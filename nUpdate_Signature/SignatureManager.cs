@@ -1,10 +1,11 @@
 /**
- *  Klasse zum Signieren von Daten mithilfe des RSA-Algorithmus
+ *  Klasse zum Signieren von Daten mit Hilfe des RSA-Algorithmus
  *  
  *  Author: Tim Schiewe (timmi31061)
  *  Lizenz: GPL v3
  *  Erstellt: 09. Dezember 2013
  *  Modifiziert:  Trade - 15.12.13 - Design des Konstruktors verbessert
+ *  Modifiziert:  Tim Schiewe (timmi31061) - 04.01.14 - Parametervalidation zum Konstruktor hinzugefügt; mehr IntelliSense
  */
 
 using System;
@@ -16,6 +17,9 @@ using System.Security.Cryptography;
 
 namespace nUpdate.SignatureManager
 {
+    /// <summary>
+    /// Klasse zum Signieren von Daten mit Hilfe des RSA-Algorithmus
+    /// </summary>
     public class RsaSignature
     {
         /// <summary>
@@ -50,17 +54,25 @@ namespace nUpdate.SignatureManager
         /// <summary>
         /// Erstellt eine neue RsaSignature-Instanz.
         /// </summary>
-        /// <param name="rsaKey">Der zu verwendene RSA-Schlüssel. Wenn keiner angegeben wurde, wird ein neuer erstellt.</param>
+        /// <param name="rsaKey">Der zu verwendene RSA-Schlüssel.</param>
         public RsaSignature(string rsaKey)
         {
-                this.rsa = new RSACryptoServiceProvider();  // Schlüssel wurde angegeben...
-                this.rsa.FromXmlString(rsaKey);             // ...also wird dieser importiert.
+            if (string.IsNullOrWhiteSpace(rsaKey))          // Wenn kein oder ein leerer Schlüssel übergeben wurde...
+            {
+                throw new ArgumentNullException("rsaKey");  // ArgumentNullException werfen.
+            }
+            
+            this.rsa = new RSACryptoServiceProvider();      // Schlüssel wurde angegeben...
+            this.rsa.FromXmlString(rsaKey);                 // ...also wird dieser importiert.
             
         }
 
+        /// <summary>
+        /// Erstellt eine neue RsaSignature-Instanz und einen Schlüssel mit der Standardschlüsselgröße.
+        /// </summary>
         public RsaSignature()
         {
-            this.rsa = new RSACryptoServiceProvider(DefaultKeySize);    // Kein Schlüssel angegeben, einen neuen mit der Standardschlüsselgröße erstellen.
+            this.rsa = new RSACryptoServiceProvider(DefaultKeySize);    // Einen neuen Schlüssel mit der Standardschlüsselgröße erstellen.
             this.rsa.ToXmlString(true);                                 // Ein Dummy, um den Schlüssel zu erstellen.
         }
 
