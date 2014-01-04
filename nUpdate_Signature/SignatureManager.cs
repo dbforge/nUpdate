@@ -6,6 +6,7 @@
  *  Erstellt: 09. Dezember 2013
  *  Modifiziert:  Trade - 15.12.13 - Design des Konstruktors verbessert
  *  Modifiziert:  Tim Schiewe (timmi31061) - 04.01.14 - Parametervalidation zum Konstruktor hinzugefügt; mehr IntelliSense
+ *  Modifiziert:  TIm Schiewe (timmi31061) - 04.01.14 - Kritisches Sicherheitsupdate
  */
 
 using System;
@@ -64,7 +65,7 @@ namespace nUpdate.SignatureManager
             
             this.rsa = new RSACryptoServiceProvider();      // Schlüssel wurde angegeben...
             this.rsa.FromXmlString(rsaKey);                 // ...also wird dieser importiert.
-            
+            this.rsa.PersistKeyInCsp = false;               // Sicherstellen, dass der Schlüssel nicht von .Net gespeichert wird.
         }
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace nUpdate.SignatureManager
         {
             this.rsa = new RSACryptoServiceProvider(DefaultKeySize);    // Einen neuen Schlüssel mit der Standardschlüsselgröße erstellen.
             this.rsa.ToXmlString(true);                                 // Ein Dummy, um den Schlüssel zu erstellen.
+            this.rsa.PersistKeyInCsp = false;                           // Sicherstellen, dass der Schlüssel nicht von .Net gespeichert wird.
         }
 
         /// <summary>
