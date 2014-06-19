@@ -1,0 +1,636 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>nUpdate</name>
+    </assembly>
+    <members>
+        <member name="P:nUpdate.Core.Operations.FileManager.FileExceptions">
+            <summary>
+            Returns an array of exceptions that appeared while performing different file operations.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Operations.RegistryManager.Write(System.String,System.Object)">
+            <summary>
+            Writes an entry to the registry.
+            </summary>
+            <param name="keyName">The name of the sub key.</param>
+            <param name="value">The value to use.</param>
+        </member>
+        <member name="P:nUpdate.Core.Operations.RegistryManager.RegistryException">
+            <summary>
+            Returns the exception an operation has thrown. If the value equals 'null' no exception had been thrown.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Operations.ServicesManager.StartService(System.String,System.Int32)">
+            <summary>
+            Starts a new windows service.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Operations.ServicesManager.StopService(System.String,System.Int32)">
+            <summary>
+            Stops a running windows service.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Operations.ServicesManager.RestartService(System.String,System.Int32)">
+            <summary>
+            Restarts a running service.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.Operations.ServicesManager.ServiceException">
+            <summary>
+            Returns the exception that was caused by an operation. If the value equals 'null' no exception had been returned.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Language.ILanguage.SetLanguage">
+            <summary>
+            Sets the language and initializes the controls and strings 
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Language.LanguageSerializer.WriteXml(System.String)">
+            <summary>
+            Writes the properties and values to a XML-file.
+            </summary>
+            <param name="fileName">The path of the file.</param>
+        </member>
+        <member name="M:nUpdate.Core.Language.LanguageSerializer.ReadXml(System.String)">
+            <summary>
+            Reads the properties and values form a XML-file.
+            </summary>
+            <param name="fileName">The path of the file.</param>
+            <returns></returns>
+        </member>
+        <member name="M:nUpdate.Core.Language.LanguageSerializer.ReadXml(System.IO.Stream)">
+            <summary>
+            Reads the properties and values form a XML-file.
+            </summary>
+            <param name="stream">The path of the file.</param>
+            <returns></returns>
+        </member>
+        <member name="P:nUpdate.Core.Language.LanguageSerializer.CancelButtonText">
+            <summary>
+            The text of the CancelButton.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.Language.LanguageSerializer.ContinueButtonText">
+            <summary>
+            The text of the ContinueButton.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.Language.LanguageSerializer.InstallButtonText">
+            <summary>
+            The text of the InstallButton.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.Language.LanguageSerializer.CloseButtonText">
+            <summary>
+            The text of the CloseButton.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.Language.LanguageSerializer.UpdateSearchDialogHeader">
+            <summary>
+            The text of the header of the UpdateSearchDialog.
+            </summary>
+        </member>
+        <member name="T:nUpdate.Core.RsaSignature">
+            <summary>
+            Class to sign data with the RSA-class.
+            </summary>
+        </member>
+        <member name="F:nUpdate.Core.RsaSignature.DefaultKeySize">
+            <summary>
+            The default key size in bits.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.RsaSignature.#ctor(System.String)">
+            <summary>
+            Creates a new instance of the RsaSignature-class.
+            </summary>
+            <param name="rsaKey">The key to use.</param>
+        </member>
+        <member name="M:nUpdate.Core.RsaSignature.#ctor">
+            <summary>
+            Creates a new instance of the RsaSignature-class and creates a new key pair.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.RsaSignature.SignData(System.Byte[])">
+            <summary>
+            Calculates the signature for the given data.
+            </summary>
+            <param name="data">The data to calculate the signature for.</param>
+            <returns>The calculated signature.</returns>
+        </member>
+        <member name="M:nUpdate.Core.RsaSignature.VerifyData(System.Byte[],System.Byte[])">
+            <summary>
+            Checks the signature for the given data.
+            </summary>
+            <param name="data">The data to check.</param>
+            <param name="signature">The signature to check.</param>
+            <returns>Return "true" if the signature is correct, otherwise return "false".</returns>
+        </member>
+        <member name="P:nUpdate.Core.RsaSignature.PublicKey">
+            <summary>
+            Returns the public key.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Core.RsaSignature.PrivateKey">
+            <summary>
+            Returns private key.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Core.Serializer.Serialize(System.Object)">
+            <summary>
+            Serializes a given serializable object.
+            </summary>
+            <param name="dataToSerialize">The data to serialize.</param>
+            <returns>Returns the serialized data as a string.</returns>
+        </member>
+        <member name="M:nUpdate.Core.Serializer.Deserialize``1(System.String)">
+            <summary>
+            Deserializes a given string.
+            </summary>
+            <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
+            <param name="dataToDeserialize">The data to deserialize.</param>
+            <returns>Returns the data as given type in the type-argument.</returns>
+        </member>
+        <member name="M:nUpdate.Core.SizeConverter.ConvertBytesToMegabytes(System.Int32)">
+            <summary>
+            Converts Bytes to MegaBytes.
+            </summary>
+            <param name="bytes">The long for the size.</param>
+            <returns>Returns a double containing the converted size in MB.</returns>
+        </member>
+        <member name="P:nUpdate.Internal.ProxySettings.Host">
+            <summary>
+            Sets the host for the proxy.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.ProxySettings.Port">
+            <summary>
+            Sets the port for the proxy.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.ProxySettings.Username">
+            <summary>
+            Sets the username for the proxy.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.ProxySettings.Password">
+            <summary>
+            Sets the password for the proxy.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateConfiguration.LoadUpdateConfiguration(System.Uri)">
+            <summary>
+            Loads the update configuration from the server.
+            </summary>
+            <param name="infoFileUrl">The url of the info file.</param>
+            <returns>Returns a deserialized stack of type <see cref="!:UpdatePackage"/>.</returns>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateConfiguration.LoadUpdateConfiguration(System.Uri,nUpdate.Internal.ProxySettings)">
+            <summary>
+            Loads the update configuration from the server.
+            </summary>
+            <param name="infoFileUrl">The url of the info file.</param>
+            <param name="proxySettings">The proxy settings for the server.</param>
+            <returns>Returns a deserialized stack of type <see cref="!:UpdatePackage"/>.</returns>
+        </member>
+        <member name="M:nUpdate.Internal.UpdaterUI.#ctor(nUpdate.Internal.UpdateManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:nUpdate.Internal.UpdaterUI"/>-class.
+            </summary>
+            <param name="updateManagerInstance">The instance of the <see cref="T:nUpdate.Internal.UpdateManager"/> to handle over.</param>
+        </member>
+        <member name="M:nUpdate.Internal.UpdaterUI.ShowUserInterface">
+            <summary>
+            Shows the built-in UI while the updates are managed.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdaterUI.UpdateManagerInstance">
+            <summary>
+            Sets the given instance of the <see cref="T:nUpdate.Internal.UpdateManager"/>-class.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateResult.#ctor(System.Collections.Generic.Stack{nUpdate.Internal.UpdateConfiguration},System.Version,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:nUpdate.Internal.UpdateResult"/> class.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateResult.UpdatesFound">
+            <summary>
+            Returns 'true' if there were updates found.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateResult.NewestPackages">
+            <summary>
+            Returns all new packages.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateResult.NewestPackage">
+            <summary>
+            Returns the newest update package.
+            </summary>
+        </member>
+        <member name="F:nUpdate.Dialogs.BaseForm.protectedControls">
+            <summary>
+            A list for controls that never should be locked
+            </summary>
+        </member>
+        <member name="M:nUpdate.Dialogs.BaseForm.SetControlAccessiblity(System.Windows.Forms.Control,System.Boolean)">
+            <summary>
+            Disables or enables the given control
+            </summary>
+            <param name="control">The control to lock</param>
+            <param name="enabled">A param to set if the control is locked</param>
+        </member>
+        <member name="M:nUpdate.Dialogs.BaseForm.SetAccessiblityForAllControls(System.Boolean)">
+            <summary>
+            Disables or enables all controls on the form
+            </summary>
+            <param name="enabled">A param to set if the controls are locked</param>
+        </member>
+        <member name="M:nUpdate.Core.ConnectionChecker.IsConnectionAvailable">
+            <summary>
+            Checks if an internet connection is available.
+            </summary>
+            <returns>This function returns a boolean.</returns>
+        </member>
+        <member name="F:nUpdate.Dialogs.NewUpdateDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Dialogs.NewUpdateDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:nUpdate.Dialogs.NewUpdateDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.NewUpdateDialog.UpdateVersion">
+            <summary>
+            Sets the available version.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.NewUpdateDialog.CurrentVersion">
+            <summary>
+            Sets the current version.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.NewUpdateDialog.PackageSize">
+            <summary>
+            Sets the size of the package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.NewUpdateDialog.ChangelogText">
+            <summary>
+            Sets the changelog.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.NewUpdateDialog.MustUpdate">
+            <summary>
+            Sets if this update must be installed.
+            </summary>
+        </member>
+        <member name="F:nUpdate.Dialogs.NoUpdateFoundDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Dialogs.NoUpdateFoundDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:nUpdate.Dialogs.NoUpdateFoundDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:nUpdate.UI.Dialogs.UpdateSearchDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:nUpdate.UI.Dialogs.UpdateSearchDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:nUpdate.UI.Dialogs.UpdateSearchDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:nUpdate.Dialogs.UpdateDownloadDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Dialogs.UpdateDownloadDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:nUpdate.Dialogs.UpdateDownloadDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:nUpdate.Dialogs.UpdateErrorDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Dialogs.UpdateErrorDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:nUpdate.Dialogs.UpdateErrorDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.UpdateErrorDialog.ErrorCode">
+            <summary>
+            Sets the code that is shown in the dialog.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.UpdateErrorDialog.ErrorMessage">
+            <summary>
+            Sets the exact message that is shown in the dialog.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Dialogs.UpdateErrorDialog.InfoMessage">
+            <summary>
+            Sets the short message that is shown on top of the dialog.
+            </summary>
+        </member>
+        <member name="T:nUpdate.Properties.Resources">
+            <summary>
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Properties.Resources.ResourceManager">
+            <summary>
+              Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Properties.Resources.Culture">
+            <summary>
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Properties.Resources.Ionic_Zip">
+            <summary>
+              Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+            </summary>
+        </member>
+        <member name="P:nUpdate.Properties.Resources.line">
+            <summary>
+              Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Properties.Resources.nUpdate_UpdateInstaller">
+            <summary>
+              Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+            </summary>
+        </member>
+        <member name="T:nUpdate.Internal.UpdateManager">
+            <summary>
+            Class that offers functions to update .NET-applications.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:nUpdate.Internal.UpdateManager"/> class.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance of the <see cref="T:nUpdate.Internal.UpdateManager"/> class.
+            </summary>
+            <param name="updateInfoFileUrl">The url of the info file.</param>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.#ctor(System.Uri,System.String,System.Version)">
+            <summary>
+            Initializes a new instance of the <see cref="T:nUpdate.Internal.UpdateManager"/>
+            </summary>
+            <param name="updateInfoFileUrl">The url of the info file.</param>
+            <param name="publicKey">The public key to check the signature of an update package.</param>
+            <param name="currentVersion">The current version of the current application.</param>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.CheckArguments">
+            <summary>
+            Checks if all arguments have been given.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.InitializeWorkaroundArea">
+            <summary>
+            Creates the necessary data for nUpdate.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.GetUpdatePackageSize(System.Uri)">
+            <summary>
+            Gets the size of the update package.
+            </summary>
+            <param name="packageUrl">The link where the update package can be found.</param>
+            <returns>Returns the size in bytes as a double.</returns>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.RefreshCancellationTokens">
+            <summary>
+            Refreshes and re-initializes the cancellation tokens.
+            </summary>
+        </member>
+        <!-- Ungültiger XML-Kommentar wurde für den Member "M:nUpdate.Internal.UpdateManager.CheckForUpdates" ignoriert -->
+        <member name="M:nUpdate.Internal.UpdateManager.CheckForUpdatesAsync">
+            <summary>
+            Checks if there are updates available. This method does not block the calling thread.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">There is already a search process running.</exception>
+            <exception cref="T:nUpdate.Internal.Exceptions.NetworkException">There is no network connection available..</exception>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.SearchExceptionHandler(System.Threading.Tasks.Task)">
+            <summary>
+            The handler set if the async task for the update search throws an exception.
+            </summary>
+            <param name="task">The taskto handle the sended the exceptions.</param>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.SearchTaskCompleted">
+            <summary>
+            Internal method to call when the search task has completed.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.DownloadPackage">
+            <summary>
+            Downloads the update package.
+            </summary>
+            <exception cref="T:nUpdate.Internal.Exceptions.NetworkException">There is no network connection available..</exception>
+            <exception cref="T:System.Net.WebException">The download process has failed because of an WebException.</exception>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.DownloadPackageAsync">
+            <summary>
+            Downloads the update package. This method does not block the calling thread.
+            </summary>
+            <exception cref="T:nUpdate.Internal.Exceptions.NetworkException">There is no network connection available..</exception>
+            <exception cref="T:System.Net.WebException">The download process has failed because of an WebException.</exception>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.DownloadExceptionHandler(System.Threading.Tasks.Task)">
+            <summary>
+            The handler set if the async task for the update search throws an exception.
+            </summary>
+            <param name="task">The task to handle the sended exceptions from.</param>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.DownloadTaskCompleted">
+            <summary>
+            Internal method to call when the search task has completed.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.CheckPackageSize">
+            <summary>
+            Checks if the size of the package is too big.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.CheckPackageValidility">
+            <summary>
+            Checks if the package contains a valid signature.
+            </summary>
+            <returns>Returns if the package contains a valid signature.</returns>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.InstallPackage">
+            <summary>
+            Installs the update package and overwrites the old data in the directory.
+            </summary>
+        </member>
+        <member name="M:nUpdate.Internal.UpdateManager.DeletePackage">
+            <summary>
+            Deletes the package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UpdatesFound">
+            <summary>
+            Returns if there were updates found.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UpdatePackageUrl">
+            <summary>
+            Sets the url of the update package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UpdateInfoFileUrl">
+            <summary>
+            Sets the url of the info file.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UseWebProxy">
+            <summary>
+            Sets if there is a proxy used.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.PublicKey">
+            <summary>
+            Sets the PublicKey for the signature.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.CurrentVersion">
+            <summary>
+            Sets the version of the current application.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.Language">
+            <summary>
+            The language to use.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.LanguageFilePath">
+            <summary>
+            The path to the language file. Requires "Language.Custom" and a valid XML-file.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.IncludeAlpha">
+            <summary>
+            Sets if the user should be able to update to Alpha-versions.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.IncludeBeta">
+            <summary>
+            Sets if the user should be able to update to Beta-versions.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UseHiddenSearch">
+            <summary>
+            Sets if a hidden search should be provided in order to search in the background without informing the user.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.MustUpdate">
+            <summary>
+            Sets if the found update is a duty update and must be installed.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UpdateVersion">
+            <summary>
+            Gets the version of the update package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.Changelog">
+            <summary>
+            Gets the changelog of the update package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.PackageSize">
+            <summary>
+            Gets the size of the update package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.Signature">
+            <summary>
+            Gets the signature of the update package.
+            </summary>
+        </member>
+        <member name="P:nUpdate.Internal.UpdateManager.UnsupportedVersions">
+            <summary>
+            Gets the versions that the update package does not support.
+            </summary>
+        </member>
+        <member name="E:nUpdate.Internal.UpdateManager.UpdateSearchStarted">
+            <summary>
+            The event fired when the update search begins.
+            </summary>
+        </member>
+        <member name="E:nUpdate.Internal.UpdateManager.UpdateSearchFinished">
+            <summary>
+            The event fired when the update search is finished.
+            </summary>
+        </member>
+        <member name="E:nUpdate.Internal.UpdateManager.UpdateSearchFailed">
+            <summary>
+            The event fired when the download of the package begins.
+            </summary>
+        </member>
+        <member name="E:nUpdate.Internal.UpdateManager.PackageDownloadStarted">
+            <summary>
+            The event fired when the download of the package begins.
+            </summary>
+        </member>
+        <member name="E:nUpdate.Internal.UpdateManager.PackageDownloadFailed">
+            <summary>
+            The event fired when the download of the package fails.
+            </summary>
+        </member>
+    </members>
+</doc>

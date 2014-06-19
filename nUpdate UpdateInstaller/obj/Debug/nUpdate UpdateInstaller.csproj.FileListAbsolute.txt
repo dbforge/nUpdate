@@ -1,0 +1,43 @@
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe.config
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\Ionic.Zip.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.ErrorDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.MainForm.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.Properties.Resources.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csproj.GenerateResource.Cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe.config
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\Ionic.Zip.dll
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csprojResolveAssemblyReference.cache
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.ErrorDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.MainForm.resources
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.Properties.Resources.resources
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csproj.GenerateResource.Cache
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csprojResolveAssemblyReference.cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.ErrorDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.MainForm.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.Properties.Resources.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csproj.GenerateResource.Cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe.config
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe.config
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csprojResolveAssemblyReference.cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.ErrorDialog.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.MainForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate.UpdateInstaller.Properties.Resources.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.csproj.GenerateResource.Cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.exe
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\obj\Debug\nUpdate UpdateInstaller.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.pdb

@@ -1,0 +1,9 @@
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.UpdateInstaller.Client.GuiInterface.csprojResolveAssemblyReference.cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.pdb

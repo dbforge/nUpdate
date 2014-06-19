@@ -1,0 +1,6 @@
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\bin\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\bin\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Client.GuiInterface\obj\Debug\nUpdate.Client.GuiInterface.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate UpdateInstaller\bin\Debug\nUpdate.Client.GuiInterface.pdb

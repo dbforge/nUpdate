@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>nUpdate</RootNamespace>
+    <AssemblyName>nUpdate</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Debug\nUpdate.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Web.RegularExpressions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Operations\FileManager.cs" />
+    <Compile Include="Core\Operations\Operation.cs" />
+    <Compile Include="Core\Operations\RegistryManager.cs" />
+    <Compile Include="Core\Operations\ServicesManager.cs" />
+    <Compile Include="Core\DevelopmentalStage.cs" />
+    <Compile Include="Core\ErrorHandler.cs" />
+    <Compile Include="Core\Language\ILanguage.cs" />
+    <Compile Include="Core\Language\Language.cs" />
+    <Compile Include="Core\Language\LanguageSerializer.cs" />
+    <Compile Include="Core\RsaSignature.cs" />
+    <Compile Include="Core\Serializer.cs" />
+    <Compile Include="Core\SizeConverter.cs" />
+    <Compile Include="Internal\UpdateEventArgs\FailedEventArgs.cs" />
+    <Compile Include="Internal\UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
+    <Compile Include="Internal\Exceptions\InvalidJSONFileException.cs" />
+    <Compile Include="Internal\Exceptions\NetworkException.cs" />
+    <Compile Include="Internal\ProxySettings.cs" />
+    <Compile Include="Internal\UpdateConfiguration.cs" />
+    <Compile Include="Internal\UpdaterUI.cs" />
+    <Compile Include="Internal\UpdateResult.cs" />
+    <Compile Include="UI\Dialogs\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ControlPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\ConnectionChecker.cs" />
+    <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\NewUpdateDialog.Designer.cs">
+      <DependentUpon>NewUpdateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.Designer.cs">
+      <DependentUpon>NoUpdateFoundDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateSearchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateSearchDialog.Designer.cs">
+      <DependentUpon>UpdateSearchDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateDownloadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateDownloadDialog.Designer.cs">
+      <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateErrorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateErrorDialog.Designer.cs">
+      <DependentUpon>UpdateErrorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\UpdateManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\UriConnecter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Dialogs\BaseForm.resx">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\NewUpdateDialog.resx">
+      <DependentUpon>NewUpdateDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\NoUpdateFoundDialog.resx">
+      <DependentUpon>NoUpdateFoundDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdateSearchDialog.resx">
+      <DependentUpon>UpdateSearchDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdateDownloadDialog.resx">
+      <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdateErrorDialog.resx">
+      <DependentUpon>UpdateErrorDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\line.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ionic.Zip.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\en.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Core\Language\en.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Core\Language\de.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Core\Language\es.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nUpdate UpdateInstaller.exe" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

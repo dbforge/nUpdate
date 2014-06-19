@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<LanguageSerializer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CancelButtonText>Abbrechen</CancelButtonText>
+  <ContinueButtonText>Weiter</ContinueButtonText>
+  <InstallButtonText>Installieren</InstallButtonText>
+  <CloseButtonText>Schließen</CloseButtonText>
+  <UpdateSearchDialogHeader>Suche nach Aktualisierungen...</UpdateSearchDialogHeader>
+  <NewUpdateDialogHeader>Es sind neue Updates verfügbar.</NewUpdateDialogHeader>
+  <NewUpdateDialogInfoText>Es können Updates für {0} geladen werden.</NewUpdateDialogInfoText>
+  <NewUpdateDialogNewestVersionText>Neueste Version: {0}</NewUpdateDialogNewestVersionText>
+  <NewUpdateDialogCurrentVersionText>Aktuelle Version: {0}</NewUpdateDialogCurrentVersionText>
+  <NewUpdateDialogSizeText>Paketgröße: {0}</NewUpdateDialogSizeText>
+  <NewUpdateDialogChangelogText>Änderungen:</NewUpdateDialogChangelogText>
+  <NoUpdateDialogHeader>Es sind keine Aktualisierungen verfügbar.</NoUpdateDialogHeader>
+  <NoUpdateDialogInfoText>Die Anwendung ist auf dem neuesten Stand.</NoUpdateDialogInfoText>
+  <UpdateDownloadDialogLoadingHeader>Updates werden heruntergeladen...</UpdateDownloadDialogLoadingHeader>
+  <UpdateDownloadDialogLoadingInfo>Bitte haben Sie einen Moment Geduld...</UpdateDownloadDialogLoadingInfo>
+  <UpdateDownloadDialogLoadingPackageText>Lade Updatepaket herunter...</UpdateDownloadDialogLoadingPackageText>
+  <UpdateDownloadDialogFinishedHeader>Updates wurden heruntergeladen.</UpdateDownloadDialogFinishedHeader>
+  <UpdateDownloadDialogFinishedInfoText>Download abgeschlossen.</UpdateDownloadDialogFinishedInfoText>
+  <UpdateDownloadDialogFinishedPackageText>Updatepaket wurde geladen.</UpdateDownloadDialogFinishedPackageText>
+  <UpdateErrorDialogHeader>Beim Aktualisieren der Anwendung sind Fehler aufgetreten.</UpdateErrorDialogHeader>
+  <UpdateErrorDialogErrorCodeText>Fehlercode:</UpdateErrorDialogErrorCodeText>
+  <SearchErrorCaption>Fehler bei der Updatesuche.</SearchErrorCaption>
+  <LocalDataCreationErrorCaption>Fehler beim Erstellen der lokalen Daten.</LocalDataCreationErrorCaption>
+  <LocalDataCreationErrorText>Der Ordner für die Paketdaten konnte nicht erstellt werden. {0}</LocalDataCreationErrorText>
+  <FileTooBigErrorCaption>Das Updatepaket ist zu groß.</FileTooBigErrorCaption>
+  <FileTooBigErrorText>nUpdate wird die Installation des Updatepaketes nicht erlauben, um Ihren Arbeitsspeicher zu schützen.</FileTooBigErrorText>
+  <PackageNotFoundErrorCaption>Paket nicht gefunden.</PackageNotFoundErrorCaption>
+  <PackageNotFoundErrorText>Das Updatepaket konnte nicht geprüft werden, da es nicht gefunden wurde.</PackageNotFoundErrorText>
+  <InvalidSignatureErrorCaption>Ungültige Signatur.</InvalidSignatureErrorCaption>
+  <InvalidSignatureErrorText>Das Paket enthält eine ungültige Signatur und könnte potenziell gefährlich sein.{0}nUpdate wird die Installation verbieten und das Paket unwiederherstellbar löschen.</InvalidSignatureErrorText>
+  <InvalidSignatureAndFileDeletingFailedErrorText>Das Paket enthält eine ungültige Signatur und könnte potenziell gefährlich sein.{0}nUpdate wird die Installation verbieten.{0}Das Paket konnte jedoch nicht entfernt werden, da ein Fehler aufgetreten ist. Bitte löschen Sie dieses sofort, da dieses Viren und/oder Malware enthalten könnte, um Ihrem Computer zu schaden.{0}{1}</InvalidSignatureAndFileDeletingFailedErrorText>
+</LanguageSerializer>
