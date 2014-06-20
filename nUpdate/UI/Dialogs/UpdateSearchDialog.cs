@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using nUpdate.Internal.UpdateEventArgs;
+﻿using nUpdate.Core.Language;
 using nUpdate.Dialogs;
+using System;
+using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Reflection;
-using System.IO;
-using nUpdate.Core.Language;
+using System.Windows.Forms;
 
 namespace nUpdate.UI.Dialogs
 {
@@ -32,9 +26,9 @@ namespace nUpdate.UI.Dialogs
             string resourceName = "nUpdate.Core.Language.";
             LanguageSerializer lang = null;
 
-            if (Language != Language.Custom)
+            if (this.Language != Language.Custom)
             {
-                switch (Language)
+                switch (this.Language)
                 {
                     case Language.English:
                         resourceName += "en.xml";
@@ -56,17 +50,17 @@ namespace nUpdate.UI.Dialogs
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
+                if (File.Exists(this.LanguageFilePath))
                 {
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                    lang = LanguageSerializer.ReadXml(this.LanguageFilePath);
                 }
             }
 
-            cancelButton.Text = lang.CancelButtonText;
-            headerLabel.Text = lang.UpdateSearchDialogHeader;
+            this.cancelButton.Text = lang.CancelButtonText;
+            this.headerLabel.Text = lang.UpdateSearchDialogHeader;
 
-            Text = Application.ProductName;
-            Icon = AppIcon; 
+            this.Text = Application.ProductName;
+            this.Icon = AppIcon; 
         }
 
         public void SearchFailedEventHandler(Exception ex)
@@ -89,19 +83,19 @@ namespace nUpdate.UI.Dialogs
                 {
                     if (errorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        DialogResult = DialogResult.Cancel;
+                        this.DialogResult = DialogResult.Cancel;
                     }
                 }));
         }
 
         public void SearchFinishedEventHandler(bool updateFound)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
     }
 }

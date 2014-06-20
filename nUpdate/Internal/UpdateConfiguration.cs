@@ -1,11 +1,9 @@
-﻿using System;
+﻿using nUpdate.Core;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using nUpdate.Core;
 
 namespace nUpdate.Internal
 {
@@ -20,19 +18,18 @@ namespace nUpdate.Internal
         {
             var wc = new WebClient();
 
-            // Cheeck for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate(
-            Object obj, X509Certificate certificate, X509Chain chain,
-            SslPolicyErrors errors)
-            {
-                return (true);
-            };
+            // Check for SSL and ignore it
+            ServicePointManager.ServerCertificateValidationCallback += delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return (true); };
 
             var input = wc.DownloadString(infoFileUrl);
             if (String.IsNullOrEmpty(input))
+            {
                 return null;
+            }
             else
+            {
                 return Serializer.Deserialize<Stack<UpdateConfiguration>>(input);
+            }
         }
 
         /// <summary>
@@ -45,13 +42,8 @@ namespace nUpdate.Internal
         {
             var wc = new WebClient();
 
-            // Cheeck for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate(
-            Object obj, X509Certificate certificate, X509Chain chain,
-            SslPolicyErrors errors)
-            {
-                return (true);
-            };
+            // Check for SSL and ignore it
+            ServicePointManager.ServerCertificateValidationCallback += delegate( Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return (true); };
 
             // Set the proxy
             wc.Proxy = new WebProxy(proxySettings.Host, proxySettings.Port);
@@ -60,52 +52,20 @@ namespace nUpdate.Internal
             return Serializer.Deserialize<Stack<UpdateConfiguration>>(wc.DownloadString(infoFileUrl));
         }
 
-        public string UpdateVersion
-        {
-            get;
-            set;
-        }
+        public string UpdateVersion { get; set; }
 
-        public string UpdatePackageUrl
-        {
-            get;
-            set;
-        }
+        public string UpdatePackageUrl  { get; set; }
 
-        public string Changelog
-        {
-            get;
-            set;
-        }
+        public string Changelog { get; set; }
 
-        public string Signature
-        {
-            get;
-            set;
-        }
+        public string Signature { get; set; }
 
-        public string DevelopmentalStage
-        {
-            get;
-            set;
-        }
+        public string DevelopmentalStage { get; set; }
 
-        public string Environment
-        {
-            get;
-            set;
-        }
+        public string Environment { get; set; }
 
-        public string[] UnsupportedVersions
-        {
-            get;
-            set;
-        }
+        public string[] UnsupportedVersions { get; set; }
 
-        public bool MustUpdate
-        {
-            get;
-            set;
-        }
+        public bool MustUpdate { get; set; }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.UpdateInstaller
@@ -21,28 +16,28 @@ namespace nUpdate.UpdateInstaller
 
         private void ErrorDialog_Load(object sender, EventArgs e)
         {
-            pict_icon.Image = SystemIcons.Error.ToBitmap();
+            this.pict_icon.Image = SystemIcons.Error.ToBitmap();
 
-            if (!String.IsNullOrEmpty(InfoMessage) && !String.IsNullOrEmpty(ErrorMessage))
+            if (!String.IsNullOrEmpty(this.InfoMessage) && !String.IsNullOrEmpty(this.ErrorMessage))
             {
-                infoLabel.Text = InfoMessage;
-                errorMessageTextBox.Text = ErrorMessage;
+                this.infoLabel.Text = this.InfoMessage;
+                this.errorMessageTextBox.Text = this.ErrorMessage;
             }
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void ErrorDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void errorMessageTextBox_Enter(object sender, EventArgs e)
         {
-            closeButton.Focus();
+            this.closeButton.Focus();
         }
     }
 }

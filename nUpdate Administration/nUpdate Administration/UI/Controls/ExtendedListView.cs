@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
@@ -39,7 +35,6 @@ namespace nUpdate.Administration.UI.Controls
             const int lvmFirst = 0x1000;
             const int LVM_SETGROUPINFO = (lvmFirst + 147);
 
-
             for (int i = 0; i <= Groups.Count - 1; i++)
             {
                 var grp = new LVGROUP();
@@ -65,7 +60,9 @@ namespace nUpdate.Administration.UI.Controls
                 {
                     object tmprtnval = pi.GetValue(lstvwgrp, null);
                     if (tmprtnval != null)
+                    {
                         rtnval = (int)tmprtnval;
+                    }
                 }
             }
             return rtnval;
@@ -76,7 +73,9 @@ namespace nUpdate.Administration.UI.Controls
             const int WM_LBUTTONUP = 0x202;
 
             if (m.Msg == WM_LBUTTONUP && Environment.OSVersion.Version.Major >= 6)
+            {
                 DefWndProc(ref m);
+            }
 
             switch (m.Msg)
             {

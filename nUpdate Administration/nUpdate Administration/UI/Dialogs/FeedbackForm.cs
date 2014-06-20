@@ -1,18 +1,12 @@
-﻿using System;
+﻿using HttpPostRequestLib.Net;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.UI.Popups;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
-using HttpPostRequestLib.Net;
-using System.Net;
-using nUpdate.Administration.UI.Popups;
-using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -26,9 +20,10 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void InitializeUnwishedWords() {
-            string[] unwishedContent = new string[] {"dumm", "arsch", "hure", "hurensohn", "wichser", "wixxer", "wixer", "schlampe", "hurä", "bullshit", "scheiß", "scheis", "fotze", "muschi", "bastard", "fick", "idiot", "depp", "dreck", "müll", "bitch", "asshole", "fuck", "fool", "heil", "hitler", "nazi", "penis", "vagina", "screw", "shit", "baisse", "merde", "nique"};
-            unwishedWords.AddRange(unwishedContent);
+        private void InitializeUnwishedWords()
+        {
+            string[] unwishedContent = new string[] { "dumm", "arsch", "hure", "hurensohn", "wichser", "wixxer", "wixer", "schlampe", "hurä", "bullshit", "scheiß", "scheis", "fotze", "muschi", "bastard", "fick", "idiot", "depp", "dreck", "müll", "bitch", "asshole", "fuck", "fool", "heil", "hitler", "nazi", "penis", "vagina", "screw", "shit", "baisse", "merde", "nique" };
+            this.unwishedWords.AddRange(unwishedContent);
         }
 
         /// <summary>
@@ -51,30 +46,33 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            if (!ValidationManager.ValidateDialog(this)) {
+            if (!ValidationManager.ValidateDialog(this))
+            {
                 MessageBox.Show("Please fill out all fields.", "Empty fields", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (!IsValidMailAdress(emailTextBox.Text)) {
+            if (!this.IsValidMailAdress(emailTextBox.Text))
+            {
                 MessageBox.Show("Please enter a valid E-mail address.", "Invalid address", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (unwishedWords.Any(item => emailTextBox.Text.ToLower().Contains(item)) || unwishedWords.Any(item => nameTextBox.Text.ToLower().Contains(item)) || unwishedWords.Any(item => contentTextBox.Text.ToLower().Contains(item))) {
+            if (this.unwishedWords.Any(item => emailTextBox.Text.ToLower().Contains(item)) || this.unwishedWords.Any(item => this.nameTextBox.Text.ToLower().Contains(item)) || this.unwishedWords.Any(item => this.contentTextBox.Text.ToLower().Contains(item)))
+            {
                 MessageBox.Show("Your text contains insulting words. Think about it again!", "Insulting content", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             string returnedString = null;
 
-            try {
-
-                httpPost = new HTTPPostRequest("http://www.trade-programming.de/nupdate/mail.php");
-                httpPost.Post.Add("name", nameTextBox.Text);
-                httpPost.Post.Add("sender", emailTextBox.Text);
-                httpPost.Post.Add("content", contentTextBox.Text);
-                returnedString = httpPost.Submit();
+            try
+            {
+                this.httpPost = new HTTPPostRequest("http://www.trade-programming.de/nupdate/mail.php");
+                this.httpPost.Post.Add("name", nameTextBox.Text);
+                this.httpPost.Post.Add("sender", emailTextBox.Text);
+                this.httpPost.Post.Add("content", contentTextBox.Text);
+                returnedString = this.httpPost.Submit();
                 if (!String.IsNullOrEmpty(returnedString))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.", String.Format("Please report this message: {0}", returnedString), PopupButtons.OK);
@@ -83,8 +81,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Popup.ShowPopup(this, SystemIcons.Information, "Delivering successful.", "The feedback was sent. Thank you!", PopupButtons.OK);
             }
-
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.", ex, PopupButtons.OK);
             }
         }

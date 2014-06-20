@@ -1,7 +1,5 @@
 ﻿using nUpdate.Administration.Core;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -23,7 +21,9 @@ namespace nUpdate.Administration
         {
             Type t = Type.GetType("Mono.Runtime");
             if (t != null)
+            {
                 throw new Exception("Mono is not supported.");
+            }
 
             bool firstInstance = false;
             Mutex mtx = new Mutex(true, "MainForm", out firstInstance);
@@ -31,7 +31,9 @@ namespace nUpdate.Administration
             if (firstInstance)
             {
                 foreach (string arg in args)
+                {
                     MessageBox.Show(arg);
+                }
 
                 Application.EnableVisualStyles();
                 //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -39,7 +41,9 @@ namespace nUpdate.Administration
                 Application.Run(new MainForm());
             }
             else
+            {
                 HandleCmdLineArgs();
+            }
         }
 
         public static void HandleCmdLineArgs()

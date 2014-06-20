@@ -28,8 +28,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Application.Extension
@@ -44,22 +42,14 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="dwItem1">First event-dependent value.</param>
         /// <param name="dwItem2">Second event-dependent value.</param>
         [DllImport("shell32.dll")]
-        private static extern void SHChangeNotify(
-            UInt32 wEventId,
-            UInt32 uFlags,
-            IntPtr dwItem1,
-            IntPtr dwItem2);
+        private static extern void SHChangeNotify(UInt32 wEventId, UInt32 uFlags, IntPtr dwItem1, IntPtr dwItem2);
 
         /// <summary>
         /// Notify shell of change of file associations.
         /// </summary>
         public static void NotifyOfChange()
         {
-            SHChangeNotify(
-                (uint)ShellChangeNotificationEvents.SHCNE_ASSOCCHANGED,
-                (uint)(ShellChangeNotificationFlags.SHCNF_IDLIST | ShellChangeNotificationFlags.SHCNF_FLUSHNOWAIT),
-                IntPtr.Zero,
-                IntPtr.Zero);
+            SHChangeNotify((uint)ShellChangeNotificationEvents.SHCNE_ASSOCCHANGED, (uint)(ShellChangeNotificationFlags.SHCNF_IDLIST | ShellChangeNotificationFlags.SHCNF_FLUSHNOWAIT), IntPtr.Zero, IntPtr.Zero);
         }
 
 

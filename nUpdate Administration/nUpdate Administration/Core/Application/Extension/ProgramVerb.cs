@@ -27,9 +27,6 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -46,7 +43,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Command
         {
-            get { return command; }
+            get { return this.command; }
         }
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// "print"</example>
         public string Name
         {
-            get { return name; }
+            get { return this.name; }
         }
 
         /// <summary>

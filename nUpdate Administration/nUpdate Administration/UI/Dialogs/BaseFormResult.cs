@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using nUpdate.Administration.Core.Application;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

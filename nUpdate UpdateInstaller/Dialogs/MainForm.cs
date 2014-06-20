@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using nUpdate.Client.GuiInterface;
 using nUpdate.UpdateInstaller;
-using System.Diagnostics;
-using nUpdate.Client.GuiInterface;
+using System;
+using System.Windows.Forms;
 
 namespace nUpdate
 {
@@ -28,8 +19,8 @@ namespace nUpdate
 
         public void ReportProgress(int progress, string currentFile)
         {
-            extractProgressBar.Value = progress;
-            unpackingLabel.Text = String.Format("{0} {1}... {2}", "Unpacking...", currentFile, progress);
+            this.extractProgressBar.Value = progress;
+            this.unpackingLabel.Text = String.Format("{0} {1}... {2}", "Unpacking...", currentFile, progress);
         }
 
         public void Fail(string infoMessage, string errorMessage)

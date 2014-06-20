@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace nUpdate.Internal
 {
@@ -34,40 +33,53 @@ namespace nUpdate.Internal
                             foreach (string unsupportedVersion in package.UnsupportedVersions)
                             {
                                 if (new Version(unsupportedVersion) == currentVersion)
+                                {
                                     containsUnsupported = true;
+                                }
                             }
 
                             if (containsUnsupported)
+                            {
                                 continue;
+                            }
                         }
 
                         if (package.Environment != null)
                         {
                             bool isNotCurrentArchitecture = false;
                             if (package.Environment == "x86" && is64bit)
+                            {
                                 isNotCurrentArchitecture = true;
+                            }
                             else if (package.Environment == "x64" && !is64bit)
+                            {
                                 isNotCurrentArchitecture = true;
+                            }
 
                             if (isNotCurrentArchitecture)
+                            {
                                 continue;
+                            }
                         }
-                        
-                        newUpdatePackages.Push(package); 
+
+                        this.newUpdatePackages.Push(package); 
                     }
                 }
             }
 
-            if (NewestPackages.Count != 0) 
-                updatesFound = true;
+            if (this.NewestPackages.Count != 0)
+            {
+                this.updatesFound = true;
+            }
         }
 
         /// <summary>
         /// Returns 'true' if there were updates found.
         /// </summary>
         public bool UpdatesFound {
-            get {
-                return updatesFound;
+            get
+            {
+                return this.updatesFound;
             }
         }
 
@@ -85,8 +97,9 @@ namespace nUpdate.Internal
         /// </summary>
         internal Stack<UpdateConfiguration> NewestPackages
         {
-            get {
-                return newUpdatePackages;
+            get
+            {
+                return this.newUpdatePackages;
             }
         }
 
@@ -95,8 +108,9 @@ namespace nUpdate.Internal
         /// </summary>
         public UpdateConfiguration NewestPackage
         {
-            get {
-                return newUpdatePackages.OrderBy(package => package.UpdateVersion).Last();
+            get
+            {
+                return this.newUpdatePackages.OrderBy(package => package.UpdateVersion).Last();
             }
         }
     }

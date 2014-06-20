@@ -27,9 +27,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -53,7 +51,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                 FileAssociationInfo fai = new FileAssociationInfo(s);
 
                 if (!fai.Exists || fai.ProgID != progId)
+                {
                     notAssociated.Add(s);
+                }
             }
 
             return notAssociated.ToArray();
@@ -76,7 +76,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                 FileAssociationInfo fai = new FileAssociationInfo(s);
 
                 if (!fai.Exists)
+                {
                     fai.Create(progId);
+                }
 
                 fai.ProgID = progId;
             }
@@ -84,7 +86,9 @@ namespace nUpdate.Administration.Core.Application.Extension
             ProgramAssociationInfo pai = new ProgramAssociationInfo(progId);
 
             if (!pai.Exists)
+            {
                 pai.Create();
+            }
 
             pai.AddVerb(new ProgramVerb("open", executablePath));
         }
@@ -101,11 +105,12 @@ namespace nUpdate.Administration.Core.Application.Extension
                 FileAssociationInfo fai = new FileAssociationInfo(s);
 
                 if (!fai.Exists)
+                {
                     fai.Create(progId);
+                }
 
                 fai.ProgID = progId;
             }
         }
-
     }
 }

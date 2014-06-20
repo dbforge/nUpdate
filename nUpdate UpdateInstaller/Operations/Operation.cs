@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace nUpdate.UpdateInstaller.Operations
 {
@@ -12,9 +8,9 @@ namespace nUpdate.UpdateInstaller.Operations
 
         public Operation(string operation)
         {
-            UpdateOperation = operation;
+            this.UpdateOperation = operation;
         }
-        
+
         /// <summary>
         /// Executes the set operation.
         /// </summary>
@@ -25,14 +21,15 @@ namespace nUpdate.UpdateInstaller.Operations
             //#R-#C-Entry            // Registry-Operation, here: Create an entry.
             //#P-#S-ProcessName      // Process-Operation, here: Start a process.
 
-            string[] operationParts = UpdateOperation.Split(new char[]{'-'});
+            string[] operationParts = this.UpdateOperation.Split(new char[] { '-' });
             if (operationParts[0] == "#F")
             {
                 var fileManager = new FileManager();
                 switch (operationParts[1])
                 {
                     case "#R":
-                        if (operationParts.Length != 4) {
+                        if (operationParts.Length != 4)
+                        {
                             fileManager.FileExceptions.Add(new Exception(String.Format("Renaming file {0} failed: Not enough arguments.", operationParts[1])));
                             return;
                         }
@@ -40,7 +37,8 @@ namespace nUpdate.UpdateInstaller.Operations
                         break;
 
                     case "#C":
-                        if (operationParts.Length != 3) {
+                        if (operationParts.Length != 3)
+                        {
                             fileManager.FileExceptions.Add(new Exception(String.Format("Creating file {0} failed: Not enough arguments.", operationParts[1])));
                             return;
                         }

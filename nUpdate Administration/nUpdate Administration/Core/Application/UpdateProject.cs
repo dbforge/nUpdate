@@ -1,8 +1,6 @@
-﻿using System;
+﻿using nUpdate.Administration.Core.Application.History;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using nUpdate.Administration.Core.Application.History;
 
 namespace nUpdate.Administration.Core.Application
 {

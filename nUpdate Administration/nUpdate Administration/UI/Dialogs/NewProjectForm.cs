@@ -1,58 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using nUpdate.Administration.Core;
+﻿using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.UI.Dialogs;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Administration.Core.Application;
+using System;
+using System.Drawing;
+using System.IO;
 using System.Reflection;
+using System.Security;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectForm : BaseForm
     {
-        bool allowCancel = true;
-        string alreadyExistingWarn;
+        private bool allowCancel = true;
+        private string alreadyExistingWarn;
 
         /// <summary>
         /// Returns the private key.
         /// </summary>
-        public string PrivateKey 
-        {
-            get; 
-            set;
-        }
+        public string PrivateKey { get; set; }
 
         /// <summary>
         /// Returns the public key.
         /// </summary>
-        public string PublicKey 
-        {
-            get; 
-            set; 
-        }
+        public string PublicKey { get; set; }
 
         /// <summary>
         /// Sets the current panel.
         /// </summary>
-        public Panel Sender 
-        { 
-            get;
-            set; 
-        }
+        public Panel Sender { get; set; }
 
         /// <summary>
         /// Sets the language
@@ -61,10 +40,11 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             LocalizationProperties ls = new LocalizationProperties();
             if (File.Exists(Program.LanguageSerializerFilePath))
+            {
                 ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(Program.LanguageSerializerFilePath));
+            }
             else
             {
-
                 string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
@@ -73,28 +53,28 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             this.Text = ls.NewProjectFormTitle;
-            alreadyExistingWarn = ls.AlreadyExistingWarn;
+            this.alreadyExistingWarn = ls.AlreadyExistingWarn;
 
-            cancelButton.Text = ls.CancelButtonText;
-            continueButton.Text = ls.ContinueButtonText;
+            this.cancelButton.Text = ls.CancelButtonText;
+            this.continueButton.Text = ls.ContinueButtonText;
 
-            keyPairHeaderLabel.Text = ls.PanelSignatureHeader;
-            keyPairInfoLabel.Text = ls.PanelSignatureInfoText;
-            keyPairGenerationLabel.Text = ls.PanelSignatureWaitText;
+            this.keyPairHeaderLabel.Text = ls.PanelSignatureHeader;
+            this.keyPairInfoLabel.Text = ls.PanelSignatureInfoText;
+            this.keyPairGenerationLabel.Text = ls.PanelSignatureWaitText;
 
-            generalHeaderLabel.Text = ls.PanelGeneralHeader;
-            nameLabel.Text = ls.PanelGeneralNameText;
-            nameTextBox.Cue = ls.PanelGeneralNameWatermarkText;
-            languageLabel.Text = ls.PanelGeneralLanguageText;
+            this.generalHeaderLabel.Text = ls.PanelGeneralHeader;
+            this.nameLabel.Text = ls.PanelGeneralNameText;
+            this.nameTextBox.Cue = ls.PanelGeneralNameWatermarkText;
+            this.languageLabel.Text = ls.PanelGeneralLanguageText;
 
-            ftpHeaderLabel.Text = ls.PanelFtpHeader;
-            adressLabel.Text = ls.PanelFtpServerText;
-            adressTextBox.Cue = ls.PanelFtpServerWatermarkText;
-            userLabel.Text = ls.PanelFtpUserText;
-            userTextBox.Cue = ls.PanelFtpUserWatermarkText;
-            passwordLabel.Text = ls.PanelFtpPasswordText;
-            portLabel.Text = ls.PanelFtpPortText;
-            portTextBox.Cue = ls.PanelFtpPortWatermarkText;
+            this.ftpHeaderLabel.Text = ls.PanelFtpHeader;
+            this.adressLabel.Text = ls.PanelFtpServerText;
+            this.adressTextBox.Cue = ls.PanelFtpServerWatermarkText;
+            this.userLabel.Text = ls.PanelFtpUserText;
+            this.userTextBox.Cue = ls.PanelFtpUserWatermarkText;
+            this.passwordLabel.Text = ls.PanelFtpPasswordText;
+            this.portLabel.Text = ls.PanelFtpPortText;
+            this.portTextBox.Cue = ls.PanelFtpPortWatermarkText;
         }
 
         public NewProjectForm()
@@ -106,30 +86,32 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             portTextBox.ShortcutsEnabled = false;
 
-            userLabel.Enabled = Properties.Settings.Default.SaveCredentials;
-            userTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
-            passwordTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
-            passwordLabel.Enabled = Properties.Settings.Default.SaveCredentials;
+            this.userLabel.Enabled = Properties.Settings.Default.SaveCredentials;
+            this.userTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
+            this.passwordTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
+            this.passwordLabel.Enabled = Properties.Settings.Default.SaveCredentials;
 
-            languageComboBox.SelectedIndex = 0;
-            modeComboBox.SelectedIndex = 0;
-            protocolComboBox.SelectedIndex = 0;
+            this.languageComboBox.SelectedIndex = 0;
+            this.modeComboBox.SelectedIndex = 0;
+            this.protocolComboBox.SelectedIndex = 0;
 
-            SetLanguage();
+            this.SetLanguage();
 
-            generalPanel.Hide();
-            ftpPanel.Hide();
+            this.generalPanel.Hide();
+            this.ftpPanel.Hide();
 
-            controlPanel1.Visible = false;
-            allowCancel = false;
+            this.controlPanel1.Visible = false;
+            this.allowCancel = false;
 
-            new Thread(GenerateKeyPair).Start();
+            new Thread(this.GenerateKeyPair).Start();
         }
 
         private void NewProjectForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!allowCancel)
+            {
                 e.Cancel = true;
+            }
         }
 
         /// <summary>
@@ -141,24 +123,24 @@ namespace nUpdate.Administration.UI.Dialogs
             RsaSignature rsa = new RsaSignature();
 
             // Initialize the properties with the keys
-            PrivateKey = rsa.PrivateKey;
-            PublicKey = rsa.PublicKey;
+            this.PrivateKey = rsa.PrivateKey;
+            this.PublicKey = rsa.PublicKey;
 
             Invoke(new Action(() =>
             {
-                controlPanel1.Visible = true;
-                generalPanel.Show();
-                Sender = generalPanel;
+                this.controlPanel1.Visible = true;
+                this.generalPanel.Show();
+                this.Sender = this.generalPanel;
             }));
 
-            allowCancel = true;
+            this.allowCancel = true;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
         {
-            if (Sender == generalPanel)
+            if (this.Sender == this.generalPanel)
             {
-                if (!ValidationManager.ValidatePanel(generalPanel))
+                if (!ValidationManager.ValidatePanel(this.generalPanel))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.", "All fields need to have a value.", PopupButtons.OK);
                     return;
@@ -170,12 +152,12 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                Sender = ftpPanel;
-                backButton.Enabled = true;
-                generalPanel.Hide();
-                ftpPanel.Show();
+                this.Sender = this.ftpPanel;
+                this.backButton.Enabled = true;
+                this.generalPanel.Hide();
+                this.ftpPanel.Show();
             }
-            else if (Sender == ftpPanel)
+            else if (this.Sender == this.ftpPanel)
             {
                 //if (!ValidationManager.ValidateDialog(this, directoryTextBox))
                 //{
@@ -185,64 +167,70 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    FileStream fs = File.Create(localPathTextBox.Text);
+                    FileStream fs = File.Create(this.localPathTextBox.Text);
                     fs.Flush();
                     fs.Dispose();
                 }
                 catch (IOException ex)
                 {
-                    Popup.ShowPopup(this ,SystemIcons.Error, "Failed to create project file.", ex, PopupButtons.OK);
-                    Close();
+                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to create project file.", ex, PopupButtons.OK);
+                    this.Close();
                 }
 
                 bool usePassive;
 
-                if (modeComboBox.SelectedIndex == 0)
+                if (this.modeComboBox.SelectedIndex == 0)
+                {
                     usePassive = true;
+                }
                 else
+                {
                     usePassive = false;
+                }
 
                 // Create a new package
                 var project = new UpdateProject()
                 {
-                    Path = localPathTextBox.Text,
-                    Name = nameTextBox.Text,
+                    Path = this.localPathTextBox.Text,
+                    Name = this.nameTextBox.Text,
                     Id = Guid.NewGuid().ToString(),
-                    UpdateUrl = updateUrlTextBox.Text,
-                    ProgrammingLanguage = languageComboBox.SelectedText,
+                    UpdateUrl = this.updateUrlTextBox.Text,
+                    ProgrammingLanguage = this.languageComboBox.SelectedText,
                     NewestPackage = null,
                     Packages = null,
                     ReleasedPackages = "0",
-                    FtpHost = adressTextBox.Text,
-                    FtpPort = portTextBox.Text,
-                    FtpUsername = userTextBox.Text,
-                    FtpPassword = passwordTextBox.Text,
-                    FtpDirectory = directoryTextBox.Text,
-                    FtpProtocol = protocolComboBox.GetItemText(protocolComboBox.SelectedItem),
+                    FtpHost = this.adressTextBox.Text,
+                    FtpPort = this.portTextBox.Text,
+                    FtpUsername = this.userTextBox.Text,
+                    FtpPassword = this.passwordTextBox.Text,
+                    FtpDirectory = this.directoryTextBox.Text,
+                    FtpProtocol = this.protocolComboBox.GetItemText(this.protocolComboBox.SelectedItem),
                     FtpUsePassiveMode = usePassive.ToString(),
-                    PrivateKey = PrivateKey,
-                    PublicKey = PublicKey,
+                    PrivateKey = this.PrivateKey,
+                    PublicKey = this.PublicKey,
                     Log = null,
                 };
 
                 string projectFileContents = Serializer.Serialize(project);
                 try
                 {
-                    File.WriteAllText(localPathTextBox.Text, projectFileContents);
+                    File.WriteAllText(this.localPathTextBox.Text, projectFileContents);
                 }
                 catch (IOException ex)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Failed to write to project file.", ex, PopupButtons.OK);
                 }
 
-                Close();
+                this.Close();
             }
         }
 
         private void portTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ("1234567890\b".IndexOf(e.KeyChar.ToString()) < 0)
+            {
                 e.Handled = true;
+            }
         }
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
@@ -262,16 +250,20 @@ namespace nUpdate.Administration.UI.Dialogs
             //    }
             //}
 
-            FtpProtocol _protocol = FtpProtocol.NormalFtp;
-            if (int.Equals(modeComboBox.SelectedIndex, 0))
-                _protocol = FtpProtocol.NormalFtp;
+            FtpProtocol protocol = FtpProtocol.NormalFtp;
+            if (int.Equals(this.modeComboBox.SelectedIndex, 0))
+            {
+                protocol = FtpProtocol.NormalFtp;
+            }
             else
-                _protocol = FtpProtocol.SecureFtp;
+            {
+                protocol = FtpProtocol.SecureFtp;
+            }
 
             SecureString securePwd = new SecureString();
             if (Properties.Settings.Default.SaveCredentials)
             {
-                foreach (char sign in passwordTextBox.Text)
+                foreach (char sign in this.passwordTextBox.Text)
                 {
                     securePwd.AppendChar(sign);
                 }
@@ -279,16 +271,18 @@ namespace nUpdate.Administration.UI.Dialogs
 
             var searchForm = new DirectorySearchForm()
             {
-                ProjectName = nameTextBox.Text,
-                Host = adressTextBox.Text,
-                Port = int.Parse(portTextBox.Text),
-                UsePassiveMode = modeComboBox.SelectedIndex.Equals(0),
-                Username = userTextBox.Text,
+                ProjectName = this.nameTextBox.Text,
+                Host = this.adressTextBox.Text,
+                Port = int.Parse(this.portTextBox.Text),
+                UsePassiveMode = this.modeComboBox.SelectedIndex.Equals(0),
+                Username = this.userTextBox.Text,
                 Password = securePwd,
-                Protocol = _protocol,
+                Protocol = protocol,
             };
             if (searchForm.ShowDialog() == DialogResult.OK)
-                directoryTextBox.Text = searchForm.SelectedDirectory;
+            {
+                this.directoryTextBox.Text = searchForm.SelectedDirectory;
+            }
 
             searchForm.Close();
         }
@@ -298,15 +292,17 @@ namespace nUpdate.Administration.UI.Dialogs
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
             if (fileDialog.ShowDialog() == DialogResult.OK)
-                localPathTextBox.Text = fileDialog.FileName;
+            {
+                this.localPathTextBox.Text = fileDialog.FileName;
+            }
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            ftpPanel.Hide();
-            generalPanel.Show();
-            backButton.Enabled = false;
-            Sender = generalPanel;
+            this.ftpPanel.Hide();
+            this.generalPanel.Show();
+            this.backButton.Enabled = false;
+            this.Sender = this.generalPanel;
         }
 
     }

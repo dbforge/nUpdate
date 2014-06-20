@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace nUpdate.Administration.Core
 {
@@ -18,7 +15,7 @@ namespace nUpdate.Administration.Core
         {
             get
             {
-                return (count <= 0) == false;
+                return (this.count <= 0) == false;
             }
         }
 
@@ -29,7 +26,7 @@ namespace nUpdate.Administration.Core
         {
             get
             {
-                return navs.Count != count;
+                return this.navs.Count != this.count;
             }
         }
 
@@ -38,7 +35,10 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public void Back()
         {
-            if (CanGoBack) count--;
+            if (this.CanGoBack)
+            {
+                this.count--;
+            }
         }
 
         /// <summary>
@@ -46,7 +46,10 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public void Forward()
         {
-            if (CanGoForward) count++;
+            if (this.CanGoForward)
+            { 
+                this.count++; 
+            }
         }
 
         /// <summary>
@@ -56,9 +59,9 @@ namespace nUpdate.Administration.Core
         {
             get
             {
-                if ((count - 1 == -1) == false)
+                if ((this.count - 1 == -1) == false)
                 {
-                    return navs[count - 1];
+                    return this.navs[this.count - 1];
                 }
                 else
                 {
@@ -72,17 +75,17 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public void Set(T value)
         {
-            if (navs.Count == 0)
+            if (this.navs.Count == 0)
             {
-                navs.Add(value);
-                Last = value;
+                this.navs.Add(value);
+                this.Last = value;
                 count++;
             }
-            else if (!Last.Equals(value))
+            else if (!this.Last.Equals(value))
             {
-                navs.Add(value);
-                Last = value;
-                count++;
+                this.navs.Add(value);
+                this.Last = value;
+                this.count++;
             }
         }
 

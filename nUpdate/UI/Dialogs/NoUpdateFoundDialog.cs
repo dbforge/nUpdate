@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using nUpdate.Core.Language;
+using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using nUpdate.UI.Controls;
-using nUpdate.Core.Language;
 
 namespace nUpdate.Dialogs
 {
@@ -30,17 +24,17 @@ namespace nUpdate.Dialogs
             string resourceName = "nUpdate.Core.Language.";
             LanguageSerializer lang = null;
 
-            if (Language != Language.Custom)
+            if (this.Language != Language.Custom)
             {
-                switch (Language)
+                switch (this.Language)
                 {
                     case Language.English:
                         resourceName += "en.xml";
                         break;
                     case Language.German:
                         resourceName += "de.xml";
-                        headerLabel.Location = new Point(19, 12);
-                        infoLabel.Location = new Point(36, 34);
+                        this.headerLabel.Location = new Point(19, 12);
+                        this.infoLabel.Location = new Point(36, 34);
                         break;
                     //case Language.French:
                     //    resourceName += "fr.xml";
@@ -60,24 +54,23 @@ namespace nUpdate.Dialogs
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
+                if (File.Exists(this.LanguageFilePath))
                 {
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                    lang = LanguageSerializer.ReadXml(this.LanguageFilePath);
                 }
             }
 
-            closeButton.Text = lang.CloseButtonText;
-            headerLabel.Text = lang.NoUpdateDialogHeader;
-            infoLabel.Text = lang.NoUpdateDialogInfoText;
+            this.closeButton.Text = lang.CloseButtonText;
+            this.headerLabel.Text = lang.NoUpdateDialogHeader;
+            this.infoLabel.Text = lang.NoUpdateDialogInfoText;
 
-            Icon = AppIcon;
+            this.Icon = this.AppIcon;
             this.Text = Application.ProductName;
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
-
     }
 }

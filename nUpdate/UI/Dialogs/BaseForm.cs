@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace nUpdate.Dialogs
@@ -23,7 +20,7 @@ namespace nUpdate.Dialogs
         /// <summary>
         /// A list for controls that never should be locked
         /// </summary>
-        List<Control> protectedControls = new List<Control>();
+        private List<Control> protectedControls = new List<Control>();
 
         /// <summary>
         /// Disables or enables the given control
@@ -34,7 +31,9 @@ namespace nUpdate.Dialogs
         {
             // Check if the control is protected of locking it
             if (!protectedControls.Contains(control))
+            {
                 control.Enabled = enabled;
+            }
 
             // Check if the control has children and if so, we (un)lock them
             if (control.HasChildren)
@@ -54,7 +53,7 @@ namespace nUpdate.Dialogs
         {
             foreach (Control ctrl in Controls)
             {
-                SetControlAccessiblity(ctrl, enabled);
+                this.SetControlAccessiblity(ctrl, enabled);
             }
         }
     }

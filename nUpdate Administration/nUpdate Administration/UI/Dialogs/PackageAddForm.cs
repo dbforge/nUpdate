@@ -1,26 +1,22 @@
-﻿using System;
+﻿using Ionic.Zip;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.Application.History;
+using nUpdate.Administration.Core.Localization;
+using nUpdate.Administration.Core.Update;
+using nUpdate.Administration.UI.Popups;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-using Ionic.Zip;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Localization;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.UI.Popups;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using nUpdate.Administration.Core.Application.History;
+using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -28,16 +24,16 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         #region "Fields"
 
-        const string separatorCharacter = "-";
-        const float KB = 1024;
-        const float MB = 1048577;
+        private const string separatorCharacter = "-";
+        private const float Kb = 1024;
+        private const float Mb = 1048577;
 
-        bool publishUpdate;
-        bool mustUpdate;
-        bool containsUnsupportedFormat;
-        bool allowCancel = true;
-        bool hasFailedOnLoading;
-        bool deletePackageFromServer = false;
+        private bool publishUpdate;
+        private bool mustUpdate;
+        private bool containsUnsupportedFormat;
+        private bool allowCancel = true;
+        private bool hasFailedOnLoading;
+        private bool deletePackageFromServer = false;
 
         private List<string> paths = new List<string>();
         private Dictionary<string, string> archiveTypes = new Dictionary<string, string>();
@@ -46,41 +42,29 @@ namespace nUpdate.Administration.UI.Dialogs
         private FtpManager ftp = new FtpManager();
         private Log updateLog = new Log();
 
-        string packageVersionString;
-        string packageFolder;
-        string updateConfigFile;
-        Uri remoteInfoFileUrl;
+        private string packageVersionString;
+        private string packageFolder;
+        private string updateConfigFile;
+        private Uri remoteInfoFileUrl;
 
-        int architectureIndex = 2;
+        private int architectureIndex = 2;
 
         #endregion
 
         /// <summary>
         /// The newest version
         /// </summary>
-        public Version NewestVersion
-        {
-            get;
-            set;
-        }
+        public Version NewestVersion { get; set; }
 
         /// <summary>
         /// Sets the name of the project.
         /// </summary>
-        public string ProjectName
-        {
-            get;
-            set;
-        }
+        public string ProjectName { get; set; }
 
         /// <summary>
         /// Sets the developmental stage of the package.
         /// </summary>
-        public DevelopmentalStage DevStage
-        {
-            get;
-            set;
-        }
+        public DevelopmentalStage DevStage { get; set; }
 
         /// <summary>
         /// Returns all operations set.
@@ -89,45 +73,46 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #region "Localization"
 
-        string noNetworkCaption;
-        string noNetworkText;
-        string noFilesCaption;
-        string noFilesText;
-        string unsupportedArchiveCaption;
-        string unsupportedArchiveText;
-        string invalidVersionCaption;
-        string invalidVersionText;
-        string noChangelogCaption;
-        string noChangelogText;
-        string invalidArgumentCaption;
-        string invalidArgumentText;
-        string creatingPackageDataErrorCaption;
-        string loadingProjectDataErrorCaption;
-        string gettingUrlErrorCaption;
-        string readingPackageBytesErrorCaption;
-        string invalidServerDirectoryErrorCaption;
-        string invalidServerDirectoryErrorText;
-        string ftpDataLoadErrorCaption;
-        string configDownloadErrorCaption;
-        string serializingDataErrorCaption;
-        string relativeUriErrorText;
-        string savingInformationErrorCaption;
-        string uploadFailedErrorCaption;
-        string initializingArchiveInfoText;
-        string preparingUpdateInfoText;
-        string signingPackageInfoText;
-        string initializingConfigInfoText;
-        string uploadingPackageInfoText;
-        string uploadingConfigInfoText;
+        private string noNetworkCaption;
+        private string noNetworkText;
+        private string noFilesCaption;
+        private string noFilesText;
+        private string unsupportedArchiveCaption;
+        private string unsupportedArchiveText;
+        private string invalidVersionCaption;
+        private string invalidVersionText;
+        private string noChangelogCaption;
+        private string noChangelogText;
+        private string invalidArgumentCaption;
+        private string invalidArgumentText;
+        private string creatingPackageDataErrorCaption;
+        private string loadingProjectDataErrorCaption;
+        private string gettingUrlErrorCaption;
+        private string readingPackageBytesErrorCaption;
+        private string invalidServerDirectoryErrorCaption;
+        private string invalidServerDirectoryErrorText;
+        private string ftpDataLoadErrorCaption;
+        private string configDownloadErrorCaption;
+        private string serializingDataErrorCaption;
+        private string relativeUriErrorText;
+        private string savingInformationErrorCaption;
+        private string uploadFailedErrorCaption;
+        private string initializingArchiveInfoText;
+        private string preparingUpdateInfoText;
+        private string signingPackageInfoText;
+        private string initializingConfigInfoText;
+        private string uploadingPackageInfoText;
+        private string uploadingConfigInfoText;
 
         private void SetLanguage()
         {
             LocalizationProperties ls = new LocalizationProperties();
             if (File.Exists(Program.LanguageSerializerFilePath))
+            {
                 ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(Program.LanguageSerializerFilePath));
+            }
             else
             {
-
                 string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
@@ -135,62 +120,62 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            noNetworkCaption = ls.PackageAddFormNoInternetWarningCaption;
-            noNetworkText = ls.PackageAddFormNoInternetWarningText;
-            noFilesCaption = ls.PackageAddFormNoFilesSpecifiedWarningCaption;
-            noFilesText = ls.PackageAddFormNoFilesSpecifiedWarningText;
-            unsupportedArchiveCaption = ls.PackageAddFormUnsupportedArchiveWarningCaption;
-            unsupportedArchiveText = ls.PackageAddFormUnsupportedArchiveWarningText;
-            invalidVersionCaption = ls.PackageAddFormVersionInvalidWarningCaption;
-            invalidVersionText = ls.PackageAddFormVersionInvalidWarningText;
-            noChangelogCaption = ls.PackageAddFormNoChangelogWarningCaption;
-            noChangelogText = ls.PackageAddFormNoChangelogWarningText;
-            invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
-            invalidArgumentText = ls.InvalidArgumentErrorText;
-            creatingPackageDataErrorCaption = ls.PackageAddFormPackageDataCreationErrorCaption;
-            loadingProjectDataErrorCaption = ls.PackageAddFormProjectDataLoadingErrorCaption;
-            gettingUrlErrorCaption = ls.PackageAddFormGettingUrlErrorCaption;
-            readingPackageBytesErrorCaption = ls.PackageAddFormReadingPackageBytesErrorCaption;
-            invalidServerDirectoryErrorCaption = ls.PackageAddFormInvalidServerDirectoryErrorCaption;
-            invalidServerDirectoryErrorText = ls.PackageAddFormInvalidServerDirectoryErrorText;
-            ftpDataLoadErrorCaption = ls.PackageAddFormLoadingFtpDataErrorCaption;
-            configDownloadErrorCaption = ls.PackageAddFormConfigurationDownloadErrorCaption;
-            serializingDataErrorCaption = ls.PackageAddFormSerializingDataErrorCaption;
-            relativeUriErrorText = ls.PackageAddFormRelativeUriErrorText;
-            savingInformationErrorCaption = ls.PackageAddFormPackageInformationSavingErrorCaption;
-            uploadFailedErrorCaption = ls.PackageAddFormUploadFailedErrorCaption;
+            this.noNetworkCaption = ls.PackageAddFormNoInternetWarningCaption;
+            this.noNetworkText = ls.PackageAddFormNoInternetWarningText;
+            this.noFilesCaption = ls.PackageAddFormNoFilesSpecifiedWarningCaption;
+            this.noFilesText = ls.PackageAddFormNoFilesSpecifiedWarningText;
+            this.unsupportedArchiveCaption = ls.PackageAddFormUnsupportedArchiveWarningCaption;
+            this.unsupportedArchiveText = ls.PackageAddFormUnsupportedArchiveWarningText;
+            this.invalidVersionCaption = ls.PackageAddFormVersionInvalidWarningCaption;
+            this.invalidVersionText = ls.PackageAddFormVersionInvalidWarningText;
+            this.noChangelogCaption = ls.PackageAddFormNoChangelogWarningCaption;
+            this.noChangelogText = ls.PackageAddFormNoChangelogWarningText;
+            this.invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
+            this.invalidArgumentText = ls.InvalidArgumentErrorText;
+            this.creatingPackageDataErrorCaption = ls.PackageAddFormPackageDataCreationErrorCaption;
+            this.loadingProjectDataErrorCaption = ls.PackageAddFormProjectDataLoadingErrorCaption;
+            this.gettingUrlErrorCaption = ls.PackageAddFormGettingUrlErrorCaption;
+            this.readingPackageBytesErrorCaption = ls.PackageAddFormReadingPackageBytesErrorCaption;
+            this.invalidServerDirectoryErrorCaption = ls.PackageAddFormInvalidServerDirectoryErrorCaption;
+            this.invalidServerDirectoryErrorText = ls.PackageAddFormInvalidServerDirectoryErrorText;
+            this.ftpDataLoadErrorCaption = ls.PackageAddFormLoadingFtpDataErrorCaption;
+            this.configDownloadErrorCaption = ls.PackageAddFormConfigurationDownloadErrorCaption;
+            this.serializingDataErrorCaption = ls.PackageAddFormSerializingDataErrorCaption;
+            this.relativeUriErrorText = ls.PackageAddFormRelativeUriErrorText;
+            this.savingInformationErrorCaption = ls.PackageAddFormPackageInformationSavingErrorCaption;
+            this.uploadFailedErrorCaption = ls.PackageAddFormUploadFailedErrorCaption;
 
-            initializingArchiveInfoText = ls.PackageAddFormArchiveInitializerInfoText;
-            preparingUpdateInfoText = ls.PackageAddFormPrepareInfoText;
-            signingPackageInfoText = ls.PackageAddFormSigningInfoText;
-            initializingConfigInfoText = ls.PackageAddFormConfigInitializerInfoText;
-            uploadingPackageInfoText = ls.PackageAddFormUploadingPackageInfoText;
-            uploadingConfigInfoText = ls.PackageAddFormUploadingConfigInfoText;
+            this.initializingArchiveInfoText = ls.PackageAddFormArchiveInitializerInfoText;
+            this.preparingUpdateInfoText = ls.PackageAddFormPrepareInfoText;
+            this.signingPackageInfoText = ls.PackageAddFormSigningInfoText;
+            this.initializingConfigInfoText = ls.PackageAddFormConfigInitializerInfoText;
+            this.uploadingPackageInfoText = ls.PackageAddFormUploadingPackageInfoText;
+            this.uploadingConfigInfoText = ls.PackageAddFormUploadingConfigInfoText;
 
-            Text = String.Format(ls.PackageAddFormTitle, ProjectName, ls.ProductTitle);
-            cancelButton.Text = ls.CancelButtonText;
-            createButton.Text = ls.CreatePackageButtonText;
+            this.Text = String.Format(ls.PackageAddFormTitle, this.ProjectName, ls.ProductTitle);
+            this.cancelButton.Text = ls.CancelButtonText;
+            this.createButton.Text = ls.CreatePackageButtonText;
 
-            devStageLabel.Text = ls.PackageAddFormDevelopmentalStageLabelText;
-            versionLabel.Text = ls.PackageAddFormVersionLabelText;
-            descriptionLabel.Text = ls.PackageAddFormDescriptionLabelText;
-            publishCheckBox.Text = ls.PackageAddFormPublishCheckBoxText;
-            publishInfoLabel.Text = ls.PackageAddFormPublishInfoLabelText;
-            environmentLabel.Text = ls.PackageAddFormEnvironmentLabelText;
-            environmentInfoLabel.Text = ls.PackageAddFormEnvironmentInfoLabelText;
+            this.devStageLabel.Text = ls.PackageAddFormDevelopmentalStageLabelText;
+            this.versionLabel.Text = ls.PackageAddFormVersionLabelText;
+            this.descriptionLabel.Text = ls.PackageAddFormDescriptionLabelText;
+            this.publishCheckBox.Text = ls.PackageAddFormPublishCheckBoxText;
+            this.publishInfoLabel.Text = ls.PackageAddFormPublishInfoLabelText;
+            this.environmentLabel.Text = ls.PackageAddFormEnvironmentLabelText;
+            this.environmentInfoLabel.Text = ls.PackageAddFormEnvironmentInfoLabelText;
 
-            changelogLoadButton.Text = ls.PackageAddFormLoadButtonText;
-            changelogClearButton.Text = ls.PackageAddFormClearButtonText;
+            this.changelogLoadButton.Text = ls.PackageAddFormLoadButtonText;
+            this.changelogClearButton.Text = ls.PackageAddFormClearButtonText;
 
-            addFilesButton.Text = ls.PackageAddFormAddFileButtonText;
-            removeFilesButton.Text = ls.PackageAddFormRemoveFileButtonText;
-            filesList.Columns[0].Text = ls.PackageAddFormNameHeaderText;
-            filesList.Columns[1].Text = ls.PackageAddFormSizeHeaderText;
+            this.addFilesButton.Text = ls.PackageAddFormAddFileButtonText;
+            this.removeFilesButton.Text = ls.PackageAddFormRemoveFileButtonText;
+            this.filesList.Columns[0].Text = ls.PackageAddFormNameHeaderText;
+            this.filesList.Columns[1].Text = ls.PackageAddFormSizeHeaderText;
 
-            allVersionsRadioButton.Text = ls.PackageAddFormAvailableForAllRadioButtonText;
-            someVersionsRadioButton.Text = ls.PackageAddFormAvailableForSomeRadioButtonText;
-            allVersionsInfoLabel.Text = ls.PackageAddFormAvailableForAllInfoText;
-            someVersionsInfoLabel.Text = ls.PackageAddFormAvailableForSomeInfoText;
+            this.allVersionsRadioButton.Text = ls.PackageAddFormAvailableForAllRadioButtonText;
+            this.someVersionsRadioButton.Text = ls.PackageAddFormAvailableForSomeRadioButtonText;
+            this.allVersionsInfoLabel.Text = ls.PackageAddFormAvailableForAllInfoText;
+            this.someVersionsInfoLabel.Text = ls.PackageAddFormAvailableForSomeInfoText;
         }
 
         #endregion
@@ -204,52 +189,52 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void InitializeArchiveTypes()
         {
-            archiveTypes.Add("7z", ".7z");
-            archiveTypes.Add("ACE", ".ace");
-            archiveTypes.Add("ALZip", ".alz");
-            archiveTypes.Add("APK", ".apk");
-            archiveTypes.Add("ARC", ".arc");
-            archiveTypes.Add("ARJ", ".alj");
-            archiveTypes.Add("Scifer", ".ba");
-            archiveTypes.Add("Cabinet", ".cab");
-            archiveTypes.Add("Compact File Set", ".cfs");
-            archiveTypes.Add("Disk Archiver", ".dar");
-            archiveTypes.Add("DGCA", ".dgc");
-            archiveTypes.Add("WinHKI", ".hki");
-            archiveTypes.Add("ICE", ".ice");
-            archiveTypes.Add("Jar", ".j");
-            archiveTypes.Add("KGB Archiver", ".kgb");
-            archiveTypes.Add("LHA", ".lha");
-            archiveTypes.Add("LHZ", ".lzh");
-            archiveTypes.Add("PartImage", ".partimg");
-            archiveTypes.Add("PAQ6", ".paq6");
-            archiveTypes.Add("PAQ7", ".paq7");
-            archiveTypes.Add("PAQ8", ".paq8");
-            archiveTypes.Add("PeaZip", ".pea");
-            archiveTypes.Add("PIM", ".pim");
-            archiveTypes.Add("Quadruple D", ".qda");
-            archiveTypes.Add("RAR", ".rar");
-            archiveTypes.Add("RK", ".rk");
-            archiveTypes.Add("Scifer (sen)", ".sen");
-            archiveTypes.Add("Stuffit", ".sit");
-            archiveTypes.Add("Stuffit X", ".sitx");
-            archiveTypes.Add("SQX", ".sqx");
-            archiveTypes.Add("TAR.GZ", ".tar.gz");
-            archiveTypes.Add("TGZ", ".tgz");
-            archiveTypes.Add("TAR.Z", "tar.Z");
-            archiveTypes.Add("TAR.BZ2", ".tar.bz2");
-            archiveTypes.Add("TBZ2", ".tbz2");
-            archiveTypes.Add("TAR.LZMA", ".tar.lzma");
-            archiveTypes.Add("TLZ", ".tlz");
-            archiveTypes.Add("PerfectCompress", ".uca");
-            archiveTypes.Add("UHarc", ".uha");
-            archiveTypes.Add("Windows Image", ".wim");
-            archiveTypes.Add("XAR", ".xar");
-            archiveTypes.Add("KiriKiri", ".xp3");
-            archiveTypes.Add("YZ1", ".yz1");
-            archiveTypes.Add("zoo", ".zoo");
-            archiveTypes.Add("ZPAQ", ".zpaq");
-            archiveTypes.Add("Zzip", ".zz");
+            this.archiveTypes.Add("7z", ".7z");
+            this.archiveTypes.Add("ACE", ".ace");
+            this.archiveTypes.Add("ALZip", ".alz");
+            this.archiveTypes.Add("APK", ".apk");
+            this.archiveTypes.Add("ARC", ".arc");
+            this.archiveTypes.Add("ARJ", ".alj");
+            this.archiveTypes.Add("Scifer", ".ba");
+            this.archiveTypes.Add("Cabinet", ".cab");
+            this.archiveTypes.Add("Compact File Set", ".cfs");
+            this.archiveTypes.Add("Disk Archiver", ".dar");
+            this.archiveTypes.Add("DGCA", ".dgc");
+            this.archiveTypes.Add("WinHKI", ".hki");
+            this.archiveTypes.Add("ICE", ".ice");
+            this.archiveTypes.Add("Jar", ".j");
+            this.archiveTypes.Add("KGB Archiver", ".kgb");
+            this.archiveTypes.Add("LHA", ".lha");
+            this.archiveTypes.Add("LHZ", ".lzh");
+            this.archiveTypes.Add("PartImage", ".partimg");
+            this.archiveTypes.Add("PAQ6", ".paq6");
+            this.archiveTypes.Add("PAQ7", ".paq7");
+            this.archiveTypes.Add("PAQ8", ".paq8");
+            this.archiveTypes.Add("PeaZip", ".pea");
+            this.archiveTypes.Add("PIM", ".pim");
+            this.archiveTypes.Add("Quadruple D", ".qda");
+            this.archiveTypes.Add("RAR", ".rar");
+            this.archiveTypes.Add("RK", ".rk");
+            this.archiveTypes.Add("Scifer (sen)", ".sen");
+            this.archiveTypes.Add("Stuffit", ".sit");
+            this.archiveTypes.Add("Stuffit X", ".sitx");
+            this.archiveTypes.Add("SQX", ".sqx");
+            this.archiveTypes.Add("TAR.GZ", ".tar.gz");
+            this.archiveTypes.Add("TGZ", ".tgz");
+            this.archiveTypes.Add("TAR.Z", "tar.Z");
+            this.archiveTypes.Add("TAR.BZ2", ".tar.bz2");
+            this.archiveTypes.Add("TBZ2", ".tbz2");
+            this.archiveTypes.Add("TAR.LZMA", ".tar.lzma");
+            this.archiveTypes.Add("TLZ", ".tlz");
+            this.archiveTypes.Add("PerfectCompress", ".uca");
+            this.archiveTypes.Add("UHarc", ".uha");
+            this.archiveTypes.Add("Windows Image", ".wim");
+            this.archiveTypes.Add("XAR", ".xar");
+            this.archiveTypes.Add("KiriKiri", ".xp3");
+            this.archiveTypes.Add("YZ1", ".yz1");
+            this.archiveTypes.Add("zoo", ".zoo");
+            this.archiveTypes.Add("ZPAQ", ".zpaq");
+            this.archiveTypes.Add("Zzip", ".zz");
         }
 
         public PackageAddForm()
@@ -264,199 +249,213 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             try
             {
-                ftp.FtpServer = Project.FtpHost;
+                this.ftp.FtpServer = this.Project.FtpHost;
                 int port;
-                if (!int.TryParse(Project.FtpPort, out port))
+                if (!int.TryParse(this.Project.FtpPort, out port))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid argument found.", "The entry for the port can't be parsed to int.", PopupButtons.OK);
-                    hasFailedOnLoading = true;
+                    this.hasFailedOnLoading = true;
                     return;
                 }
-                ftp.FtpPort = port;
+                this.ftp.FtpPort = port;
 
                 if (Properties.Settings.Default.SaveCredentials)
                 {
-                    ftp.FtpUserName = Project.FtpUsername;
+                    this.ftp.FtpUserName = this.Project.FtpUsername;
 
                     SecureString pwd = new SecureString();
-                    foreach (char sign in Project.FtpPassword)
+                    foreach (char sign in this.Project.FtpPassword)
                     {
                         pwd.AppendChar(sign);
                     }
-                    ftp.FtpPassword = pwd;
+                    this.ftp.FtpPassword = pwd;
                 }
 
-                if (cancellationToken.IsCancellationRequested)
+                if (this.cancellationToken.IsCancellationRequested)
+                {
                     return;
+                }
 
                 try
                 {
-                    if (Project.FtpProtocol == "FTP")
-                        ftp.Protocol = FtpProtocol.NormalFtp;
-                    else if (Project.FtpProtocol == "FTP/SSL")
-                        ftp.Protocol = FtpProtocol.SecureFtp;
+                    if (this.Project.FtpProtocol == "FTP")
+                    {
+                        this.ftp.Protocol = FtpProtocol.NormalFtp;
+                    }
+                    else if (this.Project.FtpProtocol == "FTP/SSL")
+                    {
+                        this.ftp.Protocol = FtpProtocol.SecureFtp;
+                    }
                 }
                 catch (Exception ex)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while reading FTP-data.", ex, PopupButtons.OK);
-                    hasFailedOnLoading = true;
+                    this.hasFailedOnLoading = true;
                     return;
                 }
 
-                if (cancellationToken.IsCancellationRequested)
+                if (this.cancellationToken.IsCancellationRequested)
+                {
                     return;
+                }
 
                 bool usePassive;
-                if (!bool.TryParse(Project.FtpUsePassiveMode, out usePassive))
+                if (!bool.TryParse(this.Project.FtpUsePassiveMode, out usePassive))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid argument found.", "The entry for passive mode can't be parsed to bool.", PopupButtons.OK);
-                    hasFailedOnLoading = true;
+                    this.hasFailedOnLoading = true;
                     return;
                 }
 
-                if (cancellationToken.IsCancellationRequested)
+                if (this.cancellationToken.IsCancellationRequested)
+                {
                     return;
+                }
 
-                ftp.Directory = Project.FtpDirectory;
+                this.ftp.Directory = this.Project.FtpDirectory;
             }
             catch (IOException ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.OK);
-                hasFailedOnLoading = true;
+                this.hasFailedOnLoading = true;
             }
             catch (NullReferenceException)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", "The project file is corrupt and does not have the necessary arguments.", PopupButtons.OK);
-                hasFailedOnLoading = true;
+                this.hasFailedOnLoading = true;
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.OK);
-                hasFailedOnLoading = true;
+                this.hasFailedOnLoading = true;
             }
         }
 
         private void PackageAddForm_Load(object sender, EventArgs e)
         {
-            ftp.ProgressChanged += ProgressChanged;
+            this.ftp.ProgressChanged += ProgressChanged;
 
-            updateLog.Project = Project;
-            Operations = new List<String>();
+            this.updateLog.Project = this.Project;
+            this.Operations = new List<String>();
 
-            InitializeArchiveTypes();
-            InitializeFtpData();
+            this.InitializeArchiveTypes();
+            this.InitializeFtpData();
             if (hasFailedOnLoading)
             {
                 // TODO: Failed to load FTP-data. *Take the code from ProjectForm*
-                Close();
+                this.Close();
                 return;
             }
 
-            SetLanguage();
+            this.SetLanguage();
 
-            architectureComboBox.SelectedIndex = 2;
-            categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
-            stageComboBox.SelectedIndex = 2;
-            unsupportedVersionsPanel.Enabled = false;
-            SetWindowTheme(operationsListView.Handle, "explorer", null);
+            this.architectureComboBox.SelectedIndex = 2;
+            this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[0];
+            this.stageComboBox.SelectedIndex = 2;
+            this.unsupportedVersionsPanel.Enabled = false;
+            SetWindowTheme(this.operationsListView.Handle, "explorer", null);
 
             if (!ConnectionChecker.IsConnectionAvailable())
             {
-                Popup.ShowPopup(this, SystemIcons.Error, noNetworkCaption, noNetworkText, PopupButtons.OK);
+                Popup.ShowPopup(this, SystemIcons.Error, this.noNetworkCaption, this.noNetworkText, PopupButtons.OK);
 
-                publishCheckBox.Checked = false;
-                publishCheckBox.Enabled = false;
-                publishInfoLabel.ForeColor = Color.Gray;
+                this.publishCheckBox.Checked = false;
+                this.publishCheckBox.Enabled = false;
+                this.publishInfoLabel.ForeColor = Color.Gray;
             }
 
-            publishUpdate = publishCheckBox.Checked;
-            mustUpdate = mustUpdateCheckBox.Checked;
-            majorNumericUpDown.Minimum = NewestVersion.Major;
-            minorNumericUpDown.Minimum = NewestVersion.Minor;
-            buildNumericUpDown.Minimum = NewestVersion.Build;
-            revisionNumericUpDown.Minimum = NewestVersion.Revision;
+            this.publishUpdate = this.publishCheckBox.Checked;
+            this.mustUpdate = this.mustUpdateCheckBox.Checked;
+            this.majorNumericUpDown.Minimum = this.NewestVersion.Major;
+            this.minorNumericUpDown.Minimum = this.NewestVersion.Minor;
+            this.buildNumericUpDown.Minimum = this.NewestVersion.Build;
+            this.revisionNumericUpDown.Minimum = this.NewestVersion.Revision;
         }
 
         private void PackageAddForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!allowCancel)
+            if (!this.allowCancel)
+            {
                 e.Cancel = true;
+            }
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (int.Equals(paths.Count, 0))
+            if (int.Equals(this.paths.Count, 0))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, noFilesCaption, noFilesText, PopupButtons.OK);
-                filesPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[2];
+                Popup.ShowPopup(this, SystemIcons.Error, this.noFilesCaption, this.noFilesText, PopupButtons.OK);
+                this.filesPanel.BringToFront();
+                this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[2];
                 return;
             }
 
             foreach (KeyValuePair<string, string> entry in archiveTypes)
             {
                 if (paths[0].EndsWith(entry.Value))
-                    containsUnsupportedFormat = true;
+                {
+                    this.containsUnsupportedFormat = true;
+                }
             }
 
-            if (filesList.Items.Count == 1 && containsUnsupportedFormat)
+            if (this.filesList.Items.Count == 1 && this.containsUnsupportedFormat)
             {
-                if (Popup.ShowPopup(this, SystemIcons.Warning, unsupportedArchiveCaption, unsupportedArchiveText, PopupButtons.YesNo) == DialogResult.No)
+                if (Popup.ShowPopup(this, SystemIcons.Warning, this.unsupportedArchiveCaption, this.unsupportedArchiveText, PopupButtons.YesNo) == DialogResult.No)
                 {
-
-                    filesPanel.BringToFront();
-                    categoryTreeView.SelectedNode = categoryTreeView.Nodes[2];
+                    this.filesPanel.BringToFront();
+                    this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[2];
                     return;
                 }
-                containsUnsupportedFormat = false;
+                this.containsUnsupportedFormat = false;
             }
 
-            packageVersionString = String.Format("{0}.{1}.{2}.{3}",
-                majorNumericUpDown.Value, minorNumericUpDown.Value, buildNumericUpDown.Value, revisionNumericUpDown.Value);
+            this.packageVersionString = String.Format("{0}.{1}.{2}.{3}", this.majorNumericUpDown.Value, this.minorNumericUpDown.Value, this.buildNumericUpDown.Value, this.revisionNumericUpDown.Value);
 
             if (packageVersionString.StartsWith("0.0"))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, invalidVersionCaption, invalidVersionText, PopupButtons.OK);
-                generalPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
+                Popup.ShowPopup(this, SystemIcons.Error, this.invalidVersionCaption, this.invalidVersionText, PopupButtons.OK);
+                this.generalPanel.BringToFront();
+                this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[0];
                 return;
             }
 
-            if (new Version(packageVersionString) == NewestVersion)
+            if (new Version(this.packageVersionString) == this.NewestVersion)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, invalidVersionCaption, String.Format("Version \"{0}\" is already existing.", packageVersionString), PopupButtons.OK);
-                generalPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
+                Popup.ShowPopup(this, SystemIcons.Error, this.invalidVersionCaption, String.Format("Version \"{0}\" is already existing.", this.packageVersionString), PopupButtons.OK);
+                this.generalPanel.BringToFront();
+                this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[0];
                 return;
             }
 
-            if (String.IsNullOrEmpty(changelogTextBox.Text))
+            if (String.IsNullOrEmpty(this.changelogTextBox.Text))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, noChangelogCaption, noChangelogText, PopupButtons.OK);
-                changelogPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
+                Popup.ShowPopup(this, SystemIcons.Error, this.noChangelogCaption, this.noChangelogText, PopupButtons.OK);
+                this.changelogPanel.BringToFront();
+                this.categoryTreeView.SelectedNode = this.categoryTreeView.Nodes[1];
                 return;
             }
 
             // Disallow closing now
-            allowCancel = false;
+            this.allowCancel = false;
 
             foreach (Control control in this.Controls)
             {
                 if (control.Visible == true)
+                {
                     control.Enabled = false;
+                }
             }
 
-            loadingPanel.Location = new Point(180, 91);
-            loadingPanel.BringToFront();
-            loadingPanel.Visible = true;
+            this.loadingPanel.Location = new Point(180, 91);
+            this.loadingPanel.BringToFront();
+            this.loadingPanel.Visible = true;
 
             var task =
             Task.Factory.StartNew(this.InitializePackage).ContinueWith(this.InitializingFailed,
-                    cancellationToken.Token,
+                    this.cancellationToken.Token,
                     TaskContinuationOptions.OnlyOnFaulted,
-                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith( o => this.InitializingFinished(),
-                            cancellationToken.Token,
+                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => this.InitializingFinished(),
+                            this.cancellationToken.Token,
                             TaskContinuationOptions.NotOnFaulted,
                             TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -466,49 +465,54 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void InitializePackage()
         {
-            if (!Project.UpdateUrl.EndsWith("/"))
-                Project.UpdateUrl += "/";
-            remoteInfoFileUrl = UriConnecter.ConnectUri(Project.UpdateUrl, "updates.json");
-            packageFolder = Path.Combine(Program.Path, packageVersionString);
-            updateConfigFile = Path.Combine(Program.Path, packageVersionString, "updates.json");
-
-            if (cancellationToken != null)
+            if (!this.Project.UpdateUrl.EndsWith("/"))
             {
-                cancellationToken.Dispose();
-                cancellationToken = new CancellationTokenSource();
+                this.Project.UpdateUrl += "/";
+            }
+            this.remoteInfoFileUrl = UriConnecter.ConnectUri(this.Project.UpdateUrl, "updates.json");
+            this.packageFolder = Path.Combine(Program.Path, this.packageVersionString);
+            this.updateConfigFile = Path.Combine(Program.Path, this.packageVersionString, "updates.json");
+
+            if (this.cancellationToken != null)
+            {
+                this.cancellationToken.Dispose();
+                this.cancellationToken = new CancellationTokenSource();
             }
 
-            Invoke(new Action(() => loadingLabel.Text = initializingArchiveInfoText));
+            Invoke(new Action(() => this.loadingLabel.Text = this.initializingArchiveInfoText));
 
             // Save the package first
             // ----------------------
 
-            Directory.CreateDirectory(packageFolder); // Create the content folder
-            using (FileStream fs = File.Create(updateConfigFile)) { };
+            Directory.CreateDirectory(this.packageFolder); // Create the content folder
+            using (FileStream fs = File.Create(this.updateConfigFile)) { };
 
-            if (int.Equals(paths.Count, 1))
-                File.Copy(paths[0], Path.Combine(packageFolder, String.Format("{0}.zip", Project.Id)), true); // Create the archive
+            if (int.Equals(this.paths.Count, 1))
+            {
+                File.Copy(this.paths[0], Path.Combine(this.packageFolder, String.Format("{0}.zip", this.Project.Id)), true); // Create the archive
+            }
             else
             {
                 ZipFile zip = new ZipFile();
-                zip.AddFiles(paths);
-                zip.Save(Path.Combine(packageFolder, String.Format("{0}.zip", Project.Id)));
+                zip.AddFiles(this.paths);
+                zip.Save(Path.Combine(this.packageFolder, String.Format("{0}.zip", this.Project.Id)));
             }
 
-            updateLog.Write(LogEntry.Create, packageVersionString);
-            Invoke(new Action(() => loadingLabel.Text = preparingUpdateInfoText));
+            this.updateLog.Write(LogEntry.Create, this.packageVersionString);
+            Invoke(new Action(() => this.loadingLabel.Text = this.preparingUpdateInfoText));
 
             // Initialize the package itself
             // -----------------------------
             string[] unsupportedVersions = null;
 
-            if (versionsList.Items.Count == 0)
-                allVersionsRadioButton.Checked = true;
-
-            else if (versionsList.Items.Count > 0 && someVersionsRadioButton.Checked)
+            if (this.versionsList.Items.Count == 0)
+            {
+                this.allVersionsRadioButton.Checked = true;
+            }
+            else if (this.versionsList.Items.Count > 0 && this.someVersionsRadioButton.Checked)
             {
                 List<string> itemArray = new List<string>();
-                foreach (string item in versionsList.Items)
+                foreach (string item in this.versionsList.Items)
                 {
                     itemArray.Add(item);
                 }
@@ -517,40 +521,39 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             // Create a new package configuration
-            configuration.Changelog = changelogTextBox.Text;
-            configuration.DevelopmentalStage = DevStage.ToString();
-            configuration.MustUpdate = mustUpdateCheckBox.Checked;
+            this.configuration.Changelog = this.changelogTextBox.Text;
+            this.configuration.DevelopmentalStage = this.DevStage.ToString();
+            this.configuration.MustUpdate = this.mustUpdateCheckBox.Checked;
 
             switch (architectureIndex)
             {
                 case 0:
-                    configuration.Architecture = "x64";
+                    this.configuration.Architecture = "x64";
                     break;
                 case 1:
-                    configuration.Architecture = "x86";
+                    this.configuration.Architecture = "x86";
                     break;
                 case 2:
-                    configuration.Architecture = "AnyCPU";
+                    this.configuration.Architecture = "AnyCPU";
                     break;
             }
 
-            Invoke(new Action(() => loadingLabel.Text = signingPackageInfoText));
+            Invoke(new Action(() => this.loadingLabel.Text = this.signingPackageInfoText));
 
-            byte[] data = File.ReadAllBytes(Path.Combine(packageFolder, String.Format("{0}.zip", Project.Id)));
-            configuration.Signature = Convert.ToBase64String(new RsaSignature(Project.PrivateKey).SignData(data));
+            byte[] data = File.ReadAllBytes(Path.Combine(this.packageFolder, String.Format("{0}.zip", this.Project.Id)));
+            this.configuration.Signature = Convert.ToBase64String(new RsaSignature(this.Project.PrivateKey).SignData(data));
 
-            string remotePackageDirectory = String.Format("{0}/", 
-                UriConnecter.ConnectUri(Project.UpdateUrl, packageVersionString).ToString());
+            string remotePackageDirectory = String.Format("{0}/", UriConnecter.ConnectUri(this.Project.UpdateUrl, this.packageVersionString).ToString());
 
-            configuration.UnsupportedVersions = unsupportedVersions;
-            configuration.UpdatePackageUrl = UriConnecter.ConnectUri(remotePackageDirectory, String.Format("{0}.zip", Project.Id)).ToString(); // Get the URL with the GUID of the project
-            configuration.UpdateVersion = packageVersionString;
+            this.configuration.UnsupportedVersions = unsupportedVersions;
+            this.configuration.UpdatePackageUrl = UriConnecter.ConnectUri(remotePackageDirectory, String.Format("{0}.zip", this.Project.Id)).ToString(); // Get the URL with the GUID of the project
+            this.configuration.UpdateVersion = this.packageVersionString;
 
             /* -------- Configuration initializing ------------*/
-            Invoke(new Action(() => loadingLabel.Text = initializingConfigInfoText));
+            Invoke(new Action(() => this.loadingLabel.Text = this.initializingConfigInfoText));
 
             var configurationList = new List<UpdateConfiguration>();
-            if (Project.ProxyHost != null)
+            if (this.Project.ProxyHost != null)
             {
                 var pwd = new SecureString();
                 foreach (Char sign in Project.ProxyPassword)
@@ -560,42 +563,45 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var proxySettings = new ProxySettings()
                 {
-                    Host = Project.ProxyHost,
-                    Port = int.Parse(Project.ProxyPort),
-                    Username = Project.ProxyUsername,
+                    Host = this.Project.ProxyHost,
+                    Port = int.Parse(this.Project.ProxyPort),
+                    Username = this.Project.ProxyUsername,
                     Password = pwd,
                 };
 
-                configurationList = configuration.LoadUpdateConfiguration(remoteInfoFileUrl, proxySettings);
+                configurationList = this.configuration.LoadUpdateConfiguration(this.remoteInfoFileUrl, proxySettings);
             }
-            else {
-                configurationList = configuration.LoadUpdateConfiguration(remoteInfoFileUrl);
+            else
+            {
+                configurationList = this.configuration.LoadUpdateConfiguration(this.remoteInfoFileUrl);
             }
 
             if (configurationList != null)
             {
-                configurationList.Add(configuration);
-                File.WriteAllText(updateConfigFile, Serializer.Serialize(configurationList));
+                configurationList.Add(this.configuration);
+                File.WriteAllText(this.updateConfigFile, Serializer.Serialize(configurationList));
             }
             else
             {
-                File.WriteAllText(updateConfigFile, Serializer.Serialize(configuration));
+                File.WriteAllText(this.updateConfigFile, Serializer.Serialize(this.configuration));
             }
 
             /* ------------- Save package info  ------------- */
             var package = new UpdatePackage();
-            package.Description = descriptionTextBox.Text;
-            package.IsReleased = publishUpdate.ToString();
-            package.LocalPackagePath = Path.Combine(Program.Path, packageVersionString, 
-                String.Format("{0}.zip", Project.Id)); 
-            package.Version = packageVersionString;
+            package.Description = this.descriptionTextBox.Text;
+            package.IsReleased = this.publishUpdate.ToString();
+            package.LocalPackagePath = Path.Combine(Program.Path, this.packageVersionString, String.Format("{0}.zip", Project.Id));
+            package.Version = this.packageVersionString;
 
-            if (Project.Packages == null)
-                Project.Packages = new List<UpdatePackage>();
-            Project.Packages.Add(package);
+            if (this.Project.Packages == null)
+            {
+                this.Project.Packages = new List<UpdatePackage>();
+            }
+
+            this.Project.Packages.Add(package);
 
             /* ------------ Upload ----------- */
-            if (publishUpdate)
+            if (this.publishUpdate)
             {
                 if (!Properties.Settings.Default.SaveCredentials)
                 {
@@ -604,22 +610,25 @@ namespace nUpdate.Administration.UI.Dialogs
                             var credentialsForm = new CredentialsForm();
                             if (credentialsForm.ShowDialog() == DialogResult.OK)
                             {
-                                ftp.FtpUserName = credentialsForm.Username;
-                                ftp.FtpPassword = credentialsForm.Password;
+                                this.ftp.FtpUserName = credentialsForm.Username;
+                                this.ftp.FtpPassword = credentialsForm.Password;
                             }
                         }));
                 }
 
-                Invoke(new Action(() => loadingLabel.Text = String.Format(uploadingPackageInfoText, "0%")));
-                ftp.UploadPackage(Path.Combine(Program.Path, packageVersionString, String.Format("{0}.zip", Project.Id)),
-                    packageVersionString);
-                while (!ftp.HasFinishedUploading)
+                Invoke(new Action(() => this.loadingLabel.Text = String.Format(this.uploadingPackageInfoText, "0%")));
+                this.ftp.UploadPackage(Path.Combine(Program.Path, this.packageVersionString, String.Format("{0}.zip", this.Project.Id)), this.packageVersionString);
+                while (!this.ftp.HasFinishedUploading)
+                {
                     continue;
+                }
 
-                Invoke(new Action(() => loadingLabel.Text = uploadingConfigInfoText));
-                ftp.UploadFile(updateConfigFile);
-                while (!ftp.HasFinishedUploading)
+                Invoke(new Action(() => this.loadingLabel.Text = this.uploadingConfigInfoText));
+                this.ftp.UploadFile(this.updateConfigFile);
+                while (!this.ftp.HasFinishedUploading)
+                {
                     continue;
+                }
             }
         }
 
@@ -656,21 +665,27 @@ namespace nUpdate.Administration.UI.Dialogs
                 infoMessage = "Error while initializing the package.";
                 Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, infoMessage, ex.InnerException, PopupButtons.OK)));
 
-                if (Directory.Exists(packageFolder))
-                    Directory.Delete(packageFolder, true);
+                if (Directory.Exists(this.packageFolder))
+                {
+                    Directory.Delete(this.packageFolder, true);
+                }
 
-                if (deletePackageFromServer)
-                    ftp.DeleteDirectory(packageVersionString);
+                if (this.deletePackageFromServer)
+                {
+                    this.ftp.DeleteDirectory(this.packageVersionString);
+                }
 
-                updateLog.Write(LogEntry.Delete, packageVersionString);
+                this.updateLog.Write(LogEntry.Delete, this.packageVersionString);
 
                 Invoke(new Action(() =>
                 {
                     foreach (Control control in this.Controls)
+                    {
                         control.Enabled = true;
-                    loadingPanel.Visible = false;
+                    }
 
-                    allowCancel = true;
+                    this.loadingPanel.Visible = false;
+                    this.allowCancel = true;
                 }));
             }
         }
@@ -680,23 +695,25 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void InitializingFinished()
         {
-            Project.HasUnsavedChanges = true;
+            this.Project.HasUnsavedChanges = true;
 
             Invoke(new Action(() =>
             {
                 foreach (Control control in this.Controls)
+                {
                     control.Enabled = true;
-                loadingPanel.Visible = false;
+                }
 
-                allowCancel = true;
-                DialogResult = DialogResult.OK;
-                Close();
+                this.loadingPanel.Visible = false;
+                this.allowCancel = true;
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }));
         }
 
         private void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Invoke(new Action(() => loadingLabel.Text = String.Format(uploadingPackageInfoText, String.Format("{0}%", e.ProgressPercentage))));
+            Invoke(new Action(() => this.loadingLabel.Text = String.Format(this.uploadingPackageInfoText, String.Format("{0}%", e.ProgressPercentage))));
         }
 
         private void changelogLoadButton_Click(object sender, EventArgs e)
@@ -709,14 +726,16 @@ namespace nUpdate.Administration.UI.Dialogs
                 ofd.Filter = "Textdocument (*.txt)|*.txt|RTF-Document (*.rtf)|*.rtf";
 
                 if (ofd.ShowDialog() == DialogResult.OK)
-                    changelogTextBox.Text = File.ReadAllText(ofd.FileName, Encoding.Default);
+                {
+                    this.changelogTextBox.Text = File.ReadAllText(ofd.FileName, Encoding.Default);
+                }
 
             }
         }
 
         private void changelogClearButton_Click(object sender, EventArgs e)
         {
-            changelogTextBox.Clear();
+            this.changelogTextBox.Clear();
         }
 
         private void addFilesButton_Click(object sender, EventArgs e)
@@ -731,7 +750,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     foreach (string file in ofdFiles.FileNames)
                     {
-                        paths.Add(file);
+                        this.paths.Add(file);
 
                         FileInfo fileInfo = new FileInfo(file);
                         string name = fileInfo.Name;
@@ -742,34 +761,36 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         if (sizeInBytes > 104857.6)
                         {
-                            size = (float)Math.Round(sizeInBytes / MB, 1);
+                            size = (float)Math.Round(sizeInBytes / Mb, 1);
                             sizeText = String.Format("{0} MB", size);
                         }
-
                         else
                         {
-                            size = (float)Math.Round(sizeInBytes / KB, 1);
+                            size = (float)Math.Round(sizeInBytes / Kb, 1);
                             sizeText = String.Format("{0} KB", size);
                         }
 
                         ListViewItem fileItem = new ListViewItem(name);
 
                         ListViewItem item = new ListViewItem();
-                        item = filesList.FindItemWithText(name);
+                        item = this.filesList.FindItemWithText(name);
 
                         if (item != null)
                         {
                             DialogResult dr = MessageBox.Show("The file \"" + name + "\" is already imported. Should it be replaced by the new one?", "File already imported", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                             if (dr == DialogResult.Yes)
-                                filesList.Items.Remove(item);
+                            {
+                                this.filesList.Items.Remove(item);
+                            }
                             else
+                            {
                                 continue;
+                            }
                         }
 
                         fileItem.ImageIndex = file.EndsWith(".zip") ? 0 : 1;
-
                         fileItem.SubItems.Add(sizeText);
-                        filesList.Items.Add(fileItem);
+                        this.filesList.Items.Add(fileItem);
                     }
                 }
             }
@@ -777,72 +798,72 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void removeFilesButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem itemToDelete in filesList.SelectedItems)
+            foreach (ListViewItem itemToDelete in this.filesList.SelectedItems)
             {
-                paths.RemoveAt(itemToDelete.Index);
-                filesList.Items.Remove(itemToDelete);
+                this.paths.RemoveAt(itemToDelete.Index);
+                this.filesList.Items.Remove(itemToDelete);
             }
         }
 
         private void someVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            unsupportedVersionsPanel.Enabled = true;
+            this.unsupportedVersionsPanel.Enabled = true;
         }
 
         private void allVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            unsupportedVersionsPanel.Enabled = false;
+            this.unsupportedVersionsPanel.Enabled = false;
         }
 
         private void addVersionButton_Click(object sender, EventArgs e)
         {
-            string version = unsupportedMajorNumericUpDown.Value.ToString() + "." + unsupportedMinorNumericUpDown.Value.ToString() + "." + unsupportedBuildNumericUpDown.Value.ToString() + "." + unsupportedRevisionNumericUpDown.Value.ToString();
-            versionsList.Items.Add(version);
+            string version = this.unsupportedMajorNumericUpDown.Value.ToString() + "." + this.unsupportedMinorNumericUpDown.Value.ToString() + "." + this.unsupportedBuildNumericUpDown.Value.ToString() + "." + this.unsupportedRevisionNumericUpDown.Value.ToString();
+            this.versionsList.Items.Add(version);
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)
         {
-            versionsList.Items.Remove(versionsList.SelectedItem);
+            this.versionsList.Items.Remove(this.versionsList.SelectedItem);
         }
 
         private void stageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DevStage = (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage), stageComboBox.GetItemText(stageComboBox.SelectedItem));
+            this.DevStage = (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage), this.stageComboBox.GetItemText(this.stageComboBox.SelectedItem));
         }
 
         private void publishCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            publishUpdate = publishCheckBox.Checked;
+            this.publishUpdate = this.publishCheckBox.Checked;
         }
 
         private void mustUpdateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            mustUpdate = mustUpdateCheckBox.Checked;
+            this.mustUpdate = this.mustUpdateCheckBox.Checked;
         }
 
         private void environmentComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            architectureIndex = architectureComboBox.SelectedIndex;
+            this.architectureIndex = this.architectureComboBox.SelectedIndex;
         }
 
         private void categoryTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            switch (categoryTreeView.SelectedNode.Index)
+            switch (this.categoryTreeView.SelectedNode.Index)
             {
                 case 0:
-                    generalPanel.BringToFront();
+                    this.generalPanel.BringToFront();
                     break;
                 case 1:
-                    changelogPanel.BringToFront();
+                    this.changelogPanel.BringToFront();
                     break;
                 case 2:
-                    filesPanel.BringToFront();
+                    this.filesPanel.BringToFront();
                     break;
                 case 3:
-                    availabilityPanel.BringToFront();
+                    this.availabilityPanel.BringToFront();
                     break;
                 case 4:
-                    operationsPanel.BringToFront();
+                    this.operationsPanel.BringToFront();
                     break;
             }
         }

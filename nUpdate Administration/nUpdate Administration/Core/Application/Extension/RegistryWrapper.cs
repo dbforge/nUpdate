@@ -27,10 +27,8 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
+using System;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -60,7 +58,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                 key = key.OpenSubKey(parts[x]);
 
                 if (key == null)
+                {
                     return null;
+                }
 
                 if (x == parts.Length - 1)
                 {
@@ -157,7 +157,9 @@ namespace nUpdate.Administration.Core.Application.Extension
             }
 
             if (key != null)
+            {
                 key.Close();
+            }
         }
 
         /// <summary>
@@ -180,7 +182,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                 key = key.OpenSubKey(parts[x], true);
 
                 if (key == null)
+                {
                     return;
+                }
 
                 if (x == parts.Length - 1)
                 {
@@ -188,6 +192,5 @@ namespace nUpdate.Administration.Core.Application.Extension
                 }
             }
         }
-
     }
 }

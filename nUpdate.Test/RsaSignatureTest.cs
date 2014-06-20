@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate;
-using nUpdate.Administration;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Core;
+using System;
+using System.IO;
 
 namespace nUpdate.Test
 {

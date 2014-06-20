@@ -27,10 +27,9 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using Microsoft.Win32;
-
 using System.Xml.Serialization;
 
 
@@ -111,8 +110,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string ContentType
         {
-            get { return GetContentType(this); }
-            set { SetContentType(this, value); }
+            get { return this.GetContentType(this); }
+            set { this.SetContentType(this, value); }
         }
 
         /// <summary>
@@ -128,7 +127,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                     RegistryKey key = root.OpenSubKey(extension);
 
                     if (key == null)
+                    {
                         return false;
+                    }
 
                 }
                 catch (Exception ex)
@@ -147,8 +148,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Extension
         {
-            get { return extension; }
-            set { extension = value; }
+            get { return this.extension; }
+            set { this.extension = value; }
         }
 
         /// <summary>
@@ -157,8 +158,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <example>notepad.exe, wordpad.exe, othertexteditor.exe</example>
         public string[] OpenWithList
         {
-            get { return GetOpenWithList(this); }
-            set { SetOpenWithList(this, value); }
+            get { return this.GetOpenWithList(this); }
+            set { this.SetOpenWithList(this, value); }
         }
 
         /// <summary>
@@ -166,8 +167,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public PerceivedTypes PerceivedType
         {
-            get { return GetPerceivedType(this); }
-            set { SetPerceivedType(this, value); }
+            get { return this.GetPerceivedType(this); }
+            set { this.SetPerceivedType(this, value); }
         }
 
         /// <summary>
@@ -175,8 +176,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public Guid PersistentHandler
         {
-            get { return GetPersistentHandler(this); }
-            set { SetPersistentHandler(this, value); }
+            get { return this.GetPersistentHandler(this); }
+            set { this.SetPersistentHandler(this, value); }
         }
 
         /// <summary>
@@ -185,8 +186,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         [XmlAttribute()]
         public string ProgID
         {
-            get { return GetProgID(this); }
-            set { SetProgID(this, value); }
+            get { return this.GetProgID(this); }
+            set { this.SetProgID(this, value); }
         }
 
         /// <summary>
@@ -194,7 +195,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public void Create()
         {
-            Create(this);
+            this.Create(this);
         }
 
         /// <summary>
@@ -202,7 +203,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public void Delete()
         {
-            Delete(this);
+            this.Delete(this);
         }
 
         /// <summary>
@@ -216,10 +217,14 @@ namespace nUpdate.Administration.Core.Application.Extension
             FileAssociationInfo fai = new FileAssociationInfo(extension);
 
             if (!fai.Exists)
+            {
                 return false;
+            }
 
             if (progId != fai.ProgID)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -245,7 +250,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns>FileAssociationInfo instance referring to specified extension.</returns>
         public FileAssociationInfo Create(string progId)
         {
-            return Create(progId, PerceivedTypes.None, string.Empty, null);
+            return this.Create(progId, PerceivedTypes.None, string.Empty, null);
         }
 
         /// <summary>
@@ -256,7 +261,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns>FileAssociationInfo instance referring to specified extension.</returns>
         public FileAssociationInfo Create(string progId, PerceivedTypes perceivedType)
         {
-            return Create(progId, perceivedType, string.Empty, null);
+            return this.Create(progId, perceivedType, string.Empty, null);
         }
 
         /// <summary>
@@ -268,7 +273,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns>FileAssociationInfo instance referring to specified extension.</returns>
         public FileAssociationInfo Create(string progId, PerceivedTypes perceivedType, string contentType)
         {
-            return Create(progId, PerceivedTypes.None, contentType, null);
+            return this.Create(progId, PerceivedTypes.None, contentType, null);
         }
 
         /// <summary>
@@ -292,13 +297,19 @@ namespace nUpdate.Administration.Core.Application.Extension
             fai.ProgID = progId;
 
             if (perceivedType != PerceivedTypes.None)
+            {
                 fai.PerceivedType = perceivedType;
+            }
 
             if (contentType != string.Empty)
+            {
                 fai.ContentType = contentType;
+            }
 
             if (openwithList != null)
+            {
                 fai.OpenWithList = openwithList;
+            }
 
             return fai;
         }
@@ -315,7 +326,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected string[] GetOpenWithList(FileAssociationInfo file)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -340,7 +353,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetOpenWithList(FileAssociationInfo file, string[] programList)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -371,13 +386,17 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected PerceivedTypes GetPerceivedType(FileAssociationInfo file)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(file.extension, "PerceivedType");
+            object val = this.registryWrapper.Read(file.extension, "PerceivedType");
             PerceivedTypes actualType = PerceivedTypes.None;
 
             if (val == null)
+            {
                 return actualType;
+            }
 
             try
             {
@@ -400,9 +419,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetPerceivedType(FileAssociationInfo file, PerceivedTypes type)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            registryWrapper.Write(file.extension, "PerceivedType", type.ToString());
+            this.registryWrapper.Write(file.extension, "PerceivedType", type.ToString());
 
             ShellNotification.NotifyOfChange();
         }
@@ -416,14 +437,20 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected Guid GetPersistentHandler(FileAssociationInfo file)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(file.extension + "\\PersistentHandler", string.Empty);
+            object val = this.registryWrapper.Read(file.extension + "\\PersistentHandler", string.Empty);
 
             if (val == null)
+            {
                 return new Guid();
+            }
             else
+            {
                 return new Guid(val.ToString());
+            }
         }
 
         /// <summary>
@@ -452,9 +479,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected string GetContentType(FileAssociationInfo file)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(file.extension, "Content Type");
+            object val = this.registryWrapper.Read(file.extension, "Content Type");
 
             if (val == null)
             {
@@ -474,9 +503,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetContentType(FileAssociationInfo file, string type)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            registryWrapper.Write(file.extension, "Content Type", type);
+            this.registryWrapper.Write(file.extension, "Content Type", type);
 
             ShellNotification.NotifyOfChange();
         }
@@ -490,12 +521,16 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected string GetProgID(FileAssociationInfo file)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(file.extension, string.Empty);
+            object val = this.registryWrapper.Read(file.extension, string.Empty);
 
             if (val == null)
+            {
                 return string.Empty;
+            }
 
             return val.ToString();
         }
@@ -508,9 +543,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetProgID(FileAssociationInfo file, string progId)
         {
             if (!file.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            registryWrapper.Write(file.extension, string.Empty, progId);
+            this.registryWrapper.Write(file.extension, string.Empty, progId);
 
             ShellNotification.NotifyOfChange();
         }

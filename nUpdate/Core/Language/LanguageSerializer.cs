@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace nUpdate.Core.Language
@@ -11,44 +8,43 @@ namespace nUpdate.Core.Language
     {
         public LanguageSerializer()
         {
-            CancelButtonText = "Cancel";
-            ContinueButtonText = "Continue";
-            InstallButtonText = "Install";
-            CloseButtonText = "Close";
+            this.CancelButtonText = "Cancel";
+            this.ContinueButtonText = "Continue";
+            this.InstallButtonText = "Install";
+            this.CloseButtonText = "Close";
 
-            UpdateSearchDialogHeader = "Searching for updates...";
+            this.UpdateSearchDialogHeader = "Searching for updates...";
 
-            NewUpdateDialogHeader = "New updates available.";
-            NewUpdateDialogInfoText = "New updates can be downloaded for {0}.";
-            NewUpdateDialogNewestVersionText = "Newest version: {0}";
-            NewUpdateDialogCurrentVersionText = "Current version: {0}";
-            NewUpdateDialogSizeText = "Package size: {0}";
-            NewUpdateDialogChangelogText = "Changelog:";
+            this.NewUpdateDialogHeader = "New updates available.";
+            this.NewUpdateDialogInfoText = "New updates can be downloaded for {0}.";
+            this.NewUpdateDialogNewestVersionText = "Newest version: {0}";
+            this.NewUpdateDialogCurrentVersionText = "Current version: {0}";
+            this.NewUpdateDialogSizeText = "Package size: {0}";
+            this.NewUpdateDialogChangelogText = "Changelog:";
 
-            NoUpdateDialogHeader = "There are no new updates available.";
-            NoUpdateDialogInfoText = "The application is up-to-date.";
+            this.NoUpdateDialogHeader = "There are no new updates available.";
+            this.NoUpdateDialogInfoText = "The application is up-to-date.";
 
-            UpdateDownloadDialogLoadingHeader = "Updates are being downloaded...";
-            UpdateDownloadDialogLoadingInfo = "Please be patient...";
-            UpdateDownloadDialogLoadingPackageText = "Package is being downloaded...";
-            UpdateDownloadDialogFinishedHeader = "The updates have been downloaded.";
-            UpdateDownloadDialogFinishedInfoText = "Download completed.";
-            UpdateDownloadDialogFinishedPackageText = "Package downloaded.";
+            this.UpdateDownloadDialogLoadingHeader = "Updates are being downloaded...";
+            this.UpdateDownloadDialogLoadingInfo = "Please be patient...";
+            this.UpdateDownloadDialogLoadingPackageText = "Package is being downloaded...";
+            this.UpdateDownloadDialogFinishedHeader = "The updates have been downloaded.";
+            this.UpdateDownloadDialogFinishedInfoText = "Download completed.";
+            this.UpdateDownloadDialogFinishedPackageText = "Package downloaded.";
 
-            UpdateErrorDialogHeader = "Updating the application has failed.";
-            UpdateErrorDialogErrorCodeText = "Errorcode:";
+            this.UpdateErrorDialogHeader = "Updating the application has failed.";
+            this.UpdateErrorDialogErrorCodeText = "Errorcode:";
 
-            SearchErrorCaption = "Error while searching for updates.";
-            LocalDataCreationErrorCaption = "Error while creating local data.";
-            LocalDataCreationErrorText = "The folder for the package data couldn't be created. {0}";
-            FileTooBigErrorCaption = "The update file is too big.";
-            FileTooBigErrorText = "nUpdate will not allow to install the update in order to save your RAM.";
-            PackageNotFoundErrorCaption = "Package not found.";
-            PackageNotFoundErrorText = "The update package couldn't be validated because it is missing.";
-            InvalidSignatureErrorCaption = "Invalid signature.";
-            InvalidSignatureErrorText = String.Format("The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.",
-                            Environment.NewLine);
-            InvalidSignatureAndFileDeletingFailedErrorText = "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package.{0}Unfortunately nUpdate could not remove the update package because of an system error. Please delete this package immediately because it could contain viruses and/or malware in order to damage your PC.{0}{1}";
+            this.SearchErrorCaption = "Error while searching for updates.";
+            this.LocalDataCreationErrorCaption = "Error while creating local data.";
+            this.LocalDataCreationErrorText = "The folder for the package data couldn't be created. {0}";
+            this.FileTooBigErrorCaption = "The update file is too big.";
+            this.FileTooBigErrorText = "nUpdate will not allow to install the update in order to save your RAM.";
+            this.PackageNotFoundErrorCaption = "Package not found.";
+            this.PackageNotFoundErrorText = "The update package couldn't be validated because it is missing.";
+            this.InvalidSignatureErrorCaption = "Invalid signature.";
+            this.InvalidSignatureErrorText = String.Format("The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.", Environment.NewLine);
+            this.InvalidSignatureAndFileDeletingFailedErrorText = "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package.{0}Unfortunately nUpdate could not remove the update package because of an system error. Please delete this package immediately because it could contain viruses and/or malware in order to damage your PC.{0}{1}";
         }
 
         /// <summary>
@@ -103,6 +99,7 @@ namespace nUpdate.Core.Language
         public string InvalidSignatureErrorCaption { get; set; }
         public string InvalidSignatureErrorText { get; set; }
         public string InvalidSignatureAndFileDeletingFailedErrorText { get; set; }
+
         /// <summary>
         /// Writes the properties and values to a XML-file.
         /// </summary>
@@ -118,7 +115,6 @@ namespace nUpdate.Core.Language
                 fs.Flush();
                 fs.Close();
             }
-
             else
             {
                 return;

@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using nUpdate.Core.Language;
+using System;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Dialogs;
-using nUpdate.Core.Language;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace nUpdate.Dialogs
 {
     public partial class UpdateDownloadDialog : BaseForm
     {
-        string finishedHeader = null;
-        string finishedInfoText = null;
-        string finishedStatusLabelText = null;
+        private string finishedHeader = null;
+        private string finishedInfoText = null;
+        private string finishedStatusLabelText = null;
 
         public Language Language { get; set; }
         public string LanguageFilePath { get; set; }
@@ -37,9 +30,9 @@ namespace nUpdate.Dialogs
             string resourceName = "nUpdate.Core.Language.";
             LanguageSerializer lang = null;
 
-            if (Language != Language.Custom)
+            if (this.Language != Language.Custom)
             {
-                switch (Language)
+                switch (this.Language)
                 {
                     case Language.English:
                         resourceName += "en.xml";
@@ -61,43 +54,43 @@ namespace nUpdate.Dialogs
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
+                if (File.Exists(this.LanguageFilePath))
                 {
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                    lang = LanguageSerializer.ReadXml(this.LanguageFilePath);
                 }
             }
 
-            cancelButton.Text = lang.CancelButtonText;
-            furtherButton.Text = lang.ContinueButtonText;
-            headerLabel.Text = lang.UpdateDownloadDialogLoadingHeader;
-            infoLabel.Text = lang.UpdateDownloadDialogLoadingInfo;
-            statusLabel.Text = lang.UpdateDownloadDialogLoadingPackageText;
-            finishedHeader = lang.UpdateDownloadDialogFinishedHeader;
-            finishedInfoText = lang.UpdateDownloadDialogFinishedInfoText;
-            finishedStatusLabelText = lang.UpdateDownloadDialogFinishedPackageText;
+            this.cancelButton.Text = lang.CancelButtonText;
+            this.furtherButton.Text = lang.ContinueButtonText;
+            this.headerLabel.Text = lang.UpdateDownloadDialogLoadingHeader;
+            this.infoLabel.Text = lang.UpdateDownloadDialogLoadingInfo;
+            this.statusLabel.Text = lang.UpdateDownloadDialogLoadingPackageText;
+            this.finishedHeader = lang.UpdateDownloadDialogFinishedHeader;
+            this.finishedInfoText = lang.UpdateDownloadDialogFinishedInfoText;
+            this.finishedStatusLabelText = lang.UpdateDownloadDialogFinishedPackageText;
 
-            hookPictureBox.Visible = false;
-            cancelButton.Enabled = false;
-            furtherButton.Enabled = false;
+            this.hookPictureBox.Visible = false;
+            this.cancelButton.Enabled = false;
+            this.furtherButton.Enabled = false;
 
             this.Text = Application.ProductName;
-            this.Icon = AppIcon;
+            this.Icon = this.AppIcon;
 
-            iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
-            iconPictureBox.Image = AppIcon.ToBitmap();
+            this.iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
+            this.iconPictureBox.Image = this.AppIcon.ToBitmap();
         }
 
         public void furtherButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         public void ProgressChangedEventHandler(object sender, DownloadProgressChangedEventArgs e)
         {
             Invoke(new Action(() =>
             {
-                downloadProgressBar.Value = e.ProgressPercentage;
-                percentLabel.Text = String.Format("{0} %", e.ProgressPercentage);
+                this.downloadProgressBar.Value = e.ProgressPercentage;
+                this.percentLabel.Text = String.Format("{0} %", e.ProgressPercentage);
             }));
         }
 
@@ -123,7 +116,7 @@ namespace nUpdate.Dialogs
                 {
                     if (errorDialog.ShowDialog(this) == DialogResult.OK)
                     {
-                        DialogResult = DialogResult.Cancel;
+                        this.DialogResult = DialogResult.Cancel;
                     }
                 }));
             }
@@ -131,12 +124,12 @@ namespace nUpdate.Dialogs
             {
                 Invoke(new Action(() =>
                     {
-                        cancelButton.Enabled = true;
-                        furtherButton.Enabled = true;
+                        this.cancelButton.Enabled = true;
+                        this.furtherButton.Enabled = true;
 
-                        headerLabel.Text = finishedHeader;
-                        infoLabel.Text = finishedInfoText;
-                        statusLabel.Text = finishedStatusLabelText;
+                        this.headerLabel.Text = this.finishedHeader;
+                        this.infoLabel.Text = this.finishedInfoText;
+                        this.statusLabel.Text = this.finishedStatusLabelText;
                     }));
             }
         }
@@ -145,13 +138,19 @@ namespace nUpdate.Dialogs
         {
             var errorDialog = new UpdateErrorDialog();
             if (exception.GetType() == typeof(WebException))
+            {
                 errorDialog.ErrorCode = (int)((HttpWebResponse)(exception as WebException).Response).StatusCode;
+            }
             else
+            {
                 errorDialog.ErrorCode = 0;
+            }
             errorDialog.InfoMessage = "Error while downloading.";
             errorDialog.ErrorMessage = exception.Message;
             if (errorDialog.ShowDialog(this) == DialogResult.OK)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
     }
 }
