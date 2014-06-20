@@ -1,29 +1,23 @@
 ﻿#define DEBUG
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.UI.Dialogs;
-using System.DirectoryServices.AccountManagement;
 using nUpdate.Administration.UI.Popups;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace nUpdate.Administration
 {
     public partial class MainForm : BaseForm
     {
-        string notSupportedWarning;
+        private string notSupportedWarning;
 
         public MainForm()
         {
@@ -37,8 +31,11 @@ namespace nUpdate.Administration
         {
             LocalizationProperties ls = new LocalizationProperties();
             if (File.Exists(Program.LanguageSerializerFilePath))
+            {
                 ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(Program.LanguageSerializerFilePath));
-            else {
+            }
+            else
+            {
                 string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
@@ -47,29 +44,31 @@ namespace nUpdate.Administration
             }
 
             this.Text = ls.ProductTitle;
-            headerLabel.Text = ls.ProductTitle;
-            infoLabel.Text = ls.MainFormInfoText;
+            this.headerLabel.Text = ls.ProductTitle;
+            this.infoLabel.Text = ls.MainFormInfoText;
 
-            sectionsListView.Groups[0].Header = ls.MainFormProjectsGroupText;
-            sectionsListView.Groups[1].Header = ls.MainFormOptionGroupText;
-            sectionsListView.Groups[2].Header = ls.MainFormInformationGroupText;
+            this.sectionsListView.Groups[0].Header = ls.MainFormProjectsGroupText;
+            this.sectionsListView.Groups[1].Header = ls.MainFormOptionGroupText;
+            this.sectionsListView.Groups[2].Header = ls.MainFormInformationGroupText;
 
-            sectionsListView.Items[0].Text = ls.MainFormNewProjectText;
-            sectionsListView.Items[1].Text = ls.MainFormOpenProjectText;
-            sectionsListView.Items[2].Text = ls.MainFormSettingsText;
-            sectionsListView.Items[3].Text = ls.MainFormInformationText;
-            sectionsListView.Items[4].Text = ls.MainFormFeedbackText;
+            this.sectionsListView.Items[0].Text = ls.MainFormNewProjectText;
+            this.sectionsListView.Items[1].Text = ls.MainFormOpenProjectText;
+            this.sectionsListView.Items[2].Text = ls.MainFormSettingsText;
+            this.sectionsListView.Items[3].Text = ls.MainFormInformationText;
+            this.sectionsListView.Items[4].Text = ls.MainFormFeedbackText;
 
-            notSupportedWarning = ls.MainFormNotSupportedWarn;
+            this.notSupportedWarning = ls.MainFormNotSupportedWarn;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                DialogResult dr = MessageBox.Show(notSupportedWarning, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogResult dr = MessageBox.Show(this.notSupportedWarning, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
+                {
                     Application.Exit();
+                }
             }
 
             FileAssociationInfo fai = new FileAssociationInfo(".nupdproj");
@@ -82,8 +81,7 @@ namespace nUpdate.Administration
                     ProgramAssociationInfo pai = new ProgramAssociationInfo(fai.ProgID);
                     if (!pai.Exists)
                     {
-                        pai.Create("nUpdate Administration Project File",
-                            new ProgramVerb("Open", Application.ExecutablePath));
+                        pai.Create("nUpdate Administration Project File", new ProgramVerb("Open", Application.ExecutablePath));
                         pai.DefaultIcon = new ProgramIcon(Application.ExecutablePath);
                     }
                 }
@@ -97,14 +95,16 @@ namespace nUpdate.Administration
 
             // Create program folder
             if (!Directory.Exists(Program.Path))
+            {
                 Directory.CreateDirectory(Program.Path);
+            }
 
             LocalizationProperties lang = new LocalizationProperties();
             string content = Serializer.Serialize(lang);
             File.WriteAllText(Program.LanguageSerializerFilePath, content);
 
-            SetLanguage();
-            sectionsListView.DoubleBuffer();
+            this.SetLanguage();
+            this.sectionsListView.DoubleBuffer();
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -135,7 +135,7 @@ namespace nUpdate.Administration
 
         private void sectionsListView_Click(object sender, EventArgs e)
         {
-            switch (sectionsListView.FocusedItem.Index)
+            switch (this.sectionsListView.FocusedItem.Index)
             {
                 case 0:
                     NewProjectForm projectForm = new NewProjectForm();
@@ -150,8 +150,8 @@ namespace nUpdate.Administration
                     {
                         try
                         {
-                            Project = ApplicationInstance.LoadProject(fileDialog.FileName);
-                            ShowDialog<ProjectForm>(this, Project);
+                            this.Project = ApplicationInstance.LoadProject(fileDialog.FileName);
+                            ShowDialog<ProjectForm>(this, this.Project);
                         }
                         catch (Exception ex)
                         {

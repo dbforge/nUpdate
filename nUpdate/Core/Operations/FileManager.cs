@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace nUpdate.Core.Operations
 {
@@ -15,7 +13,6 @@ namespace nUpdate.Core.Operations
 
         public FileManager(Operation[] operations)
         {
-
         }
 
         private void MoveFile(string filePath, string newPath)
@@ -27,13 +24,13 @@ namespace nUpdate.Core.Operations
             catch (Exception ex)
             {
                 List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in FileExceptions)
+                foreach (Exception exception in this.FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                FileExceptions = exceptions.ToArray();
+                this.FileExceptions = exceptions.ToArray();
             }
         }
 
@@ -46,13 +43,13 @@ namespace nUpdate.Core.Operations
             catch (Exception ex)
             {
                 List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in FileExceptions)
+                foreach (Exception exception in this.FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                FileExceptions = exceptions.ToArray();
+                this.FileExceptions = exceptions.ToArray();
             }
         }
 
@@ -65,13 +62,13 @@ namespace nUpdate.Core.Operations
             catch (Exception ex)
             {
                 List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in FileExceptions)
+                foreach (Exception exception in this.FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                FileExceptions = exceptions.ToArray();
+                this.FileExceptions = exceptions.ToArray();
             }
         }
     }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
 
 namespace nUpdate.Core.Operations
 {
@@ -28,7 +25,7 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                ServiceException = ex;
+                this.ServiceException = ex;
             }
         }
 
@@ -47,7 +44,7 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                ServiceException = ex;
+                this.ServiceException = ex;
             }
         }
 
@@ -73,7 +70,7 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                ServiceException = ex;
+                this.ServiceException = ex;
             }
         }
     }

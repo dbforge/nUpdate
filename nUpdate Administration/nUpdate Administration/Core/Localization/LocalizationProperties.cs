@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace nUpdate.Administration.Core.Localization
 {
@@ -10,163 +6,163 @@ namespace nUpdate.Administration.Core.Localization
     {
         public LocalizationProperties()
         {
-            ProductTitle = "nUpdate Administration 1.1.0.0";
-            CancelButtonText = "Cancel";
-            ContinueButtonText = "Continue";
-            SaveButtonText = "Save";
-            DoneButtonText = "Done";
-            CreatePackageButtonText = "Create package";
+            this.ProductTitle = "nUpdate Administration 1.1.0.0";
+            this.CancelButtonText = "Cancel";
+            this.ContinueButtonText = "Continue";
+            this.SaveButtonText = "Save";
+            this.DoneButtonText = "Done";
+            this.CreatePackageButtonText = "Create package";
 
-            InvalidArgumentErrorCaption = "Invalid argument found.";
-            InvalidArgumentErrorText = "The entry for {0} can't be parsed to {1}.";
+            this.InvalidArgumentErrorCaption = "Invalid argument found.";
+            this.InvalidArgumentErrorText = "The entry for {0} can't be parsed to {1}.";
 
-            MainFormHeader = "nUpdate - Administration";
-            MainFormInfoText = "Welcome, you can create and manage your updates for nUpdate here.";
-            MainFormProjectsGroupText = "Projects";
-            MainFormOptionGroupText = "Settings";
-            MainFormInformationGroupText = "Information";
-            MainFormNewProjectText = "New project";
-            MainFormOpenProjectText = "Open project";
-            MainFormInformationText = "Information";
-            MainFormSettingsText = "Preferences";
-            MainFormFeedbackText = "Feedback";
-            MainFormNotSupportedWarn = "Your system is not supported. Windows Vista or higher necessary...";
+            this.MainFormHeader = "nUpdate - Administration";
+            this.MainFormInfoText = "Welcome, you can create and manage your updates for nUpdate here.";
+            this.MainFormProjectsGroupText = "Projects";
+            this.MainFormOptionGroupText = "Settings";
+            this.MainFormInformationGroupText = "Information";
+            this.MainFormNewProjectText = "New project";
+            this.MainFormOpenProjectText = "Open project";
+            this.MainFormInformationText = "Information";
+            this.MainFormSettingsText = "Preferences";
+            this.MainFormFeedbackText = "Feedback";
+            this.MainFormNotSupportedWarn = "Your system is not supported. Windows Vista or higher necessary...";
 
-            NewProjectFormTitle = "New project - {0}";
-            PanelSignatureHeader = "Key pair generation";
-            PanelSignatureInfoText = "nUpdate uses a 4096-bit RSA-Signature to serve for the security of your update" + Environment.NewLine +
+            this.NewProjectFormTitle = "New project - {0}";
+            this.PanelSignatureHeader = "Key pair generation";
+            this.PanelSignatureInfoText = "nUpdate uses a 4096-bit RSA-Signature to serve for the security of your update" + Environment.NewLine +
                                      "packages. The generation of these keys may take a different amount of time," + Environment.NewLine +
                                      "depending on your PC. Please be patient.";
 
-            PanelSignatureWaitText = "Please wait while the key pair is being generated...";
-            PanelGeneralHeader = "General";
-            PanelGeneralNameText = "Name:";
-            PanelGeneralNameWatermarkText = "The name of the project";
-            PanelGeneralLanguageText = "Language:";
-            PanelFtpHeader = "FTP-Data";
-            PanelFtpServerText = "Adress:";
-            PanelFtpServerWatermarkText = "The url of the update server";
-            PanelFtpUserText = "User:";
-            PanelFtpUserWatermarkText = "The username";
-            PanelFtpPasswordText = "Password:";
-            PanelFtpDirectoryText = "Directory:";
-            PanelFtpPortText = "Port:";
-            PanelFtpPortWatermarkText = "The port";
-            PanelFtpPassiveConnectionText = "Passive (rated)";
-            PanelFtpActiveConnectionText = "Active";
+            this.PanelSignatureWaitText = "Please wait while the key pair is being generated...";
+            this.PanelGeneralHeader = "General";
+            this.PanelGeneralNameText = "Name:";
+            this.PanelGeneralNameWatermarkText = "The name of the project";
+            this.PanelGeneralLanguageText = "Language:";
+            this.PanelFtpHeader = "FTP-Data";
+            this.PanelFtpServerText = "Adress:";
+            this.PanelFtpServerWatermarkText = "The url of the update server";
+            this.PanelFtpUserText = "User:";
+            this.PanelFtpUserWatermarkText = "The username";
+            this.PanelFtpPasswordText = "Password:";
+            this.PanelFtpDirectoryText = "Directory:";
+            this.PanelFtpPortText = "Port:";
+            this.PanelFtpPortWatermarkText = "The port";
+            this.PanelFtpPassiveConnectionText = "Passive (rated)";
+            this.PanelFtpActiveConnectionText = "Active";
 
-            ProjectsOverviewFormTitle = "Projects";
-            ProjectsOverviewFormEditText = "Edit project";
-            ProjectsOverviewFormFtpText = "Edit FTP-data";
-            ProjectsOverviewFormDeleteText = "Delete";
-            ProjectsOverviewFormNameText = "Name";
-            ProjectsOverviewFormLanguageText= "Language";
-            ProjectsOverviewFormCreationTimeText = "Created";
-            ProjectsOverviewFormPackagesText = "Packages";
-            ProjectsOverviewFormProjectsText = "Projects: ";
+            this.ProjectsOverviewFormTitle = "Projects";
+            this.ProjectsOverviewFormEditText = "Edit project";
+            this.ProjectsOverviewFormFtpText = "Edit FTP-data";
+            this.ProjectsOverviewFormDeleteText = "Delete";
+            this.ProjectsOverviewFormNameText = "Name";
+            this.ProjectsOverviewFormLanguageText = "Language";
+            this.ProjectsOverviewFormCreationTimeText = "Created";
+            this.ProjectsOverviewFormPackagesText = "Packages";
+            this.ProjectsOverviewFormProjectsText = "Projects: ";
 
-            UnknownErrorMessage = "An unknown error occured.";
-            UnknownErrorCaption = "Unknown error";
-            RemovalConfirmationMessage = "Are you sure you want to remove this project?";
-            RemovalConfirmationCaption = "Delete project";
+            this.UnknownErrorMessage = "An unknown error occured.";
+            this.UnknownErrorCaption = "Unknown error";
+            this.RemovalConfirmationMessage = "Are you sure you want to remove this project?";
+            this.RemovalConfirmationCaption = "Delete project";
 
-            AlreadyExistingWarn = "The project {0} already exists.";
+            this.AlreadyExistingWarn = "The project {0} already exists.";
 
-            ProjectFormTitle = "{0} - nUpdate Administration 1.1.0.0";
-            ProjectFormOverviewTabText = "Overview";
-            ProjectFormNameLabelText = "Name:";
-            ProjectFormUpdateUrlLabelText = "Update-URL:";
-            ProjectFormFtpHostLabelText = "FTP-Host:";
-            ProjectFormFtpDirectoryLabelText = "FTP-directory:";
-            ProjectFormPackagesAmountLabelText = "Amount of packages released:";
-            ProjectFormNewestPackageLabelText = "Newest package released:";
-            ProjectFormInfoFileloadingLabelText = "Status of the update-info file:";
-            ProjectFormCheckInfoFileStatusLinkLabelText = "Check status";
-            ProjectFormProjectDataText = "Project-data";
-            ProjectFormPublicKeyLabelText = "Public key:";
-            ProjectFormProjectIdLabelText = "Project-ID:";
-            ProjectFormPackagesTabText = "Packages";
-            ProjectFormOverviewText = "Project-overview";
-            ProjectFormAddButtonText = "Add";
-            ProjectFormEditButtonText = "Edit";
-            ProjectFormDeleteButtonText = "Delete";
-            ProjectFormUploadButtonText = "Upload";
-            ProjectFormHistoryButtonText = "History";
-            ProjectFormVersionText = "Version";
-            ProjectFormDevStageText = "Developmental stage";
-            ProjectFormReleasedText = "Released";
-            ProjectFormSizeText = "Size";
-            ProjectFormDescriptionText = "Description";
-            ProjectFormSearchText = "Search...";
+            this.ProjectFormTitle = "{0} - nUpdate Administration 1.1.0.0";
+            this.ProjectFormOverviewTabText = "Overview";
+            this.ProjectFormNameLabelText = "Name:";
+            this.ProjectFormUpdateUrlLabelText = "Update-URL:";
+            this.ProjectFormFtpHostLabelText = "FTP-Host:";
+            this.ProjectFormFtpDirectoryLabelText = "FTP-directory:";
+            this.ProjectFormPackagesAmountLabelText = "Amount of packages released:";
+            this.ProjectFormNewestPackageLabelText = "Newest package released:";
+            this.ProjectFormInfoFileloadingLabelText = "Status of the update-info file:";
+            this.ProjectFormCheckInfoFileStatusLinkLabelText = "Check status";
+            this.ProjectFormProjectDataText = "Project-data";
+            this.ProjectFormPublicKeyLabelText = "Public key:";
+            this.ProjectFormProjectIdLabelText = "Project-ID:";
+            this.ProjectFormPackagesTabText = "Packages";
+            this.ProjectFormOverviewText = "Project-overview";
+            this.ProjectFormAddButtonText = "Add";
+            this.ProjectFormEditButtonText = "Edit";
+            this.ProjectFormDeleteButtonText = "Delete";
+            this.ProjectFormUploadButtonText = "Upload";
+            this.ProjectFormHistoryButtonText = "History";
+            this.ProjectFormVersionText = "Version";
+            this.ProjectFormDevStageText = "Developmental stage";
+            this.ProjectFormReleasedText = "Released";
+            this.ProjectFormSizeText = "Size";
+            this.ProjectFormDescriptionText = "Description";
+            this.ProjectFormSearchText = "Search...";
 
-            EditFormNewNameText = "New name:";
-            EditFormLanguageText = "Language:";
-            EditFormRenameText = "The new name of the project";
-            EditFormTitle = "Edit project";
+            this.EditFormNewNameText = "New name:";
+            this.EditFormLanguageText = "Language:";
+            this.EditFormRenameText = "The new name of the project";
+            this.EditFormTitle = "Edit project";
 
             #region "PackageAddForm
 
-            PackageAddFormTitle = "Add new package - {0} - {1}";
-            PackageAddFormGeneralItemText = "General";
-            PackageAddFormChangelogItemText = "Changelog";
-            PackageAddFormFilesItemText = "Files";
-            PackageAddFormAvailabilityItemText = "Availability";
-            PackageAddFormDevelopmentalStageLabelText = "Developmental stage:";
-            PackageAddFormVersionLabelText = "Version:";
-            PackageAddFormDescriptionLabelText = "Description:";
-            PackageAddFormPublishCheckBoxText = "Publish this update";
-            PackageAddFormPublishInfoLabelText = "Sets if the package should be uploaded yet. You can upload it later, if you disable this" + Environment.NewLine +
+            this.PackageAddFormTitle = "Add new package - {0} - {1}";
+            this.PackageAddFormGeneralItemText = "General";
+            this.PackageAddFormChangelogItemText = "Changelog";
+            this.PackageAddFormFilesItemText = "Files";
+            this.PackageAddFormAvailabilityItemText = "Availability";
+            this.PackageAddFormDevelopmentalStageLabelText = "Developmental stage:";
+            this.PackageAddFormVersionLabelText = "Version:";
+            this.PackageAddFormDescriptionLabelText = "Description:";
+            this.PackageAddFormPublishCheckBoxText = "Publish this update";
+            this.PackageAddFormPublishInfoLabelText = "Sets if the package should be uploaded yet. You can upload it later, if you disable this" + Environment.NewLine +
                                              "option. The update package will be saved locally on your PC then.";
-            PackageAddFormEnvironmentLabelText = "Architecture settings:";
-            PackageAddFormEnvironmentInfoLabelText = "Sets if the update package should only run on special architectures. To set any type" + Environment.NewLine +
+            this.PackageAddFormEnvironmentLabelText = "Architecture settings:";
+            this.PackageAddFormEnvironmentInfoLabelText = "Sets if the update package should only run on special architectures. To set any type" + Environment.NewLine +
                                                        "of architecture, choose \"AnyCPU\" as entry.";
 
-            PackageAddFormLoadButtonText = "Load from file...";
-            PackageAddFormClearButtonText = "Clear";
-            PackageAddFormAddFileButtonText = "Add files...";
-            PackageAddFormRemoveFileButtonText = "Remove files...";
-            PackageAddFormNameHeaderText = "Name";
-            PackageAddFormSizeHeaderText = "Size";
-            PackageAddFormAvailableForAllRadioButtonText = "Available for all older versions";
-            PackageAddFormAvailableForAllInfoText = "This package is available and can be downloaded for all older versions.";
-            PackageAddFormAvailableForSomeRadioButtonText = "Available for some older versions";
-            PackageAddFormAvailableForSomeInfoText = "This package is not available for the following versions.";
-            PackageAddFormAddButtonText = "Add";
-            PackageAddFormRemoveButtonText = "Remove";
+            this.PackageAddFormLoadButtonText = "Load from file...";
+            this.PackageAddFormClearButtonText = "Clear";
+            this.PackageAddFormAddFileButtonText = "Add files...";
+            this.PackageAddFormRemoveFileButtonText = "Remove files...";
+            this.PackageAddFormNameHeaderText = "Name";
+            this.PackageAddFormSizeHeaderText = "Size";
+            this.PackageAddFormAvailableForAllRadioButtonText = "Available for all older versions";
+            this.PackageAddFormAvailableForAllInfoText = "This package is available and can be downloaded for all older versions.";
+            this.PackageAddFormAvailableForSomeRadioButtonText = "Available for some older versions";
+            this.PackageAddFormAvailableForSomeInfoText = "This package is not available for the following versions.";
+            this.PackageAddFormAddButtonText = "Add";
+            this.PackageAddFormRemoveButtonText = "Remove";
 
-            PackageAddFormArchiveInitializerInfoText = "Initializing archive...";
-            PackageAddFormPrepareInfoText = "Preparing update...";
-            PackageAddFormSigningInfoText = "Signing package...";
-            PackageAddFormConfigInitializerInfoText = "Initializing config...";
-            PackageAddFormUploadingPackageInfoText = "Uploading package - {0}";
-            PackageAddFormUploadingConfigInfoText = "Uploading configuration...";
+            this.PackageAddFormArchiveInitializerInfoText = "Initializing archive...";
+            this.PackageAddFormPrepareInfoText = "Preparing update...";
+            this.PackageAddFormSigningInfoText = "Signing package...";
+            this.PackageAddFormConfigInitializerInfoText = "Initializing config...";
+            this.PackageAddFormUploadingPackageInfoText = "Uploading package - {0}";
+            this.PackageAddFormUploadingConfigInfoText = "Uploading configuration...";
 
-            PackageAddFormNoInternetWarningText = "nUpdate Administration could not verify a network connection. Some functions are disabled for now and you can only save the package on your PC. An upload is possible as soon as a network connections is given.";
-            PackageAddFormNoInternetWarningCaption = "No network connection available.";
-            PackageAddFormNoFilesSpecifiedWarningText = "There were no files specified for the update package. Please make sure you added an archive or some files to pack automatically.";
-            PackageAddFormNoFilesSpecifiedWarningCaption = "No files for the package set.";
-            PackageAddFormUnsupportedArchiveWarningText = "You added an unsupported archive type to the list. nUpdate is only able to unpack \".ZIP\"-files at the moment.";
-            PackageAddFormUnsupportedArchiveWarningCaption = "Unsupported archive type.";
-            PackageAddFormVersionInvalidWarningText = "The given version is invalid. You cannot use \"0.0.x.x\" as product-version. Please make sure to select a minimum Minor-version of \"1\".";
-            PackageAddFormVersionInvalidWarningCaption = "Invalid package version.";
-            PackageAddFormVersionExistingWarningText = "Version \"{0}\" is already existing.";
-            PackageAddFormNoChangelogWarningText = "There was no changelog set for the update package.";
-            PackageAddFormNoChangelogWarningCaption = "No changelog set.";
-            PackageAddFormAlreadyImportedWarningText = "The file \" {0} \" is already imported. Should it be replaced by the new one?";
-            PackageAddFormAlreadyImportedWarningCaption = "File already imported";
+            this.PackageAddFormNoInternetWarningText = "nUpdate Administration could not verify a network connection. Some functions are disabled for now and you can only save the package on your PC. An upload is possible as soon as a network connections is given.";
+            this.PackageAddFormNoInternetWarningCaption = "No network connection available.";
+            this.PackageAddFormNoFilesSpecifiedWarningText = "There were no files specified for the update package. Please make sure you added an archive or some files to pack automatically.";
+            this.PackageAddFormNoFilesSpecifiedWarningCaption = "No files for the package set.";
+            this.PackageAddFormUnsupportedArchiveWarningText = "You added an unsupported archive type to the list. nUpdate is only able to unpack \".ZIP\"-files at the moment.";
+            this.PackageAddFormUnsupportedArchiveWarningCaption = "Unsupported archive type.";
+            this.PackageAddFormVersionInvalidWarningText = "The given version is invalid. You cannot use \"0.0.x.x\" as product-version. Please make sure to select a minimum Minor-version of \"1\".";
+            this.PackageAddFormVersionInvalidWarningCaption = "Invalid package version.";
+            this.PackageAddFormVersionExistingWarningText = "Version \"{0}\" is already existing.";
+            this.PackageAddFormNoChangelogWarningText = "There was no changelog set for the update package.";
+            this.PackageAddFormNoChangelogWarningCaption = "No changelog set.";
+            this.PackageAddFormAlreadyImportedWarningText = "The file \" {0} \" is already imported. Should it be replaced by the new one?";
+            this.PackageAddFormAlreadyImportedWarningCaption = "File already imported";
 
-            PackageAddFormPackageDataCreationErrorCaption = "Creating package data failed.";
-            PackageAddFormProjectDataLoadingErrorCaption = "Failed to load project data.";
-            PackageAddFormGettingUrlErrorCaption = "Error while getting url.";
-            PackageAddFormReadingPackageBytesErrorCaption = "Reading package bytes failed.";
-            PackageAddFormInvalidServerDirectoryErrorCaption = "Invalid server directory.";
-            PackageAddFormInvalidServerDirectoryErrorText = "The directory for the update files on the server is not valid. Please edit it.";
-            PackageAddFormLoadingFtpDataErrorCaption = "Failed to load FTP-data.";
-            PackageAddFormConfigurationDownloadErrorCaption = "Configuration download failed.";
-            PackageAddFormSerializingDataErrorCaption = "Error on serializing data.";
-            PackageAddFormRelativeUriErrorText = "The server-directory can't be set as a relative uri.";
-            PackageAddFormPackageInformationSavingErrorCaption = "Saving package information failed.";
-            PackageAddFormUploadFailedErrorCaption = "Upload failed.";
+            this.PackageAddFormPackageDataCreationErrorCaption = "Creating package data failed.";
+            this.PackageAddFormProjectDataLoadingErrorCaption = "Failed to load project data.";
+            this.PackageAddFormGettingUrlErrorCaption = "Error while getting url.";
+            this.PackageAddFormReadingPackageBytesErrorCaption = "Reading package bytes failed.";
+            this.PackageAddFormInvalidServerDirectoryErrorCaption = "Invalid server directory.";
+            this.PackageAddFormInvalidServerDirectoryErrorText = "The directory for the update files on the server is not valid. Please edit it.";
+            this.PackageAddFormLoadingFtpDataErrorCaption = "Failed to load FTP-data.";
+            this.PackageAddFormConfigurationDownloadErrorCaption = "Configuration download failed.";
+            this.PackageAddFormSerializingDataErrorCaption = "Error on serializing data.";
+            this.PackageAddFormRelativeUriErrorText = "The server-directory can't be set as a relative uri.";
+            this.PackageAddFormPackageInformationSavingErrorCaption = "Saving package information failed.";
+            this.PackageAddFormUploadFailedErrorCaption = "Upload failed.";
 
             #endregion
         }
@@ -332,7 +328,7 @@ namespace nUpdate.Administration.Core.Localization
         public string UnknownErrorMessage { get; set; }
 
         // The caption of the "Unknown error"-message
-        public string UnknownErrorCaption { get; set; }   
+        public string UnknownErrorCaption { get; set; }
 
         // The text of the "Project remove"-confirm-message
         public string RemovalConfirmationMessage { get; set; }
@@ -495,7 +491,7 @@ namespace nUpdate.Administration.Core.Localization
         public string PackageAddFormClearButtonText { get; set; }
 
         // Files-tab
-        
+
         // The text of the "Add File"-button
         public string PackageAddFormAddFileButtonText { get; set; }
 

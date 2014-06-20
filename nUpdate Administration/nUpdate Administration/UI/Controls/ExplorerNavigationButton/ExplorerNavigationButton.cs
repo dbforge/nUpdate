@@ -1,10 +1,10 @@
-﻿using System;
+﻿using nUpdate.Administration.Properties;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using nUpdate.Administration.Properties;
 
 namespace ExplorerNavigationButton
 {
@@ -15,11 +15,11 @@ namespace ExplorerNavigationButton
     [Description("A button with the appearance of the explorer navigation buttons.")]
     public partial class ExplorerNavigationButton : Control
     {
-        Template template;
-        readonly Bitmap[] arrows;
-        ArrowDirection arrowDirection;
-        ButtonTheme theme;
-        ButtonState state;
+        private Template template;
+        private readonly Bitmap[] arrows;
+        private ArrowDirection arrowDirection;
+        private ButtonTheme theme;
+        private ButtonState state;
 
         /// <summary>
         /// Is risen if the arrow direction has changed.
@@ -43,12 +43,12 @@ namespace ExplorerNavigationButton
         [DefaultValue(ArrowDirection.Left)]
         public ArrowDirection ArrowDirection
         {
-            get { return arrowDirection; }
+            get { return this.arrowDirection; }
             set
             {
-                if (value != arrowDirection)
+                if (value != this.arrowDirection)
                 {
-                    arrowDirection = value;
+                    this.arrowDirection = value;
                     this.Invalidate();
 
                     this.OnArrowDirectionChanged(EventArgs.Empty);
@@ -64,18 +64,20 @@ namespace ExplorerNavigationButton
         [DefaultValue(ButtonTheme.Auto)]
         public ButtonTheme Theme
         {
-            get { return theme; }
+            get { return this.theme; }
             set
             {
-                if (value != theme)
+                if (value != this.theme)
                 {
-                    theme = value;
+                    this.theme = value;
 
-                    if (template != null) template.Dispose();
-                    template = this.SelectTemplate(theme);
+                    if (this.template != null)
+                    {
+                        this.template.Dispose();
+                    }
 
+                    this.template = this.SelectTemplate(this.theme);
                     this.Invalidate();
-
                     this.OnTemplateChanged(EventArgs.Empty);
                 }
             }
@@ -83,14 +85,18 @@ namespace ExplorerNavigationButton
 
         protected virtual void OnArrowDirectionChanged(EventArgs e)
         {
-            if (ArrowDirectionChanged != null)
-                ArrowDirectionChanged(this, e);
+            if (this.ArrowDirectionChanged != null)
+            {
+                this.ArrowDirectionChanged(this, e);
+            }
         }
 
         protected virtual void OnTemplateChanged(EventArgs e)
         {
-            if (ThemeChanged != null)
-                ThemeChanged(this, e);
+            if (this.ThemeChanged != null)
+            {
+                this.ThemeChanged(this, e);
+            }
         }
 
         private Template SelectTemplate(ButtonTheme theme)
@@ -117,9 +123,13 @@ namespace ExplorerNavigationButton
 
                 Version version = Environment.OSVersion.Version;
                 if (version >= metroVersion)
+                {
                     return new MetroTemplate();
+                }
                 else if (version >= aeroVersion)
+                {
                     return new AeroTemplate();
+                }
             }
 
             return null;
@@ -133,90 +143,103 @@ namespace ExplorerNavigationButton
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
             this.UpdateStyles();
 
-            Size = new Size(24, 24);
+            this.Size = new Size(24, 24);
 
-            arrows = new Bitmap[4];
-            arrows[0] = Resources.Left_Normal;
-            arrows[1] = Resources.Right_Normal;
-            arrows[2] = Resources.Left_Disabled;
-            arrows[3] = Resources.Right_Disabled;
+            this.arrows = new Bitmap[4];
+            this.arrows[0] = Resources.Left_Normal;
+            this.arrows[1] = Resources.Right_Normal;
+            this.arrows[2] = Resources.Left_Disabled;
+            this.arrows[3] = Resources.Right_Disabled;
 
-            template = this.AutoSelectTemplate();
+            this.template = this.AutoSelectTemplate();
         }
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            state = ButtonState.Hover;
+            this.state = ButtonState.Hover;
             this.Invalidate();
-            
+
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            state = ButtonState.Normal;
+            this.state = ButtonState.Normal;
             this.Invalidate();
-            
+
             base.OnMouseLeave(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            state = ButtonState.Pressed;
+            this.state = ButtonState.Pressed;
             this.Invalidate();
-            
+
             base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            state = ButtonState.Hover;
+            this.state = ButtonState.Hover;
             this.Invalidate();
-            
+
             base.OnMouseUp(e);
         }
 
         protected override void OnEnabledChanged(EventArgs e)
         {
             this.Invalidate();
-            
+
             base.OnEnabledChanged(e);
         }
 
         private void DrawDefault(Graphics g, ArrowDirection direction, ButtonState state)
         {
             int arrowIndex = (int)direction;
-            if (state == ButtonState.Disabled) arrowIndex += 2;
-            int arrowSize = Math.Min(16, Math.Min(Width, Height));
-            var arrowRect = new Rectangle((Width - arrowSize) / 2, (Height - arrowSize) / 2, arrowSize, arrowSize);
+            if (state == ButtonState.Disabled)
+            {
+                arrowIndex += 2;
+            }
 
-            ButtonRenderer.DrawButton(g, ClientRectangle, arrows[arrowIndex], arrowRect, false, (PushButtonState)(state + 1));
+            int arrowSize = Math.Min(16, Math.Min(this.Width, this.Height));
+            var arrowRect = new Rectangle((this.Width - arrowSize) / 2, (this.Height - arrowSize) / 2, arrowSize, arrowSize);
+
+            ButtonRenderer.DrawButton(g, this.ClientRectangle, this.arrows[arrowIndex], arrowRect, false, (PushButtonState)(state + 1));
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (template != null)
+            if (this.template != null)
             {
                 Graphics g = e.Graphics;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                int buttonSize = Math.Min(Width, Height);
+                int buttonSize = Math.Min(this.Width, this.Height);
                 float sizeFactor = buttonSize / 24.0f;
-                g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (Width - buttonSize) / 2.0f, (Height - buttonSize) / 2.0f);
+                g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (this.Width - buttonSize) / 2.0f, (this.Height - buttonSize) / 2.0f);
 
-                template.Draw(g, arrowDirection, Enabled ? state : ButtonState.Disabled);
+                template.Draw(g, this.arrowDirection, this.Enabled ? this.state : ButtonState.Disabled);
             }
             else
-                this.DrawDefault(e.Graphics, arrowDirection, Enabled ? state : ButtonState.Disabled);
+            {
+                this.DrawDefault(e.Graphics, this.arrowDirection, this.Enabled ? this.state : ButtonState.Disabled);
+            }
 
             base.OnPaint(e);
         }
 
         protected override void Dispose(bool disposing)
         {
-            foreach (Bitmap bmp in arrows) bmp.Dispose();
-            if (template != null) template.Dispose();
+            foreach (Bitmap bmp in this.arrows)
+            {
+                bmp.Dispose();
+            }
+
+            if (template != null)
+            {
+                this.template.Dispose();
+            }
 
             base.Dispose(disposing);
         }

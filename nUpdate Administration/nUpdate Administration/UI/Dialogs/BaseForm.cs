@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using nUpdate.Administration.Core.Application;
+using System;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.Core.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -20,11 +15,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         /// The update project in the current state.
         /// </summary>
-        internal UpdateProject Project
-        {
-            get;
-            set;
-        }
+        internal UpdateProject Project { get; set; }
 
         /// <summary>
         /// Shows a new dialog.
@@ -33,7 +24,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <returns>Returns the returned <see cref="DialogResult"/>.</returns>
         internal BaseFormResult ShowDialog<T>() where T : BaseForm
         {
-            return ShowDialog<T>(null, null);
+            return this.ShowDialog<T>(null, null);
         }
 
         /// <summary>
@@ -44,7 +35,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <returns>Returns the returned <see cref="DialogResult"/>.</returns>
         internal BaseFormResult ShowDialog<T>(IWin32Window owner) where T : BaseForm
         {
-            return ShowDialog<T>(owner, null);
+            return this.ShowDialog<T>(owner, null);
         }
 
         /// <summary>
@@ -79,6 +70,5 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Font = new Font("SeogeUI", 8);
             this.ResumeLayout(false);
         }
-
     }
 }

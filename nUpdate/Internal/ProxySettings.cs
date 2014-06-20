@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
+﻿using System.Security;
 
 namespace nUpdate.Internal
 {
     public class ProxySettings
     {
         /// <summary>
-        /// Sets the host for the proxy.
+        /// Host for the proxy.
         /// </summary>
         public string Host { get; set; }
 
         /// <summary>
-        /// Sets the port for the proxy.
+        /// Port for the proxy.
         /// </summary>
         public int Port { get; set; }
 
         /// <summary>
-        /// Sets the username for the proxy.
+        /// Username for the proxy.
         /// </summary>
         public string Username { get; set; }
 
         /// <summary>
-        /// Sets the password for the proxy.
+        /// Password for the proxy.
         /// </summary>
         public SecureString Password { get; set; }
     }

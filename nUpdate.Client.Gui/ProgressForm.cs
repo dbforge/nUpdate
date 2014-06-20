@@ -1,12 +1,5 @@
 ﻿using nUpdate.Client.GuiInterface;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace nUpdate.Client.GUI
@@ -20,15 +13,15 @@ namespace nUpdate.Client.GUI
 
         public void ReportProgress(int progress, int maximum)
         {
-            if(progressBar1.InvokeRequired)
+            if (this.progressBar1.InvokeRequired)
             {
-                progressBar1.Invoke(new Action(() =>
+                this.progressBar1.Invoke(new Action(() =>
                 {
-                    ReportProgress(progress, maximum);
+                    this.ReportProgress(progress, maximum);
                 }));
             }
-            progressBar1.Maximum = maximum;
-            progressBar1.Value = progress;
+            this.progressBar1.Maximum = maximum;
+            this.progressBar1.Value = progress;
         }
 
         public void Fail(string infoMessage, string errorMessage)
@@ -38,11 +31,11 @@ namespace nUpdate.Client.GUI
 
         public void Initialize()
         {
-            if (progressBar1.InvokeRequired)
+            if (this.progressBar1.InvokeRequired)
             {
-                progressBar1.Invoke(new Action(() =>
+                this.progressBar1.Invoke(new Action(() =>
                 {
-                    Initialize();
+                    this.Initialize();
                 }));
             }
             Show();
@@ -50,15 +43,15 @@ namespace nUpdate.Client.GUI
 
         public void Terminate()
         {
-            if (progressBar1.InvokeRequired)
+            if (this.progressBar1.InvokeRequired)
             {
-                progressBar1.Invoke(new Action(() =>
+                this.progressBar1.Invoke(new Action(() =>
                 {
-                    Close();
+                    this.Close();
                 }));
             }
             MessageBox.Show("Fertig");
-            Close();
+            this.Close();
         }
 
 

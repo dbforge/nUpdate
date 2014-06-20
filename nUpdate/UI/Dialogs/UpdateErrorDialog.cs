@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using nUpdate.UI.Controls;
 
 namespace nUpdate.Dialogs
 {
@@ -37,19 +30,23 @@ namespace nUpdate.Dialogs
 
         private void UpdateErrorDialog_Load(object sender, EventArgs e)
         {
-            infoLabel.Text = InfoMessage;
+            this.infoLabel.Text = this.InfoMessage;
 
-            if (ErrorCode == 0)
-                errorCodeLabel.Text = "Errorcode: -";
+            if (this.ErrorCode == 0)
+            {
+                this.errorCodeLabel.Text = "Errorcode: -";
+            }
             else
-                errorCodeLabel.Text = String.Format("Errorcode: {0}", ErrorCode);
+            {
+                this.errorCodeLabel.Text = String.Format("Errorcode: {0}", this.ErrorCode);
+            }
 
-            errorMessageTextBox.Text = ErrorMessage;
+            this.errorMessageTextBox.Text = ErrorMessage;
 
-            closeButton.Focus();
+            this.closeButton.Focus();
 
-            iconPictureBox.Image = SystemIcons.Error.ToBitmap();
-            iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
+            this.iconPictureBox.Image = SystemIcons.Error.ToBitmap();
+            this.iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
             this.Icon = AppIcon;
             this.Text = Application.ProductName;
@@ -57,7 +54,7 @@ namespace nUpdate.Dialogs
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
     }

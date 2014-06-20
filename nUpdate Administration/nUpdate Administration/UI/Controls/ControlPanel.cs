@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace nUpdate.Administration.UI.Controls
 {
@@ -10,8 +7,8 @@ namespace nUpdate.Administration.UI.Controls
     {
         public ControlPanel()
         {
-            Paint += BottomPanel_Paint;
-            BackColor = SystemColors.Control;
+            this.Paint += BottomPanel_Paint;
+            this.BackColor = SystemColors.Control;
         }
 
         void BottomPanel_Paint(object sender, PaintEventArgs e)

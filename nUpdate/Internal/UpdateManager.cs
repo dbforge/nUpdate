@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using nUpdate.Core;
+using nUpdate.Core.Language;
+using nUpdate.Internal.Exceptions;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Reflection;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate;
-using nUpdate.Core;
-using nUpdate.Core.Language;
-using nUpdate.Dialogs;
-using nUpdate.Internal;
-using nUpdate.Internal.Exceptions;
-using nUpdate.Internal.UpdateEventArgs;
-using nUpdate.UI.Dialogs;
 
 namespace nUpdate.Internal
 {
@@ -58,12 +47,12 @@ namespace nUpdate.Internal
         /// <param name="currentVersion">The current version of the current application.</param>
         public UpdateManager(Uri updateInfoFileUrl, string publicKey, Version currentVersion)
         {
-            UpdateInfoFileUrl = updateInfoFileUrl;
-            PublicKey = publicKey;
-            CurrentVersion = currentVersion;
+            this.UpdateInfoFileUrl = updateInfoFileUrl;
+            this.PublicKey = publicKey;
+            this.CurrentVersion = currentVersion;
 
             // Create all necessary data
-            InitializeWorkaroundArea();
+            this.InitializeWorkaroundArea();
 
             //LanguageSerializer lang = LanguageSerializer.ReadXml(Properties.Resources.en);
         }
@@ -71,44 +60,24 @@ namespace nUpdate.Internal
         /// <summary>
         /// Returns if there were updates found.
         /// </summary>
-        public bool UpdatesFound
-        {
-            get;
-            private set;
-        }
+        public bool UpdatesFound { get; private set; }
 
         /// <summary>
         /// Sets the url of the update package.
         /// </summary>
-        private Uri UpdatePackageUrl
-        {
-            get;
-            set;
-        }
+        private Uri UpdatePackageUrl { get; set; }
 
         /// <summary>
         /// Sets the url of the info file.
         /// </summary>
-        public Uri UpdateInfoFileUrl
-        {
-            get;
-            set;
-        }
+        public Uri UpdateInfoFileUrl { get; set; }
 
         /// <summary>
         /// Sets if there is a proxy used.
         /// </summary>
-        public bool UseWebProxy
-        {
-            get;
-            set;
-        }
+        public bool UseWebProxy { get; set; }
 
-        public ProxySettings WebProxySettings
-        {
-            get;
-            set;
-        }
+        public ProxySettings WebProxySettings { get; set; }
 
         /// <summary>
         /// Sets the PublicKey for the signature.
@@ -195,39 +164,50 @@ namespace nUpdate.Internal
         /// Checks if all arguments have been given.
         /// </summary>
         private void CheckArguments() {
-
             // UpdateInfo-property
-            if (UpdateInfoFileUrl == null) {
+            if (UpdateInfoFileUrl == null)
+            {
                 throw new ArgumentException("The Property \"UpdateInfoFileUrl\" is not initialized.");
             }
 
-            if (!UpdateInfoFileUrl.ToString().EndsWith(".json")) {
+            if (!UpdateInfoFileUrl.ToString().EndsWith(".json"))
+            {
                 throw new FormatException("The info file is not a valid JSON-file.");
             }
 
             // PublicKey-property
-            if (String.IsNullOrEmpty(PublicKey))  {
+            if (String.IsNullOrEmpty(PublicKey))
+            {
                 throw new ArgumentException("The Property \"PublicKey\" is not initialized.");
             }
 
             // CurrentVersion-property
-            if (CurrentVersion == null) {
-                CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            if (this.CurrentVersion == null)
+            {
+                this.CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             }
 
-            if (Language == null)
+            if (this.Language == null)
+            { 
                 throw new ArgumentException("The Property \"Language\" is not initialized.");
+            }
         }
 
         /// <summary>
         /// Creates the necessary data for nUpdate.
         /// </summary>
-        private void InitializeWorkaroundArea() {
-
+        private void InitializeWorkaroundArea()
+        {
             if (!Directory.Exists(Path.Combine(Path.GetTempPath(), "nUpdate")))
             {
-                try { Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName)); }
-                catch (Exception ex) { throw new IOException(String.Format("The application's main folder could not be created. {0}", ex.Message)); }
+                try
+                {
+                    Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName));
+                }
+                catch (Exception ex)
+                {
+                    throw new IOException(String.Format("The application's main folder could not be created. {0}", ex.Message)); 
+                }
             }
         }
 
@@ -265,22 +245,34 @@ namespace nUpdate.Internal
 
         protected virtual void OnUpdateSearchStarted(Object sender, EventArgs e)
         {
-            if (UpdateSearchStarted != null) UpdateSearchStarted(sender, e);
+            if (this.UpdateSearchStarted != null)
+            {
+                this.UpdateSearchStarted(sender, e);
+            }
         }
 
         protected virtual void OnUpdateSearchFinished(bool updateFound)
         {
-            if (UpdateSearchFinished != null) UpdateSearchFinished(updateFound);
+            if (this.UpdateSearchFinished != null)
+            {
+                this.UpdateSearchFinished(updateFound);
+            }
         }
 
         protected virtual void OnUpdateSearchFailed(Exception exception)
         {
-            if (UpdateSearchFailed != null) UpdateSearchFailed(exception);
+            if (this.UpdateSearchFailed != null)
+            {
+                this.UpdateSearchFailed(exception);
+            }
         }
 
         protected virtual void OnPackageDownloadStarted(Object sender, EventArgs e)
         {
-            if (PackageDownloadStarted != null) PackageDownloadStarted(sender, e);
+            if (this.PackageDownloadStarted != null)
+            {
+                this.PackageDownloadStarted(sender, e);
+            }
         }
 
         public event DownloadProgressChangedEventHandler PackageDownloadProgressChanged
@@ -297,7 +289,10 @@ namespace nUpdate.Internal
 
         protected virtual void OnPackageDownloadFailed(Exception exception)
         {
-            if (PackageDownloadFailed != null) PackageDownloadFailed(exception);
+            if (this.PackageDownloadFailed != null)
+            {
+                this.PackageDownloadFailed(exception);
+            }
         }
 
 
@@ -323,7 +318,6 @@ namespace nUpdate.Internal
                     }
                 }
             }
-
             catch
             {
                 return -1;
@@ -338,11 +332,15 @@ namespace nUpdate.Internal
         private void RefreshCancellationTokens()
         {
             if (searchCancellationTokenSource != null)
+            {
                 searchCancellationTokenSource.Dispose();
+            }
             searchCancellationTokenSource = new CancellationTokenSource();
 
             if (downloadCancellationTokenSource != null)
+            {
                 downloadCancellationTokenSource.Dispose();
+            }
             downloadCancellationTokenSource = new CancellationTokenSource();
         }
 
@@ -353,31 +351,33 @@ namespace nUpdate.Internal
         /// <exception cref="NetworkException">There is no network connection available..</exception
         public void CheckForUpdates()
         {
-            RefreshCancellationTokens();
+            this.RefreshCancellationTokens();
 
             if (!ConnectionChecker.IsConnectionAvailable())
+            {
                 throw new NetworkException("No network connection available.");
+            }
 
             UpdateConfiguration updateConfig = new UpdateConfiguration();
-            UpdateResult result = new UpdateResult(updateConfig.LoadUpdateConfiguration(UpdateInfoFileUrl), 
-                CurrentVersion, IncludeAlpha, IncludeBeta);
+            UpdateResult result = new UpdateResult(updateConfig.LoadUpdateConfiguration(UpdateInfoFileUrl), CurrentVersion, IncludeAlpha, IncludeBeta);
 
-            if (!result.UpdatesFound) {
-                OnUpdateSearchFinished(false);
+            if (!result.UpdatesFound)
+            {
+                this.OnUpdateSearchFinished(false);
                 return;
             }
 
             updateConfig = result.NewestPackage;
-            UpdateVersion = new Version(updateConfig.UpdateVersion);
-            Changelog = updateConfig.Changelog;
-            Signature = Convert.FromBase64String(updateConfig.Signature);
-            UpdatePackageUrl = new Uri(updateConfig.UpdatePackageUrl);
+            this.UpdateVersion = new Version(updateConfig.UpdateVersion);
+            this.Changelog = updateConfig.Changelog;
+            this.Signature = Convert.FromBase64String(updateConfig.Signature);
+            this.UpdatePackageUrl = new Uri(updateConfig.UpdatePackageUrl);
             DevelopmentalStage developmentalStage = (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage), updateConfig.DevelopmentalStage);
-            MustUpdate = updateConfig.MustUpdate;
+            this.MustUpdate = updateConfig.MustUpdate;
 
             // Set the size
-            PackageSize = GetUpdatePackageSize(UpdatePackageUrl);
-            OnUpdateSearchFinished(true);
+            this.PackageSize = this.GetUpdatePackageSize(UpdatePackageUrl);
+            this.OnUpdateSearchFinished(true);
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace nUpdate.Internal
             var exception = task.Exception;
             if (exception != null && exception.InnerExceptions.Count > 0)
             {
-                OnUpdateSearchFailed(exception.InnerException);
+                this.OnUpdateSearchFailed(exception.InnerException);
             }
         }
 
@@ -422,15 +422,19 @@ namespace nUpdate.Internal
         /// <exception cref="WebException">The download process has failed because of an WebException.</exception>
         private void DownloadPackage()
         {
-            RefreshCancellationTokens();
+            this.RefreshCancellationTokens();
 
             if (!ConnectionChecker.IsConnectionAvailable())
+            {
                 throw new NetworkException("No network connection available.");
+            }
 
             if (String.IsNullOrEmpty(this.UpdatePackageUrl.ToString()))
+            {
                 throw new ArgumentException("UpdatePackageUrl");
+            }
 
-            OnPackageDownloadStarted(this, EventArgs.Empty);
+            this.OnPackageDownloadStarted(this, EventArgs.Empty);
 
             if (!Directory.Exists(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName)))
             {
@@ -440,11 +444,11 @@ namespace nUpdate.Internal
                 }
                 catch (Exception ex)
                 {
-                    OnPackageDownloadFailed(ex);
+                    this.OnPackageDownloadFailed(ex);
                 }
             }
 
-            packageDownloader.DownloadFileAsync(UpdatePackageUrl, Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip"));
+            this.packageDownloader.DownloadFileAsync(UpdatePackageUrl, Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip"));
         }
 
         /// <summary>
@@ -473,7 +477,7 @@ namespace nUpdate.Internal
             var exception = task.Exception;
             if (exception != null && exception.InnerExceptions.Count > 0)
             {
-                OnPackageDownloadFailed(exception.InnerException);
+                this.OnPackageDownloadFailed(exception.InnerException);
             }
         }
 
@@ -493,7 +497,7 @@ namespace nUpdate.Internal
                 ErrorHandler.ShowErrorDialog(0, "The update file is too big.", "nUpdate will not allow to install the update in order to save your RAM.");
                 try
                 {
-                    DeletePackage();
+                    this.DeletePackage();
                     return false;
                 }
                 catch
@@ -503,7 +507,9 @@ namespace nUpdate.Internal
                 }
             }
             else
+            { 
                 return true;
+            }
         }
 
         /// <summary>
@@ -515,28 +521,36 @@ namespace nUpdate.Internal
             string packageOfUpdate = Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip");
 
             if (!File.Exists(packageOfUpdate))
+            {
                 throw new FileNotFoundException("The update package to check could not be found." + Environment.NewLine + "The function call was invalid at this point.");
+            }
 
             if (Signature == null || Signature.Length <= 0)
+            {
                 throw new NullReferenceException("The signature is null or empty.");
+            }
 
             byte[] data = File.ReadAllBytes(packageOfUpdate); 
 
             RsaSignature rsa;
 
-            try { rsa = new RsaSignature(PublicKey); }
+            try
+            {
+                rsa = new RsaSignature(PublicKey);
+            }
             catch 
             {
-                DeletePackage();
+                this.DeletePackage();
                 return false; 
             }
 
             if (rsa.VerifyData(data, Signature))
+            {
                 return true;
-
+            }
             else
             {
-                DeletePackage();
+                this.DeletePackage();
                 return false;
             }
         }
@@ -551,13 +565,19 @@ namespace nUpdate.Internal
             string unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
 
             if (!Directory.Exists(unpackerDirectory))
+            {
                 Directory.CreateDirectory(unpackerDirectory);
+            }
 
             if (!File.Exists(unpackerZipPath))
+            {
                 File.WriteAllBytes(unpackerZipPath, Properties.Resources.Ionic_Zip);
+            }
 
             if (!File.Exists(unpackerAppPath))
+            {
                 File.WriteAllBytes(unpackerAppPath, Properties.Resources.nUpdate_UpdateInstaller);
+            }
 
             string unpackString = "Unpacking";
             string[] args = { Application.ProductName, unpackString };
@@ -587,7 +607,9 @@ namespace nUpdate.Internal
         {
             string packageFile = Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip");
             if (File.Exists(packageFile))
+            {
                 File.Delete(packageFile);
+            }
         }
     }
 }

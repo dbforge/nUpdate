@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -28,12 +23,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void InfoForm_Shown(object sender, EventArgs e)
         {
-            closeButton.Focus();
+            this.closeButton.Focus();
         }
 
         private void timSchieweLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

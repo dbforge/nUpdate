@@ -27,10 +27,9 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -139,8 +138,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public bool AlwaysShowExtension
         {
-            get { return GetAlwaysShowExt(); }
-            set { SetAlwaysShowExt(value); }
+            get { return this.GetAlwaysShowExt(); }
+            set { this.SetAlwaysShowExt(value); }
         }
 
 
@@ -149,8 +148,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Description
         {
-            get { return GetDescription(); }
-            set { SetDescription(value); }
+            get { return this.GetDescription(); }
+            set { this.SetDescription(value); }
         }
 
         /// <summary>
@@ -158,8 +157,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public EditFlags EditFlags
         {
-            get { return GetEditFlags(); }
-            set { SetEditFlags(value); }
+            get { return this.GetEditFlags(); }
+            set { this.SetEditFlags(value); }
         }
 
         /// <summary>
@@ -167,8 +166,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public ProgramIcon DefaultIcon
         {
-            get { return GetDefaultIcon(); }
-            set { SetDefaultIcon(value); }
+            get { return this.GetDefaultIcon(); }
+            set { this.SetDefaultIcon(value); }
         }
 
         /// <summary>
@@ -176,8 +175,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public ProgramVerb[] Verbs
         {
-            get { return GetVerbs(); }
-            set { SetVerbs(value); }
+            get { return this.GetVerbs(); }
+            set { this.SetVerbs(value); }
         }
 
         /// <summary>
@@ -185,7 +184,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string ProgID
         {
-            get { return progId; }
+            get { return this.progId; }
         }
 
         /// <summary>
@@ -204,7 +203,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                     RegistryKey key = root.OpenSubKey(this.progId);
 
                     if (key == null)
+                    {
                         return false;
+                    }
 
                 }
                 catch (Exception ex)
@@ -226,7 +227,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         public void Create()
         {
             if (this.Exists)
+            {
                 return;
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -240,7 +243,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns><see cref="ProgramAssociationInfo"/> instance referring to specified extension.</returns>
         public ProgramAssociationInfo Create(ProgramVerb verb)
         {
-            return Create(string.Empty, EditFlags.None, new ProgramVerb[] { verb });
+            return this.Create(string.Empty, EditFlags.None, new ProgramVerb[] { verb });
         }
 
         /// <summary>
@@ -250,7 +253,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns><see cref="ProgramAssociationInfo"/> instance referring to specified extension.</returns>
         public ProgramAssociationInfo Create(ProgramVerb[] verbs)
         {
-            return Create(string.Empty, EditFlags.None, verbs);
+            return this.Create(string.Empty, EditFlags.None, verbs);
         }
 
         /// <summary>
@@ -261,7 +264,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns><see cref="ProgramAssociationInfo"/> instance referring to specified extension.</returns>
         public ProgramAssociationInfo Create(string description, ProgramVerb verb)
         {
-            return Create(description, EditFlags.None, new ProgramVerb[] { verb });
+            return this.Create(description, EditFlags.None, new ProgramVerb[] { verb });
         }
 
         /// <summary>
@@ -272,7 +275,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns><see cref="ProgramAssociationInfo"/> instance referring to specified extension.</returns>
         public ProgramAssociationInfo Create(string description, ProgramVerb[] verbs)
         {
-            return Create(description, EditFlags.None, verbs);
+            return this.Create(description, EditFlags.None, verbs);
         }
 
         /// <summary>
@@ -284,7 +287,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns><see cref="ProgramAssociationInfo"/> instance referring to specified extension.</returns>
         public ProgramAssociationInfo Create(string description, EditFlags editFlags, ProgramVerb verb)
         {
-            return Create(description, editFlags, new ProgramVerb[] { verb });
+            return this.Create(description, editFlags, new ProgramVerb[] { verb });
         }
 
         /// <summary>
@@ -304,10 +307,14 @@ namespace nUpdate.Administration.Core.Application.Extension
             this.Create();
 
             if (description != string.Empty)
+            {
                 this.Description = description;
+            }
 
             if (editFlags != EditFlags.None)
+            {
                 this.EditFlags = editFlags;
+            }
 
             this.Verbs = verbs;
 
@@ -324,7 +331,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected bool GetAlwaysShowExt()
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -346,15 +355,17 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetAlwaysShowExt(bool value)
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             if (value)
             {
-                registryWrapper.Write(this.progId, "AlwaysShowExt", string.Empty);
+                this.registryWrapper.Write(this.progId, "AlwaysShowExt", string.Empty);
             }
             else
             {
-                registryWrapper.Delete(this.progId, "AlwaysShowExt");
+                this.registryWrapper.Delete(this.progId, "AlwaysShowExt");
             }
 
             ShellNotification.NotifyOfChange();
@@ -367,12 +378,16 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected string GetDescription()
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(this.progId, string.Empty);
+            object val = this.registryWrapper.Read(this.progId, string.Empty);
 
             if (val == null)
+            {
                 return string.Empty;
+            }
 
             return val.ToString();
         }
@@ -384,9 +399,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetDescription(string description)
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            registryWrapper.Write(this.progId, string.Empty, description);
+            this.registryWrapper.Write(this.progId, string.Empty, description);
 
             ShellNotification.NotifyOfChange();
         }
@@ -401,7 +418,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!this.Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = registryWrapper.Read(this.progId, "EditFlags");
+            object val = this.registryWrapper.Read(this.progId, "EditFlags");
 
             if (val == null)
             {
@@ -410,7 +427,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (val is byte[])
             {
                 int num;
-                if (TryGetInt(val as byte[], out num))
+                if (this.TryGetInt(val as byte[], out num))
                 {
                     val = num;
                 }
@@ -439,10 +456,12 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetEditFlags(EditFlags flags)
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             //registryWrapper.Write(info.progId, "EditFlags", (uint)flags);
-            registryWrapper.Write(this.progId, "EditFlags", flags);
+            this.registryWrapper.Write(this.progId, "EditFlags", flags);
 
             ShellNotification.NotifyOfChange();
         }
@@ -455,12 +474,16 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected ProgramIcon GetDefaultIcon()
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
-            object val = registryWrapper.Read(this.progId + "\\DefaultIcon", "");
+            object val = this.registryWrapper.Read(this.progId + "\\DefaultIcon", "");
 
             if (val == null)
+            {
                 return ProgramIcon.None;
+            }
 
             return ProgramIcon.Parse(val.ToString());
         }
@@ -472,11 +495,13 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetDefaultIcon(ProgramIcon icon)
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             if (icon != ProgramIcon.None)
             {
-                registryWrapper.Write(this.progId, "DefaultIcon", icon.ToString());
+                this.registryWrapper.Write(this.progId, "DefaultIcon", icon.ToString());
 
                 ShellNotification.NotifyOfChange();
             }
@@ -489,7 +514,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected ProgramVerb[] GetVerbs()
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -505,11 +532,15 @@ namespace nUpdate.Administration.Core.Application.Extension
                 {
                     RegistryKey verb = key.OpenSubKey(s);
                     if (verb == null)
+                    {
                         continue;
+                    }
 
                     verb = verb.OpenSubKey("command");
                     if (verb == null)
+                    {
                         continue;
+                    }
 
                     string command = (string)verb.GetValue("", "", RegistryValueOptions.DoNotExpandEnvironmentNames);
 
@@ -532,7 +563,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void SetVerbs(ProgramVerb[] verbs)
         {
             if (!this.Exists)
+            {
                 throw new Exception("Extension does not exist");
+            }
 
             RegistryKey root = Registry.ClassesRoot;
 
@@ -617,7 +650,9 @@ namespace nUpdate.Administration.Core.Application.Extension
             key = key.OpenSubKey("shell", true);
 
             if (key == null)
+            {
                 throw new RegistryException("Shell key not found");
+            }
 
             string[] subkeynames = key.GetSubKeyNames();
             foreach (string s in subkeynames)
@@ -659,7 +694,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="verb">Single <see cref="ProgramVerb"/> that contains supported verb.</param>
         public void AddVerb(ProgramVerb verb)
         {
-            AddVerbInternal(verb);
+            this.AddVerbInternal(verb);
         }
 
         /// <summary>
@@ -669,9 +704,11 @@ namespace nUpdate.Administration.Core.Application.Extension
         public void RemoveVerb(ProgramVerb verb)
         {
             if (verb == null)
+            {
                 throw new NullReferenceException();
+            }
 
-            RemoveVerb(verb.Name);
+            this.RemoveVerb(verb.Name);
         }
 
         /// <summary>
@@ -680,7 +717,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="name">Name of verb to remove.</param>
         public void RemoveVerb(string name)
         {
-            RemoveVerbInternal(name);
+            this.RemoveVerbInternal(name);
         }
 
         /// <summary>

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
@@ -72,12 +65,15 @@ namespace nUpdate.Administration.UI.Controls
             e.Graphics.Clear(Color.White);
 
             if (e.State.HasFlag(DrawItemState.Selected))
-            { ren = new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW", (int)ListViewParts.LVP_GROUPHEADER, (int)GroupHeaderStates.LVGH_OPENSELECTEDNOTFOCUSEDHOT)); }
-
+            {
+                this.ren = new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW", (int)ListViewParts.LVP_GROUPHEADER, (int)GroupHeaderStates.LVGH_OPENSELECTEDNOTFOCUSEDHOT));
+            }
             else
-            { ren = new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW", (int)ListViewParts.LVP_GROUPHEADER, (int)GroupHeaderStates.LVGH_OPEN)); }
+            {
+                this.ren = new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW", (int)ListViewParts.LVP_GROUPHEADER, (int)GroupHeaderStates.LVGH_OPEN));
+            }
 
-            ren.DrawBackground(e.Graphics, e.Bounds);
+            this.ren.DrawBackground(e.Graphics, e.Bounds);
 
             if (this.Items.Count != 0)
             {
@@ -91,9 +87,10 @@ namespace nUpdate.Administration.UI.Controls
                     e.Graphics.DrawString(itm.ItemText, this.Font, new SolidBrush(this.ForeColor), 20, e.Bounds.Y + 43);
                     e.Graphics.DrawImage(itm.HeaderImage, 20, e.Bounds.Y + 10);
                 }
-
                 else
-                    this.Items.RemoveAt(e.Index); 
+                {
+                    this.Items.RemoveAt(e.Index);
+                }
             }
         }
     }
@@ -102,10 +99,10 @@ namespace nUpdate.Administration.UI.Controls
     {
         public string HeaderText { get; set; }
         public string Description { get; set; }
-        public string ItemText { get; set; } 
+        public string ItemText { get; set; }
         public Image HeaderImage { get; set; }
 
-        Color headerColor = SystemColors.ControlText;
+        private Color headerColor = SystemColors.ControlText;
 
         /// <summary>
         /// Sets the header color.
@@ -114,20 +111,26 @@ namespace nUpdate.Administration.UI.Controls
         {
             get
             {
-                return headerColor;
+                return this.headerColor;
             }
 
             set
             {
-                headerColor = value;
+                this.headerColor = value;
             }
         }
 
         public static ActionListItem TryParse(object source)
         {
             ActionListItem dest = null;
-            try { dest = (ActionListItem)source; }
-            catch { }
+            try
+            {
+                dest = (ActionListItem)source;
+            }
+            catch
+            {
+            }
+
             return dest;
         }
 

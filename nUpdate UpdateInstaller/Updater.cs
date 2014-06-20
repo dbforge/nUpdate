@@ -1,15 +1,11 @@
 ﻿using nUpdate.Client.GuiInterface;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -24,9 +20,11 @@ namespace nUpdate.UpdateInstaller
             {
                 GuiFilename = ConfigurationManager.AppSettings["UpdaterGuiAssembly"];
                 if (String.IsNullOrWhiteSpace(GuiFilename))
+                { 
                     GuiFilename = DefaultUpdaterGui;
+                }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 GuiFilename = DefaultUpdaterGui;
             }
@@ -65,7 +63,7 @@ namespace nUpdate.UpdateInstaller
 
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
-            p.StartInfo.FileName = Program.ApplicationExecutablePath; 
+            p.StartInfo.FileName = Program.ApplicationExecutablePath;
             p.Start();
         }
 
@@ -76,13 +74,13 @@ namespace nUpdate.UpdateInstaller
                 var assembly = Assembly.LoadFrom(GuiFilename);
 
                 var validTypes = assembly.GetTypes().Where(x => typeof(IProgressReporter).IsAssignableFrom(x)).ToList();
-                if(validTypes.Count > 0)
+                if (validTypes.Count > 0)
                 {
                     try
                     {
                         return (IProgressReporter)Activator.CreateInstance(validTypes.First());
                     }
-                    catch(Exception) //No parameterless constructor
+                    catch (Exception) //No parameterless constructor
                     {
                         return (IProgressReporter)Activator.CreateInstance(typeof(MainForm)); // Show the default GUI
                     }

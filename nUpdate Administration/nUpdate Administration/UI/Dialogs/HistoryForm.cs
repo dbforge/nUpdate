@@ -1,32 +1,21 @@
-﻿using System;
+﻿using nUpdate.Administration.UI.Controls;
+using nUpdate.Administration.UI.Popups;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using nUpdate.Administration;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.UI.Dialogs;
-using nUpdate.Administration.UI.Popups;
-using nUpdate.Administration.Core.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class HistoryForm : BaseForm
     {
-        Stack<ActionListItem> historyItemsStack = new Stack<ActionListItem>();
+        private Stack<ActionListItem> historyItemsStack = new Stack<ActionListItem>();
 
         /// <summary>
         /// Sets the name of the project.
         /// </summary>
-        public string ProjectName
-        {
-            get;
-            set;
-        }
+        public string ProjectName { get; set; }
 
         public HistoryForm()
         {
@@ -35,12 +24,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void HistoryForm_Load(object sender, EventArgs e)
         {
-            string logFilePath = Path.Combine(Program.Path, "Projects", ProjectName, "log.log");
+            string logFilePath = Path.Combine(Program.Path, "Projects", this.ProjectName, "log.log");
             string[] existingLog = null;
 
             try
             {
-                existingLog = File.ReadAllLines(Path.Combine(Program.Path, "Projects", ProjectName, "log.log"));
+                existingLog = File.ReadAllLines(Path.Combine(Program.Path, "Projects", this.ProjectName, "log.log"));
             }
             catch (Exception ex)
             {
@@ -54,7 +43,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 string[] parts = existingLog[i].Split('-');
                 if (parts == null || parts.Length != 3)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the history.", String.Format("The arguments for line {0} are invalid.", i +1), PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the history.", String.Format("The arguments for line {0} are invalid.", i + 1), PopupButtons.OK);
                     continue;
                 }
 
@@ -62,7 +51,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 string packageStatus = parts[1];
                 string pathVersion = parts[2];
 
-                string fullPath = Path.Combine(Program.Path, "Projects", ProjectName, "Packages", pathVersion);
+                string fullPath = Path.Combine(Program.Path, "Projects", this.ProjectName, "Packages", pathVersion);
 
                 ActionListItem historyItem = new ActionListItem();
 
@@ -85,30 +74,30 @@ namespace nUpdate.Administration.UI.Dialogs
                         historyItem.HeaderImage = Properties.Resources.Edit;
                         break;
                 }
-                
+
                 historyItem.ItemText = String.Format("{0} - {1}", time, Path.GetFileName(fullPath));
-                historyItemsStack.Push(historyItem);
+                this.historyItemsStack.Push(historyItem);
             }
 
-            foreach (ActionListItem item in historyItemsStack)
+            foreach (ActionListItem item in this.historyItemsStack)
             {
-                historyList.Items.Add(item);
+                this.historyList.Items.Add(item);
             }
 
-            if (int.Equals(historyList.Items.Count, 0))
+            if (int.Equals(this.historyList.Items.Count, 0))
             {
-                openButton.Enabled = false;
-                showDetailsButton.Enabled = false;
-                clearLogButton.Enabled = false;
-                noHistoryLabel.Visible = true;
+                this.openButton.Enabled = false;
+                this.showDetailsButton.Enabled = false;
+                this.clearLogButton.Enabled = false;
+                this.noHistoryLabel.Visible = true;
             }
 
-            Text = String.Format(Text, ProjectName);
+            this.Text = String.Format(this.Text, this.ProjectName);
         }
 
         private void openButton_Click(object sender, EventArgs e)
         {
-            ActionListItem selectedItem = ActionListItem.TryParse(historyList.SelectedItem);
+            ActionListItem selectedItem = ActionListItem.TryParse(this.historyList.SelectedItem);
             if (selectedItem != null)
             {
                 string descriptionPath = selectedItem.Description.Split('-').Last().Trim().Substring(1);
@@ -116,7 +105,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 bool isValidWindowsPath = true;
 
                 if (!Directory.Exists(descriptionPath))
+                {
                     isValidWindowsPath = false;
+                }
 
                 switch (isValidWindowsPath)
                 {
@@ -136,5 +127,5 @@ namespace nUpdate.Administration.UI.Dialogs
 
             Close();
         }
-    } 
+    }
 }

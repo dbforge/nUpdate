@@ -1,16 +1,10 @@
 ﻿using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.UI.Popups;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Security;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -24,39 +18,39 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void FtpEditForm_Load(object sender, EventArgs e)
         {
-            Text += String.Format("{0} - nUpdate Administration 1.1.0.0", Project.Name);
+            this.Text += String.Format("{0} - nUpdate Administration 1.1.0.0", Project.Name);
 
-            modeComboBox.SelectedIndex = 0;
-            protocolComboBox.SelectedIndex = 0;
+            this.modeComboBox.SelectedIndex = 0;
+            this.protocolComboBox.SelectedIndex = 0;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if (!ValidationManager.ValidateDialog(this, directoryTextBox))
+            if (!ValidationManager.ValidateDialog(this, this.directoryTextBox))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.", "All fields need to have a value.", PopupButtons.OK);
                 return;
             }
 
-            Project.FtpHost = adressTextBox.Text;
-            Project.FtpPort = portTextBox.Text;
+            this.Project.FtpHost = this.adressTextBox.Text;
+            this.Project.FtpPort = this.portTextBox.Text;
             if (Properties.Settings.Default.SaveCredentials)
             {
-                Project.FtpUsername = userTextBox.Text;
-                Project.FtpPassword = passwordTextBox.Text;
+                this.Project.FtpUsername = this.userTextBox.Text;
+                this.Project.FtpPassword = this.passwordTextBox.Text;
             }
 
-            bool usePassive = modeComboBox.SelectedIndex.Equals(0);
-            Project.FtpUsePassiveMode = usePassive.ToString();
-            Project.FtpProtocol = protocolComboBox.GetItemText(protocolComboBox.SelectedItem);
-            Project.FtpDirectory = directoryTextBox.Text;
+            bool usePassive = this.modeComboBox.SelectedIndex.Equals(0);
+            this.Project.FtpUsePassiveMode = usePassive.ToString();
+            this.Project.FtpProtocol = this.protocolComboBox.GetItemText(this.protocolComboBox.SelectedItem);
+            this.Project.FtpDirectory = this.directoryTextBox.Text;
 
-            string ftpInfoFile = Path.Combine(Program.Path, "Projects", Project.Name, "ftp.txt");
+            string ftpInfoFile = Path.Combine(Program.Path, "Projects", this.Project.Name, "ftp.txt");
 
             try
             {
@@ -65,10 +59,10 @@ namespace nUpdate.Administration.UI.Dialogs
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Failed to save FTP-data.", ex, PopupButtons.OK);
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
 
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
@@ -88,15 +82,19 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            FtpProtocol _protocol = FtpProtocol.NormalFtp;
-            if (int.Equals(modeComboBox.SelectedIndex, 0))
-                _protocol = FtpProtocol.NormalFtp;
+            FtpProtocol protocol = FtpProtocol.NormalFtp;
+            if (int.Equals(this.modeComboBox.SelectedIndex, 0))
+            {
+                protocol = FtpProtocol.NormalFtp;
+            }
             else
-                _protocol = FtpProtocol.SecureFtp;
+            {
+                protocol = FtpProtocol.SecureFtp;
+            }
 
             SecureString securePwd = new SecureString();
 
-            foreach (char sign in passwordTextBox.Text)
+            foreach (char sign in this.passwordTextBox.Text)
             {
                 securePwd.AppendChar(sign);
             }
@@ -104,15 +102,17 @@ namespace nUpdate.Administration.UI.Dialogs
             var searchForm = new DirectorySearchForm()
             {
                 ProjectName = this.Project.Name,
-                Host = adressTextBox.Text,
-                Port = int.Parse(portTextBox.Text),
-                UsePassiveMode = modeComboBox.SelectedIndex.Equals(0),
-                Username = userTextBox.Text,
+                Host = this.adressTextBox.Text,
+                Port = int.Parse(this.portTextBox.Text),
+                UsePassiveMode = this.modeComboBox.SelectedIndex.Equals(0),
+                Username = this.userTextBox.Text,
                 Password = securePwd,
-                Protocol = _protocol,
+                Protocol = protocol,
             };
             if (searchForm.ShowDialog() == DialogResult.OK)
-                directoryTextBox.Text = searchForm.SelectedDirectory;
+            {
+                this.directoryTextBox.Text = searchForm.SelectedDirectory;
+            }
 
             searchForm.Close();
         }
@@ -120,7 +120,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private void portTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ("1234567890\b".IndexOf(e.KeyChar.ToString()) < 0)
+            {
                 e.Handled = true;
+            }
         }
     }
 }

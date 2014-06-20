@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Windows.Forms;
-using nUpdate.Administration.Core;
+﻿using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Update;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using nUpdate.Administration.UI.Popups;
-using System.Threading.Tasks;
-using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class DirectorySearchForm : BaseForm
     {
-        bool allowCancel;
-        bool isGettingRootData = true;
-        bool isSetByUser = false;
+        private bool allowCancel;
+        private bool isGettingRootData = true;
+        private bool isSetByUser = false;
 
         private List<TreeNode> listedNodes = new List<TreeNode>();
         private Navigator<TreeNode> nav = new Navigator<TreeNode>();
-        FtpWebRequest request = null;
+        private FtpWebRequest request = null;
 
         public DirectorySearchForm()
         {
@@ -38,74 +32,42 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         /// The directory selected.
         /// </summary>
-        public string SelectedDirectory
-        {
-            get;
-            set;
-        }
+        public string SelectedDirectory { get; set; }
 
         /// <summary>
         /// The name of the project.
         /// </summary>
-        public string ProjectName
-        {
-            get;
-            set;
-        }
+        public string ProjectName { get; set; }
 
         /// <summary>
         /// The host of the FTP-server.
         /// </summary>
-        public string Host
-        {
-            get;
-            set;
-        }
+        public string Host { get; set; }
 
         /// <summary>
         /// The port of the FTP-server.
         /// </summary>
-        public int Port
-        {
-            get;
-            set;
-        }
+        public int Port { get; set; }
 
         /// <summary>
         /// The username for the FTP's credentials.
         /// </summary>
-        public string Username
-        {
-            get;
-            set;
-        }
+        public string Username { get; set; }
 
         /// <summary>
         /// The password for the FTP's credentials.
         /// </summary>
-        public SecureString Password
-        {
-            get;
-            set;
-        }
+        public SecureString Password { get; set; }
 
         /// <summary>
         /// Sets if passive mode should be used.
         /// </summary>
-        public bool UsePassiveMode
-        {
-            get;
-            set;
-        }
+        public bool UsePassiveMode { get; set; }
 
         /// <summary>
         /// Sets the protocol for the request.
         /// </summary>
-        public FtpProtocol Protocol
-        {
-            get;
-            set;
-        }
+        public FtpProtocol Protocol { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MARGINS
@@ -120,8 +82,7 @@ namespace nUpdate.Administration.UI.Dialogs
         public static extern bool DwmIsCompositionEnabled();
 
         [DllImport("dwmapi.dll")]
-        public extern static int DwmExtendFrameIntoClientArea(IntPtr hwnd,
-                                 ref MARGINS margin);
+        public extern static int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margin);
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
@@ -132,10 +93,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Graphics.Clear(Color.Black);
 
                 Rectangle clientArea = new Rectangle(
-                        margins.Left,
-                        margins.Top,
-                        this.ClientRectangle.Width - margins.Left - margins.Right,
-                        this.ClientRectangle.Height - margins.Top - margins.Bottom
+                        this.margins.Left,
+                        this.margins.Top,
+                        this.ClientRectangle.Width - this.margins.Left - this.margins.Right,
+                        this.ClientRectangle.Height - this.margins.Top - this.margins.Bottom
                     );
                 Brush b = new SolidBrush(this.BackColor);
                 e.Graphics.FillRectangle(b, clientArea);
@@ -145,13 +106,13 @@ namespace nUpdate.Administration.UI.Dialogs
         private MARGINS margins;
         private void DirectorySearchForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format("Set directory - {0} - nUpdate Administration 1.1.0.0", ProjectName);
+            this.Text = String.Format("Set directory - {0} - nUpdate Administration 1.1.0.0", ProjectName);
 
             if (DwmIsCompositionEnabled())
             {
-                margins = new MARGINS();
-                margins.Top = 40;
-                DwmExtendFrameIntoClientArea(this.Handle, ref margins);
+                this.margins = new MARGINS();
+                this.margins.Top = 40;
+                DwmExtendFrameIntoClientArea(this.Handle, ref this.margins);
             }
         }
 
@@ -166,8 +127,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     var credentialsForm = new CredentialsForm();
                     if (credentialsForm.ShowDialog() == DialogResult.OK)
                     {
-                        Username = credentialsForm.Username;
-                        Password = credentialsForm.Password;
+                        this.Username = credentialsForm.Username;
+                        this.Password = credentialsForm.Password;
                     }
                     else
                     {
@@ -177,45 +138,49 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else
             {
-                request.Credentials = new NetworkCredential(Username, Password);
+                this.request.Credentials = new NetworkCredential(this.Username, this.Password);
             }
 
-            if (mustCancel) {
-
-                allowCancel = true;
-                DialogResult = DialogResult.Cancel;
-                Close();
+            if (mustCancel)
+            {
+                this.allowCancel = true;
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
 
                 return; // Exit this void
             }
 
             var node = serverDataTreeView.Nodes[0];
-            Thread thread = new Thread(() => LoadListAsync(node));
+            Thread thread = new Thread(() => this.LoadListAsync(node));
             thread.Start();
         }
 
         private void DirectorySearchForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!allowCancel)
+            if (!this.allowCancel)
+            {
                 e.Cancel = true;
+            }
         }
 
         private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (serverDataTreeView.SelectedNode.Text.Equals("Server") && serverDataTreeView.SelectedNode.Index.Equals(0))
-                directoryTextBox.Text = "/";
+            if (this.serverDataTreeView.SelectedNode.Text.Equals("Server") && this.serverDataTreeView.SelectedNode.Index.Equals(0))
+            {
+                this.directoryTextBox.Text = "/";
+            }
             else
             {
-                var node = serverDataTreeView.SelectedNode;
-                if (!listedNodes.Contains(node))
+                var node = this.serverDataTreeView.SelectedNode;
+                if (!this.listedNodes.Contains(node))
                 {
-                    Thread thread = new Thread(() => LoadListAsync(node));
+                    Thread thread = new Thread(() => this.LoadListAsync(node));
                     thread.Start();
                 }
 
-                directoryTextBox.Text = String.Empty;
+                this.directoryTextBox.Text = String.Empty;
 
-                IList<TreeNode> ancestorList = GetAncestors(node, x => x.Parent).ToList();
+                IList<TreeNode> ancestorList = this.GetAncestors(node, x => x.Parent).ToList();
                 Stack<TreeNode> parents = new Stack<TreeNode>();
                 foreach (TreeNode nodeParent in ancestorList)
                 {
@@ -225,25 +190,41 @@ namespace nUpdate.Administration.UI.Dialogs
                 foreach (TreeNode parent in parents)
                 {
                     if (parent.Index.Equals(0) && parent.Text.Equals("Server"))
-                        directoryTextBox.Text = String.Format("/{0}/", node.Text);
+                    {
+                        this.directoryTextBox.Text = String.Format("/{0}/", node.Text);
+                    }
                     else
-                        directoryTextBox.Text = String.Format("/{0}/{1}/", parent.Text, node.Text.Split(new char[] { '/' }).Last());
+                    {
+                        this.directoryTextBox.Text = String.Format("/{0}/{1}/", parent.Text, node.Text.Split(new char[] { '/' }).Last());
+                    }
                 }
             }
-            
-            if (isSetByUser)
-                nav.Set(e.Node);
-            else
-                isSetByUser = true;
 
-            if (!nav.CanGoBack)
-                backButton.Enabled = false;
-            if (nav.CanGoBack)
-                backButton.Enabled = true;
-            if (!nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (nav.CanGoForward)
-                forwardButton.Enabled = true;
+            if (this.isSetByUser)
+            {
+                this.nav.Set(e.Node);
+            }
+            else
+            {
+                this.isSetByUser = true;
+            }
+
+            if (!this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = false;
+            }
+            if (this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = true;
+            }
+            if (!this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = false;
+            }
+            if (this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = true;
+            }
         }
 
         /// <summary>
@@ -251,8 +232,10 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private IEnumerable<TItem> GetAncestors<TItem>(TItem item, Func<TItem, TItem> getParentFunc)
         {
-            if (ReferenceEquals(item, null)) 
+            if (ReferenceEquals(item, null))
+            {
                 yield break;
+            }
 
             for (TItem curItem = getParentFunc(item); !ReferenceEquals(curItem, null); curItem = getParentFunc(curItem))
             {
@@ -263,12 +246,16 @@ namespace nUpdate.Administration.UI.Dialogs
         private FtpWebRequest CreateRequest(string directory)
         {
             if (directory.Equals(String.Empty))
-                request = (FtpWebRequest)WebRequest.Create(String.Format("ftp://{0}:{1}", Host, Port));
+            {
+                this.request = (FtpWebRequest)WebRequest.Create(String.Format("ftp://{0}:{1}", this.Host, this.Port));
+            }
             else
-                request = (FtpWebRequest)WebRequest.Create(String.Format("ftp://{0}:{1}/{2}", Host, Port, directory));
+            {
+                this.request = (FtpWebRequest)WebRequest.Create(String.Format("ftp://{0}:{1}/{2}", this.Host, this.Port, directory));
+            }
 
-            request.Credentials = new NetworkCredential(Username, Password);
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
+            this.request.Credentials = new NetworkCredential(this.Username, this.Password);
+            this.request.Method = WebRequestMethods.Ftp.ListDirectory;
 
             return request;
         }
@@ -276,7 +263,7 @@ namespace nUpdate.Administration.UI.Dialogs
         public string[] ListDirectories(string directory)
         {
             var list = new List<string>();
-            var request = CreateRequest(directory);
+            var request = this.CreateRequest(directory);
 
             using (var response = (FtpWebResponse)request.GetResponse())
             {
@@ -296,18 +283,18 @@ namespace nUpdate.Administration.UI.Dialogs
             return list.ToArray();
         }
 
-        FtpWebResponse response = null;
+        private FtpWebResponse response = null;
 
         private void LoadListAsync(TreeNode currentNode)
         {
-            allowCancel = false;
+            this.allowCancel = false;
 
             Invoke(new Action(() =>
             {
-                serverDataTreeView.Enabled = false;
-                loadPictureBox.Visible = true;
-                cancelButton.Enabled = false;
-                continueButton.Enabled = false;
+                this.serverDataTreeView.Enabled = false;
+                this.loadPictureBox.Visible = true;
+                this.cancelButton.Enabled = false;
+                this.continueButton.Enabled = false;
             }));
 
             string[] dirs;
@@ -315,10 +302,14 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 if (currentNode.Index.Equals(0) && currentNode.Text.Equals("Server"))
+                {
                     dirs = ListDirectories(String.Empty);
+                }
 
                 else
+                {
                     dirs = ListDirectories(currentNode.Text);
+                }
 
                 foreach (string dir in dirs)
                 {
@@ -327,7 +318,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         if (Path.GetExtension(dir).Equals(String.Empty) && !dir.EndsWith("."))
                         {
                             //if (currentNode.Text == "Server" && currentNode.Index == 0)
-                                currentNode.Nodes.Add(new TreeNode(dir, 1, 1));
+                            currentNode.Nodes.Add(new TreeNode(dir, 1, 1));
                             //else
                             //    currentNode.Nodes.Add(new TreeNode(String.Format("{0}/{1}", currentNode.Text, dir), 1, 1));
                         }
@@ -335,136 +326,153 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 Invoke(new Action(() =>
-                    {
-                        serverDataTreeView.Enabled = true;
-                        loadPictureBox.Visible = false;
-                        cancelButton.Enabled = true;
-                        continueButton.Enabled = true;
-                    }));
+                {
+                    this.serverDataTreeView.Enabled = true;
+                    this.loadPictureBox.Visible = false;
+                    this.cancelButton.Enabled = true;
+                    this.continueButton.Enabled = true;
+                }));
 
-                isGettingRootData = false;
-                allowCancel = true;
+                this.isGettingRootData = false;
+                this.allowCancel = true;
 
-                listedNodes.Add(currentNode);
+                this.listedNodes.Add(currentNode);
             }
 
             catch (Exception ex)
             {
-                allowCancel = true;
+                this.allowCancel = true;
                 if (ex.GetType() == typeof(WebException))
                 {
-                    response = (FtpWebResponse)(ex as WebException).Response;
-                    if (response.StatusCode == FtpStatusCode.NotLoggedIn)
+                    this.response = (FtpWebResponse)(ex as WebException).Response;
+                    if (this.response.StatusCode == FtpStatusCode.NotLoggedIn)
                     {
-                        if (isGettingRootData)
+                        if (this.isGettingRootData)
                         {
                             Invoke(new Action(() =>
-                                {
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while listing server-data.", "The login credentials are wrong.", PopupButtons.OK);
-                                    Close();
-                                }));
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while listing server-data.", "The login credentials are wrong.", PopupButtons.OK);
+                                this.Close();
+                            }));
                         }
 
                         else
                         {
                             Invoke(new Action(() =>
                             {
-                                serverDataTreeView.Enabled = true;
-                                loadPictureBox.Visible = false;
-                                cancelButton.Enabled = true;
-                                continueButton.Enabled = true;
+                                this.serverDataTreeView.Enabled = true;
+                                this.loadPictureBox.Visible = false;
+                                this.cancelButton.Enabled = true;
+                                this.continueButton.Enabled = true;
                             }));
                         }
                     }
-
                     else
                     {
                         Invoke(new Action(() =>
-                            {
-                                if (isGettingRootData)
-                                {
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while listing server-data.", ex, PopupButtons.OK);
-                                    Close();
-                                }
-
-                                else
-                                {
-                                    Invoke(new Action(() =>
-                                    {
-                                        serverDataTreeView.Enabled = true;
-                                        loadPictureBox.Visible = false;
-                                        cancelButton.Enabled = true;
-                                        continueButton.Enabled = true;
-                                    }));
-                                }
-                            }));
-                    }
-                }
-
-                else
-                {
-                    Invoke(new Action(() =>
                         {
-                            if (isGettingRootData)
+                            if (this.isGettingRootData)
                             {
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while listing server-data.", ex, PopupButtons.OK);
-                                Close();
+                                this.Close();
                             }
                             else
                             {
                                 Invoke(new Action(() =>
                                 {
-                                    serverDataTreeView.Enabled = true;
-                                    loadPictureBox.Visible = false;
-                                    cancelButton.Enabled = true;
-                                    continueButton.Enabled = true;
+                                    this.serverDataTreeView.Enabled = true;
+                                    this.loadPictureBox.Visible = false;
+                                    this.cancelButton.Enabled = true;
+                                    this.continueButton.Enabled = true;
                                 }));
                             }
                         }));
+                    }
+                }
+                else
+                {
+                    Invoke(new Action(() =>
+                    {
+                        if (this.isGettingRootData)
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while listing server-data.", ex, PopupButtons.OK);
+                            this.Close();
+                        }
+                        else
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                this.serverDataTreeView.Enabled = true;
+                                this.loadPictureBox.Visible = false;
+                                this.cancelButton.Enabled = true;
+                                this.continueButton.Enabled = true;
+                            }));
+                        }
+                    }));
                 }
             }
         }
 
         private void continueButton_Click(object sender, EventArgs e)
         {
-            SelectedDirectory = directoryTextBox.Text;
-            DialogResult = DialogResult.OK;
+            this.SelectedDirectory = this.directoryTextBox.Text;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            isSetByUser = false;
+            this.isSetByUser = false;
 
-            if (!nav.CanGoBack)
-                backButton.Enabled = false;
-            if (nav.CanGoBack) 
-                backButton.Enabled = true;
-            if (!nav.CanGoForward) 
-                forwardButton.Enabled = false;
-            if (nav.CanGoForward) 
-                forwardButton.Enabled = true;
+            if (!this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = false;
+            }
+            if (this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = true;
+            }
+            if (!this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = false;
+            }
+            if (this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = true;
+            }
 
-            nav.Back();
-            if (nav.Current != null) 
-                serverDataTreeView.SelectedNode = nav.Current;
+            this.nav.Back();
+            if (this.nav.Current != null)
+            {
+                this.serverDataTreeView.SelectedNode = this.nav.Current;
+            }
         }
 
         private void forwardButton_Click(object sender, EventArgs e)
         {
-            isSetByUser = false;
+            this.isSetByUser = false;
 
-            if (!nav.CanGoBack)
-                backButton.Enabled = false;
-            if (nav.CanGoBack)
-                backButton.Enabled = true;
-            if (!nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (nav.CanGoForward)
-                forwardButton.Enabled = true;
+            if (!this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = false;
+            }
+            if (this.nav.CanGoBack)
+            {
+                this.backButton.Enabled = true;
+            }
+            if (!this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = false;
+            }
+            if (this.nav.CanGoForward)
+            {
+                this.forwardButton.Enabled = true;
+            }
 
-            nav.Forward();
-            if (nav.Current != null)
-                serverDataTreeView.SelectedNode = nav.Current;
+            this.nav.Forward();
+            if (this.nav.Current != null)
+            {
+                this.serverDataTreeView.SelectedNode = this.nav.Current;
+            }
         }
     }
 }

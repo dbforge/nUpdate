@@ -28,8 +28,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -43,7 +41,6 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public RegistryException()
         {
-
         }
 
         /// <summary>
@@ -53,8 +50,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         public RegistryException(string message)
             : base(message)
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the ApplicationException class with a specified error message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
@@ -63,7 +60,6 @@ namespace nUpdate.Administration.Core.Application.Extension
         public RegistryException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
     }
 }

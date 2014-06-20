@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration
@@ -26,8 +23,8 @@ namespace nUpdate.Administration
         [Localizable(true)]
         public string Cue
         {
-            get { return mCue; }
-            set { mCue = value; updateCue(); }
+            get { return this.mCue; }
+            set { this.mCue = value; this.updateCue(); }
         }
 
         private void updateCue()
@@ -40,7 +37,7 @@ namespace nUpdate.Administration
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            updateCue();
+            this.updateCue();
         }
         private string mCue;
 

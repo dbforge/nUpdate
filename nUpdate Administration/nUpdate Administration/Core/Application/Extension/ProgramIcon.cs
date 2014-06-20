@@ -27,9 +27,6 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
@@ -48,8 +45,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public int Index
         {
-            get { return index; }
-            set { index = value; }
+            get { return this.index; }
+            set { this.index = value; }
         }
 
         /// <summary>
@@ -57,8 +54,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Path
         {
-            get { return path; }
-            set { path = value; }
+            get { return this.path; }
+            set { this.path = value; }
         }
 
         /// <summary>
@@ -97,7 +94,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns></returns>
         public override string ToString()
         {
-            return path + "," + index.ToString();
+            return this.path + "," + this.index.ToString();
         }
 
         /// <summary>
@@ -108,12 +105,16 @@ namespace nUpdate.Administration.Core.Application.Extension
         public static ProgramIcon Parse(string regString)
         {
             if (regString == string.Empty)
+            {
                 return new ProgramIcon("");
+            }
 
             if (regString.StartsWith("\"") && regString.EndsWith("\""))
             {
                 if (regString.Length > 3)
+                {
                     regString = regString.Substring(1, regString.Length - 2);
+                }
             }
 
             string path;
@@ -145,13 +146,16 @@ namespace nUpdate.Administration.Core.Application.Extension
         public static bool operator ==(ProgramIcon lv, ProgramIcon rv)
         {
             if (ReferenceEquals(lv, null) && ReferenceEquals(rv, null))
+            {
                 return true;
+            }
             else if (ReferenceEquals(lv, null) || ReferenceEquals(rv, null))
+            {
                 return false;
+            }
             else
             {
-                if (lv.path == rv.path
-                   && lv.index == rv.index)
+                if (lv.path == rv.path && lv.index == rv.index)
                 {
                     return true;
                 }

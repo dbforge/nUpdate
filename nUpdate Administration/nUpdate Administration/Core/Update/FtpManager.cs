@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using nUpdate.Administration.UI.Popups;
-using System.Net.Sockets;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Security;
 
 namespace nUpdate.Administration.Core.Update
@@ -35,85 +29,56 @@ namespace nUpdate.Administration.Core.Update
         /// <summary>
         /// Sets the protocol to use.
         /// </summary>
-        public FtpProtocol Protocol
-        {
-            get;
-            set;
-        }
+        public FtpProtocol Protocol { get; set; }
 
         /// <summary>
         /// Sets if passive mode should be used.
         /// </summary>
-        public bool FtpModeUsePassive
-        {
-            get;
-            set;
-        }
+        public bool FtpModeUsePassive { get; set; }
 
         /// <summary>
         /// The FTP-server.
         /// </summary>
-        public string FtpServer
-        {
-            get;
-            set;
-        }
+        public string FtpServer { get; set; }
 
         /// <summary>
         /// The port.
         /// </summary>
-        public int FtpPort
-        {
-            get;
-            set;
-        }
+        public int FtpPort { get; set; }
 
         /// <summary>
         /// The directory.
         /// </summary>
-        public string Directory
-        {
-            get;
-            set;
-        }
+        public string Directory { get; set; }
 
         /// <summary>
         /// The username.
         /// </summary>
-        public string FtpUserName
-        {
-            get;
-            set;
-        }
+        public string FtpUserName { get; set; }
 
         /// <summary>
         /// The password.
         /// </summary>
-        public SecureString FtpPassword
-        {
-            get;
-            set;
-        }
+        public SecureString FtpPassword { get; set; }
 
         /// <summary>
         /// Is fired when the upload of a file has failed.
         /// </summary>
         protected internal void OnUploadFailed(Exception ex)
         {
-            FailedEventHandler handler = UploadFailed;
+            FailedEventHandler handler = this.UploadFailed;
             if (handler != null)
             {
                 handler(ex);
             }
-
         }
-        
+
         /// <summary>
         /// Is fired when deleting a file has failed.
         /// </summary>
         protected internal void OnDeleteFailed(Exception ex)
         {
-            FailedEventHandler handler = DeleteFailed;
+            FailedEventHandler handler = this.DeleteFailed;
             if (handler != null)
             {
                 handler(ex);
@@ -125,7 +90,7 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         protected internal void OnServerConnected()
         {
-            EventHandler<EventArgs> handler = ServerConnected;
+            EventHandler<EventArgs> handler = this.ServerConnected;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);
@@ -134,10 +99,10 @@ namespace nUpdate.Administration.Core.Update
 
         protected internal void OnProgressChanged(ProgressChangedEventArgs e)
         {
-            ProgressChangedEventHandler handler = ProgressChanged;
+            ProgressChangedEventHandler handler = this.ProgressChanged;
             if (handler != null)
             {
-                handler(this, e); 
+                handler(this, e);
             }
         }
 
@@ -161,16 +126,16 @@ namespace nUpdate.Administration.Core.Update
         {
             content = content + "\r\n";
 
-            byte[] _sent = new byte[content.Length];
-            int _count = 0;
+            byte[] sent = new byte[content.Length];
+            int count = 0;
 
             foreach (byte b in System.Text.Encoding.Default.GetBytes(content))
             {
-                _sent[_count] = b;
-                _count++;
+                sent[count] = b;
+                count++;
             }
 
-            stream.Write(_sent, 0, _sent.Length);
+            stream.Write(sent, 0, sent.Length);
         }
 
         /// <summary>
@@ -196,15 +161,16 @@ namespace nUpdate.Administration.Core.Update
         /// <param name="directory"></param>
         private void CreateDirectory(string directory)
         {
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}",
-                            FtpServer, FtpPort, Directory, directory);
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}", this.FtpServer, this.FtpPort, this.Directory, directory);
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(ServerAdress));
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(this.ServerAdress));
             request.Method = WebRequestMethods.Ftp.MakeDirectory;
-            request.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
+            request.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
 
-            if (Protocol == FtpProtocol.SecureFtp)
+            if (this.Protocol == FtpProtocol.SecureFtp)
+            {
                 request.EnableSsl = true;
+            }
             var resp = (FtpWebResponse)request.GetResponse();
         }
 
@@ -213,20 +179,21 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         public void DeleteFile(string fileName)
         {
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}",
-                    FtpServer, FtpPort, Directory, fileName);
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}", this.FtpServer, this.FtpPort, this.Directory, fileName);
 
-            deleteRequest = (FtpWebRequest)WebRequest.Create(new Uri(ServerAdress));
-            deleteRequest.KeepAlive = false;
-            deleteRequest.Method = WebRequestMethods.Ftp.DeleteFile;
+            this.deleteRequest = (FtpWebRequest)WebRequest.Create(new Uri(this.ServerAdress));
+            this.deleteRequest.KeepAlive = false;
+            this.deleteRequest.Method = WebRequestMethods.Ftp.DeleteFile;
 
-            deleteRequest.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
-            deleteRequest.UsePassive = FtpModeUsePassive;
+            this.deleteRequest.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
+            this.deleteRequest.UsePassive = FtpModeUsePassive;
 
             if (Protocol == FtpProtocol.SecureFtp)
-                deleteRequest.EnableSsl = true;
+            {
+                this.deleteRequest.EnableSsl = true;
+            }
 
-            var deleteResponse = deleteRequest.GetResponse();
+            var deleteResponse = this.deleteRequest.GetResponse();
         }
 
         /// <summary>
@@ -236,11 +203,10 @@ namespace nUpdate.Administration.Core.Update
         {
             /* ------- List the files -------- */
 
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}",
-                    FtpServer, FtpPort, Directory, directoryName);
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}", this.FtpServer, this.FtpPort, this.Directory, directoryName);
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(ServerAdress));
-            request.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(this.ServerAdress));
+            request.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
 
             request.Method = WebRequestMethods.Ftp.ListDirectory;
 
@@ -263,24 +229,27 @@ namespace nUpdate.Administration.Core.Update
             foreach (string entry in result)
             {
                 if (!entry.EndsWith("."))
-                    DeleteFile(entry);
+                {
+                    this.DeleteFile(entry);
+                }
             }
 
             /* ------- Delete the directory -------- */
 
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}",
-                    FtpServer, FtpPort, Directory, directoryName);
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}", this.FtpServer, this.FtpPort, this.Directory, directoryName);
 
-            deleteRequest = (FtpWebRequest)WebRequest.Create(new Uri(ServerAdress));
-            deleteRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
+            this.deleteRequest = (FtpWebRequest)WebRequest.Create(new Uri(this.ServerAdress));
+            this.deleteRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
 
-            deleteRequest.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
-            deleteRequest.UsePassive = FtpModeUsePassive;
+            this.deleteRequest.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
+            this.deleteRequest.UsePassive = this.FtpModeUsePassive;
 
             if (Protocol == FtpProtocol.SecureFtp)
-                deleteRequest.EnableSsl = true;
+            {
+                this.deleteRequest.EnableSsl = true;
+            }
 
-            var deleteResponse = deleteRequest.GetResponse();
+            var deleteResponse = this.deleteRequest.GetResponse();
         }
 
         /// <summary>
@@ -288,15 +257,14 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         public void UploadFile(string filePath)
         {
-            HasFinishedUploading = false;
-            fileWebClient = new WebClient();
-            fileWebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(UploadFinishedEventHandler);
-            fileWebClient.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
+            this.HasFinishedUploading = false;
+            this.fileWebClient = new WebClient();
+            this.fileWebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(UploadFinishedEventHandler);
+            this.fileWebClient.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
 
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}",
-                    FtpServer, FtpPort, Directory, Path.GetFileName(filePath));
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}", this.FtpServer, this.FtpPort, this.Directory, Path.GetFileName(filePath));
 
-            fileWebClient.UploadFileAsync(new Uri(ServerAdress), filePath);
+            this.fileWebClient.UploadFileAsync(new Uri(this.ServerAdress), filePath);
         }
 
         public bool HasFinishedUploading { get; set; }
@@ -306,30 +274,31 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         public void UploadPackage(string packagePath, string packageVersion)
         {
-            HasFinishedUploading = false;
-            CreateDirectory(packageVersion);
+            this.HasFinishedUploading = false;
+            this.CreateDirectory(packageVersion);
 
-            packageWebClient = new WebClient();
-            packageWebClient.UploadProgressChanged += new UploadProgressChangedEventHandler(UploadProgressChangedEventHandler);
-            packageWebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(UploadFinishedEventHandler);
-            packageWebClient.Credentials = new NetworkCredential(FtpUserName, FtpPassword);
+            this.packageWebClient = new WebClient();
+            this.packageWebClient.UploadProgressChanged += new UploadProgressChangedEventHandler(UploadProgressChangedEventHandler);
+            this.packageWebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(UploadFinishedEventHandler);
+            this.packageWebClient.Credentials = new NetworkCredential(this.FtpUserName, this.FtpPassword);
 
-            ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}/{4}", 
-                FtpServer, FtpPort, Directory, packageVersion, Path.GetFileName(packagePath));
+            this.ServerAdress = String.Format("ftp://{0}:{1}/{2}/{3}/{4}", this.FtpServer, this.FtpPort, this.Directory, packageVersion, Path.GetFileName(packagePath));
 
-            packageWebClient.UploadFileAsync(new Uri(ServerAdress), packagePath);
+            this.packageWebClient.UploadFileAsync(new Uri(this.ServerAdress), packagePath);
         }
 
         private void UploadProgressChangedEventHandler(object sender, ProgressChangedEventArgs e)
         {
-            OnProgressChanged(e);
+            this.OnProgressChanged(e);
         }
 
         private void UploadFinishedEventHandler(object sender, UploadFileCompletedEventArgs e)
         {
             if (e.Error != null)
-                OnUploadFailed(e.Error);
-            HasFinishedUploading = true;
+            {
+                this.OnUploadFailed(e.Error);
+            }
+            this.HasFinishedUploading = true;
         }
     }
 }

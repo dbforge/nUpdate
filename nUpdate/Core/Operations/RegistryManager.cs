@@ -1,8 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Core.Operations
@@ -26,8 +23,8 @@ namespace nUpdate.Core.Operations
         {
             try
             {
-                RegistryKey registryKey = baseRegistryKey;
-                RegistryKey sk1 = registryKey.CreateSubKey(subKey);
+                RegistryKey registryKey = this.baseRegistryKey;
+                RegistryKey sk1 = registryKey.CreateSubKey(this.subKey);
 
                 sk1.SetValue(keyName.ToUpper(), value);
             }

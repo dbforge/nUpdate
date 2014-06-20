@@ -1,8 +1,4 @@
-﻿using nUpdate.Administration.UI.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core
@@ -14,7 +10,7 @@ namespace nUpdate.Administration.Core
         /// </summary>
         /// <param name="owner">The form to validate.</param>
         /// <returns>This function returns a boolean.</returns>
-        public static bool ValidateDialog(Form owner) 
+        public static bool ValidateDialog(Form owner)
         {
             foreach (Control control in owner.Controls)
             {
@@ -23,10 +19,13 @@ namespace nUpdate.Administration.Core
                     if (control.Enabled == true)
                     {
                         if (string.IsNullOrEmpty(control.Text) || control.ForeColor == Color.Gray)
+                        {
                             return false;
-
+                        }
                         else
+                        {
                             return true;
+                        }
                     }
                 }
             }
@@ -48,10 +47,13 @@ namespace nUpdate.Administration.Core
                     if (control.Enabled == true)
                     {
                         if (string.IsNullOrEmpty(control.Text) || control.ForeColor == Color.Gray)
+                        {
                             return false;
-
+                        }
                         else
+                        {
                             return true;
+                        }
                     }
                 }
             }
@@ -73,15 +75,20 @@ namespace nUpdate.Administration.Core
                         if (control != unsupportedTextBox)
                         {
                             if (string.IsNullOrEmpty(control.Text) || control.ForeColor == Color.Gray)
+                            {
                                 return false;
-
+                            }
                             else
+                            {
                                 return true;
+                            }
                         }
                         else
                         {
                             if (string.IsNullOrEmpty(control.Text) || control.Text == "/")
+                            {
                                 return false;
+                            }
                         }
                     }
                 }
@@ -104,15 +111,20 @@ namespace nUpdate.Administration.Core
                         if (control != unsupportedTextBox)
                         {
                             if (string.IsNullOrEmpty(control.Text) || control.ForeColor == Color.Gray)
+                            {
                                 return false;
-
+                            }
                             else
+                            {
                                 return true;
+                            }
                         }
                         else
                         {
                             if (string.IsNullOrEmpty(control.Text) || control.Text == "/")
+                            {
                                 return false;
+                            }
                         }
                     }
                 }
@@ -121,5 +133,4 @@ namespace nUpdate.Administration.Core
             return false;
         }
     }
-
 }

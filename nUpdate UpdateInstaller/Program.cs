@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using nUpdate.UpdateInstaller.LanguageManagement;
+using System;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller;
-using nUpdate.UpdateInstaller.LanguageManagement;
 
 namespace nUpdate.UpdateInstaller
 {

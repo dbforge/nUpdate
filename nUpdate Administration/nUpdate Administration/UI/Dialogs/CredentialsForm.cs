@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Windows.Forms;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.Core;
+﻿using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
+using System;
+using System.Drawing;
+using System.Security;
+using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -33,13 +27,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            Username = usernameTextBox.Text;
+            this.Username = this.usernameTextBox.Text;
             SecureString pass = new SecureString();
-            foreach (Char c in passwordTextBox.Text)
+            foreach (Char c in this.passwordTextBox.Text)
                 pass.AppendChar(c);
-            Password = pass;
+            this.Password = pass;
 
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void CredentialsForm_Load(object sender, EventArgs e)

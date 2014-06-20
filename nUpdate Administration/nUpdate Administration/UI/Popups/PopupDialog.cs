@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Popups
@@ -24,47 +19,51 @@ namespace nUpdate.Administration.UI.Popups
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void PopupDialog_Shown(object sender, EventArgs e)
         {
-            iconPictureBox.Image = PopupIcon.ToBitmap();
-            headerLabel.Text = Title;
-            messageLabel.Text = InfoMessage;
+            this.iconPictureBox.Image = this.PopupIcon.ToBitmap();
+            this.headerLabel.Text = this.Title;
+            this.messageLabel.Text = this.InfoMessage;
 
             if (Buttons == PopupButtons.OK)
             {
-                closeButton.Visible = true;
-                AcceptButton = closeButton;
+                this.closeButton.Visible = true;
+                this.AcceptButton = this.closeButton;
             }
             else
             {
-                noButton.Visible = true;
-                yesButton.Visible = true;
-                AcceptButton = noButton;
+                this.noButton.Visible = true;
+                this.yesButton.Visible = true;
+                this.AcceptButton = this.noButton;
             }
 
-            if (Exception == null)
-                contextMenu.Enabled = false;
+            if (this.Exception == null)
+            {
+                this.contextMenu.Enabled = false;
+            }
 
-            if (Title.Length > 40)
-                headerLabel.Location = new Point(61, 13);
+            if (this.Title.Length > 40)
+            {
+                this.headerLabel.Location = new Point(61, 13);
+            }
         }
 
         private void copyEntireMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(Exception.ToString());
+            Clipboard.SetText(this.Exception.ToString());
         }
 
         private void yesButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Yes;
+            this.DialogResult = DialogResult.Yes;
         }
 
         private void noButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.No;
+            this.DialogResult = DialogResult.No;
         }
     }
 }

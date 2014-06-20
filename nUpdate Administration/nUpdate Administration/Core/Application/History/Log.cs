@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Application.History
 {
@@ -11,11 +8,7 @@ namespace nUpdate.Administration.Core.Application.History
         /// <summary>
         /// The name of the project that contains the log file.
         /// </summary>
-        public UpdateProject Project
-        {
-            get;
-            set;
-        }
+        public UpdateProject Project { get; set; }
 
         /// <summary>
         /// The time when the entry was made.
@@ -44,9 +37,11 @@ namespace nUpdate.Administration.Core.Application.History
             log.Entry = entry;
             log.PackageVersion = packageVersionString;
 
-            if (Project.Log == null)
-                Project.Log = new List<Log>();
-            Project.Log.Add(log);
+            if (this.Project.Log == null)
+            {
+                this.Project.Log = new List<Log>();
+            }
+            this.Project.Log.Add(log);
         }
     }
 }

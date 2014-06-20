@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using nUpdate.Dialogs;
+﻿using nUpdate.Dialogs;
 using System.Windows.Forms;
 
 namespace nUpdate.Core
@@ -24,7 +20,9 @@ namespace nUpdate.Core
             };
 
             if (owner != null)
+            {
                 errorDialog.ShowDialog(owner);
+            }
         }
     }
 }
