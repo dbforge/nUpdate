@@ -22,7 +22,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void InitializeUnwishedWords()
         {
-            string[] unwishedContent = new string[] { "dumm", "arsch", "hure", "hurensohn", "wichser", "wixxer", "wixer", "schlampe", "hurä", "bullshit", "scheiß", "scheis", "fotze", "muschi", "bastard", "fick", "idiot", "depp", "dreck", "müll", "bitch", "asshole", "fuck", "fool", "heil", "hitler", "nazi", "penis", "vagina", "screw", "shit", "baisse", "merde", "nique" };
+            string[] unwishedContent = new string[] { }
             this.unwishedWords.AddRange(unwishedContent);
         }
 
