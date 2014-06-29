@@ -50,7 +50,7 @@ namespace nUpdate.Client.GUI
                     this.Close();
                 }));
             }
-            MessageBox.Show("Fertig");
+            MessageBox.Show("Finished");
             this.Close();
         }
 
