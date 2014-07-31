@@ -1,0 +1,17 @@
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\bin\Debug\nUpdate.Test.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\bin\Debug\nUpdate.Test.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\bin\Debug\nUpdate.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\bin\Debug\nUpdate.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\bin\Debug\nUpdate.xml
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.csprojResolveAssemblyReference.cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\nUpdate.Test.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\nUpdate.Test.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\nUpdate.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\nUpdate.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\nUpdate.xml
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.csprojResolveAssemblyReference.cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\obj\Debug\nUpdate.Test.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate.Test\bin\Debug\MySql.Data.dll

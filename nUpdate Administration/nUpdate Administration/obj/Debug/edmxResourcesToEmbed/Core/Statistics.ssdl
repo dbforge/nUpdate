@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="Statistics.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+  <EntityContainer Name="StatisticsTargetContainer" />
+</Schema>

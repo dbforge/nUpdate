@@ -1,0 +1,61 @@
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.exe.config
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.csprojResolveAssemblyReference.cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Core.Update.Operations.FileDeleteOperationDialog.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.BaseForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.CredentialsForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.DirectorySearchForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.FeedbackForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.FtpEditForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.HistoryForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.MainForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.OptionsForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.PackageAddForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.PackageEditForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.ProjectForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Properties.Resources.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.InfoForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.NewProjectForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.ProjectEditForm.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Popups.PopupDialog.resources
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.csproj.GenerateResource.Cache
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.exe
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.dll
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.pdb
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.xml
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.exe
+C:\Users\Erika\Documents\Visual Studio 2012\Projects\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.exe.config
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate Administration.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\FastColoredTextBox.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.dll
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\nUpdate.xml
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\FastColoredTextBox.xml
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.csprojResolveAssemblyReference.cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.BaseDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.CredentialsDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.DirectorySearchDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.FeedbackDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.FtpEditDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.HistoryDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.JSONEditorDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.MainDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.PreferencesDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.PackageAddDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.PackageEditDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.ProjectDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Properties.Resources.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.InfoDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.NewProjectDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.ProjectEditDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Dialogs.StatisticsServerAddDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.UI.Popups.PopupDialog.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.csproj.GenerateResource.Cache
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.exe
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate Administration.pdb
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Core.Update.Operations.Dialogs.FileDeleteOperationPanel.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Core.Update.Operations.Dialogs.FileRenameOperationPanel.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\obj\Debug\nUpdate.Administration.Core.Update.Operations.Dialogs.RegistryEntryCreateOperationPanel.resources
+C:\Users\Dominic\Documents\Visual Studio 2013\Projects\nUpdate\nUpdate\nUpdate Administration\nUpdate Administration\bin\Debug\MySql.Data.dll
