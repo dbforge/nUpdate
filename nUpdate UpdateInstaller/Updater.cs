@@ -1,18 +1,19 @@
-﻿using nUpdate.Client.GuiInterface;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using nUpdate.Client.GuiInterface;
 
 namespace nUpdate.UpdateInstaller
 {
     public class Updater
     {
-        private readonly string GuiFilename;
         private const string DefaultUpdaterGui = "UpdaterGui.dll";
+        private readonly string GuiFilename;
 
         public Updater()
         {
@@ -20,9 +21,7 @@ namespace nUpdate.UpdateInstaller
             {
                 GuiFilename = ConfigurationManager.AppSettings["UpdaterGuiAssembly"];
                 if (String.IsNullOrWhiteSpace(GuiFilename))
-                { 
                     GuiFilename = DefaultUpdaterGui;
-                }
             }
             catch (Exception)
             {
@@ -31,13 +30,13 @@ namespace nUpdate.UpdateInstaller
         }
 
         /// <summary>
-        /// Runs the update installation process.
+        ///     Runs the update installation process.
         /// </summary>
         public void RunUpdate()
         {
-            var progressReporter = GetGUI();
+            IProgressReporter progressReporter = GetGUI();
             progressReporter.Initialize();
-            BackgroundWorker worker = new BackgroundWorker();
+            var worker = new BackgroundWorker();
             //worker.WorkerReportsProgress = true;
             //worker.DoWork += (o, e) =>
             //{
@@ -61,7 +60,7 @@ namespace nUpdate.UpdateInstaller
             worker.RunWorkerAsync();
             progressReporter.Terminate();
 
-            Process p = new Process();
+            var p = new Process();
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.FileName = Program.ApplicationExecutablePath;
             p.Start();
@@ -71,23 +70,24 @@ namespace nUpdate.UpdateInstaller
         {
             if (File.Exists(GuiFilename))
             {
-                var assembly = Assembly.LoadFrom(GuiFilename);
+                Assembly assembly = Assembly.LoadFrom(GuiFilename);
 
-                var validTypes = assembly.GetTypes().Where(x => typeof(IProgressReporter).IsAssignableFrom(x)).ToList();
+                List<Type> validTypes =
+                    assembly.GetTypes().Where(x => typeof (IProgressReporter).IsAssignableFrom(x)).ToList();
                 if (validTypes.Count > 0)
                 {
                     try
                     {
-                        return (IProgressReporter)Activator.CreateInstance(validTypes.First());
+                        return (IProgressReporter) Activator.CreateInstance(validTypes.First());
                     }
                     catch (Exception) //No parameterless constructor
                     {
-                        return (IProgressReporter)Activator.CreateInstance(typeof(MainForm)); // Show the default GUI
+                        return (IProgressReporter) Activator.CreateInstance(typeof (MainForm)); // Show the default GUI
                     }
                 }
             }
 
-            return (IProgressReporter)Activator.CreateInstance(typeof(MainForm));
+            return (IProgressReporter) Activator.CreateInstance(typeof (MainForm));
         }
     }
 

@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Administration.Core.Update
+﻿namespace nUpdate.Administration.Core.Update
 {
     public enum FTPProtocol
     {

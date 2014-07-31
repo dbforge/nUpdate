@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Administration.UI.Popups
+﻿namespace nUpdate.Administration.UI.Popups
 {
     public enum PopupButtons
     {

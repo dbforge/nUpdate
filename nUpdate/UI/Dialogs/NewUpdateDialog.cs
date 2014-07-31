@@ -1,65 +1,61 @@
-﻿using nUpdate.Core;
-using nUpdate.Core.Language;
-using nUpdate.Internal;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using nUpdate.Core.Language;
+using nUpdate.Internal;
 
 namespace nUpdate.Dialogs
 {
     public partial class NewUpdateDialog : BaseForm
     {
-        private bool allowCancel = false;
-        public Language Language { get; set; }
-        public string LanguageFilePath { get; set; }
+        private const Int32 BCM_SETSHIELD = 0x160C;
+        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private bool allowCancel;
 
         public NewUpdateDialog()
         {
             InitializeComponent();
         }
 
+        public Language Language { get; set; }
+        public string LanguageFilePath { get; set; }
+
         /// <summary>
-        /// Sets the available version.
+        ///     Sets the available version.
         /// </summary>
         public UpdateVersion UpdateVersion { get; set; }
 
         /// <summary>
-        /// Sets the current version.
+        ///     Sets the current version.
         /// </summary>
         public UpdateVersion CurrentVersion { get; set; }
 
         /// <summary>
-        /// Sets the size of the package.
+        ///     Sets the size of the package.
         /// </summary>
         public double PackageSize { get; set; }
 
         /// <summary>
-        /// Sets the changelog.
+        ///     Sets the changelog.
         /// </summary>
         public string Changelog { get; set; }
 
         /// <summary>
-        /// Sets if this update must be installed.
+        ///     Sets if this update must be installed.
         /// </summary>
         public bool MustUpdate { get; set; }
 
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
-
-        const Int32 BCM_SETSHIELD = 0x160C;
 
         internal static void AddShieldToButton(Button btn)
         {
             const Int32 BCM_SETSHIELD = 0x160C;
 
-            btn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            btn.FlatStyle = FlatStyle.System;
             SendMessage(btn.Handle, BCM_SETSHIELD, 0, 1);
         }
 
@@ -68,9 +64,9 @@ namespace nUpdate.Dialogs
             string resourceName = "nUpdate.Core.Language.";
             LanguageSerializer lang = null;
 
-            if (this.Language != Language.Custom)
+            if (Language != Language.Custom)
             {
-                switch (this.Language)
+                switch (Language)
                 {
                     case Language.English:
                         resourceName += "en.xml";
@@ -95,71 +91,65 @@ namespace nUpdate.Dialogs
             }
             else
             {
-                if (File.Exists(this.LanguageFilePath))
-                {
-                    lang = LanguageSerializer.ReadXml(this.LanguageFilePath);
-                }
+                if (File.Exists(LanguageFilePath))
+                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
                 else
                 {
-                    this.infoLabel.Text = String.Format(this.infoLabel.Text, Application.ProductName);
-                    this.newestVersionLabel.Text = String.Format(this.newestVersionLabel.Text, this.UpdateVersion.FullText);
-                    this.currentVersionLabel.Text = String.Format(this.currentVersionLabel.Text, this.CurrentVersion);
+                    infoLabel.Text = String.Format(infoLabel.Text, Application.ProductName);
+                    newestVersionLabel.Text = String.Format(newestVersionLabel.Text, UpdateVersion.FullText);
+                    currentVersionLabel.Text = String.Format(currentVersionLabel.Text, CurrentVersion);
                 }
             }
 
-            this.headerLabel.Text = lang.NewUpdateDialogHeader;
-            this.infoLabel.Text = String.Format(lang.NewUpdateDialogInfoText, Application.ProductName);
-            this.newestVersionLabel.Text = String.Format(this.newestVersionLabel.Text, this.UpdateVersion.FullText);
-            this.currentVersionLabel.Text = String.Format(lang.NewUpdateDialogCurrentVersionText, this.CurrentVersion);
-            this.changelogLabel.Text = lang.NewUpdateDialogChangelogText;
-            this.cancelButton.Text = lang.CancelButtonText;
-            this.installButton.Text = lang.InstallButtonText;
+            headerLabel.Text = lang.NewUpdateDialogHeader;
+            infoLabel.Text = String.Format(lang.NewUpdateDialogInfoText, Application.ProductName);
+            newestVersionLabel.Text = String.Format(newestVersionLabel.Text, UpdateVersion.FullText);
+            currentVersionLabel.Text = String.Format(lang.NewUpdateDialogCurrentVersionText, CurrentVersion);
+            changelogLabel.Text = lang.NewUpdateDialogChangelogText;
+            cancelButton.Text = lang.CancelButtonText;
+            installButton.Text = lang.InstallButtonText;
 
             const int Mb = 1048576;
             const int Kb = 1024;
 
-            if (this.PackageSize == -1)
+            if (PackageSize == -1)
+                updateSizeLabel.Text = String.Format(updateSizeLabel.Text, "N/A");
+            else if (PackageSize >= 104857.6)
             {
-                this.updateSizeLabel.Text = String.Format(this.updateSizeLabel.Text, "N/A");
-            }
-            else if (this.PackageSize >= 104857.6)
-            {
-                double PackageSizeInMb = Math.Round((this.PackageSize / Mb), 1);
-                this.updateSizeLabel.Text = String.Format("{0} {1}", String.Format(lang.NewUpdateDialogSizeText, PackageSizeInMb), "MB");
+                double PackageSizeInMb = Math.Round((PackageSize / Mb), 1);
+                updateSizeLabel.Text = String.Format("{0} {1}",
+                    String.Format(lang.NewUpdateDialogSizeText, PackageSizeInMb), "MB");
             }
             else
             {
-                double PackageSizeInKb = Math.Round((this.PackageSize / Kb), 1);
-                this.updateSizeLabel.Text = String.Format("{0} {1}", String.Format(lang.NewUpdateDialogSizeText, PackageSizeInKb), "KB");
+                double PackageSizeInKb = Math.Round((PackageSize / Kb), 1);
+                updateSizeLabel.Text = String.Format("{0} {1}",
+                    String.Format(lang.NewUpdateDialogSizeText, PackageSizeInKb), "KB");
             }
 
-            this.Icon = this.AppIcon;
-            this.Text = Application.ProductName;
-            this.iconPictureBox.Image = this.AppIcon.ToBitmap();
-            this.iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
+            Icon = AppIcon;
+            Text = Application.ProductName;
+            iconPictureBox.Image = AppIcon.ToBitmap();
+            iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
-            this.changelogTextBox.Text = this.Changelog;
+            changelogTextBox.Text = Changelog;
             AddShieldToButton(installButton);
 
-            if (this.MustUpdate)
-            {
+            if (MustUpdate)
                 cancelButton.Enabled = false;
-            }
         }
 
         private void installButton_Click(object sender, EventArgs e)
         {
             allowCancel = true;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void NewUpdateDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.MustUpdate && !allowCancel)
-            {
+            if (MustUpdate && !allowCancel)
                 e.Cancel = true;
-            }
         }
     }
 }

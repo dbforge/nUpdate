@@ -6,38 +6,38 @@ namespace nUpdate.UpdateInstaller
 {
     public partial class ErrorDialog : Form
     {
-        public string InfoMessage { get; set; }
-        public string ErrorMessage { get; set; }
-
         public ErrorDialog()
         {
             InitializeComponent();
         }
 
+        public string InfoMessage { get; set; }
+        public string ErrorMessage { get; set; }
+
         private void ErrorDialog_Load(object sender, EventArgs e)
         {
-            this.pict_icon.Image = SystemIcons.Error.ToBitmap();
+            pict_icon.Image = SystemIcons.Error.ToBitmap();
 
-            if (!String.IsNullOrEmpty(this.InfoMessage) && !String.IsNullOrEmpty(this.ErrorMessage))
+            if (!String.IsNullOrEmpty(InfoMessage) && !String.IsNullOrEmpty(ErrorMessage))
             {
-                this.infoLabel.Text = this.InfoMessage;
-                this.errorMessageTextBox.Text = this.ErrorMessage;
+                infoLabel.Text = InfoMessage;
+                errorMessageTextBox.Text = ErrorMessage;
             }
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
 
         private void ErrorDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
 
         private void errorMessageTextBox_Enter(object sender, EventArgs e)
         {
-            this.closeButton.Focus();
+            closeButton.Focus();
         }
     }
 }

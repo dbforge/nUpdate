@@ -9,35 +9,21 @@ namespace nUpdate.Administration.UI.Controls
 {
     public class CommandLink : Button
     {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern int SendMessage(HandleRef hWnd, UInt32 Msg, ref int wParam, StringBuilder lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, string lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, bool lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-
-        const int BS_COMMANDLINK = 0x0000000E;
-        const uint BCM_SETNOTE = 0x00001609;
-        const uint BCM_GETNOTE = 0x0000160A;
-        const uint BCM_GETNOTELENGTH = 0x0000160B;
-        const uint BCM_SETSHIELD = 0x0000160C;
+        private const int BS_COMMANDLINK = 0x0000000E;
+        private const uint BCM_SETNOTE = 0x00001609;
+        private const uint BCM_GETNOTE = 0x0000160A;
+        private const uint BCM_GETNOTELENGTH = 0x0000160B;
+        private const uint BCM_SETSHIELD = 0x0000160C;
+        private bool shield;
 
         public CommandLink()
         {
-            this.FlatStyle = FlatStyle.System;
+            FlatStyle = FlatStyle.System;
         }
 
-        protected override System.Drawing.Size DefaultSize
+        protected override Size DefaultSize
         {
-            get
-            {
-                return new Size(180, 60);
-            }
+            get { return new Size(180, 60); }
         }
 
         protected override CreateParams CreateParams
@@ -50,18 +36,16 @@ namespace nUpdate.Administration.UI.Controls
             }
         }
 
-        private bool shield = false;
-
         [Category("Command Link"),
          Description("Gets or sets the shield icon visibility of the command link."),
          DefaultValue(false)]
         public bool Shield
         {
-            get { return this.shield; }
+            get { return shield; }
             set
             {
-                this.shield = value;
-                SendMessage(new HandleRef(this, this.Handle), BCM_SETSHIELD, IntPtr.Zero, this.shield);
+                shield = value;
+                SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, shield);
             }
         }
 
@@ -70,31 +54,36 @@ namespace nUpdate.Administration.UI.Controls
          DefaultValue("")]
         public string Note
         {
-            get
-            {
-                return this.GetNoteText();
-            }
-            set
-            {
-                this.SetNoteText(value);
-            }
+            get { return GetNoteText(); }
+            set { SetNoteText(value); }
         }
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, ref int wParam, StringBuilder lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, string lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, bool lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
         private void SetNoteText(string value)
         {
-            SendMessage(new HandleRef(this, this.Handle), BCM_SETNOTE, IntPtr.Zero, value);
+            SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
         }
 
         private string GetNoteText()
         {
-            int length = SendMessage(new HandleRef(this, this.Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero) + 1;
+            int length = SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero) + 1;
 
-            StringBuilder sb = new StringBuilder(length);
+            var sb = new StringBuilder(length);
 
-            SendMessage(new HandleRef(this, this.Handle), BCM_GETNOTE, ref length, sb);
+            SendMessage(new HandleRef(this, Handle), BCM_GETNOTE, ref length, sb);
 
             return sb.ToString();
         }
-
     }
 }

@@ -1,6 +1,6 @@
-﻿using nUpdate.Client.GuiInterface;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using nUpdate.Client.GuiInterface;
 
 namespace nUpdate.Client.GUI
 {
@@ -11,19 +11,6 @@ namespace nUpdate.Client.GUI
             InitializeComponent();
         }
 
-        public void ReportProgress(int progress, int maximum)
-        {
-            if (this.progressBar1.InvokeRequired)
-            {
-                this.progressBar1.Invoke(new Action(() =>
-                {
-                    this.ReportProgress(progress, maximum);
-                }));
-            }
-            this.progressBar1.Maximum = maximum;
-            this.progressBar1.Value = progress;
-        }
-
         public void Fail(string infoMessage, string errorMessage)
         {
             MessageBox.Show("Failed");
@@ -31,33 +18,31 @@ namespace nUpdate.Client.GUI
 
         public void Initialize()
         {
-            if (this.progressBar1.InvokeRequired)
-            {
-                this.progressBar1.Invoke(new Action(() =>
-                {
-                    this.Initialize();
-                }));
-            }
+            if (progressBar1.InvokeRequired)
+                progressBar1.Invoke(new Action(() => { Initialize(); }));
             Show();
         }
 
         public void Terminate()
         {
-            if (this.progressBar1.InvokeRequired)
-            {
-                this.progressBar1.Invoke(new Action(() =>
-                {
-                    this.Close();
-                }));
-            }
+            if (progressBar1.InvokeRequired)
+                progressBar1.Invoke(new Action(() => { Close(); }));
             MessageBox.Show("Finished");
-            this.Close();
+            Close();
         }
 
 
         public void ReportProgress(int progress, string currentFile)
         {
             throw new NotImplementedException();
+        }
+
+        public void ReportProgress(int progress, int maximum)
+        {
+            if (progressBar1.InvokeRequired)
+                progressBar1.Invoke(new Action(() => { ReportProgress(progress, maximum); }));
+            progressBar1.Maximum = maximum;
+            progressBar1.Value = progress;
         }
     }
 }

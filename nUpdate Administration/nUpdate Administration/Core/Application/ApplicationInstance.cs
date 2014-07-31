@@ -5,7 +5,7 @@ namespace nUpdate.Administration.Core.Update
     internal class ApplicationInstance
     {
         /// <summary>
-        /// Loads an update project.
+        ///     Loads an update project.
         /// </summary>
         /// <param name="path">The path of the project file.</param>
         /// <returns>Returns the read update project.</returns>
@@ -15,7 +15,7 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Saves an update project.
+        ///     Saves an update project.
         /// </summary>
         /// <param name="path">The path of the project file.</param>
         /// <param name="project">The project to save.</param>
@@ -26,7 +26,7 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Loads an update package.
+        ///     Loads an update package.
         /// </summary>
         /// <param name="path">The path of the package config file.</param>
         /// <returns>Returns the read update package.</returns>

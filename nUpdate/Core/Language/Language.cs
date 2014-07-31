@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Core.Language
+﻿namespace nUpdate.Core.Language
 {
     public enum Language
     {

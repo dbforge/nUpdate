@@ -6,66 +6,58 @@ namespace nUpdate.Dialogs
 {
     public partial class UpdateErrorDialog : BaseForm
     {
+        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
         public UpdateErrorDialog()
         {
             InitializeComponent();
         }
 
         /// <summary>
-        /// Sets the code that is shown in the dialog.
+        ///     Sets the code that is shown in the dialog.
         /// </summary>
         public int ErrorCode { get; set; }
 
         /// <summary>
-        /// Sets the error that occured.
+        ///     Sets the error that occured.
         /// </summary>
         public Exception Error { get; set; }
 
         /// <summary>
-        /// Sets the short message that is shown on top of the dialog.
+        ///     Sets the short message that is shown on top of the dialog.
         /// </summary>
         public string InfoMessage { get; set; }
 
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-
         private void UpdateErrorDialog_Load(object sender, EventArgs e)
         {
-            this.infoLabel.Text = this.InfoMessage;
+            infoLabel.Text = InfoMessage;
 
-            if (this.ErrorCode == 0)
-            {
-                this.errorCodeLabel.Text = "Errorcode: -";
-            }
+            if (ErrorCode == 0)
+                errorCodeLabel.Text = "Errorcode: -";
             else
-            {
-                this.errorCodeLabel.Text = String.Format("Errorcode: {0}", this.ErrorCode);
-            }
+                errorCodeLabel.Text = String.Format("Errorcode: {0}", ErrorCode);
 
-            this.errorMessageTextBox.Text = Error.Message;
+            errorMessageTextBox.Text = Error.Message;
 
-            this.iconPictureBox.Image = SystemIcons.Error.ToBitmap();
-            this.iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
+            iconPictureBox.Image = SystemIcons.Error.ToBitmap();
+            iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
-            this.Icon = AppIcon;
-            this.Text = Application.ProductName;
+            Icon = AppIcon;
+            Text = Application.ProductName;
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void showStackTraceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (showStackTraceCheckBox.Checked)
-            {
-                this.errorMessageTextBox.Text = String.Format("{0}\n{1}", Error.Message, Error.StackTrace);
-            }
+                errorMessageTextBox.Text = String.Format("{0}\n{1}", Error.Message, Error.StackTrace);
             else
-            {
-                this.errorMessageTextBox.Text = Error.Message;
-            }
+                errorMessageTextBox.Text = Error.Message;
         }
     }
 }

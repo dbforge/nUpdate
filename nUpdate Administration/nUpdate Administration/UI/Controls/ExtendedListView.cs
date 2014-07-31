@@ -44,9 +44,7 @@ namespace nUpdate.Administration.UI.Controls
                 grp.IGroupId = GetGroupID(Groups[i]);
 
                 if (grp.IGroupId >= 0)
-                {
                     SendMessage(Handle, LVM_SETGROUPINFO, grp.IGroupId, ref grp);
-                }
             }
         }
 
@@ -60,9 +58,7 @@ namespace nUpdate.Administration.UI.Controls
                 {
                     object tmprtnval = pi.GetValue(lstvwgrp, null);
                     if (tmprtnval != null)
-                    {
-                        rtnval = (int)tmprtnval;
-                    }
+                        rtnval = (int) tmprtnval;
                 }
             }
             return rtnval;
@@ -73,9 +69,7 @@ namespace nUpdate.Administration.UI.Controls
             const int WM_LBUTTONUP = 0x202;
 
             if (m.Msg == WM_LBUTTONUP && Environment.OSVersion.Version.Major >= 6)
-            {
                 DefWndProc(ref m);
-            }
 
             switch (m.Msg)
             {
@@ -100,11 +94,9 @@ namespace nUpdate.Administration.UI.Controls
         {
             internal int CbSize;
             internal ListViewGroupMask Mask;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            internal string PszHeader;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string PszHeader;
             internal int CchHeader;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            internal string PszFooter;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string PszFooter;
             internal int CchFooter;
             internal int IGroupId;
             internal int StateMask;
@@ -112,14 +104,11 @@ namespace nUpdate.Administration.UI.Controls
             internal uint UAlign;
             internal IntPtr PszSubtitle;
             internal uint CchSubtitle;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            internal string PszTask;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string PszTask;
             internal uint CchTask;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            internal string PszDescriptionTop;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string PszDescriptionTop;
             internal uint CchDescriptionTop;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            internal string PszDescriptionBottom;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string PszDescriptionBottom;
             internal uint CchDescriptionBottom;
             internal int ITitleImage;
             internal int IExtendedImage;

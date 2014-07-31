@@ -2,10 +2,10 @@
 
 namespace nUpdate.Internal.UpdateEventArgs
 {
-    public class FailedEventArgs : System.EventArgs
+    public class FailedEventArgs : EventArgs
     {
         public FailedEventArgs(Exception exception)
-        { 
+        {
         }
     }
 }

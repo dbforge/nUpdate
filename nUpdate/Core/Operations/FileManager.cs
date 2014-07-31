@@ -6,14 +6,14 @@ namespace nUpdate.Core.Operations
 {
     internal class FileManager
     {
-        /// <summary>
-        /// Returns an array of exceptions that appeared while performing different file operations.
-        /// </summary>
-        public Exception[] FileExceptions { get; set; }
-
         public FileManager(Operation[] operations)
         {
         }
+
+        /// <summary>
+        ///     Returns an array of exceptions that appeared while performing different file operations.
+        /// </summary>
+        public Exception[] FileExceptions { get; set; }
 
         private void MoveFile(string filePath, string newPath)
         {
@@ -23,14 +23,14 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in this.FileExceptions)
+                var exceptions = new List<Exception>();
+                foreach (Exception exception in FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                this.FileExceptions = exceptions.ToArray();
+                FileExceptions = exceptions.ToArray();
             }
         }
 
@@ -42,14 +42,14 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in this.FileExceptions)
+                var exceptions = new List<Exception>();
+                foreach (Exception exception in FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                this.FileExceptions = exceptions.ToArray();
+                FileExceptions = exceptions.ToArray();
             }
         }
 
@@ -61,14 +61,14 @@ namespace nUpdate.Core.Operations
             }
             catch (Exception ex)
             {
-                List<Exception> exceptions = new List<Exception>();
-                foreach (Exception exception in this.FileExceptions)
+                var exceptions = new List<Exception>();
+                foreach (Exception exception in FileExceptions)
                 {
                     exceptions.Add(exception);
                 }
 
                 exceptions.Add(ex);
-                this.FileExceptions = exceptions.ToArray();
+                FileExceptions = exceptions.ToArray();
             }
         }
     }

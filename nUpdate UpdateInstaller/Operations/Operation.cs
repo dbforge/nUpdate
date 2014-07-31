@@ -4,15 +4,15 @@ namespace nUpdate.UpdateInstaller.Operations
 {
     public class Operation
     {
-        internal string UpdateOperation { get; set; }
-
         public Operation(string operation)
         {
-            this.UpdateOperation = operation;
+            UpdateOperation = operation;
         }
 
+        internal string UpdateOperation { get; set; }
+
         /// <summary>
-        /// Executes the set operation.
+        ///     Executes the set operation.
         /// </summary>
         public void ExecuteOperation()
         {
@@ -21,7 +21,7 @@ namespace nUpdate.UpdateInstaller.Operations
             //#R-#C-Entry            // Registry-Operation, here: Create an entry.
             //#P-#S-ProcessName      // Process-Operation, here: Start a process.
 
-            string[] operationParts = this.UpdateOperation.Split(new char[] { '-' });
+            string[] operationParts = UpdateOperation.Split(new[] {'-'});
             if (operationParts[0] == "#F")
             {
                 var fileManager = new FileManager();
@@ -30,7 +30,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     case "#R":
                         if (operationParts.Length != 4)
                         {
-                            fileManager.FileExceptions.Add(new Exception(String.Format("Renaming file {0} failed: Not enough arguments.", operationParts[1])));
+                            fileManager.FileExceptions.Add(
+                                new Exception(String.Format("Renaming file {0} failed: Not enough arguments.",
+                                    operationParts[1])));
                             return;
                         }
                         fileManager.RenameFile(operationParts[1], operationParts[2]);
@@ -39,7 +41,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     case "#C":
                         if (operationParts.Length != 3)
                         {
-                            fileManager.FileExceptions.Add(new Exception(String.Format("Creating file {0} failed: Not enough arguments.", operationParts[1])));
+                            fileManager.FileExceptions.Add(
+                                new Exception(String.Format("Creating file {0} failed: Not enough arguments.",
+                                    operationParts[1])));
                             return;
                         }
                         fileManager.CreateFile(operationParts[1]);
@@ -48,7 +52,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     case "#D":
                         if (operationParts.Length != 3)
                         {
-                            fileManager.FileExceptions.Add(new Exception(String.Format("Deleting file {0} failed: Not enough arguments.", operationParts[1])));
+                            fileManager.FileExceptions.Add(
+                                new Exception(String.Format("Deleting file {0} failed: Not enough arguments.",
+                                    operationParts[1])));
                             return;
                         }
                         fileManager.DeleteFile(operationParts[1]);
@@ -56,7 +62,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     case "#M":
                         if (operationParts.Length != 4)
                         {
-                            fileManager.FileExceptions.Add(new Exception(String.Format("Moving file {0} failed: Not enough arguments.", operationParts[1])));
+                            fileManager.FileExceptions.Add(
+                                new Exception(String.Format("Moving file {0} failed: Not enough arguments.",
+                                    operationParts[1])));
                             return;
                         }
                         fileManager.MoveFile(operationParts[1], operationParts[2]);
@@ -71,7 +79,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     case "#C":
                         if (operationParts.Length != 3)
                         {
-                            registryManager.RegistryExceptions.Add(new Exception(String.Format("Creating file {0} failed: Not enough arguments.", operationParts[1])));
+                            registryManager.RegistryExceptions.Add(
+                                new Exception(String.Format("Creating file {0} failed: Not enough arguments.",
+                                    operationParts[1])));
                             return;
                         }
                         registryManager.Create(operationParts[2]);

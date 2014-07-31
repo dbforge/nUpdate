@@ -7,7 +7,7 @@ namespace nUpdate.UpdateInstaller.Operations
     internal class FileManager
     {
         /// <summary>
-        /// Returns an array of exceptions that appeared while performing different file operations.
+        ///     Returns an array of exceptions that appeared while performing different file operations.
         /// </summary>
         public List<Exception> FileExceptions { get; set; }
 
@@ -15,7 +15,9 @@ namespace nUpdate.UpdateInstaller.Operations
         {
             try
             {
-                using (FileStream fs = File.Create(filePath)) { }
+                using (FileStream fs = File.Create(filePath))
+                {
+                }
             }
             catch (Exception ex)
             {

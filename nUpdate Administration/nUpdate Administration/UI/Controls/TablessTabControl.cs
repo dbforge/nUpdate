@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
@@ -15,7 +12,7 @@ namespace nUpdate.Administration.UI.Controls
             // Hide the tab headers at run-time
             if (m.Msg == TCM_ADJUSTRECT && !DesignMode)
             {
-                m.Result = (IntPtr)1;
+                m.Result = (IntPtr) 1;
                 return;
             }
 

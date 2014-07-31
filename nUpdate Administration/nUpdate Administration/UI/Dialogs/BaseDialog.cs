@@ -1,11 +1,10 @@
-﻿using nUpdate.Administration.Core.Update;
-using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
+using nUpdate.Administration.Core.Update;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class BaseDialog : Form
+    public class BaseDialog : Form
     {
         public BaseDialog()
         {
@@ -13,21 +12,21 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        /// The update project in the current state.
+        ///     The update project in the current state.
         /// </summary>
         internal UpdateProject Project { get; set; }
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // BaseDialog
             // 
-            this.ClientSize = new System.Drawing.Size(284, 262);
-            this.Name = "BaseDialog";
-            this.BackColor = SystemColors.Window;
-            this.Font = new Font("SeogeUI", 8);
-            this.ResumeLayout(false);
+            ClientSize = new Size(284, 262);
+            Name = "BaseDialog";
+            BackColor = SystemColors.Window;
+            Font = new Font("SeogeUI", 8);
+            ResumeLayout(false);
         }
     }
 }

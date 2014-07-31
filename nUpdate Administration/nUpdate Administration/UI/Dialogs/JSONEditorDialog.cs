@@ -1,47 +1,41 @@
-﻿using FastColoredTextBoxNS;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.UI.Popups;
-using nUpdate.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using FastColoredTextBoxNS;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class JSONEditorDialog : BaseDialog
     {
-        /// <summary>
-        /// The content of the language file.
-        /// </summary>
-        public string LanguageContent { get; set; }
+        private readonly Style argumentsStyle = new TextStyle(Brushes.Red, null, FontStyle.Bold);
+        private readonly Style commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
+        private readonly Style keyWordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
+        private Style stringStyle = new TextStyle(Brushes.DarkRed, null, FontStyle.Regular);
 
-        /// <summary>
-        /// The name of the language/culture.
-        /// </summary>
-        public string CultureName { get; set; }
-            
         public JSONEditorDialog()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        ///     The content of the language file.
+        /// </summary>
+        public string LanguageContent { get; set; }
+
+        /// <summary>
+        ///     The name of the language/culture.
+        /// </summary>
+        public string CultureName { get; set; }
+
         private void JSONEditorDialog_Load(object sender, EventArgs e)
         {
-            byte[] bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(this.LanguageContent));
-            this.codeTextBox.Text = Encoding.UTF8.GetString(bytes);
+            byte[] bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
+            codeTextBox.Text = Encoding.UTF8.GetString(bytes);
         }
 
-        Style argumentsStyle = new TextStyle(Brushes.Red, null, FontStyle.Bold);
-        Style stringStyle = new TextStyle(Brushes.DarkRed, null, FontStyle.Regular);
-        Style commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
-        Style keyWordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
         private void codeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             e.ChangedRange.ClearStyle(argumentsStyle);
@@ -66,18 +60,19 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                string filePath = Path.Combine(Program.Path, "Localization", String.Format("{0}.json", this.CultureName));
-                using (FileStream fs = File.Create(filePath)) { }
+                string filePath = Path.Combine(Program.Path, "Localization", String.Format("{0}.json", CultureName));
+                using (FileStream fs = File.Create(filePath))
+                {
+                }
                 File.WriteAllText(filePath, codeTextBox.Text);
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the language-file.", ex, PopupButtons.OK);
-                return;
             }
             finally
             {
-                this.Close();
+                Close();
             }
         }
     }

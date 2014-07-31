@@ -1,5 +1,4 @@
-﻿using nUpdate.Administration.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading;
@@ -7,25 +6,22 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration
 {
-    static class Program 
+    internal static class Program
     {
         /// <summary>
-        /// The root path of nUpdate Administration.
+        ///     The root path of nUpdate Administration.
         /// </summary>
-        public static string Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "nUpdate Administration");
+        public static string Path =
+            System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "nUpdate Administration");
 
         /// <summary>
-        /// The path of the languages directory.
-        /// </summary>
-        public static string LanguagesDirectory { get; set; }
-
-        /// <summary>
-        /// The path of the config file for all projects.
+        ///     The path of the config file for all projects.
         /// </summary>
         public static string ProjectsConfigFilePath = System.IO.Path.Combine(Path, "projconf.txt");
 
         /// <summary>
-        /// The SQL-Script for the setup.
+        ///     The SQL-Script for the setup.
         /// </summary>
         public static string SqlSetupScript = @"DROP DATABASE IF EXISTS nUpdate;
 CREATE DATABASE IF NOT EXISTS nUpdate;
@@ -68,33 +64,38 @@ ENGINE = InnoDB;
 ALTER TABLE Download ADD DownloadDate DATETIME;";
 
         /// <summary>
-        /// The currently existing projects.
+        ///     The currently existing projects.
         /// </summary>
         public static Dictionary<string, string> ExisitingProjects = new Dictionary<string, string>();
 
         /// <summary>
-        /// The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
+        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public static SecureString FtpPassword = new SecureString();
 
         /// <summary>
-        /// The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
+        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public static SecureString SqlPassword = new SecureString();
 
         /// <summary>
-        /// The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public static SecureString ProxyPassword = new SecureString();
 
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        ///     The path of the languages directory.
+        /// </summary>
+        public static string LanguagesDirectory { get; set; }
+
+        /// <summary>
+        ///     Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             bool firstInstance = false;
-            Mutex mtx = new Mutex(true, "MainForm", out firstInstance);
+            var mtx = new Mutex(true, "MainForm", out firstInstance);
 
             if (firstInstance)
             {

@@ -19,51 +19,47 @@ namespace nUpdate.Administration.UI.Popups
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void PopupDialog_Shown(object sender, EventArgs e)
         {
-            this.iconPictureBox.Image = this.PopupIcon.ToBitmap();
-            this.headerLabel.Text = this.Title;
-            this.messageLabel.Text = this.InfoMessage;
+            iconPictureBox.Image = PopupIcon.ToBitmap();
+            headerLabel.Text = Title;
+            messageLabel.Text = InfoMessage;
 
             if (Buttons == PopupButtons.OK)
             {
-                this.closeButton.Visible = true;
-                this.AcceptButton = this.closeButton;
+                closeButton.Visible = true;
+                AcceptButton = closeButton;
             }
             else
             {
-                this.noButton.Visible = true;
-                this.yesButton.Visible = true;
-                this.AcceptButton = this.noButton;
+                noButton.Visible = true;
+                yesButton.Visible = true;
+                AcceptButton = noButton;
             }
 
-            if (this.Exception == null)
-            {
-                this.contextMenu.Enabled = false;
-            }
+            if (Exception == null)
+                contextMenu.Enabled = false;
 
-            if (this.Title.Length > 40)
-            {
-                this.headerLabel.Location = new Point(61, 13);
-            }
+            if (Title.Length > 40)
+                headerLabel.Location = new Point(61, 13);
         }
 
         private void copyEntireMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(this.Exception.ToString());
+            Clipboard.SetText(Exception.ToString());
         }
 
         private void yesButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Yes;
+            DialogResult = DialogResult.Yes;
         }
 
         private void noButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.No;
+            DialogResult = DialogResult.No;
         }
     }
 }

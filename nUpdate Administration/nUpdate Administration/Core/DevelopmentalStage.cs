@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Administration.Core
+﻿namespace nUpdate.Administration.Core
 {
     public enum DevelopmentalStage
     {

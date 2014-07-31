@@ -12,12 +12,11 @@ namespace nUpdate_Tester
 
         private void SearchForm_Load(object sender, EventArgs e)
         {
-
         }
 
         public void Finished(bool found)
         {
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
     }
 }

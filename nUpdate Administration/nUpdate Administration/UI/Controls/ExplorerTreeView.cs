@@ -29,7 +29,8 @@ namespace nUpdate.Administration.UI.Controls
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam, ref TVITEM item);
+        private static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam,
+            ref TVITEM item);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, bool wParam, IntPtr lParam);
@@ -59,26 +60,27 @@ namespace nUpdate.Administration.UI.Controls
 
         private void PseudoSelectNode(TreeNode node, bool selected)
         {
-            this.tempTVItem.hItem = node.Handle;
-            this.tempTVItem.state = selected ? 2 : 0;
-            SendMessage(base.Handle, 0x113f, new IntPtr(0), ref this.tempTVItem);
+            tempTVItem.hItem = node.Handle;
+            tempTVItem.state = selected ? 2 : 0;
+            SendMessage(base.Handle, 0x113f, new IntPtr(0), ref tempTVItem);
         }
 
         public void SetInsertionMark(TreeNode Node, InsertType insertPostion)
         {
-            this.tempTVItem.mask = 8;
-            this.tempTVItem.stateMask = 2;
-            if (this.pseudoSelectedNode != null)
+            tempTVItem.mask = 8;
+            tempTVItem.stateMask = 2;
+            if (pseudoSelectedNode != null)
             {
-                this.PseudoSelectNode(this.pseudoSelectedNode, false);
-                this.pseudoSelectedNode = null;
+                PseudoSelectNode(pseudoSelectedNode, false);
+                pseudoSelectedNode = null;
             }
             if (insertPostion == InsertType.InsideNode)
             {
-                this.PseudoSelectNode(Node, true);
-                this.pseudoSelectedNode = Node;
+                PseudoSelectNode(Node, true);
+                pseudoSelectedNode = Node;
             }
-            SendMessage(base.Handle, 0x111a, insertPostion == InsertType.AfterNode, ((Node == null) || (insertPostion == InsertType.InsideNode)) ? IntPtr.Zero : Node.Handle);
+            SendMessage(base.Handle, 0x111a, insertPostion == InsertType.AfterNode,
+                ((Node == null) || (insertPostion == InsertType.InsideNode)) ? IntPtr.Zero : Node.Handle);
         }
 
         protected override void WndProc(ref Message message)
@@ -86,32 +88,34 @@ namespace nUpdate.Administration.UI.Controls
             switch (message.Msg)
             {
                 case 15:
+                {
+                    var paintStruct = new PAINTSTRUCT();
+                    IntPtr targetDC = BeginPaint(message.HWnd, ref paintStruct);
+                    var rectangle = new Rectangle(paintStruct.rcPaint_left, paintStruct.rcPaint_top,
+                        paintStruct.rcPaint_right - paintStruct.rcPaint_left,
+                        paintStruct.rcPaint_bottom - paintStruct.rcPaint_top);
+                    if ((rectangle.Width > 0) && (rectangle.Height > 0))
                     {
-                        var paintStruct = new PAINTSTRUCT();
-                        IntPtr targetDC = BeginPaint(message.HWnd, ref paintStruct);
-                        var rectangle = new Rectangle(paintStruct.rcPaint_left, paintStruct.rcPaint_top,
-                                                      paintStruct.rcPaint_right - paintStruct.rcPaint_left,
-                                                      paintStruct.rcPaint_bottom - paintStruct.rcPaint_top);
-                        if ((rectangle.Width > 0) && (rectangle.Height > 0))
+                        using (
+                            BufferedGraphics graphics = BufferedGraphicsManager.Current.Allocate(targetDC,
+                                base.ClientRectangle))
                         {
-                            using (BufferedGraphics graphics = BufferedGraphicsManager.Current.Allocate(targetDC, base.ClientRectangle))
-                            {
-                                IntPtr hdc = graphics.Graphics.GetHdc();
-                                Message m = Message.Create(base.Handle, 0x318, hdc, IntPtr.Zero);
-                                DefWndProc(ref m);
-                                graphics.Graphics.ReleaseHdc(hdc);
-                                graphics.Render();
-                            }
+                            IntPtr hdc = graphics.Graphics.GetHdc();
+                            Message m = Message.Create(base.Handle, 0x318, hdc, IntPtr.Zero);
+                            DefWndProc(ref m);
+                            graphics.Graphics.ReleaseHdc(hdc);
+                            graphics.Render();
                         }
-                        EndPaint(message.HWnd, ref paintStruct);
-                        message.Result = IntPtr.Zero;
-                        return;
                     }
+                    EndPaint(message.HWnd, ref paintStruct);
+                    message.Result = IntPtr.Zero;
+                    return;
+                }
                 case 20:
-                    message.Result = (IntPtr)1;
+                    message.Result = (IntPtr) 1;
                     return;
 
-                /*case 0x20:
+                    /*case 0x20:
                 LinkLabel2.SetCursor(LinkLabel2.LoadCursor(0, 0x7f00));
                 message.Result = IntPtr.Zero;
                 return;*/
@@ -131,9 +135,7 @@ namespace nUpdate.Administration.UI.Controls
                 SetWindowTheme(base.Handle, "explorer", null);
             }
             else
-            {
                 base.HotTracking = false;
-            }
         }
 
         protected override void OnDragOver(DragEventArgs drgevent)
@@ -145,9 +147,7 @@ namespace nUpdate.Administration.UI.Controls
             if (pt.Y < base.ItemHeight)
             {
                 if (nodeAt.PrevVisibleNode != null)
-                {
                     nodeAt = nodeAt.PrevVisibleNode;
-                }
                 nodeAt.EnsureVisible();
                 m_Ticks = DateTime.Now.Ticks;
             }
@@ -155,18 +155,14 @@ namespace nUpdate.Administration.UI.Controls
             {
                 nodeAt = nodeAt.PrevVisibleNode;
                 if (nodeAt.PrevVisibleNode != null)
-                {
                     nodeAt = nodeAt.PrevVisibleNode;
-                }
                 nodeAt.EnsureVisible();
                 m_Ticks = DateTime.Now.Ticks;
             }
             if (pt.Y > base.ItemHeight)
             {
                 if (nodeAt.NextVisibleNode != null)
-                {
                     nodeAt = nodeAt.NextVisibleNode;
-                }
                 nodeAt.EnsureVisible();
                 m_Ticks = DateTime.Now.Ticks;
             }
@@ -174,9 +170,7 @@ namespace nUpdate.Administration.UI.Controls
             {
                 nodeAt = nodeAt.NextVisibleNode;
                 if (nodeAt.NextVisibleNode != null)
-                {
                     nodeAt = nodeAt.NextVisibleNode;
-                }
                 nodeAt.EnsureVisible();
                 m_Ticks = DateTime.Now.Ticks;
             }

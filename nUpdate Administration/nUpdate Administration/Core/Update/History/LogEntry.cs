@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Administration.Core.Update.History
+﻿namespace nUpdate.Administration.Core.Update.History
 {
     internal enum LogEntry
     {

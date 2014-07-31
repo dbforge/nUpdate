@@ -1,24 +1,27 @@
 ﻿namespace ExplorerNavigationButton
 {
     /// <summary>
-    /// The theme of the ExplorerNavigationButton.
+    ///     The theme of the ExplorerNavigationButton.
     /// </summary>
     public enum ButtonTheme
     {
         /// <summary>
-        /// The control chooses its theme automatically.
+        ///     The control chooses its theme automatically.
         /// </summary>
         Auto,
+
         /// <summary>
-        /// The default theme.
+        ///     The default theme.
         /// </summary>
         Default,
+
         /// <summary>
-        /// The aero theme.
+        ///     The aero theme.
         /// </summary>
         Aero,
+
         /// <summary>
-        /// The metro theme.
+        ///     The metro theme.
         /// </summary>
         Metro,
     }

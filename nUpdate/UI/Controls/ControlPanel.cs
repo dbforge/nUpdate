@@ -7,11 +7,11 @@ namespace nUpdate.UI.Controls
     {
         public ControlPanel()
         {
-            this.Paint += BottomPanel_Paint;
-            this.BackColor = SystemColors.Control;
+            Paint += BottomPanel_Paint;
+            BackColor = SystemColors.Control;
         }
 
-        void BottomPanel_Paint(object sender, PaintEventArgs e)
+        private void BottomPanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawLine(new Pen(Brushes.LightGray), 0, 1, Width, 1);
         }

@@ -6,7 +6,7 @@ namespace nUpdate.Internal.Exceptions
     {
         public NetworkException(string message)
             : base(message)
-        { 
+        {
         }
     }
 }

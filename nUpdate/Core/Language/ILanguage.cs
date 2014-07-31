@@ -1,10 +1,9 @@
-﻿
-namespace nUpdate.Core.Language
+﻿namespace nUpdate.Core.Language
 {
-    interface ILanguage
+    internal interface ILanguage
     {
         /// <summary>
-        /// Sets the language and initializes the controls and strings 
+        ///     Sets the language and initializes the controls and strings
         /// </summary>
         void SetLanguage();
     }

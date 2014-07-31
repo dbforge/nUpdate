@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.UpdateInstaller.Localization
+﻿namespace nUpdate.UpdateInstaller.Localization
 {
     public class LanguageSerializer
     {

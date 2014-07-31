@@ -6,7 +6,7 @@ namespace nUpdate.Administration.Core
     internal class Serializer
     {
         /// <summary>
-        /// Serializes a given serializable object.
+        ///     Serializes a given serializable object.
         /// </summary>
         /// <param name="dataToSerialize">The data to serialize.</param>
         /// <returns>Returns the serialized data as a string.</returns>
@@ -18,12 +18,12 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        /// Deserializes a given string.
+        ///     Deserializes a given string.
         /// </summary>
         /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
         /// <param name="content">The data to deserialize.</param>
         /// <returns>Returns the data as given type in the type-argument.</returns>
-        public static T Deserialize<T>(string content) 
+        public static T Deserialize<T>(string content)
         {
             var serializer = new JavaScriptSerializer();
             serializer.MaxJsonLength = 50000000; // 50 MB
@@ -31,7 +31,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        /// Deserializes a string object from a stream.
+        ///     Deserializes a string object from a stream.
         /// </summary>
         /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
         /// <param name="stream">The data to deserialize.</param>
@@ -41,11 +41,11 @@ namespace nUpdate.Administration.Core
             var serializer = new JavaScriptSerializer();
             serializer.MaxJsonLength = 50000000; // 50 MB
             string streamContent = null;
-            using (StreamReader reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream))
             {
                 streamContent = reader.ReadToEnd();
             }
-            
+
             return serializer.Deserialize<T>(streamContent);
         }
     }

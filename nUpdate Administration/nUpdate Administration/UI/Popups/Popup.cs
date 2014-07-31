@@ -7,14 +7,15 @@ namespace nUpdate.Administration.UI.Popups
     internal class Popup
     {
         /// <summary>
-        /// Shows a new popup-window.
+        ///     Shows a new popup-window.
         /// </summary>
         /// <param name="popupIcon">The icons of the popup.</param>
         /// <param name="title">The title of the popup.</param>
         /// <param name="infoMessage">The info message of the popup.</param>
-        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, string infoMessage, PopupButtons buttons) 
+        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, string infoMessage,
+            PopupButtons buttons)
         {
-            var popupWindow = new PopupDialog()
+            var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
                 Title = title,
@@ -22,19 +23,20 @@ namespace nUpdate.Administration.UI.Popups
                 Buttons = buttons,
                 StartPosition = FormStartPosition.CenterParent,
             };
-            
+
             return popupWindow.ShowDialog(owner);
         }
 
         /// <summary>
-        /// Shows a new popup-window.
+        ///     Shows a new popup-window.
         /// </summary>
         /// <param name="popupIcon">The icons of the popup.</param>
         /// <param name="title">The title of the popup.</param>
         /// <param name="infoMessage">The info message of the popup.</param>
-        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, Exception exception, PopupButtons buttons)
+        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, Exception exception,
+            PopupButtons buttons)
         {
-            var popupWindow = new PopupDialog()
+            var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
                 Title = title,

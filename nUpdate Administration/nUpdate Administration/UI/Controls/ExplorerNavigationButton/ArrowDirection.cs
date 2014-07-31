@@ -1,16 +1,17 @@
 ﻿namespace ExplorerNavigationButton
 {
     /// <summary>
-    /// The direction of an arrow.
+    ///     The direction of an arrow.
     /// </summary>
     public enum ArrowDirection
     {
         /// <summary>
-        /// The arrow points to the left.
+        ///     The arrow points to the left.
         /// </summary>
         Left,
+
         /// <summary>
-        /// The arrow points to the right.
+        ///     The arrow points to the right.
         /// </summary>
         Right,
     }

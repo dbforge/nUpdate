@@ -17,13 +17,9 @@ namespace nUpdate.Administration.UI.Controls
         {
             base.OnPaint(e);
             if (LineAlignment == Alignment.Horizontal)
-            {
-                e.Graphics.DrawLine(new System.Drawing.Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(500, 5));
-            }
+                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(500, 5));
             else
-            {
-                e.Graphics.DrawLine(new System.Drawing.Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(5, 500));
-            }
+                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(5, 500));
         }
     }
 }

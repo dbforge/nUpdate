@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Administration.Core.Localization
+﻿namespace nUpdate.Administration.Core.Localization
 {
     public enum Language
     {

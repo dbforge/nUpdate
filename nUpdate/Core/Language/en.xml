@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <LanguageSerializer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <CancelButtonText>Cancel</CancelButtonText>
   <ContinueButtonText>Continue</ContinueButtonText>
@@ -29,7 +30,9 @@
   <PackageNotFoundErrorCaption>Package not found.</PackageNotFoundErrorCaption>
   <PackageNotFoundErrorText>The update package couldn't be validated because it is missing.</PackageNotFoundErrorText>
   <InvalidSignatureErrorCaption>Invalid signature.</InvalidSignatureErrorCaption>
-  <InvalidSignatureErrorText>The package contains an invalid signature and could be dangerous.
-In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.</InvalidSignatureErrorText>
+  <InvalidSignatureErrorText>
+    The package contains an invalid signature and could be dangerous.
+    In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.
+  </InvalidSignatureErrorText>
   <InvalidSignatureAndFileDeletingFailedErrorText>The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package.{0}Unfortunately nUpdate could not remove the update package because of an system error. Please delete this package immediately because it could contain viruses and/or malware in order to damage your PC.{0}{1}</InvalidSignatureAndFileDeletingFailedErrorText>
 </LanguageSerializer>

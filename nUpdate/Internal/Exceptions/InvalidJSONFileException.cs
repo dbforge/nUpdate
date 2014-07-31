@@ -6,7 +6,7 @@ namespace nUpdate.Internal.Exceptions
     {
         public InvalidJSONFileException(string message)
             : base(message)
-        { 
+        {
         }
     }
 }

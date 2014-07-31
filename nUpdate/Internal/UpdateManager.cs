@@ -1,116 +1,117 @@
-﻿using nUpdate.Core;
-using nUpdate.Core.Language;
-using nUpdate.Internal.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using nUpdate.Core;
+using nUpdate.Internal.Exceptions;
+using nUpdate.Properties;
 
 namespace nUpdate.Internal
 {
     /// <summary>
-    /// Class that offers functions to update .NET-applications.
+    ///     Class that offers functions to update .NET-applications.
     /// </summary>
-    public class UpdateManager 
+    public class UpdateManager
     {
-        private WebClient packageDownloader = new WebClient();
-        private CancellationTokenSource searchCancellationTokenSource = new CancellationTokenSource();
+        private readonly WebClient packageDownloader = new WebClient();
         private CancellationTokenSource downloadCancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource searchCancellationTokenSource = new CancellationTokenSource();
 
         #region "Members"
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpdateManager"/> class.
+        ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
         /// </summary>
         public UpdateManager()
-            : this(null, String.Empty, null) {
+            : this(null, String.Empty, null)
+        {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpdateManager"/> class.
+        ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
         /// </summary>
         /// <param name="updateInfoFileUrl">The url of the info file.</param>
         public UpdateManager(Uri updateInfoFileUrl)
-            : this(updateInfoFileUrl, String.Empty, null) {
+            : this(updateInfoFileUrl, String.Empty, null)
+        {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpdateManager"/>
+        ///     Initializes a new instance of the <see cref="UpdateManager" />
         /// </summary>
         /// <param name="updateInfoFileUrl">The url of the info file.</param>
         /// <param name="publicKey">The public key to check the signature of an update package.</param>
         /// <param name="currentVersion">The current version of the current application.</param>
         public UpdateManager(Uri updateInfoFileUrl, string publicKey, UpdateVersion currentVersion)
         {
-            this.UpdateInfoFileUrl = updateInfoFileUrl;
-            this.PublicKey = publicKey;
-            this.CurrentVersion = currentVersion;
+            UpdateInfoFileUrl = updateInfoFileUrl;
+            PublicKey = publicKey;
+            CurrentVersion = currentVersion;
 
             // Create all necessary data
-            this.InitializeWorkaroundArea();
+            InitializeWorkaroundArea();
 
             //LanguageSerializer lang = LanguageSerializer.ReadXml(Properties.Resources.en);
         }
 
         /// <summary>
-        /// Returns if there were updates found.
+        ///     Returns if there were updates found.
         /// </summary>
         public bool UpdatesFound { get; private set; }
 
         /// <summary>
-        /// Sets the url of the update package.
+        ///     Sets the url of the update package.
         /// </summary>
         private Uri UpdatePackageUrl { get; set; }
 
         /// <summary>
-        /// Sets the url of the info file.
+        ///     Sets the url of the info file.
         /// </summary>
         public Uri UpdateInfoFileUrl { get; set; }
 
         /// <summary>
-        /// Sets the PublicKey for the signature.
+        ///     Sets the PublicKey for the signature.
         /// </summary>
         public string PublicKey { get; set; }
 
         /// <summary>
-        /// Sets the version of the current application.
+        ///     Sets the version of the current application.
         /// </summary>
         public UpdateVersion CurrentVersion { get; set; }
 
         /// <summary>
-        /// The culture of the language to use.
+        ///     The culture of the language to use.
         /// </summary>
         public CultureInfo LanguageCulture { get; set; }
 
         /// <summary>
-        /// Sets the paths for the file with the content for the cultures of an element.
+        ///     Sets the paths for the file with the content for the cultures of an element.
         /// </summary>
         public Dictionary<CultureInfo, string> CultureFilePaths { get; set; }
 
         /// <summary>
-        /// Sets if the user should be able to update to Alpha-versions.
+        ///     Sets if the user should be able to update to Alpha-versions.
         /// </summary>
         public bool IncludeAlpha { get; set; }
 
         /// <summary>
-        /// Sets if the user should be able to update to Beta-versions.
+        ///     Sets if the user should be able to update to Beta-versions.
         /// </summary>
         public bool IncludeBeta { get; set; }
 
         /// <summary>
-        /// Sets if a hidden search should be provided in order to search in the background without informing the user.
+        ///     Sets if a hidden search should be provided in order to search in the background without informing the user.
         /// </summary>
         public bool UseHiddenSearch { get; set; }
 
         /// <summary>
-        /// Sets if the found update is a duty update and must be installed.
+        ///     Sets if the found update is a duty update and must be installed.
         /// </summary>
         public bool MustUpdate { get; private set; }
 
@@ -141,76 +142,66 @@ namespace nUpdate.Internal
         //}
 
         /// <summary>
-        /// Gets the version of the update package.
+        ///     Gets the version of the update package.
         /// </summary>
         public UpdateVersion UpdateVersion { get; private set; }
 
         /// <summary>
-        /// Gets the developmental stage of the package.
+        ///     Gets the developmental stage of the package.
         /// </summary>
         public DevelopmentalStage DevStage { get; private set; }
 
         /// <summary>
-        /// Gets the development build if the update is an alpha or beta-version.
+        ///     Gets the development build if the update is an alpha or beta-version.
         /// </summary>
         public int DevelopmentBuild { get; private set; }
 
         /// <summary>
-        /// Gets the changelog of the update package.
+        ///     Gets the changelog of the update package.
         /// </summary>
         public string Changelog { get; private set; }
 
         /// <summary>
-        /// Gets the size of the update package.
+        ///     Gets the size of the update package.
         /// </summary>
         public double PackageSize { get; private set; }
 
         /// <summary>
-        /// Gets the signature of the update package.
+        ///     Gets the signature of the update package.
         /// </summary>
         private byte[] Signature { get; set; }
 
         /// <summary>
-        /// Gets the versions that the update package does not support.
+        ///     Gets the versions that the update package does not support.
         /// </summary>
         private Version[] UnsupportedVersions { get; set; }
 
         /// <summary>
-        /// Checks if all arguments have been given.
+        ///     Checks if all arguments have been given.
         /// </summary>
-        private void CheckArguments() 
+        private void CheckArguments()
         {
             // UpdateInfo-property
             if (UpdateInfoFileUrl == null)
-            {
                 throw new ArgumentException("The Property \"UpdateInfoFileUrl\" is not initialized.");
-            }
 
             if (!UpdateInfoFileUrl.ToString().EndsWith(".json"))
-            {
                 throw new FormatException("The info file is not a valid JSON-file.");
-            }
 
             // PublicKey-property
             if (String.IsNullOrEmpty(PublicKey))
-            {
                 throw new ArgumentException("The Property \"PublicKey\" is not initialized.");
-            }
 
             // CurrentVersion-property
-            if (this.CurrentVersion == null)
-            {
+            if (CurrentVersion == null)
                 throw new ArgumentException("The current version must have a value.");
-            }
 
-            if (this.LanguageCulture == null)
-            { 
+            if (LanguageCulture == null)
                 throw new ArgumentException("The Property \"Language\" is not initialized.");
-            }
         }
 
         /// <summary>
-        /// Creates the necessary data for nUpdate.
+        ///     Creates the necessary data for nUpdate.
         /// </summary>
         private void InitializeWorkaroundArea()
         {
@@ -222,76 +213,70 @@ namespace nUpdate.Internal
                 }
                 catch (Exception ex)
                 {
-                    throw new IOException(String.Format("The application's main folder could not be created. {0}", ex.Message)); 
+                    throw new IOException(String.Format("The application's main folder could not be created. {0}",
+                        ex.Message));
                 }
             }
 
-            this.CultureFilePaths = new Dictionary<CultureInfo, string>();
-            this.CultureFilePaths.Add(new CultureInfo("en"), "en.json");
+            CultureFilePaths = new Dictionary<CultureInfo, string>();
+            CultureFilePaths.Add(new CultureInfo("en"), "en.json");
         }
 
         #endregion
 
         #region "Events"
 
-        public delegate void UpdateSearchFinishedEventHandler(bool updateFound);
         public delegate void FailedEventHandler(Exception exception);
 
+        public delegate void UpdateSearchFinishedEventHandler(bool updateFound);
+
         /// <summary>
-        /// The event fired when the update search begins.
+        ///     The event fired when the update search begins.
         /// </summary>
         public event EventHandler<EventArgs> UpdateSearchStarted;
 
         /// <summary>
-        /// The event fired when the update search is finished.
+        ///     The event fired when the update search is finished.
         /// </summary>
         public event UpdateSearchFinishedEventHandler UpdateSearchFinished;
 
         /// <summary>
-        /// The event fired when the download of the package begins.
+        ///     The event fired when the download of the package begins.
         /// </summary>
         public event FailedEventHandler UpdateSearchFailed;
 
         /// <summary>
-        /// The event fired when the download of the package begins.
+        ///     The event fired when the download of the package begins.
         /// </summary>
         public event EventHandler<EventArgs> PackageDownloadStarted;
 
         /// <summary>
-        /// The event fired when the download of the package fails.
+        ///     The event fired when the download of the package fails.
         /// </summary>
         public event FailedEventHandler PackageDownloadFailed;
 
         protected virtual void OnUpdateSearchStarted(Object sender, EventArgs e)
         {
-            if (this.UpdateSearchStarted != null)
-            {
-                this.UpdateSearchStarted(sender, e);
-            }
+            if (UpdateSearchStarted != null)
+                UpdateSearchStarted(sender, e);
         }
 
         protected virtual void OnUpdateSearchFinished(bool updateFound)
         {
-            if (this.UpdateSearchFinished != null)
-            {
-                this.UpdateSearchFinished(updateFound);
-            }
+            if (UpdateSearchFinished != null)
+                UpdateSearchFinished(updateFound);
         }
 
         protected virtual void OnUpdateSearchFailed(Exception exception)
         {
-            if (this.UpdateSearchFailed != null)
-            {
-                this.UpdateSearchFailed(exception);
-            }
+            if (UpdateSearchFailed != null)
+                UpdateSearchFailed(exception);
         }
 
         protected virtual void OnPackageDownloadStarted(Object sender, EventArgs e)
         {
-            if (this.PackageDownloadStarted != null)
-            {
-                this.PackageDownloadStarted(sender, e);
-            }
+            if (PackageDownloadStarted != null)
+                PackageDownloadStarted(sender, e);
         }
 
         public event DownloadProgressChangedEventHandler PackageDownloadProgressChanged
@@ -308,17 +293,14 @@ namespace nUpdate.Internal
 
         protected virtual void OnPackageDownloadFailed(Exception exception)
         {
-            if (this.PackageDownloadFailed != null)
-            {
-                this.PackageDownloadFailed(exception);
-            }
+            if (PackageDownloadFailed != null)
+                PackageDownloadFailed(exception);
         }
-
 
         #endregion
 
         /// <summary>
-        /// Gets the size of the update package.
+        ///     Gets the size of the update package.
         /// </summary>
         /// <param name="packageUrl">The link where the update package can be found.</param>
         /// <returns>Returns the size in bytes as a double.</returns>
@@ -326,15 +308,13 @@ namespace nUpdate.Internal
         {
             try
             {
-                System.Net.WebRequest req = System.Net.HttpWebRequest.Create(packageUrl);
+                WebRequest req = WebRequest.Create(packageUrl);
                 req.Method = "HEAD";
-                using (System.Net.WebResponse resp = req.GetResponse())
+                using (WebResponse resp = req.GetResponse())
                 {
                     double ContentLength;
                     if (double.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                    {
                         return ContentLength;
-                    }
                 }
             }
             catch
@@ -346,120 +326,111 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Refreshes and re-initializes the cancellation tokens.
+        ///     Refreshes and re-initializes the cancellation tokens.
         /// </summary>
         private void RefreshCancellationTokens()
         {
-            if (this.searchCancellationTokenSource != null)
-            {
-                this.searchCancellationTokenSource.Dispose();
-            }
-            this.searchCancellationTokenSource = new CancellationTokenSource();
+            if (searchCancellationTokenSource != null)
+                searchCancellationTokenSource.Dispose();
+            searchCancellationTokenSource = new CancellationTokenSource();
 
-            if (this.downloadCancellationTokenSource != null)
-            {
-                this.downloadCancellationTokenSource.Dispose();
-            }
-            this.downloadCancellationTokenSource = new CancellationTokenSource();
+            if (downloadCancellationTokenSource != null)
+                downloadCancellationTokenSource.Dispose();
+            downloadCancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
-        /// Checks if there are updates available.
+        ///     Checks if there are updates available.
         /// </summary>
         /// <exception cref="InvalidOperationException">There is already a search process running.</exception>
         /// <exception cref="NetworkException">There is no network connection available..</exception
         public void CheckForUpdates()
         {
-            this.RefreshCancellationTokens();
+            RefreshCancellationTokens();
 
             if (!ConnectionChecker.IsConnectionAvailable())
-            {
                 throw new NetworkException("No network connection available.");
-            }
 
-            UpdateConfiguration updateConfig = new UpdateConfiguration();
-            UpdateResult result = new UpdateResult(updateConfig.LoadUpdateConfiguration(UpdateInfoFileUrl), CurrentVersion, IncludeAlpha, IncludeBeta);
+            var updateConfig = new UpdateConfiguration();
+            var result = new UpdateResult(updateConfig.LoadUpdateConfiguration(UpdateInfoFileUrl), CurrentVersion,
+                IncludeAlpha, IncludeBeta);
 
             if (!result.UpdatesFound)
             {
-                this.OnUpdateSearchFinished(false);
+                OnUpdateSearchFinished(false);
                 return;
             }
 
             updateConfig = result.NewestConfiguration;
-            this.UpdateVersion = new UpdateVersion(updateConfig.Version);
-            this.Changelog = updateConfig.Changelog;
-            this.Signature = Convert.FromBase64String(updateConfig.Signature);
+            UpdateVersion = new UpdateVersion(updateConfig.Version);
+            Changelog = updateConfig.Changelog;
+            Signature = Convert.FromBase64String(updateConfig.Signature);
             //this.UpdatePackageUrl = new Uri(updateConfig.UpdatePackageUrl); //TODO: Url
-            this.DevStage = this.UpdateVersion.DevelopmentalStage;
-            this.MustUpdate = updateConfig.MustUpdate;
-            this.DevelopmentBuild = this.UpdateVersion.DevelopmentBuild;
+            DevStage = UpdateVersion.DevelopmentalStage;
+            MustUpdate = updateConfig.MustUpdate;
+            DevelopmentBuild = UpdateVersion.DevelopmentBuild;
 
             //if (updateConfig.Operations != null)
             //{
-             // TODO: Operations
+            // TODO: Operations
             //}
 
             // Set the size
-            this.PackageSize = this.GetUpdatePackageSize(UpdatePackageUrl);
-            this.OnUpdateSearchFinished(true);
+            PackageSize = GetUpdatePackageSize(UpdatePackageUrl);
+            OnUpdateSearchFinished(true);
         }
 
         /// <summary>
-        /// Checks if there are updates available. This method does not block the calling thread.
+        ///     Checks if there are updates available. This method does not block the calling thread.
         /// </summary>
         /// <exception cref="InvalidOperationException">There is already a search process running.</exception>
         /// <exception cref="NetworkException">There is no network connection available..</exception>
-        public void CheckForUpdatesAsync() 
+        public void CheckForUpdatesAsync()
         {
-            var task =
-            Task.Factory.StartNew(this.CheckForUpdates).ContinueWith(this.SearchExceptionHandler,
+            Task task =
+                Task.Factory.StartNew(CheckForUpdates).ContinueWith(SearchExceptionHandler,
                     searchCancellationTokenSource.Token,
                     TaskContinuationOptions.OnlyOnFaulted,
-                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith( o => this.SearchTaskCompleted(),
-                            searchCancellationTokenSource.Token,
-                            TaskContinuationOptions.NotOnFaulted,
-                            TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => SearchTaskCompleted(),
+                        searchCancellationTokenSource.Token,
+                        TaskContinuationOptions.NotOnFaulted,
+                        TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         /// <summary>
-        /// The handler set if the async task for the update search throws an exception.
+        ///     The handler set if the async task for the update search throws an exception.
         /// </summary>
         /// <param name="task">The taskto handle the sended the exceptions.</param>
         private void SearchExceptionHandler(Task task)
         {
-            var exception = task.Exception;
+            AggregateException exception = task.Exception;
             if (exception != null && exception.InnerExceptions.Count > 0)
-            {
-                this.OnUpdateSearchFailed(exception.InnerException);
-            }
+                OnUpdateSearchFailed(exception.InnerException);
         }
 
         /// <summary>
-        /// Internal method to call when the search task has completed.
+        ///     Internal method to call when the search task has completed.
         /// </summary>
-        private void SearchTaskCompleted() { }
+        private void SearchTaskCompleted()
+        {
+        }
 
         /// <summary>
-        /// Downloads the update package.
+        ///     Downloads the update package.
         /// </summary>
         /// <exception cref="NetworkException">There is no network connection available..</exception>
         /// <exception cref="WebException">The download process has failed because of an WebException.</exception>
         private void DownloadPackage()
         {
-            this.RefreshCancellationTokens();
+            RefreshCancellationTokens();
 
             if (!ConnectionChecker.IsConnectionAvailable())
-            {
                 throw new NetworkException("No network connection available.");
-            }
 
-            if (String.IsNullOrEmpty(this.UpdatePackageUrl.ToString()))
-            {
+            if (String.IsNullOrEmpty(UpdatePackageUrl.ToString()))
                 throw new ArgumentException("UpdatePackageUrl");
-            }
 
-            this.OnPackageDownloadStarted(this, EventArgs.Empty);
+            OnPackageDownloadStarted(this, EventArgs.Empty);
 
             if (!Directory.Exists(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName)))
             {
@@ -469,61 +440,67 @@ namespace nUpdate.Internal
                 }
                 catch (Exception ex)
                 {
-                    this.OnPackageDownloadFailed(ex);
+                    OnPackageDownloadFailed(ex);
                 }
             }
 
-            this.packageDownloader.DownloadFileAsync(UpdatePackageUrl, Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip"));
+            packageDownloader.DownloadFileAsync(UpdatePackageUrl,
+                Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip"));
         }
 
         /// <summary>
-        /// Downloads the update package. This method does not block the calling thread.
+        ///     Downloads the update package. This method does not block the calling thread.
         /// </summary>
         /// <exception cref="NetworkException">There is no network connection available..</exception>
         /// <exception cref="WebException">The download process has failed because of an WebException.</exception>
         public void DownloadPackageAsync()
         {
-            var task =
-            Task.Factory.StartNew(this.DownloadPackage).ContinueWith(this.DownloadExceptionHandler,
+            Task task =
+                Task.Factory.StartNew(DownloadPackage).ContinueWith(DownloadExceptionHandler,
                     downloadCancellationTokenSource.Token,
                     TaskContinuationOptions.OnlyOnFaulted,
-                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => this.DownloadTaskCompleted(),
-                            downloadCancellationTokenSource.Token,
-                            TaskContinuationOptions.NotOnFaulted,
-                            TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => DownloadTaskCompleted(),
+                        downloadCancellationTokenSource.Token,
+                        TaskContinuationOptions.NotOnFaulted,
+                        TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         /// <summary>
-        /// The handler set if the async task for the update search throws an exception.
+        ///     The handler set if the async task for the update search throws an exception.
         /// </summary>
         /// <param name="task">The task to handle the sended exceptions from.</param>
         private void DownloadExceptionHandler(Task task)
         {
-            var exception = task.Exception;
+            AggregateException exception = task.Exception;
             if (exception != null && exception.InnerExceptions.Count > 0)
-            {
-                this.OnPackageDownloadFailed(exception.InnerException);
-            }
+                OnPackageDownloadFailed(exception.InnerException);
         }
 
         /// <summary>
-        /// Internal method to call when the search task has completed.
+        ///     Internal method to call when the search task has completed.
         /// </summary>
-        private void DownloadTaskCompleted() { }
+        private void DownloadTaskCompleted()
+        {
+        }
 
         /// <summary>
-        /// Checks if the size of the package is too big.
+        ///     Checks if the size of the package is too big.
         /// </summary>
         /// <returns></returns>
         private bool CheckPackageSize()
         {
-            if (SizeConverter.ConvertBytesToMegabytes((int)new FileInfo(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip")).Length) > 1000)
+            if (
+                SizeConverter.ConvertBytesToMegabytes(
+                    (int)
+                        new FileInfo(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip"))
+                            .Length) > 1000)
             {
                 // TODO: Change this with the exception to prevent NullReferenceException because of no StackTrace
-                ErrorHandler.ShowErrorDialog(0, "The update file is too big.", new Exception("nUpdate will not allow to install the update in order to save your RAM."));
+                ErrorHandler.ShowErrorDialog(0, "The update file is too big.",
+                    new Exception("nUpdate will not allow to install the update in order to save your RAM."));
                 try
                 {
-                    this.DeletePackage();
+                    DeletePackage();
                     return false;
                 }
                 catch
@@ -532,14 +509,11 @@ namespace nUpdate.Internal
                     return false;
                 }
             }
-            else
-            { 
-                return true;
-            }
+            return true;
         }
 
         /// <summary>
-        /// Checks if the package contains a valid signature.
+        ///     Checks if the package contains a valid signature.
         /// </summary>
         /// <returns>Returns if the package contains a valid signature.</returns>
         public bool CheckPackageValidility()
@@ -548,40 +522,34 @@ namespace nUpdate.Internal
 
             if (!File.Exists(packageOfUpdate))
             {
-                throw new FileNotFoundException("The update package to check could not be found." + Environment.NewLine + "The function call was invalid at this point.");
+                throw new FileNotFoundException("The update package to check could not be found." + Environment.NewLine +
+                                                "The function call was invalid at this point.");
             }
 
             if (Signature == null || Signature.Length <= 0)
-            {
                 throw new NullReferenceException("The signature is null or empty.");
-            }
 
-            byte[] data = File.ReadAllBytes(packageOfUpdate); 
+            byte[] data = File.ReadAllBytes(packageOfUpdate);
             RsaSignature rsa;
 
             try
             {
                 rsa = new RsaSignature(PublicKey);
             }
-            catch 
+            catch
             {
-                this.DeletePackage();
-                return false; 
+                DeletePackage();
+                return false;
             }
 
             if (rsa.VerifyData(data, Signature))
-            {
                 return true;
-            }
-            else
-            {
-                this.DeletePackage();
-                return false;
-            }
+            DeletePackage();
+            return false;
         }
 
         /// <summary>
-        /// Installs the update package and overwrites the old data in the directory.
+        ///     Installs the update package and overwrites the old data in the directory.
         /// </summary>
         public void InstallPackage()
         {
@@ -591,23 +559,21 @@ namespace nUpdate.Internal
             string packageFilePath = Path.Combine(Path.GetTempPath(), Application.ProductName, "update.zip");
 
             if (!Directory.Exists(unpackerDirectory))
-            {
                 Directory.CreateDirectory(unpackerDirectory);
-            }
 
             if (!File.Exists(unpackerZipPath))
-            {
-                File.WriteAllBytes(unpackerZipPath, Properties.Resources.Ionic_Zip);
-            }
+                File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
 
             if (!File.Exists(unpackerAppPath))
-            {
-                File.WriteAllBytes(unpackerAppPath, Properties.Resources.nUpdate_UpdateInstaller);
-            }
-            
-            string[] args = { packageFilePath, Application.StartupPath, Application.ExecutablePath, Application.ProductName, LanguageCulture.ToString() };
+                File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
 
-            ProcessStartInfo updateInfo = new ProcessStartInfo();
+            string[] args =
+            {
+                packageFilePath, Application.StartupPath, Application.ExecutablePath,
+                Application.ProductName, LanguageCulture.ToString()
+            };
+
+            var updateInfo = new ProcessStartInfo();
             updateInfo.FileName = unpackerAppPath;
             updateInfo.Arguments = String.Join("|", args);
             updateInfo.Verb = "runas";
@@ -618,26 +584,22 @@ namespace nUpdate.Internal
             }
             catch (Win32Exception)
             {
-                this.DeletePackage();
-                if (!this.MustUpdate)
-                {
+                DeletePackage();
+                if (!MustUpdate)
                     return;
-                }
             }
 
             Application.Exit();
         }
 
         /// <summary>
-        /// Deletes the package.
+        ///     Deletes the package.
         /// </summary>
         public void DeletePackage()
         {
             string packageFile = Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName, "update.zip");
             if (File.Exists(packageFile))
-            {
                 File.Delete(packageFile);
-            }
         }
     }
 }

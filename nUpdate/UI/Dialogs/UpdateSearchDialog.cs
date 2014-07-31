@@ -1,34 +1,34 @@
-﻿using nUpdate.Core.Language;
-using nUpdate.Dialogs;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
+using nUpdate.Core.Language;
+using nUpdate.Dialogs;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateSearchDialog : BaseForm
     {
-        public Language Language { get; set; }
-        public string LanguageFilePath { get; set; }
+        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public UpdateSearchDialog()
         {
             InitializeComponent();
         }
 
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        public Language Language { get; set; }
+        public string LanguageFilePath { get; set; }
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
             string resourceName = "nUpdate.Core.Language.";
             LanguageSerializer lang = null;
 
-            if (this.Language != Language.Custom)
+            if (Language != Language.Custom)
             {
-                switch (this.Language)
+                switch (Language)
                 {
                     case Language.English:
                         resourceName += "en.xml";
@@ -53,52 +53,46 @@ namespace nUpdate.UI.Dialogs
             }
             else
             {
-                if (File.Exists(this.LanguageFilePath))
-                {
-                    lang = LanguageSerializer.ReadXml(this.LanguageFilePath);
-                }
+                if (File.Exists(LanguageFilePath))
+                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
             }
 
-            this.cancelButton.Text = lang.CancelButtonText;
-            this.headerLabel.Text = lang.UpdateSearchDialogHeader;
+            cancelButton.Text = lang.CancelButtonText;
+            headerLabel.Text = lang.UpdateSearchDialogHeader;
 
-            this.Text = Application.ProductName;
-            this.Icon = AppIcon; 
+            Text = Application.ProductName;
+            Icon = AppIcon;
         }
 
         public void SearchFailedEventHandler(Exception ex)
         {
             var errorDialog = new UpdateErrorDialog();
-            if (ex.GetType() == typeof(WebException))
+            if (ex.GetType() == typeof (WebException))
             {
                 HttpWebResponse response = null;
-                response = (HttpWebResponse)(ex as WebException).Response;
-                errorDialog.ErrorCode = (int)response.StatusCode;
+                response = (HttpWebResponse) (ex as WebException).Response;
+                errorDialog.ErrorCode = (int) response.StatusCode;
             }
             else
-            {
                 errorDialog.ErrorCode = 0;
-            }
 
             errorDialog.InfoMessage = "Error while searching for updates.";
             errorDialog.Error = ex;
             Invoke(new Action(() =>
-                {
-                    if (errorDialog.ShowDialog(this) == DialogResult.OK)
-                    {
-                        this.DialogResult = DialogResult.Cancel;
-                    }
-                }));
+            {
+                if (errorDialog.ShowDialog(this) == DialogResult.OK)
+                    DialogResult = DialogResult.Cancel;
+            }));
         }
 
         public void SearchFinishedEventHandler(bool updateFound)
         {
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            DialogResult = DialogResult.Cancel;
         }
     }
 }

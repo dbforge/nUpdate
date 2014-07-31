@@ -6,229 +6,242 @@ namespace nUpdate.Administration.Core.Localization
     {
         public LocalizationProperties()
         {
-            this.ProductTitle = "nUpdate Administration 1.1.0.0";
-            this.CancelButtonText = "Cancel";
-            this.ContinueButtonText = "Continue";
-            this.SaveButtonText = "Save";
-            this.DoneButtonText = "Done";
-            this.CreatePackageButtonText = "Create package";
-            this.EditPackageButtonText = "Edit package";
-            this.SendButtonText = "Send";
-            this.SaveLanguageButtonText = "Save language";
+            ProductTitle = "nUpdate Administration 1.1.0.0";
+            CancelButtonText = "Cancel";
+            ContinueButtonText = "Continue";
+            SaveButtonText = "Save";
+            DoneButtonText = "Done";
+            CreatePackageButtonText = "Create package";
+            EditPackageButtonText = "Edit package";
+            SendButtonText = "Send";
+            SaveLanguageButtonText = "Save language";
 
-            this.InvalidArgumentErrorCaption = "Invalid argument found.";
-            this.InvalidArgumentErrorText = "The entry for {0} can't be parsed to {1}.";
+            InvalidArgumentErrorCaption = "Invalid argument found.";
+            InvalidArgumentErrorText = "The entry for {0} can't be parsed to {1}.";
 
             /*
              * CredentialsDialog
              * */
-            this.CredentialsDialogTitle = "Enter your credentials";
-            this.CredentialsDialogHeaderText = "Credentials";
-            this.CredentialsDialogUsernameLabelText = "Username:";
-            this.CredentialsDialogPasswordLabelext = "Password:";
+            CredentialsDialogTitle = "Enter your credentials";
+            CredentialsDialogHeaderText = "Credentials";
+            CredentialsDialogUsernameLabelText = "Username:";
+            CredentialsDialogPasswordLabelext = "Password:";
 
             /*
              * DirectorySearchDialog
              * */
-            this.DirectorySearchDialogTitle = "Set the directory - {0} - {1}";
-            this.DirectorySearchDialogInfoLabelText = "Select the directory that should be used for the update files.";
-            this.DirectorySearchDialogDirectoryLabelText = "Directory:";
-            this.DirectorySearchDialogServerNodeText = "Server";
+            DirectorySearchDialogTitle = "Set the directory - {0} - {1}";
+            DirectorySearchDialogInfoLabelText = "Select the directory that should be used for the update files.";
+            DirectorySearchDialogDirectoryLabelText = "Directory:";
+            DirectorySearchDialogServerNodeText = "Server";
 
             /*
              * FeedbackDialog
              * */
-            this.FeedbackDialogTitle = "Feedback - {0}";
-            this.FeedbackDialogHeaderLabelText = "Feedback";
-            this.FeedbackDialogEmailAdressWatermarkText = "Your e-mail address";
-            this.FeedbackDialogNameWatermarkText = "Name";
-            this.FeedBackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
+            FeedbackDialogTitle = "Feedback - {0}";
+            FeedbackDialogHeaderLabelText = "Feedback";
+            FeedbackDialogEmailAdressWatermarkText = "Your e-mail address";
+            FeedbackDialogNameWatermarkText = "Name";
+            FeedBackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
 
             /*
              * HistoryDialog
              * */
-            this.HistoryDialogTitle = "History - {0} - {1}";
-            this.HistoryDialogClearButtonText = "Clear history";
-            this.HistoryDialogSaveToFileButtonText = "Save to file.";
-            this.HistoryDialogOrderDescendingEntryText = "Order descending";
-            this.HistoryDialogOrderAscendingEntryText = "Order ascending";
-            this.HistoryDialogNoHistoryLabelText = "No history available.";
-            this.HistoryDialogCreatedPackageEntryText = "Created package";
-            this.HistoryDialogEditedPackageEntryText = "Edited package";
-            this.HistoryDialogUploadedPackageEntryText = "Uploaded package";
-            this.HistoryDialogDeletedPackageEntryText = "Deleted package";
+            HistoryDialogTitle = "History - {0} - {1}";
+            HistoryDialogClearButtonText = "Clear history";
+            HistoryDialogSaveToFileButtonText = "Save to file.";
+            HistoryDialogOrderDescendingEntryText = "Order descending";
+            HistoryDialogOrderAscendingEntryText = "Order ascending";
+            HistoryDialogNoHistoryLabelText = "No history available.";
+            HistoryDialogCreatedPackageEntryText = "Created package";
+            HistoryDialogEditedPackageEntryText = "Edited package";
+            HistoryDialogUploadedPackageEntryText = "Uploaded package";
+            HistoryDialogDeletedPackageEntryText = "Deleted package";
 
             /*
              * InfoDialog
              * */
-            this.InfoDialogTitle = "Information - {0}";
-            this.InfoDialogLicenseInfoLabelText = "nUpdate's solution contains 7 projects which are all licensed under the CC-ND-license.";
-            this.InfoDialogIconsLabelText = "Icons:";
-            this.InfoDialogIconPackageByLabelText = "Fugue Icon Package by";
-            this.InfoDialogSpecialThanksToLabelText = "Special thanks to ";
-            this.InfoDialogAsRsaContributorLabelText = "as a contributor to the RsaSignature-class and";
-            this.InfoDialogENBLabelText = "for tips and the great \"ExplorerNavigationButton\"-control.";
-            this.InfoDialogFollowProjectLabelText = "Follow this project on ";
-            this.InfoDialogOrHaveALookLabelText = "or have a look at";
+            InfoDialogTitle = "Information - {0}";
+            InfoDialogLicenseInfoLabelText =
+                "nUpdate's solution contains 7 projects which are all licensed under the CC-ND-license.";
+            InfoDialogIconsLabelText = "Icons:";
+            InfoDialogIconPackageByLabelText = "Fugue Icon Package by";
+            InfoDialogSpecialThanksToLabelText = "Special thanks to ";
+            InfoDialogAsRsaContributorLabelText = "as a contributor to the RsaSignature-class and";
+            InfoDialogENBLabelText = "for tips and the great \"ExplorerNavigationButton\"-control.";
+            InfoDialogFollowProjectLabelText = "Follow this project on ";
+            InfoDialogOrHaveALookLabelText = "or have a look at";
 
             /*
              * JSONEditorDialog
              * */
-            this.JsonEditorDialogTitle = "Edit language file - {0} - {1}";
+            JsonEditorDialogTitle = "Edit language file - {0} - {1}";
 
             /*
              * MainDialog
              * */
-            this.MainDialogInfoText = "Welcome, here you can create and manage your updates for nUpdate.";
-            this.MainDialogProjectsGroupText = "Projects";
-            this.MainDialogPreferencesGroupText = "Preferences";
-            this.MainDialogInformationGroupText = "Information";
-            this.MainDialogNewProjectText = "New project";
-            this.MainDialogNewProjectDescriptionText = "Creates a new project.";
-            this.MainDialogOpenProjectText = "Open project";
-            this.MainDialogOpenProjectDescriptionText = "Opens an existing project.";
-            this.MainDialogInformationText = "Information";
-            this.MainDialogInformationDescriptionText = "Shows the information.";
-            this.MainDialogPreferencesText = "Preferences";
-            this.MainDialogProxyText = "Proxy";
-            this.MainDialogProxyDescriptionText = "Configurate your proxies here.";
-            this.MainDialogFeedbackText = "Feedback";
-            this.MainDialogFeedbackDescriptionText = "Send your feedback here.";
-            this.OperatingSystemNotSupportedWarn = "Your system is not supported. Windows Vista or higher necessary...";
-            this.MissingRightsWarnCaption = "Missing rights.";
-            this.MissingRightsWarnText = "You do not own the admin rights to create the extension's registry entry.";
+            MainDialogInfoText = "Welcome, here you can create and manage your updates for nUpdate.";
+            MainDialogProjectsGroupText = "Projects";
+            MainDialogPreferencesGroupText = "Preferences";
+            MainDialogInformationGroupText = "Information";
+            MainDialogNewProjectText = "New project";
+            MainDialogNewProjectDescriptionText = "Creates a new project.";
+            MainDialogOpenProjectText = "Open project";
+            MainDialogOpenProjectDescriptionText = "Opens an existing project.";
+            MainDialogInformationText = "Information";
+            MainDialogInformationDescriptionText = "Shows the information.";
+            MainDialogPreferencesText = "Preferences";
+            MainDialogProxyText = "Proxy";
+            MainDialogProxyDescriptionText = "Configurate your proxies here.";
+            MainDialogFeedbackText = "Feedback";
+            MainDialogFeedbackDescriptionText = "Send your feedback here.";
+            OperatingSystemNotSupportedWarn = "Your system is not supported. Windows Vista or higher necessary...";
+            MissingRightsWarnCaption = "Missing rights.";
+            MissingRightsWarnText = "You do not own the admin rights to create the extension's registry entry.";
 
             /*
              * NewProjectDialog
              * */
-            this.NewProjectDialogTitle = "New project - {0}";
-            this.PanelSignatureHeader = "Key pair generation";
-            this.PanelSignatureInfoText = "nUpdate uses a 4096-bit RSA-Signature to serve for the security of your update packages.\nThe generation of these keys may take a different amount of time,\ndepending on your PC. Please be patient.";
-            this.PanelSignatureWaitText = "Please wait while the key pair is being generated...";
-            this.PanelGeneralHeader = "General";
-            this.PanelGeneralNameText = "Name:";
-            this.PanelGeneralNameWatermarkText = "The name of the project";
-            this.PanelGeneralLanguageText = "Language:";
-            this.PanelFtpHeader = "FTP-Data";
-            this.PanelFtpServerText = "Adress:";
-            this.PanelFtpUserText = "User:";
-            this.PanelFtpUserWatermarkText = "The username";
-            this.PanelFtpPasswordText = "Password:";
-            this.PanelFtpDirectoryText = "Directory:";
-            this.PanelFtpPortText = "Port:";
-            this.PanelFtpPortWatermarkText = "The port";
-            this.PanelFtpPassiveConnectionText = "Passive (rated)";
-            this.PanelFtpActiveConnectionText = "Active";
-            this.AlreadyExistingWarnText = "The project {0} already exists.";
+            NewProjectDialogTitle = "New project - {0}";
+            PanelSignatureHeader = "Key pair generation";
+            PanelSignatureInfoText =
+                "nUpdate uses a 4096-bit RSA-Signature to serve for the security of your update packages.\nThe generation of these keys may take a different amount of time,\ndepending on your PC. Please be patient.";
+            PanelSignatureWaitText = "Please wait while the key pair is being generated...";
+            PanelGeneralHeader = "General";
+            PanelGeneralNameText = "Name:";
+            PanelGeneralNameWatermarkText = "The name of the project";
+            PanelGeneralLanguageText = "Language:";
+            PanelFtpHeader = "FTP-Data";
+            PanelFtpServerText = "Adress:";
+            PanelFtpUserText = "User:";
+            PanelFtpUserWatermarkText = "The username";
+            PanelFtpPasswordText = "Password:";
+            PanelFtpDirectoryText = "Directory:";
+            PanelFtpPortText = "Port:";
+            PanelFtpPortWatermarkText = "The port";
+            PanelFtpPassiveConnectionText = "Passive (rated)";
+            PanelFtpActiveConnectionText = "Active";
+            AlreadyExistingWarnText = "The project {0} already exists.";
 
             /*
              * ProjectDialog
              * */
-            this.ProjectDialogTitle = "{0} - {1}";
-            this.ProjectDialogOverviewTabText = "Overview";
-            this.ProjectDialogNameLabelText = "Name:";
-            this.ProjectDialogUpdateUrlLabelText = "Update-URL:";
-            this.ProjectDialogFtpHostLabelText = "FTP-Host:";
-            this.ProjectDialogFtpDirectoryLabelText = "FTP-directory:";
-            this.ProjectDialogPackagesAmountLabelText = "Amount of packages released:";
-            this.ProjectDialogNewestPackageLabelText = "Newest package released:";
-            this.ProjectDialogInfoFileloadingLabelText = "Status of the update-info file:";
-            this.ProjectDialogCheckInfoFileStatusLinkLabelText = "Check status";
-            this.ProjectDialogProjectDataText = "Project-data";
-            this.ProjectDialogPublicKeyLabelText = "Public key:";
-            this.ProjectDialogProjectIdLabelText = "Project-ID:";
-            this.ProjectDialogPackagesTabText = "Packages";
-            this.ProjectDialogOverviewText = "Project-overview";
-            this.ProjectDialogAddButtonText = "Add";
-            this.ProjectDialogEditButtonText = "Edit";
-            this.ProjectDialogDeleteButtonText = "Delete";
-            this.ProjectDialogUploadButtonText = "Upload";
-            this.ProjectDialogHistoryButtonText = "History";
-            this.ProjectDialogVersionText = "Version";
-            this.ProjectDialogReleasedText = "Released";
-            this.ProjectDialogSizeText = "Size";
-            this.ProjectDialogDescriptionText = "Description";
-            this.ProjectDialogSearchText = "Search...";
+            ProjectDialogTitle = "{0} - {1}";
+            ProjectDialogOverviewTabText = "Overview";
+            ProjectDialogNameLabelText = "Name:";
+            ProjectDialogUpdateUrlLabelText = "Update-URL:";
+            ProjectDialogFtpHostLabelText = "FTP-Host:";
+            ProjectDialogFtpDirectoryLabelText = "FTP-directory:";
+            ProjectDialogPackagesAmountLabelText = "Amount of packages released:";
+            ProjectDialogNewestPackageLabelText = "Newest package released:";
+            ProjectDialogInfoFileloadingLabelText = "Status of the update-info file:";
+            ProjectDialogCheckInfoFileStatusLinkLabelText = "Check status";
+            ProjectDialogProjectDataText = "Project-data";
+            ProjectDialogPublicKeyLabelText = "Public key:";
+            ProjectDialogProjectIdLabelText = "Project-ID:";
+            ProjectDialogPackagesTabText = "Packages";
+            ProjectDialogOverviewText = "Project-overview";
+            ProjectDialogAddButtonText = "Add";
+            ProjectDialogEditButtonText = "Edit";
+            ProjectDialogDeleteButtonText = "Delete";
+            ProjectDialogUploadButtonText = "Upload";
+            ProjectDialogHistoryButtonText = "History";
+            ProjectDialogVersionText = "Version";
+            ProjectDialogReleasedText = "Released";
+            ProjectDialogSizeText = "Size";
+            ProjectDialogDescriptionText = "Description";
+            ProjectDialogSearchText = "Search...";
 
             /*
              * ProjectEditDialog
              * */
-            this.ProjectEditDialogNewNameText = "New name:";
-            this.ProjectEditDialogLanguageText = "Language:";
-            this.ProjectEditDialogRenameText = "The new name of the project";
-            this.ProjectEditDialogTitle = "Edit project";
+            ProjectEditDialogNewNameText = "New name:";
+            ProjectEditDialogLanguageText = "Language:";
+            ProjectEditDialogRenameText = "The new name of the project";
+            ProjectEditDialogTitle = "Edit project";
 
             #region "PackageAddDialog
 
-            this.PackageAddDialogTitle = "Add new package - {0} - {1}";
-            this.PackageAddDialogGeneralItemText = "General";
-            this.PackageAddDialogChangelogItemText = "Changelog";
-            this.PackageAddDialogFilesItemText = "Files";
-            this.PackageAddDialogAvailabilityItemText = "Availability";
-            this.PackageAddDialogDevelopmentalStageLabelText = "Developmental stage:";
-            this.PackageAddDialogVersionLabelText = "Version:";
-            this.PackageAddDialogDescriptionLabelText = "Description:";
-            this.PackageAddDialogPublishCheckBoxText = "Publish this update";
-            this.PackageAddDialogPublishInfoLabelText = "Sets if the package should be uploaded yet. You can upload it later, if you disable this" + Environment.NewLine +
-                                             "option. The update package will be saved locally on your PC then.";
-            this.PackageAddDialogEnvironmentLabelText = "Architecture settings:";
-            this.PackageAddDialogEnvironmentInfoLabelText = "Sets if the update package should only run on special architectures. To set any type" + Environment.NewLine +
-                                                       "of architecture, choose \"AnyCPU\" as entry.";
+            PackageAddDialogTitle = "Add new package - {0} - {1}";
+            PackageAddDialogGeneralItemText = "General";
+            PackageAddDialogChangelogItemText = "Changelog";
+            PackageAddDialogFilesItemText = "Files";
+            PackageAddDialogAvailabilityItemText = "Availability";
+            PackageAddDialogDevelopmentalStageLabelText = "Developmental stage:";
+            PackageAddDialogVersionLabelText = "Version:";
+            PackageAddDialogDescriptionLabelText = "Description:";
+            PackageAddDialogPublishCheckBoxText = "Publish this update";
+            PackageAddDialogPublishInfoLabelText =
+                "Sets if the package should be uploaded yet. You can upload it later, if you disable this" +
+                Environment.NewLine +
+                "option. The update package will be saved locally on your PC then.";
+            PackageAddDialogEnvironmentLabelText = "Architecture settings:";
+            PackageAddDialogEnvironmentInfoLabelText =
+                "Sets if the update package should only run on special architectures. To set any type" +
+                Environment.NewLine +
+                "of architecture, choose \"AnyCPU\" as entry.";
 
-            this.PackageAddDialogLoadButtonText = "Load from file...";
-            this.PackageAddDialogClearButtonText = "Clear";
-            this.PackageAddDialogAddFileButtonText = "Add files...";
-            this.PackageAddDialogRemoveFileButtonText = "Remove files...";
-            this.PackageAddDialogNameHeaderText = "Name";
-            this.PackageAddDialogSizeHeaderText = "Size";
-            this.PackageAddDialogAvailableForAllRadioButtonText = "Available for all older versions";
-            this.PackageAddDialogAvailableForAllInfoText = "This package is available and can be downloaded for all older versions.";
-            this.PackageAddDialogAvailableForSomeRadioButtonText = "Not available for some older versions";
-            this.PackageAddDialogAvailableForSomeInfoText = "This package is not available for the following versions.";
-            this.PackageAddDialogAddButtonText = "Add";
-            this.PackageAddDialogRemoveButtonText = "Remove";
+            PackageAddDialogLoadButtonText = "Load from file...";
+            PackageAddDialogClearButtonText = "Clear";
+            PackageAddDialogAddFileButtonText = "Add files...";
+            PackageAddDialogRemoveFileButtonText = "Remove files...";
+            PackageAddDialogNameHeaderText = "Name";
+            PackageAddDialogSizeHeaderText = "Size";
+            PackageAddDialogAvailableForAllRadioButtonText = "Available for all older versions";
+            PackageAddDialogAvailableForAllInfoText =
+                "This package is available and can be downloaded for all older versions.";
+            PackageAddDialogAvailableForSomeRadioButtonText = "Not available for some older versions";
+            PackageAddDialogAvailableForSomeInfoText = "This package is not available for the following versions.";
+            PackageAddDialogAddButtonText = "Add";
+            PackageAddDialogRemoveButtonText = "Remove";
 
-            this.PackageAddDialogArchiveInitializerInfoText = "Initializing archive...";
-            this.PackageAddDialogPrepareInfoText = "Preparing update...";
-            this.PackageAddDialogSigningInfoText = "Signing package...";
-            this.PackageAddDialogConfigInitializerInfoText = "Initializing config...";
-            this.PackageAddDialogUploadingPackageInfoText = "Uploading package - {0}";
-            this.PackageAddDialogUploadingConfigInfoText = "Uploading configuration...";
+            PackageAddDialogArchiveInitializerInfoText = "Initializing archive...";
+            PackageAddDialogPrepareInfoText = "Preparing update...";
+            PackageAddDialogSigningInfoText = "Signing package...";
+            PackageAddDialogConfigInitializerInfoText = "Initializing config...";
+            PackageAddDialogUploadingPackageInfoText = "Uploading package - {0}";
+            PackageAddDialogUploadingConfigInfoText = "Uploading configuration...";
 
-            this.PackageAddDialogNoInternetWarningText = "nUpdate Administration could not verify a network connection. Some functions are disabled for now and you can only save the package on your PC. An upload is possible as soon as a network connections is given.";
-            this.PackageAddDialogNoInternetWarningCaption = "No network connection available.";
-            this.PackageAddDialogNoFilesSpecifiedWarningText = "There were no files specified for the update package. Please make sure you added an archive or some files to pack automatically.";
-            this.PackageAddDialogNoFilesSpecifiedWarningCaption = "No files for the package set.";
-            this.PackageAddDialogUnsupportedArchiveWarningText = "You added an unsupported archive type to the list. nUpdate is only able to unpack \".ZIP\"-files at the moment.";
-            this.PackageAddDialogUnsupportedArchiveWarningCaption = "Unsupported archive type.";
-            this.PackageAddDialogVersionInvalidWarningText = "The given version is invalid. You cannot use \"0.0.x.x\" as product-version. Please make sure to select a minimum Minor-version of \"1\".";
-            this.PackageAddDialogVersionInvalidWarningCaption = "Invalid package version.";
-            this.PackageAddDialogVersionExistingWarningText = "Version \"{0}\" is already existing.";
-            this.PackageAddDialogNoChangelogWarningText = "There was no changelog set for the update package.";
-            this.PackageAddDialogNoChangelogWarningCaption = "No changelog set.";
-            this.PackageAddDialogAlreadyImportedWarningText = "The file \" {0} \" is already imported. Should it be replaced by the new one?";
-            this.PackageAddDialogAlreadyImportedWarningCaption = "File already imported";
+            PackageAddDialogNoInternetWarningText =
+                "nUpdate Administration could not verify a network connection. Some functions are disabled for now and you can only save the package on your PC. An upload is possible as soon as a network connections is given.";
+            PackageAddDialogNoInternetWarningCaption = "No network connection available.";
+            PackageAddDialogNoFilesSpecifiedWarningText =
+                "There were no files specified for the update package. Please make sure you added an archive or some files to pack automatically.";
+            PackageAddDialogNoFilesSpecifiedWarningCaption = "No files for the package set.";
+            PackageAddDialogUnsupportedArchiveWarningText =
+                "You added an unsupported archive type to the list. nUpdate is only able to unpack \".ZIP\"-files at the moment.";
+            PackageAddDialogUnsupportedArchiveWarningCaption = "Unsupported archive type.";
+            PackageAddDialogVersionInvalidWarningText =
+                "The given version is invalid. You cannot use \"0.0.x.x\" as product-version. Please make sure to select a minimum Minor-version of \"1\".";
+            PackageAddDialogVersionInvalidWarningCaption = "Invalid package version.";
+            PackageAddDialogVersionExistingWarningText = "Version \"{0}\" is already existing.";
+            PackageAddDialogNoChangelogWarningText = "There was no changelog set for the update package.";
+            PackageAddDialogNoChangelogWarningCaption = "No changelog set.";
+            PackageAddDialogAlreadyImportedWarningText =
+                "The file \" {0} \" is already imported. Should it be replaced by the new one?";
+            PackageAddDialogAlreadyImportedWarningCaption = "File already imported";
 
-            this.PackageAddDialogPackageDataCreationErrorCaption = "Creating package data failed.";
-            this.PackageAddDialogProjectDataLoadingErrorCaption = "Failed to load project data.";
-            this.PackageAddDialogGettingUrlErrorCaption = "Error while getting url.";
-            this.PackageAddDialogReadingPackageBytesErrorCaption = "Reading package bytes failed.";
-            this.PackageAddDialogInvalidServerDirectoryErrorCaption = "Invalid server directory.";
-            this.PackageAddDialogInvalidServerDirectoryErrorText = "The directory for the update files on the server is not valid. Please edit it.";
-            this.PackageAddDialogLoadingFtpDataErrorCaption = "Failed to load FTP-data.";
-            this.PackageAddDialogConfigurationDownloadErrorCaption = "Configuration download failed.";
-            this.PackageAddDialogSerializingDataErrorCaption = "Error on serializing data.";
-            this.PackageAddDialogRelativeUriErrorText = "The server-directory can't be set as a relative uri.";
-            this.PackageAddDialogPackageInformationSavingErrorCaption = "Saving package information failed.";
-            this.PackageAddDialogUploadFailedErrorCaption = "Upload failed.";
+            PackageAddDialogPackageDataCreationErrorCaption = "Creating package data failed.";
+            PackageAddDialogProjectDataLoadingErrorCaption = "Failed to load project data.";
+            PackageAddDialogGettingUrlErrorCaption = "Error while getting url.";
+            PackageAddDialogReadingPackageBytesErrorCaption = "Reading package bytes failed.";
+            PackageAddDialogInvalidServerDirectoryErrorCaption = "Invalid server directory.";
+            PackageAddDialogInvalidServerDirectoryErrorText =
+                "The directory for the update files on the server is not valid. Please edit it.";
+            PackageAddDialogLoadingFtpDataErrorCaption = "Failed to load FTP-data.";
+            PackageAddDialogConfigurationDownloadErrorCaption = "Configuration download failed.";
+            PackageAddDialogSerializingDataErrorCaption = "Error on serializing data.";
+            PackageAddDialogRelativeUriErrorText = "The server-directory can't be set as a relative uri.";
+            PackageAddDialogPackageInformationSavingErrorCaption = "Saving package information failed.";
+            PackageAddDialogUploadFailedErrorCaption = "Upload failed.";
 
             #endregion
 
             /*
              * Errors
              * */
-            this.ProjectReadingErrorCaption = "Error while reading the project.";
-            this.ListingServerDataErrorCaption = "Error while listing the server-data.";
+            ProjectReadingErrorCaption = "Error while reading the project.";
+            ListingServerDataErrorCaption = "Error while listing the server-data.";
         }
 
         // The title in the forms

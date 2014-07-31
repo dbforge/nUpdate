@@ -1,51 +1,54 @@
-﻿using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.Core.Localization;
-using nUpdate.Administration.UI.Controls;
-using nUpdate.Administration.UI.Dialogs;
-using nUpdate.Administration.UI.Popups;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Security;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Text;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Localization;
+using nUpdate.Administration.Core.Update;
+using nUpdate.Administration.Properties;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectDialog : BaseDialog
     {
-        private LocalizationProperties lp = new LocalizationProperties();
         private bool allowCancel = true;
+        private LocalizationProperties lp = new LocalizationProperties();
+
+        public NewProjectDialog()
+        {
+            InitializeComponent();
+        }
 
         /// <summary>
-        /// Returns the private key.
+        ///     Returns the private key.
         /// </summary>
         public string PrivateKey { get; set; }
 
         /// <summary>
-        /// Returns the public key.
+        ///     Returns the public key.
         /// </summary>
         public string PublicKey { get; set; }
 
         /// <summary>
-        /// Sets the current tabpage.
+        ///     Sets the current tabpage.
         /// </summary>
         public TabPage Sender { get; set; }
 
         /// <summary>
-        /// Sets the language
+        ///     Sets the language
         /// </summary>
         public void SetLanguage()
         {
-            string languageFilePath = Path.Combine(Program.LanguagesDirectory, String.Format("{0}.json", Properties.Settings.Default.Language.Name));
+            string languageFilePath = Path.Combine(Program.LanguagesDirectory,
+                String.Format("{0}.json", Settings.Default.Language.Name));
             if (File.Exists(languageFilePath))
-            {
                 lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-            }
             else
             {
                 string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
@@ -55,119 +58,113 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            this.Text = lp.NewProjectDialogTitle;
-            this.Text = String.Format(this.Text, lp.ProductTitle);
+            Text = lp.NewProjectDialogTitle;
+            Text = String.Format(Text, lp.ProductTitle);
 
-            this.cancelButton.Text = lp.CancelButtonText;
-            this.continueButton.Text = lp.ContinueButtonText;
+            cancelButton.Text = lp.CancelButtonText;
+            continueButton.Text = lp.ContinueButtonText;
 
-            this.keyPairHeaderLabel.Text = lp.PanelSignatureHeader;
-            this.keyPairInfoLabel.Text = lp.PanelSignatureInfoText;
-            this.keyPairGenerationLabel.Text = lp.PanelSignatureWaitText;
+            keyPairHeaderLabel.Text = lp.PanelSignatureHeader;
+            keyPairInfoLabel.Text = lp.PanelSignatureInfoText;
+            keyPairGenerationLabel.Text = lp.PanelSignatureWaitText;
 
-            this.generalHeaderLabel.Text = lp.PanelGeneralHeader;
-            this.nameLabel.Text = lp.PanelGeneralNameText;
-            this.nameTextBox.Cue = lp.PanelGeneralNameWatermarkText;
-            this.languageLabel.Text = lp.PanelGeneralLanguageText;
+            generalHeaderLabel.Text = lp.PanelGeneralHeader;
+            nameLabel.Text = lp.PanelGeneralNameText;
+            nameTextBox.Cue = lp.PanelGeneralNameWatermarkText;
+            languageLabel.Text = lp.PanelGeneralLanguageText;
 
-            this.ftpHeaderLabel.Text = lp.PanelFtpHeader;
-            this.ftpHostLabel.Text = lp.PanelFtpServerText;
-            this.ftpUserLabel.Text = lp.PanelFtpUserText;
-            this.ftpUserTextBox.Cue = lp.PanelFtpUserWatermarkText;
-            this.ftpPasswordLabel.Text = lp.PanelFtpPasswordText;
-            this.ftpPortLabel.Text = lp.PanelFtpPortText;
-            this.ftpPortTextBox.Cue = lp.PanelFtpPortWatermarkText;
-        }
-
-        public NewProjectDialog()
-        {
-            InitializeComponent();
+            ftpHeaderLabel.Text = lp.PanelFtpHeader;
+            ftpHostLabel.Text = lp.PanelFtpServerText;
+            ftpUserLabel.Text = lp.PanelFtpUserText;
+            ftpUserTextBox.Cue = lp.PanelFtpUserWatermarkText;
+            ftpPasswordLabel.Text = lp.PanelFtpPasswordText;
+            ftpPortLabel.Text = lp.PanelFtpPortText;
+            ftpPortTextBox.Cue = lp.PanelFtpPortWatermarkText;
         }
 
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            this.ftpPortTextBox.ShortcutsEnabled = false;
+            ftpPortTextBox.ShortcutsEnabled = false;
 
-            this.ftpUserLabel.Enabled = Properties.Settings.Default.SaveCredentials;
-            this.ftpUserTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
-            this.ftpPasswordTextBox.Enabled = Properties.Settings.Default.SaveCredentials;
-            this.ftpPasswordLabel.Enabled = Properties.Settings.Default.SaveCredentials;
+            ftpUserLabel.Enabled = Settings.Default.SaveCredentials;
+            ftpUserTextBox.Enabled = Settings.Default.SaveCredentials;
+            ftpPasswordTextBox.Enabled = Settings.Default.SaveCredentials;
+            ftpPasswordLabel.Enabled = Settings.Default.SaveCredentials;
 
-            this.languageComboBox.SelectedIndex = 0;
-            this.ftpModeComboBox.SelectedIndex = 0;
-            this.ftpProtocolComboBox.SelectedIndex = 0;
+            languageComboBox.SelectedIndex = 0;
+            ftpModeComboBox.SelectedIndex = 0;
+            ftpProtocolComboBox.SelectedIndex = 0;
 
-            this.SetLanguage();
+            SetLanguage();
 
-            this.controlPanel1.Visible = false;
-            this.allowCancel = false;
+            controlPanel1.Visible = false;
+            allowCancel = false;
 
-            ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object state)
-            { this.GenerateKeyPair(); }), null);
+            ThreadPool.QueueUserWorkItem(delegate { GenerateKeyPair(); }, null);
         }
 
         private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!allowCancel)
-            {
                 e.Cancel = true;
-            }
         }
 
         /// <summary>
-        /// Generates the key pair in an own thread.
+        ///     Generates the key pair in an own thread.
         /// </summary>
         private void GenerateKeyPair()
         {
             // Create a new instance of the RsaSignature-class
-            RsaSignature rsa = new RsaSignature();
+            var rsa = new RsaSignature();
 
             // Initialize the properties with the keys
-            this.PrivateKey = rsa.PrivateKey;
-            this.PublicKey = rsa.PublicKey;
+            PrivateKey = rsa.PrivateKey;
+            PublicKey = rsa.PublicKey;
 
             Invoke(new Action(() =>
             {
-                this.controlPanel1.Visible = true;
-                this.tablessTabControl1.SelectedTab = this.generalTabPage;
-                this.Sender = this.generalTabPage;
+                controlPanel1.Visible = true;
+                tablessTabControl1.SelectedTab = generalTabPage;
+                Sender = generalTabPage;
             }));
 
-            this.allowCancel = true;
+            allowCancel = true;
         }
 
         /// <summary>
-        /// Converts a string into a byte array.
+        ///     Converts a string into a byte array.
         /// </summary>
         private byte[] GetBytes(string str)
         {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            var bytes = new byte[str.Length * sizeof (char)];
+            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
             return bytes;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
         {
-            if (this.Sender == this.generalTabPage)
+            if (Sender == generalTabPage)
             {
-                if (!ValidationManager.ValidatePanel(this.generalPanel))
+                if (!ValidationManager.ValidatePanel(generalPanel))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.", "All fields need to have a value.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.OK);
                     return;
                 }
 
-                List<string> entriesToDelete = new List<string>();
-                foreach (KeyValuePair<string, string> existingProject in Program.ExisitingProjects)
+                var entriesToDelete = new List<string>();
+                foreach (var existingProject in Program.ExisitingProjects)
                 {
-                    if (existingProject.Key == this.nameTextBox.Text && File.Exists(existingProject.Value))
+                    if (existingProject.Key == nameTextBox.Text && File.Exists(existingProject.Value))
                     {
-                        Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.", String.Format("The project \"{0}\" is already existing. Please choose another name for it.", this.nameTextBox.Text), PopupButtons.OK);
+                        Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
+                            String.Format(
+                                "The project \"{0}\" is already existing. Please choose another name for it.",
+                                nameTextBox.Text), PopupButtons.OK);
                         return;
                     }
-                    else if (!File.Exists(existingProject.Value))
-                    {
+                    if (!File.Exists(existingProject.Value))
                         entriesToDelete.Add(existingProject.Key);
-                    }
                 }
 
                 foreach (string entryToDelete in entriesToDelete)
@@ -177,95 +174,100 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 if (!Uri.IsWellFormedUriString(updateUrlTextBox.Text, UriKind.Absolute))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid adress.", "The given Update-URL is invalid.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid adress.", "The given Update-URL is invalid.",
+                        PopupButtons.OK);
                     return;
                 }
 
-                if (!Path.IsPathRooted(this.localPathTextBox.Text))
+                if (!Path.IsPathRooted(localPathTextBox.Text))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid path.", "The given local path for the project is invalid.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid path.",
+                        "The given local path for the project is invalid.", PopupButtons.OK);
                     return;
                 }
 
                 try
                 {
-                    Path.GetFullPath(this.localPathTextBox.Text);
+                    Path.GetFullPath(localPathTextBox.Text);
                 }
                 catch
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid path.", "The given local path for the project is invalid.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid path.",
+                        "The given local path for the project is invalid.", PopupButtons.OK);
                     return;
                 }
 
-                this.Sender = this.ftpTabPage;
-                this.backButton.Enabled = true;
-                this.tablessTabControl1.SelectedTab = this.ftpTabPage;
+                Sender = ftpTabPage;
+                backButton.Enabled = true;
+                tablessTabControl1.SelectedTab = ftpTabPage;
             }
-            else if (this.Sender == this.ftpTabPage)
+            else if (Sender == ftpTabPage)
             {
-                if (!ValidationManager.ValidatePanel(ftpPanel) || String.IsNullOrEmpty(this.ftpPasswordTextBox.Text))
+                if (!ValidationManager.ValidatePanel(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.", "All fields need to have a value.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.OK);
                     return;
                 }
 
-                this.Sender = this.statisticsServerTabPage;
-                this.tablessTabControl1.SelectedTab = this.statisticsServerTabPage;
+                Sender = statisticsServerTabPage;
+                tablessTabControl1.SelectedTab = statisticsServerTabPage;
             }
-            else if (this.Sender == this.statisticsServerTabPage)
+            else if (Sender == statisticsServerTabPage)
             {
-                if (!ValidationManager.ValidatePanel(this.statisticsServerTabPage))
+                if (!ValidationManager.ValidatePanel(statisticsServerTabPage))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.", "All fields need to have a value.", PopupButtons.OK);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.OK);
                     return;
                 }
 
                 try
                 {
-                    using (FileStream fs = File.Create(this.localPathTextBox.Text)) { }
+                    using (FileStream fs = File.Create(localPathTextBox.Text))
+                    {
+                    }
                 }
                 catch (IOException ex)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Failed to create project file.", ex, PopupButtons.OK);
-                    this.Close();
+                    Close();
                 }
 
                 bool usePassive;
-                if (this.ftpModeComboBox.SelectedIndex == 0)
-                {
+                if (ftpModeComboBox.SelectedIndex == 0)
                     usePassive = true;
-                }
                 else
-                {
                     usePassive = false;
-                }
 
                 // Create a new package...
-                var project = new UpdateProject()
+                var project = new UpdateProject
                 {
-                    Path = this.localPathTextBox.Text,
-                    Name = this.nameTextBox.Text,
+                    Path = localPathTextBox.Text,
+                    Name = nameTextBox.Text,
                     Id = Guid.NewGuid().ToString(),
-                    UpdateUrl = this.updateUrlTextBox.Text,
-                    ProgrammingLanguage = this.languageComboBox.SelectedText,
+                    UpdateUrl = updateUrlTextBox.Text,
+                    ProgrammingLanguage = languageComboBox.SelectedText,
                     NewestPackage = null,
                     Packages = null,
                     ReleasedPackages = 0,
-                    FtpHost = this.ftpHostTextBox.Text,
-                    FtpPort = int.Parse(this.ftpPortTextBox.Text),
-                    FtpUsername = this.ftpUserTextBox.Text,
-                    FtpPassword = Convert.ToBase64String(AESManager.Encrypt(this.ftpPasswordTextBox.Text, this.ftpUserTextBox.Text, this.ftpPasswordTextBox.Text)),
-                    FtpDirectory = this.ftpDirectoryTextBox.Text,
-                    FtpProtocol = this.ftpProtocolComboBox.GetItemText(this.ftpProtocolComboBox.SelectedItem),
+                    FtpHost = ftpHostTextBox.Text,
+                    FtpPort = int.Parse(ftpPortTextBox.Text),
+                    FtpUsername = ftpUserTextBox.Text,
+                    FtpPassword =
+                        Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, ftpUserTextBox.Text,
+                            ftpPasswordTextBox.Text)),
+                    FtpDirectory = ftpDirectoryTextBox.Text,
+                    FtpProtocol = ftpProtocolComboBox.GetItemText(ftpProtocolComboBox.SelectedItem),
                     FtpUsePassiveMode = usePassive,
-                    PrivateKey = this.PrivateKey,
-                    PublicKey = this.PublicKey,
+                    PrivateKey = PrivateKey,
+                    PublicKey = PublicKey,
                     Log = null,
                 };
 
                 try
                 {
-                    ApplicationInstance.SaveProject(this.localPathTextBox.Text, project); // ... and save it
+                    ApplicationInstance.SaveProject(localPathTextBox.Text, project); // ... and save it
                 }
                 catch (IOException ex)
                 {
@@ -275,8 +277,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 Program.ExisitingProjects.Add(project.Name, project.Path);
                 try
                 {
-                    StringBuilder builder = new StringBuilder();
-                    foreach (KeyValuePair<string, string> dictionaryEntry in Program.ExisitingProjects)
+                    var builder = new StringBuilder();
+                    foreach (var dictionaryEntry in Program.ExisitingProjects)
                     {
                         builder.AppendLine(String.Format("{0}-{1}", dictionaryEntry.Key, dictionaryEntry.Value));
                     }
@@ -286,98 +288,91 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Failed to create the project-entry.", ex, PopupButtons.OK);
                 }
-                this.Close();
+                Close();
             }
         }
 
         private void portTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if ("1234567890\b".IndexOf(e.KeyChar.ToString()) < 0)
-            {
                 e.Handled = true;
-            }
         }
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
         {
             if (!ValidationManager.ValidatePanelWithIgnoring(ftpPanel, ftpDirectoryTextBox))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Missing information.", "All input fields need to have a value in order to send a request to the server.", PopupButtons.OK);
+                Popup.ShowPopup(this, SystemIcons.Error, "Missing information.",
+                    "All input fields need to have a value in order to send a request to the server.", PopupButtons.OK);
                 return;
             }
 
-            FTPProtocol protocol = FTPProtocol.NormalFtp;
-            if (int.Equals(this.ftpModeComboBox.SelectedIndex, 0))
-            {
+            var protocol = FTPProtocol.NormalFtp;
+            if (Equals(ftpModeComboBox.SelectedIndex, 0))
                 protocol = FTPProtocol.NormalFtp;
-            }
             else
-            {
                 protocol = FTPProtocol.SecureFtp;
-            }
 
             var securePwd = new SecureString();
-            foreach (char sign in this.ftpPasswordTextBox.Text)
+            foreach (char sign in ftpPasswordTextBox.Text)
             {
                 securePwd.AppendChar(sign);
             }
 
-            var searchForm = new DirectorySearchDialog()
+            var searchForm = new DirectorySearchDialog
             {
-                ProjectName = this.nameTextBox.Text,
-                Host = this.ftpHostTextBox.Text,
-                Port = int.Parse(this.ftpPortTextBox.Text),
-                UsePassiveMode = this.ftpModeComboBox.SelectedIndex.Equals(0),
-                Username = this.ftpUserTextBox.Text,
+                ProjectName = nameTextBox.Text,
+                Host = ftpHostTextBox.Text,
+                Port = int.Parse(ftpPortTextBox.Text),
+                UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
+                Username = ftpUserTextBox.Text,
                 Password = securePwd,
                 Protocol = protocol,
             };
             if (searchForm.ShowDialog() == DialogResult.OK)
-            {
-                this.ftpDirectoryTextBox.Text = searchForm.SelectedDirectory;
-            }
+                ftpDirectoryTextBox.Text = searchForm.SelectedDirectory;
 
             searchForm.Close();
         }
 
         private void searchPathButton_Click(object sender, EventArgs e)
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
+            var fileDialog = new SaveFileDialog();
             fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
             if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                this.localPathTextBox.Text = fileDialog.FileName;
-            }
+                localPathTextBox.Text = fileDialog.FileName;
         }
 
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
-            Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.", "All your passwords will be encrypted with AES 256 and then saved on your PC. The key and initializing vector is your FTP-username and password, consecutively you have to enter them each time you open a project.", PopupButtons.OK);
+            Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
+                "All your passwords will be encrypted with AES 256 and then saved on your PC. The key and initializing vector is your FTP-username and password, consecutively you have to enter them each time you open a project.",
+                PopupButtons.OK);
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            if (this.Sender == this.ftpPanel)
+            if (Sender == ftpPanel)
             {
-                this.tablessTabControl1.SelectedTab = this.generalTabPage;
-                this.backButton.Enabled = false;
-                this.Sender = this.generalTabPage;
+                tablessTabControl1.SelectedTab = generalTabPage;
+                backButton.Enabled = false;
+                Sender = generalTabPage;
             }
-            else if (this.Sender == this.statisticsServerTabPage)
+            else if (Sender == statisticsServerTabPage)
             {
-                this.tablessTabControl1.SelectedTab = this.ftpTabPage;
-                this.Sender = this.ftpTabPage;
+                tablessTabControl1.SelectedTab = ftpTabPage;
+                Sender = ftpTabPage;
             }
         }
 
         private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            this.panel1.Enabled = this.useStatisticsServerRadioButton.Checked;
+            panel1.Enabled = useStatisticsServerRadioButton.Checked;
         }
 
         private void ftpImportButton_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            using (var fileDialog = new OpenFileDialog())
             {
                 fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
                 fileDialog.Multiselect = false;
@@ -385,18 +380,19 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     try
                     {
-                        var importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
-                        this.ftpHostTextBox.Text = importProject.FtpHost;
-                        this.ftpPortTextBox.Text = importProject.FtpPort.ToString();
-                        this.ftpUserTextBox.Text = importProject.FtpUsername;
-                        this.ftpProtocolComboBox.SelectedIndex = (importProject.FtpProtocol == "FTP") ? 0 : 1;
-                        this.ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
-                        this.ftpDirectoryTextBox.Text = importProject.FtpDirectory;
-                        this.ftpPasswordTextBox.Focus();
+                        UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                        ftpHostTextBox.Text = importProject.FtpHost;
+                        ftpPortTextBox.Text = importProject.FtpPort.ToString();
+                        ftpUserTextBox.Text = importProject.FtpUsername;
+                        ftpProtocolComboBox.SelectedIndex = (importProject.FtpProtocol == "FTP") ? 0 : 1;
+                        ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
+                        ftpDirectoryTextBox.Text = importProject.FtpDirectory;
+                        ftpPasswordTextBox.Focus();
                     }
                     catch (Exception ex)
                     {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex, PopupButtons.OK);
+                        Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex,
+                            PopupButtons.OK);
                     }
                 }
             }

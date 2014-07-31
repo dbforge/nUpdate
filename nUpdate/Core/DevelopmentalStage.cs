@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Core
+﻿namespace nUpdate.Core
 {
     public enum DevelopmentalStage
     {

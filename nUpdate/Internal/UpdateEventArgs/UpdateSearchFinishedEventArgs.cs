@@ -1,10 +1,11 @@
-﻿
+﻿using System;
+
 namespace nUpdate.Internal.UpdateEventArgs
 {
-    internal sealed class UpdateSearchFinishedEventArgs : System.EventArgs 
+    internal sealed class UpdateSearchFinishedEventArgs : EventArgs
     {
-        public UpdateSearchFinishedEventArgs(bool updateFound) 
-        { 
+        public UpdateSearchFinishedEventArgs(bool updateFound)
+        {
         }
     }
 }

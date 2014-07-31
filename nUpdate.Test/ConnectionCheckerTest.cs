@@ -7,7 +7,7 @@ namespace nUpdate.Test
     public class ConnectionCheckerTest
     {
         /// <summary>
-        /// Checks if the "wininet.dll" returns the right stats.
+        ///     Checks if the "wininet.dll" returns the right stats.
         /// </summary>
         [TestMethod]
         public void CanReturnConnectionStatus()

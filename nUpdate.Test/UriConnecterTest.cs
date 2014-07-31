@@ -1,19 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Core;
-using System.Diagnostics;
 
 namespace nUpdate.Test
 {
     [TestClass]
     public class UriConnecterTest
     {
-        static string baseUri;
-        static string baseUriWithoutSlash;
-        static string endUri;
+        private static string baseUri;
+        private static string baseUriWithoutSlash;
+        private static string endUri;
 
 
         /// <summary>
-        /// Initializes the members.
+        ///     Initializes the members.
         /// </summary>
         /// <param name="tcx">The additional TestContext.</param>
         [ClassInitialize]
@@ -25,24 +25,24 @@ namespace nUpdate.Test
         }
 
         /// <summary>
-        /// Should connect the two Uris with a slash at the end of the first Uri.
+        ///     Should connect the two Uris with a slash at the end of the first Uri.
         /// </summary>
         [TestMethod]
         public void CanConnectUriWithSlash()
         {
-            UriConnecter uriConnecter = new UriConnecter();
+            var uriConnecter = new UriConnecter();
             string output = uriConnecter.ConnectUri(baseUri, endUri).ToString();
             Debug.Print(output);
             Assert.AreEqual("http://www.test.de/test", output);
         }
 
         /// <summary>
-        /// Should connect the two Uris with no slash at the end of the first Uri.
+        ///     Should connect the two Uris with no slash at the end of the first Uri.
         /// </summary>
         [TestMethod]
         public void CanConnectUriWithoutSlash()
         {
-            UriConnecter uriConnecter = new UriConnecter();
+            var uriConnecter = new UriConnecter();
             string output = uriConnecter.ConnectUri(baseUriWithoutSlash, endUri).ToString();
             Debug.Write(output);
             Assert.AreEqual("http://www.test.de/test", output);

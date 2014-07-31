@@ -1,21 +1,21 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace nUpdate.Core.Operations
 {
     internal class RegistryManager
     {
+        private readonly RegistryKey baseRegistryKey = Registry.LocalMachine;
+        private readonly string subKey = String.Format("SOFTWARE\\{0}", Application.ProductName);
+
         /// <summary>
-        /// Returns the exception an operation has thrown. If the value equals 'null' no exception had been thrown.
+        ///     Returns the exception an operation has thrown. If the value equals 'null' no exception had been thrown.
         /// </summary>
         public Exception RegistryException { get; set; }
 
-        private RegistryKey baseRegistryKey = Registry.LocalMachine;
-        private string subKey = String.Format("SOFTWARE\\{0}", Application.ProductName);
-        
         /// <summary>
-        /// Writes an entry to the registry.
+        ///     Writes an entry to the registry.
         /// </summary>
         /// <param name="keyName">The name of the sub key.</param>
         /// <param name="value">The value to use.</param>
@@ -23,8 +23,8 @@ namespace nUpdate.Core.Operations
         {
             try
             {
-                RegistryKey registryKey = this.baseRegistryKey;
-                RegistryKey sk1 = registryKey.CreateSubKey(this.subKey);
+                RegistryKey registryKey = baseRegistryKey;
+                RegistryKey sk1 = registryKey.CreateSubKey(subKey);
 
                 sk1.SetValue(keyName.ToUpper(), value);
             }

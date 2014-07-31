@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace nUpdate.Administration.Core
 {
     internal class AESManager
     {
         /// <summary>
-        /// Encrypts a string with the given key and initializing vector.
+        ///     Encrypts a string with the given key and initializing vector.
         /// </summary>
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="keyPassword">The password which the key should be derived from.</param>
@@ -26,12 +23,14 @@ namespace nUpdate.Administration.Core
             if (ivPassword == null || ivPassword.Length <= 0)
                 throw new ArgumentNullException("ivPassword");
 
-            PasswordDeriveBytes keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword, new byte[] { 0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84 });
-            PasswordDeriveBytes IVPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword, new byte[] { 0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84 });
+            var keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword,
+                new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
+            var IVPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword,
+                new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
             byte[] encrypted;
             // Create an AesManaged object
             // with the specified key and IV.
-            using (AesManaged aesAlg = new AesManaged())
+            using (var aesAlg = new AesManaged())
             {
                 aesAlg.KeySize = 256;
                 aesAlg.Key = keyPasswordDeriveBytes.GetBytes(aesAlg.KeySize / 8);
@@ -41,13 +40,12 @@ namespace nUpdate.Administration.Core
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (var msEncrypt = new MemoryStream())
                 {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
-
                             //Write all data to the stream.
                             swEncrypt.Write(plainText);
                         }
@@ -62,7 +60,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        /// Decrypts a string with the given key and initializing vector.
+        ///     Decrypts a string with the given key and initializing vector.
         /// </summary>
         /// <param name="cipherText">The byte-array of the encrypted string.</param>
         /// <param name="keyPassword">The key to use.</param>
@@ -77,8 +75,10 @@ namespace nUpdate.Administration.Core
             if (ivPassword == null || ivPassword.Length <= 0)
                 throw new ArgumentNullException("ivPassword");
 
-            PasswordDeriveBytes keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword, new byte[] { 0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84 });
-            PasswordDeriveBytes IVPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword, new byte[] { 0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84 });
+            var keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword,
+                new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
+            var IVPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword,
+                new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
 
             // Declare the string used to hold
             // the decrypted text.
@@ -86,7 +86,7 @@ namespace nUpdate.Administration.Core
 
             // Create an AesManaged object
             // with the specified key and IV.
-            using (AesManaged aesAlg = new AesManaged())
+            using (var aesAlg = new AesManaged())
             {
                 aesAlg.KeySize = 256;
                 aesAlg.Key = keyPasswordDeriveBytes.GetBytes(aesAlg.KeySize / 8);
@@ -96,20 +96,18 @@ namespace nUpdate.Administration.Core
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                using (var msDecrypt = new MemoryStream(cipherText))
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        using (var srDecrypt = new StreamReader(csDecrypt))
                         {
-
                             // Read the decrypted bytes from the decrypting stream
                             // and place them in a string.
                             plaintext = srDecrypt.ReadToEnd();
                         }
                     }
                 }
-
             }
 
             var securedPlainText = new SecureString();

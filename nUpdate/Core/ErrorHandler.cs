@@ -1,6 +1,6 @@
-﻿using nUpdate.Dialogs;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using nUpdate.Dialogs;
 
 namespace nUpdate.Core
 {
@@ -13,7 +13,7 @@ namespace nUpdate.Core
 
         public static void ShowErrorDialog(IWin32Window owner, int errorCode, string infoMessage, Exception error)
         {
-            var errorDialog = new UpdateErrorDialog()
+            var errorDialog = new UpdateErrorDialog
             {
                 ErrorCode = errorCode,
                 Error = error,
@@ -21,9 +21,7 @@ namespace nUpdate.Core
             };
 
             if (owner != null)
-            {
                 errorDialog.ShowDialog(owner);
-            }
         }
     }
 }

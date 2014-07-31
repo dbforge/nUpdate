@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Client.GuiInterface
+﻿namespace nUpdate.Client.GuiInterface
 {
     public interface IProgressReporter
     {

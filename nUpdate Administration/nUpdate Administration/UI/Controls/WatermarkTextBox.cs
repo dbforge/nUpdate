@@ -7,6 +7,8 @@ namespace nUpdate.Administration
 {
     internal class WatermarkTextBox : TextBox
     {
+        private string mCue;
+
         public WatermarkTextBox()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -16,23 +18,25 @@ namespace nUpdate.Administration
         [Localizable(true)]
         public string Cue
         {
-            get { return this.mCue; }
-            set { this.mCue = value; this.updateCue(); }
+            get { return mCue; }
+            set
+            {
+                mCue = value;
+                updateCue();
+            }
         }
 
         private void updateCue()
         {
-            if (this.IsHandleCreated && mCue != null)
-            {
-                SendMessage(this.Handle, 0x1501, (IntPtr)1, mCue);
-            }
+            if (IsHandleCreated && mCue != null)
+                SendMessage(Handle, 0x1501, (IntPtr) 1, mCue);
         }
+
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            this.updateCue();
+            updateCue();
         }
-        private string mCue;
 
         // PInvoke
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]

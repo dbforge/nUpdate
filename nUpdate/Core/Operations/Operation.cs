@@ -1,5 +1,4 @@
-﻿
-namespace nUpdate.Core.Operations
+﻿namespace nUpdate.Core.Operations
 {
     internal class Operation
     {

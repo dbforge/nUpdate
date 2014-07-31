@@ -18,17 +18,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void iconPackLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://p.yusukekamiyamane.com/"); 
+            Process.Start("http://p.yusukekamiyamane.com/");
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void InfoForm_Shown(object sender, EventArgs e)
         {
-            this.closeButton.Focus();
+            closeButton.Focus();
         }
 
         private void timSchieweLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

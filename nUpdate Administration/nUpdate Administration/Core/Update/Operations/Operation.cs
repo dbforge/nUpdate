@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace nUpdate.Administration.Core.Update.Operations
 {
@@ -9,34 +6,34 @@ namespace nUpdate.Administration.Core.Update.Operations
     {
         public Operation(OperationArea area, OperationMethods method, string value, string value2 = null)
         {
-            this.Area = area;
-            this.Method = method;
-            this.Value = value;
-            this.Value2 = value2;
+            Area = area;
+            Method = method;
+            Value = value;
+            Value2 = value2;
         }
 
         /// <summary>
-        /// The area of the current operation.
+        ///     The area of the current operation.
         /// </summary>
         public OperationArea Area { get; set; }
 
         /// <summary>
-        /// The method of the current oepration.
+        ///     The method of the current oepration.
         /// </summary>
         public OperationMethods Method { get; set; }
 
         /// <summary>
-        /// The value of the current operation.
+        ///     The value of the current operation.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// The second value of the current operation if it needs more than one argument.
+        ///     The second value of the current operation if it needs more than one argument.
         /// </summary>
         public string Value2 { get; set; }
 
         /// <summary>
-        /// Gets the operation area and method from a given tag.
+        ///     Gets the operation area and method from a given tag.
         /// </summary>
         /// <param name="areaTag">The tag to check.</param>
         /// <returns>Returns a new Tuple with the area and method for the given tag.</returns>
