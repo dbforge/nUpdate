@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+
+<LanguageSerializer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CancelButtonText>Caer</CancelButtonText>
+  <ContinueButtonText>Salir</ContinueButtonText>
+  <InstallButtonText>Instalar</InstallButtonText>
+  <CloseButtonText>Cerrar</CloseButtonText>
+  <UpdateSearchDialogHeader>Busca de modernizaciones...</UpdateSearchDialogHeader>
+  <NewUpdateDialogHeader>Nuevas actualizaciones son disponibles.</NewUpdateDialogHeader>
+  <NewUpdateDialogInfoText>Modernizaciones pueden ser cargadas para {0}.</NewUpdateDialogInfoText>
+  <NewUpdateDialogNewestVersionText>Nueva versión: {0}</NewUpdateDialogNewestVersionText>
+  <NewUpdateDialogCurrentVersionText>Versión actual: {0}</NewUpdateDialogCurrentVersionText>
+  <NewUpdateDialogSizeText>Tamaño de paquete: {0}</NewUpdateDialogSizeText>
+  <NewUpdateDialogChangelogText>Cambios:</NewUpdateDialogChangelogText>
+  <NoUpdateDialogHeader>Ningunas modernizaciones son disponibles.</NoUpdateDialogHeader>
+  <NoUpdateDialogInfoText>El empleo es en la más nueva posición.</NoUpdateDialogInfoText>
+  <UpdateDownloadDialogLoadingHeader>Actualizaciones son bajadas...</UpdateDownloadDialogLoadingHeader>
+  <UpdateDownloadDialogLoadingInfo>Cogéis un momento el tiempo, por favor.</UpdateDownloadDialogLoadingInfo>
+  <UpdateDownloadDialogLoadingPackageText>Lade Updatepaket herunter...</UpdateDownloadDialogLoadingPackageText>
+  <UpdateDownloadDialogFinishedHeader>Die Updates wurden heruntergeladen.</UpdateDownloadDialogFinishedHeader>
+  <UpdateDownloadDialogFinishedInfoText>Download abgeschlossen.</UpdateDownloadDialogFinishedInfoText>
+  <UpdateDownloadDialogFinishedPackageText>Updatepaket wurde geladen.</UpdateDownloadDialogFinishedPackageText>
+  <UpdateErrorDialogHeader>Beim Aktualisieren der Anwendung sind Fehler aufgetreten.</UpdateErrorDialogHeader>
+  <UpdateErrorDialogErrorCodeText>Código de falta:</UpdateErrorDialogErrorCodeText>
+  <SearchErrorCaption>Falta en la busca.</SearchErrorCaption>
+  <LocalDataCreationErrorCaption>Falta en la elaboración de los datos locales.</LocalDataCreationErrorCaption>
+  <LocalDataCreationErrorText>El clasificador para los datos de paquetes no podía ser hecho. {0}</LocalDataCreationErrorText>
+  <FileTooBigErrorCaption>El paquete es demasiado grande.</FileTooBigErrorCaption>
+  <FileTooBigErrorText>nUpdate wird die Installation des Updatepaketes nicht erlauben, um Ihren Arbeitsspeicher zu schützen.</FileTooBigErrorText>
+  <PackageNotFoundErrorCaption>El paquete falta.</PackageNotFoundErrorCaption>
+  <PackageNotFoundErrorText>El paquete no podía ser examinado, dado que esto falta</PackageNotFoundErrorText>
+  <InvalidSignatureErrorCaption>Signo nulo.</InvalidSignatureErrorCaption>
+  <InvalidSignatureErrorText>Das Paket enthält eine ungültige Signatur und könnte potenziell gefährlich sein.{0}nUpdate wird die Installation verbieten und das Paket unwiederherstellbar löschen.</InvalidSignatureErrorText>
+  <InvalidSignatureAndFileDeletingFailedErrorText>Das Paket enthält eine ungültige Signatur und könnte potenziell gefährlich sein.{0}nUpdate wird die Installation verbieten.{0}Das Paket konnte jedoch nicht entfernt werden, da ein Fehler aufgetreten ist. Bitte löschen Sie dieses sofort, da dieses Viren und/oder Malware enthalten könnte, um Ihrem Computer zu schaden.{0}{1}</InvalidSignatureAndFileDeletingFailedErrorText>
+</LanguageSerializer>

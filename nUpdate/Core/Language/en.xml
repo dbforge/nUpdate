@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<LanguageSerializer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CancelButtonText>Cancel</CancelButtonText>
+  <ContinueButtonText>Continue</ContinueButtonText>
+  <InstallButtonText>Install</InstallButtonText>
+  <CloseButtonText>Close</CloseButtonText>
+  <UpdateSearchDialogHeader>Searching for updates...</UpdateSearchDialogHeader>
+  <NewUpdateDialogHeader>New updates available.</NewUpdateDialogHeader>
+  <NewUpdateDialogInfoText>New updates can be downloaded for {0}.</NewUpdateDialogInfoText>
+  <NewUpdateDialogNewestVersionText>Newest version: {0}</NewUpdateDialogNewestVersionText>
+  <NewUpdateDialogCurrentVersionText>Current version: {0}</NewUpdateDialogCurrentVersionText>
+  <NewUpdateDialogSizeText>Package size: {0}</NewUpdateDialogSizeText>
+  <NewUpdateDialogChangelogText>Changelog:</NewUpdateDialogChangelogText>
+  <NoUpdateDialogHeader>There are no new updates available.</NoUpdateDialogHeader>
+  <NoUpdateDialogInfoText>The application is currently up-to-date.</NoUpdateDialogInfoText>
+  <UpdateDownloadDialogLoadingHeader>Updates are being downloaded...</UpdateDownloadDialogLoadingHeader>
+  <UpdateDownloadDialogLoadingInfo>Please be patient...</UpdateDownloadDialogLoadingInfo>
+  <UpdateDownloadDialogLoadingPackageText>Package is being downloaded...</UpdateDownloadDialogLoadingPackageText>
+  <UpdateDownloadDialogFinishedHeader>Updates have been downloaded.</UpdateDownloadDialogFinishedHeader>
+  <UpdateDownloadDialogFinishedInfoText>Download completed.</UpdateDownloadDialogFinishedInfoText>
+  <UpdateDownloadDialogFinishedPackageText>Package downloaded.</UpdateDownloadDialogFinishedPackageText>
+  <UpdateErrorDialogHeader>Updating the application has failed.</UpdateErrorDialogHeader>
+  <UpdateErrorDialogErrorCodeText>Errorcode:</UpdateErrorDialogErrorCodeText>
+  <SearchErrorCaption>Error while searching for updates.</SearchErrorCaption>
+  <LocalDataCreationErrorCaption>Error while creating local data.</LocalDataCreationErrorCaption>
+  <LocalDataCreationErrorText>The folder for the package data couldn't be created. {0}</LocalDataCreationErrorText>
+  <FileTooBigErrorCaption>The update file is too big.</FileTooBigErrorCaption>
+  <FileTooBigErrorText>nUpdate will not allow to install the update in order to save your RAM.</FileTooBigErrorText>
+  <PackageNotFoundErrorCaption>Package not found.</PackageNotFoundErrorCaption>
+  <PackageNotFoundErrorText>The update package couldn't be validated because it is missing.</PackageNotFoundErrorText>
+  <InvalidSignatureErrorCaption>Invalid signature.</InvalidSignatureErrorCaption>
+  <InvalidSignatureErrorText>
+    The package contains an invalid signature and could be dangerous.
+    In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.
+  </InvalidSignatureErrorText>
+  <InvalidSignatureAndFileDeletingFailedErrorText>The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package.{0}Unfortunately nUpdate could not remove the update package because of an system error. Please delete this package immediately because it could contain viruses and/or malware in order to damage your PC.{0}{1}</InvalidSignatureAndFileDeletingFailedErrorText>
+</LanguageSerializer>
