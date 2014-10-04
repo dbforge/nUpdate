@@ -12,11 +12,23 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
     public partial class FileDeleteOperationPanel : UserControl, IOperationPanel
     {
-        private readonly BindingList<string> _itemList = new BindingList<string>(); 
+        private BindingList<string> _itemList = new BindingList<string>(); 
 
         public FileDeleteOperationPanel()
         {
             InitializeComponent();
+        }
+
+        public string Path
+        {
+            get { return pathTextBox.Text; }
+            set { pathTextBox.Text = value; }
+        }
+
+        public BindingList<string> ItemList
+        {
+            get { return _itemList; }
+            set { _itemList = value; }
         }
 
         private void FileDeleteOperationPanel_Load(object sender, EventArgs e)
@@ -47,7 +59,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Files, OperationMethods.Delete, pathTextBox.Text, _itemList.ToList());
+                return new Operation(OperationArea.Files, OperationMethods.Delete, Path, ItemList.ToList());
             }
         }
     }

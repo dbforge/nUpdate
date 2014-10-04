@@ -8,6 +8,9 @@ using nUpdate.Administration.Core.Application.History;
 
 namespace nUpdate.Administration.Core.Application
 {
+    /// <summary>
+    /// Represents a local update project.
+    /// </summary>
     [Serializable]
     internal class UpdateProject
     {

@@ -16,6 +16,12 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public string ServiceName
+        {
+            get { return serviceNameTextBox.Text; }
+            set { serviceNameTextBox.Text = value; }
+        }
+
         private void ServiceStopOperationPanel_Load(object sender, EventArgs e)
         {
 
@@ -25,7 +31,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Services, OperationMethods.Stop, serviceNameTextBox.Text);
+                return new Operation(OperationArea.Services, OperationMethods.Stop, ServiceName);
             }
         }
     }

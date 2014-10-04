@@ -32,7 +32,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.pathLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.argumentdTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.argumentTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -63,13 +63,13 @@
             this.label1.TabIndex = 28;
             this.label1.Text = "Arguments:";
             // 
-            // argumentdTextBox
+            // argumentTextBox
             // 
-            this.argumentdTextBox.Cue = "arg1,arg2";
-            this.argumentdTextBox.Location = new System.Drawing.Point(145, 41);
-            this.argumentdTextBox.Name = "argumentdTextBox";
-            this.argumentdTextBox.Size = new System.Drawing.Size(193, 22);
-            this.argumentdTextBox.TabIndex = 29;
+            this.argumentTextBox.Cue = "arg1,arg2";
+            this.argumentTextBox.Location = new System.Drawing.Point(145, 41);
+            this.argumentTextBox.Name = "argumentTextBox";
+            this.argumentTextBox.Size = new System.Drawing.Size(193, 22);
+            this.argumentTextBox.TabIndex = 29;
             // 
             // pathTextBox
             // 
@@ -94,7 +94,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.Controls.Add(this.argumentdTextBox);
+            this.Controls.Add(this.argumentTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pathTextBox);
             this.Controls.Add(this.pathLabel);
@@ -116,7 +116,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private UI.Controls.WatermarkTextBox pathTextBox;
         private System.Windows.Forms.Label pathLabel;
-        private UI.Controls.WatermarkTextBox argumentdTextBox;
+        private UI.Controls.WatermarkTextBox argumentTextBox;
         private System.Windows.Forms.Label label1;
     }
 }

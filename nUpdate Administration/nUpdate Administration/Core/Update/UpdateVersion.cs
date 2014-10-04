@@ -3,6 +3,7 @@
 // Created: 01-08-2014 12:11
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace nUpdate.Administration.Core.Update
@@ -102,9 +103,9 @@ namespace nUpdate.Administration.Core.Update
         /// <param name="build">The build version.</param>
         /// <param name="revision">The revision version.</param>
         /// <param name="devStage">The developmental stage.</param>
-        /// <param name="developmentStage">The pre-release version.</param>
+        /// <param name="developmentBuild">The pre-release version.</param>
         public UpdateVersion(int major, int minor, int build, int revision, DevelopmentalStage devStage,
-            int developmentStage)
+            int developmentBuild)
         {
             if (major < 0)
                 throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
@@ -123,7 +124,7 @@ namespace nUpdate.Administration.Core.Update
             Build = build;
             Revision = revision;
             DevelopmentalStage = devStage;
-            DevelopmentBuild = developmentStage;
+            DevelopmentBuild = developmentBuild;
         }
 
         /// <summary>
@@ -163,9 +164,7 @@ namespace nUpdate.Administration.Core.Update
         {
             get
             {
-                if (DevelopmentalStage != DevelopmentalStage.Release)
-                    return String.Format("{0} {1} {2}", LiteralUpdateVersion, DevelopmentalStage, DevelopmentBuild);
-                return LiteralUpdateVersion;
+                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", LiteralUpdateVersion, DevelopmentalStage, DevelopmentBuild) : LiteralUpdateVersion;
             }
         }
 
@@ -189,7 +188,7 @@ namespace nUpdate.Administration.Core.Update
                 return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision,
                     DevelopmentalStage.ToString().Substring(0, 1).ToLower(), DevelopmentBuild);
             }
-            return String.Format("{0}.{1}.{2}.{3}", Major, Minor, Build, Revision);
+            return LiteralUpdateVersion;
         }
 
         /// <summary>

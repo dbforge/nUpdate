@@ -22,6 +22,7 @@ namespace nUpdate.Administration.UI.Controls
         public string Changelog
         {
             get { return changelogTextBox.Text; }
+            set { changelogTextBox.Text = value; }
         }
     }
 }

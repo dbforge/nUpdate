@@ -4,10 +4,11 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using nUpdate.Administration.UI.Dialogs;
 
 namespace nUpdate.Administration.UI.Popups
 {
-    public partial class PopupDialog : Form
+    public partial class PopupDialog : BaseDialog
     {
         public PopupDialog()
         {

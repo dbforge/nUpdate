@@ -6,6 +6,9 @@ using nUpdate.Administration.Core.Update;
 
 namespace nUpdate.Administration.Core.Application
 {
+    /// <summary>
+    /// Represents a local update package.
+    /// </summary>
     [Serializable]
     internal class UpdatePackage
     {

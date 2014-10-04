@@ -16,6 +16,12 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public string ProcessName
+        {
+            get { return processNameTextBox.Text; }
+            set { processNameTextBox.Text = value; }
+        }
+
         private void ProcessStopOperationPanel_Load(object sender, EventArgs e)
         {
 
@@ -25,7 +31,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Processes, OperationMethods.Stop, processNameTextBox.Text);
+                return new Operation(OperationArea.Processes, OperationMethods.Stop, ProcessName);
             }
         }
     }

@@ -625,7 +625,8 @@ INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
                 return;
             }
 
-            FtpProtocol protocol = Equals(ftpModeComboBox.SelectedIndex, 0) ? FtpProtocol.FTP : FtpProtocol.FTPS;
+            // FtpProtocol protocol = Equals(ftpModeComboBox.SelectedIndex, 0) ? FtpProtocol.FTP : FtpProtocol.FTPS;
+            // TODO: Protocol
 
             var securePwd = new SecureString();
             foreach (char sign in ftpPasswordTextBox.Text)
@@ -641,7 +642,7 @@ INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                Protocol = protocol,
+                //Protocol = protocol,
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)

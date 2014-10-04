@@ -58,12 +58,65 @@ namespace nUpdate.Administration.Core.Update.Operations
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.SetValue);
                 case "StartProcess":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Start);
-                case "Terminaterocess":
+                case "TerminateProcess":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Stop);
                 case "StartService":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Services, OperationMethods.Start);
                 case "StopService":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Services, OperationMethods.Stop);
+            }
+            return null;
+        }
+
+        /// <summary>
+        ///     Gets the operation tag from a given operation.
+        /// </summary>
+        /// <param name="operation">The operation to get the tag from.</param>
+        /// <returns>
+        /// Returns the tag as a string.
+        /// </returns>
+        public static string GetOperationTag(Operation operation)
+        {
+            switch (operation.Area)
+            {
+                case OperationArea.Files:
+                    switch (operation.Method)
+                    {
+                        case OperationMethods.Delete:
+                            return "DeleteFile";
+                        case OperationMethods.Rename:
+                            return "RenameFile";
+                    }
+                    break;
+                case OperationArea.Registry:
+                    switch (operation.Method)
+                    {
+                        case OperationMethods.Create:
+                            return "CreateRegistryEntry";
+                        case OperationMethods.Delete:
+                            return "DeleteRegistryEntry";
+                        case OperationMethods.SetValue:
+                            return "SetRegistryKeyValue";
+                    }
+                    break;
+                case OperationArea.Processes:
+                    switch (operation.Method)
+                    {
+                        case OperationMethods.Start:
+                            return "StartProcess";
+                        case OperationMethods.Stop:
+                            return "TerminateProcess";
+                    }
+                    break;
+                case OperationArea.Services:
+                    switch (operation.Method)
+                    {
+                        case OperationMethods.Start:
+                            return "StartService";
+                        case OperationMethods.Stop:
+                            return "StopService";
+                    }
+                    break;
             }
             return null;
         }

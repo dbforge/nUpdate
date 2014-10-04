@@ -65,7 +65,6 @@ namespace nUpdate.Administration
             bool firstInstance;
             new Mutex(true, "MainForm", out firstInstance);
 
-            var appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             if (firstInstance)
             {
                 AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -97,6 +96,7 @@ namespace nUpdate.Administration
             FtpPassword.Dispose();
             ProxyPassword.Dispose();
             SqlPassword.Dispose();
+            Application.Exit();
         }
     }
 }

@@ -1,6 +1,32 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
+﻿/*
+* Copyright (c) 2006, Brendan Grant (grantb@dahat.com)
+* All rights reserved.
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*     * All original and modified versions of this source code must include the
+*       above copyright notice, this list of conditions and the following
+*       disclaimer.
+*     * This code may not be used with or within any modules or code that is 
+*       licensed in any way that that compels or requires users or modifiers
+*       to release their source code or changes as a requirement for
+*       the use, modification or distribution of binary, object or source code
+*       based on the licensed source code. (ex: Cannot be used with GPL code.)
+*     * The name of Brendan Grant may be used to endorse or promote products
+*       derived from this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY BRENDAN GRANT ``AS IS'' AND ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+* EVENT SHALL BRENDAN GRANT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 namespace nUpdate.Administration.Core.Application.Extension
 {
     internal class ProgramIcon
@@ -10,8 +36,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public static readonly ProgramIcon None = new ProgramIcon();
 
-        private int index;
-        private string path;
+        private int _index;
+        private string _path;
 
         /// <summary>
         ///     Creates instance of ProgramIcon.
@@ -20,8 +46,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="index">Index of icon within the file.</param>
         public ProgramIcon(string path, int index)
         {
-            this.path = path;
-            this.index = index;
+            _path = path;
+            _index = index;
         }
 
         /// <summary>
@@ -30,8 +56,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="path">Filename of file containing icon.</param>
         public ProgramIcon(string path)
         {
-            this.path = path;
-            index = 0;
+            _path = path;
+            _index = 0;
         }
 
         /// <summary>
@@ -39,8 +65,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public ProgramIcon()
         {
-            path = string.Empty;
-            index = 0;
+            _path = string.Empty;
+            _index = 0;
         }
 
         /// <summary>
@@ -48,8 +74,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public int Index
         {
-            get { return index; }
-            set { index = value; }
+            get { return _index; }
+            set { _index = value; }
         }
 
         /// <summary>
@@ -57,8 +83,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Path
         {
-            get { return path; }
-            set { path = value; }
+            get { return _path; }
+            set { _path = value; }
         }
 
         /// <summary>
@@ -67,7 +93,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <returns></returns>
         public override string ToString()
         {
-            return path + "," + index;
+            return _path + "," + _index;
         }
 
         /// <summary>
@@ -86,17 +112,16 @@ namespace nUpdate.Administration.Core.Application.Extension
                     regString = regString.Substring(1, regString.Length - 2);
             }
 
-            string path;
             int index = 0;
 
-            int commaPos = regString.IndexOf(",");
+            int commaPos = regString.IndexOf(",", System.StringComparison.Ordinal);
 
             if (commaPos == -1)
                 commaPos = regString.Length;
             else
                 index = int.Parse(regString.Substring(commaPos + 1));
 
-            path = regString.Substring(0, commaPos);
+            string path = regString.Substring(0, commaPos);
 
 
             return new ProgramIcon(path, index);
@@ -113,10 +138,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 return true;
             if (ReferenceEquals(lv, null) || ReferenceEquals(rv, null))
                 return false;
-            if (lv.path == rv.path && lv.index == rv.index)
-                return true;
-
-            return false;
+            return lv._path == rv._path && lv._index == rv._index;
         }
 
         /// <summary>

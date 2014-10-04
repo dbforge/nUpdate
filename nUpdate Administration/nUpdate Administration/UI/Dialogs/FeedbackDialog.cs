@@ -79,8 +79,16 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                string responseString = new WebClient().DownloadString(String.Format("http://www.trade-programming.de/nupdate/mail.php?name={0}&sender={1}&content={2}",
-                    nameTextBox.Text, emailTextBox.Text, contentTextBox.Text));
+                string responseString = null;
+                using (var client = new WebClientWrapper())
+                {
+                    responseString =
+                        client.DownloadString(
+                            String.Format(
+                                "http://www.trade-programming.de/nupdate/mail.php?name={0}&sender={1}&content={2}",
+                                nameTextBox.Text, emailTextBox.Text, contentTextBox.Text));
+                }
+
                 if (!String.IsNullOrEmpty(responseString))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.",

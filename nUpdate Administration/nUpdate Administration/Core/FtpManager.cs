@@ -1,19 +1,23 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
+
 using System;
+using System.Collections.Generic;
 using System.Security;
 using System.Threading;
 using Starksoft.Net.Ftp;
 
-namespace nUpdate.Administration.Core.Update
+namespace nUpdate.Administration.Core
 {
     internal class FtpManager
     {
         private bool _hasAlreadyFixedStrings;
         private FtpClient _packageFtpClient;
-        private ManualResetEvent _uploadResetEvent = new ManualResetEvent(false);
-        private ManualResetEvent _listingResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _uploadFileResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _directoryFilesListingResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _listingResetEvent = new ManualResetEvent(false);
         private FtpItemCollection _directoryCollection;
 
         /// <summary>
@@ -57,9 +61,19 @@ namespace nUpdate.Administration.Core.Update
         public SecureString Password { get; set; }
 
         /// <summary>
+        /// Gets or sets the exception appearing during a file-upload.
+        /// </summary>
+        public Exception FileUploadException { get; set; }
+
+        /// <summary>
         /// Gets or sets the exception appearing during the package upload.
         /// </summary>
         public Exception PackageUploadException { get; set; }
+
+        /// <summary>
+        /// Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFilesRecursively"/>-method.
+        /// </summary>
+        public IEnumerable<FtpItem> ListedFtpItems; 
 
         /// <summary>
         /// Occurs when the download progress is changed.
@@ -80,9 +94,6 @@ namespace nUpdate.Administration.Core.Update
         {
             if (Host.EndsWith("/"))
                 Host = Host.Remove(Host.Length - 1);
-
-            if (Directory.StartsWith("/"))
-                Directory = Directory.Substring(1);
 
             if (Directory.EndsWith("/"))
                 Directory = Directory.Remove(Directory.Length - 1);
@@ -126,14 +137,14 @@ namespace nUpdate.Administration.Core.Update
             ftp.ChangeDirectoryMultiPath(String.Format("/{0}/{1}", Directory, directoryName));
             ftp.GetDirListAsyncCompleted += DirectoryListingFinished;
             ftp.GetDirListAsync();
-            _listingResetEvent.WaitOne();
+            _directoryFilesListingResetEvent.WaitOne();
 
             foreach (FtpItem directoryItem in _directoryCollection)
             {
                 ftp.DeleteFile(directoryItem.Name);
             }
-                
-            ftp.ChangeDirectoryUp();
+
+            ftp.ChangeDirectory(Directory);
             ftp.DeleteDirectory(directoryName);
             ftp.Close();
         }
@@ -141,6 +152,25 @@ namespace nUpdate.Administration.Core.Update
         private void DirectoryListingFinished(object sender, GetDirListAsyncCompletedEventArgs e)
         {
             _directoryCollection = e.DirectoryListingResult;
+            _directoryFilesListingResetEvent.Set();
+        }
+
+        public void ListDirectoriesAndFilesRecursively()
+        {
+            var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None)
+            {
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary
+            };
+            ftp.Open(UserName, Password.ConvertToUnsecureString());
+            ftp.GetDirListDeepAsyncCompleted += ListingFinished;
+            ftp.GetDirListDeepAsync();
+            _listingResetEvent.WaitOne();
+        }
+
+        public void ListingFinished(object sender, GetDirListDeepAsyncCompletedEventArgs e)
+        {
+            ListedFtpItems = e.DirectoryListingResult;
             _listingResetEvent.Set();
         }
 
@@ -149,12 +179,6 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         public void UploadFile(string filePath)
         {
-            if (_uploadResetEvent != null)
-            {
-                _uploadResetEvent.Dispose();
-                _uploadResetEvent = new ManualResetEvent(false);
-            }
-
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
@@ -165,8 +189,20 @@ namespace nUpdate.Administration.Core.Update
             };
             ftp.Open(UserName, Password.ConvertToUnsecureString());
             ftp.ChangeDirectoryMultiPath(Directory);
+            ftp.PutFileAsyncCompleted += UploadFileFinished;
             ftp.PutFileAsync(filePath, FileAction.Create);
+            _uploadFileResetEvent.WaitOne();
             ftp.Close();
+        }
+
+        private void UploadFileFinished(object sender, PutFileAsyncCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                if (e.Error.InnerException != null)
+                    FileUploadException = e.Error.InnerException;
+            }
+            _uploadFileResetEvent.Set();
         }
 
         /// <summary>
@@ -174,12 +210,6 @@ namespace nUpdate.Administration.Core.Update
         /// </summary>
         public void UploadPackage(string packagePath, string packageVersion)
         {
-            if (_uploadResetEvent != null)
-            {
-                _uploadResetEvent.Dispose();
-                _uploadResetEvent = new ManualResetEvent(false);
-            }
-
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
@@ -188,14 +218,25 @@ namespace nUpdate.Administration.Core.Update
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                 FileTransferType = TransferType.Binary,
             };
-            _packageFtpClient.TransferProgress += UploadProgressChangedEventHandler;
-            _packageFtpClient.PutFileAsyncCompleted += UploadFinishedEventHandler;
+            _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
+            _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;
             _packageFtpClient.Open(UserName, Password.ConvertToUnsecureString());
             _packageFtpClient.ChangeDirectoryMultiPath(Directory);
             _packageFtpClient.MakeDirectory(packageVersion);
             _packageFtpClient.ChangeDirectory(packageVersion);
             _packageFtpClient.PutFileAsync(packagePath, FileAction.Create);
+            _uploadPackageResetEvent.WaitOne();
             _packageFtpClient.Close();
+        }
+
+        private void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                if (e.Error.InnerException != null)
+                    PackageUploadException = e.Error.InnerException;
+            }
+            _uploadPackageResetEvent.Set();
         }
 
         /// <summary>
@@ -204,22 +245,11 @@ namespace nUpdate.Administration.Core.Update
         public void CancelPackageUpload()
         {
             _packageFtpClient.CancelAsync();
-            _uploadResetEvent.Set();
         }
 
-        private void UploadProgressChangedEventHandler(object sender, TransferProgressEventArgs e)
+        private void TransferProgressChangedEventHandler(object sender, TransferProgressEventArgs e)
         {
             OnProgressChanged(e);
-        }
-
-        private void UploadFinishedEventHandler(object sender, PutFileAsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                if (e.Error.InnerException != null)
-                    PackageUploadException = e.Error.InnerException;
-            }
-            _uploadResetEvent.Set();
         }
     }
 }

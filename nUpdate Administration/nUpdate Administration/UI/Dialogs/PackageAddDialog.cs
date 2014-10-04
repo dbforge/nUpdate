@@ -45,15 +45,15 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5);
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6);
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7);
-        private readonly BindingList<string> _unsupportedVersionsBindingsList = new BindingList<string>();
+        private readonly BindingList<UpdateVersion> _unsupportedVersionsBindingsList = new BindingList<UpdateVersion>();
         private readonly Log _updateLog = new Log();
         private bool _allowCancel = true;
         private int _architectureIndex = 2;
         private UpdateConfiguration _configuration = new UpdateConfiguration();
-        private bool _hasFailedOnLoading;
         private bool _includeIntoStatistics;
         private MySqlConnection _insertConnection;
         private bool _mustUpdate;
+        private DevelopmentalStage _developmentalStage;
 
         private string _packageFolder;
         private UpdateVersion _packageVersion;
@@ -72,16 +72,6 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The newest package version.
         /// </summary>
         internal UpdateVersion NewestVersion { get; set; }
-
-        /// <summary>
-        ///     Sets the developmental stage of the package.
-        /// </summary>
-        public DevelopmentalStage DevStage { get; set; }
-
-        /// <summary>
-        ///     Returns all operations set.
-        /// </summary>
-        internal List<Operation> Operations { get; set; }
 
         #region "Localization"
 
@@ -212,7 +202,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Initializes the FTP-data.
         /// </summary>
-        private void InitializeFtpData()
+        private bool InitializeFtpData()
         {
             try
             {
@@ -223,22 +213,24 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
                 _ftp.Directory = Project.FtpDirectory;
+
+                return true;
             }
             catch (IOException ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                _hasFailedOnLoading = true;
+                return false;
             }
             catch (NullReferenceException)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.",
                     "The project file is corrupt and does not have the necessary arguments.", PopupButtons.Ok);
-                _hasFailedOnLoading = true;
+                return false;
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                _hasFailedOnLoading = true;
+                return false;
             }
         }
 
@@ -247,12 +239,9 @@ namespace nUpdate.Administration.UI.Dialogs
             _ftp.ProgressChanged += ProgressChanged;
 
             _updateLog.Project = Project;
-            Operations = new List<Operation>();
 
-            InitializeFtpData();
-            if (_hasFailedOnLoading)
+            if (!InitializeFtpData())
             {
-                // TODO: Failed to load FTP-data. *Take the code from ProjectDialog*
                 Close();
                 return;
             }
@@ -308,6 +297,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             generalTabPage.DoubleBuffer();
+            changelogTabPage.DoubleBuffer();
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
         }
 
@@ -378,9 +368,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void addButton_Click(object sender, EventArgs e)
+        private void createPackageButton_Click(object sender, EventArgs e)
         {
-            if (DevStage == DevelopmentalStage.Release)
+            if (_developmentalStage == DevelopmentalStage.Release)
             {
                 _packageVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
                     (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value);
@@ -388,7 +378,7 @@ namespace nUpdate.Administration.UI.Dialogs
             else
             {
                 _packageVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
-                    (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value, DevStage,
+                    (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value, _developmentalStage,
                     (int) developmentBuildNumericUpDown.Value);
             }
 
@@ -571,7 +561,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _configuration.Changelog = changelog;
             _configuration.MustUpdate = _mustUpdate;
 
-            switch (_architectureIndex)
+            /*switch (_architectureIndex)
             {
                 case 0:
                     _configuration.Architecture = "x86";
@@ -582,7 +572,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 case 2:
                     _configuration.Architecture = "AnyCPU";
                     break;
-            }
+            }*/
+            // TODO: Fix dat shit
 
             _configuration.Operations = new List<Operation>();
             Invoke(new Action(() =>
@@ -650,7 +641,22 @@ namespace nUpdate.Administration.UI.Dialogs
                 configurationList = new List<UpdateConfiguration>();
 
             configurationList.Add(_configuration);
-            File.WriteAllText(_updateConfigFile, Serializer.Serialize(configurationList));
+
+            try
+            {
+                File.WriteAllText(_updateConfigFile, Serializer.Serialize(configurationList));
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
+                                PopupButtons.Ok)));
+                SetUiState(true);
+                Reset(false);
+                return;
+            }
 
             /* ------------- Save package info  ------------- */
             Invoke(new Action(() => _package.Description = descriptionTextBox.Text));
@@ -761,7 +767,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     SetUiState(true);
                     Reset(_savePackages);
                     if (!_savePackages) return;
-
+                    
                     DialogResult = DialogResult.OK;
                     return;
                 }
@@ -787,7 +793,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() =>
                 {
                     loadingLabel.Text = uploadingConfigInfoText;
-                    cancelLabel.Visible = true;
+                    cancelLabel.Visible = false;
                 }));
 
                 try
@@ -842,6 +848,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex, PopupButtons.Ok);
             }
+            
             DialogResult = DialogResult.OK;
         }
 
@@ -874,7 +881,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void changelogClearButton_Click(object sender, EventArgs e)
         {
-            englishChangelogTextBox.Clear();
+            if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
+            {
+                ((TextBox)changelogContentTabControl.SelectedTab.Controls[0]).Clear();
+            }
+            else
+            {
+                var currentChangelogPanel = (ChangelogPanel)changelogContentTabControl.SelectedTab.Controls[0];
+                ((TextBox)currentChangelogPanel.Controls[0]).Clear();
+            }
         }
 
         /// <summary>
@@ -957,23 +972,47 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addVersionButton_Click(object sender, EventArgs e)
         {
-            string version = unsupportedMajorNumericUpDown.Value + "." + unsupportedMinorNumericUpDown.Value + "." +
-                             unsupportedBuildNumericUpDown.Value + "." + unsupportedRevisionNumericUpDown.Value;
-            _unsupportedVersionsBindingsList.Add(version);
+            if (
+                unsupportedMajorNumericUpDown.Value == 0 && unsupportedMinorNumericUpDown.Value == 0 &&
+                unsupportedBuildNumericUpDown.Value == 0 && unsupportedRevisionNumericUpDown.Value == 0)
+            {
+                Popup.ShowPopup(this, SystemIcons.Warning, "Invalid version.",
+                    "You can't add version \"0.0.0.0\" to the unsupported versions. Please specify a minimum version of \"0.1.0.0\"",
+                    PopupButtons.Ok);
+                return;
+            }
+
+            var developmentalStage = (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage),
+                developmentalStageComboBox.GetItemText(unsupportedDevelopmentalStageComboBox.SelectedItem));
+
+            if (developmentalStage == DevelopmentalStage.Alpha || developmentalStage == DevelopmentalStage.Beta)
+            {
+                var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
+                    (int)unsupportedMinorNumericUpDown.Value, (int)unsupportedBuildNumericUpDown.Value,
+                    (int)unsupportedRevisionNumericUpDown.Value, developmentalStage, (int)unsupportedDevelopmentBuildNumericUpDown.Value);
+                _unsupportedVersionsBindingsList.Add(version);
+            }
+            else
+            {
+                var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
+                    (int)unsupportedMinorNumericUpDown.Value, (int)unsupportedBuildNumericUpDown.Value,
+                    (int)unsupportedRevisionNumericUpDown.Value);
+                _unsupportedVersionsBindingsList.Add(version);
+            }
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)
         {
-            _unsupportedVersionsBindingsList.Remove(unsupportedVersionsListBox.SelectedItem.ToString());
+            _unsupportedVersionsBindingsList.Remove(new UpdateVersion(unsupportedVersionsListBox.SelectedItem.ToString()));
         }
 
         private void developmentalStageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DevStage =
+            _developmentalStage =
                 (DevelopmentalStage)
                     Enum.Parse(typeof (DevelopmentalStage),
                         developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem));
-            if (DevStage == DevelopmentalStage.Alpha || DevStage == DevelopmentalStage.Beta)
+            if (_developmentalStage == DevelopmentalStage.Alpha || _developmentalStage == DevelopmentalStage.Beta)
                 developmentBuildNumericUpDown.Enabled = true;
             else
                 developmentBuildNumericUpDown.Enabled = false;
@@ -1186,18 +1225,18 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _ftp.CancelPackageUpload();
 
-            try
-            {
-                _ftp.DeleteDirectory(_packageVersion.ToString());
-            }
-            catch (Exception deletingEx)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
-                                deletingEx, PopupButtons.Ok)));
-            }
+            //try
+            //{
+            //    _ftp.DeleteDirectory(_packageVersion.ToString());
+            //}
+            //catch (Exception deletingEx)
+            //{
+            //    Invoke(
+            //        new Action(
+            //            () =>
+            //                Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
+            //                    deletingEx, PopupButtons.Ok)));
+            //}
 
             SetUiState(true);
             Reset(_savePackages);

@@ -95,9 +95,9 @@
     <Compile Include="Core\Application\Extension\RegistryException.cs" />
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
-    <Compile Include="Core\Application\SQL.cs" />
+    <Compile Include="Core\Application\Sql.cs" />
+    <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\ProgrammingLanguage.cs" />
-    <Compile Include="Core\Update\FtpsWebRequestCreator.cs" />
     <Compile Include="Core\Update\History\LogEntry.cs" />
     <Compile Include="Core\Application\UpdatePackage.cs" />
     <Compile Include="Core\Application\UpdateProject.cs" />
@@ -107,8 +107,7 @@
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\JsonHelper.cs" />
     <Compile Include="Core\Navigator.cs" />
-    <Compile Include="Core\Update\FtpManager.cs" />
-    <Compile Include="Core\Update\FtpProtocol.cs" />
+    <Compile Include="Core\FtpManager.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
     <Compile Include="Core\RsaSignature.cs" />
     <Compile Include="Core\Serializer.cs" />
@@ -172,7 +171,7 @@
     </Compile>
     <Compile Include="Core\Update\UpdateConfiguration.cs" />
     <Compile Include="Core\Update\UpdateVersion.cs" />
-    <Compile Include="Core\Update\WebClientWrapper.cs">
+    <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\UriConnector.cs" />
@@ -490,6 +489,7 @@
     <None Include="Resources\Accept.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\en.json" />
     <None Include="Resources\Error.png" />
   </ItemGroup>
   <ItemGroup>

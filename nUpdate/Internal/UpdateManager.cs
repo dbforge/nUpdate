@@ -378,7 +378,7 @@ namespace nUpdate.Internal
         /// <summary>
         ///     The handler set if the async task for the update search throws an exception.
         /// </summary>
-        /// <param name="task">The taskto handle the sended the exceptions.</param>
+        /// <param name="task">The task to handle the sended the exceptions.</param>
         private void SearchExceptionHandler(Task task)
         {
             AggregateException exception = task.Exception;

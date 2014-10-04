@@ -57,7 +57,7 @@ namespace nUpdate.Administration.Core.Update
         /// <summary>
         ///     The architecture settings of the update package.
         /// </summary>
-        public string Architecture { get; set; }
+        public Architecture Architecture { get; set; }
 
         /// <summary>
         ///     The operations of the update package.
@@ -77,13 +77,15 @@ namespace nUpdate.Administration.Core.Update
         /// <returns>Returns a deserialized list of type <see cref="UpdatePackage" />.</returns>
         public static List<UpdateConfiguration> DownloadUpdateConfiguration(Uri configFileUrl, WebProxy proxy)
         {
-            var wc = new WebClientWrapper();
-            if (proxy != null)
-                wc.Proxy = proxy;
+            using(var wc = new WebClientWrapper())
+            {
+                if (proxy != null)
+                    wc.Proxy = proxy;
 
-            // Check for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-            return Serializer.Deserialize<List<UpdateConfiguration>>(wc.DownloadString(configFileUrl));
+                // Check for SSL and ignore it
+                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
+                return Serializer.Deserialize<List<UpdateConfiguration>>(wc.DownloadString(configFileUrl));
+            }
         }
 
         /// <summary>

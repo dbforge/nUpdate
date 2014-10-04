@@ -41,8 +41,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly FtpManager _ftp = new FtpManager();
         private readonly Log _updateLog = new Log();
         private bool _allowCancel = true;
-        private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
-        private HttpWebResponse _configResponse;
+        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private Uri _configurationFileUrl;
         private MySqlConnection _deleteConnection;
         private int _groupIndex;
@@ -51,7 +50,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _isNetworkAvailable = true;
         private UpdateVersion _packageVersion;
         private MySqlConnection _queryConnection;
-        private HttpWebResponse _uploadedConfigResponse;
 
         public ProjectDialog()
         {
@@ -149,7 +147,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             InitializePackageItems();
             SetLanguage();
-            
+
             _updateLog.Project = Project;
 
             programmingLanguageComboBox.DataSource = Enum.GetValues(typeof (ProgrammingLanguage));
@@ -185,13 +183,15 @@ namespace nUpdate.Administration.UI.Dialogs
                 statisticsServerPanel.Enabled = false;
                 label5.Text = "Statistics couldn't be loaded.\nNo network connection available.";
 
-                foreach (Control c in from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
+                foreach (
+                    Control c in
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
                 {
                     c.Visible = false;
                 }
 
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection.",
-                        "Some functions aren't usable because no network connection is available.", PopupButtons.Ok);
+                    "Some functions aren't usable because no network connection is available.", PopupButtons.Ok);
                 _isSetByUser = true;
                 return;
             }
@@ -260,7 +260,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else
             {
-                foreach (Control c in from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
+                foreach (
+                    Control c in
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
                 {
                     c.Visible = false;
                 }
@@ -302,7 +304,8 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!ConnectionChecker.IsConnectionAvailable())
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.", "No package can be created because no network connection is available.", PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
+                    "No package can be created because no network connection is available.", PopupButtons.Ok);
                 return;
             }
 
@@ -348,7 +351,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while copying source.", ex, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while copying the source-code.", ex, PopupButtons.Ok);
             }
         }
 
@@ -360,6 +363,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 List<UpdateConfiguration> allConfigurations =
                     UpdateConfiguration.LoadFromFile(Path.Combine(Program.Path, "Projects", Project.Name,
                         _packageVersion.ToString(), "updates.json"));
+                packageEditDialog.UpdateConfigurations = allConfigurations;
                 packageEditDialog.PackageConfiguration =
                     allConfigurations.First(item => item.Version == _packageVersion.ToString());
             }
@@ -539,8 +543,9 @@ namespace nUpdate.Administration.UI.Dialogs
         #region "Initializing"
 
         /// <summary>
-        ///     Initializes the FTP-data.
+        /// Initializes the FTP-data.
         /// </summary>
+        /// <returns>Returns whether the operation was successful or not.</returns>
         private bool InitializeFtpData()
         {
             try
@@ -549,19 +554,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Port = Project.FtpPort;
                 _ftp.UserName = Project.FtpUsername;
                 _ftp.Password = Program.FtpPassword;
-                _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
+                _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
                 _ftp.Directory = Project.FtpDirectory;
-            }
-            catch (IOException ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                return false;
-            }
-            catch (NullReferenceException ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                return false;
             }
             catch (Exception ex)
             {
@@ -575,6 +570,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Sets all the details for the project.
         /// </summary>
+        /// <returns>Returns whether the operation was successful or not.</returns>
         private bool InitializeProjectDetails()
         {
             try
@@ -608,26 +604,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     projectIdTextBox.Text = Project.Guid;
                     publicKeyTextBox.Text = Project.PublicKey;
                 }));
-            }
-
-            catch (IOException ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while loading project-data.", ex,
-                                PopupButtons.Ok)));
-                return false;
-            }
-            catch (NullReferenceException)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while loading project-data.",
-                                "The project file is corrupt and does not have the necessary arguments.",
-                                PopupButtons.Ok)));
-                return false;
             }
             catch (Exception ex)
             {
@@ -727,10 +703,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while saving new project info.", ex,
                                         PopupButtons.Ok)));
                     }
-
-                    InitializeProjectDetails();
-                    InitializePackageItems();
-                    break;
                 }
                 catch (Exception ex)
                 {
@@ -740,9 +712,9 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the package.", ex,
                                     PopupButtons.Ok)));
                 }
-
-                InitializeProjectDetails();
             }
+
+            InitializeProjectDetails();
         }
 
         /// <summary>
@@ -766,8 +738,73 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         #endregion
+
         // TODO: Manage upload
+
         #region "Upload"
+
+        /// <summary>
+        /// Undoes the MySQL-insertion.
+        /// </summary>
+        private void UndoSqlInsertion()
+        {
+            Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
+
+            string connectionString = String.Format("SERVER={0};" +
+                                                    "DATABASE={1};" +
+                                                    "UID={2};" +
+                                                    "PASSWORD={3};",
+                Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
+                Project.SqlSettings.Username,
+                Program.SqlPassword.ConvertToUnsecureString());
+
+            var deleteConnection = new MySqlConnection(connectionString);
+            try
+            {
+                deleteConnection.Open();
+            }
+            catch (MySqlException ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "An MySQL-exception occured when trying to undo the SQL-insertions...",
+                                ex, PopupButtons.Ok)));
+                deleteConnection.Close();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while connecting to the database when trying to undo the SQL-insertions...",
+                                ex, PopupButtons.Ok)));
+                deleteConnection.Close();
+                return;
+            }
+
+            MySqlCommand command = deleteConnection.CreateCommand();
+            command.CommandText =
+                String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", _packageVersion);
+
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while executing the commands when trying to undo the SQL-insertions...",
+                                ex, PopupButtons.Ok)));
+                deleteConnection.Close();
+            }
+        }
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
@@ -974,8 +1011,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #region "Configuration"
 
-        private bool _hasFailed;
-
         /// <summary>
         ///     Starts checking if the update configuration exists.
         /// </summary>
@@ -990,111 +1025,149 @@ namespace nUpdate.Administration.UI.Dialogs
             StartCheckingUpdateInfo();
         }
 
+        private bool _hasFinishedCheck;
+        private bool _isExisting = true;
         private void CheckUpdateConfigurationStatus(Uri configFileUrl)
         {
-            WebRequest request = WebRequest.Create(configFileUrl);
-            request.Timeout = 5000;
-            request.Method = "HEAD";
-
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-
-            try
+            if (!ConnectionChecker.IsConnectionAvailable())
             {
-                _configResponse = (HttpWebResponse) request.GetResponse();
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
+                                String.Format(
+                                    "Checking the update configuration failed because there is no network connection avilable."),
+                                PopupButtons.Ok);
+
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                        }));
+
+                return;
             }
-            catch
+
+            using (var client = new WebClientWrapper(5000))
+            {
+                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
+                try
+                {
+                    Stream stream = client.OpenRead(configFileUrl);
+                    if (stream == null)
+                    {
+                        _isExisting = false;
+                        return;
+                    }
+                    _isExisting = true;
+                }
+                catch (Exception)
+                {
+                    _isExisting = false;
+                }
+            }
+
+            if (_isExisting)
             {
                 Invoke(new Action(() =>
                 {
-                    SetUiState(false);
-                    loadingLabel.Text = "Updating info file...";
-
-                    checkUpdateConfigurationLinkLabel.Enabled = false;
+                    tickPictureBox.Visible = true;
                     checkingUrlPictureBox.Visible = false;
+                    checkUpdateConfigurationLinkLabel.Enabled = true;
                 }));
+                return;
+            }
 
-                string temporaryConfigurationFile = Path.Combine(Program.Path, "updates.json");
+            if (_hasFinishedCheck)
+            {
+                _hasFinishedCheck = false;
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
+                                String.Format(
+                                    "The configuration file was successfully updated on the FTP-server, but it couldn't be accessed via HTTP(S). Please check if it is correct."),
+                                PopupButtons.Ok);
+
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                        }));
+
+                return;
+            }
+
+            SetUiState(false);
+            Invoke(new Action(() =>
+            {
+                loadingLabel.Text = "Updating configuration file...";
+
+                checkUpdateConfigurationLinkLabel.Enabled = false;
+                checkingUrlPictureBox.Visible = false;
+                tickPictureBox.Visible = false;
+            }));
+
+            string temporaryConfigurationFile = Path.Combine(Program.Path, "updates.json");
+            try
+            {
                 if (!File.Exists(temporaryConfigurationFile))
                 {
                     using (File.Create(temporaryConfigurationFile))
                     {
                     }
                 }
-
-                try
-                {
-                    // Upload the file now
-                    _ftp.UploadFile(temporaryConfigurationFile);
-                }
-                catch (Exception ex)
-                {
-                    _hasFailed = true;
-                    Invoke(
-                        new Action(
-                            () => Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
-                                PopupButtons.Ok)));
-                }
             }
-            finally
+            catch (Exception ex)
             {
-                if (_configResponse != null)
-                    _configResponse.Close();
-                
-                WebRequest checkRequest = WebRequest.Create(configFileUrl);
-                checkRequest.Timeout = 5000;
-                checkRequest.Method = "HEAD";
-
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-
-                try
-                {
-                    _uploadedConfigResponse = (HttpWebResponse) checkRequest.GetResponse();
-                }
-                catch (Exception ex)
-                {
-                    if (!_hasFailed)
-                    {
-                        _hasFailed = true;
-                        if (ex.GetType() == typeof (WebException))
+                Invoke(
+                    new Action(
+                        () =>
                         {
-                            Invoke(new Action(() =>
-                            {
-                                var webException = ex as WebException;
-                                if (webException == null) return;
-                                var statusCode = (int) ((HttpWebResponse) webException.Response).StatusCode;
-                                Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
-                                    String.Format(
-                                        "The configuration file was successfully updated on the FTP-server, but it couldn't be accessed via HTTP(S)-url. Please check if it is correct. - {0}",
-                                        statusCode),
-                                    PopupButtons.Ok);
-                            }));
-                        }
-                        else
-                        {
-                            Invoke(
-                                new Action(
-                                    () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error,
-                                            "HTTP(S)-access of configuration file failed.", ex, PopupButtons.Ok)));
-                        }
-                    }
-                }
-                finally
-                {
-                    if (_uploadedConfigResponse != null)
-                        _uploadedConfigResponse.Close();
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the new configuration file.", ex,
+                                PopupButtons.Ok);
 
-                    Invoke(new Action(() =>
-                    {
-                        SetUiState(true);
-                        checkingUrlPictureBox.Visible = false;
-                        checkUpdateConfigurationLinkLabel.Enabled = true;
-
-                        if (!_hasFailed)
-                            tickPictureBox.Visible = true; // Upload succeeded
-                    }));
-                }
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                        }));
+                SetUiState(true);
+                return;
             }
+
+            try
+            {
+                // Upload the file now
+                _ftp.UploadFile(temporaryConfigurationFile);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration file.", ex,
+                                PopupButtons.Ok);
+
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                        }));
+                SetUiState(true);
+                return;
+            }
+
+            if (_ftp.FileUploadException != null)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration file.",
+                                _ftp.FileUploadException,
+                                PopupButtons.Ok);
+
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                        }));
+                SetUiState(true);
+                return;
+            }
+
+            _hasFinishedCheck = true;
+            SetUiState(true);
+            CheckUpdateConfigurationStatus(_configurationFileUrl);
         }
 
         #endregion
@@ -1242,6 +1315,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting local package directory.",
                                     ex, PopupButtons.Ok)));
+                    return;
                 }
 
                 try

@@ -4,6 +4,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -39,11 +40,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
             else
             {
-                string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
+                File.WriteAllBytes(Path.Combine(Program.LanguagesDirectory, "en.json"), Resources.en);
+                Settings.Default.Language = new CultureInfo("en");
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
             }
 
             Text = _lp.ProductTitle;

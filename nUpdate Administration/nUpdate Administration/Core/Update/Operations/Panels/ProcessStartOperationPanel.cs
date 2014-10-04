@@ -16,6 +16,18 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public string Path
+        {
+            get { return pathTextBox.Text; }
+            set { pathTextBox.Text = value; }
+        }
+
+        public IEnumerable<string> Arguments
+        {
+            get { return argumentTextBox.Text.Split(new char[] {','}); }
+            set { argumentTextBox.Text = String.Join(",", value); }
+        }
+
         private void ProcessStartOperationPanel_Load(object sender, EventArgs e)
         {
 
@@ -25,7 +37,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Processes, OperationMethods.Start, pathTextBox.Text, argumentdTextBox.Text.Split(new char[] { ',' }).ToList());
+                return new Operation(OperationArea.Processes, OperationMethods.Start, pathTextBox.Text, Arguments.ToList());
             }
         }
     }

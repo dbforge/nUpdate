@@ -14,6 +14,18 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public string Path
+        {
+            get { return pathTextBox.Text; }
+            set { pathTextBox.Text = value; }
+        }
+
+        public string NewName
+        {
+            get { return newNameTextBox.Text; }
+            set { newNameTextBox.Text = value; }
+        }
+
         private void FileRenameOperationPanel_Load(object sender, EventArgs e)
         {
             // Language initializing follows here
@@ -23,7 +35,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Files, OperationMethods.Rename, pathTextBox.Text, newNameTextBox.Text);
+                return new Operation(OperationArea.Files, OperationMethods.Rename, Path, NewName);
             }
         }
     }

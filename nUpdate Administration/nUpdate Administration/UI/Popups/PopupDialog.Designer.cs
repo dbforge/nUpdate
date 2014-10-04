@@ -81,9 +81,9 @@
             // controlPanel1
             // 
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.yesButton);
             this.controlPanel1.Controls.Add(this.noButton);
             this.controlPanel1.Controls.Add(this.closeButton);
+            this.controlPanel1.Controls.Add(this.yesButton);
             this.controlPanel1.Location = new System.Drawing.Point(0, 130);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(359, 35);
@@ -91,7 +91,7 @@
             // 
             // yesButton
             // 
-            this.yesButton.Location = new System.Drawing.Point(273, 6);
+            this.yesButton.Location = new System.Drawing.Point(192, 6);
             this.yesButton.Name = "yesButton";
             this.yesButton.Size = new System.Drawing.Size(75, 23);
             this.yesButton.TabIndex = 9;
@@ -102,7 +102,7 @@
             // 
             // noButton
             // 
-            this.noButton.Location = new System.Drawing.Point(192, 6);
+            this.noButton.Location = new System.Drawing.Point(273, 6);
             this.noButton.Name = "noButton";
             this.noButton.Size = new System.Drawing.Size(75, 23);
             this.noButton.TabIndex = 10;

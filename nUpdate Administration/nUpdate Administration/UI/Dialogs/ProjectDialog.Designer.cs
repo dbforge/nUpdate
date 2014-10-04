@@ -83,6 +83,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.releasedPackagesAmountLabel = new System.Windows.Forms.Label();
             this.line4 = new nUpdate.Administration.UI.Controls.Line();
             this.statisticsServerPanel = new System.Windows.Forms.Panel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.selectStatisticsServerButton = new System.Windows.Forms.Button();
             this.dataBaseLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -122,8 +124,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.noStatisticsPanel = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -187,6 +187,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.tabControl1.Controls.Add(this.overviewTabPage);
             this.tabControl1.Controls.Add(this.packagesTabPage);
             this.tabControl1.Controls.Add(this.statisticsTabPage);
+            this.tabControl1.HotTrack = true;
             this.tabControl1.ImageList = this.imageList1;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -681,6 +682,22 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsServerPanel.Size = new System.Drawing.Size(305, 96);
             this.statisticsServerPanel.TabIndex = 57;
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(78, 31);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(215, 22);
+            this.textBox1.TabIndex = 58;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(59, 13);
+            this.label1.TabIndex = 57;
+            this.label1.Text = "Password:";
+            // 
             // selectStatisticsServerButton
             // 
             this.selectStatisticsServerButton.Location = new System.Drawing.Point(16, 61);
@@ -1066,22 +1083,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label5.Size = new System.Drawing.Size(148, 26);
             this.label5.TabIndex = 0;
             this.label5.Text = "This project was not linked \r\nwith a statistics server.";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 13);
-            this.label1.TabIndex = 57;
-            this.label1.Text = "Password:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(78, 31);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(215, 22);
-            this.textBox1.TabIndex = 58;
             // 
             // ProjectDialog
             // 

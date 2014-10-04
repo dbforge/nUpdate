@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackageEditDialog));
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
@@ -61,46 +65,29 @@
             System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Program directory", 2, 2);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("AppData", 2, 2);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Temp directory", 2, 2);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Desktop", 2, 2);
-            this.operationsPanel = new System.Windows.Forms.Panel();
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
-            this.availabilityPanel = new System.Windows.Forms.Panel();
-            this.someVersionsInfoLabel = new System.Windows.Forms.Label();
-            this.allVersionsRadioButton = new System.Windows.Forms.RadioButton();
-            this.allVersionsInfoLabel = new System.Windows.Forms.Label();
-            this.unsupportedVersionsPanel = new System.Windows.Forms.Panel();
-            this.unsupportedMajorNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.addVersionButton = new System.Windows.Forms.Button();
-            this.removeVersionButton = new System.Windows.Forms.Button();
-            this.unsupportedRevisionNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.unsupportedVersionsList = new System.Windows.Forms.ListBox();
-            this.unsupportedMinorNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.unsupportedBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.someVersionsRadioButton = new System.Windows.Forms.RadioButton();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.filesImageList = new System.Windows.Forms.ImageList(this.components);
+            this.saveButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.loadingPanel = new System.Windows.Forms.Panel();
+            this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
-            this.changelogPanel = new System.Windows.Forms.Panel();
-            this.toolStrip5 = new System.Windows.Forms.ToolStrip();
-            this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.changelogClearButton = new System.Windows.Forms.ToolStripButton();
-            this.changelogTextBox = new System.Windows.Forms.TextBox();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.filesImageList = new System.Windows.Forms.ImageList(this.components);
+            this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
+            this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
+            this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
+            this.line2 = new nUpdate.Administration.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
+            this.mustBeInstalledInfoLabel = new System.Windows.Forms.Label();
             this.mustUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.environmentInfoLabel = new System.Windows.Forms.Label();
+            this.line3 = new nUpdate.Administration.UI.Controls.Line();
+            this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
             this.environmentLabel = new System.Windows.Forms.Label();
@@ -112,56 +99,79 @@
             this.developmentalStageComboBox = new System.Windows.Forms.ComboBox();
             this.devStageLabel = new System.Windows.Forms.Label();
             this.minorNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.filesList = new System.Windows.Forms.ListView();
-            this.filesPanel = new System.Windows.Forms.Panel();
-            this.toolStrip4 = new System.Windows.Forms.ToolStrip();
-            this.addFolderButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.addFilesButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.removeEntryButton = new System.Windows.Forms.ToolStripButton();
+            this.changelogTabPage = new System.Windows.Forms.TabPage();
+            this.changelogPanel = new System.Windows.Forms.Panel();
+            this.changelogContentTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.englishChangelogTabPage = new System.Windows.Forms.TabPage();
+            this.englishChangelogTextBox = new System.Windows.Forms.TextBox();
+            this.toolStrip5 = new System.Windows.Forms.ToolStrip();
+            this.changelogLanguageComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.changelogClearButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.specialCharactersComboBox = new System.Windows.Forms.ToolStripDropDownButton();
+            this.bulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.anführungszeichenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.anführungszeichenKlassischToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.anführungszeichennachAußenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.apostropheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.copyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allRightsReservedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.soundrecordingCopyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unregisteredTrademarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serviceMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.availabilityTabPage = new System.Windows.Forms.TabPage();
+            this.availabilityPanel = new System.Windows.Forms.Panel();
+            this.unsupportedVersionsPanel = new System.Windows.Forms.Panel();
+            this.unsupportedDevelopmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.unsupportedDevelopmentalStageComboBox = new System.Windows.Forms.ComboBox();
+            this.unsupportedMajorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.addVersionButton = new System.Windows.Forms.Button();
+            this.removeVersionButton = new System.Windows.Forms.Button();
+            this.unsupportedRevisionNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.unsupportedVersionsListBox = new System.Windows.Forms.ListBox();
+            this.unsupportedMinorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.unsupportedBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.someVersionsInfoLabel = new System.Windows.Forms.Label();
+            this.allVersionsRadioButton = new System.Windows.Forms.RadioButton();
+            this.allVersionsInfoLabel = new System.Windows.Forms.Label();
+            this.someVersionsRadioButton = new System.Windows.Forms.RadioButton();
+            this.operationsTabPage = new System.Windows.Forms.TabPage();
+            this.operationsPanel = new System.Windows.Forms.Panel();
+            this.operationsListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.editPackageButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.operationsListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.line3 = new nUpdate.Administration.UI.Controls.Line();
-            this.line1 = new nUpdate.Administration.UI.Controls.Line();
-            this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
-            this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.operationsPanel.SuspendLayout();
-            this.availabilityPanel.SuspendLayout();
-            this.unsupportedVersionsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMajorNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.changelogPanel.SuspendLayout();
-            this.toolStrip5.SuspendLayout();
+            this.controlPanel1.SuspendLayout();
+            this.categoryTabControl.SuspendLayout();
+            this.generalTabPage.SuspendLayout();
             this.generalPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.buildNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.majorNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.revisionNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minorNumericUpDown)).BeginInit();
-            this.filesPanel.SuspendLayout();
-            this.toolStrip4.SuspendLayout();
-            this.controlPanel1.SuspendLayout();
+            this.changelogTabPage.SuspendLayout();
+            this.changelogPanel.SuspendLayout();
+            this.changelogContentTabControl.SuspendLayout();
+            this.englishChangelogTabPage.SuspendLayout();
+            this.toolStrip5.SuspendLayout();
+            this.availabilityTabPage.SuspendLayout();
+            this.availabilityPanel.SuspendLayout();
+            this.unsupportedVersionsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedDevelopmentBuildNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMajorNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
+            this.operationsTabPage.SuspendLayout();
+            this.operationsPanel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // operationsPanel
-            // 
-            this.operationsPanel.AutoScroll = true;
-            this.operationsPanel.Controls.Add(this.operationsListView);
-            this.operationsPanel.Location = new System.Drawing.Point(148, 22);
-            this.operationsPanel.Name = "operationsPanel";
-            this.operationsPanel.Size = new System.Drawing.Size(474, 235);
-            this.operationsPanel.TabIndex = 44;
             // 
             // categoryImageList
             // 
@@ -179,223 +189,15 @@
             this.categoryImageList.Images.SetKeyName(9, "document--minus.png");
             this.categoryImageList.Images.SetKeyName(10, "document--pencil.png");
             this.categoryImageList.Images.SetKeyName(11, "document--arrow.png");
+            this.categoryImageList.Images.SetKeyName(12, "wall--minus.png");
+            this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
+            this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             // 
-            // availabilityPanel
+            // cancelToolTip
             // 
-            this.availabilityPanel.Controls.Add(this.someVersionsInfoLabel);
-            this.availabilityPanel.Controls.Add(this.allVersionsRadioButton);
-            this.availabilityPanel.Controls.Add(this.allVersionsInfoLabel);
-            this.availabilityPanel.Controls.Add(this.unsupportedVersionsPanel);
-            this.availabilityPanel.Controls.Add(this.someVersionsRadioButton);
-            this.availabilityPanel.Location = new System.Drawing.Point(148, 22);
-            this.availabilityPanel.Name = "availabilityPanel";
-            this.availabilityPanel.Size = new System.Drawing.Size(474, 235);
-            this.availabilityPanel.TabIndex = 49;
-            // 
-            // someVersionsInfoLabel
-            // 
-            this.someVersionsInfoLabel.AutoSize = true;
-            this.someVersionsInfoLabel.Location = new System.Drawing.Point(34, 67);
-            this.someVersionsInfoLabel.Name = "someVersionsInfoLabel";
-            this.someVersionsInfoLabel.Size = new System.Drawing.Size(292, 13);
-            this.someVersionsInfoLabel.TabIndex = 40;
-            this.someVersionsInfoLabel.Text = "This package is not available for the following versions.";
-            // 
-            // allVersionsRadioButton
-            // 
-            this.allVersionsRadioButton.AutoSize = true;
-            this.allVersionsRadioButton.Checked = true;
-            this.allVersionsRadioButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.allVersionsRadioButton.Location = new System.Drawing.Point(12, 7);
-            this.allVersionsRadioButton.Name = "allVersionsRadioButton";
-            this.allVersionsRadioButton.Size = new System.Drawing.Size(182, 17);
-            this.allVersionsRadioButton.TabIndex = 37;
-            this.allVersionsRadioButton.TabStop = true;
-            this.allVersionsRadioButton.Text = "Available for all older versions";
-            this.allVersionsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // allVersionsInfoLabel
-            // 
-            this.allVersionsInfoLabel.AutoSize = true;
-            this.allVersionsInfoLabel.Location = new System.Drawing.Point(34, 27);
-            this.allVersionsInfoLabel.Name = "allVersionsInfoLabel";
-            this.allVersionsInfoLabel.Size = new System.Drawing.Size(372, 13);
-            this.allVersionsInfoLabel.TabIndex = 39;
-            this.allVersionsInfoLabel.Text = "This package is available and can be downloaded for all older versions.";
-            // 
-            // unsupportedVersionsPanel
-            // 
-            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedMajorNumericUpDown);
-            this.unsupportedVersionsPanel.Controls.Add(this.addVersionButton);
-            this.unsupportedVersionsPanel.Controls.Add(this.removeVersionButton);
-            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedRevisionNumericUpDown);
-            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedVersionsList);
-            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedMinorNumericUpDown);
-            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedBuildNumericUpDown);
-            this.unsupportedVersionsPanel.Location = new System.Drawing.Point(4, 88);
-            this.unsupportedVersionsPanel.Name = "unsupportedVersionsPanel";
-            this.unsupportedVersionsPanel.Size = new System.Drawing.Size(335, 135);
-            this.unsupportedVersionsPanel.TabIndex = 36;
-            // 
-            // unsupportedMajorNumericUpDown
-            // 
-            this.unsupportedMajorNumericUpDown.Location = new System.Drawing.Point(31, 108);
-            this.unsupportedMajorNumericUpDown.Name = "unsupportedMajorNumericUpDown";
-            this.unsupportedMajorNumericUpDown.Size = new System.Drawing.Size(56, 22);
-            this.unsupportedMajorNumericUpDown.TabIndex = 26;
-            // 
-            // addVersionButton
-            // 
-            this.addVersionButton.Location = new System.Drawing.Point(246, 53);
-            this.addVersionButton.Name = "addVersionButton";
-            this.addVersionButton.Size = new System.Drawing.Size(82, 22);
-            this.addVersionButton.TabIndex = 24;
-            this.addVersionButton.Text = "Add";
-            this.addVersionButton.UseVisualStyleBackColor = true;
-            // 
-            // removeVersionButton
-            // 
-            this.removeVersionButton.Location = new System.Drawing.Point(246, 81);
-            this.removeVersionButton.Name = "removeVersionButton";
-            this.removeVersionButton.Size = new System.Drawing.Size(82, 22);
-            this.removeVersionButton.TabIndex = 25;
-            this.removeVersionButton.Text = "Remove";
-            this.removeVersionButton.UseVisualStyleBackColor = true;
-            // 
-            // unsupportedRevisionNumericUpDown
-            // 
-            this.unsupportedRevisionNumericUpDown.Location = new System.Drawing.Point(215, 108);
-            this.unsupportedRevisionNumericUpDown.Name = "unsupportedRevisionNumericUpDown";
-            this.unsupportedRevisionNumericUpDown.Size = new System.Drawing.Size(56, 22);
-            this.unsupportedRevisionNumericUpDown.TabIndex = 29;
-            // 
-            // unsupportedVersionsList
-            // 
-            this.unsupportedVersionsList.FormattingEnabled = true;
-            this.unsupportedVersionsList.Location = new System.Drawing.Point(31, 8);
-            this.unsupportedVersionsList.Name = "unsupportedVersionsList";
-            this.unsupportedVersionsList.Size = new System.Drawing.Size(209, 95);
-            this.unsupportedVersionsList.TabIndex = 23;
-            // 
-            // unsupportedMinorNumericUpDown
-            // 
-            this.unsupportedMinorNumericUpDown.Location = new System.Drawing.Point(93, 108);
-            this.unsupportedMinorNumericUpDown.Name = "unsupportedMinorNumericUpDown";
-            this.unsupportedMinorNumericUpDown.Size = new System.Drawing.Size(56, 22);
-            this.unsupportedMinorNumericUpDown.TabIndex = 27;
-            // 
-            // unsupportedBuildNumericUpDown
-            // 
-            this.unsupportedBuildNumericUpDown.Location = new System.Drawing.Point(155, 108);
-            this.unsupportedBuildNumericUpDown.Name = "unsupportedBuildNumericUpDown";
-            this.unsupportedBuildNumericUpDown.Size = new System.Drawing.Size(56, 22);
-            this.unsupportedBuildNumericUpDown.TabIndex = 28;
-            // 
-            // someVersionsRadioButton
-            // 
-            this.someVersionsRadioButton.AutoSize = true;
-            this.someVersionsRadioButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.someVersionsRadioButton.Location = new System.Drawing.Point(12, 47);
-            this.someVersionsRadioButton.Name = "someVersionsRadioButton";
-            this.someVersionsRadioButton.Size = new System.Drawing.Size(219, 17);
-            this.someVersionsRadioButton.TabIndex = 38;
-            this.someVersionsRadioButton.Text = "Not available for some older versions";
-            this.someVersionsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Size";
-            this.columnHeader2.Width = 147;
-            // 
-            // loadingPanel
-            // 
-            this.loadingPanel.BackColor = System.Drawing.Color.White;
-            this.loadingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.loadingPanel.Controls.Add(this.pictureBox1);
-            this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(8, 282);
-            this.loadingPanel.Name = "loadingPanel";
-            this.loadingPanel.Size = new System.Drawing.Size(227, 51);
-            this.loadingPanel.TabIndex = 46;
-            this.loadingPanel.Visible = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 21;
-            this.pictureBox1.TabStop = false;
-            // 
-            // loadingLabel
-            // 
-            this.loadingLabel.AutoSize = true;
-            this.loadingLabel.Location = new System.Drawing.Point(34, 19);
-            this.loadingLabel.Name = "loadingLabel";
-            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
-            this.loadingLabel.TabIndex = 11;
-            this.loadingLabel.Text = "Waiting for thread...";
-            // 
-            // changelogPanel
-            // 
-            this.changelogPanel.Controls.Add(this.toolStrip5);
-            this.changelogPanel.Controls.Add(this.changelogTextBox);
-            this.changelogPanel.Location = new System.Drawing.Point(148, 22);
-            this.changelogPanel.Name = "changelogPanel";
-            this.changelogPanel.Size = new System.Drawing.Size(474, 235);
-            this.changelogPanel.TabIndex = 48;
-            // 
-            // toolStrip5
-            // 
-            this.toolStrip5.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changelogLoadButton,
-            this.toolStripSeparator5,
-            this.changelogClearButton});
-            this.toolStrip5.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.toolStrip5.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip5.Name = "toolStrip5";
-            this.toolStrip5.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip5.Size = new System.Drawing.Size(474, 23);
-            this.toolStrip5.TabIndex = 3;
-            this.toolStrip5.Text = "toolStrip5";
-            // 
-            // changelogLoadButton
-            // 
-            this.changelogLoadButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogLoadButton.Image")));
-            this.changelogLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.changelogLoadButton.Name = "changelogLoadButton";
-            this.changelogLoadButton.Size = new System.Drawing.Size(101, 20);
-            this.changelogLoadButton.Text = "Load from file";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
-            // 
-            // changelogClearButton
-            // 
-            this.changelogClearButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogClearButton.Image")));
-            this.changelogClearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.changelogClearButton.Name = "changelogClearButton";
-            this.changelogClearButton.Size = new System.Drawing.Size(54, 20);
-            this.changelogClearButton.Text = "Clear";
-            // 
-            // changelogTextBox
-            // 
-            this.changelogTextBox.AcceptsReturn = true;
-            this.changelogTextBox.Location = new System.Drawing.Point(4, 26);
-            this.changelogTextBox.Multiline = true;
-            this.changelogTextBox.Name = "changelogTextBox";
-            this.changelogTextBox.Size = new System.Drawing.Size(467, 207);
-            this.changelogTextBox.TabIndex = 0;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 316;
+            this.cancelToolTip.IsBalloon = true;
+            this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
             // 
             // filesImageList
             // 
@@ -405,17 +207,161 @@
             this.filesImageList.Images.SetKeyName(1, "file.png");
             this.filesImageList.Images.SetKeyName(2, "folder.png");
             // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(498, 7);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(121, 23);
+            this.saveButton.TabIndex = 0;
+            this.saveButton.Text = "Save package";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(417, 7);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            // 
+            // loadingPanel
+            // 
+            this.loadingPanel.BackColor = System.Drawing.Color.White;
+            this.loadingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.loadingPanel.Controls.Add(this.cancelLabel);
+            this.loadingPanel.Controls.Add(this.pictureBox1);
+            this.loadingPanel.Controls.Add(this.loadingLabel);
+            this.loadingPanel.Location = new System.Drawing.Point(198, 312);
+            this.loadingPanel.Name = "loadingPanel";
+            this.loadingPanel.Size = new System.Drawing.Size(260, 51);
+            this.loadingPanel.TabIndex = 45;
+            this.loadingPanel.Visible = false;
+            // 
+            // cancelLabel
+            // 
+            this.cancelLabel.AutoSize = true;
+            this.cancelLabel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cancelLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.cancelLabel.Location = new System.Drawing.Point(241, -2);
+            this.cancelLabel.Name = "cancelLabel";
+            this.cancelLabel.Size = new System.Drawing.Size(14, 17);
+            this.cancelLabel.TabIndex = 22;
+            this.cancelLabel.Text = "x";
+            this.cancelLabel.Visible = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(9, 13);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 21;
+            this.pictureBox1.TabStop = false;
+            // 
+            // loadingLabel
+            // 
+            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.Location = new System.Drawing.Point(34, 17);
+            this.loadingLabel.Name = "loadingLabel";
+            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
+            this.loadingLabel.TabIndex = 11;
+            this.loadingLabel.Text = "Waiting for thread...";
+            // 
+            // categoryTreeView
+            // 
+            this.categoryTreeView.AllowDrop = true;
+            this.categoryTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.categoryTreeView.FullRowSelect = true;
+            this.categoryTreeView.HideSelection = false;
+            this.categoryTreeView.HotTracking = true;
+            this.categoryTreeView.ImageIndex = 0;
+            this.categoryTreeView.ImageList = this.categoryImageList;
+            this.categoryTreeView.Indent = 5;
+            this.categoryTreeView.ItemHeight = 24;
+            this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
+            this.categoryTreeView.Name = "categoryTreeView";
+            treeNode1.ImageIndex = 2;
+            treeNode1.Name = "generalNode";
+            treeNode1.SelectedImageIndex = 2;
+            treeNode1.Text = "General";
+            treeNode2.ImageIndex = 3;
+            treeNode2.Name = "changelogNode";
+            treeNode2.SelectedImageIndex = 3;
+            treeNode2.Text = "Changelog";
+            treeNode3.ImageIndex = 0;
+            treeNode3.Name = "availabilityNode";
+            treeNode3.SelectedImageIndex = 0;
+            treeNode3.Text = "Availability";
+            treeNode4.ImageIndex = 4;
+            treeNode4.Name = "operationsNode";
+            treeNode4.SelectedImageIndex = 4;
+            treeNode4.Text = "Operations";
+            this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
+            this.categoryTreeView.SelectedImageIndex = 0;
+            this.categoryTreeView.ShowLines = false;
+            this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
+            this.categoryTreeView.TabIndex = 46;
+            this.categoryTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.categoryTreeView_AfterSelect);
+            this.categoryTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragDrop);
+            this.categoryTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragEnter);
+            this.categoryTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.categoryTreeView_KeyDown);
+            // 
+            // controlPanel1
+            // 
+            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
+            this.controlPanel1.Controls.Add(this.saveButton);
+            this.controlPanel1.Controls.Add(this.cancelButton);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 265);
+            this.controlPanel1.Name = "controlPanel1";
+            this.controlPanel1.Size = new System.Drawing.Size(632, 40);
+            this.controlPanel1.TabIndex = 47;
+            // 
+            // categoryTabControl
+            // 
+            this.categoryTabControl.Controls.Add(this.generalTabPage);
+            this.categoryTabControl.Controls.Add(this.changelogTabPage);
+            this.categoryTabControl.Controls.Add(this.availabilityTabPage);
+            this.categoryTabControl.Controls.Add(this.operationsTabPage);
+            this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
+            this.categoryTabControl.Name = "categoryTabControl";
+            this.categoryTabControl.SelectedIndex = 0;
+            this.categoryTabControl.Size = new System.Drawing.Size(481, 262);
+            this.categoryTabControl.TabIndex = 48;
+            // 
+            // generalTabPage
+            // 
+            this.generalTabPage.Controls.Add(this.generalPanel);
+            this.generalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.generalTabPage.Name = "generalTabPage";
+            this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.generalTabPage.Size = new System.Drawing.Size(473, 236);
+            this.generalTabPage.TabIndex = 0;
+            this.generalTabPage.Text = "General";
+            this.generalTabPage.UseVisualStyleBackColor = true;
+            // 
             // generalPanel
             // 
             this.generalPanel.AutoScroll = true;
-            this.generalPanel.AutoScrollMargin = new System.Drawing.Size(0, 7);
+            this.generalPanel.AutoScrollMargin = new System.Drawing.Size(0, 10);
             this.generalPanel.AutoScrollMinSize = new System.Drawing.Size(1, 20);
+            this.generalPanel.Controls.Add(this.includeIntoStatisticsInfoLabel);
+            this.generalPanel.Controls.Add(this.includeIntoStatisticsCheckBox);
+            this.generalPanel.Controls.Add(this.line2);
             this.generalPanel.Controls.Add(this.developmentBuildNumericUpDown);
-            this.generalPanel.Controls.Add(this.label1);
+            this.generalPanel.Controls.Add(this.mustBeInstalledInfoLabel);
             this.generalPanel.Controls.Add(this.mustUpdateCheckBox);
             this.generalPanel.Controls.Add(this.line3);
             this.generalPanel.Controls.Add(this.line1);
-            this.generalPanel.Controls.Add(this.environmentInfoLabel);
+            this.generalPanel.Controls.Add(this.architectureInfoLabel);
             this.generalPanel.Controls.Add(this.buildNumericUpDown);
             this.generalPanel.Controls.Add(this.descriptionLabel);
             this.generalPanel.Controls.Add(this.environmentLabel);
@@ -427,10 +373,41 @@
             this.generalPanel.Controls.Add(this.developmentalStageComboBox);
             this.generalPanel.Controls.Add(this.devStageLabel);
             this.generalPanel.Controls.Add(this.minorNumericUpDown);
-            this.generalPanel.Location = new System.Drawing.Point(148, 22);
+            this.generalPanel.Location = new System.Drawing.Point(0, -2);
             this.generalPanel.Name = "generalPanel";
-            this.generalPanel.Size = new System.Drawing.Size(474, 235);
-            this.generalPanel.TabIndex = 47;
+            this.generalPanel.Size = new System.Drawing.Size(474, 236);
+            this.generalPanel.TabIndex = 30;
+            // 
+            // includeIntoStatisticsInfoLabel
+            // 
+            this.includeIntoStatisticsInfoLabel.AutoSize = true;
+            this.includeIntoStatisticsInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.includeIntoStatisticsInfoLabel.Location = new System.Drawing.Point(9, 302);
+            this.includeIntoStatisticsInfoLabel.Name = "includeIntoStatisticsInfoLabel";
+            this.includeIntoStatisticsInfoLabel.Size = new System.Drawing.Size(433, 26);
+            this.includeIntoStatisticsInfoLabel.TabIndex = 28;
+            this.includeIntoStatisticsInfoLabel.Text = "Sets if this update package is included into the statistics when it is downloaded" +
+    " by\r\na client. You can change this option later.";
+            // 
+            // includeIntoStatisticsCheckBox
+            // 
+            this.includeIntoStatisticsCheckBox.AutoSize = true;
+            this.includeIntoStatisticsCheckBox.Location = new System.Drawing.Point(11, 279);
+            this.includeIntoStatisticsCheckBox.Name = "includeIntoStatisticsCheckBox";
+            this.includeIntoStatisticsCheckBox.Size = new System.Drawing.Size(135, 17);
+            this.includeIntoStatisticsCheckBox.TabIndex = 27;
+            this.includeIntoStatisticsCheckBox.Text = "Include into statistics";
+            this.includeIntoStatisticsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // line2
+            // 
+            this.line2.BackColor = System.Drawing.SystemColors.Window;
+            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.Location = new System.Drawing.Point(9, 262);
+            this.line2.Name = "line2";
+            this.line2.Size = new System.Drawing.Size(437, 10);
+            this.line2.TabIndex = 26;
+            this.line2.Text = "line2";
             // 
             // developmentBuildNumericUpDown
             // 
@@ -444,49 +421,76 @@
             this.developmentBuildNumericUpDown.Name = "developmentBuildNumericUpDown";
             this.developmentBuildNumericUpDown.Size = new System.Drawing.Size(43, 22);
             this.developmentBuildNumericUpDown.TabIndex = 25;
+            this.developmentBuildNumericUpDown.ThousandsSeparator = true;
             this.developmentBuildNumericUpDown.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // label1
+            // mustBeInstalledInfoLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(10, 209);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(439, 39);
-            this.label1.TabIndex = 24;
-            this.label1.Text = resources.GetString("label1.Text");
+            this.mustBeInstalledInfoLabel.AutoSize = true;
+            this.mustBeInstalledInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.mustBeInstalledInfoLabel.Location = new System.Drawing.Point(10, 210);
+            this.mustBeInstalledInfoLabel.Name = "mustBeInstalledInfoLabel";
+            this.mustBeInstalledInfoLabel.Size = new System.Drawing.Size(439, 39);
+            this.mustBeInstalledInfoLabel.TabIndex = 24;
+            this.mustBeInstalledInfoLabel.Text = resources.GetString("mustBeInstalledInfoLabel.Text");
             // 
             // mustUpdateCheckBox
             // 
             this.mustUpdateCheckBox.AutoSize = true;
-            this.mustUpdateCheckBox.Location = new System.Drawing.Point(12, 186);
+            this.mustUpdateCheckBox.Location = new System.Drawing.Point(12, 187);
             this.mustUpdateCheckBox.Name = "mustUpdateCheckBox";
             this.mustUpdateCheckBox.Size = new System.Drawing.Size(115, 17);
             this.mustUpdateCheckBox.TabIndex = 23;
             this.mustUpdateCheckBox.Text = "Must be installed";
             this.mustUpdateCheckBox.UseVisualStyleBackColor = true;
             // 
-            // environmentInfoLabel
+            // line3
             // 
-            this.environmentInfoLabel.AutoSize = true;
-            this.environmentInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.environmentInfoLabel.Location = new System.Drawing.Point(9, 136);
-            this.environmentInfoLabel.Name = "environmentInfoLabel";
-            this.environmentInfoLabel.Size = new System.Drawing.Size(438, 26);
-            this.environmentInfoLabel.TabIndex = 20;
-            this.environmentInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
+            this.line3.BackColor = System.Drawing.SystemColors.Window;
+            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.Location = new System.Drawing.Point(10, 170);
+            this.line3.Name = "line3";
+            this.line3.Size = new System.Drawing.Size(437, 10);
+            this.line3.TabIndex = 22;
+            this.line3.Text = "line3";
+            // 
+            // line1
+            // 
+            this.line1.BackColor = System.Drawing.SystemColors.Window;
+            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.Location = new System.Drawing.Point(7, 92);
+            this.line1.Name = "line1";
+            this.line1.Size = new System.Drawing.Size(437, 14);
+            this.line1.TabIndex = 21;
+            this.line1.Text = "line1";
+            // 
+            // architectureInfoLabel
+            // 
+            this.architectureInfoLabel.AutoSize = true;
+            this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.architectureInfoLabel.Location = new System.Drawing.Point(9, 137);
+            this.architectureInfoLabel.Name = "architectureInfoLabel";
+            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.TabIndex = 20;
+            this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
             // 
             // buildNumericUpDown
             // 
             this.buildNumericUpDown.Location = new System.Drawing.Point(331, 35);
+            this.buildNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.buildNumericUpDown.Name = "buildNumericUpDown";
             this.buildNumericUpDown.Size = new System.Drawing.Size(56, 22);
             this.buildNumericUpDown.TabIndex = 5;
+            this.buildNumericUpDown.ThousandsSeparator = true;
             // 
             // descriptionLabel
             // 
@@ -500,7 +504,7 @@
             // environmentLabel
             // 
             this.environmentLabel.AutoSize = true;
-            this.environmentLabel.Location = new System.Drawing.Point(8, 112);
+            this.environmentLabel.Location = new System.Drawing.Point(8, 113);
             this.environmentLabel.Name = "environmentLabel";
             this.environmentLabel.Size = new System.Drawing.Size(116, 13);
             this.environmentLabel.TabIndex = 18;
@@ -509,9 +513,15 @@
             // majorNumericUpDown
             // 
             this.majorNumericUpDown.Location = new System.Drawing.Point(207, 35);
+            this.majorNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.majorNumericUpDown.Name = "majorNumericUpDown";
             this.majorNumericUpDown.Size = new System.Drawing.Size(56, 22);
             this.majorNumericUpDown.TabIndex = 3;
+            this.majorNumericUpDown.ThousandsSeparator = true;
             // 
             // architectureComboBox
             // 
@@ -521,14 +531,14 @@
             "x86 (32-bit)",
             "x64 (64-bit)",
             "AnyCPU (independent)"});
-            this.architectureComboBox.Location = new System.Drawing.Point(207, 108);
+            this.architectureComboBox.Location = new System.Drawing.Point(207, 109);
             this.architectureComboBox.Name = "architectureComboBox";
             this.architectureComboBox.Size = new System.Drawing.Size(150, 21);
             this.architectureComboBox.TabIndex = 17;
             // 
             // descriptionTextBox
             // 
-            this.descriptionTextBox.Location = new System.Drawing.Point(207, 66);
+            this.descriptionTextBox.Location = new System.Drawing.Point(207, 63);
             this.descriptionTextBox.Name = "descriptionTextBox";
             this.descriptionTextBox.Size = new System.Drawing.Size(240, 22);
             this.descriptionTextBox.TabIndex = 11;
@@ -536,9 +546,15 @@
             // revisionNumericUpDown
             // 
             this.revisionNumericUpDown.Location = new System.Drawing.Point(391, 35);
+            this.revisionNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.revisionNumericUpDown.Name = "revisionNumericUpDown";
             this.revisionNumericUpDown.Size = new System.Drawing.Size(56, 22);
             this.revisionNumericUpDown.TabIndex = 6;
+            this.revisionNumericUpDown.ThousandsSeparator = true;
             // 
             // versionLabel
             // 
@@ -553,14 +569,11 @@
             // 
             this.developmentalStageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.developmentalStageComboBox.FormattingEnabled = true;
-            this.developmentalStageComboBox.Items.AddRange(new object[] {
-            "Alpha",
-            "Beta",
-            "Release"});
             this.developmentalStageComboBox.Location = new System.Drawing.Point(207, 8);
             this.developmentalStageComboBox.Name = "developmentalStageComboBox";
             this.developmentalStageComboBox.Size = new System.Drawing.Size(150, 21);
             this.developmentalStageComboBox.TabIndex = 0;
+            this.developmentalStageComboBox.SelectedIndexChanged += new System.EventHandler(this.developmentalStageComboBox_SelectedIndexChanged);
             // 
             // devStageLabel
             // 
@@ -574,123 +587,415 @@
             // minorNumericUpDown
             // 
             this.minorNumericUpDown.Location = new System.Drawing.Point(269, 35);
+            this.minorNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.minorNumericUpDown.Name = "minorNumericUpDown";
             this.minorNumericUpDown.Size = new System.Drawing.Size(56, 22);
             this.minorNumericUpDown.TabIndex = 4;
+            this.minorNumericUpDown.ThousandsSeparator = true;
             // 
-            // filesList
+            // changelogTabPage
             // 
-            this.filesList.BackColor = System.Drawing.SystemColors.Window;
-            this.filesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.filesList.FullRowSelect = true;
-            this.filesList.GridLines = true;
-            this.filesList.Location = new System.Drawing.Point(4, 30);
-            this.filesList.Name = "filesList";
-            this.filesList.Size = new System.Drawing.Size(467, 198);
-            this.filesList.SmallImageList = this.filesImageList;
-            this.filesList.TabIndex = 3;
-            this.filesList.UseCompatibleStateImageBehavior = false;
-            this.filesList.View = System.Windows.Forms.View.Details;
+            this.changelogTabPage.Controls.Add(this.changelogPanel);
+            this.changelogTabPage.Location = new System.Drawing.Point(4, 22);
+            this.changelogTabPage.Name = "changelogTabPage";
+            this.changelogTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.changelogTabPage.Size = new System.Drawing.Size(473, 236);
+            this.changelogTabPage.TabIndex = 1;
+            this.changelogTabPage.Text = "Changelog";
+            this.changelogTabPage.UseVisualStyleBackColor = true;
             // 
-            // filesPanel
+            // changelogPanel
             // 
-            this.filesPanel.Controls.Add(this.filesDataTreeView);
-            this.filesPanel.Controls.Add(this.toolStrip4);
-            this.filesPanel.Controls.Add(this.filesList);
-            this.filesPanel.Location = new System.Drawing.Point(148, 22);
-            this.filesPanel.Name = "filesPanel";
-            this.filesPanel.Size = new System.Drawing.Size(474, 235);
-            this.filesPanel.TabIndex = 50;
+            this.changelogPanel.Controls.Add(this.changelogContentTabControl);
+            this.changelogPanel.Controls.Add(this.toolStrip5);
+            this.changelogPanel.Location = new System.Drawing.Point(0, 2);
+            this.changelogPanel.Name = "changelogPanel";
+            this.changelogPanel.Size = new System.Drawing.Size(474, 235);
+            this.changelogPanel.TabIndex = 32;
             // 
-            // toolStrip4
+            // changelogContentTabControl
             // 
-            this.toolStrip4.AutoSize = false;
-            this.toolStrip4.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip4.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip4.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addFolderButton,
-            this.toolStripSeparator1,
-            this.addFilesButton,
-            this.toolStripSeparator4,
-            this.removeEntryButton});
-            this.toolStrip4.Location = new System.Drawing.Point(3, 2);
-            this.toolStrip4.Name = "toolStrip4";
-            this.toolStrip4.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip4.Size = new System.Drawing.Size(468, 25);
-            this.toolStrip4.TabIndex = 4;
-            this.toolStrip4.Text = "toolStrip4";
+            this.changelogContentTabControl.Controls.Add(this.englishChangelogTabPage);
+            this.changelogContentTabControl.Location = new System.Drawing.Point(6, 24);
+            this.changelogContentTabControl.Name = "changelogContentTabControl";
+            this.changelogContentTabControl.SelectedIndex = 0;
+            this.changelogContentTabControl.Size = new System.Drawing.Size(461, 220);
+            this.changelogContentTabControl.TabIndex = 4;
             // 
-            // addFolderButton
+            // englishChangelogTabPage
             // 
-            this.addFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("addFolderButton.Image")));
-            this.addFolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addFolderButton.Name = "addFolderButton";
-            this.addFolderButton.Size = new System.Drawing.Size(83, 22);
-            this.addFolderButton.Text = "Add folder";
+            this.englishChangelogTabPage.Controls.Add(this.englishChangelogTextBox);
+            this.englishChangelogTabPage.Location = new System.Drawing.Point(4, 22);
+            this.englishChangelogTabPage.Name = "englishChangelogTabPage";
+            this.englishChangelogTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.englishChangelogTabPage.Size = new System.Drawing.Size(453, 194);
+            this.englishChangelogTabPage.TabIndex = 0;
+            this.englishChangelogTabPage.Tag = "";
+            this.englishChangelogTabPage.Text = "English";
+            this.englishChangelogTabPage.UseVisualStyleBackColor = true;
             // 
-            // toolStripSeparator1
+            // englishChangelogTextBox
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.englishChangelogTextBox.AcceptsReturn = true;
+            this.englishChangelogTextBox.Location = new System.Drawing.Point(0, 3);
+            this.englishChangelogTextBox.Multiline = true;
+            this.englishChangelogTextBox.Name = "englishChangelogTextBox";
+            this.englishChangelogTextBox.Size = new System.Drawing.Size(453, 191);
+            this.englishChangelogTextBox.TabIndex = 0;
             // 
-            // addFilesButton
+            // toolStrip5
             // 
-            this.addFilesButton.Image = ((System.Drawing.Image)(resources.GetObject("addFilesButton.Image")));
-            this.addFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addFilesButton.Name = "addFilesButton";
-            this.addFilesButton.Size = new System.Drawing.Size(73, 22);
-            this.addFilesButton.Text = "Add files";
+            this.toolStrip5.BackColor = System.Drawing.Color.Transparent;
+            this.toolStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changelogLanguageComboBox,
+            this.toolStripSeparator3,
+            this.changelogLoadButton,
+            this.toolStripSeparator5,
+            this.changelogClearButton,
+            this.toolStripSeparator6,
+            this.specialCharactersComboBox});
+            this.toolStrip5.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.toolStrip5.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip5.Name = "toolStrip5";
+            this.toolStrip5.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip5.Size = new System.Drawing.Size(474, 23);
+            this.toolStrip5.TabIndex = 3;
+            this.toolStrip5.Text = "toolStrip5";
             // 
-            // toolStripSeparator4
+            // changelogLanguageComboBox
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            this.changelogLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.changelogLanguageComboBox.Name = "changelogLanguageComboBox";
+            this.changelogLanguageComboBox.Size = new System.Drawing.Size(121, 23);
+            this.changelogLanguageComboBox.SelectedIndexChanged += new System.EventHandler(this.changelogLanguageComboBox_SelectedIndexChanged);
             // 
-            // removeEntryButton
+            // toolStripSeparator3
             // 
-            this.removeEntryButton.Image = ((System.Drawing.Image)(resources.GetObject("removeEntryButton.Image")));
-            this.removeEntryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.removeEntryButton.Name = "removeEntryButton";
-            this.removeEntryButton.Size = new System.Drawing.Size(100, 22);
-            this.removeEntryButton.Text = "Remove entry";
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
             // 
-            // itemName
+            // changelogLoadButton
             // 
-            this.itemName.Width = 300;
+            this.changelogLoadButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogLoadButton.Image")));
+            this.changelogLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.changelogLoadButton.Name = "changelogLoadButton";
+            this.changelogLoadButton.Size = new System.Drawing.Size(101, 20);
+            this.changelogLoadButton.Text = "Load from file";
+            this.changelogLoadButton.Click += new System.EventHandler(this.changelogLoadButton_Click);
             // 
-            // Description
+            // toolStripSeparator5
             // 
-            this.Description.Width = 300;
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
             // 
-            // editPackageButton
+            // changelogClearButton
             // 
-            this.editPackageButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.editPackageButton.Location = new System.Drawing.Point(497, 8);
-            this.editPackageButton.Name = "editPackageButton";
-            this.editPackageButton.Size = new System.Drawing.Size(121, 23);
-            this.editPackageButton.TabIndex = 2;
-            this.editPackageButton.Text = "Edit package";
-            this.editPackageButton.UseVisualStyleBackColor = true;
+            this.changelogClearButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogClearButton.Image")));
+            this.changelogClearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.changelogClearButton.Name = "changelogClearButton";
+            this.changelogClearButton.Size = new System.Drawing.Size(54, 20);
+            this.changelogClearButton.Text = "Clear";
+            this.changelogClearButton.Click += new System.EventHandler(this.changelogClearButton_Click);
             // 
-            // cancelButton
+            // toolStripSeparator6
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(416, 8);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 3;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 23);
+            // 
+            // specialCharactersComboBox
+            // 
+            this.specialCharactersComboBox.AutoToolTip = false;
+            this.specialCharactersComboBox.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bulletToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.anführungszeichenToolStripMenuItem,
+            this.anführungszeichenKlassischToolStripMenuItem,
+            this.anführungszeichennachAußenToolStripMenuItem,
+            this.apostropheToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.copyrightToolStripMenuItem,
+            this.allRightsReservedToolStripMenuItem,
+            this.soundrecordingCopyrightToolStripMenuItem,
+            this.unregisteredTrademarkToolStripMenuItem,
+            this.serviceMarkToolStripMenuItem});
+            this.specialCharactersComboBox.Image = ((System.Drawing.Image)(resources.GetObject("specialCharactersComboBox.Image")));
+            this.specialCharactersComboBox.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.specialCharactersComboBox.Name = "specialCharactersComboBox";
+            this.specialCharactersComboBox.Size = new System.Drawing.Size(130, 20);
+            this.specialCharactersComboBox.Text = "Special characters";
+            this.specialCharactersComboBox.ToolTipText = "Special characters";
+            // 
+            // bulletToolStripMenuItem
+            // 
+            this.bulletToolStripMenuItem.Name = "bulletToolStripMenuItem";
+            this.bulletToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.bulletToolStripMenuItem.Text = "Bullet: •";
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(232, 6);
+            // 
+            // anführungszeichenToolStripMenuItem
+            // 
+            this.anführungszeichenToolStripMenuItem.Name = "anführungszeichenToolStripMenuItem";
+            this.anführungszeichenToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.anführungszeichenToolStripMenuItem.Text = "Quotation mark (inside): » « ";
+            // 
+            // anführungszeichenKlassischToolStripMenuItem
+            // 
+            this.anführungszeichenKlassischToolStripMenuItem.Name = "anführungszeichenKlassischToolStripMenuItem";
+            this.anführungszeichenKlassischToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.anführungszeichenKlassischToolStripMenuItem.Text = "Quotation mark classic: „ “";
+            // 
+            // anführungszeichennachAußenToolStripMenuItem
+            // 
+            this.anführungszeichennachAußenToolStripMenuItem.Name = "anführungszeichennachAußenToolStripMenuItem";
+            this.anführungszeichennachAußenToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.anführungszeichennachAußenToolStripMenuItem.Text = "Quotation mark (outside): « »";
+            // 
+            // apostropheToolStripMenuItem
+            // 
+            this.apostropheToolStripMenuItem.Name = "apostropheToolStripMenuItem";
+            this.apostropheToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.apostropheToolStripMenuItem.Text = "Apostrophe: \'";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(232, 6);
+            // 
+            // copyrightToolStripMenuItem
+            // 
+            this.copyrightToolStripMenuItem.Name = "copyrightToolStripMenuItem";
+            this.copyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.copyrightToolStripMenuItem.Text = "Copyright: ©";
+            // 
+            // allRightsReservedToolStripMenuItem
+            // 
+            this.allRightsReservedToolStripMenuItem.Name = "allRightsReservedToolStripMenuItem";
+            this.allRightsReservedToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.allRightsReservedToolStripMenuItem.Text = "Registered trademark: ®";
+            // 
+            // soundrecordingCopyrightToolStripMenuItem
+            // 
+            this.soundrecordingCopyrightToolStripMenuItem.Name = "soundrecordingCopyrightToolStripMenuItem";
+            this.soundrecordingCopyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.soundrecordingCopyrightToolStripMenuItem.Text = "Sound-recording copyright: ℗";
+            // 
+            // unregisteredTrademarkToolStripMenuItem
+            // 
+            this.unregisteredTrademarkToolStripMenuItem.Name = "unregisteredTrademarkToolStripMenuItem";
+            this.unregisteredTrademarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.unregisteredTrademarkToolStripMenuItem.Text = "Trademark: ™";
+            // 
+            // serviceMarkToolStripMenuItem
+            // 
+            this.serviceMarkToolStripMenuItem.Name = "serviceMarkToolStripMenuItem";
+            this.serviceMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.serviceMarkToolStripMenuItem.Text = "Service mark: ℠";
+            // 
+            // availabilityTabPage
+            // 
+            this.availabilityTabPage.Controls.Add(this.availabilityPanel);
+            this.availabilityTabPage.Location = new System.Drawing.Point(4, 22);
+            this.availabilityTabPage.Name = "availabilityTabPage";
+            this.availabilityTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.availabilityTabPage.Size = new System.Drawing.Size(473, 236);
+            this.availabilityTabPage.TabIndex = 2;
+            this.availabilityTabPage.Text = "Availability";
+            this.availabilityTabPage.UseVisualStyleBackColor = true;
+            // 
+            // availabilityPanel
+            // 
+            this.availabilityPanel.AutoScrollMargin = new System.Drawing.Size(0, 40);
+            this.availabilityPanel.Controls.Add(this.unsupportedVersionsPanel);
+            this.availabilityPanel.Controls.Add(this.someVersionsInfoLabel);
+            this.availabilityPanel.Controls.Add(this.allVersionsRadioButton);
+            this.availabilityPanel.Controls.Add(this.allVersionsInfoLabel);
+            this.availabilityPanel.Controls.Add(this.someVersionsRadioButton);
+            this.availabilityPanel.Location = new System.Drawing.Point(0, 0);
+            this.availabilityPanel.Name = "availabilityPanel";
+            this.availabilityPanel.Size = new System.Drawing.Size(474, 235);
+            this.availabilityPanel.TabIndex = 33;
+            // 
+            // unsupportedVersionsPanel
+            // 
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedDevelopmentBuildNumericUpDown);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedDevelopmentalStageComboBox);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedMajorNumericUpDown);
+            this.unsupportedVersionsPanel.Controls.Add(this.addVersionButton);
+            this.unsupportedVersionsPanel.Controls.Add(this.removeVersionButton);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedRevisionNumericUpDown);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedVersionsListBox);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedMinorNumericUpDown);
+            this.unsupportedVersionsPanel.Controls.Add(this.unsupportedBuildNumericUpDown);
+            this.unsupportedVersionsPanel.Location = new System.Drawing.Point(26, 95);
+            this.unsupportedVersionsPanel.Name = "unsupportedVersionsPanel";
+            this.unsupportedVersionsPanel.Size = new System.Drawing.Size(373, 135);
+            this.unsupportedVersionsPanel.TabIndex = 41;
+            // 
+            // unsupportedDevelopmentBuildNumericUpDown
+            // 
+            this.unsupportedDevelopmentBuildNumericUpDown.Enabled = false;
+            this.unsupportedDevelopmentBuildNumericUpDown.Location = new System.Drawing.Point(323, 106);
+            this.unsupportedDevelopmentBuildNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.unsupportedDevelopmentBuildNumericUpDown.Name = "unsupportedDevelopmentBuildNumericUpDown";
+            this.unsupportedDevelopmentBuildNumericUpDown.Size = new System.Drawing.Size(43, 22);
+            this.unsupportedDevelopmentBuildNumericUpDown.TabIndex = 31;
+            this.unsupportedDevelopmentBuildNumericUpDown.ThousandsSeparator = true;
+            this.unsupportedDevelopmentBuildNumericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // unsupportedDevelopmentalStageComboBox
+            // 
+            this.unsupportedDevelopmentalStageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.unsupportedDevelopmentalStageComboBox.FormattingEnabled = true;
+            this.unsupportedDevelopmentalStageComboBox.Location = new System.Drawing.Point(249, 106);
+            this.unsupportedDevelopmentalStageComboBox.Name = "unsupportedDevelopmentalStageComboBox";
+            this.unsupportedDevelopmentalStageComboBox.Size = new System.Drawing.Size(70, 21);
+            this.unsupportedDevelopmentalStageComboBox.TabIndex = 30;
+            this.unsupportedDevelopmentalStageComboBox.SelectedIndexChanged += new System.EventHandler(this.unsupportedDevelopmentalStageComboBox_SelectedIndexChanged);
+            // 
+            // unsupportedMajorNumericUpDown
+            // 
+            this.unsupportedMajorNumericUpDown.Location = new System.Drawing.Point(4, 105);
+            this.unsupportedMajorNumericUpDown.Name = "unsupportedMajorNumericUpDown";
+            this.unsupportedMajorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.unsupportedMajorNumericUpDown.TabIndex = 26;
+            // 
+            // addVersionButton
+            // 
+            this.addVersionButton.Location = new System.Drawing.Point(286, 49);
+            this.addVersionButton.Name = "addVersionButton";
+            this.addVersionButton.Size = new System.Drawing.Size(82, 22);
+            this.addVersionButton.TabIndex = 24;
+            this.addVersionButton.Text = "Add";
+            this.addVersionButton.UseVisualStyleBackColor = true;
+            this.addVersionButton.Click += new System.EventHandler(this.addVersionButton_Click);
+            // 
+            // removeVersionButton
+            // 
+            this.removeVersionButton.Location = new System.Drawing.Point(286, 77);
+            this.removeVersionButton.Name = "removeVersionButton";
+            this.removeVersionButton.Size = new System.Drawing.Size(82, 22);
+            this.removeVersionButton.TabIndex = 25;
+            this.removeVersionButton.Text = "Remove";
+            this.removeVersionButton.UseVisualStyleBackColor = true;
+            this.removeVersionButton.Click += new System.EventHandler(this.removeVersionButton_Click);
+            // 
+            // unsupportedRevisionNumericUpDown
+            // 
+            this.unsupportedRevisionNumericUpDown.Location = new System.Drawing.Point(188, 105);
+            this.unsupportedRevisionNumericUpDown.Name = "unsupportedRevisionNumericUpDown";
+            this.unsupportedRevisionNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.unsupportedRevisionNumericUpDown.TabIndex = 29;
+            // 
+            // unsupportedVersionsListBox
+            // 
+            this.unsupportedVersionsListBox.FormattingEnabled = true;
+            this.unsupportedVersionsListBox.Location = new System.Drawing.Point(4, 4);
+            this.unsupportedVersionsListBox.Name = "unsupportedVersionsListBox";
+            this.unsupportedVersionsListBox.Size = new System.Drawing.Size(276, 95);
+            this.unsupportedVersionsListBox.TabIndex = 23;
+            // 
+            // unsupportedMinorNumericUpDown
+            // 
+            this.unsupportedMinorNumericUpDown.Location = new System.Drawing.Point(66, 105);
+            this.unsupportedMinorNumericUpDown.Name = "unsupportedMinorNumericUpDown";
+            this.unsupportedMinorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.unsupportedMinorNumericUpDown.TabIndex = 27;
+            // 
+            // unsupportedBuildNumericUpDown
+            // 
+            this.unsupportedBuildNumericUpDown.Location = new System.Drawing.Point(128, 105);
+            this.unsupportedBuildNumericUpDown.Name = "unsupportedBuildNumericUpDown";
+            this.unsupportedBuildNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.unsupportedBuildNumericUpDown.TabIndex = 28;
+            // 
+            // someVersionsInfoLabel
+            // 
+            this.someVersionsInfoLabel.AutoSize = true;
+            this.someVersionsInfoLabel.Location = new System.Drawing.Point(34, 67);
+            this.someVersionsInfoLabel.Name = "someVersionsInfoLabel";
+            this.someVersionsInfoLabel.Size = new System.Drawing.Size(292, 13);
+            this.someVersionsInfoLabel.TabIndex = 40;
+            this.someVersionsInfoLabel.Text = "This package is not available for the following versions:";
+            // 
+            // allVersionsRadioButton
+            // 
+            this.allVersionsRadioButton.AutoSize = true;
+            this.allVersionsRadioButton.Checked = true;
+            this.allVersionsRadioButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.allVersionsRadioButton.Location = new System.Drawing.Point(12, 7);
+            this.allVersionsRadioButton.Name = "allVersionsRadioButton";
+            this.allVersionsRadioButton.Size = new System.Drawing.Size(182, 17);
+            this.allVersionsRadioButton.TabIndex = 37;
+            this.allVersionsRadioButton.TabStop = true;
+            this.allVersionsRadioButton.Text = "Available for all older versions";
+            this.allVersionsRadioButton.UseVisualStyleBackColor = true;
+            this.allVersionsRadioButton.CheckedChanged += new System.EventHandler(this.allVersionsRadioButton_CheckedChanged);
+            // 
+            // allVersionsInfoLabel
+            // 
+            this.allVersionsInfoLabel.AutoSize = true;
+            this.allVersionsInfoLabel.Location = new System.Drawing.Point(34, 27);
+            this.allVersionsInfoLabel.Name = "allVersionsInfoLabel";
+            this.allVersionsInfoLabel.Size = new System.Drawing.Size(372, 13);
+            this.allVersionsInfoLabel.TabIndex = 39;
+            this.allVersionsInfoLabel.Text = "This package is available and can be downloaded for all older versions.";
+            // 
+            // someVersionsRadioButton
+            // 
+            this.someVersionsRadioButton.AutoSize = true;
+            this.someVersionsRadioButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.someVersionsRadioButton.Location = new System.Drawing.Point(12, 47);
+            this.someVersionsRadioButton.Name = "someVersionsRadioButton";
+            this.someVersionsRadioButton.Size = new System.Drawing.Size(219, 17);
+            this.someVersionsRadioButton.TabIndex = 38;
+            this.someVersionsRadioButton.Text = "Not available for some older versions";
+            this.someVersionsRadioButton.UseVisualStyleBackColor = true;
+            this.someVersionsRadioButton.CheckedChanged += new System.EventHandler(this.someVersionsRadioButton_CheckedChanged);
+            // 
+            // operationsTabPage
+            // 
+            this.operationsTabPage.Controls.Add(this.operationsPanel);
+            this.operationsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.operationsTabPage.Name = "operationsTabPage";
+            this.operationsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.operationsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.operationsTabPage.TabIndex = 3;
+            this.operationsTabPage.Text = "Operations";
+            this.operationsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // operationsPanel
+            // 
+            this.operationsPanel.AutoScroll = true;
+            this.operationsPanel.Controls.Add(this.operationsListView);
+            this.operationsPanel.Location = new System.Drawing.Point(0, -2);
+            this.operationsPanel.Name = "operationsPanel";
+            this.operationsPanel.Size = new System.Drawing.Size(474, 235);
+            this.operationsPanel.TabIndex = 5;
             // 
             // operationsListView
             // 
             this.operationsListView.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.operationsListView.AllowDrop = true;
+            this.operationsListView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.operationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3,
-            this.columnHeader4});
+            this.itemName,
+            this.Description});
             this.operationsListView.FullRowSelect = true;
             listViewGroup1.Header = "Files";
             listViewGroup1.Name = "filesGroup";
@@ -706,6 +1011,7 @@
             listViewGroup3,
             listViewGroup4});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.operationsListView.HoverSelection = true;
             listViewItem1.Group = listViewGroup1;
             listViewItem1.Tag = "RenameFile";
             listViewItem2.Group = listViewGroup1;
@@ -738,139 +1044,35 @@
             this.operationsListView.Location = new System.Drawing.Point(0, 2);
             this.operationsListView.MultiSelect = false;
             this.operationsListView.Name = "operationsListView";
-            this.operationsListView.Size = new System.Drawing.Size(474, 231);
+            this.operationsListView.Size = new System.Drawing.Size(474, 230);
             this.operationsListView.SmallImageList = this.categoryImageList;
-            this.operationsListView.TabIndex = 2;
+            this.operationsListView.TabIndex = 1;
             this.operationsListView.TileSize = new System.Drawing.Size(450, 50);
             this.operationsListView.UseCompatibleStateImageBehavior = false;
             this.operationsListView.View = System.Windows.Forms.View.Tile;
+            this.operationsListView.DragOver += new System.Windows.Forms.DragEventHandler(this.operationsListView_DragOver);
+            this.operationsListView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.operationsListView_MouseDown);
             // 
-            // columnHeader3
+            // itemName
             // 
-            this.columnHeader3.Width = 300;
+            this.itemName.Width = 300;
             // 
-            // columnHeader4
+            // Description
             // 
-            this.columnHeader4.Width = 300;
-            // 
-            // line3
-            // 
-            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
-            this.line3.Location = new System.Drawing.Point(10, 169);
-            this.line3.Name = "line3";
-            this.line3.Size = new System.Drawing.Size(437, 10);
-            this.line3.TabIndex = 22;
-            this.line3.Text = "line3";
-            // 
-            // line1
-            // 
-            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
-            this.line1.Location = new System.Drawing.Point(7, 91);
-            this.line1.Name = "line1";
-            this.line1.Size = new System.Drawing.Size(437, 14);
-            this.line1.TabIndex = 21;
-            this.line1.Text = "line1";
-            // 
-            // categoryTreeView
-            // 
-            this.categoryTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.categoryTreeView.FullRowSelect = true;
-            this.categoryTreeView.HideSelection = false;
-            this.categoryTreeView.HotTracking = true;
-            this.categoryTreeView.ImageIndex = 0;
-            this.categoryTreeView.ImageList = this.categoryImageList;
-            this.categoryTreeView.Indent = 5;
-            this.categoryTreeView.ItemHeight = 24;
-            this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
-            this.categoryTreeView.Name = "categoryTreeView";
-            treeNode5.ImageIndex = 2;
-            treeNode5.Name = "generalNode";
-            treeNode5.SelectedImageIndex = 2;
-            treeNode5.Text = "General";
-            treeNode6.ImageIndex = 3;
-            treeNode6.Name = "changelogNode";
-            treeNode6.SelectedImageIndex = 3;
-            treeNode6.Text = "Changelog";
-            treeNode7.ImageIndex = 0;
-            treeNode7.Name = "availabilityNode";
-            treeNode7.SelectedImageIndex = 0;
-            treeNode7.Text = "Availability";
-            treeNode8.ImageIndex = 4;
-            treeNode8.Name = "operationsNode";
-            treeNode8.SelectedImageIndex = 4;
-            treeNode8.Text = "Operations";
-            this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
-            this.categoryTreeView.SelectedImageIndex = 0;
-            this.categoryTreeView.ShowLines = false;
-            this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
-            this.categoryTreeView.TabIndex = 45;
-            this.categoryTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.categoryTreeView_AfterSelect);
-            // 
-            // controlPanel1
-            // 
-            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.editPackageButton);
-            this.controlPanel1.Controls.Add(this.cancelButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 263);
-            this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(632, 40);
-            this.controlPanel1.TabIndex = 51;
-            // 
-            // filesDataTreeView
-            // 
-            this.filesDataTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.filesDataTreeView.HotTracking = true;
-            this.filesDataTreeView.ImageIndex = 0;
-            this.filesDataTreeView.ImageList = this.filesImageList;
-            this.filesDataTreeView.ItemHeight = 23;
-            this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
-            this.filesDataTreeView.Name = "filesDataTreeView";
-            treeNode1.ImageIndex = 2;
-            treeNode1.Name = "Knoten0";
-            treeNode1.SelectedImageIndex = 2;
-            treeNode1.Text = "Program directory";
-            treeNode2.ImageIndex = 2;
-            treeNode2.Name = "Knoten1";
-            treeNode2.SelectedImageIndex = 2;
-            treeNode2.Text = "AppData";
-            treeNode3.ImageIndex = 2;
-            treeNode3.Name = "Knoten2";
-            treeNode3.SelectedImageIndex = 2;
-            treeNode3.Text = "Temp directory";
-            treeNode4.ImageIndex = 2;
-            treeNode4.Name = "Knoten3";
-            treeNode4.SelectedImageIndex = 2;
-            treeNode4.Text = "Desktop";
-            this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4});
-            this.filesDataTreeView.SelectedImageIndex = 0;
-            this.filesDataTreeView.ShowLines = false;
-            this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
-            this.filesDataTreeView.TabIndex = 5;
+            this.Description.Width = 300;
             // 
             // PackageEditDialog
             // 
-            this.AcceptButton = this.editPackageButton;
+            this.AcceptButton = this.saveButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(632, 303);
-            this.Controls.Add(this.generalPanel);
-            this.Controls.Add(this.operationsPanel);
-            this.Controls.Add(this.categoryTreeView);
-            this.Controls.Add(this.availabilityPanel);
+            this.ClientSize = new System.Drawing.Size(632, 305);
             this.Controls.Add(this.loadingPanel);
-            this.Controls.Add(this.changelogPanel);
+            this.Controls.Add(this.categoryTreeView);
             this.Controls.Add(this.controlPanel1);
-            this.Controls.Add(this.filesPanel);
+            this.Controls.Add(this.categoryTabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -879,21 +1081,12 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit update package - {0} - {1}";
             this.Load += new System.EventHandler(this.PackageEditDialog_Load);
-            this.operationsPanel.ResumeLayout(false);
-            this.availabilityPanel.ResumeLayout(false);
-            this.availabilityPanel.PerformLayout();
-            this.unsupportedVersionsPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMajorNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.changelogPanel.ResumeLayout(false);
-            this.changelogPanel.PerformLayout();
-            this.toolStrip5.ResumeLayout(false);
-            this.toolStrip5.PerformLayout();
+            this.controlPanel1.ResumeLayout(false);
+            this.categoryTabControl.ResumeLayout(false);
+            this.generalTabPage.ResumeLayout(false);
             this.generalPanel.ResumeLayout(false);
             this.generalPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).EndInit();
@@ -901,54 +1094,69 @@
             ((System.ComponentModel.ISupportInitialize)(this.majorNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.revisionNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.minorNumericUpDown)).EndInit();
-            this.filesPanel.ResumeLayout(false);
-            this.toolStrip4.ResumeLayout(false);
-            this.toolStrip4.PerformLayout();
-            this.controlPanel1.ResumeLayout(false);
+            this.changelogTabPage.ResumeLayout(false);
+            this.changelogPanel.ResumeLayout(false);
+            this.changelogPanel.PerformLayout();
+            this.changelogContentTabControl.ResumeLayout(false);
+            this.englishChangelogTabPage.ResumeLayout(false);
+            this.englishChangelogTabPage.PerformLayout();
+            this.toolStrip5.ResumeLayout(false);
+            this.toolStrip5.PerformLayout();
+            this.availabilityTabPage.ResumeLayout(false);
+            this.availabilityPanel.ResumeLayout(false);
+            this.availabilityPanel.PerformLayout();
+            this.unsupportedVersionsPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedDevelopmentBuildNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMajorNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
+            this.operationsTabPage.ResumeLayout(false);
+            this.operationsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
+        private System.Windows.Forms.TabPage operationsTabPage;
         private System.Windows.Forms.Panel operationsPanel;
+        private Controls.ExtendedListView operationsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader Description;
         private System.Windows.Forms.ImageList categoryImageList;
-        private Controls.ExplorerTreeView categoryTreeView;
-        private System.Windows.Forms.Panel availabilityPanel;
         private System.Windows.Forms.Label someVersionsInfoLabel;
         private System.Windows.Forms.RadioButton allVersionsRadioButton;
         private System.Windows.Forms.Label allVersionsInfoLabel;
-        private System.Windows.Forms.Panel unsupportedVersionsPanel;
-        private System.Windows.Forms.NumericUpDown unsupportedMajorNumericUpDown;
-        private System.Windows.Forms.Button addVersionButton;
-        private System.Windows.Forms.Button removeVersionButton;
-        private System.Windows.Forms.NumericUpDown unsupportedRevisionNumericUpDown;
-        private System.Windows.Forms.ListBox unsupportedVersionsList;
-        private System.Windows.Forms.NumericUpDown unsupportedMinorNumericUpDown;
-        private System.Windows.Forms.NumericUpDown unsupportedBuildNumericUpDown;
         private System.Windows.Forms.RadioButton someVersionsRadioButton;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Panel loadingPanel;
+        private System.Windows.Forms.TabPage availabilityTabPage;
+        private System.Windows.Forms.Panel availabilityPanel;
+        private System.Windows.Forms.ToolStripMenuItem serviceMarkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unregisteredTrademarkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem soundrecordingCopyrightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allRightsReservedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyrightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripMenuItem anführungszeichennachAußenToolStripMenuItem;
+        private System.Windows.Forms.ToolTip cancelToolTip;
+        private System.Windows.Forms.Label cancelLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loadingLabel;
-        private System.Windows.Forms.Panel changelogPanel;
-        private System.Windows.Forms.ToolStrip toolStrip5;
-        private System.Windows.Forms.ToolStripButton changelogLoadButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripButton changelogClearButton;
-        private System.Windows.Forms.TextBox changelogTextBox;
-        private Controls.ControlPanel controlPanel1;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.ImageList filesImageList;
+        private System.Windows.Forms.ToolStripMenuItem apostropheToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem anführungszeichenKlassischToolStripMenuItem;
+        private Controls.ExplorerTreeView categoryTreeView;
+        private System.Windows.Forms.Label includeIntoStatisticsInfoLabel;
+        private System.Windows.Forms.CheckBox includeIntoStatisticsCheckBox;
+        private Controls.Line line2;
         private System.Windows.Forms.Panel generalPanel;
         private System.Windows.Forms.NumericUpDown developmentBuildNumericUpDown;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label mustBeInstalledInfoLabel;
         private System.Windows.Forms.CheckBox mustUpdateCheckBox;
         private Controls.Line line3;
         private Controls.Line line1;
-        private System.Windows.Forms.Label environmentInfoLabel;
+        private System.Windows.Forms.Label architectureInfoLabel;
         private System.Windows.Forms.NumericUpDown buildNumericUpDown;
         private System.Windows.Forms.Label descriptionLabel;
         private System.Windows.Forms.Label environmentLabel;
@@ -960,20 +1168,38 @@
         private System.Windows.Forms.ComboBox developmentalStageComboBox;
         private System.Windows.Forms.Label devStageLabel;
         private System.Windows.Forms.NumericUpDown minorNumericUpDown;
-        private System.Windows.Forms.ListView filesList;
-        private System.Windows.Forms.Panel filesPanel;
-        private Controls.ExplorerTreeView filesDataTreeView;
-        private System.Windows.Forms.ToolStrip toolStrip4;
-        private System.Windows.Forms.ToolStripButton addFolderButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton addFilesButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripButton removeEntryButton;
-        private Controls.ExtendedListView operationsListView;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Button editPackageButton;
+        private System.Windows.Forms.TabPage generalTabPage;
+        private Controls.ControlPanel controlPanel1;
+        private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button cancelButton;
+        private Controls.TablessTabControl categoryTabControl;
+        private System.Windows.Forms.TabPage changelogTabPage;
+        private System.Windows.Forms.Panel changelogPanel;
+        private Controls.TablessTabControl changelogContentTabControl;
+        private System.Windows.Forms.TabPage englishChangelogTabPage;
+        private System.Windows.Forms.TextBox englishChangelogTextBox;
+        private System.Windows.Forms.ToolStrip toolStrip5;
+        private System.Windows.Forms.ToolStripComboBox changelogLanguageComboBox;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton changelogLoadButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripButton changelogClearButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripDropDownButton specialCharactersComboBox;
+        private System.Windows.Forms.ToolStripMenuItem bulletToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem anführungszeichenToolStripMenuItem;
+        private System.Windows.Forms.Panel unsupportedVersionsPanel;
+        private System.Windows.Forms.NumericUpDown unsupportedMajorNumericUpDown;
+        private System.Windows.Forms.Button addVersionButton;
+        private System.Windows.Forms.Button removeVersionButton;
+        private System.Windows.Forms.NumericUpDown unsupportedRevisionNumericUpDown;
+        private System.Windows.Forms.ListBox unsupportedVersionsListBox;
+        private System.Windows.Forms.NumericUpDown unsupportedMinorNumericUpDown;
+        private System.Windows.Forms.NumericUpDown unsupportedBuildNumericUpDown;
+        private System.Windows.Forms.NumericUpDown unsupportedDevelopmentBuildNumericUpDown;
+        private System.Windows.Forms.ComboBox unsupportedDevelopmentalStageComboBox;
+
 
 
     }

@@ -121,7 +121,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            FtpProtocol protocol = Equals(modeComboBox.SelectedIndex, 0) ? FtpProtocol.FTP : FtpProtocol.FTPS;
+            // TODO: Protocol
 
             var securePwd = new SecureString();
 
@@ -138,7 +138,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 UsePassiveMode = modeComboBox.SelectedIndex.Equals(0),
                 Username = userTextBox.Text,
                 Password = securePwd,
-                Protocol = protocol,
+                //Protocol = protocol,
             };
             if (searchForm.ShowDialog() == DialogResult.OK)
                 directoryTextBox.Text = searchForm.SelectedDirectory;

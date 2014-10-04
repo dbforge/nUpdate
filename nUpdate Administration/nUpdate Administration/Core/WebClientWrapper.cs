@@ -1,10 +1,11 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
+
 using System;
 using System.Net;
 
-namespace nUpdate.Administration.Core.Update
+namespace nUpdate.Administration.Core
 {
     internal class WebClientWrapper : WebClient
     {

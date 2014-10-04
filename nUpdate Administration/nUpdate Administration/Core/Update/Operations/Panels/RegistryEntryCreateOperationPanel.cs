@@ -4,13 +4,45 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
     public partial class RegistryEntryCreateOperationPanel : UserControl, IOperationPanel
     {
-        private readonly BindingList<string> _itemList = new BindingList<string>(); 
+        private BindingList<string> _itemList = new BindingList<string>();
+
+        public string KeyPath
+        {
+            get
+            {
+                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex),
+                    appKeyTextBox.Text);
+            }
+            set
+            {
+                string[] pathParts = value.Split(new char[] {'\\'});
+                foreach (string pathPart in pathParts)
+                {
+                    if (pathPart == pathParts[0])
+                    {
+                        mainKeyComboBox.SelectedValue = pathParts[0];
+                    }
+                    else
+                    {
+                        appKeyTextBox.Text += String.Format("\\{0}", pathPart);
+                    }
+                }
+            }
+        }
+
+        public BindingList<string> ItemList
+        {
+            get { return _itemList; }
+            set { _itemList = value; }
+        }
 
         public RegistryEntryCreateOperationPanel()
         {
@@ -46,7 +78,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Registry, OperationMethods.Create, String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex), appKeyTextBox.Text), keyNameTextBox.Text);
+                return new Operation(OperationArea.Registry, OperationMethods.Create, KeyPath, _itemList.ToList());
             }
         }
     }
