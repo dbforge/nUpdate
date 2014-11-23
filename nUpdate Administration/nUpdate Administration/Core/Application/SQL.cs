@@ -3,7 +3,7 @@
 // Created: 01-08-2014 20:13
 namespace nUpdate.Administration.Core.Application
 {
-    internal class Sql
+    public class Sql
     {
         /// <summary>
         ///     The url of the SQL-connection.

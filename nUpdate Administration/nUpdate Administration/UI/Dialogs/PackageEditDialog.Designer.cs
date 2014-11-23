@@ -209,7 +209,7 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(498, 7);
+            this.saveButton.Location = new System.Drawing.Point(417, 7);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(121, 23);
             this.saveButton.TabIndex = 0;
@@ -220,7 +220,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(417, 7);
+            this.cancelButton.Location = new System.Drawing.Point(544, 7);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -318,8 +318,8 @@
             // controlPanel1
             // 
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.saveButton);
             this.controlPanel1.Controls.Add(this.cancelButton);
+            this.controlPanel1.Controls.Add(this.saveButton);
             this.controlPanel1.Location = new System.Drawing.Point(0, 265);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(632, 40);
@@ -1074,13 +1074,15 @@
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.categoryTabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "PackageEditDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit update package - {0} - {1}";
-            this.Load += new System.EventHandler(this.PackageEditDialog_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackageEditDialog_FormClosing);
+            this.Shown += new System.EventHandler(this.PackageEditDialog_Shown);
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

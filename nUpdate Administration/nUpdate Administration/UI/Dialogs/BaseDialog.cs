@@ -17,7 +17,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     The update project in the current state.
         /// </summary>
-        internal UpdateProject Project { get; set; }
+        public UpdateProject Project { get; set; }
 
         private void InitializeComponent()
         {

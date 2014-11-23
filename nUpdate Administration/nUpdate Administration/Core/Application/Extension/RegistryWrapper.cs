@@ -35,7 +35,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// <summary>
     ///     Provides a streamlined interface for reading and writing to the registry.
     /// </summary>
-    internal class RegistryWrapper
+    public class RegistryWrapper
     {
         /// <summary>
         ///     Reads specified value from the registry.

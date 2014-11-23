@@ -5,7 +5,7 @@ using System.IO;
 
 namespace nUpdate.Administration.Core.Application
 {
-    internal class ApplicationInstance
+    public class ApplicationInstance
     {
         /// <summary>
         ///     Loads an update project.

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using nUpdate.Administration.Core;
@@ -23,7 +24,9 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PackageEditDialog : BaseDialog
     {
+        private bool _allowCancel;
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
+        private readonly ManualResetEvent _loadingResetEvent = new ManualResetEvent(false);
         private readonly TreeNode _createRegistryEntryNode = new TreeNode("Create registry entry", 14, 14);
         private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9);
         private readonly TreeNode _deleteRegistryEntryNode = new TreeNode("Delete registry entry", 12, 12);
@@ -39,20 +42,63 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             InitializeComponent();
         }
+        
+        ///<summary>
+        ///    The configurations available in the file.
+        ///</summary>
+        public List<UpdateConfiguration> UpdateConfigurations { get; set; } 
 
-        /// <summary>
-        ///     The configurations available in the file.
-        /// </summary>
-        internal List<UpdateConfiguration> UpdateConfigurations { get; set; } 
+        ///<summary>
+        ///    The configuration of the package itself.
+        ///</summary>
+        public UpdateConfiguration PackageConfiguration { get; set; }
 
-        /// <summary>
-        ///     The configuration of the package itself.
-        /// </summary>
-        internal UpdateConfiguration PackageConfiguration { get; set; }
+        ///<summary>
+        ///    Gets or sets if the package is released.
+        ///</summary>
+        public bool IsReleased { get; set; }
 
-        private void PackageEditDialog_Load(object sender, EventArgs e)
+        ///<summary>
+        ///    The version of the package to edit.
+        ///</summary>
+        public UpdateVersion PackageVersion { get; set; }
+
+        ///<summary>
+        ///    The url of the configuration file.
+        ///</summary>
+        public Uri ConfigurationFileUrl { get; set; }
+
+        ///<summary>
+        ///    The local path of the package.
+        ///</summary>
+        public string LocalPackagePath { get; set; }
+
+        private void PackageEditDialog_Shown(object sender, EventArgs e)
         {
-            var packageVersion = new UpdateVersion(PackageConfiguration.Version);
+            new Thread(LoadConfiguration).Start();
+            _loadingResetEvent.WaitOne();
+
+            if (UpdateConfigurations == null)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the configuration.", "There are no entries available in the configuration.",
+                            PopupButtons.Ok);
+                Close();
+                return;
+            }
+
+            try
+            {
+                PackageConfiguration = UpdateConfigurations.First(item => item.LiteralVersion == PackageVersion.ToString());
+            }
+            catch
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the configuration.", "There are no entries available for the current package in the configuration.",
+                            PopupButtons.Ok);
+                Close();
+                return;
+            }
+
+            var packageVersion = new UpdateVersion(PackageConfiguration.LiteralVersion);
             majorNumericUpDown.Maximum = Decimal.MaxValue;
             minorNumericUpDown.Maximum = Decimal.MaxValue;
             buildNumericUpDown.Maximum = Decimal.MaxValue;
@@ -121,9 +167,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     case "DeleteFile":
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_deleteNode.Clone());
-                        
+
                         var deletePage = new TabPage("Delete file") { BackColor = SystemColors.Window };
-                        deletePage.Controls.Add(new FileDeleteOperationPanel {Path = operation.Value.ToString(), ItemList = new BindingList<string>(((JArray)operation.Value2).ToObject<List<string>>()), });
+                        deletePage.Controls.Add(new FileDeleteOperationPanel { Path = operation.Value.ToString(), ItemList = new BindingList<string>(((JArray)operation.Value2).ToObject<List<string>>()), });
                         categoryTabControl.TabPages.Add(deletePage);
                         break;
 
@@ -131,7 +177,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_renameNode.Clone());
 
                         var renamePage = new TabPage("Rename file") { BackColor = SystemColors.Window };
-                        renamePage.Controls.Add(new FileRenameOperationPanel {Path = operation.Value.ToString(), NewName = operation.Value2.ToString()});
+                        renamePage.Controls.Add(new FileRenameOperationPanel { Path = operation.Value.ToString(), NewName = operation.Value2.ToString() });
                         categoryTabControl.TabPages.Add(renamePage);
                         break;
 
@@ -155,39 +201,115 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_setRegistryKeyValueNode.Clone());
 
                         var setRegistryEntryValuePage = new TabPage("Set registry entry value") { BackColor = SystemColors.Window };
-                        setRegistryEntryValuePage.Controls.Add(new RegistryEntrySetValueOperationPanel {KeyPath = operation.Value.ToString(), Value = ((JObject)operation.Value2).ToObject<Tuple<string, string>>(), });
+                        setRegistryEntryValuePage.Controls.Add(new RegistryEntrySetValueOperationPanel { KeyPath = operation.Value.ToString(), Value = ((JObject)operation.Value2).ToObject<Tuple<string, string>>(), });
                         categoryTabControl.TabPages.Add(setRegistryEntryValuePage);
                         break;
                     case "StartProcess":
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_startProcessNode.Clone());
 
                         var startProcessPage = new TabPage("Start process") { BackColor = SystemColors.Window };
-                        startProcessPage.Controls.Add(new ProcessStartOperationPanel {Path = operation.Value.ToString(), Arguments = ((JArray)operation.Value2).ToObject<string[]>()});
+                        startProcessPage.Controls.Add(new ProcessStartOperationPanel { Path = operation.Value.ToString(), Arguments = ((JArray)operation.Value2).ToObject<string[]>() });
                         categoryTabControl.TabPages.Add(startProcessPage);
                         break;
                     case "TerminateProcess":
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_terminateProcessNode.Clone());
 
                         var terminateProcessPage = new TabPage("Terminate process") { BackColor = SystemColors.Window };
-                        terminateProcessPage.Controls.Add(new ProcessStopOperationPanel {ProcessName = operation.Value.ToString()});
+                        terminateProcessPage.Controls.Add(new ProcessStopOperationPanel { ProcessName = operation.Value.ToString() });
                         categoryTabControl.TabPages.Add(terminateProcessPage);
                         break;
                     case "StartService":
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_startServiceNode.Clone());
 
                         var startServicePage = new TabPage("Start service") { BackColor = SystemColors.Window };
-                        startServicePage.Controls.Add(new ServiceStartOperationPanel {ServiceName = operation.Value.ToString()});
+                        startServicePage.Controls.Add(new ServiceStartOperationPanel { ServiceName = operation.Value.ToString() });
                         categoryTabControl.TabPages.Add(startServicePage);
                         break;
                     case "StopService":
                         categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_stopServiceNode.Clone());
 
                         var stopServicePage = new TabPage("Stop service") { BackColor = SystemColors.Window };
-                        stopServicePage.Controls.Add(new ServiceStopOperationPanel {ServiceName = operation.Value.ToString()});
+                        stopServicePage.Controls.Add(new ServiceStopOperationPanel { ServiceName = operation.Value.ToString() });
                         categoryTabControl.TabPages.Add(stopServicePage);
                         break;
                 }
             }
+        }
+
+        private void PackageEditDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_allowCancel)
+                e.Cancel = true;
+        }
+
+        private void LoadConfiguration()
+        {
+            if (IsReleased)
+            {
+                SetUiState(false);
+                BeginInvoke(new Action(() =>
+                {
+                    loadingLabel.Text = "Getting old configuration...";
+                }));
+
+                try
+                {
+                    var updateConfigurationsPlaceholder =
+                        UpdateConfiguration.Download(ConfigurationFileUrl, null);
+                    if (updateConfigurationsPlaceholder != null)
+                        UpdateConfigurations = updateConfigurationsPlaceholder.ToList();
+                }
+                catch (Exception ex)
+                {
+                    BeginInvoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the configuration.", ex,
+                            PopupButtons.Ok);
+                        Close();
+                    }));
+                }
+
+                SetUiState(true);
+            }
+            else
+            {
+                try
+                {
+                    var updateConfigurationsPlaceholder = UpdateConfiguration.FromFile(Path.Combine(LocalPackagePath, "updates.json"));
+                    if (updateConfigurationsPlaceholder != null)
+                        UpdateConfigurations = updateConfigurationsPlaceholder.ToList();
+                }
+                catch (Exception ex)
+                {
+                    BeginInvoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the configuration.", ex,
+                            PopupButtons.Ok);
+                        Close();
+                    }));
+                }
+            }
+            _loadingResetEvent.Set();
+        }
+
+        /// <summary>
+        ///     Enables or disables the UI controls.
+        /// </summary>
+        /// <param name="enabled">Sets the activation state.</param>
+        private void SetUiState(bool enabled)
+        {
+            if (enabled)
+                _allowCancel = true;
+
+            BeginInvoke(new Action(() =>
+            {
+                foreach (Control c in from Control c in Controls where c.Visible select c)
+                {
+                    c.Enabled = enabled;
+                }
+
+                loadingPanel.Visible = !enabled;
+            }));
         }
 
         /// <summary>
@@ -276,23 +398,23 @@ namespace nUpdate.Administration.UI.Dialogs
 
             PackageConfiguration.UseStatistics = includeIntoStatisticsCheckBox.Checked;
 
-            string existingVersion = PackageConfiguration.Version;
+            string existingVersion = PackageConfiguration.LiteralVersion;
             if (developmentalStageComboBox.SelectedIndex == 2)
-                PackageConfiguration.Version = new UpdateVersion((int)majorNumericUpDown.Value,
+                PackageConfiguration.LiteralVersion = new UpdateVersion((int)majorNumericUpDown.Value,
                     (int)minorNumericUpDown.Value, (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value).ToString();
             else
             {
-                PackageConfiguration.Version = new UpdateVersion((int)majorNumericUpDown.Value,
+                PackageConfiguration.LiteralVersion = new UpdateVersion((int)majorNumericUpDown.Value,
                     (int)minorNumericUpDown.Value, (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value, (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage), developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)), (int)developmentBuildNumericUpDown.Value).ToString();
             }
 
             UpdateConfigurations[
-                UpdateConfigurations.IndexOf(UpdateConfigurations.First(item => item.Version == existingVersion))] =
+                UpdateConfigurations.IndexOf(UpdateConfigurations.First(item => item.LiteralVersion == existingVersion))] =
                 PackageConfiguration;
 
-            if (existingVersion == PackageConfiguration.Version)
+            if (existingVersion == PackageConfiguration.LiteralVersion)
             {
-                string configurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name, PackageConfiguration.Version, "updates.json");
+                string configurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name, PackageConfiguration.LiteralVersion, "updates.json");
                 try
                 {
                     File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfigurations));
@@ -301,12 +423,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
                         PopupButtons.Ok);
+                    return;
                 }
             }
             else
             {
                 string oldPackageDirectoryPath = Path.Combine(Program.Path, "Projects", existingVersion);
-                string newPackageDirectoryPath = Path.Combine(Program.Path, "Projects", PackageConfiguration.Version);
+                string newPackageDirectoryPath = Path.Combine(Program.Path, "Projects", PackageConfiguration.LiteralVersion);
                 string configurationFilePath = Path.Combine(newPackageDirectoryPath, "updates.json");
                 try
                 {
@@ -317,8 +440,22 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
                         PopupButtons.Ok);
+                    return;
                 }
             }
+
+            if (IsReleased)
+            {
+                SetUiState(false);
+                Invoke(new Action(() =>
+                {
+                    loadingLabel.Text = "Uploading new configuration...";
+                }));
+
+                SetUiState(true);
+            }
+
+            DialogResult = DialogResult.OK;
         }
 
         private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
@@ -539,8 +676,8 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (categoryTreeView.SelectedNode == null) return;
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null)
-            categoryTabControl.TabPages.Remove(
-                categoryTabControl.TabPages[3 + categoryTreeView.SelectedNode.Index]);
+                categoryTabControl.TabPages.Remove(
+                    categoryTabControl.TabPages[3 + categoryTreeView.SelectedNode.Index]);
             categoryTreeView.SelectedNode.Remove();
         }
     }

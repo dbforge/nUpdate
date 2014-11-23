@@ -32,7 +32,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// <summary>
     ///     Provides representation of verb that is used to determine mode file is being opened in. Contained within ProgID.
     /// </summary>
-    internal class ProgramVerb
+    public class ProgramVerb
     {
         private readonly string _command;
         private readonly string _name;

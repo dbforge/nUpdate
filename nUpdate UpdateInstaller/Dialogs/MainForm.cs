@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Client.GuiInterface;
-using nUpdate.UpdateInstaller;
+using nUpdate.UpdateInstaller.Client.GuiInterface;
 
-namespace nUpdate
+namespace nUpdate.UpdateInstaller.Dialogs
 {
     public partial class MainForm : Form, IProgressReporter
     {
@@ -18,32 +17,36 @@ namespace nUpdate
             Invoke(new Action(() =>
             {
                 Icon = Icon.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
-                Show();
+                Show(); // We currently only have an instace, so we show the form now.
             }));
         }
 
-        public void ReportProgress(int progress, string currentFile)
+        public void ReportUnpackingProgress(int progress, string currentFile)
         {
             Invoke(new Action(() =>
             {
                 extractProgressBar.Value = progress;
-                unpackingLabel.Text = String.Format("{0} {1}... {2}", "Unpacking...", currentFile, progress);
+                updateLabel.Text = String.Format("{0} {1}... {2}%", "Unpacking...", currentFile, progress);
             }));
         }
 
-        public void Fail(string infoMessage, string errorMessage)
+        public void ReportOperationProgress(int progress, string currentOperation)
         {
             Invoke(new Action(() =>
             {
-                var errorDialog = new ErrorDialog();
-                errorDialog.InfoMessage = infoMessage;
-                errorDialog.ErrorMessage = errorMessage;
+                extractProgressBar.Value = progress;
+                updateLabel.Text = String.Format("{0}... {1}%", currentOperation, progress);
             }));
+        }
+
+        public bool Fail(Exception ex)
+        {
+            return false;
         }
 
         public void Terminate()
         {
-            Invoke(new Action(() => Close()));
+            Invoke(new Action(Close));
         }
     }
 }

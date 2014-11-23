@@ -19,7 +19,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     The SQL-settings for the selected entry.
         /// </summary>
-        internal Sql SqlSettings = new Sql();
+        public Sql SqlSettings = new Sql();
 
         public StatisticsServerDialog()
         {

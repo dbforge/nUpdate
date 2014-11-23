@@ -34,7 +34,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// <summary>
     ///     This exception is thrown when there is an error when reading, writing or modifying file assocation info.
     /// </summary>
-    internal class RegistryException : ApplicationException
+    public class RegistryException : ApplicationException
     {
         /// <summary>
         ///     Initializes a new instance of the RegistryException class.

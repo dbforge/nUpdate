@@ -5,153 +5,101 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core.Language;
+using nUpdate.Core;
+using nUpdate.Core.Localization;
+using nUpdate.Dialogs;
+using nUpdate.UI.Popups;
 
-namespace nUpdate.Dialogs
+namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateDownloadDialog : BaseForm
     {
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-        private string finishedHeader;
-        private string finishedInfoText;
-        private string finishedStatusLabelText;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
 
         public UpdateDownloadDialog()
         {
             InitializeComponent();
         }
 
-        public Language Language { get; set; }
+        /// <summary>
+        ///     Sets the name of the _lpuage file in the resources to use, if no own file is used.
+        /// </summary>
+        public string LanguageName { get; set; }
+
+        /// <summary>
+        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        /// </summary>
         public string LanguageFilePath { get; set; }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
-            string resourceName = "nUpdate.Core.Language.";
-            LanguageSerializer lang = null;
-
-            if (Language != Language.Custom)
+            if (!String.IsNullOrEmpty(LanguageFilePath))
             {
-                switch (Language)
+                try
                 {
-                    case Language.English:
-                        resourceName += "en.xml";
-                        break;
-                    case Language.German:
-                        resourceName += "de.xml";
-                        break;
-                    case Language.French:
-                        resourceName += "fr.xml";
-                        break;
-                    case Language.Spanish:
-                        resourceName += "es.xml";
-                        break;
-                    case Language.Russian:
-                        resourceName += "ru.xml";
-                        break;
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
                 }
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                catch (Exception)
                 {
-                    lang = LanguageSerializer.ReadXml(stream);
+                    /*string resourceName = "nUpdate.Core.Localization.en.json";
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                    }*/
+
+                    _lp = new LocalizationProperties();
                 }
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                }
             }
 
-            cancelButton.Text = lang.CancelButtonText;
-            furtherButton.Text = lang.ContinueButtonText;
-            headerLabel.Text = lang.UpdateDownloadDialogLoadingHeader;
-            infoLabel.Text = lang.UpdateDownloadDialogLoadingInfo;
-            statusLabel.Text = lang.UpdateDownloadDialogLoadingPackageText;
-            finishedHeader = lang.UpdateDownloadDialogFinishedHeader;
-            finishedInfoText = lang.UpdateDownloadDialogFinishedInfoText;
-            finishedStatusLabelText = lang.UpdateDownloadDialogFinishedPackageText;
-
-            hookPictureBox.Visible = false;
-            cancelButton.Enabled = false;
-            furtherButton.Enabled = false;
+            //headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
+            //infoLabel.Text = _lp.UpdateDownloadDialogLoadingInfo;
 
             Text = Application.ProductName;
-            Icon = AppIcon;
-
-            iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
-            iconPictureBox.Image = AppIcon.ToBitmap();
-        }
-
-        public void furtherButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
+            Icon = _appIcon;
         }
 
         public void ProgressChangedEventHandler(object sender, DownloadProgressChangedEventArgs e)
         {
-            int sizeDividor = 1024;
-            string sizeString = "KB";
-            if (e.TotalBytesToReceive >= 104857.6)
-            {
-                sizeDividor = 1048576;
-                sizeString = "MB";
-            }
+            // Race condition, that's why there is a catch that suppresses the error.
 
-            Invoke(new Action(() =>
+            try
             {
-                downloadProgressBar.Value = e.ProgressPercentage;
-                percentLabel.Text = String.Format("{0} %", e.ProgressPercentage);
-                statusLabel.Text = String.Format("{0} {2} of {1} {2}",
-                    Math.Round((double) e.BytesReceived/sizeDividor, 1),
-                    Math.Round((double) e.TotalBytesToReceive/sizeDividor, 1), sizeString);
-            }));
+                Invoke(new Action(() =>
+                {
+                    downloadProgressBar.Value = e.ProgressPercentage;
+                    infoLabel.Text = String.Format(
+                        "Please wait while the available updates are\ndownloaded...  ({0}%)", e.ProgressPercentage);
+                }));
+            }
+            catch (InvalidOperationException)
+            {
+                // Suppress it
+            }
         }
 
         public void DownloadFinishedEventHandler(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Error != null)
+            if (e.Error != null && e.Error.InnerException != null)
             {
-                var errorDialog = new UpdateErrorDialog();
-                if (e.Error.GetType() == typeof (WebException))
-                {
-                    HttpWebResponse response = null;
-                    response = (HttpWebResponse) (e.Error as WebException).Response;
-                    errorDialog.ErrorCode = (int) response.StatusCode;
-                }
-                else
-                    errorDialog.ErrorCode = 0;
-
-                errorDialog.InfoMessage = "Error while downloading the package.";
-                errorDialog.Error = e.Error;
                 Invoke(new Action(() =>
                 {
-                    if (errorDialog.ShowDialog(this) == DialogResult.OK)
+                    if (
+                        Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the update package.",
+                            e.Error.InnerException, PopupButtons.Ok) == DialogResult.OK)
                         DialogResult = DialogResult.Cancel;
                 }));
             }
-            else
-            {
-                Invoke(new Action(() =>
-                {
-                    cancelButton.Enabled = true;
-                    furtherButton.Enabled = true;
 
-                    headerLabel.Text = finishedHeader;
-                    infoLabel.Text = finishedInfoText;
-                    statusLabel.Text = finishedStatusLabelText;
-                }));
-            }
-        }
-
-        public void DownloadFailedEventHandler(Exception exception)
-        {
-            var errorDialog = new UpdateErrorDialog();
-            if (exception.GetType() == typeof (WebException))
-                errorDialog.ErrorCode = (int) ((HttpWebResponse) (exception as WebException).Response).StatusCode;
-            else
-                errorDialog.ErrorCode = 0;
-            errorDialog.InfoMessage = "Error while downloading.";
-            errorDialog.Error = exception;
-            if (errorDialog.ShowDialog(this) == DialogResult.OK)
-                DialogResult = DialogResult.Cancel;
+            DialogResult = DialogResult.OK;
         }
     }
 }

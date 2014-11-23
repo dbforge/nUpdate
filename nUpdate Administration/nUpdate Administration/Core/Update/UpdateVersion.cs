@@ -3,12 +3,11 @@
 // Created: 01-08-2014 12:11
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace nUpdate.Administration.Core.Update
 {
-    internal class UpdateVersion
+    public class UpdateVersion
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateVersion" />-class.

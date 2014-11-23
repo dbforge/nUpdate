@@ -36,30 +36,31 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Operations\FileManager.cs" />
-    <Compile Include="Core\Operations\Operation.cs" />
-    <Compile Include="Core\Operations\RegistryManager.cs" />
-    <Compile Include="Core\Operations\ServicesManager.cs" />
+    <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\ErrorHandler.cs" />
-    <Compile Include="Core\Language\ILanguage.cs" />
-    <Compile Include="Core\Language\Language.cs" />
-    <Compile Include="Core\Language\LanguageSerializer.cs" />
+    <Compile Include="Core\Localization\LocalizationProperties.cs" />
+    <Compile Include="Core\Operations\Operation.cs" />
+    <Compile Include="Core\Operations\OperationArea.cs" />
+    <Compile Include="Core\Operations\OperationMethods.cs" />
     <Compile Include="Core\RsaSignature.cs" />
     <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\SizeConverter.cs" />
     <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Internal\Exceptions\PackageTooBigException.cs" />
+    <Compile Include="Internal\Exceptions\SizeCalculationException.cs" />
     <Compile Include="Internal\Exceptions\StatisticsException.cs" />
     <Compile Include="Internal\UpdateEventArgs\FailedEventArgs.cs" />
     <Compile Include="Internal\UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
@@ -117,6 +118,14 @@
     <Compile Include="Internal\UpdateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\UriConnector.cs" />
+    <Compile Include="UI\Popups\Popup.cs" />
+    <Compile Include="UI\Popups\PopupButtons.cs" />
+    <Compile Include="UI\Popups\PopupDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\PopupDialog.designer.cs">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Dialogs\BaseForm.resx">
@@ -145,8 +154,12 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="UpdateManager.cd" />
     <None Include="Resources\line.PNG" />
   </ItemGroup>
   <ItemGroup>
@@ -156,20 +169,21 @@
     <None Include="Resources\en.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Language\en.xml" />
+    <EmbeddedResource Include="Core\Localization\en.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Language\de.xml" />
+    <EmbeddedResource Include="Core\Localization\de.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Language\es.xml" />
+    <EmbeddedResource Include="Core\Localization\es.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate UpdateInstaller.exe" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Language\ru.xml" />
+    <EmbeddedResource Include="Core\Localization\ru.json" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

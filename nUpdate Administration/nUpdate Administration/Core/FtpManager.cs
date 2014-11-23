@@ -10,16 +10,15 @@ using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.Core
 {
-    internal class FtpManager
+    public class FtpManager
     {
         private bool _hasAlreadyFixedStrings;
+        private string _directoryName;
         private FtpClient _packageFtpClient;
-        private readonly ManualResetEvent _uploadFileResetEvent = new ManualResetEvent(false);
+        private FtpClient _directoryEmptyingClient;
         private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
-        private readonly ManualResetEvent _directoryFilesListingResetEvent = new ManualResetEvent(false);
-        private readonly ManualResetEvent _listingResetEvent = new ManualResetEvent(false);
         private FtpItemCollection _directoryCollection;
-
+        
         /// <summary>
         ///     Returns the adress that was created by the <see cref="FtpManager" />-class during the call of the last function.
         /// </summary>
@@ -53,7 +52,7 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     The username.
         /// </summary>
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         ///     The password.
@@ -76,9 +75,14 @@ namespace nUpdate.Administration.Core
         public IEnumerable<FtpItem> ListedFtpItems; 
 
         /// <summary>
-        /// Occurs when the download progress is changed.
+        /// Occurs when the download progress changes.
         /// </summary>
         public event EventHandler<TransferProgressEventArgs> ProgressChanged;
+
+        /// <summary>
+        /// Occurs when the cancellation is finished.
+        /// </summary>
+        public event EventHandler<EventArgs> CancellationFinished;
 
         protected internal void OnProgressChanged(TransferProgressEventArgs e)
         {
@@ -87,8 +91,15 @@ namespace nUpdate.Administration.Core
                 handler(this, e);
         }
 
+        protected internal void OnCancellationFinished(object sender, EventArgs e)
+        {
+            EventHandler<EventArgs> handler = CancellationFinished;
+            if (handler != null)
+                handler(this, e);
+        }
+
         /// <summary>
-        ///     Edits the properties if they are not automatically suitable for the server adress.
+        ///     Edits the properties if they are not automatically suitable for the server address.
         /// </summary>
         private void FixProperties()
         {
@@ -104,6 +115,7 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     Deletes a file on the server.
         /// </summary>
+        /// <param name="fileName">The name of the file to delete.</param>
         public void DeleteFile(string fileName)
         {
             if (!_hasAlreadyFixedStrings)
@@ -114,7 +126,7 @@ namespace nUpdate.Administration.Core
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                 FileTransferType = TransferType.Binary
             };
-            ftp.Open(UserName, Password.ConvertToUnsecureString());
+            ftp.Open(Username, Password.ConvertToUnsecureString());
             ftp.ChangeDirectoryMultiPath(Directory);
             ftp.DeleteFile(fileName);
             ftp.Close();
@@ -123,93 +135,121 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     Deletes a directory on the server.
         /// </summary>
+        /// <param name="directoryName">The name of the directory to delete.</param>
         public void DeleteDirectory(string directoryName)
         {
+            _directoryName = directoryName;
+
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None)
+            _directoryEmptyingClient = new FtpClient(Host, Port, FtpSecurityProtocol.None)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                 FileTransferType = TransferType.Binary
             };
-            ftp.Open(UserName, Password.ConvertToUnsecureString());
-            ftp.ChangeDirectoryMultiPath(String.Format("/{0}/{1}", Directory, directoryName));
-            ftp.GetDirListAsyncCompleted += DirectoryListingFinished;
-            ftp.GetDirListAsync();
-            _directoryFilesListingResetEvent.WaitOne();
-
-            foreach (FtpItem directoryItem in _directoryCollection)
-            {
-                ftp.DeleteFile(directoryItem.Name);
-            }
-
-            ftp.ChangeDirectory(Directory);
-            ftp.DeleteDirectory(directoryName);
-            ftp.Close();
+            _directoryEmptyingClient.Open(Username, Password.ConvertToUnsecureString());
+            _directoryEmptyingClient.ChangeDirectoryMultiPath(String.Format("/{0}/{1}", Directory, directoryName));
+            _directoryEmptyingClient.GetDirListAsyncCompleted += DirectoryListingFinished;
+            _directoryEmptyingClient.GetDirListAsync();
         }
 
         private void DirectoryListingFinished(object sender, GetDirListAsyncCompletedEventArgs e)
         {
             _directoryCollection = e.DirectoryListingResult;
-            _directoryFilesListingResetEvent.Set();
-        }
+            if (_directoryCollection != null)
+            {
+                foreach (FtpItem directoryItem in _directoryCollection)
+                {
+                    _directoryEmptyingClient.DeleteFile(directoryItem.Name);
+                }
+            }
+            _directoryEmptyingClient.Close();
 
-        public void ListDirectoriesAndFilesRecursively()
-        {
-            var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None)
+            var directoryDeletingClient = new FtpClient(Host, Port, FtpSecurityProtocol.None)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                 FileTransferType = TransferType.Binary
             };
-            ftp.Open(UserName, Password.ConvertToUnsecureString());
-            ftp.GetDirListDeepAsyncCompleted += ListingFinished;
-            ftp.GetDirListDeepAsync();
-            _listingResetEvent.WaitOne();
+            directoryDeletingClient.Open(Username, Password.ConvertToUnsecureString());
+            directoryDeletingClient.ChangeDirectoryMultiPath(Directory);
+            directoryDeletingClient.DeleteDirectory(_directoryName);
+            directoryDeletingClient.Close();
         }
 
-        public void ListingFinished(object sender, GetDirListDeepAsyncCompletedEventArgs e)
+        /// <summary>
+        ///      Lists the directories and files of the current FTP-directory recursively.
+        /// </summary>
+        public IEnumerable<FtpItem> ListDirectoriesAndFilesRecursively()
         {
-            ListedFtpItems = e.DirectoryListingResult;
-            _listingResetEvent.Set();
+            using (var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None))
+            {
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(Directory ?? "/downloads/");
+                var items = ftp.GetDirList();
+                ftp.Close();
+                return items;
+            }
+        }
+
+        /// <summary>
+        ///     Moves all files and subdirectories from the current FTP-directory to the given aim directory.
+        /// </summary>
+        /// <param name="aimPath">The aim directory to move the files and subdirectories to.</param>
+        public void MoveContent(string aimPath)
+        {
+            if (!_hasAlreadyFixedStrings)
+                FixProperties();
+
+            using (var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None))
+            {
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(Directory);
+                
+                foreach (var file in ListDirectoriesAndFilesRecursively())
+                {
+                    ftp.MoveFile(file.FullPath, aimPath);
+                }
+
+                ftp.Close();
+            }
         }
 
         /// <summary>
         ///     Uploads a file to the server.
         /// </summary>
+        /// <param name="filePath">The local path of the file to upload.</param>
         public void UploadFile(string filePath)
         {
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None)
+            using (var ftp = new FtpClient(Host, Port, FtpSecurityProtocol.None))
             {
-                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary
-            };
-            ftp.Open(UserName, Password.ConvertToUnsecureString());
-            ftp.ChangeDirectoryMultiPath(Directory);
-            ftp.PutFileAsyncCompleted += UploadFileFinished;
-            ftp.PutFileAsync(filePath, FileAction.Create);
-            _uploadFileResetEvent.WaitOne();
-            ftp.Close();
-        }
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
 
-        private void UploadFileFinished(object sender, PutFileAsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-            {
-                if (e.Error.InnerException != null)
-                    FileUploadException = e.Error.InnerException;
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(Directory);
+                ftp.PutFile(filePath, FileAction.Create);
+                ftp.Close();
             }
-            _uploadFileResetEvent.Set();
         }
 
         /// <summary>
-        ///     Connects to the server and uploads a package file.
+        ///     Uploads an update package  to the server.
         /// </summary>
+        /// <param name="packagePath">The local path of the package..</param>
+        /// <param name="packageVersion">The package version for the directory name.</param>
         public void UploadPackage(string packagePath, string packageVersion)
         {
+            _directoryName = packageVersion;
+
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
@@ -220,23 +260,28 @@ namespace nUpdate.Administration.Core
             };
             _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
             _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;
-            _packageFtpClient.Open(UserName, Password.ConvertToUnsecureString());
+            _packageFtpClient.Open(Username, Password.ConvertToUnsecureString());
             _packageFtpClient.ChangeDirectoryMultiPath(Directory);
             _packageFtpClient.MakeDirectory(packageVersion);
             _packageFtpClient.ChangeDirectory(packageVersion);
             _packageFtpClient.PutFileAsync(packagePath, FileAction.Create);
             _uploadPackageResetEvent.WaitOne();
             _packageFtpClient.Close();
+            _uploadPackageResetEvent.Reset();
         }
 
         private void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
         {
-            if (e.Error != null)
-            {
-                if (e.Error.InnerException != null)
-                    PackageUploadException = e.Error.InnerException;
-            }
             _uploadPackageResetEvent.Set();
+
+            if (e.Cancelled)
+            {
+                OnCancellationFinished(this, EventArgs.Empty);
+                return;
+            }
+
+            if (e.Error != null)
+                PackageUploadException = e.Error;
         }
 
         /// <summary>

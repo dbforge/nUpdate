@@ -53,8 +53,9 @@
   <ItemGroup>
     <Compile Include="ConnectionCheckerTest.cs" />
     <Compile Include="RsaSignatureTest.cs" />
+    <Compile Include="AesManagerTest.cs" />
     <Compile Include="UpdateVersionTest.cs" />
-    <Compile Include="UriConnecterTest.cs" />
+    <Compile Include="UriConnectorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

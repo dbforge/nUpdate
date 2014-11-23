@@ -1,26 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
-using nUpdate.Core.Language;
+using nUpdate.Core;
+using nUpdate.Core.Localization;
+using nUpdate.Core.Operations;
+using nUpdate.Dialogs;
 using nUpdate.Internal;
 
-namespace nUpdate.Dialogs
+namespace nUpdate.UI.Dialogs
 {
     public partial class NewUpdateDialog : BaseForm
     {
-        private const Int32 BCM_SETSHIELD = 0x160C;
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-        private bool allowCancel;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private bool _allowCancel;
+        private LocalizationProperties _lp; 
 
         public NewUpdateDialog()
         {
             InitializeComponent();
         }
 
-        public Language Language { get; set; }
+        /// <summary>
+        ///     Sets the name of the _lpuage file in the resources to use, if no own file is used.
+        /// </summary>
+        public string LanguageName { get; set; }
+
+        /// <summary>
+        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        /// </summary>
         public string LanguageFilePath { get; set; }
 
         /// <summary>
@@ -48,88 +61,79 @@ namespace nUpdate.Dialogs
         /// </summary>
         public bool MustUpdate { get; set; }
 
+        /// <summary>
+        ///     Sets a list of areas for this update's operations.
+        /// </summary>
+        public List<OperationArea> OperationAreas { get; set; }
+
         [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        public static extern int SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         internal static void AddShieldToButton(Button btn)
         {
-            const Int32 BCM_SETSHIELD = 0x160C;
+            const Int32 bcmSetshield = 0x160C;
 
             btn.FlatStyle = FlatStyle.System;
-            SendMessage(btn.Handle, BCM_SETSHIELD, 0, 1);
+            SendMessage(btn.Handle, bcmSetshield, 0, 1);
         }
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            string resourceName = "nUpdate.Core.Language.";
-            LanguageSerializer lang = null;
-
-            if (Language != Language.Custom)
+            if (!String.IsNullOrEmpty(LanguageFilePath))
             {
-                switch (Language)
+                try
                 {
-                    case Language.English:
-                        resourceName += "en.xml";
-                        break;
-                    case Language.German:
-                        resourceName += "de.xml";
-                        break;
-                    case Language.French:
-                        resourceName += "fr.xml";
-                        break;
-                    case Language.Spanish:
-                        resourceName += "es.xml";
-                        break;
-                    case Language.Russian:
-                        resourceName += "ru.xml";
-                        break;
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
                 }
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                catch (Exception)
                 {
-                    lang = LanguageSerializer.ReadXml(stream);
+                    /*string resourceName = "nUpdate.Core.Localization.en.json";
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                    }*/
+
+                    _lp = new LocalizationProperties();
                 }
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
-                else
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    infoLabel.Text = String.Format(infoLabel.Text, Application.ProductName);
-                    newestVersionLabel.Text = String.Format(newestVersionLabel.Text, UpdateVersion.FullText);
-                    currentVersionLabel.Text = String.Format(currentVersionLabel.Text, CurrentVersion);
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
 
-            headerLabel.Text = lang.NewUpdateDialogHeader;
-            infoLabel.Text = String.Format(lang.NewUpdateDialogInfoText, Application.ProductName);
+            headerLabel.Text = _lp.NewUpdateDialogHeader;
+            infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
             newestVersionLabel.Text = String.Format(newestVersionLabel.Text, UpdateVersion.FullText);
-            currentVersionLabel.Text = String.Format(lang.NewUpdateDialogCurrentVersionText, CurrentVersion);
-            changelogLabel.Text = lang.NewUpdateDialogChangelogText;
-            cancelButton.Text = lang.CancelButtonText;
-            installButton.Text = lang.InstallButtonText;
+            currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion);
+            changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
+            cancelButton.Text = _lp.CancelButtonText;
+            installButton.Text = _lp.InstallButtonText;
 
-            const int Mb = 1048576;
-            const int Kb = 1024;
+            const int mb = 1048576;
+            const int kb = 1024;
 
             if (PackageSize == -1)
                 updateSizeLabel.Text = String.Format(updateSizeLabel.Text, "N/A");
             else if (PackageSize >= 104857.6)
             {
-                double PackageSizeInMb = Math.Round((PackageSize/Mb), 1);
+                double packageSizeInMb = Math.Round((PackageSize/mb), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(lang.NewUpdateDialogSizeText, PackageSizeInMb), "MB");
+                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "MB");
             }
             else
             {
-                double PackageSizeInKb = Math.Round((PackageSize/Kb), 1);
+                double packageSizeInKb = Math.Round((PackageSize/kb), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(lang.NewUpdateDialogSizeText, PackageSizeInKb), "KB");
+                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb), "KB");
             }
 
-            Icon = AppIcon;
+            Icon = _appIcon;
             Text = Application.ProductName;
-            iconPictureBox.Image = AppIcon.ToBitmap();
+            iconPictureBox.Image = _appIcon.ToBitmap();
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
             changelogTextBox.Text = Changelog;
@@ -137,18 +141,48 @@ namespace nUpdate.Dialogs
 
             if (MustUpdate)
                 cancelButton.Enabled = false;
+
+            var accessStrings = new List<string>();
+
+            if (OperationAreas == null || OperationAreas.Count == 0)
+            {
+                accessLabel.Text += " -";
+                return;
+            }
+
+            if (OperationAreas.Any(item => item == OperationArea.Files))
+            {
+                accessStrings.Add(_lp.NewUpdateDialogDemandsFilesAccessText);
+            }
+
+            if (OperationAreas.Any(item => item == OperationArea.Registry))
+            {
+                accessStrings.Add(_lp.NewUpdateDialogDemandsRegistryAccessText);
+            }
+
+            if (OperationAreas.Any(item => item == OperationArea.Processes))
+            {
+                accessStrings.Add(_lp.NewUpdateDialogDemandsProcessesAccessText);
+            }
+
+            if (OperationAreas.Any(item => item == OperationArea.Files))
+            {
+                accessStrings.Add(_lp.NewUpdateDialogDemandsServicesAccessText);
+            }
+            
+            accessLabel.Text += String.Format("{0} {1}", " ", String.Join(", ", accessStrings));
         }
 
         private void installButton_Click(object sender, EventArgs e)
         {
-            allowCancel = true;
+            _allowCancel = true;
             DialogResult = DialogResult.OK;
             Close();
         }
 
         private void NewUpdateDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MustUpdate && !allowCancel)
+            if (MustUpdate && !_allowCancel)
                 e.Cancel = true;
         }
     }

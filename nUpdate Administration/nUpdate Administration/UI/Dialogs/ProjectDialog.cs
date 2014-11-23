@@ -2,6 +2,7 @@
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -27,7 +28,7 @@ using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class ProjectDialog : BaseDialog
+    public partial class ProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private const float KB = 1024;
         private const float MB = 1048577;
@@ -36,19 +37,16 @@ namespace nUpdate.Administration.UI.Dialogs
         private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
         private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
-        private const int COR_E_PATHTOOLONG = unchecked((int) 0x800700CE);
-        private const int COR_E_IO = unchecked((int) 0x80131620);
         private readonly FtpManager _ftp = new FtpManager();
         private readonly Log _updateLog = new Log();
         private bool _allowCancel = true;
-        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private Uri _configurationFileUrl;
         private MySqlConnection _deleteConnection;
-        private int _groupIndex;
         private MySqlConnection _insertConnection;
         private bool _isSetByUser;
         private bool _isNetworkAvailable = true;
-        private UpdateVersion _packageVersion;
+        private bool _uploadCancelled;
+        private bool _packageExisting;
         private MySqlConnection _queryConnection;
 
         public ProjectDialog()
@@ -132,6 +130,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void ProjectDialog_Load(object sender, EventArgs e)
         {
             _ftp.ProgressChanged += ProgressChanged;
+            _ftp.CancellationFinished += CancellationFinished;
 
             if (!InitializeProjectDetails())
             {
@@ -171,7 +170,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
             statisticsDataGridView.RowHeadersVisible = false;
 
-            // Check for network
             if (!ConnectionChecker.IsConnectionAvailable())
             {
                 _isNetworkAvailable = false;
@@ -202,10 +200,6 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 string databaseNameString = String.Format("Database: {0}", Project.SqlSettings.DatabaseName);
                 dataBaseLabel.Text = databaseNameString;
-
-                string lastUpdatedInfoString = String.Format("Last updated on {0} at {1}",
-                    DateTime.Now.ToString("dd.MM.yyy"), DateTime.Now.ToString("HH:mm:ss tt"));
-                lastUpdatedLabel.Text = lastUpdatedInfoString; // TODO: Label
 
                 useStatisticsServerRadioButton.Checked = true;
 
@@ -246,11 +240,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 var dataAdapter =
                     new MySqlDataAdapter(
                         String.Format(
-                            "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Applicaton_ID` = {0} GROUP BY Version_ID;",
+                            "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {0} GROUP BY Version_ID;",
                             Project.ApplicationId),
                         _queryConnection);
                 var dataSet = new DataSet();
                 dataAdapter.Fill(dataSet);
+                
 
                 statisticsDataGridView.DataSource = dataSet.Tables[0];
                 _queryConnection.Close();
@@ -357,23 +352,26 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            var packageEditDialog = new PackageEditDialog {Project = Project};
-            try
+            var packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag;
+            var packageEditDialog = new PackageEditDialog { Project = Project, PackageVersion = packageVersion };
+            if (Project.Packages.First(item => item.Version == packageVersion).IsReleased)
             {
-                List<UpdateConfiguration> allConfigurations =
-                    UpdateConfiguration.LoadFromFile(Path.Combine(Program.Path, "Projects", Project.Name,
-                        _packageVersion.ToString(), "updates.json"));
-                packageEditDialog.UpdateConfigurations = allConfigurations;
-                packageEditDialog.PackageConfiguration =
-                    allConfigurations.First(item => item.Version == _packageVersion.ToString());
+                packageEditDialog.IsReleased = true;
+                packageEditDialog.ConfigurationFileUrl = _configurationFileUrl;
             }
-            catch (Exception ex)
+            else
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the package configuration.", ex,
-                    PopupButtons.Ok);
-                return;
+                packageEditDialog.IsReleased = false;
+                packageEditDialog.LocalPackagePath =
+                    Directory.GetParent(
+                        Project.Packages.First(item => item.Version == packageVersion).LocalPackagePath).FullName;
+
             }
-            packageEditDialog.ShowDialog();
+
+            if (packageEditDialog.ShowDialog() == DialogResult.OK)
+            {
+                InitializePackageItems();
+            }
         }
 
         private void editFtpButton_Click(object sender, EventArgs e)
@@ -386,16 +384,16 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editProjectButton_Click(object sender, EventArgs e)
         {
-            var projectEditDialog = new ProjectEditDialog {Project = Project};
-            if (projectEditDialog.ShowDialog() != DialogResult.OK) return;
-            string projectFilePath = Project.Path;
-            Project = projectEditDialog.Project;
+            //var projectEditDialog = new ProjectEditDialog {Project = Project};
+            //if (projectEditDialog.ShowDialog() != DialogResult.OK) return;
+            //string projectFilePath = Project.Path;
+            //Project = projectEditDialog.Project;
 
             try
             {
-                ApplicationInstance.SaveProject(projectFilePath, Project);
-                if (projectFilePath != Project.Path)
-                    File.Move(projectFilePath, Project.Path);
+                //ApplicationInstance.SaveProject(projectFilePath, Project);
+                //if (projectFilePath != Project.Path)
+                //    File.Move(projectFilePath, Project.Path);
 
                 InitializeProjectDetails();
                 _configurationFileUrl = UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json");
@@ -412,31 +410,38 @@ namespace nUpdate.Administration.UI.Dialogs
             historyDialog.ShowDialog();
         }
 
-        private void packagesList_SelectedIndexChanged(object sender, EventArgs e)
+        private void packagesList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            if (packagesList.FocusedItem == null) return;
             if (!_isNetworkAvailable) return;
-            _packageVersion = (UpdateVersion) packagesList.FocusedItem.Tag;
 
-            if (packagesList.FocusedItem.Group == packagesList.Groups[0])
+            if (packagesList.SelectedItems.Count > 1)
             {
-                _groupIndex = 0;
                 editButton.Enabled = false;
                 uploadButton.Enabled = false;
+                deleteButton.Enabled = true;
             }
             else
-            {
-                _groupIndex = 1;
-                editButton.Enabled = true;
-                uploadButton.Enabled = true;
-            }
+                switch (packagesList.SelectedItems.Count)
+                {
+                    case 1:
+                        editButton.Enabled = true;
+                        deleteButton.Enabled = true;
+                        if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
+                            uploadButton.Enabled = true;
+                        break;
+                    case 0:
+                        editButton.Enabled = false;
+                        uploadButton.Enabled = false;
+                        deleteButton.Enabled = false;
+                        break;
+                }
         }
 
         /// <summary>
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
-        private void SetUiState(bool enabled)
+        public void SetUiState(bool enabled)
         {
             Invoke(new Action(() =>
             {
@@ -452,8 +457,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     loadingPanel.Location = new Point(179, 135);
                     loadingPanel.BringToFront();
 
-                    editButton.Enabled = false;
-                    uploadButton.Enabled = false;
+                    //editButton.Enabled = false;
+                    //uploadButton.Enabled = false;
                 }
                 else
                 {
@@ -552,7 +557,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 _ftp.Host = Project.FtpHost;
                 _ftp.Port = Project.FtpPort;
-                _ftp.UserName = Project.FtpUsername;
+                _ftp.Username = Project.FtpUsername;
                 _ftp.Password = Program.FtpPassword;
                 _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
@@ -629,7 +634,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     packagesList.Items.Clear();
             }));
 
-            if (Project.Packages == null) return;
+            if (Project.Packages == null || Project.Packages.Count == 0) return;
             foreach (UpdatePackage package in Project.Packages)
             {
                 try
@@ -675,7 +680,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                             GetNameOfExceptionType(ex), packagePlaceholder.Version), PopupButtons.YesNo)));
 
                     if (dialogResult != DialogResult.Yes) continue;
-                    // Remove the package info from the project file and stop the loading
                     Project.Packages.RemoveAll(item => item.Version == package.Version);
 
                     if (Project.ReleasedPackages != 0)
@@ -703,6 +707,9 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while saving new project info.", ex,
                                         PopupButtons.Ok)));
                     }
+
+
+                    InitializeProjectDetails();
                 }
                 catch (Exception ex)
                 {
@@ -713,8 +720,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                     PopupButtons.Ok)));
                 }
             }
-
-            InitializeProjectDetails();
         }
 
         /// <summary>
@@ -739,14 +744,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        // TODO: Manage upload
-
         #region "Upload"
 
         /// <summary>
         /// Undoes the MySQL-insertion.
         /// </summary>
-        private void UndoSqlInsertion()
+        private void UndoSqlInsertion(UpdateVersion packageVersion)
         {
             Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
 
@@ -788,7 +791,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             MySqlCommand command = deleteConnection.CreateCommand();
             command.CommandText =
-                String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", _packageVersion);
+                String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
 
             try
             {
@@ -808,191 +811,165 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems.Count == 0) return;
-            ThreadPool.QueueUserWorkItem(delegate { UploadPackage(); }, null);
+            ThreadPool.QueueUserWorkItem(delegate { UploadPackage((UpdateVersion)packagesList.SelectedItems[0].Tag); }, null);
         }
 
         /// <summary>
         ///     Provides a new thread that uploads the package.
         /// </summary>
-        private void UploadPackage()
+        private void UploadPackage(UpdateVersion packageVersion)
         {
-            try
+            SetUiState(false);
+
+            /* -------------- MySQL Initializing -------------*/
+            if (Project.UseStatistics)
             {
-                SetUiState(false);
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
 
-                /* -------------- MySQL Initializing -------------*/
-                if (Project.UseStatistics)
-                {
-                    Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
-
-                    try
-                    {
-                        string connectionString = String.Format("SERVER={0};" +
-                                                                "DATABASE={1};" +
-                                                                "UID={2};" +
-                                                                "PASSWORD={3};",
-                            Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
-                            Project.SqlSettings.Username,
-                            Program.SqlPassword.ConvertToUnsecureString());
-
-                        _insertConnection = new MySqlConnection(connectionString);
-                        _insertConnection.Open();
-                    }
-                    catch (MySqlException ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        SetUiState(true);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        SetUiState(true);
-                        return;
-                    }
-
-                    MySqlCommand command = _insertConnection.CreateCommand();
-                    command.CommandText =
-                        String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                            _packageVersion, Project.ApplicationId);
-
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        SetUiState(true);
-                        return;
-                    }
-                }
-
-                string updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
-                    _packageVersion.ToString(), "updates.json");
-                string packagePath = Project.Packages.First(x => x.Version == _packageVersion).LocalPackagePath;
                 try
                 {
-                    _ftp.UploadPackage(packagePath, _packageVersion.ToString());
+                    string connectionString = String.Format("SERVER={0};" +
+                                                            "DATABASE={1};" +
+                                                            "UID={2};" +
+                                                            "PASSWORD={3};",
+                        Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
+                        Project.SqlSettings.Username,
+                        Program.SqlPassword.ConvertToUnsecureString());
+
+                    _insertConnection = new MySqlConnection(connectionString);
+                    _insertConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    _insertConnection.Close();
+                    SetUiState(true); // Single call is faster than "Reset"-method
+                    return;
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the package directory.",
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
+                    _insertConnection.Close();
                     SetUiState(true);
                     return;
                 }
 
-                if (_ftp.PackageUploadException != null)
-                {
-                    if (_ftp.PackageUploadException.InnerException != null)
-                    {
-                        if (_ftp.PackageUploadException.InnerException.GetType() == typeof (WebException))
-                        {
-                            switch (
-                                ((int)
-                                    ((FtpWebResponse) ((WebException) _ftp.PackageUploadException).Response).StatusCode)
-                                )
-                            {
-                                case 550:
-                                    Invoke(
-                                        new Action(
-                                            () =>
-                                                Popup.ShowPopup(this, SystemIcons.Error,
-                                                    "Error while creating new config file.",
-                                                    String.Format(
-                                                        "The server returned 550. Make sure the given FTP-directory exists and then try again. - {0}",
-                                                        ftpDirectoryTextBox.Text), PopupButtons.Ok)));
-                                    SetUiState(true);
-                                    break;
-                                case 530:
-                                    Invoke(
-                                        new Action(
-                                            () =>
-                                                Popup.ShowPopup(this, SystemIcons.Error,
-                                                    "Error while creating new config file.",
-                                                    "The server login failed. Make sure the login credentials are correct and then try again.",
-                                                    PopupButtons.Ok)));
-                                    SetUiState(true);
-                                    break;
-                                default:
-                                    Invoke(
-                                        new Action(
-                                            () =>
-                                                Popup.ShowPopup(this, SystemIcons.Error,
-                                                    "Error while creating new config file.",
-                                                    _ftp.PackageUploadException.InnerException, PopupButtons.Ok)));
-                                    SetUiState(true);
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Exception ex = _ftp.PackageUploadException.InnerException ?? _ftp.PackageUploadException;
-
-                        // Just handle it normally
-                        Invoke(new Action(() =>
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
-                                PopupButtons.Ok);
-                            SetUiState(true);
-                        }));
-                    }
-                }
+                MySqlCommand command = _insertConnection.CreateCommand();
+                command.CommandText =
+                    String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
+                        packageVersion, Project.ApplicationId);
 
                 try
                 {
-                    _ftp.DeleteFile("updates.json"); // Configuration
-                    _ftp.UploadFile(updateConfigurationFilePath);
+                    command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
-                                    PopupButtons.Ok)));
-                    _cancellationToken.Cancel();
-                }
-
-                if (_cancellationToken.IsCancellationRequested)
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    _insertConnection.Close();
+                    SetUiState(true);
                     return;
-
-                // Write to log
-                _updateLog.Write(LogEntry.Upload, _packageVersion.ToString());
-
-                Project.Packages.First(x => x.Version == _packageVersion).IsReleased = true;
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                }
             }
-            finally
+
+            /* -------------- Package upload -----------------*/
+            Invoke(new Action(() =>
             {
-                Project.Packages.First(x => x.Version == _packageVersion).IsReleased = true;
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                loadingLabel.Text = String.Format(uploadingPackageInfoText, "0%");
+                cancelLabel.Visible = true;
+            }));
+
+            string updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
+                packageVersion.ToString(), "updates.json");
+            string packagePath = Project.Packages.First(x => x.Version == packageVersion).LocalPackagePath;
+            try
+            {
+                _ftp.UploadPackage(packagePath, packageVersion.ToString());
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the package directory.",
+                                ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+
+            if (_uploadCancelled)
+                return;
+
+            if (_ftp.PackageUploadException != null)
+            {
+                Exception ex = _ftp.PackageUploadException.InnerException ?? _ftp.PackageUploadException;
+                Invoke(
+                    new Action(
+                        () => Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
+                            PopupButtons.Ok)));
 
                 SetUiState(true);
-                InitializeProjectDetails();
-                InitializePackageItems();
+                return;
             }
+
+            _packageExisting = true;
+
+            Invoke(new Action(() =>
+            {
+                loadingLabel.Text = "Uploading new configuration...";
+                cancelLabel.Visible = false;
+            }));
+
+            try
+            {
+                _ftp.UploadFile(updateConfigurationFilePath);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
+                                PopupButtons.Ok)));
+                Reset();
+                return;
+            }
+
+            _updateLog.Write(LogEntry.Upload, packageVersion.ToString());
+
+            try
+            {
+                Project.Packages.First(x => x.Version == packageVersion).IsReleased = true;
+                Project.NewestPackage = packageVersion.FullText;
+                Project.ReleasedPackages += 1;
+                ApplicationInstance.SaveProject(Project.Path, Project);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new project data.", ex,
+                                PopupButtons.Ok)));
+                Reset();
+                return;
+            }
+
+            SetUiState(true);
+            InitializeProjectDetails();
+            InitializePackageItems();
         }
 
         /// <summary>
@@ -1001,13 +978,88 @@ namespace nUpdate.Administration.UI.Dialogs
         private void ProgressChanged(object sender, TransferProgressEventArgs e)
         {
             Invoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text =
-                            String.Format(uploadingPackageInfoText, String.Format("{0}%", e.Percentage))));
+                   new Action(
+                       () =>
+                           loadingLabel.Text =
+                               String.Format(uploadingPackageInfoText,
+                                   String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond / 1024))));
+
+            if (_uploadCancelled)
+            {
+                Invoke(new Action(() =>
+                {
+                    loadingLabel.Text = "Cancelling upload...";
+                }));
+            }
         }
 
-        #endregion // TODO: Manage upload
+        private void cancelLabel_Click(object sender, EventArgs e)
+        {
+            _uploadCancelled = true;
+
+            Invoke(new Action(() =>
+            {
+                loadingLabel.Text = "Cancelling upload...";
+                cancelLabel.Visible = false;
+            }));
+
+            _ftp.CancelPackageUpload();
+        }
+
+        private void CancellationFinished(object sender, EventArgs e)
+        {
+            UpdateVersion packageVersion = null;
+            try
+            {
+                Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
+                _ftp.DeleteDirectory(packageVersion.ToString());
+            }
+            catch (Exception deletingEx)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
+                                deletingEx, PopupButtons.Ok)));
+            }
+
+            Reset();
+        }
+
+        /// <summary>
+        ///     Resets the MySQL-data and undoes the package upload.
+        /// </summary>
+        public void Reset()
+        {
+            // TODO: MySQL
+            if (_packageExisting)
+            {
+                try
+                {
+                    UpdateVersion packageVersion = null;
+                    Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
+
+                    Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
+                    _ftp.DeleteDirectory(packageVersion.ToString());
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("No such file or directory"))
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
+                                        ex,
+                                        PopupButtons.Ok)));
+                    }
+                }
+            }
+
+            SetUiState(true);
+        }
+
+        #endregion
 
         #region "Configuration"
 
@@ -1059,7 +1111,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     _isExisting = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     _isExisting = false;
                 }
@@ -1072,6 +1124,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     tickPictureBox.Visible = true;
                     checkingUrlPictureBox.Visible = false;
                     checkUpdateConfigurationLinkLabel.Enabled = true;
+                    _hasFinishedCheck = false;
                 }));
                 return;
             }
@@ -1178,10 +1231,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems.Count == 0) return;
             DialogResult answer = Popup.ShowPopup(this, SystemIcons.Question,
-                String.Format("Delete the update package {0}?", _packageVersion),
-                "Are you sure that you want to delete this package?", PopupButtons.YesNo);
+                "Delete the selected update packages?", "Are you sure that you want to delete this package?", PopupButtons.YesNo);
             if (answer == DialogResult.Yes)
             {
                 ThreadPool.QueueUserWorkItem(delegate { DeletePackage(); }, null);
@@ -1193,32 +1244,65 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void DeletePackage()
         {
+            SetUiState(false);
+            Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
+
+            var updateConfig = new List<UpdateConfiguration>();
             try
             {
-                SetUiState(false);
-                if (Equals(_groupIndex, 0)) // Must be deleted online, too.
+                var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                if (rawUpdateConfiguration != null)
+                    updateConfig = rawUpdateConfiguration.ToList();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () => Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while downloading the old configuration.", ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+
+            IEnumerator enumerator = null;
+            Invoke(new Action(() =>
+            {
+                enumerator = packagesList.SelectedItems.GetEnumerator();
+            }));
+
+            while (enumerator.MoveNext())
+            {
+                var selectedItem = (ListViewItem) enumerator.Current;
+                ListViewGroup releasedGroup = null;
+                Invoke(new Action(() => releasedGroup = packagesList.Groups[0]));
+
+                if (selectedItem.Group == releasedGroup) // Must be deleted online, too.
                 {
-                    Invoke(new Action(() => loadingLabel.Text = "Deleting package..."));
-                    
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text =
+                                    String.Format("Deleting package {0} on server...", selectedItem.Text)));
+
                     try
                     {
-                        // Delete package folder
-                        _ftp.DeleteDirectory(_packageVersion.ToString());
+                        _ftp.DeleteDirectory(selectedItem.Tag.ToString());
                     }
                     catch (Exception ex)
                     {
-                        if (!ex.Message.Contains("No such file or directory"))
+                        if (ex.Message.Contains("No such file or directory"))
                         {
-                            // Just handle it normally
+                            _shouldKeepErrorsSecret = true;
+                        }
+                        else
+                        {
                             Invoke(
                                 new Action(
                                     () =>
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while deleting the package directory.", ex, PopupButtons.Ok)));
-                        }
-                        else
-                        {
-                            _shouldKeepErrorsSecret = true;
+                            SetUiState(true);
+                            return;
                         }
 
                         if (!_shouldKeepErrorsSecret)
@@ -1228,101 +1312,45 @@ namespace nUpdate.Administration.UI.Dialogs
                         }
                     }
 
-                    Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
-
-                    List<UpdateConfiguration> updateConfig = null;
-                    try
+                    if (updateConfig.Count != 0)
                     {
-                        updateConfig = UpdateConfiguration.DownloadUpdateConfiguration(_configurationFileUrl,
-                            Project.Proxy);
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () => Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while downloading the old configuration.", ex, PopupButtons.Ok)));
-                    }
-
-                    // The path to the temporary new update config
-                    string configurationFilePath = Path.Combine(Program.Path, "updates.json");
-
-                    if (updateConfig != null)
-                    {
-                        if (updateConfig.Count != 0)
+                        if (updateConfig.Any(item => new UpdateVersion(item.LiteralVersion) ==
+                                                     (UpdateVersion) selectedItem.Tag))
                         {
-                            if (updateConfig.Any(item => new UpdateVersion(item.Version) == 
-                                _packageVersion))
-                            {
-                                updateConfig.Remove(
-                                    updateConfig.First(item => new UpdateVersion(item.Version) ==
-                                                               _packageVersion));
-                                string content = Serializer.Serialize(updateConfig);
-
-                                try
-                                {
-                                    File.WriteAllText(configurationFilePath, content);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Invoke(
-                                        new Action(
-                                            () =>
-                                                Popup.ShowPopup(this, SystemIcons.Error,
-                                                    "Error while writing to local configuration file.", ex,
-                                                    PopupButtons.Ok)));
-                                    SetUiState(true);
-                                    return;
-                                }
-                            }
+                            updateConfig.Remove(
+                                updateConfig.First(item => new UpdateVersion(item.LiteralVersion) ==
+                                                           (UpdateVersion) selectedItem.Tag));
                         }
-
-                        Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
-
-                        try
-                        {
-                            // Upload new configuration file
-                            _ftp.UploadFile(configurationFilePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Invoke(
-                                new Action(
-                                    () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error,
-                                            "Error while uploading new configuration file.", ex, PopupButtons.Ok)));
-                           SetUiState(true);
-                           return;
-                        }
-
-                        // A try-catch is not really necessary as the writing above has completed successfully
-                        File.WriteAllText(configurationFilePath, String.Empty);
                     }
                 }
 
-                Invoke(new Action(() => loadingLabel.Text = "Deleting local directory..."));
+                Invoke(new Action(() => loadingLabel.Text = "Deleting local package directory..."));
 
                 try
                 {
-                    // Delete local folder
-                    Directory.Delete(Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString()),
+                    Directory.Delete(Path.Combine(Program.Path, "Projects", Project.Name, selectedItem.Tag.ToString()),
                         true);
                 }
                 catch (Exception ex)
                 {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting local package directory.",
-                                    ex, PopupButtons.Ok)));
-                    return;
+                    if (ex.GetType() != typeof (DirectoryNotFoundException))
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error,
+                                        "Error while deleting local package directory.",
+                                        ex, PopupButtons.Ok)));
+                        SetUiState(true);
+                        return;
+                    }
                 }
 
                 try
                 {
                     // Remove current package entry and save the edited project
-                    Project.Packages.RemoveAll(x => x.Version == _packageVersion);
-                    if (Project.ReleasedPackages != 0) // The amount of released packages
+                    Project.Packages.RemoveAll(x => x.Version == (UpdateVersion) selectedItem.Tag);
+                    if (Project.ReleasedPackages != 0) // To prevent that the number becomes negative
                         Project.ReleasedPackages -= 1;
 
                     // The newest package
@@ -1340,20 +1368,69 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while saving new project info.", ex,
                                     PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
                 }
-            }
-            finally
-            {
-                _updateLog.Write(LogEntry.Delete, _packageVersion.ToString());
 
-                SetUiState(true);
-                Invoke(new Action(() =>
-                {
-                    packagesList.Items.Clear();
-                    InitializePackageItems();
-                    InitializeProjectDetails();
-                }));
+                _updateLog.Write(LogEntry.Delete, selectedItem.Tag.ToString());
             }
+
+
+            string configurationFilePath = Path.Combine(Program.Path, "updates.json");
+            string content = Serializer.Serialize(updateConfig);
+
+            try
+            {
+                File.WriteAllText(configurationFilePath, content);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while writing to local configuration file.", ex,
+                                PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+
+            Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+
+            try
+            {
+                _ftp.UploadFile(configurationFilePath);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while uploading new configuration file.", ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+
+            try
+            {
+                File.WriteAllText(configurationFilePath, String.Empty);
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while writing to local configuration file.", ex,
+                                PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+
+            SetUiState(true);
+            InitializePackageItems();
+            InitializeProjectDetails();
         }
 
         #endregion
@@ -1561,9 +1638,9 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 configurations =
-                    UpdateConfiguration.DownloadUpdateConfiguration(
+                    UpdateConfiguration.Download(
                         UriConnector.ConnectUri(Project.UpdateUrl, "updates.json"),
-                        Project.Proxy);
+                        Project.Proxy).ToList();
             }
             catch (Exception ex)
             {
@@ -1601,7 +1678,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (configurations != null)
                     foreach (UpdateConfiguration configuration in configurations)
                     {
-                        configuration.UseStatistics = packageVersionToAffects.Contains(configuration.Version);
+                        configuration.UseStatistics = packageVersionToAffects.Contains(configuration.LiteralVersion);
                         editedConfigurations.Add(configuration);
                     }
             }

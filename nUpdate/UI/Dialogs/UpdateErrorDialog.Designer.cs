@@ -1,4 +1,4 @@
-﻿namespace nUpdate.Dialogs
+﻿namespace nUpdate.UI.Dialogs
 {
     partial class UpdateErrorDialog
     {

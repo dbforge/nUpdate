@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Popups
 {
-    internal class Popup
+    public class Popup
     {
         /// <summary>
         ///     Shows a new popup-window.

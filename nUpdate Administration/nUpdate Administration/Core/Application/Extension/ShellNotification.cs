@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
-    internal class ShellNotification
+    public class ShellNotification
     {
         /// <summary>
         ///     Notifies the system of an event that an application has performed. An application should use this function if it

@@ -4,87 +4,74 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core.Language;
+using nUpdate.Core;
+using nUpdate.Core.Localization;
 using nUpdate.Dialogs;
+using nUpdate.UI.Popups;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateSearchDialog : BaseForm
     {
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public UpdateSearchDialog()
         {
             InitializeComponent();
         }
 
-        public Language Language { get; set; }
+        /// <summary>
+        ///     Sets the name of the languguage file in the resources to use, if no own file is used.
+        /// </summary>
+        public string LanguageName { get; set; }
+
+        /// <summary>
+        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        /// </summary>
         public string LanguageFilePath { get; set; }
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
-            string resourceName = "nUpdate.Core.Language.";
-            LanguageSerializer lang = null;
-
-            if (Language != Language.Custom)
+            if (!String.IsNullOrEmpty(LanguageFilePath))
             {
-                switch (Language)
+                try
                 {
-                    case Language.English:
-                        resourceName += "en.xml";
-                        break;
-                    case Language.German:
-                        resourceName += "de.xml";
-                        break;
-                    case Language.French:
-                        resourceName += "fr.xml";
-                        break;
-                    case Language.Spanish:
-                        resourceName += "es.xml";
-                        break;
-                    case Language.Russian:
-                        resourceName += "ru.xml";
-                        break;
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
                 }
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                catch (Exception)
                 {
-                    lang = LanguageSerializer.ReadXml(stream);
+                    /*string resourceName = "nUpdate.Core.Localization.en.json";
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                    }*/
+
+                    _lp = new LocalizationProperties();
                 }
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                }
             }
 
-            cancelButton.Text = lang.CancelButtonText;
-            headerLabel.Text = lang.UpdateSearchDialogHeader;
+            cancelButton.Text = _lp.CancelButtonText;
+            headerLabel.Text = _lp.UpdateSearchDialogHeader;
 
             Text = Application.ProductName;
-            Icon = AppIcon;
+            Icon = _appIcon;
         }
 
         public void SearchFailedEventHandler(Exception ex)
         {
-            var errorDialog = new UpdateErrorDialog();
-            if (ex.GetType() == typeof (WebException))
-            {
-                HttpWebResponse response = null;
-                response = (HttpWebResponse) (ex as WebException).Response;
-                if (response != null)
-                    errorDialog.ErrorCode = (int) response.StatusCode;
-                else
-                    errorDialog.ErrorCode = 0;
-            }
-            else
-                errorDialog.ErrorCode = 0;
-
-            errorDialog.InfoMessage = "Error while searching for updates.";
-            errorDialog.Error = ex;
             Invoke(new Action(() =>
             {
-                if (errorDialog.ShowDialog(this) == DialogResult.OK)
-                    DialogResult = DialogResult.Cancel;
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", ex, PopupButtons.Ok);
+                DialogResult = DialogResult.Cancel;
             }));
         }
 

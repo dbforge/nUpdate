@@ -34,9 +34,9 @@
             this.copyEntireMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.headerLabel = new System.Windows.Forms.Label();
             this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
-            this.yesButton = new System.Windows.Forms.Button();
             this.noButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
+            this.yesButton = new System.Windows.Forms.Button();
             this.iconPictureBox = new System.Windows.Forms.PictureBox();
             this.contextMenu.SuspendLayout();
             this.controlPanel1.SuspendLayout();
@@ -48,7 +48,7 @@
             this.messageLabel.ContextMenuStrip = this.contextMenu;
             this.messageLabel.Location = new System.Drawing.Point(12, 77);
             this.messageLabel.Name = "messageLabel";
-            this.messageLabel.Size = new System.Drawing.Size(335, 39);
+            this.messageLabel.Size = new System.Drawing.Size(335, 41);
             this.messageLabel.TabIndex = 1;
             this.messageLabel.Text = "Information";
             // 
@@ -84,21 +84,10 @@
             this.controlPanel1.Controls.Add(this.noButton);
             this.controlPanel1.Controls.Add(this.closeButton);
             this.controlPanel1.Controls.Add(this.yesButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 130);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 132);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(359, 35);
             this.controlPanel1.TabIndex = 8;
-            // 
-            // yesButton
-            // 
-            this.yesButton.Location = new System.Drawing.Point(192, 6);
-            this.yesButton.Name = "yesButton";
-            this.yesButton.Size = new System.Drawing.Size(75, 23);
-            this.yesButton.TabIndex = 9;
-            this.yesButton.Text = "Yes";
-            this.yesButton.UseVisualStyleBackColor = true;
-            this.yesButton.Visible = false;
-            this.yesButton.Click += new System.EventHandler(this.yesButton_Click);
             // 
             // noButton
             // 
@@ -122,6 +111,17 @@
             this.closeButton.Visible = false;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
+            // yesButton
+            // 
+            this.yesButton.Location = new System.Drawing.Point(192, 6);
+            this.yesButton.Name = "yesButton";
+            this.yesButton.Size = new System.Drawing.Size(75, 23);
+            this.yesButton.TabIndex = 9;
+            this.yesButton.Text = "Yes";
+            this.yesButton.UseVisualStyleBackColor = true;
+            this.yesButton.Visible = false;
+            this.yesButton.Click += new System.EventHandler(this.yesButton_Click);
+            // 
             // iconPictureBox
             // 
             this.iconPictureBox.Location = new System.Drawing.Point(12, 12);
@@ -136,7 +136,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(359, 165);
+            this.ClientSize = new System.Drawing.Size(359, 167);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.headerLabel);
             this.Controls.Add(this.messageLabel);

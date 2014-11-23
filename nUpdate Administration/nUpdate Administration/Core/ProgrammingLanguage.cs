@@ -5,7 +5,7 @@ using System.Text;
 
 namespace nUpdate.Administration.Core
 {
-    internal enum ProgrammingLanguage
+    public enum ProgrammingLanguage
     {
         VB,
         CSharp,

@@ -2,9 +2,10 @@
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
 using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security;
@@ -15,14 +16,13 @@ using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Localization;
-using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class NewProjectDialog : BaseDialog
+    public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private readonly FtpManager _ftp = new FtpManager();
         private bool _allowCancel = true;
@@ -31,6 +31,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileUploaded;
         private bool _projectDataAlreadyInitialized;
+        private TabPage _sender;
         private Sql _sql = new Sql();
 
         public NewProjectDialog()
@@ -47,11 +48,6 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     Returns the public key.
         /// </summary>
         public string PublicKey { get; set; }
-
-        /// <summary>
-        ///     Sets the current tabpage.
-        /// </summary>
-        public TabPage Sender { get; set; }
 
         /// <summary>
         ///     Sets the language
@@ -131,20 +127,19 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 controlPanel1.Visible = true;
                 tablessTabControl1.SelectedTab = generalTabPage;
-                Sender = generalTabPage;
+                _sender = generalTabPage;
             }));
 
             _allowCancel = true;
         }
 
-        private void SetUiState(bool enabled)
+        public void SetUiState(bool enabled)
         {
             Invoke(new Action(() =>
             {
-                foreach (Control c in Controls)
+                foreach (Control c in from Control c in Controls where c.Visible select c)
                 {
-                    if (c.Visible)
-                        c.Enabled = enabled;
+                    c.Enabled = enabled;
                 }
 
                 if (!enabled)
@@ -164,7 +159,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void continueButton_Click(object sender, EventArgs e)
         {
-            if (Sender == generalTabPage)
+            if (_sender == generalTabPage)
             {
                 if (!ValidationManager.ValidatePanel(generalPanel))
                 {
@@ -173,24 +168,50 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                var entriesToDelete = new List<string>();
-                foreach (var existingProject in Program.ExisitingProjects)
+                if (!_generalTabPassed)
                 {
-                    if (existingProject.Key == nameTextBox.Text && File.Exists(existingProject.Value))
+                    if (Program.ExisitingProjects.Any(item => item.Key == nameTextBox.Text))
                     {
-                        Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
-                            String.Format(
-                                "The project \"{0}\" is already existing. Please choose another name for it.",
-                                nameTextBox.Text), PopupButtons.Ok);
-                        return;
-                    }
-                    if (!File.Exists(existingProject.Value))
-                        entriesToDelete.Add(existingProject.Key);
-                }
+                        var assumingProject =
+                            Program.ExisitingProjects.First(item => item.Key == nameTextBox.Text);
+                        if (File.Exists(assumingProject.Value))
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
+                                String.Format(
+                                    "The project \"{0}\" is already existing. Please choose another name for it.",
+                                    nameTextBox.Text), PopupButtons.Ok);
+                            return;
+                        }
 
-                foreach (string entryToDelete in entriesToDelete)
-                {
-                    Program.ExisitingProjects.Remove(entryToDelete);
+                        Program.ExisitingProjects.Remove(assumingProject.Key);
+                        try
+                        {
+                            bool isFirstEntry = true;
+                            var builder = new StringBuilder();
+                            foreach (var projectEntry in Program.ExisitingProjects)
+                            {
+                                if (isFirstEntry)
+                                {
+                                    builder.Append(String.Format("{0}-{1}", projectEntry.Key, projectEntry.Value));
+                                    isFirstEntry = false;
+                                }
+                                else
+                                {
+                                    builder.Append(String.Format("\n{0}-{1}", projectEntry.Key, projectEntry.Value));
+                                }
+                            }
+
+                            File.WriteAllText(Program.ProjectsConfigFilePath, builder.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while editing the project confiuration file. Please choose another name for the project.",
+                                ex,
+                                PopupButtons.Ok);
+                            return;
+                        }
+                    }
                 }
 
                 if (!Uri.IsWellFormedUriString(updateUrlTextBox.Text, UriKind.Absolute))
@@ -218,11 +239,11 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                Sender = ftpTabPage;
+                _sender = ftpTabPage;
                 backButton.Enabled = true;
                 tablessTabControl1.SelectedTab = ftpTabPage;
             }
-            else if (Sender == ftpTabPage)
+            else if (_sender == ftpTabPage)
             {
                 if (!ValidationManager.ValidatePanel(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
@@ -233,7 +254,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 _ftp.Host = ftpHostTextBox.Text;
                 _ftp.Port = int.Parse(ftpPortTextBox.Text);
-                _ftp.UserName = ftpUserTextBox.Text;
+                _ftp.Username = ftpUserTextBox.Text;
                 _ftp.Directory = ftpDirectoryTextBox.Text;
 
                 var ftpPassword = new SecureString();
@@ -249,10 +270,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (!backButton.Enabled) // If the back-button was disabled, enabled it again
                     backButton.Enabled = true;
 
-                Sender = statisticsServerTabPage;
+                _sender = statisticsServerTabPage;
                 tablessTabControl1.SelectedTab = statisticsServerTabPage;
             }
-            else if (Sender == statisticsServerTabPage)
+            else if (_sender == statisticsServerTabPage)
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
@@ -264,22 +285,19 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
-                Sender = proxyTabPage;
+                _sender = proxyTabPage;
                 tablessTabControl1.SelectedTab = proxyTabPage;
             }
-            else if (Sender == proxyTabPage)
+            else if (_sender == proxyTabPage)
             {
-                if (!String.IsNullOrEmpty(proxyUserTextBox.Text) && !ValidationManager.ValidatePanel(proxyTabPage))
+                if (useProxyRadioButton.Checked)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
-                        "All fields need to have a value.", PopupButtons.Ok);
-                    return;
-                }
-                if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text) && !ValidationManager.ValidatePanel(proxyTabPage))
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
-                        "All fields need to have a value.", PopupButtons.Ok);
-                    return;
+                    if (!ValidationManager.ValidatePanel(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) && !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                            "All fields need to have a value.", PopupButtons.Ok);
+                        return;
+                    }
                 }
 
                 if (!_projectDataAlreadyInitialized)
@@ -325,7 +343,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     Settings.Default.ApplicationID += 1;
                     Settings.Default.Save();
-                    Settings.Default.Reload(); // TODO: Check if it is necessary...
+                    Settings.Default.Reload();
 
                     // Create a new package...
                     var project = new UpdateProject
@@ -371,10 +389,19 @@ namespace nUpdate.Administration.UI.Dialogs
                     Program.ExisitingProjects.Add(project.Name, project.Path);
                     try
                     {
+                        bool isFirstEntry = true;
                         var builder = new StringBuilder();
-                        foreach (var dictionaryEntry in Program.ExisitingProjects)
+                        foreach (var projectEntry in Program.ExisitingProjects)
                         {
-                            builder.AppendLine(String.Format("{0}-{1}", dictionaryEntry.Key, dictionaryEntry.Value));
+                            if (isFirstEntry)
+                            {
+                                builder.Append(String.Format("{0}-{1}", projectEntry.Key, projectEntry.Value));
+                                isFirstEntry = false;
+                            }
+                            else
+                            {
+                                builder.Append(String.Format("\n{0}-{1}", projectEntry.Key, projectEntry.Value));
+                            }
                         }
                         File.WriteAllText(Program.ProjectsConfigFilePath, builder.ToString());
                     }
@@ -385,15 +412,13 @@ namespace nUpdate.Administration.UI.Dialogs
                         Close();
                     }
 
-                    string projectDirectory = Path.Combine(Program.Path, "Projects", nameTextBox.Text);
-                    string phpFilePath = Path.Combine(projectDirectory, "getfile.php");
+                    string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
                     try
                     {
-                        Directory.CreateDirectory(projectDirectory);
-                        File.WriteAllBytes(phpFilePath, Resources.getfile);
-
                         if (useStatisticsServerRadioButton.Checked)
                         {
+                            File.WriteAllBytes(phpFilePath, Resources.statistics);
+
                             string phpFileContent = File.ReadAllText(phpFilePath);
                             phpFileContent = phpFileContent.Replace("_DBURL", _sql.WebUrl);
                             phpFileContent = phpFileContent.Replace("_DBUSER", _sql.Username);
@@ -406,7 +431,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Failed to initialize the project-files.", ex,
                             PopupButtons.Ok);
-                        Directory.Delete(projectDirectory);
                         Close();
                     }
                 }
@@ -416,9 +440,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 SetUiState(false);
                 if (useStatisticsServerRadioButton.Checked)
-                    ThreadPool.QueueUserWorkItem(arg => InitializeRemoteData(true));
-                else
-                    ThreadPool.QueueUserWorkItem(arg => InitializeRemoteData(false));
+                    ThreadPool.QueueUserWorkItem(arg => InitializeRemoteData());
             }
         }
 
@@ -426,24 +448,23 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Provides a new thread that sets up the PHP-file and optinally the statistics server.
         /// </summary>
-        private void InitializeRemoteData(bool setupStatisticsServer)
+        private void InitializeRemoteData()
         {
             /*
-             *  Setup the "getfile.php".
+             *  Setup the "statistics.php".
              */
 
+            string name = null;
             if (!_phpFileUploaded)
             {
                 try
                 {
-                    string name = null;
                     Invoke(
                         new Action(
                             () =>
                                 name = nameTextBox.Text));
 
-                    string projectDirectory = Path.Combine(Program.Path, "Projects", name);
-                    string phpFilePath = Path.Combine(projectDirectory, "getfile.php");
+                    string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
                     _ftp.UploadFile(phpFilePath);
                     _phpFileUploaded = true;
                 }
@@ -463,17 +484,14 @@ namespace nUpdate.Administration.UI.Dialogs
              *  Setup the SQL-server and database.
              */
 
-            if (setupStatisticsServer)
-            {
-                string name = null;
-                Invoke(
-                    new Action(
-                        () =>
-                            name = nameTextBox.Text));
+            Invoke(
+                new Action(
+                    () =>
+                        name = nameTextBox.Text));
 
-                #region "Setup-String"
+            #region "Setup-String"
 
-                string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+            string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
@@ -490,7 +508,7 @@ CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
   INDEX `fk_Version_Application_idx` (`Application_ID` ASC),
   CONSTRAINT `fk_Version_Application`
     FOREIGN KEY (`Application_ID`)
-    REFERENCES `vstradesql2`.`Application` (`ID`)
+    REFERENCES `_DBNAME`.`Application` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -503,83 +521,82 @@ CREATE TABLE IF NOT EXISTS `_DBNAME`.`Download` (
   INDEX `fk_Download_Version1_idx` (`Version_ID` ASC),
   CONSTRAINT `fk_Download_Version1`
     FOREIGN KEY (`Version_ID`)
-    REFERENCES `vstradesql2`.`Version` (`ID`)
+    REFERENCES `_DBNAME`.`Version` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
+INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
-                #endregion
+            #endregion
 
-                setupString = setupString.Replace("_DBNAME", _sql.DatabaseName);
-                setupString = setupString.Replace("_APPNAME", name);
-                setupString = setupString.Replace("_APPID", Settings.Default.ApplicationID.ToString());
+            setupString = setupString.Replace("_DBNAME", _sql.DatabaseName);
+            setupString = setupString.Replace("_APPNAME", name);
+            setupString = setupString.Replace("_APPID", Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
 
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Connecting to SQL-server..."));
+
+            MySqlConnection myConnection;
+            try
+            {
+                string myConnectionString = null;
+                Invoke(new Action(() =>
+                {
+                    myConnectionString = String.Format("SERVER={0};" +
+                                                       "DATABASE={1};" +
+                                                       "UID={2};" +
+                                                       "PASSWORD={3};", _sql.WebUrl, _sql.DatabaseName,
+                        _sql.Username, sqlPasswordTextBox.Text);
+                }));
+
+                myConnection = new MySqlConnection(myConnectionString);
+                myConnection.Open();
+            }
+            catch (MySqlException ex)
+            {
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = "Connecting to SQL-server..."));
-
-                MySqlConnection myConnection;
-                try
-                {
-                    string myConnectionString = null;
-                    Invoke(new Action(() =>
-                    {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", _sql.WebUrl, _sql.DatabaseName,
-                            _sql.Username, sqlPasswordTextBox.Text);
-                    }));
-
-                    myConnection = new MySqlConnection(myConnectionString);
-                    myConnection.Open();
-                }
-                catch (MySqlException ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                    ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                    ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    return;
-                }
-
+                            Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
+            catch (Exception ex)
+            {
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = "Executing setup commands..."));
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
 
-                MySqlCommand command = myConnection.CreateCommand();
-                command.CommandText = setupString;
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Executing setup commands..."));
 
-                try
-                {
-                    command.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                    ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    return;
-                }
+            MySqlCommand command = myConnection.CreateCommand();
+            command.CommandText = setupString;
+
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
             }
 
             SetUiState(true);
@@ -589,30 +606,30 @@ INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            if (Sender == ftpTabPage)
+            if (_sender == ftpTabPage)
             {
                 tablessTabControl1.SelectedTab = generalTabPage;
                 backButton.Enabled = false;
-                Sender = generalTabPage;
-            }
-            else if (Sender == statisticsServerTabPage)
-            {
-                tablessTabControl1.SelectedTab = ftpTabPage;
-                Sender = ftpTabPage;
+                _sender = generalTabPage;
 
                 if (_generalTabPassed)
                     backButton.Enabled = false;
             }
-            else if (Sender == proxyTabPage)
+            else if (_sender == statisticsServerTabPage)
+            {
+                tablessTabControl1.SelectedTab = ftpTabPage;
+                _sender = ftpTabPage;
+            }
+            else if (_sender == proxyTabPage)
             {
                 tablessTabControl1.SelectedTab = statisticsServerTabPage;
-                Sender = statisticsServerTabPage;
+                _sender = statisticsServerTabPage;
             }
         }
 
         private void ftpPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if ("1234567890\b".IndexOf(e.KeyChar.ToString(), StringComparison.Ordinal) < 0)
+            if ("1234567890\b".IndexOf(e.KeyChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) < 0)
                 e.Handled = true;
         }
 
@@ -683,7 +700,7 @@ INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
                     {
                         UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
                         ftpHostTextBox.Text = importProject.FtpHost;
-                        ftpPortTextBox.Text = importProject.FtpPort.ToString();
+                        ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
                         ftpUserTextBox.Text = importProject.FtpUsername;
                         ftpProtocolComboBox.SelectedIndex = importProject.FtpProtocol;
                         ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
@@ -701,14 +718,22 @@ INSERT INTO Application (`ÌD`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void selectServerButton_Click(object sender, EventArgs e)
         {
-            var statisticsServerDialog = new StatisticsServerDialog();
-            statisticsServerDialog.ReactsOnKeyDown = true;
-            if (statisticsServerDialog.ShowDialog() == DialogResult.OK)
-            {
-                _sql = statisticsServerDialog.SqlSettings;
-                string sqlNameString = _sql.DatabaseName;
-                databaseNameLabel.Text = sqlNameString;
-            }
+            var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = true};
+            if (statisticsServerDialog.ShowDialog() != DialogResult.OK) return;
+
+            _sql = statisticsServerDialog.SqlSettings;
+            string sqlNameString = _sql.DatabaseName;
+            databaseNameLabel.Text = sqlNameString;
+        }
+
+        private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
         }
     }
 }

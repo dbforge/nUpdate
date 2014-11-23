@@ -43,7 +43,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             try
             {
-                MailAddress m = new MailAddress(address);
+                var m = new MailAddress(address);
                 return true;
             }
             catch (FormatException)

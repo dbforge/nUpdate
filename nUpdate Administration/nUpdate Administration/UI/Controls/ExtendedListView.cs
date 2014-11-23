@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    internal class ExtendedListView : ListView
+    public class ExtendedListView : ListView
     {
         private const int LVM_FIRST = 0x1000;
         private const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
@@ -31,7 +31,7 @@ namespace nUpdate.Administration.UI.Controls
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, ref LVGROUP lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, ref LVGROUP lParam);
 
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
@@ -39,7 +39,7 @@ namespace nUpdate.Administration.UI.Controls
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
-        internal void MakeCollapsable()
+        public void MakeCollapsable()
         {
             const int lvmFirst = 0x1000;
             const int LVM_SETGROUPINFO = (lvmFirst + 147);
@@ -99,39 +99,39 @@ namespace nUpdate.Administration.UI.Controls
         #region Nested type: LVGROUP
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct LVGROUP
+        public struct LVGROUP
         {
-            internal int CbSize;
-            internal ListViewGroupMask Mask;
-            [MarshalAs(UnmanagedType.LPWStr)] internal string PszHeader;
-            internal int CchHeader;
-            [MarshalAs(UnmanagedType.LPWStr)] internal string PszFooter;
-            internal int CchFooter;
-            internal int IGroupId;
-            internal int StateMask;
-            internal ListViewGroupState State;
-            internal uint UAlign;
-            internal IntPtr PszSubtitle;
-            internal uint CchSubtitle;
-            [MarshalAs(UnmanagedType.LPWStr)] internal string PszTask;
-            internal uint CchTask;
-            [MarshalAs(UnmanagedType.LPWStr)] internal string PszDescriptionTop;
-            internal uint CchDescriptionTop;
-            [MarshalAs(UnmanagedType.LPWStr)] internal string PszDescriptionBottom;
-            internal uint CchDescriptionBottom;
-            internal int ITitleImage;
-            internal int IExtendedImage;
-            internal int IFirstItem;
-            internal IntPtr CItems;
-            internal IntPtr PszSubsetTitle;
-            internal IntPtr CchSubsetTitle;
+            public int CbSize;
+            public ListViewGroupMask Mask;
+            [MarshalAs(UnmanagedType.LPWStr)] public string PszHeader;
+            public int CchHeader;
+            [MarshalAs(UnmanagedType.LPWStr)] public string PszFooter;
+            public int CchFooter;
+            public int IGroupId;
+            public int StateMask;
+            public ListViewGroupState State;
+            public uint UAlign;
+            public IntPtr PszSubtitle;
+            public uint CchSubtitle;
+            [MarshalAs(UnmanagedType.LPWStr)] public string PszTask;
+            public uint CchTask;
+            [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionTop;
+            public uint CchDescriptionTop;
+            [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionBottom;
+            public uint CchDescriptionBottom;
+            public int ITitleImage;
+            public int IExtendedImage;
+            public int IFirstItem;
+            public IntPtr CItems;
+            public IntPtr PszSubsetTitle;
+            public IntPtr CchSubsetTitle;
         }
 
         #endregion
 
         #region Nested type: ListViewGroupMask
 
-        internal enum ListViewGroupMask
+        public enum ListViewGroupMask
         {
             None = 0x0,
             Header = 0x1,
@@ -154,7 +154,7 @@ namespace nUpdate.Administration.UI.Controls
 
         #region Nested type: ListViewGroupState
 
-        internal enum ListViewGroupState
+        public enum ListViewGroupState
         {
             Normal = 0,
             Collapsed = 1,

@@ -1,4 +1,6 @@
-﻿using System.Web.Script.Serialization;
+﻿using Newtonsoft.Json;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace nUpdate.Core
 {
@@ -11,22 +13,35 @@ namespace nUpdate.Core
         /// <returns>Returns the serialized data as a string.</returns>
         public static string Serialize(object dataToSerialize)
         {
-            var serializer = new JavaScriptSerializer();
-            serializer.MaxJsonLength = 50000000; // 50 MB
-            return serializer.Serialize(dataToSerialize);
+            return JsonConvert.SerializeObject(dataToSerialize);
         }
 
         /// <summary>
         ///     Deserializes a given string.
         /// </summary>
         /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
-        /// <param name="dataToDeserialize">The data to deserialize.</param>
+        /// <param name="content">The data to deserialize.</param>
         /// <returns>Returns the data as given type in the type-argument.</returns>
-        public static T Deserialize<T>(string dataToDeserialize)
+        public static T Deserialize<T>(string content)
         {
-            var serializer = new JavaScriptSerializer();
-            serializer.MaxJsonLength = 50000000; // 50 MB
-            return serializer.Deserialize<T>(dataToDeserialize);
+            return JsonConvert.DeserializeObject<T>(content);
+        }
+
+        /// <summary>
+        ///     Deserializes a string object from a stream.
+        /// </summary>
+        /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
+        /// <param name="stream">The data to deserialize.</param>
+        /// <returns>Returns the data as given type in the type-argument.</returns>
+        public static T Deserialize<T>(Stream stream)
+        {
+            string streamContent;
+            using (var reader = new StreamReader(stream))
+            {
+                streamContent = reader.ReadToEnd();
+            }
+
+            return JsonConvert.DeserializeObject<T>(streamContent);
         }
     }
 }

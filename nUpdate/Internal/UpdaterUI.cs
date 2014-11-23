@@ -34,13 +34,12 @@ namespace nUpdate.Internal
         /// </summary>
         public void ShowUserInterface()
         {
-            var searchDialog = new UpdateSearchDialog();
-            //searchDialog.Language = UpdateManagerInstance.LanguageCulture;
+            var searchDialog = new UpdateSearchDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
             UpdateManagerInstance.UpdateSearchFinished += SearchFinishedEventHandler;
             UpdateManagerInstance.UpdateSearchFinished += searchDialog.SearchFinishedEventHandler;
             UpdateManagerInstance.UpdateSearchFailed += searchDialog.SearchFailedEventHandler;
 
-            //UpdateManagerInstance.SearchForUpdatesAsync();
+            UpdateManagerInstance.SearchForUpdatesAsync();
 
             if (!UpdateManagerInstance.UseHiddenSearch)
             {
@@ -56,45 +55,48 @@ namespace nUpdate.Internal
             UpdateManagerInstance.UpdateSearchFinished -= searchDialog.SearchFinishedEventHandler;
             UpdateManagerInstance.UpdateSearchFailed -= searchDialog.SearchFailedEventHandler;
 
-            var newUpdateDialog = new NewUpdateDialog
-            {
-                //Language = this.UpdateManagerInstance.LanguageCulture,
-                CurrentVersion = UpdateManagerInstance.CurrentVersion,
-                UpdateVersion = UpdateManagerInstance.UpdateVersion,
-                Changelog = UpdateManagerInstance.Changelog,
-                PackageSize = UpdateManagerInstance.PackageSize,
-                MustUpdate = UpdateManagerInstance.MustUpdate,
-            };
-            if (newUpdateDialog.ShowDialog() == DialogResult.OK)
-                newUpdateDialog.Close();
-
             if (_updateAvailable)
             {
+                var newUpdateDialog = new NewUpdateDialog
+                {
+                    LanguageName = UpdateManagerInstance.LanguageCulture.Name,
+                    CurrentVersion = UpdateManagerInstance.CurrentVersion,
+                    UpdateVersion = UpdateManagerInstance.UpdateVersion,
+                    Changelog = UpdateManagerInstance.Changelog,
+                    PackageSize = UpdateManagerInstance.PackageSize,
+                    MustUpdate = UpdateManagerInstance.MustUpdate,
+                    OperationAreas = UpdateManagerInstance.OperationAreas,
+                };
                 if (newUpdateDialog.ShowDialog() == DialogResult.OK)
                     newUpdateDialog.Close();
                 else
+                {
+                    newUpdateDialog.Close();
                     return;
+                }
             }
             else if (!_updateAvailable && UpdateManagerInstance.UseHiddenSearch)
                 return;
             else if (!_updateAvailable && !UpdateManagerInstance.UseHiddenSearch)
             {
-                var noUpdateDialog = new NoUpdateFoundDialog();
+                var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
                 if (noUpdateDialog.ShowDialog() == DialogResult.OK)
                     return;
             }
 
-            var downloadDialog = new UpdateDownloadDialog();
-            //downloadDialog.Language = UpdateManagerInstance.LanguageCulture;
+            var downloadDialog = new UpdateDownloadDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
 
             UpdateManagerInstance.PackageDownloadProgressChanged += downloadDialog.ProgressChangedEventHandler;
             UpdateManagerInstance.PackageDownloadFinished += downloadDialog.DownloadFinishedEventHandler;
-            UpdateManagerInstance.PackageDownloadFailed += downloadDialog.DownloadFailedEventHandler;
+            //UpdateManagerInstance.PackageDownloadFailed += downloadDialog.DownloadFailedEventHandler;
 
             UpdateManagerInstance.DownloadPackageAsync();
 
             if (downloadDialog.ShowDialog() == DialogResult.Cancel)
-                UpdateManagerInstance.DeletePackage();
+            {
+                UpdateManagerInstance.CancelDownload();
+                return;
+            }
 
             try
             {

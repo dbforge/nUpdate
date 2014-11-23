@@ -29,7 +29,7 @@
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
-    internal class ProgramIcon
+    public class ProgramIcon
     {
         /// <summary>
         ///     Represents and empty or nonexistent Program Icon

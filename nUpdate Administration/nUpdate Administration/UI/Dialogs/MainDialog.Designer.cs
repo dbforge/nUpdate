@@ -52,6 +52,7 @@
             this.imageList1.Images.SetKeyName(4, "mail.png");
             this.imageList1.Images.SetKeyName(5, "server.png");
             this.imageList1.Images.SetKeyName(6, "application-sidebar.png");
+            this.imageList1.Images.SetKeyName(7, "application-sidebar-list.png");
             // 
             // pictureBox1
             // 
@@ -89,7 +90,8 @@
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items3"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items4"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items5"))),
-            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items6")))});
+            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items6"))),
+            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items7")))});
             this.sectionsListView.LargeImageList = this.imageList1;
             resources.ApplyResources(this.sectionsListView, "sectionsListView");
             this.sectionsListView.Name = "sectionsListView";

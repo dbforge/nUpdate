@@ -12,7 +12,7 @@ namespace nUpdate.Administration.Core.Application
     /// Represents a local update project.
     /// </summary>
     [Serializable]
-    internal class UpdateProject
+    public class UpdateProject
     {
         /// <summary>
         ///     The path of the project.

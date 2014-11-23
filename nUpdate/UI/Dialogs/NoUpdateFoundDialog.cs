@@ -3,69 +3,65 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core.Language;
+using nUpdate.Core;
+using nUpdate.Core.Localization;
+using nUpdate.Dialogs;
 
-namespace nUpdate.Dialogs
+namespace nUpdate.UI.Dialogs
 {
     public partial class NoUpdateFoundDialog : BaseForm
     {
-        public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public NoUpdateFoundDialog()
         {
             InitializeComponent();
         }
 
-        public Language Language { get; set; }
+        /// <summary>
+        ///     Sets the name of the _lpuage file in the resources to use, if no own file is used.
+        /// </summary>
+        public string LanguageName { get; set; }
+
+        /// <summary>
+        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        /// </summary>
         public string LanguageFilePath { get; set; }
 
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
         {
-            string resourceName = "nUpdate.Core.Language.";
-            LanguageSerializer lang = null;
-
-            if (Language != Language.Custom)
+            if (!String.IsNullOrEmpty(LanguageFilePath))
             {
-                switch (Language)
+                try
                 {
-                    case Language.English:
-                        resourceName += "en.xml";
-                        break;
-                    case Language.German:
-                        resourceName += "de.xml";
-                        headerLabel.Location = new Point(19, 12);
-                        infoLabel.Location = new Point(36, 34);
-                        break;
-                    case Language.Russian:
-                        resourceName += "ru.xml";
-                        break;
-                        //case Language.French:
-                        //    resourceName += "fr.xml";
-                        //    headerLabel.Location = new Point(19, 12);
-                        //    infoLabel.Location = new Point(36, 34);
-                        //    break;
-                        //case Language.Spanish:
-                        //    resourceName += "es.xml";
-                        //    headerLabel.Location = new Point(19, 12);
-                        //    infoLabel.Location = new Point(36, 34);
-                        //    break;
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
                 }
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                catch (Exception)
                 {
-                    lang = LanguageSerializer.ReadXml(stream);
+                    /*string resourceName = "nUpdate.Core.Localization.en.json";
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                    }*/
+
+                    _lp = new LocalizationProperties();
                 }
             }
             else
             {
-                if (File.Exists(LanguageFilePath))
-                    lang = LanguageSerializer.ReadXml(LanguageFilePath);
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                }
             }
 
-            closeButton.Text = lang.CloseButtonText;
-            headerLabel.Text = lang.NoUpdateDialogHeader;
-            infoLabel.Text = lang.NoUpdateDialogInfoText;
+            closeButton.Text = _lp.CloseButtonText;
+            headerLabel.Text = _lp.NoUpdateDialogHeader;
+            infoLabel.Text = _lp.NoUpdateDialogInfoText;
 
-            Icon = AppIcon;
+            Icon = _appIcon;
             Text = Application.ProductName;
         }
 

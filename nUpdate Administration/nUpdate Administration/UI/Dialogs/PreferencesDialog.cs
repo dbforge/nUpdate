@@ -22,7 +22,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly UpdateManager _manager =
             new UpdateManager(new Uri("http://www.nupdate.net/updates.json"), "NochNix",
-                new UpdateVersion("0.1.0.0"));
+                new UpdateVersion("0.1.0.0"), new CultureInfo("en"));
 
         private CultureInfo[] _cultureInfos = {};
 

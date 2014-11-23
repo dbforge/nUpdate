@@ -3,6 +3,7 @@
 // Created: 01-08-2014 12:11
 using System;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Dialogs;
 
@@ -20,6 +21,19 @@ namespace nUpdate.Administration.UI.Popups
         public string Title { get; set; }
         public string InfoMessage { get; set; }
         public PopupButtons Buttons { get; set; }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var measuredSize = e.Graphics.MeasureString(InfoMessage, new Font("Segoe UI", 8));
+            if (measuredSize.Height > messageLabel.Height)
+            {
+                var difference = (int)(measuredSize.Height - messageLabel.Height);
+                messageLabel.Height += difference;
+                Height += difference;
+            }
+
+            base.OnPaint(e);
+        }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
@@ -49,6 +63,13 @@ namespace nUpdate.Administration.UI.Popups
 
             if (Title.Length > 40)
                 headerLabel.Location = new Point(61, 13);
+
+            if (ReferenceEquals(PopupIcon, SystemIcons.Error))
+                SystemSounds.Hand.Play();
+            else if (ReferenceEquals(PopupIcon, SystemIcons.Warning))
+                SystemSounds.Exclamation.Play();
+            else if (ReferenceEquals(PopupIcon, SystemIcons.Question))
+                SystemSounds.Question.Play();
         }
 
         private void copyEntireMessageToolStripMenuItem_Click(object sender, EventArgs e)

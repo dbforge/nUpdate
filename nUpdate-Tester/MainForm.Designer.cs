@@ -1,4 +1,4 @@
-﻿namespace nUpdate_Tester
+﻿namespace nUpdate.Tester
 {
     partial class MainForm
     {

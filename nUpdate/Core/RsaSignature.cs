@@ -23,9 +23,9 @@ namespace nUpdate.Core
         /// <summary>
         ///     The default key size in bits.
         /// </summary>
-        public const int DefaultKeySize = 4096;
+        public const int DEFAULT_KEY_SIZE = 8192;
 
-        private readonly RSACryptoServiceProvider rsa;
+        private readonly RSACryptoServiceProvider _rsa;
 
         /// <summary>
         ///     Creates a new instance of the RsaSignature-class.
@@ -36,9 +36,9 @@ namespace nUpdate.Core
             if (string.IsNullOrEmpty(rsaKey)) // If a corrupt or no key was entered...
                 throw new ArgumentNullException("rsaKey"); // Throw ArgumentException...
 
-            rsa = new RSACryptoServiceProvider(); // Key was given...
-            rsa.FromXmlString(rsaKey); // ...so we import it.
-            rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
+            _rsa = new RSACryptoServiceProvider(); // Key was given...
+            _rsa.FromXmlString(rsaKey); // ...so we import it.
+            _rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace nUpdate.Core
         /// </summary>
         public RsaSignature()
         {
-            rsa = new RSACryptoServiceProvider(DefaultKeySize); // Create a new key pair with the default key size.
-            rsa.ToXmlString(true); // A dummy to create the key.
-            rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
+            _rsa = new RSACryptoServiceProvider(DEFAULT_KEY_SIZE); // Create a new key pair with the default key size.
+            _rsa.ToXmlString(true); // A dummy to create the key.
+            _rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace nUpdate.Core
         /// </summary>
         public string PublicKey
         {
-            get { return rsa.ToXmlString(false); // Export public key
+            get { return _rsa.ToXmlString(false); // Export public key
             }
         }
 
@@ -65,7 +65,7 @@ namespace nUpdate.Core
         /// </summary>
         public string PrivateKey
         {
-            get { return rsa.ToXmlString(true); // Export private key and public key
+            get { return _rsa.ToXmlString(true); // Export private key and public key
             }
         }
 
@@ -76,7 +76,7 @@ namespace nUpdate.Core
         /// <returns>The calculated signature.</returns>
         public byte[] SignData(byte[] data)
         {
-            return rsa.SignData(data, typeof (SHA512)); // Calculates the signature and returns it...
+            return _rsa.SignData(data, typeof (SHA512)); // Calculates the signature and returns it...
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace nUpdate.Core
         /// <returns>Return "true" if the signature is correct, otherwise return "false".</returns>
         public bool VerifyData(byte[] data, byte[] signature)
         {
-            return rsa.VerifyData(data, typeof (SHA512), signature);
+            return _rsa.VerifyData(data, typeof (SHA512), signature);
             // Checks if the signature for the given signature is correct.
         }
     }

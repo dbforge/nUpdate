@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace nUpdate.Administration.Core
 {
-    internal class AesManager
+    public class AesManager
     {
         /// <summary>
         ///     Encrypts a string with the given key and initializing vector.

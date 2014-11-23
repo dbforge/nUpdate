@@ -171,16 +171,6 @@ namespace nUpdate.Administration.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
-        internal static byte[] getfile {
-            get {
-                object obj = ResourceManager.GetObject("getfile", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Left_Disabled {
@@ -287,6 +277,16 @@ namespace nUpdate.Administration.Properties {
             get {
                 object obj = ResourceManager.GetObject("Right_Normal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] statistics {
+            get {
+                object obj = ResourceManager.GetObject("statistics", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

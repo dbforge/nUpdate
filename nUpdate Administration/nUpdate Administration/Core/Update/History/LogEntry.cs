@@ -3,7 +3,7 @@
 // Created: 01-08-2014 12:11
 namespace nUpdate.Administration.Core.Application.History
 {
-    internal enum LogEntry
+    public enum LogEntry
     {
         Create,
         Delete,

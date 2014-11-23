@@ -26,11 +26,13 @@ using nUpdate.Administration.Core.Update.Operations.Panels;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using OSIcon.WinAPI;
 using Starksoft.Net.Ftp;
+using OSIcon;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class PackageAddDialog : BaseDialog
+    public partial class PackageAddDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private readonly TreeNode _createRegistryEntryNode = new TreeNode("Create registry entry", 14, 14);
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
@@ -47,9 +49,11 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7);
         private readonly BindingList<UpdateVersion> _unsupportedVersionsBindingsList = new BindingList<UpdateVersion>();
         private readonly Log _updateLog = new Log();
+        private bool _uploadCancelled;
         private bool _allowCancel = true;
+        private bool _packageExisting;
         private int _architectureIndex = 2;
-        private UpdateConfiguration _configuration = new UpdateConfiguration();
+        private readonly UpdateConfiguration _configuration = new UpdateConfiguration();
         private bool _includeIntoStatistics;
         private MySqlConnection _insertConnection;
         private bool _mustUpdate;
@@ -58,10 +62,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private string _packageFolder;
         private UpdateVersion _packageVersion;
         private bool _publishUpdate;
-        private readonly bool _savePackages = Settings.Default.SavePackages; 
         private Uri _configurationFileUrl;
         private string _updateConfigFile;
-        private ZipFile _zip = new ZipFile();
+        private readonly ZipFile _zip = new ZipFile();
 
         public PackageAddDialog()
         {
@@ -71,7 +74,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     The newest package version.
         /// </summary>
-        internal UpdateVersion NewestVersion { get; set; }
+        public UpdateVersion NewestVersion { get; set; }
 
         #region "Localization"
 
@@ -208,7 +211,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 _ftp.Host = Project.FtpHost;
                 _ftp.Port = Project.FtpPort;
-                _ftp.UserName = Project.FtpUsername;
+                _ftp.Username = Project.FtpUsername;
                 _ftp.Password = Program.FtpPassword;
                 _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
@@ -237,6 +240,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void PackageAddDialog_Load(object sender, EventArgs e)
         {
             _ftp.ProgressChanged += ProgressChanged;
+            _ftp.CancellationFinished += CancellationFinished;
 
             _updateLog.Project = Project;
 
@@ -311,7 +315,7 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
-        private void SetUiState(bool enabled)
+        public void SetUiState(bool enabled)
         {
             if (enabled)
                 _allowCancel = true;
@@ -328,43 +332,59 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        /// Resets the data set.
+        ///     Resets the data set.
         /// </summary>
-        /// <param name="savePackage">Sets if the package should be saved.</param>
-        private void Reset(bool savePackage)
+        public void Reset()
         {
+            if (_packageExisting)
+            {
+                try
+                {
+                    Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
+                    _ftp.DeleteDirectory(_packageVersion.ToString());
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("No such file or directory"))
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
+                                        ex,
+                                        PopupButtons.Ok)));
+                    }
+                }
+            }
+
+            SetUiState(true);
+
             if (Project.Packages != null)
             {
                 Project.Packages.Remove(_package); // Remove the saved package again
             }
 
-            if (!savePackage)
+            _package.IsReleased = false;
+
+            if (Project.Packages == null)
+                Project.Packages = new List<UpdatePackage>();
+            Project.Packages.Add(_package);
+
+            try
             {
-                Directory.Delete(Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString()), true);
-                // Directory
-
-                _zip.Dispose(); // Zip-file
-                _zip = new ZipFile();
-
-                _configuration = null; // Configuration
-                _configuration = new UpdateConfiguration();
+                ApplicationInstance.SaveProject(Project.Path, Project);
             }
-            else
+            catch (Exception ex)
             {
-                _package.IsReleased = false;
-
-                if (Project.Packages == null)
-                    Project.Packages = new List<UpdatePackage>();
-                Project.Packages.Add(_package);
-
-                try
-                {
-                    ApplicationInstance.SaveProject(Project.Path, Project);
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex, PopupButtons.Ok);
-                }
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex,
+                                PopupButtons.Ok)));
+            }
+            finally
+            {
+                DialogResult = DialogResult.OK;
             }
         }
 
@@ -414,7 +434,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            if (filesDataTreeView.Nodes[0].Nodes.Count == 0)
+            if (!filesDataTreeView.Nodes.Cast<TreeNode>().Any(node => node.Nodes.Count > 0))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, noFilesCaption, noFilesText, PopupButtons.Ok);
                 filesPanel.BringToFront();
@@ -515,8 +535,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while creating local package data.", ex,
                                 PopupButtons.Ok)));
-                SetUiState(true);
-                Reset(false);
+                Reset();
                 return;
             }
 
@@ -560,20 +579,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // Create a new package configuration
             _configuration.Changelog = changelog;
             _configuration.MustUpdate = _mustUpdate;
-
-            /*switch (_architectureIndex)
-            {
-                case 0:
-                    _configuration.Architecture = "x86";
-                    break;
-                case 1:
-                    _configuration.Architecture = "x64";
-                    break;
-                case 2:
-                    _configuration.Architecture = "AnyCPU";
-                    break;
-            }*/
-            // TODO: Fix dat shit
+            _configuration.Architecture = (Architecture) _architectureIndex;
 
             _configuration.Operations = new List<Operation>();
             Invoke(new Action(() =>
@@ -590,7 +596,14 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                byte[] data = File.ReadAllBytes(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)));
+                byte[] data;
+                using (var reader =
+                    new BinaryReader(File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
+                        FileMode.Open)))
+                {
+                    data = reader.ReadBytes((int) reader.BaseStream.Length);
+                    reader.Close();
+                }
                 _configuration.Signature = Convert.ToBase64String(new RsaSignature(Project.PrivateKey).SignData(data));
             }
             catch (Exception ex)
@@ -600,8 +613,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while signing the package.", ex,
                                 PopupButtons.Ok)));
-                SetUiState(true);
-                Reset(false);
+                Reset();
                 return;
             }
 
@@ -609,7 +621,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _configuration.UpdatePhpFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "getfile.php");
             _configuration.UpdatePackageUrl = UriConnector.ConnectUri(Project.UpdateUrl,
                 String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
-            _configuration.Version = _packageVersion.ToString();
+            _configuration.LiteralVersion = _packageVersion.ToString();
             _configuration.UseStatistics = _includeIntoStatistics;
 
             if (Project.UseStatistics)
@@ -618,12 +630,14 @@ namespace nUpdate.Administration.UI.Dialogs
             /* -------- Configuration initializing ------------*/
             Invoke(new Action(() => loadingLabel.Text = initializingConfigInfoText));
 
-            List<UpdateConfiguration> configurationList = null;
+            var configurationList = new List<UpdateConfiguration>();
 
             // Load the configuration
             try
             {
-                configurationList = UpdateConfiguration.DownloadUpdateConfiguration(_configurationFileUrl, Project.Proxy);
+                var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                if (configurationEnumerable != null)
+                    configurationList = configurationEnumerable.ToList();
             }
             catch (Exception ex)
             {
@@ -632,13 +646,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the old configuration.", ex,
                                 PopupButtons.Ok)));
-                SetUiState(true);
-                Reset(false);
+                Reset();
                 return;
             }
-
-            if (configurationList == null) // If nethod returned null
-                configurationList = new List<UpdateConfiguration>();
 
             configurationList.Add(_configuration);
 
@@ -653,8 +663,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
                                 PopupButtons.Ok)));
-                SetUiState(true);
-                Reset(false);
+                Reset();
                 return;
             }
 
@@ -695,11 +704,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
                         _insertConnection.Close();
-                        SetUiState(true);
-                        Reset(_savePackages);
-                        if (!_savePackages) return;
-
-                        DialogResult = DialogResult.OK;
+                        Reset();
                         return;
                     }
                     catch (Exception ex)
@@ -710,11 +715,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
                         _insertConnection.Close();
-                        SetUiState(true);
-                        Reset(_savePackages);
-                        if (!_savePackages) return;
-
-                        DialogResult = DialogResult.OK;
+                        Reset();
                         return;
                     }
 
@@ -735,11 +736,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                         ex, PopupButtons.Ok)));
                         _insertConnection.Close();
-                        SetUiState(true);
-                        Reset(_savePackages);
-                        if (!_savePackages) return;
-
-                        DialogResult = DialogResult.OK;
+                        Reset();
                         return;
                     }
                 }
@@ -764,13 +761,14 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the package directory.",
                                     ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    Reset(_savePackages);
-                    if (!_savePackages) return;
-                    
-                    DialogResult = DialogResult.OK;
+                    Reset();
                     return;
                 }
+
+                if (_uploadCancelled)
+                    return;
+
+                _packageExisting = true;
 
                 if (_ftp.PackageUploadException != null)
                 {
@@ -779,15 +777,18 @@ namespace nUpdate.Administration.UI.Dialogs
                         Invoke(
                             new Action(
                                 () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
-                                        _ftp.PackageUploadException.InnerException, PopupButtons.Ok)));
-                        SetUiState(true);
-                        Reset(_savePackages);
-                        if (!_savePackages) return;
-
-                        DialogResult = DialogResult.OK;
-                        return;
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.", _ftp.PackageUploadException.InnerException, PopupButtons.Ok)));
                     }
+                    else
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.", _ftp.PackageUploadException, PopupButtons.Ok)));
+                    }
+
+                    Reset();
+                    return;
                 }
 
                 Invoke(new Action(() =>
@@ -822,11 +823,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
                                         deletingEx, PopupButtons.Ok)));
-                        SetUiState(true);
-                        Reset(_savePackages);
-                        if (!_savePackages) return;
-                        
-                        DialogResult = DialogResult.OK;
+                        Reset();
                         return;
                     }
                 }
@@ -847,6 +844,8 @@ namespace nUpdate.Administration.UI.Dialogs
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex, PopupButtons.Ok);
+                Reset();
+                return;
             }
             
             DialogResult = DialogResult.OK;
@@ -863,6 +862,13 @@ namespace nUpdate.Administration.UI.Dialogs
                         loadingLabel.Text =
                             String.Format(uploadingPackageInfoText,
                                 String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
+            if (_uploadCancelled)
+            {
+                Invoke(new Action(() =>
+                {
+                    loadingLabel.Text = "Cancelling upload...";
+                }));
+            }
         }
 
         private void changelogLoadButton_Click(object sender, EventArgs e)
@@ -895,27 +901,89 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Lists the directory content recursively.
         /// </summary>
-        private void ListDirectory(string path)
+        private void ListDirectoryContent(string path)
         {
             var rootDirectoryInfo = new DirectoryInfo(path);
-            TreeNode selectedNode = filesDataTreeView.SelectedNode;
-            selectedNode.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
+            Invoke(new Action(() =>
+            {
+                var directoryNode = CreateDirectoryNode(rootDirectoryInfo);
+                if (directoryNode == null) return;
+                filesDataTreeView.SelectedNode.Nodes.Add(directoryNode);
+                if (!filesDataTreeView.SelectedNode.IsExpanded)
+                    filesDataTreeView.SelectedNode.Toggle();
+            }));
         }
 
+        private bool _nodeInitializingFailed;
         /// <summary>
         ///     Creates a new subnode for the corresponding directory info.
         /// </summary>
-        private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
+        private TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
-            var directoryNode = new TreeNode(directoryInfo.Name, 2, 2);
-            directoryNode.Tag = directoryInfo.FullName;
-            foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+            var directoryNode = new TreeNode(directoryInfo.Name, 0, 0) {Tag = directoryInfo.FullName};
+            try
             {
-                directoryNode.Nodes.Add(CreateDirectoryNode(directory));
+                foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+                {
+                    if (_nodeInitializingFailed)
+                    {
+                        _nodeInitializingFailed = false;
+                        break;
+                    }
+
+                    var node = CreateDirectoryNode(directory);
+                    if (node != null)
+                        directoryNode.Nodes.Add(node);
+                }
+
+                foreach (var file in directoryInfo.GetFiles())
+                {
+                    if (_nodeInitializingFailed)
+                    {
+                        _nodeInitializingFailed = false;
+                        break;
+                    }
+
+                    TreeNode fileNode;
+                    if (filesImageList.Images.ContainsKey(file.Extension))
+                    {
+                        int index = filesImageList.Images.IndexOfKey(file.Extension);
+                        fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
+                    }
+                    else
+                    {
+                        var shFileInfo = new Shell32.SHFILEINFO();
+                        Icon icon = IconReader.GetFileIcon(file.Extension, IconReader.IconSize.SysSmall, false,
+                            ref shFileInfo);
+                        if (icon != null)
+                        {
+                            int index = 0;
+                            FileInfo file1 = file;
+                            Invoke(new Action(() =>
+                            {
+                                filesImageList.Images.Add(file1.Extension, icon.ToBitmap());
+                                index = filesImageList.Images.IndexOfKey(file1.Extension);
+                            }));
+                            fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
+                        }
+                        else
+                        {
+                            fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
+                        }
+                    }
+
+                    Invoke(new Action(() => directoryNode.Nodes.Add(fileNode)));
+                }
             }
-            foreach (var fileNode in directoryInfo.GetFiles().Select(file => new TreeNode(file.Name, 1, 1) {Tag = file.FullName}))
+            catch (Exception ex)
             {
-                directoryNode.Nodes.Add(fileNode);
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while adding a directory recursively.", ex,
+                                PopupButtons.Ok)));
+                _nodeInitializingFailed = true;
+                directoryNode = null;
             }
 
             return directoryNode;
@@ -928,9 +996,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (folderDialog.ShowDialog() != DialogResult.OK) return;
                 if (filesDataTreeView.SelectedNode == null) return;
-                ListDirectory(folderDialog.SelectedPath);
-                if (!filesDataTreeView.SelectedNode.IsExpanded)
-                    filesDataTreeView.SelectedNode.Toggle();
+
+                ThreadPool.QueueUserWorkItem(arg => ListDirectoryContent(folderDialog.SelectedPath));
             }
         }
 
@@ -944,10 +1011,33 @@ namespace nUpdate.Administration.UI.Dialogs
                 fileDialog.Filter = "All Files (*.*)| *.*";
 
                 if (fileDialog.ShowDialog() != DialogResult.OK) return;
-                foreach (var node in fileDialog.FileNames.Select(path => new TreeNode(Path.GetFileName(path)) {Tag = path, ImageIndex = 1, SelectedImageIndex = 1}))
+                foreach (var fileName in fileDialog.FileNames)
                 {
-                    filesDataTreeView.SelectedNode.Nodes.Add(node);
+                    TreeNode fileNode;
+                    var fileInfo = new FileInfo(fileName);
+                    if (filesImageList.Images.ContainsKey(fileInfo.Extension))
+                    {
+                        int index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
+                        fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
+                    }
+                    else
+                    {
+                        var shFileInfo = new Shell32.SHFILEINFO();
+                        Icon icon = IconReader.GetFileIcon(fileInfo.Extension, IconReader.IconSize.SysSmall, false,
+                            ref shFileInfo);
+                        if (icon != null)
+                        {
+                            filesImageList.Images.Add(fileInfo.Extension, icon.ToBitmap());
+                            int index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
+                            fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
+                        }
+                        else
+                        {
+                            fileNode = new TreeNode(fileInfo.Name, 1, 1) {Tag = fileInfo.FullName};
+                        }
+                    }
 
+                    filesDataTreeView.SelectedNode.Nodes.Add(fileNode);
                     if (!filesDataTreeView.SelectedNode.IsExpanded)
                         filesDataTreeView.SelectedNode.Toggle();
                 }
@@ -1217,6 +1307,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void cancelLabel_Click(object sender, EventArgs e)
         {
+            _uploadCancelled = true;
+
             Invoke(new Action(() =>
             {
                 loadingLabel.Text = "Cancelling upload...";
@@ -1224,25 +1316,14 @@ namespace nUpdate.Administration.UI.Dialogs
             }));
 
             _ftp.CancelPackageUpload();
+        }
 
-            //try
-            //{
-            //    _ftp.DeleteDirectory(_packageVersion.ToString());
-            //}
-            //catch (Exception deletingEx)
-            //{
-            //    Invoke(
-            //        new Action(
-            //            () =>
-            //                Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
-            //                    deletingEx, PopupButtons.Ok)));
-            //}
+        private void CancellationFinished(object sender, EventArgs e)
+        {
+            if (!_packageExisting)
+                _packageExisting = true;
 
-            SetUiState(true);
-            Reset(_savePackages);
-            if (!_savePackages) return;
-
-            DialogResult = DialogResult.OK;
+            Reset();
         }
     }
 }

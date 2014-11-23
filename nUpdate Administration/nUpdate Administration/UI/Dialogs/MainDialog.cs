@@ -6,7 +6,7 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
@@ -15,7 +15,6 @@ using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using ExceptionBase;
 using Application = System.Windows.Forms.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -23,6 +22,11 @@ namespace nUpdate.Administration.UI.Dialogs
     public partial class MainDialog : BaseDialog
     {
         private LocalizationProperties _lp = new LocalizationProperties();
+
+        /// <summary>
+        ///     The path of the project that is stored in a file that was opened.
+        /// </summary>
+        public string ProjectPath { get; set; }
 
         public MainDialog()
         {
@@ -57,9 +61,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
             sectionsListView.Items[0].Text = _lp.MainDialogNewProjectText;
             sectionsListView.Items[1].Text = _lp.MainDialogOpenProjectText;
-            sectionsListView.Items[3].Text = _lp.MainDialogFeedbackText;
-            sectionsListView.Items[4].Text = _lp.MainDialogPreferencesText;
-            sectionsListView.Items[5].Text = _lp.MainDialogInformationText;
+            sectionsListView.Items[4].Text = _lp.MainDialogFeedbackText;
+            sectionsListView.Items[5].Text = _lp.MainDialogPreferencesText;
+            sectionsListView.Items[6].Text = _lp.MainDialogInformationText;
         }
 
         private void MainDialog_Load(object sender, EventArgs e)
@@ -92,6 +96,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     Popup.ShowPopup(this, SystemIcons.Error, _lp.MissingRightsWarnCaption, _lp.MissingRightsWarnText,
                         PopupButtons.Ok);
                 }
+
+                if (!String.IsNullOrEmpty(ProjectPath))
+                    OpenProject(ProjectPath);
             }
 
             Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
@@ -123,14 +130,73 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
-            foreach (string entry in File.ReadAllLines(Program.ProjectsConfigFilePath))
+            foreach (var entryParts in File.ReadAllLines(Program.ProjectsConfigFilePath).Select(entry => entry.Split(new[] {'-'})))
             {
-                string[] entryParts = entry.Split(new[] {'-'});
                 Program.ExisitingProjects.Add(entryParts[0], entryParts[1]);
             }
 
             SetLanguage();
             sectionsListView.DoubleBuffer();
+        }
+
+        public void OpenProject(string projectPath)
+        {
+            try
+            {
+                Project = ApplicationInstance.LoadProject(projectPath);
+                var credentialsDialog = new CredentialsDialog();
+                if (credentialsDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        Program.FtpPassword =
+                            AesManager.Decrypt(Convert.FromBase64String(Project.FtpPassword),
+                                credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+
+                        if (Project.Proxy != null)
+                            Program.ProxyPassword =
+                                AesManager.Decrypt(Convert.FromBase64String(Project.ProxyPassword),
+                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+
+                        if (Project.UseStatistics)
+                            Program.SqlPassword =
+                                AesManager.Decrypt(Convert.FromBase64String(Project.SqlPassword),
+                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+                    }
+                    catch (CryptographicException)
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
+                            "The entered credentials are invalid.", PopupButtons.Ok);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "The decryption progress has failed.",
+                            ex, PopupButtons.Ok);
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+
+                if (Project.FtpUsername != credentialsDialog.Username)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
+                        "The entered credentials are invalid.", PopupButtons.Ok);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, _lp.ProjectReadingErrorCaption, ex,
+                    PopupButtons.Ok);
+                return;
+            }
+
+            var projectDialog = new ProjectDialog {Project = Project};
+            projectDialog.ShowDialog();
         }
 
         private void sectionsListView_Click(object sender, EventArgs e)
@@ -149,86 +215,31 @@ namespace nUpdate.Administration.UI.Dialogs
                         fileDialog.Multiselect = false;
                         if (fileDialog.ShowDialog() == DialogResult.OK)
                         {
-                            try
-                            {
-                                Project = ApplicationInstance.LoadProject(fileDialog.FileName);
-                                var credentialsDialog = new CredentialsDialog();
-                                if (credentialsDialog.ShowDialog() == DialogResult.OK)
-                                {
-                                    try
-                                    {
-                                        Program.FtpPassword =
-                                            AesManager.Decrypt(Convert.FromBase64String(Project.FtpPassword),
-                                                credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-
-                                        if (Project.Proxy != null)
-                                            Program.ProxyPassword =
-                                                AesManager.Decrypt(Convert.FromBase64String(Project.ProxyPassword),
-                                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-
-                                        if (Project.UseStatistics)
-                                            Program.SqlPassword =
-                                                AesManager.Decrypt(Convert.FromBase64String(Project.SqlPassword),
-                                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-                                    }
-                                    catch (CryptographicException)
-                                    {
-                                        Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
-                                            "The entered credentials are invalid.", PopupButtons.Ok);
-                                        return;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Popup.ShowPopup(this, SystemIcons.Error, "The decryption progress has failed.",
-                                            ex, PopupButtons.Ok);
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    return;
-                                }
-
-                                if (Project.FtpUsername != credentialsDialog.Username)
-                                {
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
-                                            "The entered credentials are invalid.", PopupButtons.Ok);
-                                    return;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Popup.ShowPopup(this, SystemIcons.Error, _lp.ProjectReadingErrorCaption, ex,
-                                    PopupButtons.Ok);
-                                return;
-                            }
-
-                            var projectDialog = new ProjectDialog { Project = Project };
-                            projectDialog.ShowDialog();
+                            OpenProject(fileDialog.FileName);
                         }
                     }
                     break;
 
                 case 2:
-                    var projectManagementDialog = new ProjectManagementDialog();
+                    var projectManagementDialog = new ProjectRemovalDialog();
                     projectManagementDialog.ShowDialog();
                     break;
 
-                case 3:
+                case 4:
                     var feedbackDialog = new FeedbackDialog();
                     feedbackDialog.ShowDialog();
                     break;
 
-                case 4:
+                case 5:
                     var preferencesDialog = new PreferencesDialog();
                     preferencesDialog.ShowDialog();
                     break;
 
-                case 5:
+                case 6:
                     var infoDialog = new InfoDialog();
                     infoDialog.ShowDialog();
                     break;
-                case 6:
+                case 7:
                     var statisticsServerDialog = new StatisticsServerDialog();
                     statisticsServerDialog.ReactsOnKeyDown = false;
                     statisticsServerDialog.ShowDialog();

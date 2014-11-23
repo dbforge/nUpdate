@@ -1,7 +1,15 @@
-﻿// Author: Tim Schiewe (timmi31061)
-// License: GPL v3
-// Modified by Dominic Beger (Trade): Changed style of license header and translated comments into English.
-// Modified by Dominic Beger (Trade): Changed key size-constant's naming style.
+﻿/**
+ *  Class to sign data with the RSA-class
+ *  
+ *  Author: Tim Schiewe (timmi31061)
+ *  License: GPL v3
+ *  Created: 09th December 2013
+ *  Modified: Dominic B. (Trade) - 15.12.13 - Improved design of constructor
+ *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Parameter validation added; more IntelliSense.
+ *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Critical security update
+ *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed language of comments
+ */
+
 using System;
 using System.Security.Cryptography;
 

@@ -5,7 +5,7 @@ using System;
 
 namespace nUpdate.Administration.Core
 {
-    internal class UriConnector
+    public class UriConnector
     {
         /// <summary>
         ///     Connects to uri parts to one uri.

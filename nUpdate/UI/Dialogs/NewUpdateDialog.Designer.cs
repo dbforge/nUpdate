@@ -1,4 +1,4 @@
-﻿namespace nUpdate.Dialogs
+﻿namespace nUpdate.UI.Dialogs
 {
     partial class NewUpdateDialog
     {
@@ -39,7 +39,7 @@
             this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.installButton = new System.Windows.Forms.Button();
-            this.demandsLabel = new System.Windows.Forms.Label();
+            this.accessLabel = new System.Windows.Forms.Label();
             this.line1 = new nUpdate.UI.Controls.Line();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -49,11 +49,11 @@
             // 
             this.changelogTextBox.BackColor = System.Drawing.Color.White;
             this.changelogTextBox.BulletIndent = 10;
-            this.changelogTextBox.Location = new System.Drawing.Point(12, 192);
+            this.changelogTextBox.Location = new System.Drawing.Point(12, 185);
             this.changelogTextBox.Name = "changelogTextBox";
             this.changelogTextBox.ReadOnly = true;
             this.changelogTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.changelogTextBox.Size = new System.Drawing.Size(351, 110);
+            this.changelogTextBox.Size = new System.Drawing.Size(351, 102);
             this.changelogTextBox.TabIndex = 0;
             this.changelogTextBox.Text = "";
             // 
@@ -107,7 +107,7 @@
             // changelogLabel
             // 
             this.changelogLabel.AutoSize = true;
-            this.changelogLabel.Location = new System.Drawing.Point(9, 173);
+            this.changelogLabel.Location = new System.Drawing.Point(9, 166);
             this.changelogLabel.Name = "changelogLabel";
             this.changelogLabel.Size = new System.Drawing.Size(67, 13);
             this.changelogLabel.TabIndex = 15;
@@ -126,7 +126,7 @@
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.controlPanel1.Controls.Add(this.cancelButton);
             this.controlPanel1.Controls.Add(this.installButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 313);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 296);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(371, 39);
             this.controlPanel1.TabIndex = 16;
@@ -134,7 +134,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(161, 8);
+            this.cancelButton.Location = new System.Drawing.Point(278, 8);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(85, 23);
             this.cancelButton.TabIndex = 17;
@@ -143,7 +143,7 @@
             // 
             // installButton
             // 
-            this.installButton.Location = new System.Drawing.Point(252, 8);
+            this.installButton.Location = new System.Drawing.Point(163, 8);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(111, 23);
             this.installButton.TabIndex = 0;
@@ -151,19 +151,19 @@
             this.installButton.UseVisualStyleBackColor = true;
             this.installButton.Click += new System.EventHandler(this.installButton_Click);
             // 
-            // demandsLabel
+            // accessLabel
             // 
-            this.demandsLabel.AutoSize = true;
-            this.demandsLabel.Location = new System.Drawing.Point(9, 134);
-            this.demandsLabel.Name = "demandsLabel";
-            this.demandsLabel.Size = new System.Drawing.Size(65, 13);
-            this.demandsLabel.TabIndex = 17;
-            this.demandsLabel.Text = "Demands: -";
+            this.accessLabel.AutoSize = true;
+            this.accessLabel.Location = new System.Drawing.Point(9, 134);
+            this.accessLabel.Name = "accessLabel";
+            this.accessLabel.Size = new System.Drawing.Size(54, 13);
+            this.accessLabel.TabIndex = 17;
+            this.accessLabel.Text = "Accesses:";
             // 
             // line1
             // 
             this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
-            this.line1.Location = new System.Drawing.Point(7, 156);
+            this.line1.Location = new System.Drawing.Point(7, 151);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(356, 10);
             this.line1.TabIndex = 18;
@@ -176,9 +176,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(371, 352);
+            this.ClientSize = new System.Drawing.Size(371, 335);
             this.Controls.Add(this.line1);
-            this.Controls.Add(this.demandsLabel);
+            this.Controls.Add(this.accessLabel);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.changelogLabel);
             this.Controls.Add(this.updateSizeLabel);
@@ -193,6 +193,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "NewUpdateDialog";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewUpdateDialog_FormClosing);
@@ -217,7 +218,7 @@
         private UI.Controls.ControlPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button installButton;
-        private System.Windows.Forms.Label demandsLabel;
+        private System.Windows.Forms.Label accessLabel;
         private UI.Controls.Line line1;
     }
 }

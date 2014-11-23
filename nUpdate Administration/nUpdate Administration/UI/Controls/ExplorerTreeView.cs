@@ -3,12 +3,13 @@
 // Created: 01-08-2014 12:11
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    internal class ExplorerTreeView : TreeView
+    public class ExplorerTreeView : TreeView
     {
         #region InsertType enum
 

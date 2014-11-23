@@ -6,7 +6,7 @@ using System.Text;
 
 namespace nUpdate.Administration.Core
 {
-    internal class JsonHelper
+    public class JsonHelper
     {
         private const string INDENT_STRING = "    ";
 

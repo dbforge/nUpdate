@@ -24,14 +24,13 @@ namespace nUpdate.Administration.UI.Dialogs
         public const int HT_CAPTION = 0x2;
         private readonly List<TreeNode> _listedNodes = new List<TreeNode>();
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
+        private FtpManager ftp;
+
         private bool _allowCancel;
         private bool _isGettingRootData = true;
         private bool _isSetByUser;
-        private MARGINS _margins;
+        private Margins _margins;
         private bool mustCancel = false;
-
-        private FtpWebRequest _request;
-        private FtpWebResponse _response;
 
         public DirectorySearchDialog()
         {
@@ -59,12 +58,12 @@ namespace nUpdate.Administration.UI.Dialogs
         public int Port { get; set; }
 
         /// <summary>
-        ///     The username for the FTP's credentials.
+        ///     The username for the credentials.
         /// </summary>
         public string Username { get; set; }
 
         /// <summary>
-        ///     The password for the FTP's credentials.
+        ///     The password for the credentials.
         /// </summary>
         public SecureString Password { get; set; }
 
@@ -77,42 +76,41 @@ namespace nUpdate.Administration.UI.Dialogs
         public static extern bool DwmIsCompositionEnabled();
 
         [DllImport("dwmapi.dll")]
-        private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+        private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            if (DwmIsCompositionEnabled())
-            {
-                _margins.Top = 38;
-                e.Graphics.Clear(Color.Black);
+            if (!DwmIsCompositionEnabled()) return;
 
-                var clientArea = new Rectangle(
-                    _margins.Left,
-                    _margins.Top,
-                    ClientRectangle.Width - _margins.Left - _margins.Right,
-                    ClientRectangle.Height - _margins.Top - _margins.Bottom
-                    );
-                Brush b = new SolidBrush(BackColor);
-                e.Graphics.FillRectangle(b, clientArea);
-            }
+            _margins.Top = 38;
+            e.Graphics.Clear(Color.Black);
+
+            var clientArea = new Rectangle(
+                _margins.Left,
+                _margins.Top,
+                ClientRectangle.Width - _margins.Left - _margins.Right,
+                ClientRectangle.Height - _margins.Top - _margins.Bottom
+                );
+            Brush b = new SolidBrush(BackColor);
+            e.Graphics.FillRectangle(b, clientArea);
         }
 
         private void DirectorySearchForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format("Set directory - {0} - nUpdate Administration 1.1.0.0", ProjectName);
+            Text = String.Format("Set directory - {0} - nUpdate Administration 0.1.0.0", ProjectName);
 
-            if (DwmIsCompositionEnabled())
-            {
-                _margins = new MARGINS();
-                _margins.Top = 40;
-                DwmExtendFrameIntoClientArea(Handle, ref _margins);
-            }
+            if (!DwmIsCompositionEnabled()) return;
+
+            _margins = new Margins {Top = 40};
+            DwmExtendFrameIntoClientArea(Handle, ref _margins);
+
+            ftp = new FtpManager { Host = Host, Port = Port, Username = Username, Password = Password };
         }
 
         private void DirectorySearchForm_Shown(object sender, EventArgs e)
         {
-            var thread = new Thread(() => LoadListAsync());
+            var thread = new Thread(LoadListAsync);
             thread.Start();
         }
 
@@ -131,11 +129,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
+            if (e.Button != MouseButtons.Left) return;
+
+            ReleaseCapture();
+            SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
         }
 
         private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -210,12 +207,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 cancelButton.Enabled = false;
                 continueButton.Enabled = false;
             }));
-
-            var ftp = new FtpManager {Host = Host, Port = Port, UserName = Username, Password = Password};
-            ftp.ListDirectoriesAndFilesRecursively();
-
+            
+            var items = ftp.ListDirectoriesAndFilesRecursively();
+            
             TreeNode currentNode = null;
-            foreach (var item in ftp.ListedFtpItems)
+            foreach (var item in items)
             {
                 if (item.ParentPath.Length < 2) // Has no parent-directory
                 {
@@ -290,7 +286,7 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct MARGINS
+        public struct Margins
         {
             public int Left;
             public int Right;

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core
 {
-    internal class ConnectionChecker
+    public class ConnectionChecker
     {
         [DllImport("wininet.dll")]
         private static extern bool InternetGetConnectedState(out int connDescription, int ReservedValue);

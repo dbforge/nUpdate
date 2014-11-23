@@ -8,7 +8,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    internal sealed partial class ServerList : ListBox
+    public sealed partial class ServerList : ListBox
     {
         private VisualStyleRenderer _ren;
 

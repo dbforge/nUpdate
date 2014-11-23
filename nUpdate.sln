@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate-Tester", "nUpdate-T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.UpdateInstaller.Client.GuiInterface", "nUpdate.Client.GuiInterface\nUpdate.UpdateInstaller.Client.GuiInterface.csproj", "{5E63208A-8F06-4B99-A41D-F469BE4CFD00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.UpdateInstaller.Client.Gui", "nUpdate.Client.GUI\nUpdate.UpdateInstaller.Client.Gui.csproj", "{D8D78EDA-B737-4960-9FEF-AE4367913DA7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{5E63208A-8F06-4B99-A41D-F469BE4CFD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E63208A-8F06-4B99-A41D-F469BE4CFD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E63208A-8F06-4B99-A41D-F469BE4CFD00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8D78EDA-B737-4960-9FEF-AE4367913DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8D78EDA-B737-4960-9FEF-AE4367913DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8D78EDA-B737-4960-9FEF-AE4367913DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8D78EDA-B737-4960-9FEF-AE4367913DA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

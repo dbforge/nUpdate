@@ -855,5 +855,11 @@ namespace nUpdate.Administration.Core.Localization
         public string ListingServerDataErrorCaption { get; set; }
 
         #endregion
+
+        #region "Async operation's messages"
+
+
+
+        #endregion
     }
 }

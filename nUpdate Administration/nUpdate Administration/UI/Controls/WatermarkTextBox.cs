@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    internal class WatermarkTextBox : TextBox
+    public class WatermarkTextBox : TextBox
     {
         private string _mCue;
 

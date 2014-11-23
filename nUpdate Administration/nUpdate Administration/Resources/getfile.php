@@ -1,9 +1,9 @@
 <?php
 
-  $dbUrl = "";
-  $dbUser = "";
-  $dbPass = "";
-  $dbName = "";
+  $dbUrl = "_DBURL";
+  $dbUser = "_DBUSER";
+  $dbPass = "_DBPASS";
+  $dbName = "_DBNAME";
   
 if (isset($_REQUEST['versionid'])) // Version-ID is set
 {

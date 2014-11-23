@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using nUpdate.Core;
 
@@ -19,14 +18,14 @@ namespace nUpdate.Internal
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateVersion" />-class.
         /// </summary>
-        /// <param name="version">The update version.</param>
-        public UpdateVersion(string version)
+        /// <param name="literalVersion">The literal update version ("0.2.0.0", "0.1.0.0b1", ...).</param>
+        public UpdateVersion(string literalVersion)
         {
             var regex = new Regex(@"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+([a-b][0-9]+|)", RegexOptions.IgnoreCase);
-            if (!regex.IsMatch(version))
+            if (!regex.IsMatch(literalVersion))
                 throw new ArgumentException("Version is not valid.");
 
-            string[] versionParts = version.Split(new[] {'.'});
+            string[] versionParts = literalVersion.Split(new[] { '.' });
 
             Major = int.Parse(versionParts[0]);
             Minor = int.Parse(versionParts[1]);
@@ -36,14 +35,14 @@ namespace nUpdate.Internal
             if (versionParts[3].Contains("a"))
             {
                 DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split(new[] {'a'});
+                parts = versionParts[3].Split(new[] { 'a' });
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
             else if (versionParts[3].Contains("b"))
             {
                 DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split(new[] {'b'});
+                parts = versionParts[3].Split(new[] { 'b' });
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
@@ -101,9 +100,9 @@ namespace nUpdate.Internal
         /// <param name="build">The build version.</param>
         /// <param name="revision">The revision version.</param>
         /// <param name="devStage">The developmental stage.</param>
-        /// <param name="developmentStage">The pre-release version.</param>
+        /// <param name="developmentBuild">The pre-release version.</param>
         public UpdateVersion(int major, int minor, int build, int revision, DevelopmentalStage devStage,
-            int developmentStage)
+            int developmentBuild)
         {
             if (major < 0)
                 throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
@@ -122,7 +121,7 @@ namespace nUpdate.Internal
             Build = build;
             Revision = revision;
             DevelopmentalStage = devStage;
-            DevelopmentBuild = developmentStage;
+            DevelopmentBuild = developmentBuild;
         }
 
         /// <summary>
@@ -162,9 +161,7 @@ namespace nUpdate.Internal
         {
             get
             {
-                if (DevelopmentalStage != DevelopmentalStage.Release)
-                    return String.Format("{0} {1} {2}", LiteralUpdateVersion, DevelopmentalStage, DevelopmentBuild);
-                return LiteralUpdateVersion;
+                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", LiteralUpdateVersion, DevelopmentalStage, DevelopmentBuild) : LiteralUpdateVersion;
             }
         }
 
@@ -177,6 +174,10 @@ namespace nUpdate.Internal
         }
 
         // Overwritten Instance Methods
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
         public override string ToString()
         {
             if (DevelopmentalStage != DevelopmentalStage.Release)
@@ -184,9 +185,15 @@ namespace nUpdate.Internal
                 return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision,
                     DevelopmentalStage.ToString().Substring(0, 1).ToLower(), DevelopmentBuild);
             }
-            return String.Format("{0}.{1}.{2}.{3}", Major, Minor, Build, Revision);
+            return LiteralUpdateVersion;
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             int accumulator = 0;
@@ -199,7 +206,28 @@ namespace nUpdate.Internal
             return accumulator;
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
         // Operators
+
+        /// <summary>
+        /// Implements the operator &gt;.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator >(UpdateVersion left, UpdateVersion right)
         {
             if (left.Major > right.Major)
@@ -236,6 +264,14 @@ namespace nUpdate.Internal
             return false;
         }
 
+        /// <summary>
+        /// Implements the operator &lt;.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator <(UpdateVersion left, UpdateVersion right)
         {
             if (left.Major < right.Major)
@@ -272,6 +308,14 @@ namespace nUpdate.Internal
             return false;
         }
 
+        /// <summary>
+        /// Implements the operator &lt;=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator <=(UpdateVersion left, UpdateVersion right)
         {
             if (left.Major < right.Major)
@@ -308,6 +352,14 @@ namespace nUpdate.Internal
             return true;
         }
 
+        /// <summary>
+        /// Implements the operator &gt;=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator >=(UpdateVersion left, UpdateVersion right)
         {
             if (left.Major > right.Major)
@@ -344,14 +396,30 @@ namespace nUpdate.Internal
             return true;
         }
 
+        /// <summary>
+        /// Implements the operator ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator ==(UpdateVersion left, UpdateVersion right)
         {
-            return left != null && (right != null && (left.ToString() == right.ToString()));
+            return left.ToString() == right.ToString();
         }
 
+        /// <summary>
+        /// Implements the operator !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        /// The result of the operator.
+        /// </returns>
         public static bool operator !=(UpdateVersion left, UpdateVersion right)
         {
-            return left != null && (right != null && (left.ToString() != right.ToString()));
+            return left.ToString() != right.ToString();
         }
 
         /// <summary>
@@ -361,13 +429,14 @@ namespace nUpdate.Internal
         /// <returns>Returns the highest version found.</returns>
         public static UpdateVersion GetHighestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
         {
-            UpdateVersion[] newestVersion = {new UpdateVersion()};
-            foreach (UpdateVersion i in updateVersions.Where(i => i > newestVersion[0]))
+            var newestVersion = new UpdateVersion();
+            foreach (UpdateVersion i in updateVersions)
             {
-                newestVersion[0] = i;
+                if (i > newestVersion)
+                    newestVersion = i;
             }
 
-            return newestVersion[0];
+            return newestVersion;
         }
     }
 }

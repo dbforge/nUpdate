@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace nUpdate.Administration.Core.Application.History
 {
-    internal class Log
+    public class Log
     {
         /// <summary>
         ///     The name of the project that contains the log file.

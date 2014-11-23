@@ -86,11 +86,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label1 = new System.Windows.Forms.Label();
             this.statisticsServerLabel = new System.Windows.Forms.Label();
             this.proxyTabPage = new System.Windows.Forms.TabPage();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.doNotUseProxyRadioButton = new System.Windows.Forms.RadioButton();
+            this.useProxyRadioButton = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
             this.proxyHeaderLabel = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.proxyPanel = new System.Windows.Forms.Panel();
             this.proxyUserTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.proxyHostLabel = new System.Windows.Forms.Label();
             this.proxyUserLabel = new System.Windows.Forms.Label();
@@ -100,6 +100,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.controlPanel1.SuspendLayout();
             this.tablessTabControl1.SuspendLayout();
             this.keyPairTabPage.SuspendLayout();
@@ -112,9 +114,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsServerTabPage.SuspendLayout();
             this.panel1.SuspendLayout();
             this.proxyTabPage.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.proxyPanel.SuspendLayout();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // continueButton
@@ -205,6 +208,8 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // generalPanel
             // 
+            this.generalPanel.Controls.Add(this.label4);
+            this.generalPanel.Controls.Add(this.pictureBox1);
             this.generalPanel.Controls.Add(this.localPathLabel);
             this.generalPanel.Controls.Add(this.updateUrlTextBox);
             this.generalPanel.Controls.Add(this.updateUrlLabel);
@@ -496,28 +501,29 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // proxyTabPage
             // 
-            this.proxyTabPage.Controls.Add(this.radioButton1);
-            this.proxyTabPage.Controls.Add(this.radioButton2);
+            this.proxyTabPage.Controls.Add(this.doNotUseProxyRadioButton);
+            this.proxyTabPage.Controls.Add(this.useProxyRadioButton);
             this.proxyTabPage.Controls.Add(this.label3);
             this.proxyTabPage.Controls.Add(this.proxyHeaderLabel);
-            this.proxyTabPage.Controls.Add(this.panel2);
+            this.proxyTabPage.Controls.Add(this.proxyPanel);
             resources.ApplyResources(this.proxyTabPage, "proxyTabPage");
             this.proxyTabPage.Name = "proxyTabPage";
             this.proxyTabPage.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // doNotUseProxyRadioButton
             // 
-            resources.ApplyResources(this.radioButton1, "radioButton1");
-            this.radioButton1.Checked = true;
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.TabStop = true;
-            this.radioButton1.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.doNotUseProxyRadioButton, "doNotUseProxyRadioButton");
+            this.doNotUseProxyRadioButton.Checked = true;
+            this.doNotUseProxyRadioButton.Name = "doNotUseProxyRadioButton";
+            this.doNotUseProxyRadioButton.TabStop = true;
+            this.doNotUseProxyRadioButton.UseVisualStyleBackColor = true;
+            this.doNotUseProxyRadioButton.CheckedChanged += new System.EventHandler(this.doNotUseProxyRadioButton_CheckedChanged);
             // 
-            // radioButton2
+            // useProxyRadioButton
             // 
-            resources.ApplyResources(this.radioButton2, "radioButton2");
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.useProxyRadioButton, "useProxyRadioButton");
+            this.useProxyRadioButton.Name = "useProxyRadioButton";
+            this.useProxyRadioButton.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -530,16 +536,16 @@ namespace nUpdate.Administration.UI.Dialogs
             this.proxyHeaderLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.proxyHeaderLabel.Name = "proxyHeaderLabel";
             // 
-            // panel2
+            // proxyPanel
             // 
-            this.panel2.Controls.Add(this.proxyUserTextBox);
-            this.panel2.Controls.Add(this.proxyHostLabel);
-            this.panel2.Controls.Add(this.proxyUserLabel);
-            this.panel2.Controls.Add(this.proxyPasswordLabel);
-            this.panel2.Controls.Add(this.proxyPasswordTextBox);
-            this.panel2.Controls.Add(this.proxyHostTextBox);
-            resources.ApplyResources(this.panel2, "panel2");
-            this.panel2.Name = "panel2";
+            this.proxyPanel.Controls.Add(this.proxyUserTextBox);
+            this.proxyPanel.Controls.Add(this.proxyHostLabel);
+            this.proxyPanel.Controls.Add(this.proxyUserLabel);
+            this.proxyPanel.Controls.Add(this.proxyPasswordLabel);
+            this.proxyPanel.Controls.Add(this.proxyPasswordTextBox);
+            this.proxyPanel.Controls.Add(this.proxyHostTextBox);
+            resources.ApplyResources(this.proxyPanel, "proxyPanel");
+            this.proxyPanel.Name = "proxyPanel";
             // 
             // proxyUserTextBox
             // 
@@ -591,6 +597,17 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.TabStop = false;
             // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
+            // pictureBox1
+            // 
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.TabStop = false;
+            // 
             // NewProjectDialog
             // 
             this.AcceptButton = this.continueButton;
@@ -626,11 +643,12 @@ namespace nUpdate.Administration.UI.Dialogs
             this.panel1.PerformLayout();
             this.proxyTabPage.ResumeLayout(false);
             this.proxyTabPage.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.proxyPanel.ResumeLayout(false);
+            this.proxyPanel.PerformLayout();
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -703,8 +721,10 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.RadioButton doNotUseProxyRadioButton;
+        private System.Windows.Forms.RadioButton useProxyRadioButton;
+        private System.Windows.Forms.Panel proxyPanel;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

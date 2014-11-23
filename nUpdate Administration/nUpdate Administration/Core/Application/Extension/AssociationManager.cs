@@ -34,7 +34,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// <summary>
     ///     Provides more streamlined interface for associating a single or multiple extensions with a single program.
     /// </summary>
-    internal class AssociationManager
+    public class AssociationManager
     {
         /// <summary>
         ///     Determines of the list of extensions are associated with the specified program id.

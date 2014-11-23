@@ -6,18 +6,17 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Update.Operations;
 
 namespace nUpdate.Administration.Core.Update
 {
     [Serializable]
-    internal class UpdateConfiguration
+    public class UpdateConfiguration
     {
         /// <summary>
-        ///     The version of the package as string.
+        ///     The literal version of the package.
         /// </summary>
-        public string Version { get; set; }
+        public string LiteralVersion { get; set; }
 
         /// <summary>
         ///     Sets if the package should be used within the statistics.
@@ -70,29 +69,33 @@ namespace nUpdate.Administration.Core.Update
         public bool MustUpdate { get; set; }
 
         /// <summary>
-        ///     Loads the update configuration from the server.
+        ///     Downloads the update configurations from the server.
         /// </summary>
-        /// <param name="configFileUrl">The url of the info file.</param>
+        /// <param name="configFileUrl">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <returns>Returns a deserialized list of type <see cref="UpdatePackage" />.</returns>
-        public static List<UpdateConfiguration> DownloadUpdateConfiguration(Uri configFileUrl, WebProxy proxy)
+        /// <returns>Returns an enumerable of type <see cref="UpdateConfiguration"/> containing the package configurations.</returns>
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUrl, WebProxy proxy)
         {
-            using(var wc = new WebClientWrapper())
+            using (var wc = new WebClientWrapper())
             {
                 if (proxy != null)
                     wc.Proxy = proxy;
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                return Serializer.Deserialize<List<UpdateConfiguration>>(wc.DownloadString(configFileUrl));
+                string source = wc.DownloadString(configFileUrl);
+                if (!String.IsNullOrEmpty(source))
+                    return Serializer.Deserialize<List<UpdateConfiguration>>(source);
             }
+
+            return null;
         }
 
         /// <summary>
         ///     Loads an update configuration from a local file.
         /// </summary>
         /// <param name="filePath">The path of the file.</param>
-        public static List<UpdateConfiguration> LoadFromFile(string filePath)
+        public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
             return Serializer.Deserialize<List<UpdateConfiguration>>(File.ReadAllText(filePath));
         }

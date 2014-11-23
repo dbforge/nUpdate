@@ -1,4 +1,4 @@
-﻿namespace nUpdate
+﻿namespace nUpdate.UpdateInstaller.Dialogs
 {
     partial class MainForm
     {
@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.extractProgressBar = new System.Windows.Forms.ProgressBar();
-            this.unpackingLabel = new System.Windows.Forms.Label();
+            this.updateLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // extractProgressBar
@@ -40,15 +40,15 @@
             this.extractProgressBar.Size = new System.Drawing.Size(260, 14);
             this.extractProgressBar.TabIndex = 0;
             // 
-            // unpackingLabel
+            // updateLabel
             // 
-            this.unpackingLabel.AutoSize = true;
-            this.unpackingLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.unpackingLabel.Location = new System.Drawing.Point(11, 11);
-            this.unpackingLabel.Name = "unpackingLabel";
-            this.unpackingLabel.Size = new System.Drawing.Size(63, 13);
-            this.unpackingLabel.TabIndex = 1;
-            this.unpackingLabel.Text = "Unpacking";
+            this.updateLabel.AutoSize = true;
+            this.updateLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.updateLabel.Location = new System.Drawing.Point(11, 11);
+            this.updateLabel.Name = "updateLabel";
+            this.updateLabel.Size = new System.Drawing.Size(56, 13);
+            this.updateLabel.TabIndex = 1;
+            this.updateLabel.Text = "Updating";
             // 
             // MainForm
             // 
@@ -56,7 +56,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(294, 64);
-            this.Controls.Add(this.unpackingLabel);
+            this.Controls.Add(this.updateLabel);
             this.Controls.Add(this.extractProgressBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -70,7 +70,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar extractProgressBar;
-        private System.Windows.Forms.Label unpackingLabel;
+        private System.Windows.Forms.Label updateLabel;
     }
 }
 

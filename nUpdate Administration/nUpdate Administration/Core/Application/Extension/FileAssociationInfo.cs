@@ -84,7 +84,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     ///     Provides instance methods for the creation, modification, and deletion of file extension associations in the
     ///     Windows registry.
     /// </summary>
-    internal class FileAssociationInfo
+    public class FileAssociationInfo
     {
         private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
         private string _extension;

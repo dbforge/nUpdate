@@ -46,9 +46,6 @@
     <ApplicationIcon>Trade-Updater-Logo-v3.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExceptionBase">
-      <HintPath>..\..\..\..\..\..\..\Downloads\ExceptionBase.NET-master\ExceptionBase.NET-master\VB.NET\ExceptionBase.NET\ExceptionBase.NET\bin\Release\ExceptionBase.dll</HintPath>
-    </Reference>
     <Reference Include="FastColoredTextBox">
       <HintPath>..\..\..\..\..\..\..\Downloads\FastColoredTextBox-master\FastColoredTextBox-master\Binary\FastColoredTextBox.dll</HintPath>
     </Reference>
@@ -63,14 +60,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OSIcon">
+      <HintPath>..\..\..\..\..\..\..\Downloads\OSIcon_src_v2.0\OSIcon\OSIcon\bin\Release\OSIcon.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Starksoft.Net.Ftp">
       <HintPath>..\..\..\..\..\..\..\Downloads\starksoft_ftp_v1_158\src\bin\Debug\Starksoft.Net.Ftp.dll</HintPath>
     </Reference>
-    <Reference Include="Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Starksoft.Net.Proxy">
       <HintPath>..\..\..\..\..\..\..\Downloads\starksoft_ftp_v1_158\src\bin\Debug\Starksoft.Net.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -97,6 +95,8 @@
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
     <Compile Include="Core\Application\Sql.cs" />
     <Compile Include="Core\Architecture.cs" />
+    <Compile Include="Core\IAsyncSupportable.cs" />
+    <Compile Include="Core\IResettable.cs" />
     <Compile Include="Core\ProgrammingLanguage.cs" />
     <Compile Include="Core\Update\History\LogEntry.cs" />
     <Compile Include="Core\Application\UpdatePackage.cs" />
@@ -327,11 +327,11 @@
     <Compile Include="UI\Dialogs\ProjectEditDialog.Designer.cs">
       <DependentUpon>ProjectEditDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\ProjectManagementDialog.cs">
+    <Compile Include="UI\Dialogs\ProjectRemovalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\ProjectManagementDialog.Designer.cs">
-      <DependentUpon>ProjectManagementDialog.cs</DependentUpon>
+    <Compile Include="UI\Dialogs\ProjectRemovalDialog.Designer.cs">
+      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Dialogs\StatisticsServerAddDialog.cs">
       <SubType>Form</SubType>
@@ -449,8 +449,8 @@
     <EmbeddedResource Include="UI\Dialogs\ProjectEditDialog.resx">
       <DependentUpon>ProjectEditDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ProjectManagementDialog.resx">
-      <DependentUpon>ProjectManagementDialog.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Dialogs\ProjectRemovalDialog.resx">
+      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\StatisticsServerAddDialog.resx">
       <DependentUpon>StatisticsServerAddDialog.cs</DependentUpon>

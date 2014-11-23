@@ -9,7 +9,7 @@ using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.Core
 {
-    internal class ValidationManager
+    public class ValidationManager
     {
         /// <summary>
         ///     Validates if all fields were filled out.

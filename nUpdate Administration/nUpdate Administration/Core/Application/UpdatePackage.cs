@@ -10,7 +10,7 @@ namespace nUpdate.Administration.Core.Application
     /// Represents a local update package.
     /// </summary>
     [Serializable]
-    internal class UpdatePackage
+    public class UpdatePackage
     {
         /// <summary>
         ///     The version of the package.

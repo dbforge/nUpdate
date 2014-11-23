@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    internal class TablessTabControl : TabControl
+    public class TablessTabControl : TabControl
     {
         private const int TCM_ADJUSTRECT = 0x1328;
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using nUpdate.Dialogs;
 
-namespace nUpdate.Dialogs
+namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateErrorDialog : BaseForm
     {
@@ -32,10 +33,7 @@ namespace nUpdate.Dialogs
         {
             infoLabel.Text = InfoMessage;
 
-            if (ErrorCode == 0)
-                errorCodeLabel.Text = "Errorcode: -";
-            else
-                errorCodeLabel.Text = String.Format("Errorcode: {0}", ErrorCode);
+            errorCodeLabel.Text = ErrorCode == 0 ? "Errorcode: -" : String.Format("Errorcode: {0}", ErrorCode);
 
             errorMessageTextBox.Text = Error.Message;
 
@@ -54,10 +52,7 @@ namespace nUpdate.Dialogs
 
         private void showStackTraceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (showStackTraceCheckBox.Checked)
-                errorMessageTextBox.Text = String.Format("{0}\n{1}", Error.Message, Error.StackTrace);
-            else
-                errorMessageTextBox.Text = Error.Message;
+            errorMessageTextBox.Text = showStackTraceCheckBox.Checked ? String.Format("{0}\n{1}", Error.Message, Error.StackTrace) : Error.Message;
         }
     }
 }

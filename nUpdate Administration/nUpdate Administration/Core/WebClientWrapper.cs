@@ -7,12 +7,12 @@ using System.Net;
 
 namespace nUpdate.Administration.Core
 {
-    internal class WebClientWrapper : WebClient
+    public class WebClientWrapper : WebClient
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="WebClientWrapper" />-class.
         /// </summary>
-        public WebClientWrapper() : this(10000)
+        public WebClientWrapper() : this(5000)
         {
         }
 

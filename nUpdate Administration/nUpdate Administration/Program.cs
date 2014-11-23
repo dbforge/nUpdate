@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
@@ -12,7 +13,7 @@ using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         ///     The root path of nUpdate Administration.
@@ -65,16 +66,24 @@ namespace nUpdate.Administration
             bool firstInstance;
             new Mutex(true, "MainForm", out firstInstance);
 
-            if (firstInstance)
+            if (!firstInstance) return;
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            //currentDomain.UnhandledException += UnhandledException;
+            //Application.ThreadException += UnhandledThreadException;
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.ApplicationExit += OnExit;
+
+            var dialog = new MainDialog();
+            if (args.Length > 1)
             {
-                AppDomain currentDomain = AppDomain.CurrentDomain;
-                currentDomain.UnhandledException += UnhandledException;
-                Application.ThreadException += UnahndledThreadException;
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.ApplicationExit += OnExit;
-                Application.Run(new MainDialog());
+                var file = new FileInfo(args[0]);
+                if (file.Exists)
+                    dialog.ProjectPath = file.FullName;
             }
+
+            Application.Run(dialog);
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -84,7 +93,7 @@ namespace nUpdate.Administration
             Application.Exit();
         }
 
-        private static void UnahndledThreadException(object sender, ThreadExceptionEventArgs e)
+        private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
                     e.Exception, PopupButtons.Ok);

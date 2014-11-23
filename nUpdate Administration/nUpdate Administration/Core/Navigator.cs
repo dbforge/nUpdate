@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace nUpdate.Administration.Core
 {
-    internal class Navigator<T>
+    public class Navigator<T>
     {
         private readonly List<T> _navs = new List<T>();
         private T _last;
@@ -34,9 +34,7 @@ namespace nUpdate.Administration.Core
         {
             get
             {
-                if ((_count - 1 == -1) == false)
-                    return _navs[_count - 1];
-                return default(T);
+                return (_count - 1 == -1) == false ? _navs[_count - 1] : default(T);
             }
         }
 

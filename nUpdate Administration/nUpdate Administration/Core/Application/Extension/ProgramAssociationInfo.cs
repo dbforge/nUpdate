@@ -148,7 +148,7 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// <summary>
     ///     Provides instance of ProgramaticID that can be referenced by multiple different extensions.
     /// </summary>
-    internal class ProgramAssociationInfo
+    public class ProgramAssociationInfo
     {
         private readonly RegistryWrapper registryWrapper = new RegistryWrapper();
 
@@ -586,7 +586,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         ///     Adds single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
         /// </summary>
         /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
-        protected void AddVerbInternal(ProgramVerb verb)
+        protected void AddVerbpublic(ProgramVerb verb)
         {
             RegistryKey root = Registry.ClassesRoot;
 
@@ -618,7 +618,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         ///     Removes single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
         /// </summary>
         /// <param name="name">Name of verb to remove</param>
-        protected void RemoveVerbInternal(string name)
+        protected void RemoveVerbpublic(string name)
         {
             RegistryKey root = Registry.ClassesRoot;
 
@@ -666,7 +666,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
         public void AddVerb(ProgramVerb verb)
         {
-            AddVerbInternal(verb);
+            AddVerbpublic(verb);
         }
 
         /// <summary>
@@ -687,7 +687,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="name">Name of verb to remove.</param>
         public void RemoveVerb(string name)
         {
-            RemoveVerbInternal(name);
+            RemoveVerbpublic(name);
         }
 
         /// <summary>
