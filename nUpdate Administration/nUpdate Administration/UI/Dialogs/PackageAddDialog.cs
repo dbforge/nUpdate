@@ -26,9 +26,8 @@ using nUpdate.Administration.Core.Update.Operations.Panels;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using OSIcon.WinAPI;
+using nUpdate.Administration.Win32;
 using Starksoft.Net.Ftp;
-using OSIcon;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -952,9 +951,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     else
                     {
-                        var shFileInfo = new Shell32.SHFILEINFO();
-                        Icon icon = IconReader.GetFileIcon(file.Extension, IconReader.IconSize.SysSmall, false,
-                            ref shFileInfo);
+                        Icon icon = IconReader.GetFileIcon(file.Extension);
                         if (icon != null)
                         {
                             int index = 0;
@@ -1022,9 +1019,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     else
                     {
-                        var shFileInfo = new Shell32.SHFILEINFO();
-                        Icon icon = IconReader.GetFileIcon(fileInfo.Extension, IconReader.IconSize.SysSmall, false,
-                            ref shFileInfo);
+                        var icon = IconReader.GetFileIcon(fileInfo.Extension);
                         if (icon != null)
                         {
                             filesImageList.Images.Add(fileInfo.Extension, icon.ToBitmap());
