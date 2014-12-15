@@ -1,4 +1,1 @@
-nUpdate
-=======
-
-An easy update solution for .NET-applications.
+DO NOT USE YET!!! nUpdate is a modern update system providing high security and an easy-to-use interface. The first Alpha is still in work!
