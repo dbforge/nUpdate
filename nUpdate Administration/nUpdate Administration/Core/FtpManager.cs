@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
@@ -97,6 +98,12 @@ namespace nUpdate.Administration.Core
                 handler(this, e);
         }
 
+        ~FtpManager()
+        {
+            if (_packageFtpClient != null)
+                _packageFtpClient.Dispose();
+        }
+
         /// <summary>
         ///     Edits the properties if they are not automatically suitable for the server address.
         /// </summary>
@@ -119,14 +126,13 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            var ftp = new FtpClient(Host, Port, Protocol)
+            using (var ftp = new FtpClient(Host, Port, Protocol))
             {
-                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary
-            };
-
-            ftp.Open(Username, Password.ConvertToUnsecureString());
-            ftp.Close();
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Close();
+            }
         }
 
         /// <summary>
@@ -138,15 +144,15 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            var ftp = new FtpClient(Host, Port, Protocol)
+            using (var ftp = new FtpClient(Host, Port, Protocol))
             {
-                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary
-            };
-            ftp.Open(Username, Password.ConvertToUnsecureString());
-            ftp.ChangeDirectoryMultiPath(Directory);
-            ftp.DeleteFile(fileName);
-            ftp.Close();
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(Directory);
+                ftp.DeleteFile(fileName);
+                ftp.Close();
+            }
         }
 
         /// <summary>
@@ -257,8 +263,14 @@ namespace nUpdate.Administration.Core
                     }
                     else if (item.ItemType == FtpItemType.File && (item.Name == "updates.json" || Guid.TryParse(item.Name.Split(new [] {'.'})[0], out guid))) // Second condition determines whether the item is a package-file or not
                     {
-                        ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
-                        //ftp.DeleteFile(item.FullPath);
+                        // "MoveFile"-method damages the files, so we do it manually with a work-around
+                        //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
+
+                        string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
+                        ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
+                        ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name), FileAction.Create);
+                        File.Delete(localFilePath);
+                        ftp.DeleteFile(item.FullPath);
                     }
                 }
                 ftp.Close();

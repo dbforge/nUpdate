@@ -54,7 +54,7 @@ namespace nUpdate.Administration.Core.Update
             }
 
             if (Major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException("Major", "Index must be 0 or higher");
 
             if (Minor < 0)
                 throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
@@ -216,7 +216,7 @@ namespace nUpdate.Administration.Core.Update
         /// </returns>
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
         }
 
         // Operators
@@ -256,13 +256,7 @@ namespace nUpdate.Administration.Core.Update
             if (left.DevelopmentalStage > right.DevelopmentalStage)
                 return false;
 
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return true;
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return false;
+            return left.DevelopmentBuild > right.DevelopmentBuild;
         }
 
         /// <summary>
@@ -300,13 +294,7 @@ namespace nUpdate.Administration.Core.Update
             if (left.DevelopmentalStage < right.DevelopmentalStage)
                 return false;
 
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return true;
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return false;
+            return left.DevelopmentBuild < right.DevelopmentBuild;
         }
 
         /// <summary>
@@ -346,11 +334,7 @@ namespace nUpdate.Administration.Core.Update
 
             if (left.DevelopmentBuild < right.DevelopmentBuild)
                 return true;
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return true;
+            return !(left.DevelopmentBuild > right.DevelopmentBuild);
         }
 
         /// <summary>
@@ -390,11 +374,7 @@ namespace nUpdate.Administration.Core.Update
 
             if (left.DevelopmentBuild > right.DevelopmentBuild)
                 return true;
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return true;
+            return !(left.DevelopmentBuild < right.DevelopmentBuild);
         }
 
         /// <summary>

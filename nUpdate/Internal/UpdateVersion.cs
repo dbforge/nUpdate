@@ -18,14 +18,13 @@ namespace nUpdate.Internal
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateVersion" />-class.
         /// </summary>
-        /// <param name="literalVersion">The literal update version ("0.2.0.0", "0.1.0.0b1", ...).</param>
-        public UpdateVersion(string literalVersion)
+        /// <param name="version">The update version.</param>
+        public UpdateVersion(string version)
         {
-            var regex = new Regex(@"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+([a-b][0-9]+|)", RegexOptions.IgnoreCase);
-            if (!regex.IsMatch(literalVersion))
-                throw new ArgumentException("Version is not valid.");
+            if (!IsValid(version))
+                throw new ArgumentException("The specified version is not valid.");
 
-            string[] versionParts = literalVersion.Split(new[] { '.' });
+            string[] versionParts = version.Split(new[] {'.'});
 
             Major = int.Parse(versionParts[0]);
             Minor = int.Parse(versionParts[1]);
@@ -35,14 +34,14 @@ namespace nUpdate.Internal
             if (versionParts[3].Contains("a"))
             {
                 DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split(new[] { 'a' });
+                parts = versionParts[3].Split(new[] {'a'});
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
             else if (versionParts[3].Contains("b"))
             {
                 DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split(new[] { 'b' });
+                parts = versionParts[3].Split(new[] {'b'});
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
@@ -53,7 +52,7 @@ namespace nUpdate.Internal
             }
 
             if (Major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException("Major", "Index must be 0 or higher");
 
             if (Minor < 0)
                 throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
@@ -161,14 +160,14 @@ namespace nUpdate.Internal
         {
             get
             {
-                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", LiteralUpdateVersion, DevelopmentalStage, DevelopmentBuild) : LiteralUpdateVersion;
+                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild) : BasicVersion;
             }
         }
 
         /// <summary>
         ///     Returns the current version without the developmental stage and development build.
         /// </summary>
-        public string LiteralUpdateVersion
+        public string BasicVersion
         {
             get { return String.Format("{0}.{1}.{2}.{3}", Major, Minor, Build, Revision); }
         }
@@ -185,7 +184,7 @@ namespace nUpdate.Internal
                 return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision,
                     DevelopmentalStage.ToString().Substring(0, 1).ToLower(), DevelopmentBuild);
             }
-            return LiteralUpdateVersion;
+            return BasicVersion;
         }
 
         /// <summary>
@@ -215,7 +214,7 @@ namespace nUpdate.Internal
         /// </returns>
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
         }
 
         // Operators
@@ -255,13 +254,7 @@ namespace nUpdate.Internal
             if (left.DevelopmentalStage > right.DevelopmentalStage)
                 return false;
 
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return true;
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return false;
+            return left.DevelopmentBuild > right.DevelopmentBuild;
         }
 
         /// <summary>
@@ -299,13 +292,7 @@ namespace nUpdate.Internal
             if (left.DevelopmentalStage < right.DevelopmentalStage)
                 return false;
 
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return true;
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return false;
+            return left.DevelopmentBuild < right.DevelopmentBuild;
         }
 
         /// <summary>
@@ -345,11 +332,7 @@ namespace nUpdate.Internal
 
             if (left.DevelopmentBuild < right.DevelopmentBuild)
                 return true;
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return true;
+            return !(left.DevelopmentBuild > right.DevelopmentBuild);
         }
 
         /// <summary>
@@ -389,11 +372,7 @@ namespace nUpdate.Internal
 
             if (left.DevelopmentBuild > right.DevelopmentBuild)
                 return true;
-            if (left.DevelopmentBuild < right.DevelopmentBuild)
-                return false;
-
-            // Versions are exactly equal
-            return true;
+            return !(left.DevelopmentBuild < right.DevelopmentBuild);
         }
 
         /// <summary>
@@ -437,6 +416,26 @@ namespace nUpdate.Internal
             }
 
             return newestVersion;
+        }
+
+
+        /// <summary>
+        ///     Determines whether the specified update version is valid.
+        /// </summary>
+        /// <param name="updateVersion">The update version to check.</param>
+        public static bool IsValid(UpdateVersion updateVersion)
+        {
+            return IsValid(updateVersion.ToString());
+        }
+
+        /// <summary>
+        ///     Determines whether the specified version string is valid.
+        /// </summary>
+        /// <param name="versionString">The version string to check.</param>
+        public static bool IsValid(string versionString)
+        {
+            var regex = new Regex(@"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+([a-b][0-9]+|)", RegexOptions.IgnoreCase);
+            return regex.IsMatch(versionString);
         }
     }
 }
