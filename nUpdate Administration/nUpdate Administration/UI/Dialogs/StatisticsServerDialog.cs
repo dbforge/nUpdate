@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 02-08-2014 20:10
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 
@@ -17,9 +17,19 @@ namespace nUpdate.Administration.UI.Dialogs
     public partial class StatisticsServerDialog : BaseDialog
     {
         /// <summary>
-        ///     The SQL-settings for the selected entry.
+        ///     The url of the SQL-connection.
         /// </summary>
-        public Sql SqlSettings = new Sql();
+        public string SqlWebUrl { get; set; }
+
+        /// <summary>
+        ///     The name of the SQL-database to use.
+        /// </summary>
+        public string SqlDatabaseName { get; set; }
+
+        /// <summary>
+        ///     The username for the SQL-login.
+        /// </summary>
+        public string SqlUsername { get; set; }
 
         public StatisticsServerDialog()
         {
@@ -106,33 +116,33 @@ namespace nUpdate.Administration.UI.Dialogs
         private void addServerButton_Click(object sender, EventArgs e)
         {
             var statisticsServerAddDialog = new StatisticsServerAddDialog();
-            if (statisticsServerAddDialog.ShowDialog() == DialogResult.OK)
+            if (statisticsServerAddDialog.ShowDialog() != DialogResult.OK) 
+                return;
+
+            SqlDatabaseName = statisticsServerAddDialog.DatabaseName;
+            SqlWebUrl = statisticsServerAddDialog.WebUrl;
+            SqlUsername = statisticsServerAddDialog.Username;
+
+            try
             {
-                SqlSettings.DatabaseName = statisticsServerAddDialog.DatabaseName;
-                SqlSettings.WebUrl = statisticsServerAddDialog.WebUrl;
-                SqlSettings.Username = statisticsServerAddDialog.Username;
+                var builder = new StringBuilder(FileContent);
+                if (!String.IsNullOrEmpty(builder.ToString()))
+                    builder.Append(String.Format("\n{0},{1},{2}", SqlDatabaseName,
+                        SqlWebUrl, SqlUsername));
+                else
+                    builder.Append(String.Format("{0},{1},{2}", SqlDatabaseName,
+                        SqlWebUrl, SqlUsername));
 
-                try
-                {
-                    var builder = new StringBuilder(FileContent);
-                    if (!String.IsNullOrEmpty(builder.ToString()))
-                        builder.Append(String.Format("\n{0},{1},{2}", SqlSettings.DatabaseName,
-                            SqlSettings.WebUrl, SqlSettings.Username));
-                    else
-                        builder.Append(String.Format("{0},{1},{2}", SqlSettings.DatabaseName,
-                            SqlSettings.WebUrl, SqlSettings.Username));
-
-                    File.WriteAllText(Program.StatisticServersFilePath, builder.ToString());
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server.",
-                        ex, PopupButtons.Ok);
-                    return;
-                }
-
-                InitializeServers(); // Re-initialize the servers again
+                File.WriteAllText(Program.StatisticServersFilePath, builder.ToString());
             }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server.",
+                    ex, PopupButtons.Ok);
+                return;
+            }
+
+            InitializeServers(); // Re-initialize the servers again
         }
 
         private void deleteServerButton_Click(object sender, EventArgs e)
@@ -144,7 +154,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) ==
                     DialogResult.Yes)
                 {
-                    string[] servers = FileContent.Split(new[] {'\n'});
+                    string[] servers = FileContent.Split('\n');
                     List<string> serversList = servers.ToList();
                     serversList.RemoveAt(serverList.SelectedIndex); // Remove from list
 
@@ -175,19 +185,19 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            if (serverList.SelectedItem != null)
-            {
-                if (e.KeyCode == Keys.Enter && ReactsOnKeyDown)
-                {
-                    string[] selectedStatisticServer =
-                        FileContent.Split(new[] {'\n'})[serverList.SelectedIndex].Split(new[] {','});
-                    SqlSettings.DatabaseName = selectedStatisticServer[0];
-                    SqlSettings.WebUrl = selectedStatisticServer[1];
-                    SqlSettings.Username = selectedStatisticServer[2];
+            if (serverList.SelectedItem == null) 
+                return;
 
-                    DialogResult = DialogResult.OK;
-                }
-            }
+            if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown) 
+                return;
+
+            string[] selectedStatisticServer =
+                FileContent.Split('\n')[serverList.SelectedIndex].Split(',');
+            SqlDatabaseName = selectedStatisticServer[0];
+            SqlWebUrl = selectedStatisticServer[1];
+            SqlUsername = selectedStatisticServer[2];
+
+            DialogResult = DialogResult.OK;
         }
     }
 }

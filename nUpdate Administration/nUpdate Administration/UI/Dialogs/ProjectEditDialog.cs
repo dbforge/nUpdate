@@ -48,7 +48,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _sqlDataInitialized;
         private bool _sqlDataDeleted;
         private TabPage _sender;
-        private readonly Sql _sql = new Sql();
         private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
         private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
         private IEnumerable<UpdateVersion> _packageVersionsToAffect;
@@ -82,6 +81,21 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public SecureString ProxyPassword = new SecureString();
+
+        /// <summary>
+        ///     The url of the SQL-connection.
+        /// </summary>
+        public string SqlWebUrl { get; set; }
+
+        /// <summary>
+        ///     The name of the SQL-database to use.
+        /// </summary>
+        public string SqlDatabaseName { get; set; }
+
+        /// <summary>
+        ///     The username for the SQL-login.
+        /// </summary>
+        public string SqlUsername { get; set; }
 
         ///// <summary>
         /////     Sets the language
@@ -143,7 +157,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (Project.UseStatistics)
             {
                 useStatisticsServerRadioButton.Checked = true;
-                databaseNameLabel.Text = Project.SqlSettings.DatabaseName;
+                databaseNameLabel.Text = Project.SqlDatabaseName;
             }
 
             _sender = generalTabPage;
@@ -579,9 +593,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         File.WriteAllBytes(phpFilePath, Resources.statistics);
 
                         string phpFileContent = File.ReadAllText(phpFilePath);
-                        phpFileContent = phpFileContent.Replace("_DBURL", _sql.WebUrl);
-                        phpFileContent = phpFileContent.Replace("_DBUSER", _sql.Username);
-                        phpFileContent = phpFileContent.Replace("_DBNAME", _sql.DatabaseName);
+                        phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
+                        phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
+                        phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
                         phpFileContent = phpFileContent.Replace("_DBPASS", sqlPasswordTextBox.Text);
                         File.WriteAllText(phpFilePath, phpFileContent);
 
@@ -669,7 +683,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                     #endregion
 
-                    setupString = setupString.Replace("_DBNAME", _sql.DatabaseName);
+                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
                     setupString = setupString.Replace("_APPNAME", _name);
                     setupString = setupString.Replace("_APPID",
                         Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
@@ -688,8 +702,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             myConnectionString = String.Format("SERVER={0};" +
                                                                "DATABASE={1};" +
                                                                "UID={2};" +
-                                                               "PASSWORD={3};", _sql.WebUrl, _sql.DatabaseName,
-                                _sql.Username, sqlPasswordTextBox.Text);
+                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                                SqlUsername, sqlPasswordTextBox.Text);
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);

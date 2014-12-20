@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -125,7 +126,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             BeginInvoke(new Action(() =>
             {
-                foreach (Control c in from Control c in Controls where c.Visible select c)
+                foreach (var c in from Control c in Controls where c.Visible select c)
                 {
                     c.Enabled = enabled;
                 }
@@ -550,6 +551,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
             }
+
+            loadingPanel.Location = new Point(180, 91);
+            loadingPanel.BringToFront();
 
             if (IsReleased)
                 ThreadPool.QueueUserWorkItem(arg => InitializePackage());

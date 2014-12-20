@@ -20,12 +20,10 @@ using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.History;
-using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.Core.Update.Operations;
 using nUpdate.Administration.Core.Update.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
-using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
@@ -93,110 +91,110 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #region "Localization"
 
-        private string configDownloadErrorCaption;
-        private string creatingPackageDataErrorCaption;
-        private string ftpDataLoadErrorCaption;
-        private string gettingUrlErrorCaption;
-        private string initializingArchiveInfoText;
-        private string initializingConfigInfoText;
-        private string invalidArgumentCaption;
-        private string invalidArgumentText;
-        private string invalidServerDirectoryErrorCaption;
-        private string invalidServerDirectoryErrorText;
-        private string invalidVersionCaption;
-        private string invalidVersionText;
-        private string loadingProjectDataErrorCaption;
-        private string noChangelogCaption;
-        private string noChangelogText;
-        private string noFilesCaption;
-        private string noFilesText;
-        private string noNetworkCaption;
-        private string noNetworkText;
-        private string preparingUpdateInfoText;
-        private string readingPackageBytesErrorCaption;
-        private string relativeUriErrorText;
-        private string savingInformationErrorCaption;
-        private string serializingDataErrorCaption;
-        private string signingPackageInfoText;
-        private string unsupportedArchiveCaption;
-        private string unsupportedArchiveText;
-        private string uploadFailedErrorCaption;
-        private string uploadingConfigInfoText;
-        private string uploadingPackageInfoText;
+        //private string configDownloadErrorCaption;
+        //private string creatingPackageDataErrorCaption;
+        //private string ftpDataLoadErrorCaption;
+        //private string gettingUrlErrorCaption;
+        //private string initializingArchiveInfoText;
+        //private string initializingConfigInfoText;
+        //private string invalidArgumentCaption;
+        //private string invalidArgumentText;
+        //private string invalidServerDirectoryErrorCaption;
+        //private string invalidServerDirectoryErrorText;
+        //private string invalidVersionCaption;
+        //private string invalidVersionText;
+        //private string loadingProjectDataErrorCaption;
+        //private string noChangelogCaption;
+        //private string noChangelogText;
+        //private string noFilesCaption;
+        //private string noFilesText;
+        //private string noNetworkCaption;
+        //private string noNetworkText;
+        //private string preparingUpdateInfoText;
+        //private string readingPackageBytesErrorCaption;
+        //private string relativeUriErrorText;
+        //private string savingInformationErrorCaption;
+        //private string serializingDataErrorCaption;
+        //private string signingPackageInfoText;
+        //private string unsupportedArchiveCaption;
+        //private string unsupportedArchiveText;
+        //private string uploadFailedErrorCaption;
+        //private string uploadingConfigInfoText;
+        //private string uploadingPackageInfoText;
 
-        private void SetLanguage()
-        {
-            string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-                String.Format("{0}.json", Settings.Default.Language.Name));
-            var ls = new LocalizationProperties();
-            if (File.Exists(languageFilePath))
-                ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-            else
-            {
-                string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    ls = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
+        //private void SetLanguage()
+        //{
+        //    //string languageFilePath = Path.Combine(Program.LanguagesDirectory,
+        //    //    String.Format("{0}.json", Settings.Default.Language.Name));
+        //    //var ls = new LocalizationProperties();
+        //    //if (File.Exists(languageFilePath))
+        //    //    ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+        //    //else
+        //    //{
+        //    //    string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
+        //    //    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        //    //    {
+        //    //        ls = Serializer.Deserialize<LocalizationProperties>(stream);
+        //    //    }
+        //    //}
 
-            noNetworkCaption = ls.PackageAddDialogNoInternetWarningCaption;
-            noNetworkText = ls.PackageAddDialogNoInternetWarningText;
-            noFilesCaption = ls.PackageAddDialogNoFilesSpecifiedWarningCaption;
-            noFilesText = ls.PackageAddDialogNoFilesSpecifiedWarningText;
-            unsupportedArchiveCaption = ls.PackageAddDialogUnsupportedArchiveWarningCaption;
-            unsupportedArchiveText = ls.PackageAddDialogUnsupportedArchiveWarningText;
-            invalidVersionCaption = ls.PackageAddDialogVersionInvalidWarningCaption;
-            invalidVersionText = ls.PackageAddDialogVersionInvalidWarningText;
-            noChangelogCaption = ls.PackageAddDialogNoChangelogWarningCaption;
-            noChangelogText = ls.PackageAddDialogNoChangelogWarningText;
-            invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
-            invalidArgumentText = ls.InvalidArgumentErrorText;
-            creatingPackageDataErrorCaption = ls.PackageAddDialogPackageDataCreationErrorCaption;
-            loadingProjectDataErrorCaption = ls.PackageAddDialogProjectDataLoadingErrorCaption;
-            gettingUrlErrorCaption = ls.PackageAddDialogGettingUrlErrorCaption;
-            readingPackageBytesErrorCaption = ls.PackageAddDialogReadingPackageBytesErrorCaption;
-            invalidServerDirectoryErrorCaption = ls.PackageAddDialogInvalidServerDirectoryErrorCaption;
-            invalidServerDirectoryErrorText = ls.PackageAddDialogInvalidServerDirectoryErrorText;
-            ftpDataLoadErrorCaption = ls.PackageAddDialogLoadingFtpDataErrorCaption;
-            configDownloadErrorCaption = ls.PackageAddDialogConfigurationDownloadErrorCaption;
-            serializingDataErrorCaption = ls.PackageAddDialogSerializingDataErrorCaption;
-            relativeUriErrorText = ls.PackageAddDialogRelativeUriErrorText;
-            savingInformationErrorCaption = ls.PackageAddDialogPackageInformationSavingErrorCaption;
-            uploadFailedErrorCaption = ls.PackageAddDialogUploadFailedErrorCaption;
+        //    //noNetworkCaption = ls.PackageAddDialogNoInternetWarningCaption;
+        //    //noNetworkText = ls.PackageAddDialogNoInternetWarningText;
+        //    //noFilesCaption = ls.PackageAddDialogNoFilesSpecifiedWarningCaption;
+        //    //noFilesText = ls.PackageAddDialogNoFilesSpecifiedWarningText;
+        //    //unsupportedArchiveCaption = ls.PackageAddDialogUnsupportedArchiveWarningCaption;
+        //    //unsupportedArchiveText = ls.PackageAddDialogUnsupportedArchiveWarningText;
+        //    //invalidVersionCaption = ls.PackageAddDialogVersionInvalidWarningCaption;
+        //    //invalidVersionText = ls.PackageAddDialogVersionInvalidWarningText;
+        //    //noChangelogCaption = ls.PackageAddDialogNoChangelogWarningCaption;
+        //    //noChangelogText = ls.PackageAddDialogNoChangelogWarningText;
+        //    //invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
+        //    //invalidArgumentText = ls.InvalidArgumentErrorText;
+        //    //creatingPackageDataErrorCaption = ls.PackageAddDialogPackageDataCreationErrorCaption;
+        //    //loadingProjectDataErrorCaption = ls.PackageAddDialogProjectDataLoadingErrorCaption;
+        //    //gettingUrlErrorCaption = ls.PackageAddDialogGettingUrlErrorCaption;
+        //    //readingPackageBytesErrorCaption = ls.PackageAddDialogReadingPackageBytesErrorCaption;
+        //    //invalidServerDirectoryErrorCaption = ls.PackageAddDialogInvalidServerDirectoryErrorCaption;
+        //    //invalidServerDirectoryErrorText = ls.PackageAddDialogInvalidServerDirectoryErrorText;
+        //    //ftpDataLoadErrorCaption = ls.PackageAddDialogLoadingFtpDataErrorCaption;
+        //    //configDownloadErrorCaption = ls.PackageAddDialogConfigurationDownloadErrorCaption;
+        //    //serializingDataErrorCaption = ls.PackageAddDialogSerializingDataErrorCaption;
+        //    //relativeUriErrorText = ls.PackageAddDialogRelativeUriErrorText;
+        //    //savingInformationErrorCaption = ls.PackageAddDialogPackageInformationSavingErrorCaption;
+        //    //uploadFailedErrorCaption = ls.PackageAddDialogUploadFailedErrorCaption;
 
-            initializingArchiveInfoText = ls.PackageAddDialogArchiveInitializerInfoText;
-            preparingUpdateInfoText = ls.PackageAddDialogPrepareInfoText;
-            signingPackageInfoText = ls.PackageAddDialogSigningInfoText;
-            initializingConfigInfoText = ls.PackageAddDialogConfigInitializerInfoText;
-            uploadingPackageInfoText = ls.PackageAddDialogUploadingPackageInfoText;
-            uploadingConfigInfoText = ls.PackageAddDialogUploadingConfigInfoText;
+        //    //initializingArchiveInfoText = ls.PackageAddDialogArchiveInitializerInfoText;
+        //    //preparingUpdateInfoText = ls.PackageAddDialogPrepareInfoText;
+        //    //signingPackageInfoText = ls.PackageAddDialogSigningInfoText;
+        //    //initializingConfigInfoText = ls.PackageAddDialogConfigInitializerInfoText;
+        //    //uploadingPackageInfoText = ls.PackageAddDialogUploadingPackageInfoText;
+        //    //uploadingConfigInfoText = ls.PackageAddDialogUploadingConfigInfoText;
 
-            Text = String.Format(ls.PackageAddDialogTitle, Project.Name, ls.ProductTitle);
-            cancelButton.Text = ls.CancelButtonText;
-            createButton.Text = ls.CreatePackageButtonText;
+        //    //Text = String.Format(ls.PackageAddDialogTitle, Project.Name, ls.ProductTitle);
+        //    //cancelButton.Text = ls.CancelButtonText;
+        //    //createButton.Text = ls.CreatePackageButtonText;
 
-            devStageLabel.Text = ls.PackageAddDialogDevelopmentalStageLabelText;
-            versionLabel.Text = ls.PackageAddDialogVersionLabelText;
-            descriptionLabel.Text = ls.PackageAddDialogDescriptionLabelText;
-            publishCheckBox.Text = ls.PackageAddDialogPublishCheckBoxText;
-            publishInfoLabel.Text = ls.PackageAddDialogPublishInfoLabelText;
-            environmentLabel.Text = ls.PackageAddDialogEnvironmentLabelText;
-            architectureInfoLabel.Text = ls.PackageAddDialogEnvironmentInfoLabelText;
+        //    //devStageLabel.Text = ls.PackageAddDialogDevelopmentalStageLabelText;
+        //    //versionLabel.Text = ls.PackageAddDialogVersionLabelText;
+        //    //descriptionLabel.Text = ls.PackageAddDialogDescriptionLabelText;
+        //    //publishCheckBox.Text = ls.PackageAddDialogPublishCheckBoxText;
+        //    //publishInfoLabel.Text = ls.PackageAddDialogPublishInfoLabelText;
+        //    //environmentLabel.Text = ls.PackageAddDialogEnvironmentLabelText;
+        //    //architectureInfoLabel.Text = ls.PackageAddDialogEnvironmentInfoLabelText;
 
-            changelogLoadButton.Text = ls.PackageAddDialogLoadButtonText;
-            changelogClearButton.Text = ls.PackageAddDialogClearButtonText;
+        //    //changelogLoadButton.Text = ls.PackageAddDialogLoadButtonText;
+        //    //changelogClearButton.Text = ls.PackageAddDialogClearButtonText;
 
-            addFilesButton.Text = ls.PackageAddDialogAddFileButtonText;
-            removeEntryButton.Text = ls.PackageAddDialogRemoveFileButtonText;
-            filesList.Columns[0].Text = ls.PackageAddDialogNameHeaderText;
-            filesList.Columns[1].Text = ls.PackageAddDialogSizeHeaderText;
+        //    //addFilesButton.Text = ls.PackageAddDialogAddFileButtonText;
+        //    //removeEntryButton.Text = ls.PackageAddDialogRemoveFileButtonText;
+        //    //filesList.Columns[0].Text = ls.PackageAddDialogNameHeaderText;
+        //    //filesList.Columns[1].Text = ls.PackageAddDialogSizeHeaderText;
 
-            allVersionsRadioButton.Text = ls.PackageAddDialogAvailableForAllRadioButtonText;
-            someVersionsRadioButton.Text = ls.PackageAddDialogAvailableForSomeRadioButtonText;
-            allVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForAllInfoText;
-            someVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForSomeInfoText;
-        }
+        //    //allVersionsRadioButton.Text = ls.PackageAddDialogAvailableForAllRadioButtonText;
+        //    //someVersionsRadioButton.Text = ls.PackageAddDialogAvailableForSomeRadioButtonText;
+        //    //allVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForAllInfoText;
+        //    //someVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForSomeInfoText;
+        //}
 
         #endregion
 
@@ -248,7 +246,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            SetLanguage();
+            //SetLanguage();
 
             categoryTreeView.Nodes[3].Nodes.Add(_replaceNode);
             categoryTreeView.Nodes[3].Toggle();
@@ -340,7 +338,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                    _ftp.DeleteDirectory(_packageVersion.ToString());
+                    _ftp.DeleteDirectory(String.Format("{0}/{1}",_ftp.Directory, _packageVersion));
                 }
                 catch (Exception ex)
                 {
@@ -402,7 +400,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_packageVersion.BasicVersion == "0.0.0.0")
             {
-                Popup.ShowPopup(this, SystemIcons.Error, invalidVersionCaption, "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.", "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
                 generalPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                 return;
@@ -412,7 +410,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (ExistingVersions.Any(item => item == _packageVersion))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, invalidVersionCaption,
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                         String.Format(
                             "Version \"{0}\" is already existing.",
                             _packageVersion.FullText), PopupButtons.Ok);
@@ -424,7 +422,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, noChangelogCaption, noChangelogText, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.", "Please specify a changelog for the package.", PopupButtons.Ok);
                 changelogPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
                 return;
@@ -432,7 +430,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (!filesDataTreeView.Nodes.Cast<TreeNode>().Any(node => node.Nodes.Count > 0))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, noFilesCaption, noFilesText, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "No files and/or folders set.", "Please specify some files and/or folders that should be included into the package.", PopupButtons.Ok);
                 filesPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[3].Nodes[0];
                 return;
@@ -512,7 +510,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _updateConfigFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
                 "updates.json");
 
-            Invoke(new Action(() => loadingLabel.Text = initializingArchiveInfoText));
+            Invoke(new Action(() => loadingLabel.Text = "Initializing archive..."));
 
             // Save the package first
             // ----------------------
@@ -549,7 +547,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _zip.Save(Path.Combine(_packageFolder, packageFile));
 
             _updateLog.Write(LogEntry.Create, _packageVersion.ToString());
-            Invoke(new Action(() => loadingLabel.Text = preparingUpdateInfoText));
+            Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
 
             // Initialize the package itself
             // -----------------------------
@@ -588,7 +586,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }));
 
-            Invoke(new Action(() => loadingLabel.Text = signingPackageInfoText));
+            Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
 
             try
             {
@@ -624,7 +622,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.VersionId = Project.VersionId + 1;
 
             /* -------- Configuration initializing ------------*/
-            Invoke(new Action(() => loadingLabel.Text = initializingConfigInfoText));
+            Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
 
             var configurationList = new List<UpdateConfiguration>();
 
@@ -685,8 +683,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                                                 "DATABASE={1};" +
                                                                 "UID={2};" +
                                                                 "PASSWORD={3};",
-                            Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
-                            Project.SqlSettings.Username,
+                            Project.SqlWebUrl, Project.SqlDatabaseName,
+                            Project.SqlUsername,
                             SqlPassword.ConvertToUnsecureString());
 
                         _insertConnection = new MySqlConnection(connectionString);
@@ -740,7 +738,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 /* -------------- Package upload -----------------*/
                 Invoke(new Action(() =>
                 {
-                    loadingLabel.Text = String.Format(uploadingPackageInfoText, "0%");
+                    loadingLabel.Text = String.Format("Uploading package... {0}", "0%");
                     cancelLabel.Visible = true;
                 }));
 
@@ -789,7 +787,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Invoke(new Action(() =>
                 {
-                    loadingLabel.Text = uploadingConfigInfoText;
+                    loadingLabel.Text = "Uploading configuration...";
                     cancelLabel.Visible = false;
                 }));
 
@@ -809,7 +807,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        _ftp.DeleteDirectory(_packageVersion.ToString());
+                        _ftp.DeleteDirectory(String.Format("{0}/{1}",_ftp.Directory, _packageVersion));
                         _updateLog.Write(LogEntry.Delete, _packageVersion.ToString());
                     }
                     catch (Exception deletingEx)
@@ -856,8 +854,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            String.Format(uploadingPackageInfoText,
-                                String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
+                            String.Format("Uploading package... {0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024)));
             if (_uploadCancelled)
             {
                 Invoke(new Action(() =>

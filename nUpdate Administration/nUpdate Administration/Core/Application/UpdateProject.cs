@@ -130,9 +130,19 @@ namespace nUpdate.Administration.Core.Application
         public bool UseStatistics { get; set; }
 
         /// <summary>
-        ///     Sets the settings for the SQL-server.
+        ///     The url of the SQL-connection.
         /// </summary>
-        public Sql SqlSettings { get; set; }
+        public string SqlWebUrl { get; set; }
+
+        /// <summary>
+        ///     The name of the SQL-database to use.
+        /// </summary>
+        public string SqlDatabaseName { get; set; }
+
+        /// <summary>
+        ///     The username for the SQL-login.
+        /// </summary>
+        public string SqlUsername { get; set; }
 
         /// <summary>
         ///     Sets the password for the SQL-server. (Base64-encoded)

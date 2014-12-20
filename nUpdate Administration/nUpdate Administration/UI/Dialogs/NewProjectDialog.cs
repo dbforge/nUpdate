@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
+
 using System;
 using System.Drawing;
 using System.Globalization;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -29,10 +29,10 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _generalTabPassed;
 
         private LocalizationProperties _lp = new LocalizationProperties();
+        private bool _phpFileCreated;
         private bool _phpFileUploaded;
         private bool _projectDataAlreadyInitialized;
         private TabPage _sender;
-        private Sql _sql = new Sql();
 
         public NewProjectDialog()
         {
@@ -50,45 +50,60 @@ namespace nUpdate.Administration.UI.Dialogs
         public string PublicKey { get; set; }
 
         /// <summary>
-        ///     Sets the language
+        ///     The url of the SQL-connection.
         /// </summary>
-        public void SetLanguage()
-        {
-            string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-                String.Format("{0}.json", Settings.Default.Language.Name));
-            if (File.Exists(languageFilePath))
-                _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-            else
-            {
-                string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
+        public string SqlWebUrl { get; set; }
 
-            Text = _lp.NewProjectDialogTitle;
-            Text = String.Format(Text, _lp.ProductTitle);
+        /// <summary>
+        ///     The name of the SQL-database to use.
+        /// </summary>
+        public string SqlDatabaseName { get; set; }
 
-            cancelButton.Text = _lp.CancelButtonText;
-            continueButton.Text = _lp.ContinueButtonText;
+        /// <summary>
+        ///     The username for the SQL-login.
+        /// </summary>
+        public string SqlUsername { get; set; }
 
-            keyPairHeaderLabel.Text = _lp.PanelSignatureHeader;
-            keyPairInfoLabel.Text = _lp.PanelSignatureInfoText;
-            keyPairGenerationLabel.Text = _lp.PanelSignatureWaitText;
+        ///// <summary>
+        /////     Sets the language
+        ///// </summary>
+        //public void SetLanguage()
+        //{
+        //    string languageFilePath = Path.Combine(Program.LanguagesDirectory,
+        //        String.Format("{0}.json", Settings.Default.Language.Name));
+        //    if (File.Exists(languageFilePath))
+        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+        //    else
+        //    {
+        //        string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
+        //        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        //        {
+        //            _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+        //        }
+        //    }
 
-            generalHeaderLabel.Text = _lp.PanelGeneralHeader;
-            nameLabel.Text = _lp.PanelGeneralNameText;
-            nameTextBox.Cue = _lp.PanelGeneralNameWatermarkText;
+        //    Text = _lp.NewProjectDialogTitle;
+        //    Text = String.Format(Text, _lp.ProductTitle);
 
-            ftpHeaderLabel.Text = _lp.PanelFtpHeader;
-            ftpHostLabel.Text = _lp.PanelFtpServerText;
-            ftpUserLabel.Text = _lp.PanelFtpUserText;
-            ftpUserTextBox.Cue = _lp.PanelFtpUserWatermarkText;
-            ftpPasswordLabel.Text = _lp.PanelFtpPasswordText;
-            ftpPortLabel.Text = _lp.PanelFtpPortText;
-            ftpPortTextBox.Cue = _lp.PanelFtpPortWatermarkText;
-        }
+        //    cancelButton.Text = _lp.CancelButtonText;
+        //    continueButton.Text = _lp.ContinueButtonText;
+
+        //    keyPairHeaderLabel.Text = _lp.PanelSignatureHeader;
+        //    keyPairInfoLabel.Text = _lp.PanelSignatureInfoText;
+        //    keyPairGenerationLabel.Text = _lp.PanelSignatureWaitText;
+
+        //    generalHeaderLabel.Text = _lp.PanelGeneralHeader;
+        //    nameLabel.Text = _lp.PanelGeneralNameText;
+        //    nameTextBox.Cue = _lp.PanelGeneralNameWatermarkText;
+
+        //    ftpHeaderLabel.Text = _lp.PanelFtpHeader;
+        //    ftpHostLabel.Text = _lp.PanelFtpServerText;
+        //    ftpUserLabel.Text = _lp.PanelFtpUserText;
+        //    ftpUserTextBox.Cue = _lp.PanelFtpUserWatermarkText;
+        //    ftpPasswordLabel.Text = _lp.PanelFtpPasswordText;
+        //    ftpPortLabel.Text = _lp.PanelFtpPortText;
+        //    ftpPortTextBox.Cue = _lp.PanelFtpPortWatermarkText;
+        //}
 
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
@@ -255,14 +270,14 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Directory = ftpDirectoryTextBox.Text;
 
                 var ftpPassword = new SecureString();
-                foreach (Char c in ftpPasswordTextBox.Text)
+                foreach (var c in ftpPasswordTextBox.Text)
                 {
                     ftpPassword.AppendChar(c);
                 }
                 _ftp.Password = ftpPassword;
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
-                _ftp.Protocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex;
+                _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enabled it again
                     backButton.Enabled = true;
@@ -289,7 +304,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidatePanel(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) && !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!ValidationManager.ValidatePanel(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -311,7 +327,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         Close();
                     }
 
-                    bool usePassive = ftpModeComboBox.SelectedIndex == 0;
+                    var usePassive = ftpModeComboBox.SelectedIndex == 0;
 
                     WebProxy proxy = null;
                     string proxyUsername = null;
@@ -324,7 +340,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             proxyUsername = proxyUserTextBox.Text;
                             proxyPassword =
-                                Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text, ftpPasswordTextBox.Text,
+                                Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                                    ftpPasswordTextBox.Text,
                                     ftpUserTextBox.Text));
                         }
                     }
@@ -334,8 +351,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         sqlPassword =
                             Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, ftpPasswordTextBox.Text,
-                                    ftpUserTextBox.Text));
-                        _sql.Password = sqlPassword;
+                                ftpUserTextBox.Text));
                     }
 
                     Settings.Default.ApplicationID += 1;
@@ -358,7 +374,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         FtpUsername = ftpUserTextBox.Text,
                         FtpPassword =
                             Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, ftpPasswordTextBox.Text,
-                                    ftpUserTextBox.Text)),
+                                ftpUserTextBox.Text)),
                         FtpDirectory = ftpDirectoryTextBox.Text,
                         FtpProtocol = ftpProtocolComboBox.SelectedIndex,
                         FtpUsePassiveMode = usePassive,
@@ -366,7 +382,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         ProxyUsername = proxyUsername,
                         ProxyPassword = proxyPassword,
                         UseStatistics = useStatisticsServerRadioButton.Checked,
-                        SqlSettings = _sql,
+                        SqlDatabaseName = SqlDatabaseName,
+                        SqlWebUrl = SqlWebUrl,
+                        SqlUsername = SqlUsername,
                         SqlPassword = sqlPassword,
                         PrivateKey = PrivateKey,
                         PublicKey = PublicKey,
@@ -376,6 +394,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         ApplicationInstance.SaveProject(localPathTextBox.Text, project); // ... and save it
+                        _projectDataAlreadyInitialized = true;
                     }
                     catch (IOException ex)
                     {
@@ -387,8 +406,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         var projectEntries =
-                        Program.ExisitingProjects.Select(
-                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
+                            Program.ExisitingProjects.Select(
+                                projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
 
                         File.WriteAllText(Program.ProjectsConfigFilePath, String.Join("\n", projectEntries));
                     }
@@ -398,21 +417,22 @@ namespace nUpdate.Administration.UI.Dialogs
                             PopupButtons.Ok);
                         Close();
                     }
+                }
 
+                if (!_phpFileCreated && useStatisticsServerRadioButton.Checked)
+                {
                     string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
                     try
                     {
-                        if (useStatisticsServerRadioButton.Checked)
-                        {
-                            File.WriteAllBytes(phpFilePath, Resources.statistics);
+                        File.WriteAllBytes(phpFilePath, Resources.statistics);
 
-                            string phpFileContent = File.ReadAllText(phpFilePath);
-                            phpFileContent = phpFileContent.Replace("_DBURL", _sql.WebUrl);
-                            phpFileContent = phpFileContent.Replace("_DBUSER", _sql.Username);
-                            phpFileContent = phpFileContent.Replace("_DBNAME", _sql.DatabaseName);
-                            phpFileContent = phpFileContent.Replace("_DBPASS", sqlPasswordTextBox.Text);
-                            File.WriteAllText(phpFilePath, phpFileContent);
-                        }
+                        string phpFileContent = File.ReadAllText(phpFilePath);
+                        phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
+                        phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
+                        phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
+                        phpFileContent = phpFileContent.Replace("_DBPASS", sqlPasswordTextBox.Text);
+                        File.WriteAllText(phpFilePath, phpFileContent);
+                        _phpFileCreated = true;
                     }
                     catch (Exception ex)
                     {
@@ -422,9 +442,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
-                _projectDataAlreadyInitialized = true; // The data is now created.
+               
                 _generalTabPassed = true;
-
                 ThreadPool.QueueUserWorkItem(arg => InitializeProject());
             }
         }
@@ -445,77 +464,74 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 _ftp.TestConnection();
             }
+            catch (FtpAuthenticationException ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
+                                ex.InnerException ?? ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("Certificate validation failed") && ex.Message.Contains("does not match the name"))
-                {
-                    var popupResult = DialogResult.None;
-                    Invoke(
-                        new Action(
-                            () =>
-                                popupResult =
-                                    Popup.ShowPopup(this, SystemIcons.Warning, "Error while testing the FTP-data.", "The certificate's name for the secured connection to the FTP-server does not match the host's name and couldn't be validated. Are you sure that you want to continue?", PopupButtons.YesNo)));
-                    
-                    if (popupResult == DialogResult.No)
-                    {
-                        SetUiState(true);
-                        return;
-                    }
-                }
-                else
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
-                                    ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    return;
-                }
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
+                                ex.InnerException ?? ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
             }
 
             /*
              *  Setup the "statistics.php".
              */
 
+            bool useStatistics = false;
+            BeginInvoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
+
             string name = null;
-            if (!_phpFileUploaded)
+            if (useStatistics)
             {
-                try
+                if (!_phpFileUploaded)
                 {
-                    Invoke(
-                        new Action(
-                            () =>
-                                name = nameTextBox.Text));
+                    try
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    name = nameTextBox.Text));
 
-                    string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
-                    _ftp.UploadFile(phpFilePath);
-                    _phpFileUploaded = true;
+                        string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
+                        _ftp.UploadFile(phpFilePath);
+                        _phpFileUploaded = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
+                                        ex, PopupButtons.Ok)));
+                        SetUiState(true);
+                        return;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
-                                    ex, PopupButtons.Ok)));
-                    SetUiState(true);
-                    return;
-                }
-            }
 
-            /*
+                /*
              *  Setup the SQL-server and database.
              */
 
-            Invoke(
-                new Action(
-                    () =>
-                        name = nameTextBox.Text));
+                Invoke(
+                    new Action(
+                        () =>
+                            name = nameTextBox.Text));
 
-            #region "Setup-String"
+                #region "Setup-String"
 
-            string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+                string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
@@ -552,75 +568,77 @@ ENGINE = InnoDB;
 
 INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
-            #endregion
+                #endregion
 
-            setupString = setupString.Replace("_DBNAME", _sql.DatabaseName);
-            setupString = setupString.Replace("_APPNAME", name);
-            setupString = setupString.Replace("_APPID", Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
+                setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                setupString = setupString.Replace("_APPNAME", name);
+                setupString = setupString.Replace("_APPID",
+                    Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
 
-            Invoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text = "Connecting to SQL-server..."));
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Connecting to SQL-server..."));
 
-            MySqlConnection myConnection;
-            try
-            {
-                string myConnectionString = null;
-                Invoke(new Action(() =>
+                MySqlConnection myConnection;
+                try
                 {
-                    myConnectionString = String.Format("SERVER={0};" +
-                                                       "DATABASE={1};" +
-                                                       "UID={2};" +
-                                                       "PASSWORD={3};", _sql.WebUrl, _sql.DatabaseName,
-                        _sql.Username, sqlPasswordTextBox.Text);
-                }));
+                    string myConnectionString = null;
+                    Invoke(new Action(() =>
+                    {
+                        myConnectionString = String.Format("SERVER={0};" +
+                                                           "DATABASE={1};" +
+                                                           "UID={2};" +
+                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                            SqlUsername, sqlPasswordTextBox.Text);
+                    }));
 
-                myConnection = new MySqlConnection(myConnectionString);
-                myConnection.Open();
-            }
-            catch (MySqlException ex)
-            {
+                    myConnection = new MySqlConnection(myConnectionString);
+                    myConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                    ex, PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+
                 Invoke(
                     new Action(
                         () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                ex, PopupButtons.Ok)));
-                SetUiState(true);
-                return;
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                ex, PopupButtons.Ok)));
-                SetUiState(true);
-                return;
-            }
+                            loadingLabel.Text = "Executing setup commands..."));
 
-            Invoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text = "Executing setup commands..."));
+                MySqlCommand command = myConnection.CreateCommand();
+                command.CommandText = setupString;
 
-            MySqlCommand command = myConnection.CreateCommand();
-            command.CommandText = setupString;
-
-            try
-            {
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                ex, PopupButtons.Ok)));
-                SetUiState(true);
-                return;
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
             }
 
             SetUiState(true);
@@ -718,24 +736,24 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             {
                 fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
                 fileDialog.Multiselect = false;
-                if (fileDialog.ShowDialog() == DialogResult.OK)
+                if (fileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
                 {
-                    try
-                    {
-                        UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
-                        ftpHostTextBox.Text = importProject.FtpHost;
-                        ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
-                        ftpUserTextBox.Text = importProject.FtpUsername;
-                        ftpProtocolComboBox.SelectedIndex = importProject.FtpProtocol;
-                        ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
-                        ftpDirectoryTextBox.Text = importProject.FtpDirectory;
-                        ftpPasswordTextBox.Focus();
-                    }
-                    catch (Exception ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex,
-                            PopupButtons.Ok);
-                    }
+                    UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                    ftpHostTextBox.Text = importProject.FtpHost;
+                    ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
+                    ftpUserTextBox.Text = importProject.FtpUsername;
+                    ftpProtocolComboBox.SelectedIndex = importProject.FtpProtocol;
+                    ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
+                    ftpDirectoryTextBox.Text = importProject.FtpDirectory;
+                    ftpPasswordTextBox.Focus();
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex,
+                        PopupButtons.Ok);
                 }
             }
         }
@@ -745,8 +763,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = true};
             if (statisticsServerDialog.ShowDialog() != DialogResult.OK) return;
 
-            _sql = statisticsServerDialog.SqlSettings;
-            string sqlNameString = _sql.DatabaseName;
+            SqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
+            SqlWebUrl = statisticsServerDialog.SqlWebUrl;
+            SqlUsername = statisticsServerDialog.SqlUsername;
+            string sqlNameString = SqlDatabaseName;
             databaseNameLabel.Text = sqlNameString;
         }
 

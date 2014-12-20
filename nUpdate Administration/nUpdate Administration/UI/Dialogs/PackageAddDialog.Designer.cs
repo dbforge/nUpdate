@@ -392,7 +392,6 @@
             // 
             // developmentBuildNumericUpDown
             // 
-            this.developmentBuildNumericUpDown.DecimalPlaces = 1;
             this.developmentBuildNumericUpDown.Enabled = false;
             this.developmentBuildNumericUpDown.Location = new System.Drawing.Point(363, 8);
             this.developmentBuildNumericUpDown.Minimum = new decimal(new int[] {

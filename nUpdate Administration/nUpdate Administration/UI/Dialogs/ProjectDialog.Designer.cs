@@ -867,7 +867,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel.Controls.Add(this.loadingLabel);
             this.loadingPanel.Location = new System.Drawing.Point(207, 417);
             this.loadingPanel.Name = "loadingPanel";
-            this.loadingPanel.Size = new System.Drawing.Size(260, 51);
+            this.loadingPanel.Size = new System.Drawing.Size(269, 51);
             this.loadingPanel.TabIndex = 66;
             this.loadingPanel.Visible = false;
             // 
