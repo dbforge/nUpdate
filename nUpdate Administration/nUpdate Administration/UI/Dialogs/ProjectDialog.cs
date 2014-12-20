@@ -31,8 +31,8 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private const float KB = 1024;
-        private const float MB = 1048577;
+        private const float Kb = 1024;
+        private const float Mb = 1048577;
         private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
         private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
@@ -194,8 +194,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                                             "DATABASE={1};" +
                                                             "UID={2};" +
                                                             "PASSWORD={3};",
-                        Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
-                        Project.SqlSettings.Username,
+                        Project.SqlWebUrl, Project.SqlDatabaseName,
+                        Project.SqlUsername,
                         SqlPassword.ConvertToUnsecureString());
 
                     _queryConnection = new MySqlConnection(connectionString);
@@ -264,14 +264,15 @@ namespace nUpdate.Administration.UI.Dialogs
             else
             {
                 FtpPassword.Dispose();
+                ProxyPassword.Dispose();                
                 SqlPassword.Dispose();
-                ProxyPassword.Dispose();
             }
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter) return;
+            if (e.KeyCode != Keys.Enter)
+                return;
             ListViewItem matchingItem = packagesList.FindItemWithText(searchTextBox.Text, true, 0);
 
             if (matchingItem != null)
@@ -298,7 +299,8 @@ namespace nUpdate.Administration.UI.Dialogs
             packageAddDialog.ExistingVersions = existingUpdateVersions;
             packageAddDialog.Project = Project;
 
-            if (packageAddDialog.ShowDialog() != DialogResult.OK) return;
+            if (packageAddDialog.ShowDialog() != DialogResult.OK) 
+                return;
 
             packagesList.Items.Clear();
             InitializePackageItems();
@@ -661,12 +663,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     if (sizeInBytes > 104857.6)
                     {
-                        size = (float) Math.Round(sizeInBytes/MB, 1);
+                        size = (float) Math.Round(sizeInBytes/Mb, 1);
                         sizeText = String.Format("{0} MB", size);
                     }
                     else
                     {
-                        size = (float) Math.Round(sizeInBytes/KB, 1);
+                        size = (float) Math.Round(sizeInBytes/Kb, 1);
                         sizeText = String.Format("{0} KB", size);
                     }
 
@@ -767,8 +769,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                                     "DATABASE={1};" +
                                                     "UID={2};" +
                                                     "PASSWORD={3};",
-                Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
-                Project.SqlSettings.Username,
+                Project.SqlWebUrl, Project.SqlDatabaseName,
+                Project.SqlUsername,
                 SqlPassword.ConvertToUnsecureString());
 
             var deleteConnection = new MySqlConnection(connectionString);
@@ -821,9 +823,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
-            editButton.Enabled = false;
-            deleteButton.Enabled = false;
-            uploadButton.Enabled = false;
             var version = (UpdateVersion) packagesList.SelectedItems[0].Tag;
             ThreadPool.QueueUserWorkItem(delegate { UploadPackage(version); }, null);
         }
@@ -846,8 +845,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                                             "DATABASE={1};" +
                                                             "UID={2};" +
                                                             "PASSWORD={3};",
-                        Project.SqlSettings.WebUrl, Project.SqlSettings.DatabaseName,
-                        Project.SqlSettings.Username,
+                        Project.SqlWebUrl, Project.SqlDatabaseName,
+                        Project.SqlUsername,
                         SqlPassword.ConvertToUnsecureString());
 
                     _insertConnection = new MySqlConnection(connectionString);
@@ -1026,7 +1025,7 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
-                _ftp.DeleteDirectory(packageVersion.ToString());
+                _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
             }
             catch (Exception deletingEx)
             {
@@ -1054,7 +1053,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
 
                     Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                    _ftp.DeleteDirectory(packageVersion.ToString());
+                    _ftp.DeleteDirectory(String.Format("{0}/{1}",_ftp.Directory, packageVersion));
                 }
                 catch (Exception ex)
                 {
@@ -1250,9 +1249,6 @@ namespace nUpdate.Administration.UI.Dialogs
             if (answer != DialogResult.Yes) 
                 return;
 
-            editButton.Enabled = false;
-            deleteButton.Enabled = false;
-            uploadButton.Enabled = false;
             ThreadPool.QueueUserWorkItem(delegate { DeletePackage(); }, null);
         }
 
@@ -1303,7 +1299,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        _ftp.DeleteDirectory(selectedItem.Tag.ToString());
+                        _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, selectedItem.Tag));
                     }
                     catch (Exception ex)
                     {

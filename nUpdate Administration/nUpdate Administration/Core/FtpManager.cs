@@ -156,10 +156,11 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Deletes a directory on the server.
+        ///     Deletes a file on the server which is located at the specified path.
         /// </summary>
-        /// <param name="directoryName">The name of the directory to delete.</param>
-        public void DeleteDirectory(string directoryName)
+        /// <param name="directoryPath">The path of the directory where the file is located.</param>
+        /// <param name="fileName">The name of the file to delete.</param>
+        public void DeleteFile(string directoryPath, string fileName)
         {
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
@@ -169,21 +170,41 @@ namespace nUpdate.Administration.Core
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
-                ftp.ChangeDirectoryMultiPath(Directory);
-                var items = ListDirectoriesAndFiles(String.Format("/{0}/{1}", Directory, directoryName), true);
+                ftp.ChangeDirectoryMultiPath(directoryPath);
+                ftp.DeleteFile(fileName);
+                ftp.Close();
+            }
+        }
+
+        /// <summary>
+        ///     Deletes a directory on the server.
+        /// </summary>
+        /// <param name="directoryPath">The name of the directory to delete.</param>
+        public void DeleteDirectory(string directoryPath)
+        {
+            if (!_hasAlreadyFixedStrings)
+                FixProperties();
+
+            using (var ftp = new FtpClient(Host, Port, Protocol))
+            {
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(directoryPath);
+                var items = ListDirectoriesAndFiles(directoryPath, true);
                 foreach (var item in items)
                 {
                     switch (item.ItemType)
                     {
                         case FtpItemType.Directory:
-                            DeleteDirectory(String.Format("/{0}/{1}/{2}", Directory, directoryName, item.Name));
+                            DeleteDirectory(String.Format("/{0}/{1}/", directoryPath, item.Name));
                             break;
                         case FtpItemType.File:
-                            DeleteFile(item.Name);
+                            DeleteFile(directoryPath, item.Name);
                             break;
                     }
                 }
-                ftp.DeleteDirectory(directoryName);
+                ftp.DeleteDirectory(directoryPath);
                 ftp.Close();
             }
         }
@@ -259,7 +280,7 @@ namespace nUpdate.Administration.Core
                         ftp.MakeDirectory(item.Name);
                         ftp.ChangeDirectoryMultiPath(item.Name);
                         InternalMoveContent(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
-                        DeleteDirectory(item.Name);
+                        DeleteDirectory(item.FullPath);
                     }
                     else if (item.ItemType == FtpItemType.File && (item.Name == "updates.json" || Guid.TryParse(item.Name.Split(new [] {'.'})[0], out guid))) // Second condition determines whether the item is a package-file or not
                     {

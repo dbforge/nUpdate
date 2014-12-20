@@ -138,11 +138,6 @@ namespace nUpdate.Internal
         private byte[] Signature { get; set; }
 
         /// <summary>
-        ///     Gets the operations of the update package.
-        /// </summary>
-        private Operation[] Operations { get; set; }
-
-        /// <summary>
         ///     Checks if all arguments have been given.
         /// </summary>
         private void CheckArguments()
@@ -342,7 +337,6 @@ namespace nUpdate.Internal
 
                 if (_updateConfiguration.Operations != null)
                 {
-                    Operations = _updateConfiguration.Operations.ToArray();
                     foreach (Operation operation in _updateConfiguration.Operations)
                     {
                         OperationAreas.Add(operation.Area);
@@ -424,7 +418,14 @@ namespace nUpdate.Internal
                 _updateFilePath);
             _downloadResetEvent.WaitOne();
 
-            if (_hasDownloadCancelled || _hasDownloadFailed || !_updateConfiguration.UseStatistics)
+            if (_hasDownloadCancelled)
+            {
+                if (MustUpdate)
+                    Application.Exit();
+                return;
+            }
+
+            if (_hasDownloadFailed || !_updateConfiguration.UseStatistics)
                 return;
 
             try

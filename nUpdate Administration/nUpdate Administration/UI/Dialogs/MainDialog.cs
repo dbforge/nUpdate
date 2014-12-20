@@ -144,61 +144,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public UpdateProject OpenProject(string projectPath)
         {
-            var project = ApplicationInstance.LoadProject(projectPath);
+            UpdateProject project;
             try
             {
-                var credentialsDialog = new CredentialsDialog();
-                if (credentialsDialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        if (_ftpPassword != null)
-                            _ftpPassword = new SecureString();
-
-                        if (_sqlPassword != null)
-                            _sqlPassword = new SecureString();
-
-                        if (_proxyPassword != null)
-                            _proxyPassword = new SecureString();
-
-                        _ftpPassword =
-                            AesManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
-                                credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-
-                        if (project.Proxy != null)
-                            _proxyPassword =
-                                AesManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
-                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-
-                        if (project.UseStatistics)
-                            _sqlPassword =
-                                AesManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
-                                    credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
-                    }
-                    catch (CryptographicException)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
-                            "The entered credentials are invalid.", PopupButtons.Ok);
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "The decryption progress has failed.",
-                            ex, PopupButtons.Ok);
-                        return null;
-                    }
-                }
-                else
-                {
-                    return null;
-                }
-
-                if (project.FtpUsername != credentialsDialog.Username)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
-                        "The entered credentials are invalid.", PopupButtons.Ok);
-                    return null;
-                }
+                project = ApplicationInstance.LoadProject(projectPath);
             }
             catch (Exception ex)
             {
@@ -207,7 +156,58 @@ namespace nUpdate.Administration.UI.Dialogs
                 return null;
             }
 
-            return project;
+            var credentialsDialog = new CredentialsDialog();
+            if (credentialsDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (_ftpPassword != null)
+                        _ftpPassword = new SecureString();
+
+                    if (_sqlPassword != null)
+                        _sqlPassword = new SecureString();
+
+                    if (_proxyPassword != null)
+                        _proxyPassword = new SecureString();
+
+                    _ftpPassword =
+                        AesManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
+                            credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+
+                    if (project.Proxy != null)
+                        _proxyPassword =
+                            AesManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
+                                credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+
+                    if (project.UseStatistics)
+                        _sqlPassword =
+                            AesManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
+                                credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
+                }
+                catch (CryptographicException)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
+                        "The entered credentials are invalid.", PopupButtons.Ok);
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "The decryption progress has failed.",
+                        ex, PopupButtons.Ok);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+            if (project.FtpUsername == credentialsDialog.Username) 
+                return project;
+
+            Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
+                "The entered credentials are invalid.", PopupButtons.Ok);
+            return null;
         }
 
         private void sectionsListView_Click(object sender, EventArgs e)

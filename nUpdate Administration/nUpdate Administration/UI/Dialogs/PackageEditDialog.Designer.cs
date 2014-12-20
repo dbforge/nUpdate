@@ -231,7 +231,7 @@
             this.loadingPanel.Controls.Add(this.cancelLabel);
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(198, 312);
+            this.loadingPanel.Location = new System.Drawing.Point(186, 301);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(260, 51);
             this.loadingPanel.TabIndex = 45;
@@ -1046,10 +1046,10 @@
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(632, 305);
-            this.Controls.Add(this.loadingPanel);
             this.Controls.Add(this.categoryTreeView);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.categoryTabControl);
+            this.Controls.Add(this.loadingPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
