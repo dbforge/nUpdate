@@ -12,7 +12,7 @@ using nUpdate.Administration.Core.Update.Operations;
 namespace nUpdate.Administration.Core.Update
 {
     [Serializable]
-    public class UpdateConfiguration
+    public class UpdateConfiguration : IDeepCopy<UpdateConfiguration>
     {
         /// <summary>
         ///     The literal version of the package.
@@ -101,6 +101,15 @@ namespace nUpdate.Administration.Core.Update
         public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
             return Serializer.Deserialize<List<UpdateConfiguration>>(File.ReadAllText(filePath));
+        }
+
+        /// <summary>
+        ///     Performs a deep copy of the current <see cref="UpdateConfiguration"/>-instance.
+        /// </summary>
+        /// <returns>Returns a copy of the given <see cref="UpdateConfiguration"/>-instance.</returns>
+        public UpdateConfiguration DeepCopy()
+        {
+            return (UpdateConfiguration) MemberwiseClone();
         }
     }
 }

@@ -1060,7 +1060,6 @@
             this.Text = "Edit update package - {0} - nUpdate Administration 0.1.0.0 Alpha 1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackageEditDialog_FormClosing);
             this.Load += new System.EventHandler(this.PackageEditDialog_Load);
-            this.Shown += new System.EventHandler(this.PackageEditDialog_Shown);
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
