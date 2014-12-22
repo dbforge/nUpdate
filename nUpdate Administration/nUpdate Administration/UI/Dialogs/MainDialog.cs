@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient.Properties;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;

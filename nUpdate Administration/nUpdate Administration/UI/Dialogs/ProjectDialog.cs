@@ -759,12 +759,11 @@ namespace nUpdate.Administration.UI.Dialogs
         #region "Upload"
 
         /// <summary>
-        /// Undoes the MySQL-insertion.
+        ///     Undoes the MySQL-insertion.
         /// </summary>
         private void UndoSqlInsertion(UpdateVersion packageVersion)
         {
             Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
-
             string connectionString = String.Format("SERVER={0};" +
                                                     "DATABASE={1};" +
                                                     "UID={2};" +
