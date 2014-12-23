@@ -17,6 +17,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (disposing && (components != null))
             {
+                _ftp.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);

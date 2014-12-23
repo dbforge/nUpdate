@@ -441,7 +441,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         Close();
                     }
                 }
-
                
                 _generalTabPassed = true;
                 ThreadPool.QueueUserWorkItem(arg => InitializeProject());
@@ -452,6 +451,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Provides a new thread that sets up the project data.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
         private void InitializeProject()
         {
             SetUiState(false);
@@ -486,7 +486,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             /*
-             *  Setup the "statistics.php".
+             *  Setup the "statistics.php" if necessary.
              */
 
             bool useStatistics = false;

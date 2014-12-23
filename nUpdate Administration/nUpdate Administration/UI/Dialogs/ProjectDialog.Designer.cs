@@ -17,6 +17,11 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (disposing && (components != null))
             {
+                _ftp.Dispose();
+                _loadConfigurationResetEvent.Dispose();
+                FtpPassword.Dispose();
+                ProxyPassword.Dispose();
+                SqlPassword.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);

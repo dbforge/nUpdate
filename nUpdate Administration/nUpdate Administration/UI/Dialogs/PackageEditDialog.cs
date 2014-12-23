@@ -457,7 +457,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _packageConfiguration.Operations.Clear();
             foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
-                where node.Index != 0
                 select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
             {
                 _packageConfiguration.Operations.Add(operationPanel.Operation);

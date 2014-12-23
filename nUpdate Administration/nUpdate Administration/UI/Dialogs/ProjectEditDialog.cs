@@ -345,6 +345,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Provides a new thread that sets up the project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
         private void InitializeData()
         {
             SetUiState(false);

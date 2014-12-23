@@ -15,6 +15,9 @@
         {
             if (disposing && (components != null))
             {
+                _argumentsStyle.Dispose();
+                _keyWordStyle.Dispose();
+                _commentStyle.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);

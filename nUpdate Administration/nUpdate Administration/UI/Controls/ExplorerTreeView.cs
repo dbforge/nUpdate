@@ -1,11 +1,7 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.UI.Controls
 {
@@ -24,32 +20,13 @@ namespace nUpdate.Administration.UI.Controls
 
         private long _mTicks;
         private TreeNode _selectedNode;
-        private TVITEM _tempTvItem;
+        private TvItem _tempTvItem;
 
         public ExplorerTreeView()
         {
             SetStyle(ControlStyles.Opaque, true);
             BorderStyle = BorderStyle.None;
         }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam,
-            ref TVITEM item);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, bool wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
-
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT paintStruct);
-
-        [DllImport("user32.dll")]
-        private static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT paintStruct);
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -66,7 +43,7 @@ namespace nUpdate.Administration.UI.Controls
         {
             _tempTvItem.hItem = node.Handle;
             _tempTvItem.state = selected ? 2 : 0;
-            SendMessage(Handle, 0x113f, new IntPtr(0), ref _tempTvItem);
+            NativeMethods.SendMessage(Handle, 0x113f, new IntPtr(0), ref _tempTvItem);
         }
 
         public void SetInsertionMark(TreeNode node, InsertType insertPostion)
@@ -83,7 +60,7 @@ namespace nUpdate.Administration.UI.Controls
                 PseudoSelectNode(node, true);
                 _selectedNode = node;
             }
-            SendMessage(Handle, 0x111a, insertPostion == InsertType.AfterNode,
+            NativeMethods.SendMessage(Handle, 0x111a, insertPostion == InsertType.AfterNode,
                 ((node == null) || (insertPostion == InsertType.InsideNode)) ? IntPtr.Zero : node.Handle);
         }
 
@@ -93,8 +70,8 @@ namespace nUpdate.Administration.UI.Controls
             {
                 case 15:
                 {
-                    var paintStruct = new PAINTSTRUCT();
-                    IntPtr targetDc = BeginPaint(message.HWnd, ref paintStruct);
+                    var paintStruct = new PaintStruct();
+                    IntPtr targetDc = NativeMethods.BeginPaint(message.HWnd, ref paintStruct);
                     var rectangle = new Rectangle(paintStruct.rcPaint_left, paintStruct.rcPaint_top,
                         paintStruct.rcPaint_right - paintStruct.rcPaint_left,
                         paintStruct.rcPaint_bottom - paintStruct.rcPaint_top);
@@ -111,7 +88,7 @@ namespace nUpdate.Administration.UI.Controls
                             graphics.Render();
                         }
                     }
-                    EndPaint(message.HWnd, ref paintStruct);
+                    NativeMethods.EndPaint(message.HWnd, ref paintStruct);
                     message.Result = IntPtr.Zero;
                     return;
                 }
@@ -134,9 +111,9 @@ namespace nUpdate.Administration.UI.Controls
             {
                 ShowLines = false;
                 HotTracking = true;
-                int lParam = SendMessage(base.Handle, 0x112d, 0, 0) | 0x40;
-                SendMessage(Handle, 0x112c, 0, lParam);
-                SetWindowTheme(Handle, "explorer", null);
+                IntPtr lParam = NativeMethods.SendMessage(Handle, 0x112d, new IntPtr(0), new IntPtr(0));
+                NativeMethods.SendMessage(Handle, 0x112c, new IntPtr(0), lParam);
+                NativeMethods.SetWindowTheme(Handle, "explorer", null);
             }
             else
                 HotTracking = false;
@@ -182,49 +159,5 @@ namespace nUpdate.Administration.UI.Controls
                 _mTicks = DateTime.Now.Ticks;
             }
         }
-
-        #region Nested type: PAINTSTRUCT
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct PAINTSTRUCT
-        {
-            public readonly IntPtr hdc;
-            public readonly bool fErase;
-            public readonly int rcPaint_left;
-            public readonly int rcPaint_top;
-            public readonly int rcPaint_right;
-            public readonly int rcPaint_bottom;
-            public readonly bool fRestore;
-            public readonly bool fIncUpdate;
-            public readonly int reserved1;
-            public readonly int reserved2;
-            public readonly int reserved3;
-            public readonly int reserved4;
-            public readonly int reserved5;
-            public readonly int reserved6;
-            public readonly int reserved7;
-            public readonly int reserved8;
-        }
-
-        #endregion
-
-        #region Nested type: TVITEM
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct TVITEM
-        {
-            public int mask;
-            public IntPtr hItem;
-            public int state;
-            public int stateMask;
-            public readonly IntPtr pszText;
-            public readonly IntPtr cchTextMax;
-            public readonly int iImage;
-            public readonly int iSelectedImage;
-            public readonly int cChildren;
-            public readonly int lParam;
-        }
-
-        #endregion
     }
 }

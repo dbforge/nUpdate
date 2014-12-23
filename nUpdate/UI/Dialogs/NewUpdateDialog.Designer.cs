@@ -82,7 +82,7 @@
             this.newestVersionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newestVersionLabel.Location = new System.Drawing.Point(9, 82);
             this.newestVersionLabel.Name = "newestVersionLabel";
-            this.newestVersionLabel.Size = new System.Drawing.Size(108, 13);
+            this.newestVersionLabel.Size = new System.Drawing.Size(107, 13);
             this.newestVersionLabel.TabIndex = 12;
             this.newestVersionLabel.Text = "Newest Version: {0}";
             // 

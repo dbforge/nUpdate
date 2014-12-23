@@ -150,14 +150,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 Project.UpdateUrl += "/";
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
 
-            checkingUrlPictureBox.Location =
-                new Point(
-                    checkUpdateConfigurationLinkLabel.Location.X + checkUpdateConfigurationLinkLabel.Size.Width + 2,
-                    checkingUrlPictureBox.Location.Y);
-            tickPictureBox.Location =
-                new Point(
-                    checkUpdateConfigurationLinkLabel.Location.X + checkUpdateConfigurationLinkLabel.Size.Width + 2,
-                    tickPictureBox.Location.Y);
             packagesList.DoubleBuffer();
             tabControl1.DoubleBuffer();
 
@@ -261,12 +253,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!_allowCancel)
                 e.Cancel = true;
-            else
-            {
-                FtpPassword.Dispose();
-                ProxyPassword.Dispose();                
-                SqlPassword.Dispose();
-            }
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)

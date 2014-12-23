@@ -1,3 +1,4 @@
+using nUpdate.Administration.Core.Win32;
 // Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
@@ -48,7 +49,7 @@ namespace nUpdate.Administration.UI.Controls
             set
             {
                 shield = value;
-                SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, shield);
+                NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, shield);
             }
         }
 
@@ -61,31 +62,19 @@ namespace nUpdate.Administration.UI.Controls
             set { SetNoteText(value); }
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, ref int wParam, StringBuilder lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, string lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, bool lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SendMessage(HandleRef hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        
 
         private void SetNoteText(string value)
         {
-            SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
+            NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
         }
 
         private string GetNoteText()
         {
-            int length = SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero) + 1;
+            int length = NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32() + 1;
 
             var sb = new StringBuilder(length);
-
-            SendMessage(new HandleRef(this, Handle), BCM_GETNOTE, ref length, sb);
-
+            NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTE, ref length, sb);
             return sb.ToString();
         }
     }

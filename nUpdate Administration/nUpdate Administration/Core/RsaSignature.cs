@@ -8,6 +8,7 @@
  *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Parameter validation added; more IntelliSense.
  *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Critical security update
  *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed language of comments
+ *  Modified: Dominic B. (Trade) - 23.12.2014 - Implemented IDisposable
  */
 
 using System;
@@ -18,13 +19,14 @@ namespace nUpdate.Administration.Core
     /// <summary>
     ///     Class to sign data with the RSA-class.
     /// </summary>
-    public class RsaSignature
+    public class RsaSignature : IDisposable
     {
         /// <summary>
         ///     The default key size in bits.
         /// </summary>
-        public const int DEFAULT_KEY_SIZE = 8192;
+        public const int DefaultKeySize = 8192;
 
+        private bool _disposed;
         private readonly RSACryptoServiceProvider _rsa;
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public RsaSignature()
         {
-            _rsa = new RSACryptoServiceProvider(DEFAULT_KEY_SIZE); // Create a new key pair with the default key size.
+            _rsa = new RSACryptoServiceProvider(DefaultKeySize); // Create a new key pair with the default key size.
             _rsa.ToXmlString(true); // A dummy to create the key.
             _rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
         }
@@ -89,6 +91,21 @@ namespace nUpdate.Administration.Core
         {
             return _rsa.VerifyData(data, typeof (SHA512), signature);
             // Checks if the signature for the given signature is correct.
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _rsa.Dispose();
+            _disposed = true;
         }
     }
 }
