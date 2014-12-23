@@ -27,6 +27,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using nUpdate.Administration.Core.Win32;
 using System;
 using System.Runtime.InteropServices;
 
@@ -35,25 +36,11 @@ namespace nUpdate.Administration.Core.Application.Extension
     public class ShellNotification
     {
         /// <summary>
-        ///     Notifies the system of an event that an application has performed. An application should use this function if it
-        ///     performs an action that may affect the Shell.
-        /// </summary>
-        /// <param name="wEventId">
-        ///     Describes the event that has occurred. The ShellChangeNotificationEvents enum contains a list of
-        ///     options.
-        /// </param>
-        /// <param name="uFlags">Flags that indicate the meaning of the dwItem1 and dwItem2 parameters.</param>
-        /// <param name="dwItem1">First event-dependent value.</param>
-        /// <param name="dwItem2">Second event-dependent value.</param>
-        [DllImport("shell32.dll")]
-        private static extern void SHChangeNotify(UInt32 wEventId, UInt32 uFlags, IntPtr dwItem1, IntPtr dwItem2);
-
-        /// <summary>
         ///     Notify shell of change of file associations.
         /// </summary>
         public static void NotifyOfChange()
         {
-            SHChangeNotify((uint) ShellChangeNotificationEvents.SHCNE_ASSOCCHANGED,
+            NativeMethods.SHChangeNotify((uint) ShellChangeNotificationEvents.SHCNE_ASSOCCHANGED,
                 (uint) (ShellChangeNotificationFlags.SHCNF_IDLIST | ShellChangeNotificationFlags.SHCNF_FLUSHNOWAIT),
                 IntPtr.Zero, IntPtr.Zero);
         }

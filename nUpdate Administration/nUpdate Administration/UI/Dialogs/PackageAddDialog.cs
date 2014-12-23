@@ -300,12 +300,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!_allowCancel)
                 e.Cancel = true;
-            else
-            {
-                FtpPassword.Dispose();
-                SqlPassword.Dispose();
-                ProxyPassword.Dispose();
-            }
         }
 
         /// <summary>
@@ -596,7 +590,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         FileMode.Open)))
                 {
                     data = reader.ReadBytes((int) reader.BaseStream.Length);
-                    reader.Close();
                 }
                 _configuration.Signature = Convert.ToBase64String(new RsaSignature(Project.PrivateKey).SignData(data));
             }
@@ -716,7 +709,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     MySqlCommand command = _insertConnection.CreateCommand();
                     command.CommandText =
                         String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                            _packageVersion, Project.ApplicationId);
+                            _packageVersion, Project.ApplicationId); // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
 
                     try
                     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.Dialogs;
+using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.UI.Popups;
 
 namespace nUpdate.UI.Dialogs
@@ -66,16 +66,16 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
-        public void SearchFailedEventHandler(Exception ex)
+        public void SearchFailedEventHandler(object sender, FailedEventArgs e)
         {
             Invoke(new Action(() =>
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", ex, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", e.Exception, PopupButtons.Ok);
                 DialogResult = DialogResult.Cancel;
             }));
         }
 
-        public void SearchFinishedEventHandler(bool updateFound)
+        public void SearchFinishedEventHandler(object sender, UpdateSearchFinishedEventArgs e)
         {
             DialogResult = DialogResult.OK;
         }
