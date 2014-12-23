@@ -4,14 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
-using nUpdate.Administration.UI.Popups;
 using nUpdate.Internal;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -31,7 +28,7 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void OptionsForm_Load(object sender, EventArgs e)
+        private void PreferencesDialog_Load(object sender, EventArgs e)
         {
             _cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
             foreach (CultureInfo info in _cultureInfos)
@@ -49,7 +46,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void searchUpdatesButton_Click(object sender, EventArgs e)
         {
             //this.manager.LanguageCulture = nUpdate.Core.Language.Language.Spanish;
-            var updaterUi = new UpdaterUI(_manager);
+            var updaterUi = new UpdaterUi(_manager);
             updaterUi.ShowUserInterface();
         }
 
@@ -89,7 +86,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             Settings.Default.Language =
                 new CultureInfo(
-                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split(new[] {'-'})[1].Trim());
+                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim());
             Settings.Default.IncludeAlpha = includeAlphaCheckBox.Checked;
             Settings.Default.IncludeBeta = includeBetaCheckBox.Checked;
             Settings.Default.Save();
@@ -101,12 +98,11 @@ namespace nUpdate.Administration.UI.Dialogs
             var lp = new LocalizationProperties();
             string name =
                 new CultureInfo(
-                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split(new[] {'-'})[1].Trim()).Name;
+                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim()).Name;
 
             var jsonEditorDialog = new JsonEditorDialog();
             jsonEditorDialog.LanguageContent = Serializer.Serialize(lp);
             jsonEditorDialog.CultureName = name;
             jsonEditorDialog.ShowDialog(this);
-        }
-    }
+        }    }
 }

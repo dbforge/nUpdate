@@ -13,8 +13,9 @@ using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.Core
 {
-    public class FtpManager
+    public class FtpManager : IDisposable
     {
+        private bool _disposed;
         private bool _hasAlreadyFixedStrings;
         private FtpClient _packageFtpClient;
         private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
@@ -98,12 +99,6 @@ namespace nUpdate.Administration.Core
                 handler(this, e);
         }
 
-        ~FtpManager()
-        {
-            if (_packageFtpClient != null)
-                _packageFtpClient.Dispose();
-        }
-
         /// <summary>
         ///     Edits the properties if they are not automatically suitable for the server address.
         /// </summary>
@@ -131,7 +126,6 @@ namespace nUpdate.Administration.Core
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
-                ftp.Close();
             }
         }
 
@@ -151,7 +145,6 @@ namespace nUpdate.Administration.Core
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.DeleteFile(fileName);
-                ftp.Close();
             }
         }
 
@@ -172,7 +165,6 @@ namespace nUpdate.Administration.Core
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
                 ftp.DeleteFile(fileName);
-                ftp.Close();
             }
         }
 
@@ -205,7 +197,6 @@ namespace nUpdate.Administration.Core
                     }
                 }
                 ftp.DeleteDirectory(directoryPath);
-                ftp.Close();
             }
         }
 
@@ -219,9 +210,7 @@ namespace nUpdate.Administration.Core
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
-                var items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
-                ftp.Close();
-                return items;
+                return recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
             }
         }
 
@@ -238,7 +227,6 @@ namespace nUpdate.Administration.Core
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.Rename(oldName, newName);
-                ftp.Close();
             }
         }
 
@@ -258,7 +246,6 @@ namespace nUpdate.Administration.Core
 
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 InternalMoveContent(Directory, aimPath);
-                ftp.Close();
             }
         }
 
@@ -294,7 +281,6 @@ namespace nUpdate.Administration.Core
                         ftp.DeleteFile(item.FullPath);
                     }
                 }
-                ftp.Close();
             }
         }
 
@@ -315,7 +301,6 @@ namespace nUpdate.Administration.Core
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.PutFile(filePath, FileAction.Create);
-                ftp.Close();
             }
         }
 
@@ -371,6 +356,22 @@ namespace nUpdate.Administration.Core
         private void TransferProgressChangedEventHandler(object sender, TransferProgressEventArgs e)
         {
             OnProgressChanged(e);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed) 
+                return;
+
+            _packageFtpClient.Dispose();
+            _uploadPackageResetEvent.Dispose();
+            _disposed = true;
         }
     }
 }

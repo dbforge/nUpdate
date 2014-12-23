@@ -4,8 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
@@ -17,6 +15,9 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class NewUpdateDialog : BaseForm
     {
+        private const int Mb = 1048576;
+        private const int Kb = 1024;
+
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private bool _allowCancel;
         private LocalizationProperties _lp; 
@@ -66,15 +67,12 @@ namespace nUpdate.UI.Dialogs
         /// </summary>
         public List<OperationArea> OperationAreas { get; set; }
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
-
         internal static void AddShieldToButton(Button btn)
         {
             const Int32 bcmSetshield = 0x160C;
 
             btn.FlatStyle = FlatStyle.System;
-            SendMessage(btn.Handle, bcmSetshield, 0, 1);
+            NativeMethods.SendMessage(btn.Handle, bcmSetshield, new IntPtr(0), new IntPtr(1));
         }
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
@@ -113,20 +111,15 @@ namespace nUpdate.UI.Dialogs
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            const int mb = 1048576;
-            const int kb = 1024;
-
-            if (PackageSize == -1)
-                updateSizeLabel.Text = String.Format(updateSizeLabel.Text, "N/A");
-            else if (PackageSize >= 104857.6)
+            if (PackageSize >= 104857.6)
             {
-                double packageSizeInMb = Math.Round((PackageSize/mb), 1);
+                double packageSizeInMb = Math.Round((PackageSize/Mb), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "MB");
             }
             else
             {
-                double packageSizeInKb = Math.Round((PackageSize/kb), 1);
+                double packageSizeInKb = Math.Round((PackageSize/Kb), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb), "KB");
             }
@@ -141,8 +134,8 @@ namespace nUpdate.UI.Dialogs
 
             if (MustUpdate)
                 cancelButton.Enabled = false;
-
-            var accessStrings = new List<string>();
+            else
+                _allowCancel = true;
 
             if (OperationAreas == null || OperationAreas.Count == 0)
             {
@@ -150,27 +143,7 @@ namespace nUpdate.UI.Dialogs
                 return;
             }
 
-            if (OperationAreas.Any(item => item == OperationArea.Files))
-            {
-                accessStrings.Add(_lp.NewUpdateDialogDemandsFilesAccessText);
-            }
-
-            if (OperationAreas.Any(item => item == OperationArea.Registry))
-            {
-                accessStrings.Add(_lp.NewUpdateDialogDemandsRegistryAccessText);
-            }
-
-            if (OperationAreas.Any(item => item == OperationArea.Processes))
-            {
-                accessStrings.Add(_lp.NewUpdateDialogDemandsProcessesAccessText);
-            }
-
-            if (OperationAreas.Any(item => item == OperationArea.Files))
-            {
-                accessStrings.Add(_lp.NewUpdateDialogDemandsServicesAccessText);
-            }
-            
-            accessLabel.Text += String.Format("{0} {1}", " ", String.Join(", ", accessStrings));
+            accessLabel.Text += String.Format(" {0}", String.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().ToArray())));
         }
 
         private void installButton_Click(object sender, EventArgs e)
@@ -182,7 +155,7 @@ namespace nUpdate.UI.Dialogs
 
         private void NewUpdateDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MustUpdate && !_allowCancel)
+            if (!_allowCancel)
                 e.Cancel = true;
         }
     }

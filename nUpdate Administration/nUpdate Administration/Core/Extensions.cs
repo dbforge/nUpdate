@@ -1,16 +1,10 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.Core
 {
@@ -35,34 +29,14 @@ namespace nUpdate.Administration.Core
         private const int TVIS_STATEIMAGEMASK = 0xF000;
         private const int TV_FIRST = 0x1100;
         private const int TVM_SETITEM = TV_FIRST + 63;
-
-        [StructLayout(LayoutKind.Sequential, Pack = 8, CharSet = CharSet.Auto)]
-        private struct Tvitem
-        {
-            public int mask;
-            public IntPtr hItem;
-            public int state;
-            public int stateMask;
-            [MarshalAs(UnmanagedType.LPTStr)] 
-            private readonly string lpszText;
-            private readonly int cchTextMax;
-            private readonly int iImage;
-            private readonly int iSelectedImage;
-            private readonly int cChildren;
-            private readonly IntPtr lParam;
-        }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam,
-                                                 ref Tvitem lParam);
-
+ 
         /// <summary>
-        /// Hides the checkbox for the specified node on a TreeView control.
+        ///     Hides the checkbox for the specified node on a TreeView control.
         /// </summary>
         public static void HideCheckBox(this TreeNode node)
         {
-            var tvi = new Tvitem {hItem = node.Handle, mask = TVIF_STATE, stateMask = TVIS_STATEIMAGEMASK, state = 0};
-            SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
+            var tvi = new TvItem {hItem = node.Handle, mask = TVIF_STATE, stateMask = TVIS_STATEIMAGEMASK, state = 0};
+            NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
 
 

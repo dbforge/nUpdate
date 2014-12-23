@@ -15,6 +15,7 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -72,16 +73,12 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public bool UsePassiveMode { get; set; }
 
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        public static extern bool DwmIsCompositionEnabled();
-
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
+        
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            if (!DwmIsCompositionEnabled()) return;
+            if (!NativeMethods.DwmIsCompositionEnabled()) return;
 
             _margins.Top = 38;
             e.Graphics.Clear(Color.Black);
@@ -100,10 +97,10 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             Text = String.Format("Set directory - {0} - nUpdate Administration 0.1.0.0", ProjectName);
 
-            if (!DwmIsCompositionEnabled()) return;
+            if (!NativeMethods.DwmIsCompositionEnabled()) return;
 
             _margins = new Margins {Top = 40};
-            DwmExtendFrameIntoClientArea(Handle, ref _margins);
+            NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
 
             ftp = new FtpManager { Host = Host, Port = Port, Username = Username, Password = Password };
         }
@@ -120,19 +117,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Cancel = true;
         }
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd,
-            int msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-
         private void DirectorySearchDialog_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
 
-            ReleaseCapture();
-            SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            NativeMethods.ReleaseCapture();
+            NativeMethods.SendMessage(Handle, WM_NCLBUTTONDOWN, new IntPtr(HT_CAPTION), new IntPtr(0));
         }
 
         private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)

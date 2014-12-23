@@ -15,6 +15,7 @@
         {
             if (disposing && (components != null))
             {
+                _manager.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -166,7 +167,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "PreferencesDialog";
-            this.Load += new System.EventHandler(this.OptionsForm_Load);
+            this.Load += new System.EventHandler(this.PreferencesDialog_Load);
             this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
