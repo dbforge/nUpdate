@@ -50,7 +50,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             {
                 var fai = new FileAssociationInfo(s);
 
-                if (!fai.Exists || fai.ProgID != progId)
+                if (!fai.Exists || fai.ProgId != progId)
                     notAssociated.Add(s);
             }
 
@@ -77,7 +77,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 if (!fai.Exists)
                     fai.Create(progId);
 
-                fai.ProgID = progId;
+                fai.ProgId = progId;
             }
 
             var pai = new ProgramAssociationInfo(progId);
@@ -102,7 +102,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 if (!fai.Exists)
                     fai.Create(progId);
 
-                fai.ProgID = progId;
+                fai.ProgId = progId;
             }
         }
     }

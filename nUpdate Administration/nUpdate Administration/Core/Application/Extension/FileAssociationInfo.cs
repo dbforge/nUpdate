@@ -156,7 +156,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 fai.Delete();
 
             fai.Create();
-            fai.ProgID = progId;
+            fai.ProgId = progId;
 
             if (perceivedType != PerceivedTypes.None)
                 fai.PerceivedType = perceivedType;
@@ -343,7 +343,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         /// <param name="file"><see cref="FileAssociationInfo" /> that provides specifics of the extension to be changed.</param>
         /// <returns>Associated Program ID of handling program.</returns>
-        protected string GetProgID(FileAssociationInfo file)
+        protected string GetProgId(FileAssociationInfo file)
         {
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
@@ -361,7 +361,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         /// <param name="file"><see cref="FileAssociationInfo" /> that provides specifics of the extension to be changed.</param>
         /// <param name="progId">Associated Program ID of handling program.</param>
-        protected void SetProgID(FileAssociationInfo file, string progId)
+        protected void SetProgId(FileAssociationInfo file, string progId)
         {
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
@@ -451,10 +451,10 @@ namespace nUpdate.Administration.Core.Application.Extension
         ///     extension.
         /// </summary>
         [XmlAttribute]
-        public string ProgID
+        public string ProgId
         {
-            get { return GetProgID(this); }
-            set { SetProgID(this, value); }
+            get { return GetProgId(this); }
+            set { SetProgId(this, value); }
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!fai.Exists)
                 return false;
 
-            if (progId != fai.ProgID)
+            if (progId != fai.ProgId)
                 return false;
 
             return true;

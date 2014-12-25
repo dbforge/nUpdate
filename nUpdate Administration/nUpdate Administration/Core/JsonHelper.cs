@@ -8,7 +8,7 @@ namespace nUpdate.Administration.Core
 {
     public class JsonHelper
     {
-        private const string INDENT_STRING = "    ";
+        private const string IndentString = "    ";
 
         public static string FormatJson(string str)
         {
@@ -26,7 +26,7 @@ namespace nUpdate.Administration.Core
                         if (!quoted)
                         {
                             sb.AppendLine();
-                            Enumerable.Range(0, ++indent).ForEach(item => sb.Append(INDENT_STRING));
+                            Enumerable.Range(0, ++indent).ForEach(item => sb.Append(IndentString));
                         }
                         break;
                     case '}':
@@ -34,7 +34,7 @@ namespace nUpdate.Administration.Core
                         if (!quoted)
                         {
                             sb.AppendLine();
-                            Enumerable.Range(0, --indent).ForEach(item => sb.Append(INDENT_STRING));
+                            Enumerable.Range(0, --indent).ForEach(item => sb.Append(IndentString));
                         }
                         sb.Append(ch);
                         break;
@@ -54,7 +54,7 @@ namespace nUpdate.Administration.Core
                         if (!quoted)
                         {
                             sb.AppendLine();
-                            Enumerable.Range(0, indent).ForEach(item => sb.Append(INDENT_STRING));
+                            Enumerable.Range(0, indent).ForEach(item => sb.Append(IndentString));
                         }
                         break;
                     case ':':

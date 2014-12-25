@@ -113,12 +113,12 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <summary>
         ///     The Dynamic Data Exchange (DDE)-related entries cannot be modified or deleted.
         /// </summary>
-        NoDDE = 0x00002000,
+        NoDde = 0x00002000,
 
         /// <summary>
         ///     The content-type and default-extension entries cannot be modified or deleted.
         /// </summary>
-        NoEditMIME = 0x00008000,
+        NoEditMime = 0x00008000,
 
         /// <summary>
         ///     The file class's open verb can be safely invoked for downloaded files. Note that this flag may create a security
@@ -150,12 +150,12 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// </summary>
     public class ProgramAssociationInfo
     {
-        private readonly RegistryWrapper registryWrapper = new RegistryWrapper();
+        private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
 
         /// <summary>
         ///     Actual name of Programmatic Identifier
         /// </summary>
-        protected string progId;
+        protected string ProgId;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProgramAssociationInfo" /> class, which acts as a wrapper for a
@@ -164,7 +164,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="progId">Name of program id to interface with.</param>
         public ProgramAssociationInfo(string progId)
         {
-            this.progId = progId;
+            this.ProgId = progId;
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string ProgID
         {
-            get { return progId; }
+            get { return ProgId; }
         }
 
         /// <summary>
@@ -232,10 +232,10 @@ namespace nUpdate.Administration.Core.Application.Extension
                 RegistryKey root = Registry.ClassesRoot;
                 try
                 {
-                    if (progId == string.Empty)
+                    if (ProgId == string.Empty)
                         return false;
 
-                    RegistryKey key = root.OpenSubKey(progId);
+                    RegistryKey key = root.OpenSubKey(ProgId);
 
                     if (key == null)
                         return false;
@@ -263,7 +263,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             RegistryKey root = Registry.ClassesRoot;
 
-            root.CreateSubKey(progId);
+            root.CreateSubKey(ProgId);
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             RegistryKey root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(progId);
+            RegistryKey key = root.OpenSubKey(ProgId);
 
             object o = key.GetValue("AlwaysShowExt", "ThisValueShouldNotExist");
             if (o.ToString() == "ThisValueShouldNotExist")
@@ -379,9 +379,9 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             if (value)
-                registryWrapper.Write(progId, "AlwaysShowExt", string.Empty);
+                _registryWrapper.Write(ProgId, "AlwaysShowExt", string.Empty);
             else
-                registryWrapper.Delete(progId, "AlwaysShowExt");
+                _registryWrapper.Delete(ProgId, "AlwaysShowExt");
 
             ShellNotification.NotifyOfChange();
         }
@@ -395,7 +395,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = registryWrapper.Read(progId, string.Empty);
+            object val = _registryWrapper.Read(ProgId, string.Empty);
 
             if (val == null)
                 return string.Empty;
@@ -412,7 +412,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            registryWrapper.Write(progId, string.Empty, description);
+            _registryWrapper.Write(ProgId, string.Empty, description);
 
             ShellNotification.NotifyOfChange();
         }
@@ -428,7 +428,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = registryWrapper.Read(progId, "EditFlags");
+            object val = _registryWrapper.Read(ProgId, "EditFlags");
 
             if (val == null)
                 return EditFlags.None;
@@ -464,7 +464,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             //registryWrapper.Write(info.progId, "EditFlags", (uint)flags);
-            registryWrapper.Write(progId, "EditFlags", flags);
+            _registryWrapper.Write(ProgId, "EditFlags", flags);
 
             ShellNotification.NotifyOfChange();
         }
@@ -478,7 +478,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = registryWrapper.Read(progId + "\\DefaultIcon", "");
+            object val = _registryWrapper.Read(ProgId + "\\DefaultIcon", "");
 
             if (val == null)
                 return ProgramIcon.None;
@@ -496,7 +496,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             if (icon != ProgramIcon.None)
             {
-                registryWrapper.Write(progId, "DefaultIcon", icon.ToString());
+                _registryWrapper.Write(ProgId, "DefaultIcon", icon.ToString());
 
                 ShellNotification.NotifyOfChange();
             }
@@ -513,7 +513,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             RegistryKey root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(progId);
+            RegistryKey key = root.OpenSubKey(ProgId);
             var verbs = new List<ProgramVerb>();
 
             key = key.OpenSubKey("shell", false);
@@ -555,7 +555,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             RegistryKey root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(progId, true);
+            RegistryKey key = root.OpenSubKey(ProgId, true);
 
             RegistryKey tmpKey = key.OpenSubKey("shell", true);
 
@@ -590,10 +590,10 @@ namespace nUpdate.Administration.Core.Application.Extension
         {
             RegistryKey root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(progId).OpenSubKey("shell", true);
+            RegistryKey key = root.OpenSubKey(ProgId).OpenSubKey("shell", true);
 
             if (key == null)
-                key = root.OpenSubKey(progId, true).CreateSubKey("shell");
+                key = root.OpenSubKey(ProgId, true).CreateSubKey("shell");
 
             RegistryKey tmpkey = key.OpenSubKey(verb.Name, true);
             if (tmpkey == null)
@@ -622,7 +622,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         {
             RegistryKey root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(progId);
+            RegistryKey key = root.OpenSubKey(ProgId);
 
             key = key.OpenSubKey("shell", true);
 
@@ -657,7 +657,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             RegistryKey root = Registry.ClassesRoot;
 
-            root.DeleteSubKeyTree(progId);
+            root.DeleteSubKeyTree(ProgId);
         }
 
         /// <summary>

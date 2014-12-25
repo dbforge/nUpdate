@@ -3,19 +3,18 @@
 // Created: 01-08-2014 12:11
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
@@ -28,10 +27,11 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _allowCancel = true;
         private bool _generalTabPassed;
 
-        private LocalizationProperties _lp = new LocalizationProperties();
+        //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
-        private bool _projectDataAlreadyInitialized;
+        private bool _projectFileCreated;
+        private bool _projectConfigurationEdited;
         private TabPage _sender;
 
         public NewProjectDialog()
@@ -108,16 +108,13 @@ namespace nUpdate.Administration.UI.Dialogs
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
             ftpPortTextBox.ShortcutsEnabled = false;
-
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
 
             //SetLanguage();
 
             controlPanel1.Visible = false;
-            _allowCancel = false;
-
-            ThreadPool.QueueUserWorkItem(delegate { GenerateKeyPair(); }, null);
+            ThreadPool.QueueUserWorkItem(arg => GenerateKeyPair());
         }
 
         private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -127,21 +124,18 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     Generates the key pair in an own thread.
+        ///     Provides a new thread that generates a new RSA-key pair.
         /// </summary>
         private void GenerateKeyPair()
         {
-            // Create a new instance of the RsaSignature-class
             var rsa = new RsaSignature();
-
-            // Initialize the properties with the keys
             PrivateKey = rsa.PrivateKey;
             PublicKey = rsa.PublicKey;
 
             Invoke(new Action(() =>
             {
                 controlPanel1.Visible = true;
-                tablessTabControl1.SelectedTab = generalTabPage;
+                informationCategoriesTabControl.SelectedTab = generalTabPage;
                 _sender = generalTabPage;
             }));
 
@@ -152,7 +146,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             Invoke(new Action(() =>
             {
-                foreach (Control c in from Control c in Controls where c.Visible select c)
+                foreach (var c in from Control c in Controls where c.Visible select c)
                 {
                     c.Enabled = enabled;
                 }
@@ -194,9 +188,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     if (Program.ExisitingProjects.Any(item => item.Key == nameTextBox.Text))
                     {
-                        var assumingProject =
+                        var relatingProject =
                             Program.ExisitingProjects.First(item => item.Key == nameTextBox.Text);
-                        if (File.Exists(assumingProject.Value))
+                        if (File.Exists(relatingProject.Value))
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
                                 String.Format(
@@ -205,7 +199,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             return;
                         }
 
-                        Program.ExisitingProjects.Remove(assumingProject.Key);
+                        Program.ExisitingProjects.Remove(relatingProject.Key);
                         try
                         {
                             var projectEntries =
@@ -253,7 +247,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 _sender = ftpTabPage;
                 backButton.Enabled = true;
-                tablessTabControl1.SelectedTab = ftpTabPage;
+                informationCategoriesTabControl.SelectedTab = ftpTabPage;
             }
             else if (_sender == ftpTabPage)
             {
@@ -274,7 +268,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     ftpPassword.AppendChar(c);
                 }
-                _ftp.Password = ftpPassword;
+                _ftp.Password = ftpPassword; // Same instance that FtpManager will automatically dispose
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
                 _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
@@ -283,7 +277,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     backButton.Enabled = true;
 
                 _sender = statisticsServerTabPage;
-                tablessTabControl1.SelectedTab = statisticsServerTabPage;
+                informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
             }
             else if (_sender == statisticsServerTabPage)
             {
@@ -298,7 +292,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 _sender = proxyTabPage;
-                tablessTabControl1.SelectedTab = proxyTabPage;
+                informationCategoriesTabControl.SelectedTab = proxyTabPage;
             }
             else if (_sender == proxyTabPage)
             {
@@ -313,113 +307,113 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
-                if (!_projectDataAlreadyInitialized)
+                try
                 {
-                    try
+                    using (File.Create(localPathTextBox.Text))
                     {
-                        using (File.Create(localPathTextBox.Text))
-                        {
-                        }
                     }
-                    catch (IOException ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Failed to create project file.", ex, PopupButtons.Ok);
-                        Close();
-                    }
+                    _projectFileCreated = true;
+                }
+                catch (IOException ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to create project file.", ex, PopupButtons.Ok);
+                    Close();
+                }
 
-                    var usePassive = ftpModeComboBox.SelectedIndex == 0;
+                var usePassive = ftpModeComboBox.SelectedIndex == 0;
 
-                    WebProxy proxy = null;
-                    string proxyUsername = null;
-                    string proxyPassword = null;
-                    if (!String.IsNullOrEmpty(proxyHostTextBox.Text))
+                WebProxy proxy = null;
+                string proxyUsername = null;
+                string proxyPassword = null;
+                if (!String.IsNullOrEmpty(proxyHostTextBox.Text))
+                {
+                    proxy = new WebProxy(proxyHostTextBox.Text);
+                    if (!String.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
-                        proxy = new WebProxy(proxyHostTextBox.Text);
-                        if (!String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                            !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
-                        {
-                            proxyUsername = proxyUserTextBox.Text;
-                            proxyPassword =
-                                Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
-                                    ftpPasswordTextBox.Text,
-                                    ftpUserTextBox.Text));
-                        }
-                    }
-
-                    string sqlPassword = null;
-                    if (useStatisticsServerRadioButton.Checked)
-                    {
-                        sqlPassword =
-                            Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, ftpPasswordTextBox.Text,
+                        proxyUsername = proxyUserTextBox.Text;
+                        proxyPassword =
+                            Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                                ftpPasswordTextBox.Text,
                                 ftpUserTextBox.Text));
-                    }
-
-                    Settings.Default.ApplicationID += 1;
-                    Settings.Default.Save();
-                    Settings.Default.Reload();
-
-                    // Create a new package...
-                    var project = new UpdateProject
-                    {
-                        Path = localPathTextBox.Text,
-                        Name = nameTextBox.Text,
-                        Guid = Guid.NewGuid().ToString(),
-                        ApplicationId = Settings.Default.ApplicationID,
-                        UpdateUrl = updateUrlTextBox.Text,
-                        NewestPackage = null,
-                        Packages = null,
-                        ReleasedPackages = 0,
-                        FtpHost = ftpHostTextBox.Text,
-                        FtpPort = int.Parse(ftpPortTextBox.Text),
-                        FtpUsername = ftpUserTextBox.Text,
-                        FtpPassword =
-                            Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, ftpPasswordTextBox.Text,
-                                ftpUserTextBox.Text)),
-                        FtpDirectory = ftpDirectoryTextBox.Text,
-                        FtpProtocol = ftpProtocolComboBox.SelectedIndex,
-                        FtpUsePassiveMode = usePassive,
-                        Proxy = proxy,
-                        ProxyUsername = proxyUsername,
-                        ProxyPassword = proxyPassword,
-                        UseStatistics = useStatisticsServerRadioButton.Checked,
-                        SqlDatabaseName = SqlDatabaseName,
-                        SqlWebUrl = SqlWebUrl,
-                        SqlUsername = SqlUsername,
-                        SqlPassword = sqlPassword,
-                        PrivateKey = PrivateKey,
-                        PublicKey = PublicKey,
-                        Log = null,
-                    };
-
-                    try
-                    {
-                        ApplicationInstance.SaveProject(localPathTextBox.Text, project); // ... and save it
-                        _projectDataAlreadyInitialized = true;
-                    }
-                    catch (IOException ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Failed to save project file.", ex, PopupButtons.Ok);
-                        Close();
-                    }
-
-                    Program.ExisitingProjects.Add(project.Name, project.Path);
-                    try
-                    {
-                        var projectEntries =
-                            Program.ExisitingProjects.Select(
-                                projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
-
-                        File.WriteAllText(Program.ProjectsConfigFilePath, String.Join("\n", projectEntries));
-                    }
-                    catch (Exception ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Failed to create the project-entry.", ex,
-                            PopupButtons.Ok);
-                        Close();
                     }
                 }
 
-                if (!_phpFileCreated && useStatisticsServerRadioButton.Checked)
+                string sqlPassword = null;
+                if (useStatisticsServerRadioButton.Checked)
+                {
+                    sqlPassword =
+                        Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, ftpPasswordTextBox.Text,
+                            ftpUserTextBox.Text));
+                }
+
+                Settings.Default.ApplicationID += 1;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+
+                // Create a new package...
+                var project = new UpdateProject
+                {
+                    Path = localPathTextBox.Text,
+                    Name = nameTextBox.Text,
+                    Guid = Guid.NewGuid().ToString(),
+                    ApplicationId = Settings.Default.ApplicationID,
+                    UpdateUrl = updateUrlTextBox.Text,
+                    NewestPackage = null,
+                    Packages = null,
+                    ReleasedPackages = 0,
+                    FtpHost = ftpHostTextBox.Text,
+                    FtpPort = int.Parse(ftpPortTextBox.Text),
+                    FtpUsername = ftpUserTextBox.Text,
+                    FtpPassword =
+                        Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, ftpPasswordTextBox.Text,
+                            ftpUserTextBox.Text)),
+                    FtpDirectory = ftpDirectoryTextBox.Text,
+                    FtpProtocol = ftpProtocolComboBox.SelectedIndex,
+                    FtpUsePassiveMode = usePassive,
+                    Proxy = proxy,
+                    ProxyUsername = proxyUsername,
+                    ProxyPassword = proxyPassword,
+                    UseStatistics = useStatisticsServerRadioButton.Checked,
+                    SqlDatabaseName = SqlDatabaseName,
+                    SqlWebUrl = SqlWebUrl,
+                    SqlUsername = SqlUsername,
+                    SqlPassword = sqlPassword,
+                    PrivateKey = PrivateKey,
+                    PublicKey = PublicKey,
+                    Log = null,
+                };
+
+                try
+                {
+                    ApplicationInstance.SaveProject(localPathTextBox.Text, project); // ... and save it
+                }
+                catch (IOException ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to save project file.", ex, PopupButtons.Ok);
+                    Reset();
+                    Close();
+                }
+
+                Program.ExisitingProjects.Add(project.Name, project.Path);
+                try
+                {
+                    var projectEntries =
+                        Program.ExisitingProjects.Select(
+                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
+
+                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
+                    _projectConfigurationEdited = true;
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to create the project-entry.", ex,
+                        PopupButtons.Ok);
+                    Reset();
+                    Close();
+                }
+
+                if (useStatisticsServerRadioButton.Checked)
                 {
                     string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
                     try
@@ -438,10 +432,11 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Failed to initialize the project-files.", ex,
                             PopupButtons.Ok);
+                        Reset();
                         Close();
                     }
                 }
-               
+
                 _generalTabPassed = true;
                 ThreadPool.QueueUserWorkItem(arg => InitializeProject());
             }
@@ -451,7 +446,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Provides a new thread that sets up the project data.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
+        [SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
         private void InitializeProject()
         {
             SetUiState(false);
@@ -472,6 +467,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
                                 ex.InnerException ?? ex, PopupButtons.Ok)));
                 SetUiState(true);
+                Reset();
                 return;
             }
             catch (Exception ex)
@@ -482,6 +478,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
                                 ex.InnerException ?? ex, PopupButtons.Ok)));
                 SetUiState(true);
+                Reset();
                 return;
             }
 
@@ -495,29 +492,27 @@ namespace nUpdate.Administration.UI.Dialogs
             string name = null;
             if (useStatistics)
             {
-                if (!_phpFileUploaded)
+                try
                 {
-                    try
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    name = nameTextBox.Text));
+                    Invoke(
+                        new Action(
+                            () =>
+                                name = nameTextBox.Text));
 
-                        string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
-                        _ftp.UploadFile(phpFilePath);
-                        _phpFileUploaded = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
-                                        ex, PopupButtons.Ok)));
-                        SetUiState(true);
-                        return;
-                    }
+                    string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
+                    _ftp.UploadFile(phpFilePath);
+                    _phpFileUploaded = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
+                                    ex, PopupButtons.Ok)));
+                    Reset();
+                    SetUiState(true);
+                    return;
                 }
 
                 /*
@@ -604,6 +599,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
                     SetUiState(true);
+                    Reset();
                     return;
                 }
                 catch (Exception ex)
@@ -614,6 +610,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
                     SetUiState(true);
+                    Reset();
                     return;
                 }
 
@@ -636,6 +633,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                     ex, PopupButtons.Ok)));
+                    Reset();
                     SetUiState(true);
                     return;
                 }
@@ -650,7 +648,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         {
             if (_sender == ftpTabPage)
             {
-                tablessTabControl1.SelectedTab = generalTabPage;
+                informationCategoriesTabControl.SelectedTab = generalTabPage;
                 backButton.Enabled = false;
                 _sender = generalTabPage;
 
@@ -659,12 +657,12 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
             else if (_sender == statisticsServerTabPage)
             {
-                tablessTabControl1.SelectedTab = ftpTabPage;
+                informationCategoriesTabControl.SelectedTab = ftpTabPage;
                 _sender = ftpTabPage;
             }
             else if (_sender == proxyTabPage)
             {
-                tablessTabControl1.SelectedTab = statisticsServerTabPage;
+                informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
                 _sender = statisticsServerTabPage;
             }
         }
@@ -701,7 +699,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                //Protocol = protocol,
+                Protocol = ftpProtocolComboBox.SelectedIndex,
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)
@@ -712,7 +710,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void searchPathButton_Click(object sender, EventArgs e)
         {
-            var fileDialog = new SaveFileDialog {Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj"};
+            var fileDialog = new SaveFileDialog {Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj", CheckFileExists = false};
             if (fileDialog.ShowDialog() == DialogResult.OK)
                 localPathTextBox.Text = fileDialog.FileName;
         }
@@ -726,7 +724,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            panel1.Enabled = useStatisticsServerRadioButton.Checked;
+            statisticsInfoPanel.Enabled = useStatisticsServerRadioButton.Checked;
             selectServerButton.Enabled = useStatisticsServerRadioButton.Checked;
         }
 
@@ -777,7 +775,94 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            Invoke(new Action(
+                () =>
+                    loadingLabel.Text = "Resetting data..."));
+
+            if (_projectFileCreated)
+            {
+                try
+                {
+                    string localPath = null;
+                    Invoke(new Action(() => localPath = localPathTextBox.Text));
+                    File.Delete(localPath);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting the project file.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_projectConfigurationEdited)
+            {
+                string name = null;
+                Invoke(new Action(() => name = nameTextBox.Text));
+                Program.ExisitingProjects.Remove(name);
+
+                try
+                {
+                    var projectEntries =
+                        Program.ExisitingProjects.Select(
+                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
+
+                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting the project file.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_phpFileCreated)
+            {
+                string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
+                try
+                {
+                    File.Delete(phpFilePath);
+                    _phpFileCreated = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting \"statistics.php\" again.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_phpFileUploaded)
+            {
+                try
+                {
+                    _ftp.DeleteFile("statistics.php");
+                    _phpFileUploaded = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting \"statistics.php\" on the server again.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            Settings.Default.ApplicationID -= 1;
+            Settings.Default.Save();
+            Settings.Default.Reload();
         }
     }
 }
