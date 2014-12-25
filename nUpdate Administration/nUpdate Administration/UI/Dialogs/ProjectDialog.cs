@@ -176,7 +176,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            StartCheckingUpdateInfo();
+            StartCheckingUpdateConfiguration();
 
             if (Project.UseStatistics)
             {
@@ -1064,19 +1064,24 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Starts checking if the update configuration exists.
         /// </summary>
-        private void StartCheckingUpdateInfo()
+        private void StartCheckingUpdateConfiguration()
         {
-            checkingUrlPictureBox.Visible = true;
+            Invoke(new Action(() =>
+            {
+                checkingUrlPictureBox.Visible = true;
+                checkUpdateConfigurationLinkLabel.Enabled = false;
+            }));
             ThreadPool.QueueUserWorkItem(delegate { CheckUpdateConfigurationStatus(_configurationFileUrl); }, null);
         }
 
         private void checkUpdateConfigurationLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            StartCheckingUpdateInfo();
+            StartCheckingUpdateConfiguration();
         }
 
         private bool _hasFinishedCheck;
-        private bool _isExisting = true;
+        private bool _foundWithUrl;
+        private bool _foundWithFtp;
         private void CheckUpdateConfigurationStatus(Uri configFileUrl)
         {
             if (!ConnectionChecker.IsConnectionAvailable())
@@ -1104,121 +1109,166 @@ namespace nUpdate.Administration.UI.Dialogs
                     Stream stream = client.OpenRead(configFileUrl);
                     if (stream == null)
                     {
-                        _isExisting = false;
+                        _foundWithUrl = false;
                         return;
                     }
-                    _isExisting = true;
+                    _foundWithUrl = true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _isExisting = false;
+                    _foundWithUrl = false;
                 }
             }
 
-            if (_isExisting)
+            try
+            {
+                if (_ftp.IsExisting("updates.json"))
+                    _foundWithFtp = true;
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while checking if the configuration file exists.",
+                        ex, PopupButtons.Ok);
+                    checkingUrlPictureBox.Visible = false;
+                    checkUpdateConfigurationLinkLabel.Enabled = true;
+                }));
+                return;
+            }
+
+            if (_foundWithUrl && _foundWithFtp)
             {
                 Invoke(new Action(() =>
                 {
                     tickPictureBox.Visible = true;
                     checkingUrlPictureBox.Visible = false;
                     checkUpdateConfigurationLinkLabel.Enabled = true;
-                    _hasFinishedCheck = false;
                 }));
-                return;
             }
-
-            if (_hasFinishedCheck)
+            else if (_foundWithFtp && !_foundWithUrl)
             {
-                _hasFinishedCheck = false;
                 Invoke(
                     new Action(
                         () =>
                         {
-                            Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
-                                String.Format(
-                                    "The configuration file was successfully updated on the FTP-server, but it couldn't be accessed via HTTP(S). Please check if it is correct."),
+                            Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.", 
+                                "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). Please check if the update url is correct.",
                                 PopupButtons.Ok);
 
+                            checkingUrlPictureBox.Visible = false;
                             checkUpdateConfigurationLinkLabel.Enabled = true;
+                            tickPictureBox.Visible = false;
                         }));
-
-                return;
             }
-
-            SetUiState(false);
-            Invoke(new Action(() =>
+            else if (!_foundWithFtp && _foundWithUrl)
             {
-                loadingLabel.Text = "Updating configuration file...";
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Configuration file was not found in the directory set.",
+                                "The configuration file was found at the update url's destination but it couldn't be found in the given FTP-directory.",
+                                PopupButtons.Ok);
 
-                checkUpdateConfigurationLinkLabel.Enabled = false;
-                checkingUrlPictureBox.Visible = false;
-                tickPictureBox.Visible = false;
-            }));
-
-            string temporaryConfigurationFile = Path.Combine(Program.Path, "updates.json");
-            try
+                            checkingUrlPictureBox.Visible = false;
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                            tickPictureBox.Visible = false;
+                        }));
+            }
+            else if (!_foundWithFtp && !_foundWithUrl)
             {
-                if (!File.Exists(temporaryConfigurationFile))
+                SetUiState(false);
+                Invoke(new Action(() =>
                 {
-                    using (File.Create(temporaryConfigurationFile))
+                    loadingLabel.Text = "Updating configuration file...";
+
+                    checkUpdateConfigurationLinkLabel.Enabled = false;
+                    checkingUrlPictureBox.Visible = false;
+                    tickPictureBox.Visible = false;
+                }));
+
+                string temporaryConfigurationFile = Path.Combine(Program.Path, "updates.json");
+                try
+                {
+                    if (!File.Exists(temporaryConfigurationFile))
                     {
+                        using (File.Create(temporaryConfigurationFile))
+                        {
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while creating the new configuration file.", ex,
+                                    PopupButtons.Ok);
+
+                                checkingUrlPictureBox.Visible = false;
+                                checkUpdateConfigurationLinkLabel.Enabled = true;
+                            }));
+                    SetUiState(true);
+                    return;
+                }
+
+                try
+                {
+                    _ftp.UploadFile(temporaryConfigurationFile);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while uploading the new configuration file.", ex,
+                                    PopupButtons.Ok);
+
+                                checkingUrlPictureBox.Visible = false;
+                                checkUpdateConfigurationLinkLabel.Enabled = true;
+                            }));
+                    SetUiState(true);
+                    return;
+                }
+
+                if (_ftp.FileUploadException != null)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while uploading the new configuration file.",
+                                    _ftp.FileUploadException,
+                                    PopupButtons.Ok);
+
+                                checkingUrlPictureBox.Visible = false;
+                                checkUpdateConfigurationLinkLabel.Enabled = true;
+                            }));
+                    SetUiState(true);
+                    return;
+                }
+
                 Invoke(
-                    new Action(
-                        () =>
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the new configuration file.", ex,
-                                PopupButtons.Ok);
-
-                            checkUpdateConfigurationLinkLabel.Enabled = true;
-                        }));
+                        new Action(
+                            () =>
+                                checkUpdateConfigurationLinkLabel.Enabled = true));
                 SetUiState(true);
-                return;
+
+                if (_hasFinishedCheck)
+                {
+                    _hasFinishedCheck = false;
+                    return;
+                }
+
+                _hasFinishedCheck = true;
+                StartCheckingUpdateConfiguration();
             }
-
-            try
-            {
-                // Upload the file now
-                _ftp.UploadFile(temporaryConfigurationFile);
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration file.", ex,
-                                PopupButtons.Ok);
-
-                            checkUpdateConfigurationLinkLabel.Enabled = true;
-                        }));
-                SetUiState(true);
-                return;
-            }
-
-            if (_ftp.FileUploadException != null)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration file.",
-                                _ftp.FileUploadException,
-                                PopupButtons.Ok);
-
-                            checkUpdateConfigurationLinkLabel.Enabled = true;
-                        }));
-                SetUiState(true);
-                return;
-            }
-
-            _hasFinishedCheck = true;
-            SetUiState(true);
-            CheckUpdateConfigurationStatus(_configurationFileUrl);
         }
 
         #endregion

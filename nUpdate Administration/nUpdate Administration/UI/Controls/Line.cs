@@ -15,7 +15,7 @@ namespace nUpdate.Administration.UI.Controls
         }
 
         public Alignment LineAlignment { get; set; }
-
+        
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);

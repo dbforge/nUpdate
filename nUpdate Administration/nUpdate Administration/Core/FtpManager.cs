@@ -107,7 +107,7 @@ namespace nUpdate.Administration.Core
             if (Host.EndsWith("/"))
                 Host = Host.Remove(Host.Length - 1);
 
-            if (Directory.EndsWith("/"))
+            if (Directory.EndsWith("/") && Directory.Length > 1)
                 Directory = Directory.Remove(Directory.Length - 1);
 
             _hasAlreadyFixedStrings = true;
@@ -210,7 +210,8 @@ namespace nUpdate.Administration.Core
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
-                return recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
+                var items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
+                return items;
             }
         }
 
@@ -281,6 +282,38 @@ namespace nUpdate.Administration.Core
                         ftp.DeleteFile(item.FullPath);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Returns if a file or directory is existing on the server.
+        /// </summary>
+        /// <param name="destinationName">The name of the file or folder to check.</param>
+        /// <returns>Returns "true" if the file or folder exists, otherwise "false".</returns>
+        public bool IsExisting(string destinationName)
+        {
+            if (!_hasAlreadyFixedStrings)
+                FixProperties();
+
+            using (var ftp = new FtpClient(Host, Port, Protocol))
+            {
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(Directory);
+                string nameList;
+                try
+                {
+                    nameList = ftp.GetNameList(destinationName);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("No such file or directory"))
+                        return false;
+                    throw;
+                }
+                return !string.IsNullOrEmpty(nameList);
             }
         }
 
@@ -371,6 +404,7 @@ namespace nUpdate.Administration.Core
 
             _packageFtpClient.Dispose();
             _uploadPackageResetEvent.Dispose();
+            Password.Dispose();
             _disposed = true;
         }
     }

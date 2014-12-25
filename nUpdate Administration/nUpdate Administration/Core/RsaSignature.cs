@@ -1,5 +1,5 @@
 ﻿/**
- *  Class to sign data with the RSA-class
+ *  Class to sign data with the RSACryptoServiceProvider-class.
  *  
  *  Author: Tim Schiewe (timmi31061)
  *  License: GPL v3
@@ -7,7 +7,7 @@
  *  Modified: Dominic B. (Trade) - 15.12.13 - Improved design of constructor
  *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Parameter validation added; more IntelliSense.
  *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Critical security update
- *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed language of comments
+ *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed comments
  *  Modified: Dominic B. (Trade) - 23.12.2014 - Implemented IDisposable
  */
 
@@ -17,7 +17,7 @@ using System.Security.Cryptography;
 namespace nUpdate.Administration.Core
 {
     /// <summary>
-    ///     Class to sign data with the RSA-class.
+    ///     Provides methods and properties to sign data with the RSACryptoServiceProvider.
     /// </summary>
     public class RsaSignature : IDisposable
     {
@@ -30,27 +30,27 @@ namespace nUpdate.Administration.Core
         private readonly RSACryptoServiceProvider _rsa;
 
         /// <summary>
-        ///     Creates a new instance of the RsaSignature-class.
+        ///     Creates a new instance of the <see cref="RsaSignature"/>-class.
         /// </summary>
-        /// <param name="rsaKey">The key to use.</param>
+        /// <param name="rsaKey">The public key to use.</param>
         public RsaSignature(string rsaKey)
         {
-            if (string.IsNullOrEmpty(rsaKey)) // If a corrupt or no key was entered...
-                throw new ArgumentNullException("rsaKey"); // Throw ArgumentException...
+            if (string.IsNullOrEmpty(rsaKey))
+                throw new ArgumentNullException("rsaKey");
 
-            _rsa = new RSACryptoServiceProvider(); // Key was given...
-            _rsa.FromXmlString(rsaKey); // ...so we import it.
-            _rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
+            _rsa = new RSACryptoServiceProvider();
+            _rsa.FromXmlString(rsaKey);
+            _rsa.PersistKeyInCsp = false;
         }
 
         /// <summary>
-        ///     Creates a new instance of the RsaSignature-class and creates a new key pair.
+        ///     Creates a new instance of the <see cref="RsaSignature"/>-class and creates a new key pair.
         /// </summary>
         public RsaSignature()
         {
-            _rsa = new RSACryptoServiceProvider(DefaultKeySize); // Create a new key pair with the default key size.
-            _rsa.ToXmlString(true); // A dummy to create the key.
-            _rsa.PersistKeyInCsp = false; // Make sure, that .NET does not save the key.
+            _rsa = new RSACryptoServiceProvider(DefaultKeySize);
+            _rsa.ToXmlString(true);
+            _rsa.PersistKeyInCsp = false;
         }
 
         /// <summary>
@@ -58,17 +58,15 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public string PublicKey
         {
-            get { return _rsa.ToXmlString(false); // Export public key
-            }
+            get { return _rsa.ToXmlString(false); }
         }
 
         /// <summary>
-        ///     Returns private key.
+        ///     Returns the private key.
         /// </summary>
         public string PrivateKey
         {
-            get { return _rsa.ToXmlString(true); // Export private key and public key
-            }
+            get { return _rsa.ToXmlString(true); }
         }
 
         /// <summary>
@@ -78,19 +76,18 @@ namespace nUpdate.Administration.Core
         /// <returns>The calculated signature.</returns>
         public byte[] SignData(byte[] data)
         {
-            return _rsa.SignData(data, typeof (SHA512)); // Calculates the signature and returns it...
+            return _rsa.SignData(data, typeof (SHA512));
         }
 
         /// <summary>
-        ///     Checks the signature for the given data.
+        ///     Checks if the signature for the given data is valid.
         /// </summary>
         /// <param name="data">The data to check.</param>
         /// <param name="signature">The signature to check.</param>
-        /// <returns>Return "true" if the signature is correct, otherwise return "false".</returns>
+        /// <returns>Returns "true" if the signature is correct, otherwise "false".</returns>
         public bool VerifyData(byte[] data, byte[] signature)
         {
             return _rsa.VerifyData(data, typeof (SHA512), signature);
-            // Checks if the signature for the given signature is correct.
         }
 
         public void Dispose()

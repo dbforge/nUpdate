@@ -36,7 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
             this.backButton = new System.Windows.Forms.Button();
-            this.tablessTabControl1 = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.informationCategoriesTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.keyPairTabPage = new System.Windows.Forms.TabPage();
             this.keyPairPanel = new System.Windows.Forms.Panel();
             this.keyPairGenerationLabel = new System.Windows.Forms.Label();
@@ -83,7 +83,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.doNotUseStatisticsServerButton = new System.Windows.Forms.RadioButton();
             this.useStatisticsServerRadioButton = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.statisticsInfoPanel = new System.Windows.Forms.Panel();
             this.databaseNameLabel = new System.Windows.Forms.Label();
             this.sqlPasswordTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -104,7 +104,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.controlPanel1.SuspendLayout();
-            this.tablessTabControl1.SuspendLayout();
+            this.informationCategoriesTabControl.SuspendLayout();
             this.keyPairTabPage.SuspendLayout();
             this.keyPairPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.keyPairLoadingPictureBox)).BeginInit();
@@ -114,7 +114,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpTabPage.SuspendLayout();
             this.ftpPanel.SuspendLayout();
             this.statisticsServerTabPage.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.statisticsInfoPanel.SuspendLayout();
             this.proxyTabPage.SuspendLayout();
             this.proxyPanel.SuspendLayout();
             this.loadingPanel.SuspendLayout();
@@ -151,16 +151,16 @@ namespace nUpdate.Administration.UI.Dialogs
             this.backButton.UseVisualStyleBackColor = true;
             this.backButton.Click += new System.EventHandler(this.backButton_Click);
             // 
-            // tablessTabControl1
+            // informationCategoriesTabControl
             // 
-            this.tablessTabControl1.Controls.Add(this.keyPairTabPage);
-            this.tablessTabControl1.Controls.Add(this.generalTabPage);
-            this.tablessTabControl1.Controls.Add(this.ftpTabPage);
-            this.tablessTabControl1.Controls.Add(this.statisticsServerTabPage);
-            this.tablessTabControl1.Controls.Add(this.proxyTabPage);
-            resources.ApplyResources(this.tablessTabControl1, "tablessTabControl1");
-            this.tablessTabControl1.Name = "tablessTabControl1";
-            this.tablessTabControl1.SelectedIndex = 0;
+            this.informationCategoriesTabControl.Controls.Add(this.keyPairTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.generalTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.ftpTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.statisticsServerTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.proxyTabPage);
+            resources.ApplyResources(this.informationCategoriesTabControl, "informationCategoriesTabControl");
+            this.informationCategoriesTabControl.Name = "informationCategoriesTabControl";
+            this.informationCategoriesTabControl.SelectedIndex = 0;
             // 
             // keyPairTabPage
             // 
@@ -434,7 +434,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsServerTabPage.Controls.Add(this.doNotUseStatisticsServerButton);
             this.statisticsServerTabPage.Controls.Add(this.useStatisticsServerRadioButton);
             this.statisticsServerTabPage.Controls.Add(this.label8);
-            this.statisticsServerTabPage.Controls.Add(this.panel1);
+            this.statisticsServerTabPage.Controls.Add(this.statisticsInfoPanel);
             resources.ApplyResources(this.statisticsServerTabPage, "statisticsServerTabPage");
             this.statisticsServerTabPage.Name = "statisticsServerTabPage";
             this.statisticsServerTabPage.UseVisualStyleBackColor = true;
@@ -479,14 +479,14 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.label8.Name = "label8";
             // 
-            // panel1
+            // statisticsInfoPanel
             // 
-            this.panel1.Controls.Add(this.databaseNameLabel);
-            this.panel1.Controls.Add(this.sqlPasswordTextBox);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.statisticsServerLabel);
-            resources.ApplyResources(this.panel1, "panel1");
-            this.panel1.Name = "panel1";
+            this.statisticsInfoPanel.Controls.Add(this.databaseNameLabel);
+            this.statisticsInfoPanel.Controls.Add(this.sqlPasswordTextBox);
+            this.statisticsInfoPanel.Controls.Add(this.label1);
+            this.statisticsInfoPanel.Controls.Add(this.statisticsServerLabel);
+            resources.ApplyResources(this.statisticsInfoPanel, "statisticsInfoPanel");
+            this.statisticsInfoPanel.Name = "statisticsInfoPanel";
             // 
             // databaseNameLabel
             // 
@@ -616,7 +616,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.CancelButton = this.cancelButton;
             this.Controls.Add(this.loadingPanel);
             this.Controls.Add(this.controlPanel1);
-            this.Controls.Add(this.tablessTabControl1);
+            this.Controls.Add(this.informationCategoriesTabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -625,7 +625,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewProjectDialog_FormClosing);
             this.Load += new System.EventHandler(this.NewProjectDialog_Load);
             this.controlPanel1.ResumeLayout(false);
-            this.tablessTabControl1.ResumeLayout(false);
+            this.informationCategoriesTabControl.ResumeLayout(false);
             this.keyPairTabPage.ResumeLayout(false);
             this.keyPairPanel.ResumeLayout(false);
             this.keyPairPanel.PerformLayout();
@@ -639,8 +639,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpPanel.PerformLayout();
             this.statisticsServerTabPage.ResumeLayout(false);
             this.statisticsServerTabPage.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.statisticsInfoPanel.ResumeLayout(false);
+            this.statisticsInfoPanel.PerformLayout();
             this.proxyTabPage.ResumeLayout(false);
             this.proxyTabPage.PerformLayout();
             this.proxyPanel.ResumeLayout(false);
@@ -688,13 +688,13 @@ namespace nUpdate.Administration.UI.Dialogs
         private WatermarkTextBox localPathTextBox;
         private System.Windows.Forms.Label localPathLabel;
         private System.Windows.Forms.Button securityInfoButton;
-        private Controls.TablessTabControl tablessTabControl1;
+        private Controls.TablessTabControl informationCategoriesTabControl;
         private System.Windows.Forms.TabPage generalTabPage;
         private System.Windows.Forms.TabPage keyPairTabPage;
         private System.Windows.Forms.TabPage ftpTabPage;
         private System.Windows.Forms.TabPage statisticsServerTabPage;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel statisticsInfoPanel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RadioButton doNotUseStatisticsServerButton;
         private System.Windows.Forms.RadioButton useStatisticsServerRadioButton;
