@@ -1,37 +1,33 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.UI.Popups;
 using nUpdate.Administration.Core.Win32;
+using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class DirectorySearchDialog : BaseDialog
+    public partial class DirectorySearchDialog : BaseDialog, IAsyncSupportable
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-        private readonly List<TreeNode> _listedNodes = new List<TreeNode>();
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
-        private FtpManager ftp;
+        private FtpManager _ftp;
 
         private bool _allowCancel;
         private bool _isGettingRootData = true;
         private bool _isSetByUser;
         private Margins _margins;
-        private bool mustCancel = false;
+        private bool _mustCancel = false;
 
         public DirectorySearchDialog()
         {
@@ -73,7 +69,10 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public bool UsePassiveMode { get; set; }
 
-        
+        /// <summary>
+        ///     Sets the protocol to use.
+        /// </summary>
+        public int Protocol { get; set; }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
@@ -97,18 +96,26 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             Text = String.Format("Set directory - {0} - nUpdate Administration 0.1.0.0", ProjectName);
 
-            if (!NativeMethods.DwmIsCompositionEnabled()) return;
+            if (!NativeMethods.DwmIsCompositionEnabled())
+                return;
 
-            _margins = new Margins {Top = 40};
+            _margins = new Margins {Top = 38};
             NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
 
-            ftp = new FtpManager { Host = Host, Port = Port, Username = Username, Password = Password };
+            _ftp = new FtpManager
+            {
+                Host = Host,
+                Port = Port,
+                Username = Username,
+                Password = Password,
+                UsePassiveMode = UsePassiveMode,
+                Protocol = (FtpSecurityProtocol) Protocol
+            };
         }
 
         private void DirectorySearchForm_Shown(object sender, EventArgs e)
         {
-            var thread = new Thread(LoadListAsync);
-            thread.Start();
+            ThreadPool.QueueUserWorkItem(arg => LoadListAsync());
         }
 
         private void DirectorySearchForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -119,7 +126,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left)
+                return;
 
             NativeMethods.ReleaseCapture();
             NativeMethods.SendMessage(Handle, WM_NCLBUTTONDOWN, new IntPtr(HT_CAPTION), new IntPtr(0));
@@ -127,80 +135,25 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (serverDataTreeView.SelectedNode.Text.Equals("Server") && serverDataTreeView.SelectedNode.Index.Equals(0))
-                directoryTextBox.Text = "/";
-            else
-            {
-                TreeNode node = serverDataTreeView.SelectedNode;
-                if (!_listedNodes.Contains(node))
-                {
-                    var thread = new Thread(() => LoadListAsync());
-                    thread.Start();
-                }
-
-                directoryTextBox.Text = String.Empty;
-
-                IList<TreeNode> ancestorList = GetAncestors(node, x => x.Parent).ToList();
-                var parents = new Stack<TreeNode>();
-                foreach (TreeNode nodeParent in ancestorList)
-                {
-                    parents.Push(nodeParent);
-                }
-
-                foreach (TreeNode parent in parents)
-                {
-                    if (parent.Index.Equals(0) && parent.Text.Equals("Server"))
-                        directoryTextBox.Text = String.Format("/{0}/", node.Text);
-                    else
-                    {
-                        directoryTextBox.Text = String.Format("/{0}/{1}/", parent.Text,
-                            node.Text.Split(new[] {'/'}).Last());
-                    }
-                }
-            }
-
-            if (_isSetByUser)
-                _nav.Set(e.Node);
-            else
-                _isSetByUser = true;
-
-            if (!_nav.CanGoBack)
-                backButton.Enabled = false;
-            if (_nav.CanGoBack)
-                backButton.Enabled = true;
-            if (!_nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (_nav.CanGoForward)
-                forwardButton.Enabled = true;
-        }
-
-        /// <summary>
-        ///     Iterates through the parents of a given child node and returns them.
-        /// </summary>
-        private IEnumerable<TItem> GetAncestors<TItem>(TItem item, Func<TItem, TItem> getParentFunc)
-        {
-            if (ReferenceEquals(item, null))
-                yield break;
-
-            for (TItem curItem = getParentFunc(item); !ReferenceEquals(curItem, null); curItem = getParentFunc(curItem))
-            {
-                yield return curItem;
-            }
+            //if (serverDataTreeView.SelectedNode.Text.Equals("Server") && serverDataTreeView.SelectedNode.Index.Equals(0))
+            //    directoryTextBox.Text = "/";
+            //else
+            //{
+            //    if (parent.Index.Equals(0) && parent.Text.Equals("Server"))
+            //        directoryTextBox.Text = String.Format("/{0}/", node.Text);
+            //    else
+            //    {
+            //        directoryTextBox.Text = String.Format("/{0}/{1}/", parent.Text,
+            //            node.Text.Split('/').Last());
+            //    }
+            //}
         }
 
         private void LoadListAsync()
         {
-            Invoke(new Action(() =>
-            {
-                serverDataTreeView.Enabled = false;
-                loadPictureBox.Visible = true;
-                cancelButton.Enabled = false;
-                continueButton.Enabled = false;
-            }));
+            SetUiState(false);
+            var items = _ftp.ListDirectoriesAndFiles("/", true);
             
-            var items = ftp.ListDirectoriesAndFiles("/", true);
-            
-            TreeNode currentNode = null;
             foreach (var item in items)
             {
                 if (item.ParentPath.Length < 2) // Has no parent-directory
@@ -208,17 +161,34 @@ namespace nUpdate.Administration.UI.Dialogs
                     var itemPlaceholder = item;
                     Invoke(new Action(() =>
                     {
-                        serverDataTreeView.Nodes[0].Nodes.Add(itemPlaceholder.FullPath);
-                        currentNode = serverDataTreeView.Nodes[0].LastNode;
+                        serverDataTreeView.Nodes[0].Nodes.Add(String.Format("/{0}", itemPlaceholder.Name));
                     }));
                 }
                 else
                 {
                     var itemPlaceholder = item;
-                    Invoke(new Action(
-                        () => { if (currentNode != null) currentNode.Nodes.Add(itemPlaceholder.FullPath); }));
-                    //if (itemPlaceholder.FullPath.Split(new char[] {'/'}).Length > 2)
+                    string[] pathParts = itemPlaceholder.ParentPath.Split('/');
+                    BeginInvoke(
+                            new Action(
+                                () =>
+                                    serverDataTreeView.SelectedNode =
+                                        serverDataTreeView.Nodes[0].Nodes.Cast<TreeNode>()
+                                            .First(node => node.Name == itemPlaceholder.Name)));
+
+                    for (int i = 0; i <= pathParts.Length - 1; ++i)
+                    {
+                        var i1 = i;
+                        var newNode = new TreeNode(pathParts[i1]);
+                        BeginInvoke(
+                            new Action(
+                                () =>
+                                {
+                                    serverDataTreeView.SelectedNode.Nodes.Add(newNode);
+                                    serverDataTreeView.SelectedNode = newNode;
+                                }));
+                    }
                 }
+                
             }
 
             Invoke(new Action(() =>
@@ -287,6 +257,17 @@ namespace nUpdate.Administration.UI.Dialogs
         private void cancelButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        public void SetUiState(bool enabled)
+        {
+            Invoke(new Action(() =>
+            {
+                serverDataTreeView.Enabled = enabled;
+                loadPictureBox.Visible = !enabled;
+                cancelButton.Enabled = enabled;
+                continueButton.Enabled = enabled;
+            }));
         }
     }
 }

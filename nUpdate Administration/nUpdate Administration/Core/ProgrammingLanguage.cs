@@ -7,7 +7,7 @@ namespace nUpdate.Administration.Core
 {
     public enum ProgrammingLanguage
     {
-        VB,
+        Vb,
         CSharp,
     }
 }

@@ -10,16 +10,16 @@ namespace ExplorerNavigationButton
     {
         private abstract class Template : IDisposable
         {
-            private bool disposed;
+            private bool _disposed;
 
             public void Dispose()
             {
-                if (!disposed)
+                if (!_disposed)
                 {
                     Dispose(true);
                     GC.SuppressFinalize(this);
 
-                    disposed = true;
+                    _disposed = true;
                 }
             }
 

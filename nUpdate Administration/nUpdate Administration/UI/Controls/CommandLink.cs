@@ -18,7 +18,7 @@ namespace nUpdate.Administration.UI.Controls
         private const uint BCM_GETNOTE = 0x0000160A;
         private const uint BCM_GETNOTELENGTH = 0x0000160B;
         private const uint BCM_SETSHIELD = 0x0000160C;
-        private bool shield;
+        private bool _shield;
 
         public CommandLink()
         {
@@ -45,11 +45,11 @@ namespace nUpdate.Administration.UI.Controls
          DefaultValue(false)]
         public bool Shield
         {
-            get { return shield; }
+            get { return _shield; }
             set
             {
-                shield = value;
-                NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, shield);
+                _shield = value;
+                NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, _shield);
             }
         }
 

@@ -18,11 +18,11 @@ namespace ExplorerNavigationButton
     [Description("A button with the appearance of the explorer navigation buttons.")]
     public partial class ExplorerNavigationButton : Control
     {
-        private readonly Bitmap[] arrows;
-        private ArrowDirection arrowDirection;
-        private ButtonState state;
-        private Template template;
-        private ButtonTheme theme;
+        private readonly Bitmap[] _arrows;
+        private ArrowDirection _arrowDirection;
+        private ButtonState _state;
+        private Template _template;
+        private ButtonTheme _theme;
 
         /// <summary>
         ///     Creates a new ExplorerNavigationButton.
@@ -36,13 +36,13 @@ namespace ExplorerNavigationButton
 
             Size = new Size(24, 24);
 
-            arrows = new Bitmap[4];
-            arrows[0] = Resources.Left_Normal;
-            arrows[1] = Resources.Right_Normal;
-            arrows[2] = Resources.Left_Disabled;
-            arrows[3] = Resources.Right_Disabled;
+            _arrows = new Bitmap[4];
+            _arrows[0] = Resources.Left_Normal;
+            _arrows[1] = Resources.Right_Normal;
+            _arrows[2] = Resources.Left_Disabled;
+            _arrows[3] = Resources.Right_Disabled;
 
-            template = AutoSelectTemplate();
+            _template = AutoSelectTemplate();
         }
 
         /// <summary>
@@ -53,12 +53,12 @@ namespace ExplorerNavigationButton
         [DefaultValue(ArrowDirection.Left)]
         public ArrowDirection ArrowDirection
         {
-            get { return arrowDirection; }
+            get { return _arrowDirection; }
             set
             {
-                if (value != arrowDirection)
+                if (value != _arrowDirection)
                 {
-                    arrowDirection = value;
+                    _arrowDirection = value;
                     Invalidate();
 
                     OnArrowDirectionChanged(EventArgs.Empty);
@@ -74,17 +74,17 @@ namespace ExplorerNavigationButton
         [DefaultValue(ButtonTheme.Auto)]
         public ButtonTheme Theme
         {
-            get { return theme; }
+            get { return _theme; }
             set
             {
-                if (value != theme)
+                if (value != _theme)
                 {
-                    theme = value;
+                    _theme = value;
 
-                    if (template != null)
-                        template.Dispose();
+                    if (_template != null)
+                        _template.Dispose();
 
-                    template = SelectTemplate(theme);
+                    _template = SelectTemplate(_theme);
                     Invalidate();
                     OnTemplateChanged(EventArgs.Empty);
                 }
@@ -151,7 +151,7 @@ namespace ExplorerNavigationButton
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            state = ButtonState.Hover;
+            _state = ButtonState.Hover;
             Invalidate();
 
             base.OnMouseEnter(e);
@@ -159,7 +159,7 @@ namespace ExplorerNavigationButton
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            state = ButtonState.Normal;
+            _state = ButtonState.Normal;
             Invalidate();
 
             base.OnMouseLeave(e);
@@ -167,7 +167,7 @@ namespace ExplorerNavigationButton
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            state = ButtonState.Pressed;
+            _state = ButtonState.Pressed;
             Invalidate();
 
             base.OnMouseDown(e);
@@ -175,7 +175,7 @@ namespace ExplorerNavigationButton
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            state = ButtonState.Hover;
+            _state = ButtonState.Hover;
             Invalidate();
 
             base.OnMouseUp(e);
@@ -197,13 +197,13 @@ namespace ExplorerNavigationButton
             int arrowSize = Math.Min(16, Math.Min(Width, Height));
             var arrowRect = new Rectangle((Width - arrowSize)/2, (Height - arrowSize)/2, arrowSize, arrowSize);
 
-            ButtonRenderer.DrawButton(g, ClientRectangle, arrows[arrowIndex], arrowRect, false,
+            ButtonRenderer.DrawButton(g, ClientRectangle, _arrows[arrowIndex], arrowRect, false,
                 (PushButtonState) (state + 1));
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (template != null)
+            if (_template != null)
             {
                 Graphics g = e.Graphics;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -214,23 +214,23 @@ namespace ExplorerNavigationButton
                 g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (Width - buttonSize)/2.0f,
                     (Height - buttonSize)/2.0f);
 
-                template.Draw(g, arrowDirection, Enabled ? state : ButtonState.Disabled);
+                _template.Draw(g, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
             }
             else
-                DrawDefault(e.Graphics, arrowDirection, Enabled ? state : ButtonState.Disabled);
+                DrawDefault(e.Graphics, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
 
             base.OnPaint(e);
         }
 
         protected override void Dispose(bool disposing)
         {
-            foreach (Bitmap bmp in arrows)
+            foreach (Bitmap bmp in _arrows)
             {
                 bmp.Dispose();
             }
 
-            if (template != null)
-                template.Dispose();
+            if (_template != null)
+                _template.Dispose();
 
             base.Dispose(disposing);
         }

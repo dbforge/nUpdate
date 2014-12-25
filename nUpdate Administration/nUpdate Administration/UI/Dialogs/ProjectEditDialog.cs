@@ -477,7 +477,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             string ftpDirectory = null;
             Invoke(new Action(() => ftpDirectory = ftpDirectoryTextBox.Text));
-            if (_ftpDirectory != ftpDirectory && _ftpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 2))
+            if (_ftpDirectory != ftpDirectory && _ftpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1))
             {
                 Invoke(
                     new Action(
