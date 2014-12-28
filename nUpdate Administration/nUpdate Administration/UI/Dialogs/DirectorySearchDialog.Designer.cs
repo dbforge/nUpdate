@@ -41,8 +41,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.directoryTextBox = new System.Windows.Forms.TextBox();
             this.ftpDirectoryInfoLabel = new System.Windows.Forms.Label();
             this.serverDataTreeView = new System.Windows.Forms.TreeView();
-            this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
-            this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
+            this.doubleNavigationButton1 = new VisualStyleControls.Controls.DoubleNavigationButton();
             ((System.ComponentModel.ISupportInitialize)(this.loadPictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -137,28 +136,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverDataTreeView.TabIndex = 0;
             this.serverDataTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.serverDataTreeView_AfterSelect);
             // 
-            // forwardButton
+            // doubleNavigationButton1
             // 
-            this.forwardButton.ArrowDirection = ExplorerNavigationButton.ArrowDirection.Right;
-            this.forwardButton.BackColor = System.Drawing.Color.Black;
-            this.forwardButton.Enabled = false;
-            this.forwardButton.Location = new System.Drawing.Point(32, 6);
-            this.forwardButton.Name = "forwardButton";
-            this.forwardButton.Size = new System.Drawing.Size(24, 24);
-            this.forwardButton.TabIndex = 22;
-            this.forwardButton.Text = "explorerNavigationButton2";
-            this.forwardButton.Click += new System.EventHandler(this.forwardButton_Click);
-            // 
-            // backButton
-            // 
-            this.backButton.BackColor = System.Drawing.Color.Black;
-            this.backButton.Enabled = false;
-            this.backButton.Location = new System.Drawing.Point(2, 6);
-            this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(24, 24);
-            this.backButton.TabIndex = 21;
-            this.backButton.Text = "explorerNavigationButton1";
-            this.backButton.Click += new System.EventHandler(this.backButton_Click);
+            this.doubleNavigationButton1.Location = new System.Drawing.Point(14, 12);
+            this.doubleNavigationButton1.Name = "doubleNavigationButton1";
+            this.doubleNavigationButton1.Size = new System.Drawing.Size(60, 30);
+            this.doubleNavigationButton1.TabIndex = 23;
+            this.doubleNavigationButton1.Text = "doubleNavigationButton1";
             // 
             // DirectorySearchDialog
             // 
@@ -168,8 +152,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(478, 299);
-            this.Controls.Add(this.forwardButton);
-            this.Controls.Add(this.backButton);
+            this.Controls.Add(this.doubleNavigationButton1);
             this.Controls.Add(this.loadPictureBox);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.directoryLabel);
@@ -206,7 +189,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;
         private System.Windows.Forms.PictureBox loadPictureBox;
-        private ExplorerNavigationButton.ExplorerNavigationButton backButton;
-        private ExplorerNavigationButton.ExplorerNavigationButton forwardButton;
+        private VisualStyleControls.Controls.DoubleNavigationButton doubleNavigationButton1;
     }
 }
