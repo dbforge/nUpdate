@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Win32;
+using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.Core
 {
@@ -89,6 +91,11 @@ namespace nUpdate.Administration.Core
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
+        }
+
+        public static IEnumerable<ListingItem> ToListingItems(this IEnumerable<FtpItem> ftpItems)
+        {
+            return ftpItems.Select(item => new ListingItem(item.Name));
         }
 
         #endregion
