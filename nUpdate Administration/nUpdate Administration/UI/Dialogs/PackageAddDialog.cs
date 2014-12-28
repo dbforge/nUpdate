@@ -893,7 +893,9 @@ namespace nUpdate.Administration.UI.Dialogs
             Invoke(new Action(() =>
             {
                 var directoryNode = CreateDirectoryNode(rootDirectoryInfo);
-                if (directoryNode == null) return;
+                if (directoryNode == null) 
+                    return;
+
                 filesDataTreeView.SelectedNode.Nodes.Add(directoryNode);
                 if (!filesDataTreeView.SelectedNode.IsExpanded)
                     filesDataTreeView.SelectedNode.Toggle();
@@ -975,7 +977,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addFolderButton_Click(object sender, EventArgs e)
         {
-            if (filesDataTreeView.SelectedNode == null) return;
+            if (filesDataTreeView.SelectedNode == null)
+                return;
+
             using (var folderDialog = new FolderBrowserDialog())
             {
                 if (folderDialog.ShowDialog() != DialogResult.OK) return;
@@ -987,7 +991,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addFilesButton_Click(object sender, EventArgs e)
         {
-            if (filesDataTreeView.SelectedNode == null) return;
+            if (filesDataTreeView.SelectedNode == null)
+                return;
+
             using (var fileDialog = new OpenFileDialog())
             {
                 fileDialog.SupportMultiDottedExtensions = true;

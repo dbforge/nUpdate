@@ -24,7 +24,7 @@ namespace nUpdate.Administration.UI.Dialogs
     public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private readonly FtpManager _ftp = new FtpManager();
-        private bool _allowCancel = true;
+        private bool _allowCancel;
         private bool _generalTabPassed;
 
         //private LocalizationProperties _lp = new LocalizationProperties();

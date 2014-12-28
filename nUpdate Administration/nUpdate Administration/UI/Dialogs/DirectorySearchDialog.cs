@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -12,7 +13,9 @@ using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
+using Popup = nUpdate.Administration.UI.Popups.Popup;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -23,6 +26,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private FtpManager _ftp;
 
+        private List<FtpItem> _listedFtpItems = new List<FtpItem>(); 
+        private readonly List<ListingItem> _foundItems = new List<ListingItem>(); 
         private bool _allowCancel;
         private bool _isGettingRootData = true;
         private bool _isSetByUser;
@@ -152,47 +157,41 @@ namespace nUpdate.Administration.UI.Dialogs
         private void LoadListAsync()
         {
             SetUiState(false);
-            var items = _ftp.ListDirectoriesAndFiles("/", true);
-            
-            foreach (var item in items)
+            try
             {
-                if (item.ParentPath.Length < 2) // Has no parent-directory
-                {
-                    var itemPlaceholder = item;
-                    Invoke(new Action(() =>
-                    {
-                        serverDataTreeView.Nodes[0].Nodes.Add(String.Format("/{0}", itemPlaceholder.Name));
-                    }));
-                }
-                else
-                {
-                    var itemPlaceholder = item;
-                    string[] pathParts = itemPlaceholder.ParentPath.Split('/');
-                    BeginInvoke(
-                            new Action(
-                                () =>
-                                    serverDataTreeView.SelectedNode =
-                                        serverDataTreeView.Nodes[0].Nodes.Cast<TreeNode>()
-                                            .First(node => node.Name == itemPlaceholder.Name)));
+                _listedFtpItems = _ftp.ListDirectoriesAndFiles("/", true).ToList();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
+                                PopupButtons.Ok);
+                            Close();
+                        }));
 
-                    for (int i = 0; i <= pathParts.Length - 1; ++i)
-                    {
-                        var i1 = i;
-                        var newNode = new TreeNode(pathParts[i1]);
-                        BeginInvoke(
-                            new Action(
-                                () =>
-                                {
-                                    serverDataTreeView.SelectedNode.Nodes.Add(newNode);
-                                    serverDataTreeView.SelectedNode = newNode;
-                                }));
-                    }
-                }
-                
             }
 
-            Invoke(new Action(() =>
+            if (_listedFtpItems != null)
             {
+                foreach (var listedItem in _listedFtpItems.Where(item => item.ParentPath.Length < 2))
+                {
+                    var listingItem = new ListingItem(listedItem.Name);
+                    if (!Path.HasExtension(listedItem.Name)) // Only if it is a directory
+                        InitializeSubItems(listingItem, listedItem.Name,  1);
+                    _foundItems.Add(listingItem);
+                }
+            }
+
+            BeginInvoke(new Action(() =>
+            {
+                foreach (var mainItem in _foundItems)
+                {
+                    AddItemsToTreeView(serverDataTreeView.Nodes[0], mainItem);
+                }
+
                 serverDataTreeView.Enabled = true;
                 loadPictureBox.Visible = false;
                 cancelButton.Enabled = true;
@@ -201,6 +200,52 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _isGettingRootData = false;
             _allowCancel = true;
+        }
+
+        private void InitializeSubItems(ListingItem currentItem, string rootDirectoryName, int pathLength)
+        {
+            List<FtpItem> subItems =
+                _listedFtpItems.Where(
+                    item =>
+                        item.ParentPath.Split('/').Count(x => x != String.Empty) == pathLength &&
+                        item.ParentPath.StartsWith(String.Format("/{0}", rootDirectoryName))).ToList();
+            currentItem.SubItems = subItems.Select(item => new ListingItem(item.Name));
+            foreach (var subItem in currentItem.SubItems.Where(subItem => !Path.HasExtension(subItem.Text)))
+            {
+                InitializeSubItems(subItem, rootDirectoryName, pathLength + 1);
+            }
+        }
+
+        private void AddItemsToTreeView(TreeNode selectedNode, ListingItem listingItem)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                var node = new TreeNode(listingItem.Text);
+                selectedNode.Nodes.Add(node);
+
+                if (listingItem.SubItems == null) 
+                    return;
+
+                foreach (var item in listingItem.SubItems)
+                {
+                    if (!Path.HasExtension(item.Text))
+                    {
+                        var directoryNode = new TreeNode(item.Text, 1, 1);
+                        node.Nodes.Add(directoryNode);
+                        AddItemsToTreeView(directoryNode, item);
+                    }
+                    else
+                    {
+                        string extension = String.Format(".{0}", item.Text);
+                        var icon = IconReader.GetFileIcon(extension);
+                        if (!serverImageList.Images.ContainsKey(extension))
+                            serverImageList.Images.Add(extension, icon);
+
+                        var fileNode = new TreeNode(item.Text, serverImageList.Images.IndexOfKey(extension), serverImageList.Images.IndexOfKey(extension));
+                        node.Nodes.Add(fileNode);
+                    }
+                }
+            }));
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -213,14 +258,14 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             _isSetByUser = false;
 
-            if (!_nav.CanGoBack)
-                backButton.Enabled = false;
-            if (_nav.CanGoBack)
-                backButton.Enabled = true;
-            if (!_nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (_nav.CanGoForward)
-                forwardButton.Enabled = true;
+            //if (!_nav.CanGoBack)
+            //    backButton.Enabled = false;
+            //if (_nav.CanGoBack)
+            //    backButton.Enabled = true;
+            //if (!_nav.CanGoForward)
+            //    forwardButton.Enabled = false;
+            //if (_nav.CanGoForward)
+            //    forwardButton.Enabled = true;
 
             _nav.Back();
             if (_nav.Current != null)
@@ -231,14 +276,14 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             _isSetByUser = false;
 
-            if (!_nav.CanGoBack)
-                backButton.Enabled = false;
-            if (_nav.CanGoBack)
-                backButton.Enabled = true;
-            if (!_nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (_nav.CanGoForward)
-                forwardButton.Enabled = true;
+            //if (!_nav.CanGoBack)
+            //    backButton.Enabled = false;
+            //if (_nav.CanGoBack)
+            //    backButton.Enabled = true;
+            //if (!_nav.CanGoForward)
+            //    forwardButton.Enabled = false;
+            //if (_nav.CanGoForward)
+            //    forwardButton.Enabled = true;
 
             _nav.Forward();
             if (_nav.Current != null)
