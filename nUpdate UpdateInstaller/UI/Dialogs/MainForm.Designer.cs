@@ -1,4 +1,4 @@
-﻿namespace nUpdate.UpdateInstaller.Dialogs
+﻿namespace nUpdate.UpdateInstaller.UI.Dialogs
 {
     partial class MainForm
     {

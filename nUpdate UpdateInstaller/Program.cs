@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
+using nUpdate.UpdateInstaller.UI.Popups;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -97,26 +99,30 @@ namespace nUpdate.UpdateInstaller
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            if (args == null || args.Length == 0)
+            if (args.Length != 1)
             {
-                MessageBox.Show("Invalid arguments.", "Startup failed.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
+                    String.Format("Invalid arguments count ({0}) where 1 argument was expected.", args.Length),
+                    PopupButtons.Ok);
                 return;
             }
 
-            if (args.Length != 8)
+            string[] appArguments = args[0].Split('|');
+
+            try
             {
-                MessageBox.Show("Invalid arguments.", "Startup failed.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PackageFile = appArguments[0];
+                AimFolder = appArguments[1];
+                ApplicationExecutablePath = appArguments[2];
+                AppName = appArguments[3];
+                Operations = Serializer.Deserialize<IEnumerable<Operation>>(appArguments[4]);
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
                 return;
             }
-
-            string[] appArguments = args[1].Split(new[] { '|' });
-
-            PackageFile = appArguments[0];
-            AimFolder = appArguments[1];
-            ApplicationExecutablePath = appArguments[2];
-            AppName = appArguments[3];
-            Operations = Serializer.Deserialize<IEnumerable<Operation>>(appArguments[4]);
-
+            
             new Updater().RunUpdate();
         }
     }

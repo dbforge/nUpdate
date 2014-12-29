@@ -1,20 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using nUpdate.Dialogs;
+using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.UI.Dialogs;
 
 namespace nUpdate.Internal
 {
-    public class UpdaterUI
+    public class UpdaterUi
     {
         private bool _updateAvailable;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdaterUI" />-class.
+        ///     Initializes a new instance of the <see cref="UpdaterUi" />-class.
         /// </summary>
         /// <param name="updateManagerInstance">The instance of the <see cref="UpdateManager" /> to handle over.</param>
-        public UpdaterUI(UpdateManager updateManagerInstance)
+        public UpdaterUi(UpdateManager updateManagerInstance)
         {
             UpdateManagerInstance = updateManagerInstance;
         }
@@ -24,9 +24,9 @@ namespace nUpdate.Internal
         /// </summary>
         internal UpdateManager UpdateManagerInstance { get; set; }
 
-        internal void SearchFinishedEventHandler(bool updatesFound)
+        internal void SearchFinishedEventHandler(object sender, UpdateSearchFinishedEventArgs e)
         {
-            _updateAvailable = updatesFound;
+            _updateAvailable = e.UpdateAvailable;
         }
 
         /// <summary>

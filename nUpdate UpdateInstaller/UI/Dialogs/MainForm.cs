@@ -2,8 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
+using nUpdate.UpdateInstaller.UI.Popups;
 
-namespace nUpdate.UpdateInstaller.Dialogs
+namespace nUpdate.UpdateInstaller.UI.Dialogs
 {
     public partial class MainForm : Form, IProgressReporter
     {
@@ -14,11 +15,8 @@ namespace nUpdate.UpdateInstaller.Dialogs
 
         public void Initialize()
         {
-            Invoke(new Action(() =>
-            {
-                Icon = Icon.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
-                Show(); // We currently only have an instace, so we show the form now.
-            }));
+            Icon = Icon.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
+            Show(); // We currently only have an instance, so we show the form now.
         }
 
         public void ReportUnpackingProgress(int progress, string currentFile)
@@ -41,7 +39,14 @@ namespace nUpdate.UpdateInstaller.Dialogs
 
         public bool Fail(Exception ex)
         {
-            return false;
+            var result = DialogResult.None;
+            Invoke(
+                new Action(
+                    () =>
+                        result =
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.", String.Format("{0}. Should the updating be cancelled?", ex),
+                                PopupButtons.YesNo)));
+            return result == DialogResult.Yes;
         }
 
         public void Terminate()

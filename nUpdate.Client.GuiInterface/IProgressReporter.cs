@@ -27,7 +27,7 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
         ///     Reports exceptions that occur during the updating process.
         /// </summary>
         /// <param name="ex">The current exception that occured.</param>
-        /// <returns>Returns 'true' if the updating process should continue though, otherwise 'false'.</returns>
+        /// <returns>Returns 'true' if the updating process should be cancelled, otherwise 'false'.</returns>
         bool Fail(Exception ex);
 
         /// <summary>

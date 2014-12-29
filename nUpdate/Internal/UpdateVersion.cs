@@ -24,7 +24,7 @@ namespace nUpdate.Internal
             if (!IsValid(version))
                 throw new ArgumentException("The specified version is not valid.");
 
-            string[] versionParts = version.Split(new[] {'.'});
+            string[] versionParts = version.Split(new[] { '.' });
 
             Major = int.Parse(versionParts[0]);
             Minor = int.Parse(versionParts[1]);
@@ -34,14 +34,14 @@ namespace nUpdate.Internal
             if (versionParts[3].Contains("a"))
             {
                 DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split(new[] {'a'});
+                parts = versionParts[3].Split(new[] { 'a' });
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
             else if (versionParts[3].Contains("b"))
             {
                 DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split(new[] {'b'});
+                parts = versionParts[3].Split(new[] { 'b' });
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }

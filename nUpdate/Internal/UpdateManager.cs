@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Operations;
 using nUpdate.Internal.Exceptions;
+using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.Properties;
 
 namespace nUpdate.Internal
@@ -19,8 +20,9 @@ namespace nUpdate.Internal
     /// <summary>
     ///     Offers functions to update .NET-applications.
     /// </summary>
-    public class UpdateManager
+    public class UpdateManager : IDisposable
     {
+        private bool _disposed;
         private bool _hasDownloadCancelled;
         private bool _hasDownloadFailed;
 
@@ -138,6 +140,11 @@ namespace nUpdate.Internal
         private byte[] Signature { get; set; }
 
         /// <summary>
+        ///     Gets or  sets the operations of the update package.
+        /// </summary>
+        private IEnumerable<Operation> Operations { get; set; } 
+
+        /// <summary>
         ///     Checks if all arguments have been given.
         /// </summary>
         private void CheckArguments()
@@ -187,9 +194,6 @@ namespace nUpdate.Internal
 
         #region "Events"
 
-        public delegate void FailedEventHandler(Exception exception);
-        public delegate void UpdateSearchFinishedEventHandler(bool updateFound);
-
         /// <summary>
         ///     The event fired when the update search begins.
         /// </summary>
@@ -198,12 +202,12 @@ namespace nUpdate.Internal
         /// <summary>
         ///     The event fired when the update search is finished.
         /// </summary>
-        public event UpdateSearchFinishedEventHandler UpdateSearchFinished;
+        public event EventHandler<UpdateSearchFinishedEventArgs> UpdateSearchFinished;
 
         /// <summary>
         ///     The event fired when the download of the package begins.
         /// </summary>
-        public event FailedEventHandler UpdateSearchFailed;
+        public event EventHandler<FailedEventArgs> UpdateSearchFailed;
 
         /// <summary>
         ///     The event fired when the download of the package begins.
@@ -213,7 +217,7 @@ namespace nUpdate.Internal
         /// <summary>
         ///     The event fired when the download of the package fails.
         /// </summary>
-        public event FailedEventHandler PackageDownloadFailed;
+        public event EventHandler<FailedEventArgs> PackageDownloadFailed;
 
         public event DownloadProgressChangedEventHandler PackageDownloadProgressChanged
         {
@@ -233,16 +237,16 @@ namespace nUpdate.Internal
                 UpdateSearchStarted(sender, e);
         }
 
-        protected virtual void OnUpdateSearchFinished(bool updateFound)
+        protected virtual void OnUpdateSearchFinished(bool updateAvailable)
         {
             if (UpdateSearchFinished != null)
-                UpdateSearchFinished(updateFound);
+                UpdateSearchFinished(this, new UpdateSearchFinishedEventArgs(updateAvailable));
         }
 
         protected virtual void OnUpdateSearchFailed(Exception exception)
         {
             if (UpdateSearchFailed != null)
-                UpdateSearchFailed(exception);
+                UpdateSearchFailed(this, new FailedEventArgs(exception));
         }
 
         protected virtual void OnPackageDownloadStarted(Object sender, EventArgs e)
@@ -254,10 +258,29 @@ namespace nUpdate.Internal
         protected virtual void OnPackageDownloadFailed(Exception exception)
         {
             if (PackageDownloadFailed != null)
-                PackageDownloadFailed(exception);
+                PackageDownloadFailed(this, new FailedEventArgs(exception));
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed) 
+                return;
+
+            _searchWebClient.Dispose();
+            _packageDownloader.Dispose();
+            _searchCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource.Dispose();
+            _downloadResetEvent.Dispose();
+            _disposed = true;
+        }
 
         /// <summary>
         ///     Gets the size of the update package.
@@ -334,13 +357,12 @@ namespace nUpdate.Internal
                 Changelog = _updateConfiguration.Changelog.ContainsKey(LanguageCulture) ? _updateConfiguration.Changelog.First(item => item.Key.Name == LanguageCulture.Name).Value : _updateConfiguration.Changelog.First(item => item.Key.Name == new CultureInfo("en").Name).Value;
                 Signature = Convert.FromBase64String(_updateConfiguration.Signature);
                 MustUpdate = _updateConfiguration.MustUpdate;
+                Operations = _updateConfiguration.Operations;
 
                 if (_updateConfiguration.Operations != null)
                 {
-                    foreach (Operation operation in _updateConfiguration.Operations)
-                    {
-                        OperationAreas.Add(operation.Area);
-                    }
+                    OperationAreas.Clear();
+                    OperationAreas.AddRange(_updateConfiguration.Operations.Select(x => x.Area));
                 }
 
                 var updatePackageSize = GetUpdatePackageSize(_updateConfiguration.UpdatePackageUrl);
@@ -528,7 +550,6 @@ namespace nUpdate.Internal
                     FileMode.Open)))
             {
                 data = reader.ReadBytes((int)reader.BaseStream.Length);
-                reader.Close();
             }
 
             RsaSignature rsa;
@@ -556,6 +577,8 @@ namespace nUpdate.Internal
         {
             string unpackerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
             string unpackerZipPath = Path.Combine(unpackerDirectory, "Ionic.Zip.dll");
+            string guiInterfacePath = Path.Combine(unpackerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
+            string jsonNetPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.dll");
             string unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
 
             if (!Directory.Exists(unpackerDirectory))
@@ -564,13 +587,19 @@ namespace nUpdate.Internal
             if (!File.Exists(unpackerZipPath))
                 File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
 
+            if (!File.Exists(guiInterfacePath))
+                File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
+
+            if (!File.Exists(jsonNetPath))
+                File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
+
             if (!File.Exists(unpackerAppPath))
                 File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
 
             string[] args =
             {
-                _updateFilePath, Application.StartupPath, Application.ExecutablePath,
-                Application.ProductName, "Unpacking", "The installation of the update failed.", "{0}... \nPossibly the program won't be able to run properly as important components could be missing then.", "OK"
+                String.Format("\"{0}\"", _updateFilePath), String.Format("\"{0}\"", Application.StartupPath), String.Format("\"{0}\"", Application.ExecutablePath),
+                String.Format("\"{0}\"", Application.ProductName), String.Format("\"{0}\"", Serializer.Serialize(Operations)), "\"Unpacking\"", "\"The installation of the update failed.\"", "\"{0}... \nPossibly the program won't be able to run properly as important components could be missing then.\"", "\"OK\""
             };
             // TODO: lp.UnpackingText and lp.UnpackingErrorTitle + lp.UnpackingErrorMessage
 
