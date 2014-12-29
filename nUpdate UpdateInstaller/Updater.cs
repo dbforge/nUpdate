@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Windows.Forms;
+using Ionic.Zip;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
@@ -18,6 +18,11 @@ namespace nUpdate.UpdateInstaller
 {
     public class Updater
     {
+        private int _currentFileAmount;
+        private int _totalFilesCount;
+        private int _percentageMultiplier = 50;
+        private int _percentComplete;
+        private IProgressReporter _progressReporter;
         private readonly ManualResetEvent _unpackingResetEvent = new ManualResetEvent(false);
 
         /// <summary>
@@ -25,10 +30,9 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public void RunUpdate()
         {
-            IProgressReporter progressReporter;
             try
             {
-                progressReporter = GetGui();
+                _progressReporter = GetGui();
             }
             catch (Exception ex)
             {
@@ -36,53 +40,47 @@ namespace nUpdate.UpdateInstaller
                 return;
             }
 
-            if (progressReporter == null)
+            if (_progressReporter == null)
                 return;
 
             try
             {
-                progressReporter.Initialize();
+                _progressReporter.Initialize();
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", String.Format("Error while loading the user interface: {0}", ex.Message), PopupButtons.Ok);
                 return;
             }
-
-            int percentComplete = 0;
 
             ThreadPool.QueueUserWorkItem(arg =>
             {
-                using (var zf = Ionic.Zip.ZipFile.Read(Program.PackageFile))
+                using (var zf = ZipFile.Read(Program.PackageFile))
                 {
-                    zf.ExtractSelectedEntries("*.*", "Program", Program.AimFolder);
-
-                    //zf.ToList().ForEach(entry =>
-                    //{
-                    //    int step = Program.Operations.Any() ? zf.Count/50 : zf.Count/100;
-
-                    //    try
-                    //    {
-                    //        entry.FileName = Path.GetFileName(entry.FileName);
-                    //        entry.Extract(Program.AimFolder, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        if (!progressReporter.Fail(ex))
-                    //        {
-                    //            progressReporter.Terminate();
-                    //            Application.Exit();
-                    //        }
-                    //    }
-
-                    //    percentComplete += step;
-                    //    progressReporter.ReportOperationProgress(percentComplete, entry.FileName);
-
-                    //});
-                    _unpackingResetEvent.Set();
+                    try
+                    {
+                        foreach (ZipEntry entry in zf)
+                        {
+                            entry.Extract(Directory.GetParent(Program.PackageFile).FullName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (_progressReporter.Fail(ex))
+                            _progressReporter.Terminate();
+                    }
                 }
-                _unpackingResetEvent.WaitOne();
-                _unpackingResetEvent.Dispose();
+
+                var directories = Directory.GetParent(Program.PackageFile).GetDirectories();
+                _totalFilesCount = directories.Sum(directory => Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories).Length);
+
+                if (!Program.Operations.Any())
+                    _percentageMultiplier = 100;
+
+                foreach (var directory in directories)
+                {
+                    CopyDirectoryRecursively(directory.FullName, Program.AimFolder);
+                }
 
                 int operationsStep = (Program.Operations.Count()/50);
                 try
@@ -95,16 +93,16 @@ namespace nUpdate.UpdateInstaller
                                 switch (operation.Method)
                                 {
                                     case OperationMethods.Delete:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.FileDeletingOperationText, operation.Value));
 
                                         File.Delete(operation.Value.ToString());
                                         break;
 
                                     case OperationMethods.Rename:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.FileRenamingOperationText, operation.Value,
                                                 operation.Value2));
 
@@ -120,8 +118,8 @@ namespace nUpdate.UpdateInstaller
                                     case OperationMethods.Create:
                                         foreach (var registryKey in (BindingList<string>) operation.Value2)
                                         {
-                                            percentComplete += operationsStep;
-                                            progressReporter.ReportOperationProgress(percentComplete,
+                                            _percentComplete += operationsStep;
+                                            _progressReporter.ReportOperationProgress(_percentComplete,
                                                 String.Format(Program.RegistryKeyCreateOperationText, operation.Value2));
 
                                             // Create key
@@ -131,8 +129,8 @@ namespace nUpdate.UpdateInstaller
                                     case OperationMethods.Delete:
                                         foreach (var registryKey in (BindingList<string>) operation.Value2)
                                         {
-                                            percentComplete += operationsStep;
-                                            progressReporter.ReportOperationProgress(percentComplete,
+                                            _percentComplete += operationsStep;
+                                            _progressReporter.ReportOperationProgress(_percentComplete,
                                                 String.Format(Program.RegistryKeyDeleteOperationText, operation.Value2));
 
                                             // Delete key
@@ -140,8 +138,8 @@ namespace nUpdate.UpdateInstaller
                                         break;
 
                                     case OperationMethods.SetValue:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                                 String.Format(Program.RegistryKeyValueSetOperationText, operation.Value.ToString().Split(new []{'\\'}).Last(), ((Tuple<string, string>)operation.Value2).Item2));
 
                                             // Set key value
@@ -153,8 +151,8 @@ namespace nUpdate.UpdateInstaller
                                 switch (operation.Method)
                                 {
                                     case OperationMethods.Start:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.ProcessStartOperationText, operation.Value));
 
                                         var process = new Process
@@ -169,8 +167,8 @@ namespace nUpdate.UpdateInstaller
                                         break;
 
                                     case OperationMethods.Stop:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.ProcessStopOperationText, operation.Value));
 
                                         var processes = Process.GetProcessesByName(operation.Value.ToString());
@@ -184,16 +182,16 @@ namespace nUpdate.UpdateInstaller
                                 switch (operation.Method)
                                 {
                                     case OperationMethods.Start:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.ServiceStartOperationText, operation.Value));
 
                                         ServiceManager.StartService(operation.Value.ToString());
                                         break;
 
                                     case OperationMethods.Stop:
-                                        percentComplete += operationsStep;
-                                        progressReporter.ReportOperationProgress(percentComplete,
+                                        _percentComplete += operationsStep;
+                                        _progressReporter.ReportOperationProgress(_percentComplete,
                                             String.Format(Program.ServiceStopOperationText, operation.Value));
 
                                         ServiceManager.StopService(operation.Value.ToString());
@@ -205,12 +203,16 @@ namespace nUpdate.UpdateInstaller
                 }
                 catch (Exception ex)
                 {
-                    if (progressReporter.Fail(ex)) // If it should be terminated
+                    if (_progressReporter.Fail(ex)) // If it should be terminated
                     {
-                        progressReporter.Terminate();
+                        _progressReporter.Terminate();
                     }
                 }
+
+                _unpackingResetEvent.Set();
             });
+
+            _unpackingResetEvent.WaitOne();
 
             var p = new Process
             {
@@ -241,6 +243,32 @@ namespace nUpdate.UpdateInstaller
             catch (Exception) // No parameterless constructor as the "CreateInstance"-method wants a default constructor
             {
                 return (IProgressReporter) Activator.CreateInstance(typeof (MainForm));
+            }
+        }
+
+        private void CopyDirectoryRecursively(string sourceDirName, string destDirName)
+        {
+            var dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] sourceDirectories = dir.GetDirectories();
+
+            if (!Directory.Exists(destDirName))
+                Directory.CreateDirectory(destDirName);
+
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                _currentFileAmount += 1;
+                _percentComplete = (_currentFileAmount / _totalFilesCount) * _percentageMultiplier;
+                _progressReporter.ReportUnpackingProgress(_percentComplete, file.Name);
+
+                string aimPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(aimPath, true);
+            }
+
+            foreach (DirectoryInfo subDirectories in sourceDirectories)
+            {
+                string aimDirectoryPath = Path.Combine(destDirName, subDirectories.Name);
+                CopyDirectoryRecursively(subDirectories.FullName, aimDirectoryPath);
             }
         }
     }

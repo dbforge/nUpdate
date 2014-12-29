@@ -38,6 +38,7 @@
             this.extractProgressBar.Location = new System.Drawing.Point(14, 37);
             this.extractProgressBar.Name = "extractProgressBar";
             this.extractProgressBar.Size = new System.Drawing.Size(260, 14);
+            this.extractProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.extractProgressBar.TabIndex = 0;
             // 
             // updateLabel
