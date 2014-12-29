@@ -21,8 +21,9 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
 
         public void ReportUnpackingProgress(int progress, string currentFile)
         {
-            Invoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
+                extractProgressBar.Style = ProgressBarStyle.Blocks;
                 extractProgressBar.Value = progress;
                 updateLabel.Text = String.Format("{0} {1}... {2}%", "Unpacking...", currentFile, progress);
             }));
@@ -30,7 +31,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
 
         public void ReportOperationProgress(int progress, string currentOperation)
         {
-            Invoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
                 extractProgressBar.Value = progress;
                 updateLabel.Text = String.Format("{0}... {1}%", currentOperation, progress);
@@ -40,7 +41,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
         public bool Fail(Exception ex)
         {
             var result = DialogResult.None;
-            Invoke(
+            BeginInvoke(
                 new Action(
                     () =>
                         result =
@@ -51,7 +52,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
 
         public void Terminate()
         {
-            Invoke(new Action(Close));
+            BeginInvoke(new Action(Close));
         }
     }
 }
