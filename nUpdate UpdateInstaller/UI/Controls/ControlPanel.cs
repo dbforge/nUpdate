@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace nUpdate.UpdateInstaller.Controls
+namespace nUpdate.UpdateInstaller.UI.Controls
 {
     public sealed class ControlPanel : Panel
     {

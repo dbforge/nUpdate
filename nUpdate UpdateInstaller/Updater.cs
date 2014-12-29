@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,47 +11,78 @@ using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
-using nUpdate.UpdateInstaller.Dialogs;
+using nUpdate.UpdateInstaller.UI.Dialogs;
+using nUpdate.UpdateInstaller.UI.Popups;
 
 namespace nUpdate.UpdateInstaller
 {
     public class Updater
     {
+        private readonly ManualResetEvent _unpackingResetEvent = new ManualResetEvent(false);
+
         /// <summary>
         ///     Runs the update installation process.
         /// </summary>
         public void RunUpdate()
         {
-            IProgressReporter progressReporter = GetGui();
-            progressReporter.Initialize();
+            IProgressReporter progressReporter;
+            try
+            {
+                progressReporter = GetGui();
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", String.Format("Error while loading the user interface: {0}", ex.Message), PopupButtons.Ok);
+                return;
+            }
+
+            if (progressReporter == null)
+                return;
+
+            try
+            {
+                progressReporter.Initialize();
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", String.Format("Error while loading the user interface: {0}", ex.Message), PopupButtons.Ok);
+                return;
+            }
 
             int percentComplete = 0;
+
             ThreadPool.QueueUserWorkItem(arg =>
             {
                 using (var zf = Ionic.Zip.ZipFile.Read(Program.PackageFile))
                 {
-                    zf.ToList().ForEach(entry =>
-                    {
-                        int step = Program.Operations.Any() ? zf.Count/50 : zf.Count/100;
+                    zf.ExtractSelectedEntries("*.*", "Program", Program.AimFolder);
 
-                        try
-                        {
-                            entry.FileName = Path.GetFileName(entry.FileName);
-                            entry.Extract(Program.AimFolder, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (!progressReporter.Fail(ex))
-                            {
-                                progressReporter.Terminate();
-                                Application.Exit();
-                            }
-                        }
+                    //zf.ToList().ForEach(entry =>
+                    //{
+                    //    int step = Program.Operations.Any() ? zf.Count/50 : zf.Count/100;
 
-                        percentComplete += step;
-                        progressReporter.ReportOperationProgress(percentComplete, entry.FileName);
-                    });
+                    //    try
+                    //    {
+                    //        entry.FileName = Path.GetFileName(entry.FileName);
+                    //        entry.Extract(Program.AimFolder, Ionic.Zip.ExtractExistingFileAction.OverwriteSilently);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        if (!progressReporter.Fail(ex))
+                    //        {
+                    //            progressReporter.Terminate();
+                    //            Application.Exit();
+                    //        }
+                    //    }
+
+                    //    percentComplete += step;
+                    //    progressReporter.ReportOperationProgress(percentComplete, entry.FileName);
+
+                    //});
+                    _unpackingResetEvent.Set();
                 }
+                _unpackingResetEvent.WaitOne();
+                _unpackingResetEvent.Dispose();
 
                 int operationsStep = (Program.Operations.Count()/50);
                 try
@@ -173,10 +205,9 @@ namespace nUpdate.UpdateInstaller
                 }
                 catch (Exception ex)
                 {
-                    if (!progressReporter.Fail(ex))
+                    if (progressReporter.Fail(ex)) // If it should be terminated
                     {
                         progressReporter.Terminate();
-                        Application.Exit();
                     }
                 }
             });
