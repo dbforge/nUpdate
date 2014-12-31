@@ -8,51 +8,90 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
 {
     public partial class MainForm : Form, IProgressReporter
     {
+        private bool _allowCancel;
+        private bool _dataSet;
+
         public MainForm()
         {
             InitializeComponent();
         }
 
+        public bool IsCancelled { get; set; }
+
         public void Initialize()
         {
             Icon = Icon.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
-            Show(); // We currently only have an instance, so we show the form now.
+            Text = Program.AppName;
+            ShowDialog(); // We currently only have an instance, so we show the form as a modal dialog now.
         }
 
-        public void ReportUnpackingProgress(int progress, string currentFile)
+        public void ReportUnpackingProgress(float percentage, string currentFile)
         {
-            BeginInvoke(new Action(() =>
+            Invoke(new Action(() =>
             {
-                extractProgressBar.Style = ProgressBarStyle.Blocks;
-                extractProgressBar.Value = progress;
-                updateLabel.Text = String.Format("{0} {1}... {2}%", "Unpacking...", currentFile, progress);
+                if (!_dataSet)
+                {
+                    extractProgressBar.Style = ProgressBarStyle.Blocks;
+                    percentageLabel.Visible = true;
+                    _dataSet = true;
+                }
+
+                extractProgressBar.Value = (int)percentage;
+                updateLabel.Text = String.Format("{0} {1}... ", "Updating", currentFile);
+                percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
 
-        public void ReportOperationProgress(int progress, string currentOperation)
+        public void ReportOperationProgress(float percentage, string currentOperation)
         {
-            BeginInvoke(new Action(() =>
+            Invoke(new Action(() =>
             {
-                extractProgressBar.Value = progress;
-                updateLabel.Text = String.Format("{0}... {1}%", currentOperation, progress);
+                extractProgressBar.Value += 1;
+                updateLabel.Text = String.Format("{0}...", currentOperation);
+                percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
 
         public bool Fail(Exception ex)
         {
             var result = DialogResult.None;
-            BeginInvoke(
+            Invoke(
                 new Action(
                     () =>
                         result =
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.", String.Format("{0}. Should the updating be cancelled?", ex),
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.",
+                                String.Format("{0}. Should the updating be cancelled?", ex), 
                                 PopupButtons.YesNo)));
             return result == DialogResult.Yes;
         }
 
+        public void InitializingFail(Exception ex)
+        {
+            Popup.ShowPopup(this, SystemIcons.Error, "Error while iniaitializing the data.", ex,
+                PopupButtons.Ok);
+        }
+
         public void Terminate()
         {
-            BeginInvoke(new Action(Close));
+            _allowCancel = true;
+            Invoke(new Action(Close));
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Invoke(new Action(() =>
+            {
+                cancelButton.Enabled = false;
+                percentageLabel.Visible = false;
+                updateLabel.Text = "Cancelling updating process...";
+            }));
+            IsCancelled = true;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_allowCancel)
+                e.Cancel = true;
         }
     }
 }
