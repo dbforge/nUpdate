@@ -982,8 +982,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
             using (var folderDialog = new FolderBrowserDialog())
             {
-                if (folderDialog.ShowDialog() != DialogResult.OK) return;
-                if (filesDataTreeView.SelectedNode == null) return;
+                if (folderDialog.ShowDialog() != DialogResult.OK) 
+                    return;
+                if (filesDataTreeView.SelectedNode == null) 
+                    return;
 
                 ThreadPool.QueueUserWorkItem(arg => ListDirectoryContent(folderDialog.SelectedPath));
             }
@@ -1447,6 +1449,36 @@ namespace nUpdate.Administration.UI.Dialogs
                 englishChangelogTextBox.SelectAll();
             else if (e.Control & e.KeyCode == Keys.Back)
                 SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
+        }
+
+        private void addExistingFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            addFolderButton_Click(sender, e);
+        }
+
+        private void addVirtualFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (filesDataTreeView.SelectedNode == null)
+                return;
+
+            var folderNode = new TreeNode("Folder name", 0, 0);
+            filesDataTreeView.SelectedNode.Nodes.Add(folderNode);
+            if (!filesDataTreeView.SelectedNode.IsExpanded)
+                filesDataTreeView.SelectedNode.Toggle();
+
+            folderNode.BeginEdit();
+        }
+
+        private void filesDataTreeView_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Node.Parent == null)
+                e.Node.EndEdit(true);
+        }
+
+        private void infoButton_Click(object sender, EventArgs e)
+        {
+            var updatingInfoDialog = new UpdatingInfoDialog();
+            updatingInfoDialog.ShowDialog();
         }
     }
 }
