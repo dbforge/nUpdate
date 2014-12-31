@@ -8,15 +8,14 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.Core.Operations;
-using nUpdate.Dialogs;
 using nUpdate.Internal;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class NewUpdateDialog : BaseForm
+    public partial class NewUpdateDialog : BaseDialog
     {
-        private const int Mb = 1048576;
-        private const int Kb = 1024;
+        private const int MB = 1048576;
+        private const int KB = 1024;
 
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private bool _allowCancel;
@@ -113,13 +112,13 @@ namespace nUpdate.UI.Dialogs
 
             if (PackageSize >= 104857.6)
             {
-                double packageSizeInMb = Math.Round((PackageSize/Mb), 1);
+                double packageSizeInMb = Math.Round((PackageSize/MB), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "MB");
             }
             else
             {
-                double packageSizeInKb = Math.Round((PackageSize/Kb), 1);
+                double packageSizeInKb = Math.Round((PackageSize/KB), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb), "KB");
             }
