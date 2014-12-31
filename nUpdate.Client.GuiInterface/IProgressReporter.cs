@@ -5,11 +5,6 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
     public interface IProgressReporter
     {
         /// <summary>
-        ///     Gets or sets a value indicating whether the updating process is cancelled or not.
-        /// </summary>
-        bool IsCancelled { get; set; }
-
-        /// <summary>
         ///     The initializing-method that loads the necessary resources.
         /// </summary>
         void Initialize();

@@ -81,7 +81,6 @@ namespace nUpdate.UpdateInstaller
         {
             try
             {
-
                 using (var zf = ZipFile.Read(Program.PackageFile))
                 {
                     try
@@ -105,7 +104,21 @@ namespace nUpdate.UpdateInstaller
 
                 foreach (var directory in directories)
                 {
-                    CopyDirectoryRecursively(directory.FullName, Program.AimFolder);
+                    switch (directory.Name)
+                    {
+                        case "Program":
+                            CopyDirectoryRecursively(directory.FullName, Program.AimFolder);
+                            break;
+                        case "AppData":
+                            CopyDirectoryRecursively(directory.FullName, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+                            break;
+                        case "Temp":
+                            CopyDirectoryRecursively(directory.FullName, Path.GetTempPath());
+                            break;
+                        case "Desktop":
+                            CopyDirectoryRecursively(directory.FullName, Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+                            break;
+                    }
                 }
             }
             catch (Exception ex)

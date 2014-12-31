@@ -7,12 +7,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
-using nUpdate.Dialogs;
 using nUpdate.UI.Popups;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class UpdateDownloadDialog : BaseForm
+    public partial class UpdateDownloadDialog : BaseDialog
     {
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private LocalizationProperties _lp;

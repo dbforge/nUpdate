@@ -5,11 +5,10 @@ using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
-using nUpdate.Dialogs;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class NoUpdateFoundDialog : BaseForm
+    public partial class NoUpdateFoundDialog : BaseDialog
     {
         private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);

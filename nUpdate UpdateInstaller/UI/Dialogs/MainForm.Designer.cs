@@ -32,9 +32,6 @@
             this.extractProgressBar = new System.Windows.Forms.ProgressBar();
             this.updateLabel = new System.Windows.Forms.Label();
             this.percentageLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UpdateInstaller.UI.Controls.ControlPanel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // extractProgressBar
@@ -65,33 +62,12 @@
             this.percentageLabel.Text = "0%";
             this.percentageLabel.Visible = false;
             // 
-            // controlPanel1
-            // 
-            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.cancelButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 64);
-            this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(326, 40);
-            this.controlPanel1.TabIndex = 3;
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(241, 8);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(326, 104);
-            this.Controls.Add(this.controlPanel1);
+            this.ClientSize = new System.Drawing.Size(326, 67);
             this.Controls.Add(this.percentageLabel);
             this.Controls.Add(this.updateLabel);
             this.Controls.Add(this.extractProgressBar);
@@ -102,7 +78,6 @@
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -113,8 +88,6 @@
         private System.Windows.Forms.ProgressBar extractProgressBar;
         private System.Windows.Forms.Label updateLabel;
         private System.Windows.Forms.Label percentageLabel;
-        private Controls.ControlPanel controlPanel1;
-        private System.Windows.Forms.Button cancelButton;
     }
 }
 

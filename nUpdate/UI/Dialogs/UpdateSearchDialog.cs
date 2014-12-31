@@ -5,13 +5,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
-using nUpdate.Dialogs;
 using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.UI.Popups;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class UpdateSearchDialog : BaseForm
+    public partial class UpdateSearchDialog : BaseDialog
     {
         private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);

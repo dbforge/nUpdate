@@ -77,17 +77,6 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(new Action(Close));
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            Invoke(new Action(() =>
-            {
-                cancelButton.Enabled = false;
-                percentageLabel.Visible = false;
-                updateLabel.Text = "Cancelling updating process...";
-            }));
-            IsCancelled = true;
-        }
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!_allowCancel)

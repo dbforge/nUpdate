@@ -30,6 +30,7 @@ namespace nUpdate.Administration.UI.Popups
                 var difference = (int)(measuredSize.Height - messageLabel.Height);
                 messageLabel.Height += difference;
                 Height += difference;
+                controlPanel1.Location = new Point(controlPanel1.Location.X, Size.Height - controlPanel1.Size.Height);
             }
 
             base.OnPaint(e);

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Dialogs;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class UpdateErrorDialog : BaseForm
+    public partial class UpdateErrorDialog : BaseDialog
     {
         public Icon AppIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
