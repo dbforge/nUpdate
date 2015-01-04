@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Win32;
-using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.Core
 {
     public static class Extensions
     {
         #region "Control"
+
+        private const int TVIF_STATE = 0x8;
+        private const int TVIS_STATEIMAGEMASK = 0xF000;
+        private const int TV_FIRST = 0x1100;
+        private const int TVM_SETITEM = TV_FIRST + 63;
 
         /// <summary>
         ///     Sets the possibility to apply double buffering on a control.
@@ -27,11 +30,6 @@ namespace nUpdate.Administration.Core
             dbProp.SetValue(control, true, null);
         }
 
-        private const int TVIF_STATE = 0x8;
-        private const int TVIS_STATEIMAGEMASK = 0xF000;
-        private const int TV_FIRST = 0x1100;
-        private const int TVM_SETITEM = TV_FIRST + 63;
- 
         /// <summary>
         ///     Hides the checkbox for the specified node on a TreeView control.
         /// </summary>
@@ -40,7 +38,6 @@ namespace nUpdate.Administration.Core
             var tvi = new TvItem {hItem = node.Handle, mask = TVIF_STATE, stateMask = TVIS_STATEIMAGEMASK, state = 0};
             NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
-
 
         #endregion
 
@@ -91,11 +88,6 @@ namespace nUpdate.Administration.Core
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
-        }
-
-        public static IEnumerable<ListingItem> ToListingItems(this IEnumerable<FtpItem> ftpItems)
-        {
-            return ftpItems.Select(item => new ListingItem(item.Name));
         }
 
         #endregion

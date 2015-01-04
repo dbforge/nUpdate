@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -14,16 +11,13 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.History;
-using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
 
@@ -38,23 +32,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
         private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
         private readonly FtpManager _ftp = new FtpManager();
-        private readonly Log _updateLog = new Log();
-        private bool _allowCancel = true;
-        private Uri _configurationFileUrl;
-        private MySqlConnection _deleteConnection;
-        private MySqlConnection _insertConnection;
-        private bool _isSetByUser;
-        private bool _isNetworkAvailable = true;
-        private bool _uploadCancelled;
-        private bool _packageExisting;
-        private MySqlConnection _queryConnection;
         private readonly ManualResetEvent _loadConfigurationResetEvent = new ManualResetEvent(false);
-        private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
-
-        public ProjectDialog()
-        {
-            InitializeComponent();
-        }
+        private readonly Log _updateLog = new Log();
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -62,14 +41,61 @@ namespace nUpdate.Administration.UI.Dialogs
         public SecureString FtpPassword = new SecureString();
 
         /// <summary>
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString ProxyPassword = new SecureString();
+
+        /// <summary>
         ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public SecureString SqlPassword = new SecureString();
 
+        private bool _allowCancel = true;
+        private Uri _configurationFileUrl;
+        private MySqlConnection _deleteConnection;
+        private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
+        private MySqlConnection _insertConnection;
+        private bool _isNetworkAvailable = true;
+        private bool _isSetByUser;
+        private bool _packageExisting;
+        private MySqlConnection _queryConnection;
+        private bool _uploadCancelled;
+
+        public ProjectDialog()
+        {
+            InitializeComponent();
+        }
+
         /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        ///     Enables or disables the UI controls.
         /// </summary>
-        public SecureString ProxyPassword = new SecureString();
+        /// <param name="enabled">Sets the activation state.</param>
+        public void SetUiState(bool enabled)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                foreach (Control c in from Control c in Controls where c.Visible select c)
+                {
+                    c.Enabled = enabled;
+                }
+
+                if (!enabled)
+                {
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                    loadingPanel.Location = new Point(179, 135);
+                    loadingPanel.BringToFront();
+
+                    //editButton.Enabled = false;
+                    //uploadButton.Enabled = false;
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
+            }));
+        }
 
         ///// <summary>
         /////     Sets the language.
@@ -222,7 +248,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         _queryConnection);
                 var dataSet = new DataSet();
                 dataAdapter.Fill(dataSet);
-                
+
 
                 statisticsDataGridView.DataSource = dataSet.Tables[0];
                 _queryConnection.Close();
@@ -279,13 +305,18 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            var packageAddDialog = new PackageAddDialog() {FtpPassword = FtpPassword.Copy(), SqlPassword = SqlPassword.Copy(), ProxyPassword = ProxyPassword.Copy()};
+            var packageAddDialog = new PackageAddDialog
+            {
+                FtpPassword = FtpPassword.Copy(),
+                SqlPassword = SqlPassword.Copy(),
+                ProxyPassword = ProxyPassword.Copy()
+            };
             var existingUpdateVersions =
                 (from ListViewItem lvi in packagesList.Items select new UpdateVersion(lvi.Tag.ToString())).ToList();
             packageAddDialog.ExistingVersions = existingUpdateVersions;
             packageAddDialog.Project = Project;
 
-            if (packageAddDialog.ShowDialog() != DialogResult.OK) 
+            if (packageAddDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             packagesList.Items.Clear();
@@ -295,8 +326,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            var packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag;
-            var packageEditDialog = new PackageEditDialog { Project = Project, PackageVersion = packageVersion, FtpPassword = FtpPassword.Copy(), SqlPassword = SqlPassword.Copy(), ProxyPassword = ProxyPassword.Copy() };
+            var packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag;
+            var packageEditDialog = new PackageEditDialog
+            {
+                Project = Project,
+                PackageVersion = packageVersion,
+                FtpPassword = FtpPassword.Copy(),
+                SqlPassword = SqlPassword.Copy(),
+                ProxyPassword = ProxyPassword.Copy()
+            };
             UpdatePackage correspondingPackage;
 
             try
@@ -336,9 +374,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         PopupButtons.Ok);
                     return;
                 }
-
             }
-            
+
             packageEditDialog.ConfigurationFileUrl = _configurationFileUrl;
             if (packageEditDialog.ShowDialog() == DialogResult.OK)
                 InitializePackageItems();
@@ -434,37 +471,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         deleteButton.Enabled = false;
                         break;
                 }
-        }
-
-        /// <summary>
-        ///     Enables or disables the UI controls.
-        /// </summary>
-        /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
-        {
-            BeginInvoke(new Action(() =>
-            {
-                foreach (Control c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                if (!enabled)
-                {
-                    _allowCancel = false;
-                    loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(179, 135);
-                    loadingPanel.BringToFront();
-
-                    //editButton.Enabled = false;
-                    //uploadButton.Enabled = false;
-                }
-                else
-                {
-                    _allowCancel = true;
-                    loadingPanel.Visible = false;
-                }
-            }));
         }
 
         private void browseAssemblyButton_Click(object sender, EventArgs e)
@@ -745,6 +751,39 @@ namespace nUpdate.Administration.UI.Dialogs
         #region "Upload"
 
         /// <summary>
+        ///     Resets the MySQL-data and undoes the package upload.
+        /// </summary>
+        public void Reset()
+        {
+            // TODO: MySQL
+            if (_packageExisting)
+            {
+                try
+                {
+                    UpdateVersion packageVersion = null;
+                    Invoke(new Action(() => packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
+
+                    Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
+                    _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("No such file or directory"))
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
+                                        ex,
+                                        PopupButtons.Ok)));
+                    }
+                }
+            }
+
+            SetUiState(true);
+        }
+
+        /// <summary>
         ///     Undoes the MySQL-insertion.
         /// </summary>
         private void UndoSqlInsertion(UpdateVersion packageVersion)
@@ -976,18 +1015,15 @@ namespace nUpdate.Administration.UI.Dialogs
         private void ProgressChanged(object sender, TransferProgressEventArgs e)
         {
             Invoke(
-                   new Action(
-                       () =>
-                           loadingLabel.Text =
-                               String.Format("Uploading... {0}",
-                                   String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond / 1024))));
+                new Action(
+                    () =>
+                        loadingLabel.Text =
+                            String.Format("Uploading... {0}",
+                                String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
 
             if (_uploadCancelled)
             {
-                Invoke(new Action(() =>
-                {
-                    loadingLabel.Text = "Cancelling upload...";
-                }));
+                Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
             }
         }
 
@@ -1009,7 +1045,7 @@ namespace nUpdate.Administration.UI.Dialogs
             UpdateVersion packageVersion = null;
             try
             {
-                Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
+                Invoke(new Action(() => packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
                 _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
             }
             catch (Exception deletingEx)
@@ -1024,42 +1060,13 @@ namespace nUpdate.Administration.UI.Dialogs
             Reset();
         }
 
-        /// <summary>
-        ///     Resets the MySQL-data and undoes the package upload.
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: MySQL
-            if (_packageExisting)
-            {
-                try
-                {
-                    UpdateVersion packageVersion = null;
-                    Invoke(new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
-
-                    Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                    _ftp.DeleteDirectory(String.Format("{0}/{1}",_ftp.Directory, packageVersion));
-                }
-                catch (Exception ex)
-                {
-                    if (!ex.Message.Contains("No such file or directory"))
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
-                                        ex,
-                                        PopupButtons.Ok)));
-                    }
-                }
-            }
-
-            SetUiState(true);
-        }
-
         #endregion
 
         #region "Configuration"
+
+        private bool _foundWithFtp;
+        private bool _foundWithUrl;
+        private bool _hasFinishedCheck;
 
         /// <summary>
         ///     Starts checking if the update configuration exists.
@@ -1079,9 +1086,6 @@ namespace nUpdate.Administration.UI.Dialogs
             StartCheckingUpdateConfiguration();
         }
 
-        private bool _hasFinishedCheck;
-        private bool _foundWithUrl;
-        private bool _foundWithFtp;
         private void CheckUpdateConfigurationStatus(Uri configFileUrl)
         {
             if (!ConnectionChecker.IsConnectionAvailable())
@@ -1152,7 +1156,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new Action(
                         () =>
                         {
-                            Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.", 
+                            Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
                                 "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). Please check if the update url is correct.",
                                 PopupButtons.Ok);
 
@@ -1167,7 +1171,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     new Action(
                         () =>
                         {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Configuration file was not found in the directory set.",
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Configuration file was not found in the directory set.",
                                 "The configuration file was found at the update url's destination but it couldn't be found in the given FTP-directory.",
                                 PopupButtons.Ok);
 
@@ -1255,9 +1260,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 Invoke(
-                        new Action(
-                            () =>
-                                checkUpdateConfigurationLinkLabel.Enabled = true));
+                    new Action(
+                        () =>
+                            checkUpdateConfigurationLinkLabel.Enabled = true));
                 SetUiState(true);
 
                 if (_hasFinishedCheck)
@@ -1280,8 +1285,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private void deleteButton_Click(object sender, EventArgs e)
         {
             DialogResult answer = Popup.ShowPopup(this, SystemIcons.Question,
-                "Delete the selected update packages?", "Are you sure that you want to delete this package?", PopupButtons.YesNo);
-            if (answer != DialogResult.Yes) 
+                "Delete the selected update packages?", "Are you sure that you want to delete this package?",
+                PopupButtons.YesNo);
+            if (answer != DialogResult.Yes)
                 return;
 
             ThreadPool.QueueUserWorkItem(delegate { DeletePackage(); }, null);
@@ -1313,10 +1319,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             IEnumerator enumerator = null;
-            Invoke(new Action(() =>
-            {
-                enumerator = packagesList.SelectedItems.GetEnumerator();
-            }));
+            Invoke(new Action(() => { enumerator = packagesList.SelectedItems.GetEnumerator(); }));
 
             while (enumerator.MoveNext())
             {

@@ -1,10 +1,6 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Drawing;
 using System.Net.Mail;
-using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
 
@@ -39,13 +35,15 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!ValidationManager.ValidateDialog(this))
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Missing information", "All fields need to have a value.", PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Missing information", "All fields need to have a value.",
+                    PopupButtons.Ok);
                 return;
             }
 
             if (!IsValidMailAdress(emailTextBox.Text))
             {
-                Popup.ShowPopup(SystemIcons.Error, "Invalid e-mail address", "Please enter a valid e-mail address.", PopupButtons.Ok);
+                Popup.ShowPopup(SystemIcons.Error, "Invalid e-mail address", "Please enter a valid e-mail address.",
+                    PopupButtons.Ok);
                 return;
             }
 

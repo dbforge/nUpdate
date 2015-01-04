@@ -1,12 +1,8 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 28-08-2014 17:49
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
@@ -15,10 +11,10 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectRemovalDialog : BaseDialog
     {
-        private const int COR_E_ENDOFSTREAM = unchecked((int)0x80070026);
-        private const int COR_E_FILELOAD = unchecked((int)0x80131621);
-        private const int COR_E_FILENOTFOUND = unchecked((int)0x80070002);
-        private const int COR_E_DIRECTORYNOTFOUND = unchecked((int)0x80070003);
+        private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
+        private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
+        private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
+        private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
 
         public ProjectRemovalDialog()
         {
@@ -38,7 +34,10 @@ namespace nUpdate.Administration.UI.Dialogs
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();
 
-            foreach (var projectNode in Program.ExisitingProjects.Select(existingProject => new TreeNode(existingProject.Key) { Checked = true }))
+            foreach (
+                var projectNode in
+                    Program.ExisitingProjects.Select(
+                        existingProject => new TreeNode(existingProject.Key) {Checked = true}))
             {
                 projectsTreeView.Nodes[0].Nodes.Add(projectNode);
 
@@ -84,7 +83,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Node.Checked = true;
                 return;
             }
-            
+
             try
             {
                 Directory.Delete(Path.Combine(Program.Path, "Projects", projectName), true);

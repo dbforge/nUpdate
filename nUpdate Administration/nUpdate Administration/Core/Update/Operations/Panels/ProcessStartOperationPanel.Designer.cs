@@ -35,6 +35,7 @@
             this.argumentTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,11 +90,23 @@
             this.pictureBox1.TabIndex = 18;
             this.pictureBox1.TabStop = false;
             // 
+            // environmentVariablesButton
+            // 
+            this.environmentVariablesButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("environmentVariablesButton.BackgroundImage")));
+            this.environmentVariablesButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.environmentVariablesButton.Location = new System.Drawing.Point(344, 11);
+            this.environmentVariablesButton.Name = "environmentVariablesButton";
+            this.environmentVariablesButton.Size = new System.Drawing.Size(31, 23);
+            this.environmentVariablesButton.TabIndex = 30;
+            this.environmentVariablesButton.UseVisualStyleBackColor = true;
+            this.environmentVariablesButton.Click += new System.EventHandler(this.environmentVariablesButton_Click);
+            // 
             // ProcessStartOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.environmentVariablesButton);
             this.Controls.Add(this.argumentTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pathTextBox);
@@ -118,5 +131,6 @@
         private System.Windows.Forms.Label pathLabel;
         private UI.Controls.WatermarkTextBox argumentTextBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button environmentVariablesButton;
     }
 }

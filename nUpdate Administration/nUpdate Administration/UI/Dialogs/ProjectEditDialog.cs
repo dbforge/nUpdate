@@ -1,13 +1,6 @@
-﻿using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Localization;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.Properties;
-using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -15,42 +8,66 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.Localization;
+using nUpdate.Administration.Core.Update;
+using nUpdate.Administration.Properties;
+using nUpdate.Administration.UI.Popups;
+using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private readonly FtpManager _ftp = new FtpManager();
+
+        /// <summary>
+        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString FtpPassword = new SecureString();
+
+        /// <summary>
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString ProxyPassword = new SecureString();
+
+        /// <summary>
+        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString SqlPassword = new SecureString();
+
         private bool _allowCancel = true;
+        private bool _commandsExecuted;
+        private string _ftpDirectory;
         private bool _generalTabPassed;
+        private string _localPath;
+        private bool _localPathChanged;
 
         private LocalizationProperties _lp = new LocalizationProperties();
         private string _name;
-        private string _localPath;
-        private string _ftpDirectory;
-        private string _sqlWebUrl;
-        private string _sqlDatabaseName;
-        private string _sqlUsername;
-        private string _sqlPassword;
-        private bool _useStatistics;
+        private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
+        private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
+        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
         private bool _phpFileCreated;
-        private bool _phpFileUploaded;
         private bool _phpFileDeleted;
-        private bool _projectDataAlreadyInitialized;
+        private bool _phpFileUploaded;
         private bool _projectAddedToConfig;
-        private bool _projectDirectoryMoved;
         private bool _projectConfigurationEdited;
+        private bool _projectDataAlreadyInitialized;
+        private bool _projectDirectoryMoved;
         private bool _projectFileMoved;
-        private bool _localPathChanged;
+        private TabPage _sender;
+        private bool _sqlDataDeleted;
+        private bool _sqlDataInitialized;
+        private string _sqlDatabaseName;
+        private string _sqlPassword;
+        private string _sqlUsername;
+        private string _sqlWebUrl;
         private bool _updateConfigurationSaved;
         private bool _updateUrlChanged;
-        private bool _commandsExecuted;
-        private bool _sqlDataInitialized;
-        private bool _sqlDataDeleted;
-        private TabPage _sender;
-        private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
-        private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
-        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
+        private bool _useStatistics;
 
         public ProjectEditDialog()
         {
@@ -68,21 +85,6 @@ namespace nUpdate.Administration.UI.Dialogs
         public string PublicKey { get; set; }
 
         /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public  SecureString FtpPassword = new SecureString();
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword = new SecureString();
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword = new SecureString();
-
-        /// <summary>
         ///     The url of the SQL-connection.
         /// </summary>
         public string SqlWebUrl { get; set; }
@@ -96,6 +98,201 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The username for the SQL-login.
         /// </summary>
         public string SqlUsername { get; set; }
+
+        public void SetUiState(bool enabled)
+        {
+            Invoke(new Action(() =>
+            {
+                foreach (Control c in from Control c in Controls where c.Visible select c)
+                {
+                    c.Enabled = enabled;
+                }
+
+                if (!enabled)
+                {
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                    loadingPanel.Location = new Point(144, 72);
+                    loadingPanel.BringToFront();
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
+            }));
+        }
+
+        public void Reset()
+        {
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Undoing changes..."));
+
+            if (_projectConfigurationEdited)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Removing project configuration entry..."));
+
+                try
+                {
+                    Program.ExisitingProjects.Remove(_name);
+                    _projectConfigurationEdited = false;
+                }
+                catch (Exception ex)
+                {
+                    SetUiState(true);
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error, "Error while resetting the project configuration.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    return;
+                }
+            }
+
+            if (_projectDirectoryMoved)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Undoing the renaming of the project folder..."));
+
+                try
+                {
+                    Directory.Move(Path.Combine(Program.Path, "Projects", _name),
+                        Path.Combine(Program.Path, "Projects", Project.Name));
+                    _projectDirectoryMoved = false;
+                }
+                catch (Exception ex)
+                {
+                    SetUiState(true);
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while undoing the renaming of the project folder.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    return;
+                }
+            }
+
+            if (_projectFileMoved)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Undoing the renaming of the project file..."));
+
+                try
+                {
+                    File.Move(_localPath, Project.Path);
+                    _projectFileMoved = false;
+                }
+                catch (Exception ex)
+                {
+                    SetUiState(true);
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while undoing the renaming of the project file.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    return;
+                }
+            }
+
+            if (_updateUrlChanged)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Saving the old update configuration..."));
+
+                try
+                {
+                    string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                    File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
+
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text = "Uploading old configuration..."));
+                    _ftp.UploadFile(localConfigurationPath);
+
+
+                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    _updateUrlChanged = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while saving and uploading the new configuration.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    SetUiState(true);
+                    return;
+                }
+            }
+
+            if (_phpFileCreated)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Deleting the file \"statistics.php\"..."));
+
+                try
+                {
+                    File.Delete(Path.Combine(Program.Path, "Projects", _name, "statistics.php"));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while deleting the file \"statistics.php\" again.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    SetUiState(true);
+                    return;
+                }
+            }
+
+            if (_phpFileUploaded)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Deleting the file \"statistics.php\" on the server..."));
+
+                try
+                {
+                    _ftp.DeleteFile("statistics.php");
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while deleting the file \"statistics.php\" on the server.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    SetUiState(true);
+                }
+            }
+        }
 
         ///// <summary>
         /////     Sets the language
@@ -175,30 +372,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 SqlPassword.Dispose();
                 ProxyPassword.Dispose();
             }
-        }
-
-        public void SetUiState(bool enabled)
-        {
-            Invoke(new Action(() =>
-            {
-                foreach (Control c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                if (!enabled)
-                {
-                    _allowCancel = false;
-                    loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(144, 72);
-                    loadingPanel.BringToFront();
-                }
-                else
-                {
-                    _allowCancel = true;
-                    loadingPanel.Visible = false;
-                }
-            }));
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -334,7 +507,6 @@ namespace nUpdate.Administration.UI.Dialogs
                             "All fields need to have a value.", PopupButtons.Ok);
                         return;
                     }
-
                 }
 
                 _generalTabPassed = true;
@@ -345,7 +517,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Provides a new thread that sets up the project.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
+        [SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
         private void InitializeData()
         {
             SetUiState(false);
@@ -361,20 +533,20 @@ namespace nUpdate.Administration.UI.Dialogs
             catch (FtpAuthenticationException ex)
             {
                 Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
-                                    ex.InnerException ?? ex, PopupButtons.Ok)));
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
+                                ex.InnerException ?? ex, PopupButtons.Ok)));
                 SetUiState(true);
                 return;
             }
             catch (Exception ex)
             {
                 Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
-                                    ex.InnerException ?? ex, PopupButtons.Ok)));
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
+                                ex.InnerException ?? ex, PopupButtons.Ok)));
                 SetUiState(true);
                 return;
             }
@@ -407,9 +579,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Editing name in project configuration..."));
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Editing name in project configuration..."));
 
                 try
                 {
@@ -468,7 +640,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (IOException ex)
                 {
-                    Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the project file.", ex, PopupButtons.Ok)));
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the project file.", ex,
+                                    PopupButtons.Ok)));
                     Reset();
                     SetUiState(true);
                     return;
@@ -482,7 +658,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = String.Format("Moving old directory content to \"{0}\"...", ftpDirectory)));
+                            loadingLabel.Text =
+                                String.Format("Moving old directory content to \"{0}\"...", ftpDirectory)));
 
                 try
                 {
@@ -490,8 +667,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the directory content.", ex,
-                        PopupButtons.Ok)));
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the directory content.", ex,
+                                    PopupButtons.Ok)));
                     Reset();
                     SetUiState(true);
                     return;
@@ -519,8 +699,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the old configuration.", ex,
-                        PopupButtons.Ok)));
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while downloading the old configuration.", ex,
+                                    PopupButtons.Ok)));
                     Reset();
                     SetUiState(true);
                     return;
@@ -642,7 +826,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 if (!_sqlDataInitialized)
                 {
-
                     #region "Setup-String"
 
                     string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
@@ -810,7 +993,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 if (!_sqlDataDeleted)
                 {
-
                     /*
                     *  Setup the SQL-server and database.
                     */
@@ -917,10 +1099,10 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
             catch (Exception ex)
             {
                 Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new project-data.",
-                                    ex, PopupButtons.Ok)));
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new project-data.",
+                                ex, PopupButtons.Ok)));
                 Reset();
                 SetUiState(true);
                 return;
@@ -955,27 +1137,24 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
         private void ftpPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-
         }
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
         {
-
         }
 
         private void searchPathButton_Click(object sender, EventArgs e)
         {
-
         }
 
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
-
         }
 
         private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (!_useStatistics && useStatisticsServerRadioButton.Checked && (Project.Packages != null && Project.Packages.Count != 0))
+            if (!_useStatistics && useStatisticsServerRadioButton.Checked &&
+                (Project.Packages != null && Project.Packages.Count != 0))
             {
                 var packagesToAffectDialog = new PackagesToAffectDialog();
                 foreach (var existingPackage in Project.Packages)
@@ -998,190 +1177,14 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
         private void ftpImportButton_Click(object sender, EventArgs e)
         {
-
         }
 
         private void selectServerButton_Click(object sender, EventArgs e)
         {
-
         }
 
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-
         }
-
-        public void Reset()
-        {
-            Invoke(
-                new Action(
-                    () => 
-                        loadingLabel.Text = "Undoing changes..."));
-
-            if (_projectConfigurationEdited)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Removing project configuration entry..."));
-
-                try
-                {
-                    Program.ExisitingProjects.Remove(_name);
-                    _projectConfigurationEdited = false;
-                }
-                catch (Exception ex)
-                {
-                    SetUiState(true);
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while resetting the project configuration.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    return;
-                }
-            }
-
-            if (_projectDirectoryMoved)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Undoing the renaming of the project folder..."));
-
-                try
-                {
-                    Directory.Move(Path.Combine(Program.Path, "Projects", _name),
-                        Path.Combine(Program.Path, "Projects", Project.Name));
-                    _projectDirectoryMoved = false;
-                }
-                catch (Exception ex)
-                {
-                    SetUiState(true);
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while undoing the renaming of the project folder.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    return;
-                }
-            }
-
-            if (_projectFileMoved)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Undoing the renaming of the project file..."));
-
-                try
-                {
-                    File.Move(_localPath, Project.Path);
-                    _projectFileMoved = false;
-                }
-                catch (Exception ex)
-                {
-                    SetUiState(true);
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while undoing the renaming of the project file.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    return;
-                }
-            }
-
-            if (_updateUrlChanged)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Saving the old update configuration..."));
-
-                try
-                {
-                    string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
-                    File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
-
-                    Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Uploading old configuration..."));
-                    _ftp.UploadFile(localConfigurationPath);
-
-
-                    File.WriteAllText(localConfigurationPath, String.Empty);
-                    _updateUrlChanged = true;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while saving and uploading the new configuration.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    SetUiState(true);
-                    return;
-                }
-            }
-
-            if (_phpFileCreated)
-            {
-                Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Deleting the file \"statistics.php\"..."));
-
-                try
-                {
-                    File.Delete(Path.Combine(Program.Path, "Projects", _name, "statistics.php"));
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while deleting the file \"statistics.php\" again.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    SetUiState(true);
-                    return;   
-                }
-            }
-
-            if (_phpFileUploaded)
-            {
-                Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Deleting the file \"statistics.php\" on the server..."));
-
-                try
-                {
-                    _ftp.DeleteFile("statistics.php");
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while deleting the file \"statistics.php\" on the server.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    SetUiState(true);
-                    return;
-                }   
-            }
-        }
-
     }
 }

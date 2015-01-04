@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-namespace nUpdate.Administration.Core.Update.Operations
+﻿namespace nUpdate.Administration.Core.Update.Operations
 {
     /// <summary>
     ///     Represents the different methods of the operations performed in different areas.
@@ -12,6 +9,7 @@ namespace nUpdate.Administration.Core.Update.Operations
         Delete,
         Rename,
         SetValue,
+        DeleteValue,
         Start,
         Stop,
     }

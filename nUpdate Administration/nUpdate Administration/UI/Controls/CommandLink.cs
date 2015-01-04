@@ -1,4 +1,3 @@
-using nUpdate.Administration.Core.Win32;
 // Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
@@ -8,6 +7,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.UI.Controls
 {
@@ -62,7 +62,6 @@ namespace nUpdate.Administration.UI.Controls
             set { SetNoteText(value); }
         }
 
-        
 
         private void SetNoteText(string value)
         {
@@ -71,7 +70,9 @@ namespace nUpdate.Administration.UI.Controls
 
         private string GetNoteText()
         {
-            int length = NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32() + 1;
+            int length =
+                NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero)
+                    .ToInt32() + 1;
 
             var sb = new StringBuilder(length);
             NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTE, ref length, sb);

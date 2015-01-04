@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -162,7 +159,9 @@ namespace nUpdate.Administration.Core.Update
         {
             get
             {
-                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild) : BasicVersion;
+                return DevelopmentalStage != DevelopmentalStage.Release
+                    ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild)
+                    : BasicVersion;
             }
         }
 
@@ -177,7 +176,7 @@ namespace nUpdate.Administration.Core.Update
         // Overwritten Instance Methods
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         public override string ToString()
         {
@@ -190,10 +189,10 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///     Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -208,26 +207,26 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        ///     Determines whether the specified <see cref="System.Object" />, is equal to this instance.
         /// </summary>
         /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
         /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
+            return obj.GetType() == typeof (UpdateVersion) && ToString() == obj.ToString();
         }
 
         // Operators
 
         /// <summary>
-        /// Implements the operator &gt;.
+        ///     Implements the operator &gt;.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator >(UpdateVersion left, UpdateVersion right)
         {
@@ -260,12 +259,12 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Implements the operator &lt;.
+        ///     Implements the operator &lt;.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator <(UpdateVersion left, UpdateVersion right)
         {
@@ -298,12 +297,12 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Implements the operator &lt;=.
+        ///     Implements the operator &lt;=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator <=(UpdateVersion left, UpdateVersion right)
         {
@@ -338,12 +337,12 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Implements the operator &gt;=.
+        ///     Implements the operator &gt;=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator >=(UpdateVersion left, UpdateVersion right)
         {
@@ -378,12 +377,12 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Implements the operator ==.
+        ///     Implements the operator ==.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator ==(UpdateVersion left, UpdateVersion right)
         {
@@ -391,12 +390,12 @@ namespace nUpdate.Administration.Core.Update
         }
 
         /// <summary>
-        /// Implements the operator !=.
+        ///     Implements the operator !=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator !=(UpdateVersion left, UpdateVersion right)
         {

@@ -1,78 +1,63 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace nUpdate.Administration.Core
 {
     public class Navigator<T>
     {
-        private readonly List<T> _navs = new List<T>();
-        private T _last;
-        private int _count;
+        private int _currentIndex;
+        private readonly List<T> _itemList = new List<T>();
 
         /// <summary>
-        ///     Sets if the navigator can go back.
+        ///     Adds a new item to the current navigator's list.
+        /// </summary>
+        /// <param name="item"></param>
+        public void Add(T item)
+        {
+            _itemList.Add(item);
+            ++_currentIndex;
+        }
+
+        /// <summary>
+        ///     Gets a value indicating whether the navigator can go back or not.
         /// </summary>
         public bool CanGoBack
         {
-            get { return (_count <= 0) == false; }
+            get { return _currentIndex != 0; }
         }
 
         /// <summary>
-        ///     Sets if the navigator can go forward.
+        ///     Gets a value indicating whether the navigator can go forward or not.
         /// </summary>
         public bool CanGoForward
         {
-            get { return _navs.Count != _count; }
+            get { return _currentIndex != _itemList.Count - 1; }
         }
 
         /// <summary>
-        ///     Returns the current item.
+        ///     Returns the current item selected.
         /// </summary>
         public T Current
         {
-            get
-            {
-                return (_count - 1 == -1) == false ? _navs[_count - 1] : default(T);
-            }
+            get { return _itemList.ElementAt(_currentIndex); }
         }
 
         /// <summary>
-        ///     Goes back.
+        ///     Moves the naviagtor to the previous item.
         /// </summary>
-        public void Back()
+        public void GoBack()
         {
-            if (CanGoBack)
-                _count--;
+            if (_currentIndex != 0)
+                --_currentIndex;
         }
 
         /// <summary>
-        ///     Goes forward.
+        ///     Moves the navigator to the next item.
         /// </summary>
-        public void Forward()
+        public void GoForward()
         {
-            if (CanGoForward)
-                _count++;
-        }
-
-        /// <summary>
-        ///     Sets an item.
-        /// </summary>
-        public void Set(T value)
-        {
-            if (_navs.Count == 0)
-            {
-                _navs.Add(value);
-                _last = value;
-                _count++;
-            }
-            else if (!_last.Equals(value))
-            {
-                _navs.Add(value);
-                _last = value;
-                _count++;
-            }
+            if (_currentIndex != _itemList.Count - 1)
+                ++_currentIndex;
         }
     }
 }

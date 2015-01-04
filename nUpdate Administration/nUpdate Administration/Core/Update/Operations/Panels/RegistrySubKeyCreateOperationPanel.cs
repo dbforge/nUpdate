@@ -1,29 +1,29 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
-    public partial class RegistryEntryCreateOperationPanel : UserControl, IOperationPanel
+    public partial class RegistrySubKeyCreateOperationPanel : UserControl, IOperationPanel
     {
         private BindingList<string> _itemList = new BindingList<string>();
+
+        public RegistrySubKeyCreateOperationPanel()
+        {
+            InitializeComponent();
+        }
 
         public string KeyPath
         {
             get
             {
                 return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex),
-                    appKeyTextBox.Text);
+                    subKeyTextBox.Text);
             }
             set
             {
-                string[] pathParts = value.Split(new char[] {'\\'});
+                string[] pathParts = value.Split(new[] {'\\'});
                 foreach (string pathPart in pathParts)
                 {
                     if (pathPart == pathParts[0])
@@ -32,7 +32,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
                     }
                     else
                     {
-                        appKeyTextBox.Text += String.Format("\\{0}", pathPart);
+                        subKeyTextBox.Text += String.Format("\\{0}", pathPart);
                     }
                 }
             }
@@ -44,14 +44,14 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             set { _itemList = value; }
         }
 
-        public RegistryEntryCreateOperationPanel()
+        public Operation Operation
         {
-            InitializeComponent();
+            get { return new Operation(OperationArea.Registry, OperationMethods.Create, KeyPath, _itemList.ToList()); }
         }
 
         private void RegistryEntryCreateOperationPanel_Load(object sender, EventArgs e)
         {
-            entriesToCreateListBox.DataSource = _itemList;
+            subKeysToCreateListBox.DataSource = _itemList;
             mainKeyComboBox.SelectedIndex = 0;
         }
 
@@ -71,15 +71,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            _itemList.RemoveAt(entriesToCreateListBox.SelectedIndex);
-        }
-
-        public Operation Operation
-        {
-            get
-            {
-                return new Operation(OperationArea.Registry, OperationMethods.Create, KeyPath, _itemList.ToList());
-            }
+            _itemList.RemoveAt(subKeysToCreateListBox.SelectedIndex);
         }
     }
 }

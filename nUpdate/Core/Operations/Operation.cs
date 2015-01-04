@@ -50,12 +50,14 @@ namespace nUpdate.Core.Operations
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Delete);
                 case "RenameFile":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Rename);
-                case "CreateRegistryEntry":
+                case "CreateRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Create);
-                case "DeleteRegistryEntry":
+                case "DeleteRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Delete);
-                case "SetRegistryKeyValue":
+                case "SetRegistryValue":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.SetValue);
+                case "DeleteRegistryValue":
+                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.DeleteValue);
                 case "StartProcess":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Start);
                 case "TerminateProcess":
@@ -92,11 +94,11 @@ namespace nUpdate.Core.Operations
                     switch (operation.Method)
                     {
                         case OperationMethods.Create:
-                            return "CreateRegistryEntry";
+                            return "CreateRegistrySubKey";
                         case OperationMethods.Delete:
-                            return "DeleteRegistryEntry";
+                            return "DeleteRegistrySubKey";
                         case OperationMethods.SetValue:
-                            return "SetRegistryKeyValue";
+                            return "SetRegistryValue";
                     }
                     break;
                 case OperationArea.Processes:

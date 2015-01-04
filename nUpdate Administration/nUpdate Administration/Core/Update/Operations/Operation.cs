@@ -1,8 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 
 namespace nUpdate.Administration.Core.Update.Operations
 {
@@ -51,12 +47,15 @@ namespace nUpdate.Administration.Core.Update.Operations
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Delete);
                 case "RenameFile":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Rename);
-                case "CreateRegistryEntry":
+                case "CreateRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Create);
-                case "DeleteRegistryEntry":
+                case "DeleteRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Delete);
-                case "SetRegistryKeyValue":
+                case "SetRegistryValue":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.SetValue);
+                case "DeleteRegistryValue":
+                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry,
+                        OperationMethods.DeleteValue);
                 case "StartProcess":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Start);
                 case "TerminateProcess":
@@ -74,7 +73,7 @@ namespace nUpdate.Administration.Core.Update.Operations
         /// </summary>
         /// <param name="operation">The operation to get the tag from.</param>
         /// <returns>
-        /// Returns the tag as a string.
+        ///     Returns the tag as a string.
         /// </returns>
         public static string GetOperationTag(Operation operation)
         {
@@ -93,11 +92,11 @@ namespace nUpdate.Administration.Core.Update.Operations
                     switch (operation.Method)
                     {
                         case OperationMethods.Create:
-                            return "CreateRegistryEntry";
+                            return "CreateRegistrySubKey";
                         case OperationMethods.Delete:
-                            return "DeleteRegistryEntry";
+                            return "DeleteRegistrySubKey";
                         case OperationMethods.SetValue:
-                            return "SetRegistryKeyValue";
+                            return "SetRegistryValue";
                     }
                     break;
                 case OperationArea.Processes:

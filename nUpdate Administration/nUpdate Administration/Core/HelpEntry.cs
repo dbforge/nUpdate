@@ -9,7 +9,7 @@ namespace nUpdate.Administration.Core
         ///     Gets or sets the question of the help entry.
         /// </summary>
         /// <value>
-        /// The question.
+        ///     The question.
         /// </value>
         public string Question { get; set; }
 
@@ -17,7 +17,7 @@ namespace nUpdate.Administration.Core
         ///     Gets or sets the answer of the help entry.
         /// </summary>
         /// <value>
-        /// The answer.
+        ///     The answer.
         /// </value>
         public string Answer { get; set; }
     }

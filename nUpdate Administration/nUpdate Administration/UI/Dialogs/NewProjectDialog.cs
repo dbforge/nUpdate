@@ -1,8 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -30,8 +26,8 @@ namespace nUpdate.Administration.UI.Dialogs
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
-        private bool _projectFileCreated;
         private bool _projectConfigurationEdited;
+        private bool _projectFileCreated;
         private TabPage _sender;
 
         public NewProjectDialog()
@@ -63,6 +59,122 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The username for the SQL-login.
         /// </summary>
         public string SqlUsername { get; set; }
+
+        public void SetUiState(bool enabled)
+        {
+            Invoke(new Action(() =>
+            {
+                foreach (var c in from Control c in Controls where c.Visible select c)
+                {
+                    c.Enabled = enabled;
+                }
+
+                if (!enabled)
+                {
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                    loadingPanel.Location = new Point(144, 72);
+                    loadingPanel.BringToFront();
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
+            }));
+        }
+
+        public void Reset()
+        {
+            Invoke(new Action(
+                () =>
+                    loadingLabel.Text = "Resetting data..."));
+
+            if (_projectFileCreated)
+            {
+                try
+                {
+                    string localPath = null;
+                    Invoke(new Action(() => localPath = localPathTextBox.Text));
+                    File.Delete(localPath);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting the project file.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_projectConfigurationEdited)
+            {
+                string name = null;
+                Invoke(new Action(() => name = nameTextBox.Text));
+                Program.ExisitingProjects.Remove(name);
+
+                try
+                {
+                    var projectEntries =
+                        Program.ExisitingProjects.Select(
+                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
+
+                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting the project file.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_phpFileCreated)
+            {
+                string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
+                try
+                {
+                    File.Delete(phpFilePath);
+                    _phpFileCreated = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting \"statistics.php\" again.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            if (_phpFileUploaded)
+            {
+                try
+                {
+                    _ftp.DeleteFile("statistics.php");
+                    _phpFileUploaded = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while deleting \"statistics.php\" on the server again.",
+                                    ex, PopupButtons.Ok)));
+                }
+            }
+
+            Settings.Default.ApplicationID -= 1;
+            Settings.Default.Save();
+            Settings.Default.Reload();
+        }
 
         ///// <summary>
         /////     Sets the language
@@ -140,30 +252,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }));
 
             _allowCancel = true;
-        }
-
-        public void SetUiState(bool enabled)
-        {
-            Invoke(new Action(() =>
-            {
-                foreach (var c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                if (!enabled)
-                {
-                    _allowCancel = false;
-                    loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(144, 72);
-                    loadingPanel.BringToFront();
-                }
-                else
-                {
-                    _allowCancel = true;
-                    loadingPanel.Visible = false;
-                }
-            }));
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -710,7 +798,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void searchPathButton_Click(object sender, EventArgs e)
         {
-            var fileDialog = new SaveFileDialog {Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj", CheckFileExists = false};
+            var fileDialog = new SaveFileDialog
+            {
+                Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj",
+                CheckFileExists = false
+            };
             if (fileDialog.ShowDialog() == DialogResult.OK)
                 localPathTextBox.Text = fileDialog.FileName;
         }
@@ -771,98 +863,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
-        }
-
-        public void Reset()
-        {
-            Invoke(new Action(
-                () =>
-                    loadingLabel.Text = "Resetting data..."));
-
-            if (_projectFileCreated)
-            {
-                try
-                {
-                    string localPath = null;
-                    Invoke(new Action(() => localPath = localPathTextBox.Text));
-                    File.Delete(localPath);
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while deleting the project file.",
-                                    ex, PopupButtons.Ok)));
-                }
-            }
-
-            if (_projectConfigurationEdited)
-            {
-                string name = null;
-                Invoke(new Action(() => name = nameTextBox.Text));
-                Program.ExisitingProjects.Remove(name);
-
-                try
-                {
-                    var projectEntries =
-                        Program.ExisitingProjects.Select(
-                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
-
-                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while deleting the project file.",
-                                    ex, PopupButtons.Ok)));
-                }
-            }
-
-            if (_phpFileCreated)
-            {
-                string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
-                try
-                {
-                    File.Delete(phpFilePath);
-                    _phpFileCreated = false;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while deleting \"statistics.php\" again.",
-                                    ex, PopupButtons.Ok)));
-                }
-            }
-
-            if (_phpFileUploaded)
-            {
-                try
-                {
-                    _ftp.DeleteFile("statistics.php");
-                    _phpFileUploaded = false;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while deleting \"statistics.php\" on the server again.",
-                                    ex, PopupButtons.Ok)));
-                }
-            }
-
-            Settings.Default.ApplicationID -= 1;
-            Settings.Default.Save();
-            Settings.Default.Reload();
         }
     }
 }
