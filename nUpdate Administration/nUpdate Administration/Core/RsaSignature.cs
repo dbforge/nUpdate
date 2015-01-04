@@ -1,17 +1,4 @@
-﻿/**
- *  Class to sign data with the RSACryptoServiceProvider-class.
- *  
- *  Author: Tim Schiewe (timmi31061)
- *  License: GPL v3
- *  Created: 09th December 2013
- *  Modified: Dominic B. (Trade) - 15.12.13 - Improved design of constructor
- *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Parameter validation added; more IntelliSense.
- *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Critical security update
- *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed comments
- *  Modified: Dominic B. (Trade) - 23.12.2014 - Implemented IDisposable
- */
-
-using System;
+﻿using System;
 using System.Security.Cryptography;
 
 namespace nUpdate.Administration.Core
@@ -26,11 +13,11 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public const int DefaultKeySize = 8192;
 
-        private bool _disposed;
         private readonly RSACryptoServiceProvider _rsa;
+        private bool _disposed;
 
         /// <summary>
-        ///     Creates a new instance of the <see cref="RsaSignature"/>-class.
+        ///     Creates a new instance of the <see cref="RsaSignature" />-class.
         /// </summary>
         /// <param name="rsaKey">The public key to use.</param>
         public RsaSignature(string rsaKey)
@@ -44,7 +31,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Creates a new instance of the <see cref="RsaSignature"/>-class and creates a new key pair.
+        ///     Creates a new instance of the <see cref="RsaSignature" />-class and creates a new key pair.
         /// </summary>
         public RsaSignature()
         {
@@ -69,6 +56,12 @@ namespace nUpdate.Administration.Core
             get { return _rsa.ToXmlString(true); }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         ///     Calculates the signature for the given data.
         /// </summary>
@@ -88,12 +81,6 @@ namespace nUpdate.Administration.Core
         public bool VerifyData(byte[] data, byte[] signature)
         {
             return _rsa.VerifyData(data, typeof (SHA512), signature);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

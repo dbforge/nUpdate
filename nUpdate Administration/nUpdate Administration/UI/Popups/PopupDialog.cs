@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
@@ -27,7 +24,7 @@ namespace nUpdate.Administration.UI.Popups
             var measuredSize = e.Graphics.MeasureString(InfoMessage, new Font("Segoe UI", 8));
             if (measuredSize.Height > messageLabel.Height)
             {
-                var difference = (int)(measuredSize.Height - messageLabel.Height);
+                var difference = (int) (measuredSize.Height - messageLabel.Height);
                 messageLabel.Height += difference;
                 Height += difference;
                 controlPanel1.Location = new Point(controlPanel1.Location.X, Size.Height - controlPanel1.Size.Height);

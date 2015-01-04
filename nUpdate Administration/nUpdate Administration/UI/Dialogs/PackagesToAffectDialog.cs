@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 13-08-2014 18:53
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Update;

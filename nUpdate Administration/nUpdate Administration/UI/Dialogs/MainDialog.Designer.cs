@@ -129,6 +129,7 @@
             this.MaximizeBox = false;
             this.Name = "MainDialog";
             this.Load += new System.EventHandler(this.MainDialog_Load);
+            this.Shown += new System.EventHandler(this.MainDialog_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

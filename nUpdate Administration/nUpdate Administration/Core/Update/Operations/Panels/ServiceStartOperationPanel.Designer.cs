@@ -33,6 +33,8 @@
             this.serviceNameLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.argumentTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,27 +57,45 @@
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(24, 39);
+            this.label2.Location = new System.Drawing.Point(24, 79);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(399, 30);
+            this.label2.Size = new System.Drawing.Size(399, 65);
             this.label2.TabIndex = 35;
-            this.label2.Text = "If the service is already running, it will be restarted.";
+            this.label2.Text = resources.GetString("label2.Text");
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(7, 38);
+            this.pictureBox1.Location = new System.Drawing.Point(7, 78);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(16, 16);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 34;
             this.pictureBox1.TabStop = false;
             // 
+            // argumentTextBox
+            // 
+            this.argumentTextBox.Cue = "Argument1,Argument2,Argument3";
+            this.argumentTextBox.Location = new System.Drawing.Point(147, 43);
+            this.argumentTextBox.Name = "argumentTextBox";
+            this.argumentTextBox.Size = new System.Drawing.Size(193, 22);
+            this.argumentTextBox.TabIndex = 39;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(4, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(135, 19);
+            this.label1.TabIndex = 38;
+            this.label1.Text = "Arguments:";
+            // 
             // ServiceStartOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.argumentTextBox);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.serviceNameTextBox);
             this.Controls.Add(this.serviceNameLabel);
             this.Controls.Add(this.label2);
@@ -83,7 +103,6 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ServiceStartOperationPanel";
             this.Size = new System.Drawing.Size(488, 225);
-            this.Load += new System.EventHandler(this.ServiceStartOperaationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -96,5 +115,7 @@
         private System.Windows.Forms.Label serviceNameLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private UI.Controls.WatermarkTextBox argumentTextBox;
+        private System.Windows.Forms.Label label1;
     }
 }

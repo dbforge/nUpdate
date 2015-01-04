@@ -2,7 +2,7 @@
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
-    partial class RegistryEntryDeleteOperationPanel
+    partial class RegistrySubKeyDeleteOperationPanel
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -34,11 +34,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.keyNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pathLabel = new System.Windows.Forms.Label();
-            this.entriesToDeleteListBox = new System.Windows.Forms.ListBox();
+            this.subKeysToDeleteListBox = new System.Windows.Forms.ListBox();
             this.removeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
-            this.appKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.SuspendLayout();
             // 
             // addButton
@@ -76,13 +76,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathLabel.TabIndex = 29;
             this.pathLabel.Text = "Key:";
             // 
-            // entriesToDeleteListBox
+            // subKeysToDeleteListBox
             // 
-            this.entriesToDeleteListBox.FormattingEnabled = true;
-            this.entriesToDeleteListBox.Location = new System.Drawing.Point(106, 71);
-            this.entriesToDeleteListBox.Name = "entriesToDeleteListBox";
-            this.entriesToDeleteListBox.Size = new System.Drawing.Size(267, 121);
-            this.entriesToDeleteListBox.TabIndex = 28;
+            this.subKeysToDeleteListBox.FormattingEnabled = true;
+            this.subKeysToDeleteListBox.Location = new System.Drawing.Point(106, 71);
+            this.subKeysToDeleteListBox.Name = "subKeysToDeleteListBox";
+            this.subKeysToDeleteListBox.Size = new System.Drawing.Size(267, 121);
+            this.subKeysToDeleteListBox.TabIndex = 28;
             // 
             // removeButton
             // 
@@ -116,13 +116,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.mainKeyComboBox.Size = new System.Drawing.Size(133, 21);
             this.mainKeyComboBox.TabIndex = 40;
             // 
-            // appKeyTextBox
+            // subKeyTextBox
             // 
-            this.appKeyTextBox.Cue = "MyApp";
-            this.appKeyTextBox.Location = new System.Drawing.Point(261, 16);
-            this.appKeyTextBox.Name = "appKeyTextBox";
-            this.appKeyTextBox.Size = new System.Drawing.Size(150, 22);
-            this.appKeyTextBox.TabIndex = 39;
+            this.subKeyTextBox.Cue = "MyApp";
+            this.subKeyTextBox.Location = new System.Drawing.Point(261, 16);
+            this.subKeyTextBox.Name = "subKeyTextBox";
+            this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
+            this.subKeyTextBox.TabIndex = 39;
             // 
             // RegistryEntryDeleteOperationPanel
             // 
@@ -131,13 +131,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.label3);
             this.Controls.Add(this.mainKeyComboBox);
-            this.Controls.Add(this.appKeyTextBox);
+            this.Controls.Add(this.subKeyTextBox);
             this.Controls.Add(this.removeButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.keyNameTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pathLabel);
-            this.Controls.Add(this.entriesToDeleteListBox);
+            this.Controls.Add(this.subKeysToDeleteListBox);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "RegistryEntryDeleteOperationPanel";
             this.Size = new System.Drawing.Size(488, 204);
@@ -153,10 +153,10 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private WatermarkTextBox keyNameTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label pathLabel;
-        private System.Windows.Forms.ListBox entriesToDeleteListBox;
+        private System.Windows.Forms.ListBox subKeysToDeleteListBox;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
-        private WatermarkTextBox appKeyTextBox;
+        private WatermarkTextBox subKeyTextBox;
     }
 }

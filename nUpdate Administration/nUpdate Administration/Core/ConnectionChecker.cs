@@ -1,8 +1,7 @@
-﻿using nUpdate.Administration.Core.Win32;
-// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade)
 // License: Creative Commons Attribution NoDerivs (CC-ND)
 // Created: 01-08-2014 12:11
-using System.Runtime.InteropServices;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.Core
 {

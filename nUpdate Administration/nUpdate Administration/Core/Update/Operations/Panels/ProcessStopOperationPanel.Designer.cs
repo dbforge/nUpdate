@@ -33,6 +33,7 @@
             this.pathLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,11 +72,23 @@
             this.pictureBox1.TabIndex = 30;
             this.pictureBox1.TabStop = false;
             // 
+            // environmentVariablesButton
+            // 
+            this.environmentVariablesButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("environmentVariablesButton.BackgroundImage")));
+            this.environmentVariablesButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.environmentVariablesButton.Location = new System.Drawing.Point(344, 12);
+            this.environmentVariablesButton.Name = "environmentVariablesButton";
+            this.environmentVariablesButton.Size = new System.Drawing.Size(31, 23);
+            this.environmentVariablesButton.TabIndex = 34;
+            this.environmentVariablesButton.UseVisualStyleBackColor = true;
+            this.environmentVariablesButton.Click += new System.EventHandler(this.environmentVariablesButton_Click);
+            // 
             // ProcessStopOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.environmentVariablesButton);
             this.Controls.Add(this.processNameTextBox);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.label2);
@@ -96,5 +109,6 @@
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button environmentVariablesButton;
     }
 }

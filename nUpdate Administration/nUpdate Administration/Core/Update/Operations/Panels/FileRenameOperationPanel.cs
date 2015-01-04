@@ -1,9 +1,7 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
@@ -26,17 +24,21 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             set { newNameTextBox.Text = value; }
         }
 
+        public Operation Operation
+        {
+            get { return new Operation(OperationArea.Files, OperationMethods.Rename, Path, NewName); }
+        }
+
         private void FileRenameOperationPanel_Load(object sender, EventArgs e)
         {
             // Language initializing follows here
         }
 
-        public Operation Operation
+        private void environmentVariablesButton_Click(object sender, EventArgs e)
         {
-            get
-            {
-                return new Operation(OperationArea.Files, OperationMethods.Rename, Path, NewName);
-            }
+            Popup.ShowPopup(this, SystemIcons.Error, "Environment variables.",
+                "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
+                PopupButtons.Ok);
         }
     }
 }

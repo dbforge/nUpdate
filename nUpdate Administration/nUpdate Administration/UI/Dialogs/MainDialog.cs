@@ -1,41 +1,34 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient.Properties;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.UI.Popups;
-using Application = System.Windows.Forms.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class MainDialog : BaseDialog
     {
-        private SecureString _ftpPassword = new SecureString();
-        private SecureString _sqlPassword = new SecureString();
-        private SecureString _proxyPassword = new SecureString();
         private readonly LocalizationProperties _lp = new LocalizationProperties();
-
-        /// <summary>
-        ///     The path of the project that is stored in a file that was opened.
-        /// </summary>
-        public string ProjectPath { get; set; }
+        private SecureString _ftpPassword = new SecureString();
+        private SecureString _proxyPassword = new SecureString();
+        private SecureString _sqlPassword = new SecureString();
 
         public MainDialog()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        ///     The path of the project that is stored in a file that was opened.
+        /// </summary>
+        public string ProjectPath { get; set; }
 
         ///// <summary>
         /////     Sets the language
@@ -74,16 +67,17 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                DialogResult dr = MessageBox.Show(_lp.OperatingSystemNotSupportedWarn, String.Empty, MessageBoxButtons.OK,
+                DialogResult dr = MessageBox.Show(_lp.OperatingSystemNotSupportedWarn, String.Empty,
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
                     Application.Exit();
             }
-            
-            var fai = new FileAssociationInfo(".nupdproj");
-            if (!fai.Exists)
+
+            try
             {
-                try
+                var fai = new FileAssociationInfo(".nupdproj");
+                if (!fai.Exists)
                 {
                     fai.Create("nUpdate Administration");
 
@@ -91,18 +85,15 @@ namespace nUpdate.Administration.UI.Dialogs
                     if (!pai.Exists)
                     {
                         pai.Create("nUpdate Administration Project File",
-                            new ProgramVerb("Open", Application.ExecutablePath));
+                            new ProgramVerb("Open", String.Format("\"{0} %1\"", Application.ExecutablePath)));
                         pai.DefaultIcon = new ProgramIcon(Application.ExecutablePath);
                     }
                 }
-                catch
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, _lp.MissingRightsWarnCaption, _lp.MissingRightsWarnText,
-                        PopupButtons.Ok);
-                }
-
-                if (!String.IsNullOrEmpty(ProjectPath))
-                    OpenProject(ProjectPath);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, _lp.MissingRightsWarnCaption, _lp.MissingRightsWarnText,
+                    PopupButtons.Ok);
             }
 
             Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
@@ -213,7 +204,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return null;
             }
 
-            if (project.FtpUsername == credentialsDialog.Username) 
+            if (project.FtpUsername == credentialsDialog.Username)
                 return project;
 
             Popup.ShowPopup(this, SystemIcons.Error, "Invalid credentials.",
@@ -241,7 +232,13 @@ namespace nUpdate.Administration.UI.Dialogs
                             if (Project == null)
                                 return;
 
-                            var projectDialog = new ProjectDialog { Project = Project, FtpPassword = _ftpPassword.Copy(), ProxyPassword = _proxyPassword.Copy(), SqlPassword = _sqlPassword.Copy() };
+                            var projectDialog = new ProjectDialog
+                            {
+                                Project = Project,
+                                FtpPassword = _ftpPassword.Copy(),
+                                ProxyPassword = _proxyPassword.Copy(),
+                                SqlPassword = _sqlPassword.Copy()
+                            };
                             if (projectDialog.ShowDialog() == DialogResult.OK)
                             {
                                 _ftpPassword.Dispose();
@@ -268,7 +265,13 @@ namespace nUpdate.Administration.UI.Dialogs
                             if (Project == null)
                                 return;
 
-                            var projectEditDialog = new ProjectEditDialog { Project = Project, FtpPassword = _ftpPassword, ProxyPassword = _proxyPassword, SqlPassword = _sqlPassword};
+                            var projectEditDialog = new ProjectEditDialog
+                            {
+                                Project = Project,
+                                FtpPassword = _ftpPassword,
+                                ProxyPassword = _proxyPassword,
+                                SqlPassword = _sqlPassword
+                            };
                             if (projectEditDialog.ShowDialog() == DialogResult.OK)
                             {
                                 _ftpPassword.Dispose();
@@ -305,8 +308,32 @@ namespace nUpdate.Administration.UI.Dialogs
                     Popup.ShowPopup(this, SystemIcons.Information, "Feature not implemented yet.",
                         "This is the first version of nUpdate Administration. The conversion will be available in coming versions as soon as changes to the configuration schemata are made.",
                         PopupButtons.Ok);
-                        break;
+                    break;
             }
+        }
+
+        private void MainDialog_Shown(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(ProjectPath))
+                return;
+
+            Project = OpenProject(ProjectPath);
+            if (Project == null)
+                return;
+
+            var projectDialog = new ProjectDialog
+            {
+                Project = Project,
+                FtpPassword = _ftpPassword.Copy(),
+                ProxyPassword = _proxyPassword.Copy(),
+                SqlPassword = _sqlPassword.Copy()
+            };
+            if (projectDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            _ftpPassword.Dispose();
+            _proxyPassword.Dispose();
+            _sqlPassword.Dispose();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
-    partial class RegistryEntryCreateOperationPanel
+    partial class RegistrySubKeyCreateOperationPanel
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -33,9 +33,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.addButton = new System.Windows.Forms.Button();
             this.keyNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.appKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
-            this.entriesToCreateListBox = new System.Windows.Forms.ListBox();
+            this.subKeysToCreateListBox = new System.Windows.Forms.ListBox();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
@@ -68,13 +68,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.label1.TabIndex = 21;
             this.label1.Text = "Keyname:";
             // 
-            // appKeyTextBox
+            // subKeyTextBox
             // 
-            this.appKeyTextBox.Cue = "MyApp";
-            this.appKeyTextBox.Location = new System.Drawing.Point(261, 13);
-            this.appKeyTextBox.Name = "appKeyTextBox";
-            this.appKeyTextBox.Size = new System.Drawing.Size(150, 22);
-            this.appKeyTextBox.TabIndex = 20;
+            this.subKeyTextBox.Cue = "MyApp";
+            this.subKeyTextBox.Location = new System.Drawing.Point(261, 13);
+            this.subKeyTextBox.Name = "subKeyTextBox";
+            this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
+            this.subKeyTextBox.TabIndex = 20;
             // 
             // pathLabel
             // 
@@ -84,13 +84,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathLabel.TabIndex = 19;
             this.pathLabel.Text = "Path:";
             // 
-            // entriesToCreateListBox
+            // subKeysToCreateListBox
             // 
-            this.entriesToCreateListBox.FormattingEnabled = true;
-            this.entriesToCreateListBox.Location = new System.Drawing.Point(106, 71);
-            this.entriesToCreateListBox.Name = "entriesToCreateListBox";
-            this.entriesToCreateListBox.Size = new System.Drawing.Size(267, 121);
-            this.entriesToCreateListBox.TabIndex = 18;
+            this.subKeysToCreateListBox.FormattingEnabled = true;
+            this.subKeysToCreateListBox.Location = new System.Drawing.Point(106, 71);
+            this.subKeysToCreateListBox.Name = "subKeysToCreateListBox";
+            this.subKeysToCreateListBox.Size = new System.Drawing.Size(267, 121);
+            this.subKeysToCreateListBox.TabIndex = 18;
             // 
             // mainKeyComboBox
             // 
@@ -135,9 +135,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.keyNameTextBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.appKeyTextBox);
+            this.Controls.Add(this.subKeyTextBox);
             this.Controls.Add(this.pathLabel);
-            this.Controls.Add(this.entriesToCreateListBox);
+            this.Controls.Add(this.subKeysToCreateListBox);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "RegistryEntryCreateOperationPanel";
             this.Size = new System.Drawing.Size(488, 204);
@@ -152,9 +152,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private System.Windows.Forms.Button addButton;
         private WatermarkTextBox keyNameTextBox;
         private System.Windows.Forms.Label label1;
-        private WatermarkTextBox appKeyTextBox;
+        private WatermarkTextBox subKeyTextBox;
         private System.Windows.Forms.Label pathLabel;
-        private System.Windows.Forms.ListBox entriesToCreateListBox;
+        private System.Windows.Forms.ListBox subKeysToCreateListBox;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button removeButton;

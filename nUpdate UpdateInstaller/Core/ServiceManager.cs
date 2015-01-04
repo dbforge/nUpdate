@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
 
 namespace nUpdate.UpdateInstaller.Core
 {
     public class ServiceManager
     {
         /// <summary>
-        ///     Starts a windows service with the given name. If the service is already running, it will be restarted.
+        /// Starts a windows service with the given name. If the service is already running, it will be restarted.
         /// </summary>
         /// <param name="serviceName">The name of the service to start.</param>
-        public static void StartService(string serviceName)
+        /// <param name="arguments">The arguments to handle over.</param>
+        public static void StartService(string serviceName, string[] arguments)
         {
             var serviceController = new ServiceController(serviceName);
             if (serviceController.Status == ServiceControllerStatus.Running) // Restart it
@@ -23,7 +21,11 @@ namespace nUpdate.UpdateInstaller.Core
             {
                 TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
 
-                serviceController.Start();
+                if (arguments != null || arguments.Length != 0)
+                    serviceController.Start(arguments);
+                else
+                    serviceController.Start();
+                
                 serviceController.WaitForStatus(ServiceControllerStatus.Running, timeout);
             }
         }

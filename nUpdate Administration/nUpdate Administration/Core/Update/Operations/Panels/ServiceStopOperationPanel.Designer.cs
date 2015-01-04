@@ -59,7 +59,8 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(399, 30);
             this.label2.TabIndex = 39;
-            this.label2.Text = "If the service is not running, this operation will be ignored.";
+            this.label2.Text = "Make sure not to set the service\'s display name but the real one.\r\nIf the service" +
+    " is not running, this operation will be ignored.";
             // 
             // pictureBox1
             // 

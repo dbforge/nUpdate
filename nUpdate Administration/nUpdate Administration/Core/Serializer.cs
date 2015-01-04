@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System.IO;
+﻿using System.IO;
 using Newtonsoft.Json;
 
 namespace nUpdate.Administration.Core
@@ -42,7 +39,7 @@ namespace nUpdate.Administration.Core
             {
                 streamContent = reader.ReadToEnd();
             }
-            
+
             return JsonConvert.DeserializeObject<T>(streamContent);
         }
     }

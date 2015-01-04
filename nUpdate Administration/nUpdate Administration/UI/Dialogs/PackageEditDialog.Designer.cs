@@ -49,29 +49,31 @@
             "Delete file",
             "Deletes a given file."}, 9);
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Create entry",
-            "Creates a given entry in the registry."}, -1);
+            "Create sub key",
+            "Creates a sub key in the registry."}, 14);
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Delete entry",
-            "Deletes a given entry in the registry."}, -1);
+            "Delete sub key",
+            "Deletes a sub key recursively in the registry."}, 12);
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Set key value",
-            "Sets the value of a key in the registry."}, -1);
+            "Set value",
+            "Creates or edits a name-value-pair in the registry."}, 13);
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Delete name-value-pair",
+            "Deletes a name-value-pair in the registry."}, 12);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start process",
             "Starts a given process."}, 8);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
             "Terminate process",
             "Terminates a given process if possible."}, 7);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start service.",
             "Starts a windows service. If it is already running it will be restarted. "}, 5);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.saveButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.loadingPanel = new System.Windows.Forms.Panel();
@@ -199,14 +201,6 @@
             this.cancelToolTip.IsBalloon = true;
             this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
-            // 
-            // filesImageList
-            // 
-            this.filesImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("filesImageList.ImageStream")));
-            this.filesImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.filesImageList.Images.SetKeyName(0, "zip.png");
-            this.filesImageList.Images.SetKeyName(1, "file.png");
-            this.filesImageList.Images.SetKeyName(2, "folder.png");
             // 
             // saveButton
             // 
@@ -993,24 +987,17 @@
             listViewGroup4});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.operationsListView.HoverSelection = true;
-            listViewItem1.Group = listViewGroup1;
             listViewItem1.Tag = "RenameFile";
-            listViewItem2.Group = listViewGroup1;
             listViewItem2.Tag = "DeleteFile";
-            listViewItem3.Group = listViewGroup2;
-            listViewItem3.Tag = "CreateRegistryEntry";
-            listViewItem4.Group = listViewGroup2;
-            listViewItem4.Tag = "DeleteRegistryEntry";
-            listViewItem5.Group = listViewGroup2;
-            listViewItem5.Tag = "SetRegistryKeyValue";
-            listViewItem6.Group = listViewGroup3;
-            listViewItem6.Tag = "StartProcess";
-            listViewItem7.Group = listViewGroup3;
-            listViewItem7.Tag = "TerminateProcess";
-            listViewItem8.Group = listViewGroup4;
-            listViewItem8.Tag = "StartService";
-            listViewItem9.Group = listViewGroup4;
-            listViewItem9.Tag = "StopService";
+            listViewItem3.Tag = "CreateRegistrySubKey";
+            listViewItem4.Tag = "DeleteRegistrySubKey";
+            listViewItem5.Tag = "SetRegistryValue";
+            listViewItem6.Group = listViewGroup2;
+            listViewItem6.Tag = "DeleteRegistryValue";
+            listViewItem7.Tag = "StartProcess";
+            listViewItem8.Tag = "TerminateProcess";
+            listViewItem9.Tag = "StartService";
+            listViewItem10.Tag = "StopService";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -1020,7 +1007,8 @@
             listViewItem6,
             listViewItem7,
             listViewItem8,
-            listViewItem9});
+            listViewItem9,
+            listViewItem10});
             this.operationsListView.LargeImageList = this.categoryImageList;
             this.operationsListView.Location = new System.Drawing.Point(0, 2);
             this.operationsListView.MultiSelect = false;
@@ -1125,7 +1113,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.Panel loadingPanel;
-        private System.Windows.Forms.ImageList filesImageList;
         private System.Windows.Forms.ToolStripMenuItem apostropheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem classicQuotationMarkToolStripMenuItem;
         private Controls.ExplorerTreeView categoryTreeView;

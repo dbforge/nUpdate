@@ -1,6 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Win32
@@ -10,11 +8,9 @@ namespace nUpdate.Administration.Core.Win32
     {
         public int CbSize;
         public ListViewGroupMask Mask;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string PszHeader;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszHeader;
         public int CchHeader;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string PszFooter;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszFooter;
         public int CchFooter;
         public int IGroupId;
         public int StateMask;
@@ -22,14 +18,11 @@ namespace nUpdate.Administration.Core.Win32
         public uint UAlign;
         public IntPtr PszSubtitle;
         public uint CchSubtitle;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string PszTask;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszTask;
         public uint CchTask;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string PszDescriptionTop;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionTop;
         public uint CchDescriptionTop;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string PszDescriptionBottom;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionBottom;
         public uint CchDescriptionBottom;
         public int ITitleImage;
         public int IExtendedImage;

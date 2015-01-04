@@ -523,8 +523,11 @@ namespace nUpdate.Administration.Core.Application.Extension
                 file.Delete();
 
             RegistryKey root = Registry.ClassesRoot;
-
             root.CreateSubKey(file._extension);
+            var subKey = root.CreateSubKey("nUpdate Administration\\shell\\open\\command");
+            if (subKey != null)
+                subKey.SetValue("", String.Format("{0} \"%1\" ", System.Windows.Forms.Application.ExecutablePath),
+                    RegistryValueKind.String);
         }
 
         /// <summary>
@@ -537,7 +540,6 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Key not found.");
 
             RegistryKey root = Registry.ClassesRoot;
-
             root.DeleteSubKeyTree(file._extension);
         }
     }

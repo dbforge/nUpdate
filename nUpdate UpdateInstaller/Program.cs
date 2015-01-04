@@ -61,9 +61,14 @@ namespace nUpdate.UpdateInstaller
         public static string RegistryKeyCreateOperationText { get; set; }
 
         /// <summary>
-        ///     The text of the registry key value setting information.
+        ///     The text of the registry name-value-pair value setting information.
         /// </summary>
-        public static string RegistryKeyValueSetOperationText { get; set; }
+        public static string RegistryNameValuePairSetValueOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the registry name-value-pair value deleting information.
+        /// </summary>
+        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
 
         /// <summary>
         ///     The text of the registry key deletion information.
@@ -116,6 +121,7 @@ namespace nUpdate.UpdateInstaller
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
                 Operations = Serializer.Deserialize<IEnumerable<Operation>>(appArguments[4]);
+                ExternalGuiAssemblyPath = appArguments[5];
             }
             catch (Exception ex)
             {

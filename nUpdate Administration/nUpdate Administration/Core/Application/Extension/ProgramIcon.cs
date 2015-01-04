@@ -27,6 +27,8 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
+
 namespace nUpdate.Administration.Core.Application.Extension
 {
     public class ProgramIcon
@@ -114,7 +116,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             int index = 0;
 
-            int commaPos = regString.IndexOf(",", System.StringComparison.Ordinal);
+            int commaPos = regString.IndexOf(",", StringComparison.Ordinal);
 
             if (commaPos == -1)
                 commaPos = regString.Length;

@@ -1,6 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Win32

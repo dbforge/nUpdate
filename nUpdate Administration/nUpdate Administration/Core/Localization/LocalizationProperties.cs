@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 
 namespace nUpdate.Administration.Core.Localization
 {
@@ -857,8 +854,6 @@ namespace nUpdate.Administration.Core.Localization
         #endregion
 
         #region "Async operation's messages"
-
-
 
         #endregion
     }

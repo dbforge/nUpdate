@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -142,7 +139,11 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 sfd.Filter = "Text files (*.txt)|*.txt";
                 if (sfd.ShowDialog() != DialogResult.OK) return;
-                var logEntryList = Project.Log.Select(logEntry => String.Format("{0}-{1}-{2}", logEntry.PackageVersion, logEntry.Entry, logEntry.EntryTime)).ToList();
+                var logEntryList =
+                    Project.Log.Select(
+                        logEntry =>
+                            String.Format("{0}-{1}-{2}", logEntry.PackageVersion, logEntry.Entry, logEntry.EntryTime))
+                        .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }
         }

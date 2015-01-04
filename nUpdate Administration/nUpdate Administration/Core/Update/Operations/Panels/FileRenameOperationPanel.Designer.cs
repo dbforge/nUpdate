@@ -37,6 +37,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.newNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,11 +94,23 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathTextBox.Size = new System.Drawing.Size(202, 22);
             this.pathTextBox.TabIndex = 20;
             // 
+            // environmentVariablesButton
+            // 
+            this.environmentVariablesButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("environmentVariablesButton.BackgroundImage")));
+            this.environmentVariablesButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.environmentVariablesButton.Location = new System.Drawing.Point(344, 11);
+            this.environmentVariablesButton.Name = "environmentVariablesButton";
+            this.environmentVariablesButton.Size = new System.Drawing.Size(31, 23);
+            this.environmentVariablesButton.TabIndex = 31;
+            this.environmentVariablesButton.UseVisualStyleBackColor = true;
+            this.environmentVariablesButton.Click += new System.EventHandler(this.environmentVariablesButton_Click);
+            // 
             // FileRenameOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.environmentVariablesButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.newNameTextBox);
@@ -122,5 +135,6 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button environmentVariablesButton;
     }
 }

@@ -9,6 +9,6 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     Gets or sets the help entries included in the whole content.
         /// </summary>
-        public IEnumerable<HelpEntry> HelpEntries { get; set; } 
+        public IEnumerable<HelpEntry> HelpEntries { get; set; }
     }
 }

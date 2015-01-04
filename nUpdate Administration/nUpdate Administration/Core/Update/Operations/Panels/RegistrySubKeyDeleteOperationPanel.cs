@@ -1,29 +1,29 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 22-08-2014 20:36
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
-    public partial class RegistryEntryDeleteOperationPanel : UserControl, IOperationPanel
+    public partial class RegistrySubKeyDeleteOperationPanel : UserControl, IOperationPanel
     {
         private BindingList<string> _itemList = new BindingList<string>();
+
+        public RegistrySubKeyDeleteOperationPanel()
+        {
+            InitializeComponent();
+        }
 
         public string KeyPath
         {
             get
             {
                 return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex),
-                    appKeyTextBox.Text);
+                    subKeyTextBox.Text);
             }
             set
             {
-                string[] pathParts = value.Split(new char[] { '\\' });
+                string[] pathParts = value.Split(new[] {'\\'});
                 foreach (string pathPart in pathParts)
                 {
                     if (pathPart == pathParts[0])
@@ -32,7 +32,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
                     }
                     else
                     {
-                        appKeyTextBox.Text += String.Format("\\{0}", pathPart);
+                        subKeyTextBox.Text += String.Format("\\{0}", pathPart);
                     }
                 }
             }
@@ -44,14 +44,14 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             set { _itemList = value; }
         }
 
-        public RegistryEntryDeleteOperationPanel()
+        public Operation Operation
         {
-            InitializeComponent();
+            get { return new Operation(OperationArea.Registry, OperationMethods.Delete, KeyPath, ItemList.ToList()); }
         }
 
         private void RegistryEntryDeleteOperationPanel_Load(object sender, EventArgs e)
         {
-            entriesToDeleteListBox.DataSource = _itemList;
+            subKeysToDeleteListBox.DataSource = _itemList;
             mainKeyComboBox.SelectedIndex = 0;
         }
 
@@ -71,15 +71,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            _itemList.RemoveAt(entriesToDeleteListBox.SelectedIndex);
-        }
-
-        public Operation Operation
-        {
-            get
-            {
-                return new Operation(OperationArea.Registry, OperationMethods.Delete, KeyPath, ItemList.ToList());
-            }
+            _itemList.RemoveAt(subKeysToDeleteListBox.SelectedIndex);
         }
     }
 }

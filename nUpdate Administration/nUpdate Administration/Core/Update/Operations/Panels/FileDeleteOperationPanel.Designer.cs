@@ -30,13 +30,15 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileDeleteOperationPanel));
             this.addButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.pathLabel = new System.Windows.Forms.Label();
             this.filesToDeleteListBox = new System.Windows.Forms.ListBox();
+            this.removeButton = new System.Windows.Forms.Button();
             this.fileNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
             this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.removeButton = new System.Windows.Forms.Button();
+            this.environmentVariablesButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // addButton
@@ -73,6 +75,16 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.filesToDeleteListBox.Size = new System.Drawing.Size(267, 121);
             this.filesToDeleteListBox.TabIndex = 10;
             // 
+            // removeButton
+            // 
+            this.removeButton.Location = new System.Drawing.Point(379, 71);
+            this.removeButton.Name = "removeButton";
+            this.removeButton.Size = new System.Drawing.Size(75, 23);
+            this.removeButton.TabIndex = 18;
+            this.removeButton.Text = "Remove";
+            this.removeButton.UseVisualStyleBackColor = true;
+            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+            // 
             // fileNameTextBox
             // 
             this.fileNameTextBox.Cue = "obsolete.exe";
@@ -90,21 +102,23 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathTextBox.Size = new System.Drawing.Size(267, 22);
             this.pathTextBox.TabIndex = 12;
             // 
-            // removeButton
+            // environmentVariablesButton
             // 
-            this.removeButton.Location = new System.Drawing.Point(379, 71);
-            this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(75, 23);
-            this.removeButton.TabIndex = 18;
-            this.removeButton.Text = "Remove";
-            this.removeButton.UseVisualStyleBackColor = true;
-            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+            this.environmentVariablesButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("environmentVariablesButton.BackgroundImage")));
+            this.environmentVariablesButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.environmentVariablesButton.Location = new System.Drawing.Point(379, 14);
+            this.environmentVariablesButton.Name = "environmentVariablesButton";
+            this.environmentVariablesButton.Size = new System.Drawing.Size(31, 23);
+            this.environmentVariablesButton.TabIndex = 31;
+            this.environmentVariablesButton.UseVisualStyleBackColor = true;
+            this.environmentVariablesButton.Click += new System.EventHandler(this.environmentVariablesButton_Click);
             // 
             // FileDeleteOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.environmentVariablesButton);
             this.Controls.Add(this.removeButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.fileNameTextBox);
@@ -130,5 +144,6 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ListBox filesToDeleteListBox;
         private System.Windows.Forms.Button removeButton;
+        private System.Windows.Forms.Button environmentVariablesButton;
     }
 }

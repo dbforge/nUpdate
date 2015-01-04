@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using nUpdate.Dialogs;
 using nUpdate.UI.Dialogs;
 
 namespace nUpdate.Core

@@ -9,11 +9,6 @@ namespace nUpdate.Administration.UI.Controls
             InitializeComponent();
         }
 
-        public void Paste(string text)
-        {
-            changelogTextBox.Paste(text);
-        }
-
         /// <summary>
         ///     Returns the changelog set.
         /// </summary>
@@ -21,6 +16,11 @@ namespace nUpdate.Administration.UI.Controls
         {
             get { return changelogTextBox.Text; }
             set { changelogTextBox.Text = value; }
+        }
+
+        public void Paste(string text)
+        {
+            changelogTextBox.Paste(text);
         }
 
         private void changelogTextBox_KeyDown(object sender, KeyEventArgs e)

@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
@@ -15,7 +12,7 @@ namespace nUpdate.Administration.UI.Controls
         }
 
         public Alignment LineAlignment { get; set; }
-        
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);

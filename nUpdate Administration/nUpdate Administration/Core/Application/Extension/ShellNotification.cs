@@ -27,9 +27,8 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using nUpdate.Administration.Core.Win32;
 using System;
-using System.Runtime.InteropServices;
+using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {

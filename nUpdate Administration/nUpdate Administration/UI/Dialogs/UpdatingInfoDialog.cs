@@ -11,7 +11,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void UpdatingInfoDialog_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

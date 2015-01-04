@@ -1,8 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,10 +11,16 @@ namespace nUpdate.Administration.Core
 {
     public class FtpManager : IDisposable
     {
+        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
+
+        /// <summary>
+        ///     Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles" />-method.
+        /// </summary>
+        public IEnumerable<FtpItem> ListedFtpItems;
+
         private bool _disposed;
         private bool _hasAlreadyFixedStrings;
         private FtpClient _packageFtpClient;
-        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
 
         /// <summary>
         ///     Returns the adress that was created by the <see cref="FtpManager" />-class during the call of the last function.
@@ -61,27 +63,28 @@ namespace nUpdate.Administration.Core
         public SecureString Password { get; set; }
 
         /// <summary>
-        /// Gets or sets the exception appearing during a file-upload.
+        ///     Gets or sets the exception appearing during a file-upload.
         /// </summary>
         public Exception FileUploadException { get; set; }
 
         /// <summary>
-        /// Gets or sets the exception appearing during the package upload.
+        ///     Gets or sets the exception appearing during the package upload.
         /// </summary>
         public Exception PackageUploadException { get; set; }
 
-        /// <summary>
-        /// Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles"/>-method.
-        /// </summary>
-        public IEnumerable<FtpItem> ListedFtpItems; 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         /// <summary>
-        /// Occurs when the download progress changes.
+        ///     Occurs when the download progress changes.
         /// </summary>
         public event EventHandler<TransferProgressEventArgs> ProgressChanged;
 
         /// <summary>
-        /// Occurs when the cancellation is finished.
+        ///     Occurs when the cancellation is finished.
         /// </summary>
         public event EventHandler<EventArgs> CancellationFinished;
 
@@ -201,7 +204,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///      Lists the directories and files of the current FTP-directory.
+        ///     Lists the directories and files of the current FTP-directory.
         /// </summary>
         public IEnumerable<FtpItem> ListDirectoriesAndFiles(string path, bool recursive)
         {
@@ -270,7 +273,9 @@ namespace nUpdate.Administration.Core
                         InternalMoveContent(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
                         DeleteDirectory(item.FullPath);
                     }
-                    else if (item.ItemType == FtpItemType.File && (item.Name == "updates.json" || Guid.TryParse(item.Name.Split(new [] {'.'})[0], out guid))) // Second condition determines whether the item is a package-file or not
+                    else if (item.ItemType == FtpItemType.File &&
+                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split(new[] {'.'})[0], out guid)))
+                        // Second condition determines whether the item is a package-file or not
                     {
                         // "MoveFile"-method damages the files, so we do it manually with a work-around
                         //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
@@ -346,7 +351,7 @@ namespace nUpdate.Administration.Core
         {
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
-          
+
             _packageFtpClient = new FtpClient(Host, Port, Protocol)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
@@ -367,7 +372,7 @@ namespace nUpdate.Administration.Core
         private void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
         {
             _uploadPackageResetEvent.Set();
-            
+
             if (e.Cancelled)
             {
                 OnCancellationFinished(this, EventArgs.Empty);
@@ -391,15 +396,9 @@ namespace nUpdate.Administration.Core
             OnProgressChanged(e);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing || _disposed) 
+            if (!disposing || _disposed)
                 return;
 
             _packageFtpClient.Dispose();

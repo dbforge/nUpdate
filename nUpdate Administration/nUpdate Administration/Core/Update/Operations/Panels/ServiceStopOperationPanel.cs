@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
@@ -22,17 +16,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             set { serviceNameTextBox.Text = value; }
         }
 
-        private void ServiceStopOperationPanel_Load(object sender, EventArgs e)
-        {
-
-        }
-
         public Operation Operation
         {
-            get
-            {
-                return new Operation(OperationArea.Services, OperationMethods.Stop, ServiceName);
-            }
+            get { return new Operation(OperationArea.Services, OperationMethods.Stop, ServiceName); }
+        }
+
+        private void ServiceStopOperationPanel_Load(object sender, EventArgs e)
+        {
         }
     }
 }

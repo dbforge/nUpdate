@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -70,11 +67,20 @@ namespace nUpdate.Administration.Core.Update
         public bool MustUpdate { get; set; }
 
         /// <summary>
+        ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
+        /// </summary>
+        /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
+        public UpdateConfiguration DeepCopy()
+        {
+            return (UpdateConfiguration) MemberwiseClone();
+        }
+
+        /// <summary>
         ///     Downloads the update configurations from the server.
         /// </summary>
         /// <param name="configFileUrl">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <returns>Returns an enumerable of type <see cref="UpdateConfiguration"/> containing the package configurations.</returns>
+        /// <returns>Returns an enumerable of type <see cref="UpdateConfiguration" /> containing the package configurations.</returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUrl, WebProxy proxy)
         {
             using (var wc = new WebClientWrapper())
@@ -101,15 +107,6 @@ namespace nUpdate.Administration.Core.Update
         public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
             return Serializer.Deserialize<List<UpdateConfiguration>>(File.ReadAllText(filePath));
-        }
-
-        /// <summary>
-        ///     Performs a deep copy of the current <see cref="UpdateConfiguration"/>-instance.
-        /// </summary>
-        /// <returns>Returns a copy of the given <see cref="UpdateConfiguration"/>-instance.</returns>
-        public UpdateConfiguration DeepCopy()
-        {
-            return (UpdateConfiguration) MemberwiseClone();
         }
     }
 }

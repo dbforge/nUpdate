@@ -90,6 +90,16 @@ namespace nUpdate.Internal
         public Dictionary<CultureInfo, string> CultureFilePaths { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether a custom user interface should be used for the update installer or not.
+        /// </summary>
+        public bool UseCustomInstallerUserInterface { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the path of the custom assembly'S location that should be used for the update installer's user interface.
+        /// </summary>
+        public string CustomInstallerUiAssemblyPath { get; set; }
+
+        /// <summary>
         ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions or not.
         /// </summary>
         public bool IncludeAlpha { get; set; }
@@ -151,22 +161,24 @@ namespace nUpdate.Internal
         {
             // UpdateInfo-property
             if (UpdateConfigurationFileUrl == null)
-                throw new ArgumentException("The Property \"UpdateInfoFileUrl\" is not initialized.");
+                throw new ArgumentException("The property \"UpdateInfoFileUrl\" is not initialized.");
 
             if (!UpdateConfigurationFileUrl.ToString().EndsWith(".json"))
-                throw new InvalidJsonFileException("The info file is not a valid JSON-file.");
+                throw new InvalidJsonFileException("The update configuration file is not a valid JSON-file.");
 
             // PublicKey-property
             if (String.IsNullOrEmpty(PublicKey))
-                throw new ArgumentException("The Property \"PublicKey\" is not initialized.");
+                throw new ArgumentException("The property \"PublicKey\" is not initialized.");
 
             // CurrentVersion-property
             if (ReferenceEquals(CurrentVersion, null))
                 throw new ArgumentException("The current version must have a value.");
 
             if (LanguageCulture == null)
-                throw new ArgumentException("The Property \"Language\" is not initialized.");
+                throw new ArgumentException("The property \"Language\" is not initialized.");
 
+            if (UseCustomInstallerUserInterface && String.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
+                throw new ArgumentException("The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
         }
 
         /// <summary>
@@ -596,10 +608,11 @@ namespace nUpdate.Internal
             if (!File.Exists(unpackerAppPath))
                 File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
 
+            string installerUiAssemblyPath = UseCustomInstallerUserInterface ? String.Format("\"{0}\"", CustomInstallerUiAssemblyPath) : String.Empty;
             string[] args =
             {
                 String.Format("\"{0}\"", _updateFilePath), String.Format("\"{0}\"", Application.StartupPath), String.Format("\"{0}\"", Application.ExecutablePath),
-                String.Format("\"{0}\"", Application.ProductName), String.Format("\"{0}\"", Serializer.Serialize(Operations)), "\"Unpacking\"", "\"The installation of the update failed.\"", "\"{0}... \nPossibly the program won't be able to run properly as important components could be missing then.\"", "\"OK\""
+                String.Format("\"{0}\"", Application.ProductName), String.Format("\"{0}\"", Serializer.Serialize(Operations)), "\"Unpacking\"", "\"The installation of the update failed.\"", "\"{0}... \nPossibly the program won't be able to run properly as important components could be missing then.\"", "\"OK\"", installerUiAssemblyPath
             };
             // TODO: lp.UnpackingText and lp.UnpackingErrorTitle + lp.UnpackingErrorMessage
 

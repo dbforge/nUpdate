@@ -31,17 +31,17 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirectorySearchDialog));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Server");
             this.serverImageList = new System.Windows.Forms.ImageList(this.components);
-            this.continueButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.loadPictureBox = new System.Windows.Forms.PictureBox();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
             this.directoryLabel = new System.Windows.Forms.Label();
             this.directoryTextBox = new System.Windows.Forms.TextBox();
             this.ftpDirectoryInfoLabel = new System.Windows.Forms.Label();
-            this.serverDataTreeView = new System.Windows.Forms.TreeView();
-            this.doubleNavigationButton1 = new VisualStyleControls.Controls.DoubleNavigationButton();
+            this.continueButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
+            this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
+            this.serverDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.loadPictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -53,27 +53,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverImageList.Images.SetKeyName(0, "server-network.png");
             this.serverImageList.Images.SetKeyName(1, "folder.png");
             // 
-            // continueButton
-            // 
-            this.continueButton.Location = new System.Drawing.Point(391, 8);
-            this.continueButton.Name = "continueButton";
-            this.continueButton.Size = new System.Drawing.Size(75, 23);
-            this.continueButton.TabIndex = 0;
-            this.continueButton.Text = "Continue";
-            this.continueButton.UseVisualStyleBackColor = true;
-            this.continueButton.Click += new System.EventHandler(this.continueButton_Click);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(310, 8);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-            // 
             // loadPictureBox
             // 
             this.loadPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("loadPictureBox.Image")));
@@ -83,16 +62,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.loadPictureBox.TabIndex = 20;
             this.loadPictureBox.TabStop = false;
-            // 
-            // controlPanel1
-            // 
-            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.cancelButton);
-            this.controlPanel1.Controls.Add(this.continueButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 261);
-            this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(477, 38);
-            this.controlPanel1.TabIndex = 19;
             // 
             // directoryLabel
             // 
@@ -121,28 +90,73 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpDirectoryInfoLabel.TabIndex = 16;
             this.ftpDirectoryInfoLabel.Text = "Select the directory that should be used for the update files.";
             // 
+            // continueButton
+            // 
+            this.continueButton.Location = new System.Drawing.Point(391, 8);
+            this.continueButton.Name = "continueButton";
+            this.continueButton.Size = new System.Drawing.Size(75, 23);
+            this.continueButton.TabIndex = 0;
+            this.continueButton.Text = "Continue";
+            this.continueButton.UseVisualStyleBackColor = true;
+            this.continueButton.Click += new System.EventHandler(this.continueButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(310, 8);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            // 
+            // controlPanel1
+            // 
+            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
+            this.controlPanel1.Controls.Add(this.cancelButton);
+            this.controlPanel1.Controls.Add(this.continueButton);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 261);
+            this.controlPanel1.Name = "controlPanel1";
+            this.controlPanel1.Size = new System.Drawing.Size(477, 38);
+            this.controlPanel1.TabIndex = 19;
+            // 
+            // backButton
+            // 
+            this.backButton.BackColor = System.Drawing.Color.Black;
+            this.backButton.Enabled = false;
+            this.backButton.Location = new System.Drawing.Point(14, 6);
+            this.backButton.Name = "backButton";
+            this.backButton.Size = new System.Drawing.Size(24, 24);
+            this.backButton.TabIndex = 21;
+            this.backButton.Text = "explorerNavigationButton1";
+            this.backButton.Click += new System.EventHandler(this.backButton_Click);
+            // 
+            // forwardButton
+            // 
+            this.forwardButton.ArrowDirection = ExplorerNavigationButton.ArrowDirection.Right;
+            this.forwardButton.BackColor = System.Drawing.Color.Black;
+            this.forwardButton.Enabled = false;
+            this.forwardButton.Location = new System.Drawing.Point(44, 6);
+            this.forwardButton.Name = "forwardButton";
+            this.forwardButton.Size = new System.Drawing.Size(24, 24);
+            this.forwardButton.TabIndex = 22;
+            this.forwardButton.Text = "explorerNavigationButton2";
+            this.forwardButton.Click += new System.EventHandler(this.forwardButton_Click);
+            // 
             // serverDataTreeView
             // 
+            this.serverDataTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.serverDataTreeView.HotTracking = true;
             this.serverDataTreeView.ImageIndex = 0;
             this.serverDataTreeView.ImageList = this.serverImageList;
+            this.serverDataTreeView.ItemHeight = 23;
             this.serverDataTreeView.Location = new System.Drawing.Point(12, 107);
             this.serverDataTreeView.Name = "serverDataTreeView";
-            treeNode1.Name = "serverHeader";
-            treeNode1.Text = "Server";
-            this.serverDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
             this.serverDataTreeView.SelectedImageIndex = 0;
+            this.serverDataTreeView.ShowLines = false;
             this.serverDataTreeView.Size = new System.Drawing.Size(454, 143);
-            this.serverDataTreeView.TabIndex = 0;
+            this.serverDataTreeView.TabIndex = 23;
             this.serverDataTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.serverDataTreeView_AfterSelect);
-            // 
-            // doubleNavigationButton1
-            // 
-            this.doubleNavigationButton1.Location = new System.Drawing.Point(14, 12);
-            this.doubleNavigationButton1.Name = "doubleNavigationButton1";
-            this.doubleNavigationButton1.Size = new System.Drawing.Size(60, 30);
-            this.doubleNavigationButton1.TabIndex = 23;
-            this.doubleNavigationButton1.Text = "doubleNavigationButton1";
             // 
             // DirectorySearchDialog
             // 
@@ -152,7 +166,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(478, 299);
-            this.Controls.Add(this.doubleNavigationButton1);
+            this.Controls.Add(this.forwardButton);
+            this.Controls.Add(this.backButton);
             this.Controls.Add(this.loadPictureBox);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.directoryLabel);
@@ -168,8 +183,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectorySearchForm_FormClosing);
-            this.Load += new System.EventHandler(this.DirectorySearchForm_Load);
-            this.Shown += new System.EventHandler(this.DirectorySearchForm_Shown);
+            this.Shown += new System.EventHandler(this.DirectorySearchDialog_Shown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DirectorySearchDialog_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.loadPictureBox)).EndInit();
             this.controlPanel1.ResumeLayout(false);
@@ -180,7 +194,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private System.Windows.Forms.TreeView serverDataTreeView;
         private System.Windows.Forms.Label ftpDirectoryInfoLabel;
         private System.Windows.Forms.TextBox directoryTextBox;
         private System.Windows.Forms.Label directoryLabel;
@@ -189,6 +202,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;
         private System.Windows.Forms.PictureBox loadPictureBox;
-        private VisualStyleControls.Controls.DoubleNavigationButton doubleNavigationButton1;
+        private ExplorerNavigationButton.ExplorerNavigationButton backButton;
+        private ExplorerNavigationButton.ExplorerNavigationButton forwardButton;
+        private Controls.ExplorerTreeView serverDataTreeView;
     }
 }
