@@ -1,11 +1,6 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
@@ -104,5 +99,6 @@ namespace nUpdate.Administration.UI.Dialogs
             jsonEditorDialog.LanguageContent = Serializer.Serialize(lp);
             jsonEditorDialog.CultureName = name;
             jsonEditorDialog.ShowDialog(this);
-        }    }
+        }
+    }
 }

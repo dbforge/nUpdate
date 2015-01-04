@@ -7,10 +7,10 @@ namespace nUpdate.Administration.Core.Win32
     public static class IconReader
     {
         /// <summary>
-        ///     Returns the associated icon of a <paramref name="fileExtension"/>.
+        ///     Returns the associated icon of a <paramref name="fileExtension" />.
         /// </summary>
         /// <param name="fileExtension">The file extension to get the associated icon for.</param>
-        /// <returns>The associated icon of the <paramref name="fileExtension"/>.</returns>
+        /// <returns>The associated icon of the <paramref name="fileExtension" />.</returns>
         public static Icon GetFileIcon(string fileExtension)
         {
             if (String.IsNullOrWhiteSpace(fileExtension))
@@ -18,12 +18,12 @@ namespace nUpdate.Administration.Core.Win32
 
             var shfileinfo = new NativeMethods.Shfileinfo();
             const NativeMethods.ShGetFileInfoFlags flags =
-                                NativeMethods.ShGetFileInfoFlags.TypeName |
-                                NativeMethods.ShGetFileInfoFlags.DisplayName |
-                                NativeMethods.ShGetFileInfoFlags.Icon |
-                                NativeMethods.ShGetFileInfoFlags.SysIconIndex |
-                                NativeMethods.ShGetFileInfoFlags.UseFileAttributes |
-                                NativeMethods.ShGetFileInfoFlags.SmallIcon;
+                NativeMethods.ShGetFileInfoFlags.TypeName |
+                NativeMethods.ShGetFileInfoFlags.DisplayName |
+                NativeMethods.ShGetFileInfoFlags.Icon |
+                NativeMethods.ShGetFileInfoFlags.SysIconIndex |
+                NativeMethods.ShGetFileInfoFlags.UseFileAttributes |
+                NativeMethods.ShGetFileInfoFlags.SmallIcon;
 
             IntPtr hIcon = IntPtr.Zero;
 
@@ -33,7 +33,7 @@ namespace nUpdate.Administration.Core.Win32
                 if (hIcon == IntPtr.Zero)
                     return null;
 
-                return (Icon)Icon.FromHandle(shfileinfo.hIcon).Clone();
+                return (Icon) Icon.FromHandle(shfileinfo.hIcon).Clone();
             }
             finally
             {

@@ -1,6 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)License: Creative Commons Attribution NoDerivs (CC-ND)\nCreated: 23-12-2014 19:11
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Win32

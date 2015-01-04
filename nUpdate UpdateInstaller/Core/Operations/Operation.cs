@@ -3,6 +3,7 @@
 // Created: 01-08-2014 12:11
 
 using System;
+using System.IO;
 
 namespace nUpdate.UpdateInstaller.Core.Operations
 {
@@ -50,12 +51,14 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Delete);
                 case "RenameFile":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Rename);
-                case "CreateRegistryEntry":
+                case "CreateRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Create);
-                case "DeleteRegistryEntry":
+                case "DeleteRegistrySubKey":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Delete);
-                case "SetRegistryKeyValue":
+                case "SetRegistryValue":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.SetValue);
+                case "DeleteRegistryValue":
+                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.DeleteValue);
                 case "StartProcess":
                     return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Start);
                 case "TerminateProcess":
@@ -92,11 +95,11 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                     switch (operation.Method)
                     {
                         case OperationMethods.Create:
-                            return "CreateRegistryEntry";
+                            return "CreateRegistrySubKey";
                         case OperationMethods.Delete:
-                            return "DeleteRegistryEntry";
+                            return "DeleteRegistrySubKey";
                         case OperationMethods.SetValue:
-                            return "SetRegistryKeyValue";
+                            return "SetRegistryValue";
                     }
                     break;
                 case OperationArea.Processes:
@@ -117,6 +120,27 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                             return "StopService";
                     }
                     break;
+            }
+            return null;
+        }
+
+        /// <summary>
+        ///     Gets the full directory path for the given tag.
+        /// </summary>
+        /// <param name="tag">The tag to use.</param>
+        /// <returns>Returns the full path of the relating directory on the system.</returns>
+        public static string GetDirectory(string tag)
+        {
+            switch (tag)
+            {
+                case "%program%":
+                    return Program.AimFolder;
+                case "%appdata%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                case "%temp%":
+                    return Path.GetTempPath();
+                case "%desktop%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             }
             return null;
         }

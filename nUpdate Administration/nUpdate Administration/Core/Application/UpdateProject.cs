@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using nUpdate.Administration.Core.Application.History;
@@ -9,7 +6,7 @@ using nUpdate.Administration.Core.Application.History;
 namespace nUpdate.Administration.Core.Application
 {
     /// <summary>
-    /// Represents a local update project.
+    ///     Represents a local update project.
     /// </summary>
     [Serializable]
     public class UpdateProject

@@ -1,18 +1,15 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
     public partial class FileDeleteOperationPanel : UserControl, IOperationPanel
     {
-        private BindingList<string> _itemList = new BindingList<string>(); 
+        private BindingList<string> _itemList = new BindingList<string>();
 
         public FileDeleteOperationPanel()
         {
@@ -29,6 +26,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get { return _itemList; }
             set { _itemList = value; }
+        }
+
+        public Operation Operation
+        {
+            get { return new Operation(OperationArea.Files, OperationMethods.Delete, Path, ItemList.ToList()); }
         }
 
         private void FileDeleteOperationPanel_Load(object sender, EventArgs e)
@@ -55,12 +57,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             _itemList.RemoveAt(filesToDeleteListBox.SelectedIndex);
         }
 
-        public Operation Operation
+        private void environmentVariablesButton_Click(object sender, EventArgs e)
         {
-            get
-            {
-                return new Operation(OperationArea.Files, OperationMethods.Delete, Path, ItemList.ToList());
-            }
+            Popup.ShowPopup(this, SystemIcons.Error, "Environment variables.",
+                "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
+                PopupButtons.Ok);
         }
     }
 }

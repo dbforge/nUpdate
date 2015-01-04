@@ -1,8 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 02-08-2014 20:10
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -16,6 +12,11 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class StatisticsServerDialog : BaseDialog
     {
+        public StatisticsServerDialog()
+        {
+            InitializeComponent();
+        }
+
         /// <summary>
         ///     The url of the SQL-connection.
         /// </summary>
@@ -30,11 +31,6 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The username for the SQL-login.
         /// </summary>
         public string SqlUsername { get; set; }
-
-        public StatisticsServerDialog()
-        {
-            InitializeComponent();
-        }
 
         /// <summary>
         ///     Represents the content of the file for the statistic servers.
@@ -116,7 +112,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void addServerButton_Click(object sender, EventArgs e)
         {
             var statisticsServerAddDialog = new StatisticsServerAddDialog();
-            if (statisticsServerAddDialog.ShowDialog() != DialogResult.OK) 
+            if (statisticsServerAddDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             SqlDatabaseName = statisticsServerAddDialog.DatabaseName;
@@ -185,10 +181,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            if (serverList.SelectedItem == null) 
+            if (serverList.SelectedItem == null)
                 return;
 
-            if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown) 
+            if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown)
                 return;
 
             string[] selectedStatisticServer =

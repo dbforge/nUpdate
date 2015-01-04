@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
@@ -24,21 +22,28 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public IEnumerable<string> Arguments
         {
-            get { return argumentTextBox.Text.Split(new char[] {','}); }
+            get { return argumentTextBox.Text.Split(new[] {','}); }
             set { argumentTextBox.Text = String.Join(",", value); }
-        }
-
-        private void ProcessStartOperationPanel_Load(object sender, EventArgs e)
-        {
-
         }
 
         public Operation Operation
         {
             get
             {
-                return new Operation(OperationArea.Processes, OperationMethods.Start, pathTextBox.Text, Arguments.ToList());
+                return new Operation(OperationArea.Processes, OperationMethods.Start, pathTextBox.Text,
+                    Arguments.ToList());
             }
+        }
+
+        private void ProcessStartOperationPanel_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void environmentVariablesButton_Click(object sender, EventArgs e)
+        {
+            Popup.ShowPopup(this, SystemIcons.Error, "Environment variables.",
+                "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
+                PopupButtons.Ok);
         }
     }
 }

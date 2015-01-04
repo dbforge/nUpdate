@@ -46,34 +46,37 @@
             "Delete file",
             "Deletes a given file."}, 9);
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Create entry",
-            "Creates a given entry in the registry."}, 14);
+            "Create sub key",
+            "Creates a sub key in the registry."}, 14);
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Delete entry",
-            "Deletes a given entry in the registry."}, 12);
+            "Delete sub key",
+            "Deletes a sub key in the registry."}, 12);
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Set key value",
-            "Sets the value of a key in the registry."}, 13);
+            "Set value",
+            "Creates or edits a name-value-pair in the registry."}, 13);
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Delete name-value-pair",
+            "Deletes a name-value-pair in the registry."}, 12);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start process",
             "Starts a given process."}, 8);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
             "Terminate process",
             "Terminates a given process if possible."}, 7);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start service.",
             "Starts a windows service. If it is already running it will be restarted. "}, 5);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -166,12 +169,12 @@
             this.addFilesButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.removeEntryButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.infoButton = new System.Windows.Forms.ToolStripButton();
             this.filesList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.infoButton = new System.Windows.Forms.ToolStripButton();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -1013,19 +1016,21 @@
             listViewItem2.Group = listViewGroup1;
             listViewItem2.Tag = "DeleteFile";
             listViewItem3.Group = listViewGroup2;
-            listViewItem3.Tag = "CreateRegistryEntry";
+            listViewItem3.Tag = "CreateRegistrySubKey";
             listViewItem4.Group = listViewGroup2;
-            listViewItem4.Tag = "DeleteRegistryEntry";
+            listViewItem4.Tag = "DeleteRegistrySubKey";
             listViewItem5.Group = listViewGroup2;
-            listViewItem5.Tag = "SetRegistryKeyValue";
-            listViewItem6.Group = listViewGroup3;
-            listViewItem6.Tag = "StartProcess";
+            listViewItem5.Tag = "SetRegistryValue";
+            listViewItem6.Group = listViewGroup2;
+            listViewItem6.Tag = "DeleteRegistryValue";
             listViewItem7.Group = listViewGroup3;
-            listViewItem7.Tag = "TerminateProcess";
-            listViewItem8.Group = listViewGroup4;
-            listViewItem8.Tag = "StartService";
+            listViewItem7.Tag = "StartProcess";
+            listViewItem8.Group = listViewGroup3;
+            listViewItem8.Tag = "TerminateProcess";
             listViewItem9.Group = listViewGroup4;
-            listViewItem9.Tag = "StopService";
+            listViewItem9.Tag = "StartService";
+            listViewItem10.Group = listViewGroup4;
+            listViewItem10.Tag = "StopService";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -1035,7 +1040,8 @@
             listViewItem6,
             listViewItem7,
             listViewItem8,
-            listViewItem9});
+            listViewItem9,
+            listViewItem10});
             this.operationsListView.LargeImageList = this.categoryImageList;
             this.operationsListView.Location = new System.Drawing.Point(0, 0);
             this.operationsListView.MultiSelect = false;
@@ -1088,27 +1094,27 @@
             this.filesDataTreeView.LabelEdit = true;
             this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
             this.filesDataTreeView.Name = "filesDataTreeView";
-            treeNode5.ImageIndex = 0;
-            treeNode5.Name = "Knoten0";
-            treeNode5.SelectedImageIndex = 0;
-            treeNode5.Text = "Program directory";
-            treeNode6.ImageIndex = 0;
-            treeNode6.Name = "Knoten1";
-            treeNode6.SelectedImageIndex = 0;
-            treeNode6.Text = "AppData";
-            treeNode7.ImageIndex = 0;
-            treeNode7.Name = "Knoten2";
-            treeNode7.SelectedImageIndex = 0;
-            treeNode7.Text = "Temp directory";
-            treeNode8.ImageIndex = 0;
-            treeNode8.Name = "Knoten3";
-            treeNode8.SelectedImageIndex = 0;
-            treeNode8.Text = "Desktop";
+            treeNode1.ImageIndex = 0;
+            treeNode1.Name = "Knoten0";
+            treeNode1.SelectedImageIndex = 0;
+            treeNode1.Text = "Program directory";
+            treeNode2.ImageIndex = 0;
+            treeNode2.Name = "Knoten1";
+            treeNode2.SelectedImageIndex = 0;
+            treeNode2.Text = "AppData";
+            treeNode3.ImageIndex = 0;
+            treeNode3.Name = "Knoten2";
+            treeNode3.SelectedImageIndex = 0;
+            treeNode3.Text = "Temp directory";
+            treeNode4.ImageIndex = 0;
+            treeNode4.Name = "Knoten3";
+            treeNode4.SelectedImageIndex = 0;
+            treeNode4.Text = "Desktop";
             this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
             this.filesDataTreeView.SelectedImageIndex = 0;
             this.filesDataTreeView.ShowLines = false;
             this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
@@ -1206,6 +1212,20 @@
             this.removeEntryButton.Text = "Remove entry";
             this.removeEntryButton.Click += new System.EventHandler(this.removeEntryButton_Click);
             // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
+            // 
+            // infoButton
+            // 
+            this.infoButton.Image = ((System.Drawing.Image)(resources.GetObject("infoButton.Image")));
+            this.infoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.infoButton.Name = "infoButton";
+            this.infoButton.Size = new System.Drawing.Size(48, 22);
+            this.infoButton.Text = "Info";
+            this.infoButton.Click += new System.EventHandler(this.infoButton_Click);
+            // 
             // filesList
             // 
             this.filesList.BackColor = System.Drawing.SystemColors.Window;
@@ -1245,27 +1265,27 @@
             this.categoryTreeView.ItemHeight = 24;
             this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
             this.categoryTreeView.Name = "categoryTreeView";
-            treeNode9.ImageIndex = 2;
-            treeNode9.Name = "generalNode";
-            treeNode9.SelectedImageIndex = 2;
-            treeNode9.Text = "General";
-            treeNode10.ImageIndex = 3;
-            treeNode10.Name = "changelogNode";
-            treeNode10.SelectedImageIndex = 3;
-            treeNode10.Text = "Changelog";
-            treeNode11.ImageIndex = 0;
-            treeNode11.Name = "availabilityNode";
-            treeNode11.SelectedImageIndex = 0;
-            treeNode11.Text = "Availability";
-            treeNode12.ImageIndex = 4;
-            treeNode12.Name = "operationsNode";
-            treeNode12.SelectedImageIndex = 4;
-            treeNode12.Text = "Operations";
+            treeNode5.ImageIndex = 2;
+            treeNode5.Name = "generalNode";
+            treeNode5.SelectedImageIndex = 2;
+            treeNode5.Text = "General";
+            treeNode6.ImageIndex = 3;
+            treeNode6.Name = "changelogNode";
+            treeNode6.SelectedImageIndex = 3;
+            treeNode6.Text = "Changelog";
+            treeNode7.ImageIndex = 0;
+            treeNode7.Name = "availabilityNode";
+            treeNode7.SelectedImageIndex = 0;
+            treeNode7.Text = "Availability";
+            treeNode8.ImageIndex = 4;
+            treeNode8.Name = "operationsNode";
+            treeNode8.SelectedImageIndex = 4;
+            treeNode8.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1274,20 +1294,6 @@
             this.categoryTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragDrop);
             this.categoryTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragEnter);
             this.categoryTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.categoryTreeView_KeyDown);
-            // 
-            // toolStripSeparator9
-            // 
-            this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
-            // 
-            // infoButton
-            // 
-            this.infoButton.Image = ((System.Drawing.Image)(resources.GetObject("infoButton.Image")));
-            this.infoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.infoButton.Name = "infoButton";
-            this.infoButton.Size = new System.Drawing.Size(48, 20);
-            this.infoButton.Text = "Info";
-            this.infoButton.Click += new System.EventHandler(this.infoButton_Click);
             // 
             // PackageAddDialog
             // 

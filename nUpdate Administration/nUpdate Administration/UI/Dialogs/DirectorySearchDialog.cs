@@ -1,11 +1,6 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -15,7 +10,6 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
-using Popup = nUpdate.Administration.UI.Popups.Popup;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -24,15 +18,11 @@ namespace nUpdate.Administration.UI.Dialogs
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
+        private bool _allowCancel;
         private FtpManager _ftp;
 
-        private List<FtpItem> _listedFtpItems = new List<FtpItem>(); 
-        private readonly List<ListingItem> _foundItems = new List<ListingItem>(); 
-        private bool _allowCancel;
-        private bool _isGettingRootData = true;
-        private bool _isSetByUser;
+        private List<FtpItem> _listedFtpItems = new List<FtpItem>();
         private Margins _margins;
-        private bool _mustCancel = false;
 
         public DirectorySearchDialog()
         {
@@ -79,6 +69,17 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public int Protocol { get; set; }
 
+        public void SetUiState(bool enabled)
+        {
+            Invoke(new Action(() =>
+            {
+                serverDataTreeView.Enabled = enabled;
+                loadPictureBox.Visible = !enabled;
+                cancelButton.Enabled = enabled;
+                continueButton.Enabled = enabled;
+            }));
+        }
+
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
@@ -97,15 +98,15 @@ namespace nUpdate.Administration.UI.Dialogs
             e.Graphics.FillRectangle(b, clientArea);
         }
 
-        private void DirectorySearchForm_Load(object sender, EventArgs e)
+        private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
             Text = String.Format("Set directory - {0} - nUpdate Administration 0.1.0.0", ProjectName);
 
-            if (!NativeMethods.DwmIsCompositionEnabled())
-                return;
-
-            _margins = new Margins {Top = 38};
-            NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
+            if (NativeMethods.DwmIsCompositionEnabled())
+            {
+                _margins = new Margins {Top = 38};
+                NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
+            }
 
             _ftp = new FtpManager
             {
@@ -116,10 +117,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 UsePassiveMode = UsePassiveMode,
                 Protocol = (FtpSecurityProtocol) Protocol
             };
-        }
 
-        private void DirectorySearchForm_Shown(object sender, EventArgs e)
-        {
             ThreadPool.QueueUserWorkItem(arg => LoadListAsync());
         }
 
@@ -140,18 +138,24 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            //if (serverDataTreeView.SelectedNode.Text.Equals("Server") && serverDataTreeView.SelectedNode.Index.Equals(0))
-            //    directoryTextBox.Text = "/";
-            //else
-            //{
-            //    if (parent.Index.Equals(0) && parent.Text.Equals("Server"))
-            //        directoryTextBox.Text = String.Format("/{0}/", node.Text);
-            //    else
-            //    {
-            //        directoryTextBox.Text = String.Format("/{0}/{1}/", parent.Text,
-            //            node.Text.Split('/').Last());
-            //    }
-            //}
+            if (e.Node == serverDataTreeView.Nodes[0])
+                return;
+
+            _nav.Add(e.Node);
+            if (!backButton.Enabled)
+                backButton.Enabled = true;
+
+            var directories = new Stack<string>();
+            TreeNode currentNode = e.Node;
+            while (currentNode.Parent != null && currentNode.Parent != serverDataTreeView.Nodes[0])
+            {
+                directories.Push(currentNode.Parent.Text);
+                currentNode = currentNode.Parent;
+            }
+
+            directoryTextBox.Text = ((bool) currentNode.Tag)
+                ? String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text)
+                : String.Format("/{0}", String.Join("/", directories));
         }
 
         private void LoadListAsync()
@@ -171,123 +175,84 @@ namespace nUpdate.Administration.UI.Dialogs
                                 PopupButtons.Ok);
                             Close();
                         }));
-
             }
 
             if (_listedFtpItems != null)
             {
-                foreach (var listedItem in _listedFtpItems.Where(item => item.ParentPath.Length < 2))
+                ListingItem root = ConvertToListingItem(_listedFtpItems, "/");
+                var rootNode = new TreeNode("Server", 0, 0);
+                BeginInvoke(new Action(() =>
                 {
-                    var listingItem = new ListingItem(listedItem.Name);
-                    if (!Path.HasExtension(listedItem.Name)) // Only if it is a directory
-                        InitializeSubItems(listingItem, listedItem.Name,  1);
-                    _foundItems.Add(listingItem);
-                }
+                    RecursiveAdd(root, rootNode);
+                    serverDataTreeView.Nodes.Add(rootNode);
+                    serverDataTreeView.Nodes[0].Expand();
+                    serverDataTreeView.SelectedNode = rootNode;
+                }));
             }
 
             BeginInvoke(new Action(() =>
             {
-                foreach (var mainItem in _foundItems)
-                {
-                    AddItemsToTreeView(serverDataTreeView.Nodes[0], mainItem);
-                }
-
                 serverDataTreeView.Enabled = true;
                 loadPictureBox.Visible = false;
                 cancelButton.Enabled = true;
                 continueButton.Enabled = true;
             }));
 
-            _isGettingRootData = false;
             _allowCancel = true;
         }
 
-        private void InitializeSubItems(ListingItem currentItem, string rootDirectoryName, int pathLength)
+        private void RecursiveAdd(ListingItem item, TreeNode target)
         {
-            List<FtpItem> subItems =
-                _listedFtpItems.Where(
-                    item =>
-                        item.ParentPath.Split('/').Count(x => x != String.Empty) == pathLength &&
-                        item.ParentPath.StartsWith(String.Format("/{0}", rootDirectoryName))).ToList();
-            currentItem.SubItems = subItems.Select(item => new ListingItem(item.Name));
-            foreach (var subItem in currentItem.SubItems.Where(subItem => !Path.HasExtension(subItem.Text)))
+            foreach (var child in item.Children)
             {
-                InitializeSubItems(subItem, rootDirectoryName, pathLength + 1);
+                TreeNode childNode;
+                if (!child.IsDirectory)
+                {
+                    string extension = String.Format(".{0}", child.Text);
+                    var icon = IconReader.GetFileIcon(extension);
+                    if (!serverImageList.Images.ContainsKey(extension))
+                        serverImageList.Images.Add(extension, icon);
+
+                    childNode = new TreeNode(child.Text, serverImageList.Images.IndexOfKey(extension),
+                        serverImageList.Images.IndexOfKey(extension)) {Tag = false};
+                }
+                else
+                    childNode = new TreeNode(child.Text, 1, 1) {Tag = true};
+
+                target.Nodes.Add(childNode);
+                RecursiveAdd(child, childNode);
             }
         }
 
-        private void AddItemsToTreeView(TreeNode selectedNode, ListingItem listingItem)
+        public static ListingItem ConvertToListingItem(IEnumerable<FtpItem> inputItems, string seperator)
         {
-            BeginInvoke(new Action(() =>
+            var root = new ListingItem("Root", false);
+            foreach (var item in inputItems)
             {
-                var node = new TreeNode(listingItem.Text);
-                selectedNode.Nodes.Add(node);
-
-                if (listingItem.SubItems == null) 
-                    return;
-
-                foreach (var item in listingItem.SubItems)
+                ListingItem currentParent = root;
+                foreach (
+                    string pathSegment in item.FullPath.Remove(0, 1).Split(new[] {seperator}, StringSplitOptions.None))
                 {
-                    if (!Path.HasExtension(item.Text))
+                    if (currentParent.Children.All(t => t.Text != pathSegment))
                     {
-                        var directoryNode = new TreeNode(item.Text, 1, 1);
-                        node.Nodes.Add(directoryNode);
-                        AddItemsToTreeView(directoryNode, item);
+                        var nodeToken = new ListingItem(pathSegment, item.ItemType == FtpItemType.Directory);
+                        currentParent.Children.Add(nodeToken);
+                        currentParent = nodeToken;
                     }
                     else
                     {
-                        string extension = String.Format(".{0}", item.Text);
-                        var icon = IconReader.GetFileIcon(extension);
-                        if (!serverImageList.Images.ContainsKey(extension))
-                            serverImageList.Images.Add(extension, icon);
-
-                        var fileNode = new TreeNode(item.Text, serverImageList.Images.IndexOfKey(extension), serverImageList.Images.IndexOfKey(extension));
-                        node.Nodes.Add(fileNode);
+                        currentParent = currentParent.Children.First(t => t.Text == pathSegment);
                     }
                 }
-            }));
+            }
+
+            return root;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
         {
             SelectedDirectory = directoryTextBox.Text;
             DialogResult = DialogResult.OK;
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            _isSetByUser = false;
-
-            //if (!_nav.CanGoBack)
-            //    backButton.Enabled = false;
-            //if (_nav.CanGoBack)
-            //    backButton.Enabled = true;
-            //if (!_nav.CanGoForward)
-            //    forwardButton.Enabled = false;
-            //if (_nav.CanGoForward)
-            //    forwardButton.Enabled = true;
-
-            _nav.Back();
-            if (_nav.Current != null)
-                serverDataTreeView.SelectedNode = _nav.Current;
-        }
-
-        private void forwardButton_Click(object sender, EventArgs e)
-        {
-            _isSetByUser = false;
-
-            //if (!_nav.CanGoBack)
-            //    backButton.Enabled = false;
-            //if (_nav.CanGoBack)
-            //    backButton.Enabled = true;
-            //if (!_nav.CanGoForward)
-            //    forwardButton.Enabled = false;
-            //if (_nav.CanGoForward)
-            //    forwardButton.Enabled = true;
-
-            _nav.Forward();
-            if (_nav.Current != null)
-                serverDataTreeView.SelectedNode = _nav.Current;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -299,20 +264,24 @@ namespace nUpdate.Administration.UI.Dialogs
             public int Bottom;
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void backButton_Click(object sender, EventArgs e)
         {
-
+            _nav.GoBack();
+            serverDataTreeView.SelectedNode = _nav.Current;
+            if (!_nav.CanGoBack)
+                backButton.Enabled = false;
+            if (_nav.CanGoForward)
+                forwardButton.Enabled = true;
         }
 
-        public void SetUiState(bool enabled)
+        private void forwardButton_Click(object sender, EventArgs e)
         {
-            Invoke(new Action(() =>
-            {
-                serverDataTreeView.Enabled = enabled;
-                loadPictureBox.Visible = !enabled;
-                cancelButton.Enabled = enabled;
-                continueButton.Enabled = enabled;
-            }));
+            _nav.GoForward();
+            serverDataTreeView.SelectedNode = _nav.Current;
+            if (!_nav.CanGoForward)
+                forwardButton.Enabled = false;
+            if (_nav.CanGoBack)
+                backButton.Enabled = true;
         }
     }
 }

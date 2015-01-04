@@ -1,11 +1,7 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Dialogs;
@@ -51,16 +47,18 @@ namespace nUpdate.Administration
             bool firstInstance;
             new Mutex(true, "MainForm", out firstInstance);
 
-            if (!firstInstance) return;
+            if (!firstInstance)
+                return;
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            //currentDomain.UnhandledException += UnhandledException;
-            //Application.ThreadException += UnhandledThreadException;
+            currentDomain.UnhandledException += UnhandledException;
+            Application.ThreadException += UnhandledThreadException;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
             var dialog = new MainDialog();
-            if (args.Length > 1)
+            if (args.Length == 1)
             {
                 var file = new FileInfo(args[0]);
                 if (file.Exists)
@@ -80,7 +78,7 @@ namespace nUpdate.Administration
         private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
-                    e.Exception, PopupButtons.Ok);
+                e.Exception, PopupButtons.Ok);
             Application.Exit();
         }
     }

@@ -1,7 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace ExplorerNavigationButton
@@ -53,7 +50,8 @@ namespace ExplorerNavigationButton
             protected override void DrawHover(Graphics g, ArrowDirection direction)
             {
                 g.FillEllipse(_hoverBrush,
-                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1, _circleRect.Height + 1));
+                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
+                        _circleRect.Height + 1));
                 if (direction == ArrowDirection.Right)
                     g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
                 g.DrawPath(_hoverArrowPen, _arrowPath);
@@ -62,7 +60,8 @@ namespace ExplorerNavigationButton
             protected override void DrawPressed(Graphics g, ArrowDirection direction)
             {
                 g.FillEllipse(_pressedBrush,
-                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1, _circleRect.Height + 1));
+                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
+                        _circleRect.Height + 1));
                 if (direction == ArrowDirection.Right)
                     g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
                 g.DrawPath(_hoverArrowPen, _arrowPath);

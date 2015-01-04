@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="nUpdate.Internal.UpdateManager">
-    <Position X="0.5" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="0.5" Width="2.75" />
     <Members>
       <Field Name="_applicationUpdateDirectory" Hidden="true" />
       <Field Name="_downloadCancellationTokenSource" Hidden="true" />
@@ -29,22 +29,11 @@
       <Method Name="SearchExceptionHandler" Hidden="true" />
       <Method Name="SearchTaskCompleted" Hidden="true" />
     </Members>
-    <NestedTypes>
-      <Delegate Name="nUpdate.Internal.UpdateManager.FailedEventHandler" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Internal\UpdateManager.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-      <Delegate Name="nUpdate.Internal.UpdateManager.UpdateSearchFinishedEventHandler" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Internal\UpdateManager.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>iACAEiWKKCgQAIAAIQABIQyAEhgQMxhBABWIIAIwFsk=</HashCode>
+      <HashCode>iACAEiWIKCgUAIAAIQABIQyAEhgQMxhBABWIIAIwFsk=</HashCode>
       <FileName>Internal\UpdateManager.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
