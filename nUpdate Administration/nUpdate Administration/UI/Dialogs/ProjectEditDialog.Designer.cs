@@ -38,7 +38,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.doNotUseStatisticsServerButton = new System.Windows.Forms.RadioButton();
             this.useStatisticsServerRadioButton = new System.Windows.Forms.RadioButton();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.statisticsInfoPanel = new System.Windows.Forms.Panel();
             this.databaseNameLabel = new System.Windows.Forms.Label();
             this.sqlPasswordTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -98,7 +98,7 @@
             this.ftpUserLabel = new System.Windows.Forms.Label();
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.ftpHeaderLabel = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
+            this.statisticsInfoPanel.SuspendLayout();
             this.statisticsServerTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.loadingPanel.SuspendLayout();
@@ -133,6 +133,7 @@
             this.selectServerButton.TabIndex = 63;
             this.selectServerButton.Text = "Select server...";
             this.selectServerButton.UseVisualStyleBackColor = true;
+            this.selectServerButton.Click += new System.EventHandler(this.selectServerButton_Click);
             // 
             // label2
             // 
@@ -170,17 +171,17 @@
             this.useStatisticsServerRadioButton.UseVisualStyleBackColor = true;
             this.useStatisticsServerRadioButton.CheckedChanged += new System.EventHandler(this.useStatisticsServerRadioButton_CheckedChanged);
             // 
-            // panel1
+            // statisticsInfoPanel
             // 
-            this.panel1.Controls.Add(this.databaseNameLabel);
-            this.panel1.Controls.Add(this.sqlPasswordTextBox);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.statisticsServerLabel);
-            this.panel1.Enabled = false;
-            this.panel1.Location = new System.Drawing.Point(26, 135);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(302, 60);
-            this.panel1.TabIndex = 59;
+            this.statisticsInfoPanel.Controls.Add(this.databaseNameLabel);
+            this.statisticsInfoPanel.Controls.Add(this.sqlPasswordTextBox);
+            this.statisticsInfoPanel.Controls.Add(this.label1);
+            this.statisticsInfoPanel.Controls.Add(this.statisticsServerLabel);
+            this.statisticsInfoPanel.Enabled = false;
+            this.statisticsInfoPanel.Location = new System.Drawing.Point(26, 135);
+            this.statisticsInfoPanel.Name = "statisticsInfoPanel";
+            this.statisticsInfoPanel.Size = new System.Drawing.Size(302, 60);
+            this.statisticsInfoPanel.TabIndex = 59;
             // 
             // databaseNameLabel
             // 
@@ -227,6 +228,7 @@
             this.ftpImportButton.Size = new System.Drawing.Size(33, 23);
             this.ftpImportButton.TabIndex = 40;
             this.ftpImportButton.UseVisualStyleBackColor = true;
+            this.ftpImportButton.Click += new System.EventHandler(this.ftpImportButton_Click);
             // 
             // label8
             // 
@@ -249,6 +251,7 @@
             this.securityInfoButton.Size = new System.Drawing.Size(34, 23);
             this.securityInfoButton.TabIndex = 39;
             this.securityInfoButton.UseVisualStyleBackColor = true;
+            this.securityInfoButton.Click += new System.EventHandler(this.securityInfoButton_Click);
             // 
             // searchOnServerButton
             // 
@@ -259,6 +262,7 @@
             this.searchOnServerButton.TabIndex = 38;
             this.searchOnServerButton.Text = "Search on server";
             this.searchOnServerButton.UseVisualStyleBackColor = true;
+            this.searchOnServerButton.Click += new System.EventHandler(this.searchOnServerButton_Click);
             // 
             // line1
             // 
@@ -334,7 +338,7 @@
             this.statisticsServerTabPage.Controls.Add(this.doNotUseStatisticsServerButton);
             this.statisticsServerTabPage.Controls.Add(this.useStatisticsServerRadioButton);
             this.statisticsServerTabPage.Controls.Add(this.label8);
-            this.statisticsServerTabPage.Controls.Add(this.panel1);
+            this.statisticsServerTabPage.Controls.Add(this.statisticsInfoPanel);
             this.statisticsServerTabPage.Location = new System.Drawing.Point(4, 22);
             this.statisticsServerTabPage.Name = "statisticsServerTabPage";
             this.statisticsServerTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -359,9 +363,9 @@
             this.loadingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.loadingPanel.Controls.Add(this.loadingLabel);
             this.loadingPanel.Controls.Add(this.pictureBox2);
-            this.loadingPanel.Location = new System.Drawing.Point(198, 263);
+            this.loadingPanel.Location = new System.Drawing.Point(177, 263);
             this.loadingPanel.Name = "loadingPanel";
-            this.loadingPanel.Size = new System.Drawing.Size(248, 47);
+            this.loadingPanel.Size = new System.Drawing.Size(310, 47);
             this.loadingPanel.TabIndex = 92;
             this.loadingPanel.Visible = false;
             // 
@@ -403,6 +407,7 @@
             this.doNotUseProxyRadioButton.TabStop = true;
             this.doNotUseProxyRadioButton.Text = "Don\'t use a proxy server";
             this.doNotUseProxyRadioButton.UseVisualStyleBackColor = true;
+            this.doNotUseProxyRadioButton.CheckedChanged += new System.EventHandler(this.doNotUseProxyRadioButton_CheckedChanged);
             // 
             // useProxyRadioButton
             // 
@@ -521,6 +526,7 @@
             this.ftpPortTextBox.Size = new System.Drawing.Size(72, 22);
             this.ftpPortTextBox.TabIndex = 30;
             this.ftpPortTextBox.Text = "21";
+            this.ftpPortTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ftpPortTextBox_KeyPress);
             // 
             // cancelButton
             // 
@@ -704,6 +710,7 @@
             this.searchPathButton.TabIndex = 30;
             this.searchPathButton.Text = "...";
             this.searchPathButton.UseVisualStyleBackColor = true;
+            this.searchPathButton.Click += new System.EventHandler(this.searchPathButton_Click);
             // 
             // ftpTabPage
             // 
@@ -838,8 +845,8 @@
             this.Text = "Edit project {0} - nUpdate Administration 0.1.0.0 Alpha 1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectEditDialog_FormClosing);
             this.Load += new System.EventHandler(this.ProjectEditDialog_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.statisticsInfoPanel.ResumeLayout(false);
+            this.statisticsInfoPanel.PerformLayout();
             this.statisticsServerTabPage.ResumeLayout(false);
             this.statisticsServerTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
@@ -869,7 +876,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RadioButton doNotUseStatisticsServerButton;
         private System.Windows.Forms.RadioButton useStatisticsServerRadioButton;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel statisticsInfoPanel;
         private System.Windows.Forms.Label databaseNameLabel;
         private System.Windows.Forms.TextBox sqlPasswordTextBox;
         private System.Windows.Forms.Label label1;

@@ -25,8 +25,8 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private const float Kb = 1024;
-        private const float Mb = 1048577;
+        private const float KB = 1024;
+        private const float MB = 1048577;
         private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
         private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
@@ -172,6 +172,11 @@ namespace nUpdate.Administration.UI.Dialogs
             programmingLanguageComboBox.DataSource = Enum.GetValues(typeof (ProgrammingLanguage));
             programmingLanguageComboBox.SelectedIndex = 0;
 
+            var values = Enum.GetValues(typeof (DevelopmentalStage));
+            Array.Reverse(values);
+            developmentalStageComboBox.DataSource = values;
+            developmentalStageComboBox.SelectedIndex = 2;
+
             if (!Project.UpdateUrl.EndsWith("/"))
                 Project.UpdateUrl += "/";
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
@@ -311,6 +316,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 SqlPassword = SqlPassword.Copy(),
                 ProxyPassword = ProxyPassword.Copy()
             };
+
             var existingUpdateVersions =
                 (from ListViewItem lvi in packagesList.Items select new UpdateVersion(lvi.Tag.ToString())).ToList();
             packageAddDialog.ExistingVersions = existingUpdateVersions;
@@ -413,14 +419,19 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!updateUrlTextBox.Text.EndsWith("/"))
                 updateUrlTextBox.Text += "/";
 
+            string versionString = (developmentalStageComboBox.SelectedIndex == 2)
+                ? new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value, (int)buildNumericUpDown.Value,
+                    (int)revisionNumericUpDown.Value).ToString() : new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value, (int)buildNumericUpDown.Value,
+                    (int)revisionNumericUpDown.Value, (DevelopmentalStage)Enum.Parse(typeof(DevelopmentalStage), developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)), (int)developmentBuildNumericUpDown.Value).ToString();
+
             string vbSource =
                 String.Format(
-                    "Dim manager As New UpdateManager(New Uri(\"{0}\"), \"{1}\", New UpdateVersion(\"0.0.0.0\"))",
-                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
+                    "Dim manager As New UpdateManager(New Uri(\"{0}\"), \"{1}\", New UpdateVersion(\"{2}\"), New CultureInfo(\"en-US\"))",
+                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text, versionString);
             string cSharpSource =
                 String.Format(
-                    "UpdateManager manager = new UpdateManager(new Uri(\"{0}\"), \"{1}\", new UpdateVersion(\"0.0.0.0\"));",
-                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
+                    "UpdateManager manager = new UpdateManager(new Uri(\"{0}\"), \"{1}\", new UpdateVersion(\"{2}\"), new CultureInfo(\"en-US\"));",
+                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text, versionString);
 
             try
             {
@@ -450,27 +461,19 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!_isNetworkAvailable) return;
 
-            if (packagesList.SelectedItems.Count > 1)
+            if (packagesList.SelectedItems.Count > 1 || packagesList.SelectedItems.Count == 0)
             {
                 editButton.Enabled = false;
                 uploadButton.Enabled = false;
-                deleteButton.Enabled = false; // TODO: true
+                deleteButton.Enabled = false;
             }
-            else
-                switch (packagesList.SelectedItems.Count)
-                {
-                    case 1:
-                        editButton.Enabled = true;
-                        deleteButton.Enabled = true;
-                        if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
-                            uploadButton.Enabled = true;
-                        break;
-                    case 0:
-                        editButton.Enabled = false;
-                        uploadButton.Enabled = false;
-                        deleteButton.Enabled = false;
-                        break;
-                }
+            else if (packagesList.SelectedItems.Count == 1)
+            {
+                editButton.Enabled = true;
+                deleteButton.Enabled = true;
+                if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
+                    uploadButton.Enabled = true;
+            }
         }
 
         private void browseAssemblyButton_Click(object sender, EventArgs e)
@@ -519,18 +522,22 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (!loadFromAssemblyRadioButton.Checked) return;
+            if (!loadFromAssemblyRadioButton.Checked) 
+                return;
+
             assemblyPathTextBox.Enabled = true;
             browseAssemblyButton.Enabled = true;
         }
 
         private void enterVersionManuallyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (!enterVersionManuallyRadioButton.Checked) return;
+            if (!enterVersionManuallyRadioButton.Checked) 
+                return;
             assemblyPathTextBox.Enabled = false;
             browseAssemblyButton.Enabled = false;
 
-            if (!_isSetByUser) return;
+            if (!_isSetByUser)
+                return;
             Project.AssemblyVersionPath = null;
 
             try
@@ -655,12 +662,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     if (sizeInBytes > 104857.6)
                     {
-                        size = (float) Math.Round(sizeInBytes/Mb, 1);
+                        size = (float) Math.Round(sizeInBytes/MB, 1);
                         sizeText = String.Format("{0} MB", size);
                     }
                     else
                     {
-                        size = (float) Math.Round(sizeInBytes/Kb, 1);
+                        size = (float) Math.Round(sizeInBytes/KB, 1);
                         sizeText = String.Format("{0} KB", size);
                     }
 
@@ -1485,5 +1492,10 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         #endregion
+
+        private void developmentalStageComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            developmentBuildNumericUpDown.Enabled = developmentalStageComboBox.SelectedIndex != 2;
+        }
     }
 }

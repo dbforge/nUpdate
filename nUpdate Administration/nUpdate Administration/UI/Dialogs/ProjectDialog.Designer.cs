@@ -42,6 +42,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.overviewTabPage = new System.Windows.Forms.TabPage();
+            this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.majorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.revisionNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.developmentalStageComboBox = new System.Windows.Forms.ComboBox();
+            this.minorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.browseAssemblyButton = new System.Windows.Forms.Button();
             this.assemblyPathTextBox = new System.Windows.Forms.TextBox();
@@ -114,6 +121,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.overviewTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.buildNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.majorNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.revisionNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minorNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkingUrlPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).BeginInit();
             this.panel2.SuspendLayout();
@@ -154,6 +166,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.overviewTabPage.AutoScroll = true;
             this.overviewTabPage.AutoScrollMargin = new System.Drawing.Size(1, 20);
             this.overviewTabPage.AutoScrollMinSize = new System.Drawing.Size(540, 600);
+            this.overviewTabPage.Controls.Add(this.developmentBuildNumericUpDown);
+            this.overviewTabPage.Controls.Add(this.buildNumericUpDown);
+            this.overviewTabPage.Controls.Add(this.majorNumericUpDown);
+            this.overviewTabPage.Controls.Add(this.revisionNumericUpDown);
+            this.overviewTabPage.Controls.Add(this.developmentalStageComboBox);
+            this.overviewTabPage.Controls.Add(this.minorNumericUpDown);
+            this.overviewTabPage.Controls.Add(this.label1);
             this.overviewTabPage.Controls.Add(this.label8);
             this.overviewTabPage.Controls.Add(this.browseAssemblyButton);
             this.overviewTabPage.Controls.Add(this.assemblyPathTextBox);
@@ -202,6 +221,96 @@ namespace nUpdate.Administration.UI.Dialogs
             this.overviewTabPage.TabIndex = 1;
             this.overviewTabPage.Text = "Overview";
             this.overviewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // developmentBuildNumericUpDown
+            // 
+            this.developmentBuildNumericUpDown.Enabled = false;
+            this.developmentBuildNumericUpDown.Location = new System.Drawing.Point(448, 643);
+            this.developmentBuildNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.developmentBuildNumericUpDown.Name = "developmentBuildNumericUpDown";
+            this.developmentBuildNumericUpDown.Size = new System.Drawing.Size(43, 22);
+            this.developmentBuildNumericUpDown.TabIndex = 72;
+            this.developmentBuildNumericUpDown.ThousandsSeparator = true;
+            this.developmentBuildNumericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // buildNumericUpDown
+            // 
+            this.buildNumericUpDown.Location = new System.Drawing.Point(168, 644);
+            this.buildNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.buildNumericUpDown.Name = "buildNumericUpDown";
+            this.buildNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.buildNumericUpDown.TabIndex = 70;
+            this.buildNumericUpDown.ThousandsSeparator = true;
+            // 
+            // majorNumericUpDown
+            // 
+            this.majorNumericUpDown.Location = new System.Drawing.Point(44, 644);
+            this.majorNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.majorNumericUpDown.Name = "majorNumericUpDown";
+            this.majorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.majorNumericUpDown.TabIndex = 68;
+            this.majorNumericUpDown.ThousandsSeparator = true;
+            // 
+            // revisionNumericUpDown
+            // 
+            this.revisionNumericUpDown.Location = new System.Drawing.Point(228, 644);
+            this.revisionNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.revisionNumericUpDown.Name = "revisionNumericUpDown";
+            this.revisionNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.revisionNumericUpDown.TabIndex = 71;
+            this.revisionNumericUpDown.ThousandsSeparator = true;
+            // 
+            // developmentalStageComboBox
+            // 
+            this.developmentalStageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.developmentalStageComboBox.FormattingEnabled = true;
+            this.developmentalStageComboBox.Location = new System.Drawing.Point(290, 643);
+            this.developmentalStageComboBox.Name = "developmentalStageComboBox";
+            this.developmentalStageComboBox.Size = new System.Drawing.Size(150, 21);
+            this.developmentalStageComboBox.TabIndex = 67;
+            this.developmentalStageComboBox.SelectedIndexChanged += new System.EventHandler(this.developmentalStageComboBox_SelectedIndexChanged);
+            // 
+            // minorNumericUpDown
+            // 
+            this.minorNumericUpDown.Location = new System.Drawing.Point(106, 644);
+            this.minorNumericUpDown.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.minorNumericUpDown.Name = "minorNumericUpDown";
+            this.minorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.minorNumericUpDown.TabIndex = 69;
+            this.minorNumericUpDown.ThousandsSeparator = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(29, 623);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(228, 13);
+            this.label1.TabIndex = 66;
+            this.label1.Text = "2. Enter the current version of your project:";
             // 
             // label8
             // 
@@ -268,17 +377,17 @@ namespace nUpdate.Administration.UI.Dialogs
             // stepTwoLabel
             // 
             this.stepTwoLabel.AutoSize = true;
-            this.stepTwoLabel.Location = new System.Drawing.Point(29, 624);
+            this.stepTwoLabel.Location = new System.Drawing.Point(29, 686);
             this.stepTwoLabel.Name = "stepTwoLabel";
-            this.stepTwoLabel.Size = new System.Drawing.Size(318, 13);
+            this.stepTwoLabel.Size = new System.Drawing.Size(299, 13);
             this.stepTwoLabel.TabIndex = 41;
-            this.stepTwoLabel.Text = "2. Click \"{0}\" and paste the copied code into your app\'s code.";
+            this.stepTwoLabel.Text = "3. Click \"Copy source\" and paste it into your source code.";
             // 
             // programmingLanguageComboBox
             // 
             this.programmingLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.programmingLanguageComboBox.FormattingEnabled = true;
-            this.programmingLanguageComboBox.Location = new System.Drawing.Point(386, 590);
+            this.programmingLanguageComboBox.Location = new System.Drawing.Point(353, 590);
             this.programmingLanguageComboBox.Name = "programmingLanguageComboBox";
             this.programmingLanguageComboBox.Size = new System.Drawing.Size(139, 21);
             this.programmingLanguageComboBox.TabIndex = 40;
@@ -304,7 +413,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // copySourceButton
             // 
-            this.copySourceButton.Location = new System.Drawing.Point(413, 618);
+            this.copySourceButton.Location = new System.Drawing.Point(380, 681);
             this.copySourceButton.Name = "copySourceButton";
             this.copySourceButton.Size = new System.Drawing.Size(112, 23);
             this.copySourceButton.TabIndex = 37;
@@ -930,6 +1039,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.tabControl1.ResumeLayout(false);
             this.overviewTabPage.ResumeLayout(false);
             this.overviewTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.buildNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.majorNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.revisionNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minorNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkingUrlPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -1026,5 +1140,12 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label cancelLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loadingLabel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown developmentBuildNumericUpDown;
+        private System.Windows.Forms.NumericUpDown buildNumericUpDown;
+        private System.Windows.Forms.NumericUpDown majorNumericUpDown;
+        private System.Windows.Forms.NumericUpDown revisionNumericUpDown;
+        private System.Windows.Forms.ComboBox developmentalStageComboBox;
+        private System.Windows.Forms.NumericUpDown minorNumericUpDown;
     }
 }
