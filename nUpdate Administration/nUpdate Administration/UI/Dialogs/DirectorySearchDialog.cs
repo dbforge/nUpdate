@@ -19,6 +19,7 @@ namespace nUpdate.Administration.UI.Dialogs
         public const int HT_CAPTION = 0x2;
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private bool _allowCancel;
+        private bool _nodeSelectedByUser = true;
         private FtpManager _ftp;
 
         private List<FtpItem> _listedFtpItems = new List<FtpItem>();
@@ -69,21 +70,37 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public int Protocol { get; set; }
 
+        /// <summary>
+        ///     Enables or disables the UI controls.
+        /// </summary>
+        /// <param name="enabled">Sets the activation state.</param>
         public void SetUiState(bool enabled)
         {
-            Invoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
-                serverDataTreeView.Enabled = enabled;
-                loadPictureBox.Visible = !enabled;
-                cancelButton.Enabled = enabled;
-                continueButton.Enabled = enabled;
+                foreach (Control c in (from Control c in Controls where c.Visible select c).Where(c => c.GetType() != typeof(ExplorerNavigationButton.ExplorerNavigationButton)))
+                {
+                    c.Enabled = enabled;
+                }
+
+                if (!enabled)
+                {
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
             }));
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            if (!NativeMethods.DwmIsCompositionEnabled()) return;
+            if (!NativeMethods.DwmIsCompositionEnabled()) 
+                return;
 
             _margins.Top = 38;
             e.Graphics.Clear(Color.Black);
@@ -141,8 +158,9 @@ namespace nUpdate.Administration.UI.Dialogs
             if (e.Node == serverDataTreeView.Nodes[0])
                 return;
 
-            _nav.Add(e.Node);
-            if (!backButton.Enabled)
+            if (_nodeSelectedByUser)
+                _nav.Add(e.Node);
+            if (!backButton.Enabled && _nav.CanGoBack)
                 backButton.Enabled = true;
 
             var directories = new Stack<string>();
@@ -153,14 +171,18 @@ namespace nUpdate.Administration.UI.Dialogs
                 currentNode = currentNode.Parent;
             }
 
-            directoryTextBox.Text = ((bool) currentNode.Tag)
-                ? String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text)
-                : String.Format("/{0}", String.Join("/", directories));
+            string directory = String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text);
+            directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
         private void LoadListAsync()
         {
             SetUiState(false);
+            BeginInvoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Loading server directories..."));
+
             try
             {
                 _listedFtpItems = _ftp.ListDirectoriesAndFiles("/", true).ToList();
@@ -190,14 +212,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }));
             }
 
-            BeginInvoke(new Action(() =>
-            {
-                serverDataTreeView.Enabled = true;
-                loadPictureBox.Visible = false;
-                cancelButton.Enabled = true;
-                continueButton.Enabled = true;
-            }));
-
+            SetUiState(true);
             _allowCancel = true;
         }
 
@@ -205,20 +220,10 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             foreach (var child in item.Children)
             {
-                TreeNode childNode;
                 if (!child.IsDirectory)
-                {
-                    string extension = String.Format(".{0}", child.Text);
-                    var icon = IconReader.GetFileIcon(extension);
-                    if (!serverImageList.Images.ContainsKey(extension))
-                        serverImageList.Images.Add(extension, icon);
+                    continue;
 
-                    childNode = new TreeNode(child.Text, serverImageList.Images.IndexOfKey(extension),
-                        serverImageList.Images.IndexOfKey(extension)) {Tag = false};
-                }
-                else
-                    childNode = new TreeNode(child.Text, 1, 1) {Tag = true};
-
+                var childNode = new TreeNode(child.Text, 1, 1);
                 target.Nodes.Add(childNode);
                 RecursiveAdd(child, childNode);
             }
@@ -267,7 +272,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private void backButton_Click(object sender, EventArgs e)
         {
             _nav.GoBack();
+            _nodeSelectedByUser = false;
             serverDataTreeView.SelectedNode = _nav.Current;
+            _nodeSelectedByUser = true;
             if (!_nav.CanGoBack)
                 backButton.Enabled = false;
             if (_nav.CanGoForward)
@@ -277,7 +284,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private void forwardButton_Click(object sender, EventArgs e)
         {
             _nav.GoForward();
+            _nodeSelectedByUser = false;
             serverDataTreeView.SelectedNode = _nav.Current;
+            _nodeSelectedByUser = true;
             if (!_nav.CanGoForward)
                 forwardButton.Enabled = false;
             if (_nav.CanGoBack)

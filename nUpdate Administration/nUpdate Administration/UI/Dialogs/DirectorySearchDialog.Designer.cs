@@ -32,18 +32,20 @@ namespace nUpdate.Administration.UI.Dialogs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirectorySearchDialog));
             this.serverImageList = new System.Windows.Forms.ImageList(this.components);
-            this.loadPictureBox = new System.Windows.Forms.PictureBox();
             this.directoryLabel = new System.Windows.Forms.Label();
             this.directoryTextBox = new System.Windows.Forms.TextBox();
-            this.ftpDirectoryInfoLabel = new System.Windows.Forms.Label();
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
             this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.serverDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            ((System.ComponentModel.ISupportInitialize)(this.loadPictureBox)).BeginInit();
+            this.loadingPanel = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.loadingLabel = new System.Windows.Forms.Label();
             this.controlPanel1.SuspendLayout();
+            this.loadingPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // serverImageList
@@ -53,20 +55,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverImageList.Images.SetKeyName(0, "server-network.png");
             this.serverImageList.Images.SetKeyName(1, "folder.png");
             // 
-            // loadPictureBox
-            // 
-            this.loadPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("loadPictureBox.Image")));
-            this.loadPictureBox.Location = new System.Drawing.Point(446, 50);
-            this.loadPictureBox.Name = "loadPictureBox";
-            this.loadPictureBox.Size = new System.Drawing.Size(20, 19);
-            this.loadPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.loadPictureBox.TabIndex = 20;
-            this.loadPictureBox.TabStop = false;
-            // 
             // directoryLabel
             // 
             this.directoryLabel.AutoSize = true;
-            this.directoryLabel.Location = new System.Drawing.Point(11, 79);
+            this.directoryLabel.Location = new System.Drawing.Point(9, 51);
             this.directoryLabel.Name = "directoryLabel";
             this.directoryLabel.Size = new System.Drawing.Size(56, 13);
             this.directoryLabel.TabIndex = 18;
@@ -74,25 +66,16 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // directoryTextBox
             // 
-            this.directoryTextBox.Location = new System.Drawing.Point(75, 76);
+            this.directoryTextBox.Location = new System.Drawing.Point(71, 48);
             this.directoryTextBox.Name = "directoryTextBox";
             this.directoryTextBox.ReadOnly = true;
-            this.directoryTextBox.Size = new System.Drawing.Size(391, 22);
+            this.directoryTextBox.Size = new System.Drawing.Size(346, 22);
             this.directoryTextBox.TabIndex = 17;
             this.directoryTextBox.Text = "/";
             // 
-            // ftpDirectoryInfoLabel
-            // 
-            this.ftpDirectoryInfoLabel.AutoSize = true;
-            this.ftpDirectoryInfoLabel.Location = new System.Drawing.Point(12, 51);
-            this.ftpDirectoryInfoLabel.Name = "ftpDirectoryInfoLabel";
-            this.ftpDirectoryInfoLabel.Size = new System.Drawing.Size(317, 13);
-            this.ftpDirectoryInfoLabel.TabIndex = 16;
-            this.ftpDirectoryInfoLabel.Text = "Select the directory that should be used for the update files.";
-            // 
             // continueButton
             // 
-            this.continueButton.Location = new System.Drawing.Point(391, 8);
+            this.continueButton.Location = new System.Drawing.Point(346, 8);
             this.continueButton.Name = "continueButton";
             this.continueButton.Size = new System.Drawing.Size(75, 23);
             this.continueButton.TabIndex = 0;
@@ -103,7 +86,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(310, 8);
+            this.cancelButton.Location = new System.Drawing.Point(265, 8);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -115,16 +98,16 @@ namespace nUpdate.Administration.UI.Dialogs
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.controlPanel1.Controls.Add(this.cancelButton);
             this.controlPanel1.Controls.Add(this.continueButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 261);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 223);
             this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(477, 38);
+            this.controlPanel1.Size = new System.Drawing.Size(434, 38);
             this.controlPanel1.TabIndex = 19;
             // 
             // backButton
             // 
             this.backButton.BackColor = System.Drawing.Color.Black;
             this.backButton.Enabled = false;
-            this.backButton.Location = new System.Drawing.Point(14, 6);
+            this.backButton.Location = new System.Drawing.Point(3, 6);
             this.backButton.Name = "backButton";
             this.backButton.Size = new System.Drawing.Size(24, 24);
             this.backButton.TabIndex = 21;
@@ -136,7 +119,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.forwardButton.ArrowDirection = ExplorerNavigationButton.ArrowDirection.Right;
             this.forwardButton.BackColor = System.Drawing.Color.Black;
             this.forwardButton.Enabled = false;
-            this.forwardButton.Location = new System.Drawing.Point(44, 6);
+            this.forwardButton.Location = new System.Drawing.Point(33, 6);
             this.forwardButton.Name = "forwardButton";
             this.forwardButton.Size = new System.Drawing.Size(24, 24);
             this.forwardButton.TabIndex = 22;
@@ -150,13 +133,44 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverDataTreeView.ImageIndex = 0;
             this.serverDataTreeView.ImageList = this.serverImageList;
             this.serverDataTreeView.ItemHeight = 23;
-            this.serverDataTreeView.Location = new System.Drawing.Point(12, 107);
+            this.serverDataTreeView.Location = new System.Drawing.Point(12, 76);
             this.serverDataTreeView.Name = "serverDataTreeView";
             this.serverDataTreeView.SelectedImageIndex = 0;
             this.serverDataTreeView.ShowLines = false;
-            this.serverDataTreeView.Size = new System.Drawing.Size(454, 143);
+            this.serverDataTreeView.Size = new System.Drawing.Size(405, 133);
             this.serverDataTreeView.TabIndex = 23;
             this.serverDataTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.serverDataTreeView_AfterSelect);
+            // 
+            // loadingPanel
+            // 
+            this.loadingPanel.BackColor = System.Drawing.Color.White;
+            this.loadingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.loadingPanel.Controls.Add(this.pictureBox1);
+            this.loadingPanel.Controls.Add(this.loadingLabel);
+            this.loadingPanel.Location = new System.Drawing.Point(88, 89);
+            this.loadingPanel.Name = "loadingPanel";
+            this.loadingPanel.Size = new System.Drawing.Size(269, 51);
+            this.loadingPanel.TabIndex = 67;
+            this.loadingPanel.Visible = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 21;
+            this.pictureBox1.TabStop = false;
+            // 
+            // loadingLabel
+            // 
+            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.Location = new System.Drawing.Point(34, 19);
+            this.loadingLabel.Name = "loadingLabel";
+            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
+            this.loadingLabel.TabIndex = 11;
+            this.loadingLabel.Text = "Waiting for thread...";
             // 
             // DirectorySearchDialog
             // 
@@ -165,15 +179,14 @@ namespace nUpdate.Administration.UI.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(478, 299);
+            this.ClientSize = new System.Drawing.Size(434, 261);
+            this.Controls.Add(this.loadingPanel);
             this.Controls.Add(this.forwardButton);
             this.Controls.Add(this.backButton);
-            this.Controls.Add(this.loadPictureBox);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.directoryLabel);
-            this.Controls.Add(this.directoryTextBox);
-            this.Controls.Add(this.ftpDirectoryInfoLabel);
             this.Controls.Add(this.serverDataTreeView);
+            this.Controls.Add(this.directoryTextBox);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -185,8 +198,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectorySearchForm_FormClosing);
             this.Shown += new System.EventHandler(this.DirectorySearchDialog_Shown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DirectorySearchDialog_MouseDown);
-            ((System.ComponentModel.ISupportInitialize)(this.loadPictureBox)).EndInit();
             this.controlPanel1.ResumeLayout(false);
+            this.loadingPanel.ResumeLayout(false);
+            this.loadingPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,16 +209,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private System.Windows.Forms.Label ftpDirectoryInfoLabel;
         private System.Windows.Forms.TextBox directoryTextBox;
         private System.Windows.Forms.Label directoryLabel;
         private nUpdate.UI.Controls.ControlPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;
-        private System.Windows.Forms.PictureBox loadPictureBox;
         private ExplorerNavigationButton.ExplorerNavigationButton backButton;
         private ExplorerNavigationButton.ExplorerNavigationButton forwardButton;
         private Controls.ExplorerTreeView serverDataTreeView;
+        private Panel loadingPanel;
+        private PictureBox pictureBox1;
+        private Label loadingLabel;
     }
 }

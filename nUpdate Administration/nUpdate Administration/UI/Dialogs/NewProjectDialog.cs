@@ -640,6 +640,7 @@ CREATE TABLE IF NOT EXISTS `_DBNAME`.`Download` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Version_ID` INT NOT NULL,
   `DownloadDate` DATETIME NOT NULL,
+  `OperatingSystem` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`ID`),
   INDEX `fk_Download_Version1_idx` (`Version_ID` ASC),
   CONSTRAINT `fk_Download_Version1`
@@ -770,9 +771,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 return;
             }
 
-            // FtpProtocol protocol = Equals(ftpModeComboBox.SelectedIndex, 0) ? FtpProtocol.FTP : FtpProtocol.FTPS;
-            // TODO: Protocol
-
             var securePwd = new SecureString();
             foreach (char sign in ftpPasswordTextBox.Text)
             {
@@ -851,7 +849,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void selectServerButton_Click(object sender, EventArgs e)
         {
             var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = true};
-            if (statisticsServerDialog.ShowDialog() != DialogResult.OK) return;
+            if (statisticsServerDialog.ShowDialog() != DialogResult.OK) 
+                return;
 
             SqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
             SqlWebUrl = statisticsServerDialog.SqlWebUrl;
