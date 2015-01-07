@@ -53,7 +53,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             // 
             // keyNameTextBox
             // 
-            this.keyNameTextBox.Cue = "Test";
+            this.keyNameTextBox.Cue = "SubKey1\\SubKey2";
             this.keyNameTextBox.Location = new System.Drawing.Point(106, 43);
             this.keyNameTextBox.Name = "keyNameTextBox";
             this.keyNameTextBox.Size = new System.Drawing.Size(267, 22);
@@ -124,7 +124,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
             this.subKeyTextBox.TabIndex = 39;
             // 
-            // RegistryEntryDeleteOperationPanel
+            // RegistrySubKeyDeleteOperationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -139,7 +139,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.subKeysToDeleteListBox);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "RegistryEntryDeleteOperationPanel";
+            this.Name = "RegistrySubKeyDeleteOperationPanel";
             this.Size = new System.Drawing.Size(488, 204);
             this.Load += new System.EventHandler(this.RegistryEntryDeleteOperationPanel_Load);
             this.ResumeLayout(false);

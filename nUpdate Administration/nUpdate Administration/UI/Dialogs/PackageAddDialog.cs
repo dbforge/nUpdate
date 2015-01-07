@@ -471,8 +471,19 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             foreach (TreeNode node in treeNode.Nodes)
             {
-                FileAttributes attr = File.GetAttributes(node.Tag.ToString());
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                bool isDirectory = false;
+                if (node.Tag != null)
+                {
+                    FileAttributes attributes = File.GetAttributes(node.Tag.ToString());
+                    if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                        isDirectory = true;
+                }
+                else
+                {
+                    isDirectory = true;
+                }
+
+                if (isDirectory)
                 {
                     string tmpDir = string.Format("{0}/{1}", currentDirectory, node.Text);
                     try

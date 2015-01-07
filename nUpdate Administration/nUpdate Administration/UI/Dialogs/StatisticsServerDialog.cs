@@ -12,6 +12,8 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class StatisticsServerDialog : BaseDialog
     {
+        private string _fileContent;
+
         public StatisticsServerDialog()
         {
             InitializeComponent();
@@ -33,11 +35,6 @@ namespace nUpdate.Administration.UI.Dialogs
         public string SqlUsername { get; set; }
 
         /// <summary>
-        ///     Represents the content of the file for the statistic servers.
-        /// </summary>
-        public string FileContent { get; set; }
-
-        /// <summary>
         ///     Sets if the dialog should react on key inputs, e. g. when a server should be selected.
         /// </summary>
         public bool ReactsOnKeyDown { get; set; }
@@ -54,12 +51,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                FileContent = File.ReadAllText(Program.StatisticServersFilePath);
-                if (String.IsNullOrEmpty(FileContent))
+                _fileContent = File.ReadAllText(Program.StatisticServersFilePath);
+                if (String.IsNullOrEmpty(_fileContent))
                     return true;
-                // Stop the execution as no items are there, but return "true" as there are no errors with that.
 
-                serverData = FileContent.Split(new[] {'\n'});
+                serverData = _fileContent.Split('\n');
             }
             catch (Exception ex)
             {
@@ -71,16 +67,15 @@ namespace nUpdate.Administration.UI.Dialogs
             int currentIndex = 0;
             try
             {
-                foreach (string server in serverData)
+                foreach (var item in serverData.Select(server => server.Split(',')).Select(serverDetails => new ServerListItem
                 {
-                    string[] serverDetails = server.Split(new[] {','});
-                    var item = new ServerListItem();
-                    item.ItemImage = imageList1.Images[0];
-                    item.HeaderText = serverDetails[0];
-                    item.ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
-                        serverDetails[1], serverDetails[0]);
+                    ItemImage = imageList1.Images[0],
+                    HeaderText = serverDetails[0],
+                    ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
+                        serverDetails[1], serverDetails[0])
+                }))
+                {
                     serverList.Items.Add(item);
-
                     currentIndex += 1; // Increase the index value for the current item.
                 }
             }
@@ -121,7 +116,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                var builder = new StringBuilder(FileContent);
+                var builder = new StringBuilder(_fileContent);
                 if (!String.IsNullOrEmpty(builder.ToString()))
                     builder.Append(String.Format("\n{0},{1},{2}", SqlDatabaseName,
                         SqlWebUrl, SqlUsername));
@@ -150,7 +145,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) ==
                     DialogResult.Yes)
                 {
-                    string[] servers = FileContent.Split('\n');
+                    string[] servers = _fileContent.Split('\n');
                     List<string> serversList = servers.ToList();
                     serversList.RemoveAt(serverList.SelectedIndex); // Remove from list
 
@@ -188,7 +183,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
 
             string[] selectedStatisticServer =
-                FileContent.Split('\n')[serverList.SelectedIndex].Split(',');
+                _fileContent.Split('\n')[serverList.SelectedIndex].Split(',');
             SqlDatabaseName = selectedStatisticServer[0];
             SqlWebUrl = selectedStatisticServer[1];
             SqlUsername = selectedStatisticServer[2];

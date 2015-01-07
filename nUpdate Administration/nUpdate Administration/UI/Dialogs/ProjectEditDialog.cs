@@ -423,6 +423,15 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
+                if (nameTextBox.Text != localPathTextBox.Text.Split('\\').Last().Split('.').First())
+                {
+                    if (Popup.ShowPopup(this, SystemIcons.Warning,
+                        "Possible incomplete change of project-data found.",
+                        "The current name and local path don't fit in with each other. Are you sure that you want to continue?",
+                        PopupButtons.YesNo) == DialogResult.No)
+                        return;
+                }
+
                 if (!_generalTabPassed)
                 {
                     if (Project.Name != nameTextBox.Text &&
