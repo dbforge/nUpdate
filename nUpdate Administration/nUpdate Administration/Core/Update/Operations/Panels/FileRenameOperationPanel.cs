@@ -36,7 +36,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)
         {
-            Popup.ShowPopup(this, SystemIcons.Error, "Environment variables.",
+            Popup.ShowPopup(this, SystemIcons.Information, "Environment variables.",
                 "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
                 PopupButtons.Ok);
         }

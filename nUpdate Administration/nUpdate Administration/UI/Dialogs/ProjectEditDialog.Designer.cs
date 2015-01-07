@@ -279,7 +279,7 @@
             this.ftpProtocolComboBox.FormattingEnabled = true;
             this.ftpProtocolComboBox.Items.AddRange(new object[] {
             "FTP",
-            "FTPS (TLS 1)",
+            "FTPS (TLS1)",
             "FTPS (TLS1 or SSL3)",
             "FTPS (SSL3)",
             "FTPS (SSL2)"});
