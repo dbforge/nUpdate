@@ -22,7 +22,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             }
             set
             {
-                string[] pathParts = value.Split(new[] {'\\'});
+                string[] pathParts = value.Split('\\');
                 foreach (string pathPart in pathParts)
                 {
                     if (pathPart == pathParts[0])
@@ -43,8 +43,8 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             {
                 return (from ListViewItem listViewItem in nameValuePairListView.Items
                     select
-                        new Tuple<string, object, RegistryValueKind>(listViewItem.Text, listViewItem.SubItems[0],
-                            (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), listViewItem.SubItems[1].Text)))
+                        new Tuple<string, object, RegistryValueKind>(listViewItem.SubItems[0].Text, listViewItem.SubItems[1].Text,
+                            (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), listViewItem.SubItems[2].Text)))
                     .ToList();
             }
             set
@@ -72,11 +72,12 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(valueTextBox.Text))
+            if (String.IsNullOrEmpty(nameTextBox.Text) || String.IsNullOrEmpty(valueTextBox.Text))
                 return;
             var item = new ListViewItem(nameTextBox.Text);
             item.SubItems.Add(valueTextBox.Text);
             item.SubItems.Add(valueKindComboBox.GetItemText(valueKindComboBox.SelectedItem));
+            nameValuePairListView.Items.Add(item);
             nameTextBox.Clear();
             valueTextBox.Clear();
         }

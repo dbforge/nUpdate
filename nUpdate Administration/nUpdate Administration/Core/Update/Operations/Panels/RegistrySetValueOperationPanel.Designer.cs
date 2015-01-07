@@ -92,7 +92,7 @@
             // 
             // subKeyTextBox
             // 
-            this.subKeyTextBox.Cue = "MyApp";
+            this.subKeyTextBox.Cue = "SubKey1\\SubKey2";
             this.subKeyTextBox.Location = new System.Drawing.Point(249, 13);
             this.subKeyTextBox.Name = "subKeyTextBox";
             this.subKeyTextBox.Size = new System.Drawing.Size(192, 22);
@@ -255,7 +255,7 @@
             this.Controls.Add(this.pathLabel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "RegistrySetValueOperationPanel";
-            this.Size = new System.Drawing.Size(488, 225);
+            this.Size = new System.Drawing.Size(454, 208);
             this.Load += new System.EventHandler(this.RegistryEntrySetValueOperationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
