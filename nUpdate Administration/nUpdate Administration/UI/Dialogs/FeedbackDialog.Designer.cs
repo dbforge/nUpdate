@@ -33,9 +33,9 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FeedbackDialog));
             this.sendButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.nameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.emailTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.contentTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.emailTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.contentTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.cpnl = new nUpdate.Administration.UI.Controls.ControlPanel();
             this.headerLabel = new System.Windows.Forms.Label();
             this.cpnl.SuspendLayout();
@@ -144,9 +144,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private Controls.ControlPanel cpnl;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button sendButton;
-        private WatermarkTextBox contentTextBox;
-        private WatermarkTextBox emailTextBox;
-        private WatermarkTextBox nameTextBox;
+        private CueTextBox contentTextBox;
+        private CueTextBox emailTextBox;
+        private CueTextBox nameTextBox;
         private System.Windows.Forms.Label headerLabel;
     }
 }

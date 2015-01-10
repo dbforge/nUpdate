@@ -15,7 +15,7 @@ namespace nUpdate.Administration.Core
         public static bool ValidateDialog(Form owner)
         {
             return (from Control control in owner.Controls
-                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (WatermarkTextBox)
+                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 select !string.IsNullOrEmpty(control.Text) && control.ForeColor != Color.Gray).FirstOrDefault();
         }
@@ -28,7 +28,7 @@ namespace nUpdate.Administration.Core
         public static bool ValidatePanel(Panel owner)
         {
             foreach (Control control in from Control control in owner.Controls
-                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (WatermarkTextBox)
+                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 select control)
             {
@@ -44,7 +44,7 @@ namespace nUpdate.Administration.Core
         public static bool ValidateDialogWithIgnoring(Form owner, TextBox textBoxToIgnore)
         {
             return (from Control control in owner.Controls
-                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (WatermarkTextBox)
+                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 where control != textBoxToIgnore
                 select control).Select(control => !string.IsNullOrEmpty(control.Text) && control.ForeColor != Color.Gray)
@@ -57,7 +57,7 @@ namespace nUpdate.Administration.Core
         public static bool ValidatePanelWithIgnoring(Panel owner, TextBox textBoxToIgnore)
         {
             return (from Control control in owner.Controls
-                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (WatermarkTextBox)
+                where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 where control != textBoxToIgnore
                 select control).Select(control => !string.IsNullOrEmpty(control.Text) && control.ForeColor != Color.Gray)

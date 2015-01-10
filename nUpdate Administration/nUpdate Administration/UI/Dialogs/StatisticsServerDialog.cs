@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 
@@ -12,7 +12,7 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class StatisticsServerDialog : BaseDialog
     {
-        private string _fileContent;
+        private List<StatisticsServer> _statisticsServers;
 
         public StatisticsServerDialog()
         {
@@ -47,15 +47,19 @@ namespace nUpdate.Administration.UI.Dialogs
             if (serverList.Items.Count > 0)
                 serverList.Items.Clear();
 
-            string[] serverData;
-
             try
             {
-                _fileContent = File.ReadAllText(Program.StatisticServersFilePath);
-                if (String.IsNullOrEmpty(_fileContent))
-                    return true;
-
-                serverData = _fileContent.Split('\n');
+                string sourceContent = File.ReadAllText(Program.StatisticServersFilePath);
+                _statisticsServers = Serializer.Deserialize<List<StatisticsServer>>(sourceContent);
+                if (_statisticsServers == null || _statisticsServers.Count == 0)
+                {
+                    _statisticsServers = new List<StatisticsServer>();
+                    noServersLabel.Visible = true;
+                }
+                else
+                {
+                    noServersLabel.Visible = false;
+                }
             }
             catch (Exception ex)
             {
@@ -64,26 +68,26 @@ namespace nUpdate.Administration.UI.Dialogs
                 return false;
             }
 
-            int currentIndex = 0;
-            try
+            foreach (var server in _statisticsServers)
             {
-                foreach (var item in serverData.Select(server => server.Split(',')).Select(serverDetails => new ServerListItem
+                try
                 {
-                    ItemImage = imageList1.Images[0],
-                    HeaderText = serverDetails[0],
-                    ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
-                        serverDetails[1], serverDetails[0])
-                }))
-                {
-                    serverList.Items.Add(item);
-                    currentIndex += 1; // Increase the index value for the current item.
+                    var listItem = new ServerListItem()
+                    {
+                        ItemImage = imageList1.Images[0],
+                        HeaderText = server.DatabaseName,
+                        ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
+                            server.WebUrl, server.DatabaseName)
+                    };
+
+                    serverList.Items.Add(listItem);
                 }
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, String.Format("Error while loading server \"{0}\"",
-                    serverData[currentIndex]), ex, PopupButtons.Ok);
-                return false;
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, String.Format("Error while loading \"{0}\"",
+                        server.DatabaseName), ex, PopupButtons.Ok);
+                    return false;
+                }
             }
 
             return true;
@@ -110,25 +114,14 @@ namespace nUpdate.Administration.UI.Dialogs
             if (statisticsServerAddDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            SqlDatabaseName = statisticsServerAddDialog.DatabaseName;
-            SqlWebUrl = statisticsServerAddDialog.WebUrl;
-            SqlUsername = statisticsServerAddDialog.Username;
-
             try
             {
-                var builder = new StringBuilder(_fileContent);
-                if (!String.IsNullOrEmpty(builder.ToString()))
-                    builder.Append(String.Format("\n{0},{1},{2}", SqlDatabaseName,
-                        SqlWebUrl, SqlUsername));
-                else
-                    builder.Append(String.Format("{0},{1},{2}", SqlDatabaseName,
-                        SqlWebUrl, SqlUsername));
-
-                File.WriteAllText(Program.StatisticServersFilePath, builder.ToString());
+                _statisticsServers.Add(new StatisticsServer(statisticsServerAddDialog.WebUrl, statisticsServerAddDialog.DatabaseName, statisticsServerAddDialog.Username));
+                File.WriteAllText(Program.StatisticServersFilePath, Serializer.Serialize(_statisticsServers));
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server.",
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server data.",
                     ex, PopupButtons.Ok);
                 return;
             }
@@ -138,40 +131,26 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void deleteServerButton_Click(object sender, EventArgs e)
         {
-            if (serverList.SelectedItem != null)
+            if (serverList.SelectedItem == null) 
+                return;
+            if (Popup.ShowPopup(this, SystemIcons.Warning, "Delete this server?",
+                "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) !=
+                DialogResult.Yes) 
+                return;
+
+            try
             {
-                if (
-                    Popup.ShowPopup(this, SystemIcons.Warning, "Delete this server?",
-                        "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) ==
-                    DialogResult.Yes)
-                {
-                    string[] servers = _fileContent.Split('\n');
-                    List<string> serversList = servers.ToList();
-                    serversList.RemoveAt(serverList.SelectedIndex); // Remove from list
-
-                    try
-                    {
-                        var builder = new StringBuilder();
-                        foreach (string server in serversList)
-                        {
-                            if (!String.IsNullOrEmpty(builder.ToString()))
-                                builder.Append(String.Format("\n{0}", server));
-                            else
-                                builder.Append(server);
-                        }
-
-                        File.WriteAllText(Program.StatisticServersFilePath, builder.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server.",
-                            ex, PopupButtons.Ok);
-                        return;
-                    }
-
-                    InitializeServers(); // Re-initialize the servers
-                }
+                _statisticsServers.RemoveAt(serverList.SelectedIndex);
+                File.WriteAllText(Program.StatisticServersFilePath, Serializer.Serialize(_statisticsServers));
             }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server data.",
+                    ex, PopupButtons.Ok);
+                return;
+            }
+
+            InitializeServers(); // Re-initialize the servers
         }
 
         private void StatisticsServerDialog_KeyDown(object sender, KeyEventArgs e)
@@ -182,13 +161,48 @@ namespace nUpdate.Administration.UI.Dialogs
             if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown)
                 return;
 
-            string[] selectedStatisticServer =
-                _fileContent.Split('\n')[serverList.SelectedIndex].Split(',');
-            SqlDatabaseName = selectedStatisticServer[0];
-            SqlWebUrl = selectedStatisticServer[1];
-            SqlUsername = selectedStatisticServer[2];
+            var statisticsServer = _statisticsServers.ElementAt(serverList.SelectedIndex);
+            SqlDatabaseName = statisticsServer.DatabaseName;
+            SqlWebUrl = statisticsServer.WebUrl;
+            SqlUsername = statisticsServer.Username;
 
             DialogResult = DialogResult.OK;
+        }
+
+        private void editServerButton_Click(object sender, EventArgs e)
+        {
+            if (serverList.SelectedItem == null)
+                return;
+
+            int itemIndex = serverList.SelectedIndex;
+            var statisticsServer = _statisticsServers.ElementAt(itemIndex);
+            var statisticsServerEditDialog = new StatisticsServerEditDialog
+            {
+                DatabaseName = statisticsServer.DatabaseName,
+                WebUrl = statisticsServer.WebUrl,
+                Username = statisticsServer.Username,
+            };
+
+            if (statisticsServerEditDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            SqlDatabaseName = statisticsServerEditDialog.DatabaseName;
+            SqlWebUrl = statisticsServerEditDialog.WebUrl;
+            SqlUsername = statisticsServerEditDialog.Username;
+
+            try
+            {
+                _statisticsServers[itemIndex] = new StatisticsServer(statisticsServerEditDialog.WebUrl, statisticsServerEditDialog.DatabaseName, statisticsServerEditDialog.Username);
+                File.WriteAllText(Program.StatisticServersFilePath, Serializer.Serialize(_statisticsServers));
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the server data.",
+                    ex, PopupButtons.Ok);
+                return;
+            }
+
+            InitializeServers(); // Re-initialize the servers again
         }
     }
 }

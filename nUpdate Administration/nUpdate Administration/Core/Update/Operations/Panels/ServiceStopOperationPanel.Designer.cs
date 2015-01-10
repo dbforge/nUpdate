@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServiceStopOperationPanel));
-            this.serviceNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.serviceNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.serviceNameLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -93,7 +93,7 @@
 
         #endregion
 
-        private UI.Controls.WatermarkTextBox serviceNameTextBox;
+        private UI.Controls.CueTextBox serviceNameTextBox;
         private System.Windows.Forms.Label serviceNameLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;

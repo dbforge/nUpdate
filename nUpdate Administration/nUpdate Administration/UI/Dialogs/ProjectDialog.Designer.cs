@@ -107,7 +107,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.historyButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.searchTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
             this.label6 = new System.Windows.Forms.Label();
             this.updateStatisticsButton = new System.Windows.Forms.Button();
@@ -284,7 +284,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             this.developmentalStageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.developmentalStageComboBox.FormattingEnabled = true;
-            this.developmentalStageComboBox.Location = new System.Drawing.Point(290, 643);
+            this.developmentalStageComboBox.Location = new System.Drawing.Point(290, 644);
             this.developmentalStageComboBox.Name = "developmentalStageComboBox";
             this.developmentalStageComboBox.Size = new System.Drawing.Size(150, 21);
             this.developmentalStageComboBox.TabIndex = 67;
@@ -1073,7 +1073,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripButton editButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton deleteButton;
-        private WatermarkTextBox searchTextBox;
+        private CueTextBox searchTextBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton uploadButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;

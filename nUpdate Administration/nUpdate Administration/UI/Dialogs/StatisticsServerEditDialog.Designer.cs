@@ -1,8 +1,6 @@
-﻿using nUpdate.Administration.UI.Controls;
-
-namespace nUpdate.Administration.UI.Dialogs
+﻿namespace nUpdate.Administration.UI.Dialogs
 {
-    partial class StatisticsServerAddDialog
+    partial class StatisticsServerEditDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -30,36 +28,26 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StatisticsServerAddDialog));
-            this.saveButton = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StatisticsServerEditDialog));
             this.cancelButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
             this.label4 = new System.Windows.Forms.Label();
-            this.usernameTextBox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.hostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.databaseTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.line2 = new nUpdate.Administration.UI.Controls.Line();
-            this.label1 = new System.Windows.Forms.Label();
+            this.usernameTextBox = new System.Windows.Forms.TextBox();
+            this.databaseTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.hostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.controlPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
-            // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(386, 8);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 0;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // cancelButton
             // 
@@ -71,6 +59,25 @@ namespace nUpdate.Administration.UI.Dialogs
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(386, 8);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 0;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(122, 190);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(325, 26);
+            this.label1.TabIndex = 109;
+            this.label1.Text = "MySQL 4 and PHP 5 are required.";
+            // 
             // controlPanel1
             // 
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
@@ -79,7 +86,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.controlPanel1.Location = new System.Drawing.Point(0, 223);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(471, 40);
-            this.controlPanel1.TabIndex = 74;
+            this.controlPanel1.TabIndex = 97;
             // 
             // label4
             // 
@@ -89,85 +96,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label4.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.label4.Location = new System.Drawing.Point(12, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(152, 20);
-            this.label4.TabIndex = 81;
-            this.label4.Text = "Add a statistics server";
-            // 
-            // usernameTextBox
-            // 
-            this.usernameTextBox.Location = new System.Drawing.Point(104, 161);
-            this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(343, 22);
-            this.usernameTextBox.TabIndex = 93;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label5.Location = new System.Drawing.Point(17, 53);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(69, 13);
-            this.label5.TabIndex = 82;
-            this.label5.Text = "Host/Server:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label8.Location = new System.Drawing.Point(17, 81);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(58, 13);
-            this.label8.TabIndex = 83;
-            this.label8.Text = "Database:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label12.Location = new System.Drawing.Point(17, 164);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(61, 13);
-            this.label12.TabIndex = 91;
-            this.label12.Text = "Username:";
-            // 
-            // label14
-            // 
-            this.label14.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(122, 107);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(325, 26);
-            this.label14.TabIndex = 90;
-            this.label14.Text = "If the database is already existing the old one will be deleted to\r\nguarantee no " +
-    "problems during the setup of the necessary tables.";
-            // 
-            // hostTextBox
-            // 
-            this.hostTextBox.Cue = "The host/server of your MySQL-database to use";
-            this.hostTextBox.Location = new System.Drawing.Point(104, 50);
-            this.hostTextBox.Name = "hostTextBox";
-            this.hostTextBox.Size = new System.Drawing.Size(343, 22);
-            this.hostTextBox.TabIndex = 85;
-            this.hostTextBox.TabStop = false;
-            this.hostTextBox.Text = "localhost";
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-            this.pictureBox3.Location = new System.Drawing.Point(104, 106);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox3.TabIndex = 89;
-            this.pictureBox3.TabStop = false;
-            // 
-            // databaseTextBox
-            // 
-            this.databaseTextBox.Cue = "The name of the database of your MySQL-Server to use";
-            this.databaseTextBox.Location = new System.Drawing.Point(104, 78);
-            this.databaseTextBox.Name = "databaseTextBox";
-            this.databaseTextBox.Size = new System.Drawing.Size(343, 22);
-            this.databaseTextBox.TabIndex = 86;
-            this.databaseTextBox.TabStop = false;
+            this.label4.Size = new System.Drawing.Size(150, 20);
+            this.label4.TabIndex = 98;
+            this.label4.Text = "Edit a statistics server";
             // 
             // line2
             // 
@@ -176,17 +107,74 @@ namespace nUpdate.Administration.UI.Dialogs
             this.line2.Location = new System.Drawing.Point(10, 143);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(448, 10);
-            this.line2.TabIndex = 88;
+            this.line2.TabIndex = 103;
             this.line2.Text = "line2";
             // 
-            // label1
+            // usernameTextBox
             // 
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(122, 190);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(325, 26);
-            this.label1.TabIndex = 96;
-            this.label1.Text = "MySQL 4 and PHP 5 are required.";
+            this.usernameTextBox.Location = new System.Drawing.Point(104, 161);
+            this.usernameTextBox.Name = "usernameTextBox";
+            this.usernameTextBox.Size = new System.Drawing.Size(343, 22);
+            this.usernameTextBox.TabIndex = 107;
+            // 
+            // databaseTextBox
+            // 
+            this.databaseTextBox.Cue = "The name of the database of your MySQL-Server to use";
+            this.databaseTextBox.Location = new System.Drawing.Point(104, 78);
+            this.databaseTextBox.Name = "databaseTextBox";
+            this.databaseTextBox.Size = new System.Drawing.Size(343, 22);
+            this.databaseTextBox.TabIndex = 102;
+            this.databaseTextBox.TabStop = false;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label5.Location = new System.Drawing.Point(17, 53);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(69, 13);
+            this.label5.TabIndex = 99;
+            this.label5.Text = "Host/Server:";
+            // 
+            // hostTextBox
+            // 
+            this.hostTextBox.Cue = "The host/server of your MySQL-database to use";
+            this.hostTextBox.Location = new System.Drawing.Point(104, 50);
+            this.hostTextBox.Name = "hostTextBox";
+            this.hostTextBox.Size = new System.Drawing.Size(343, 22);
+            this.hostTextBox.TabIndex = 101;
+            this.hostTextBox.TabStop = false;
+            this.hostTextBox.Text = "localhost";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label8.Location = new System.Drawing.Point(17, 81);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(58, 13);
+            this.label8.TabIndex = 100;
+            this.label8.Text = "Database:";
+            // 
+            // label14
+            // 
+            this.label14.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(122, 107);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(325, 26);
+            this.label14.TabIndex = 105;
+            this.label14.Text = "If the database is already existing the old one will be deleted to\r\nguarantee no " +
+    "problems during the setup of the necessary tables.";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label12.Location = new System.Drawing.Point(17, 164);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(61, 13);
+            this.label12.TabIndex = 106;
+            this.label12.Text = "Username:";
             // 
             // pictureBox1
             // 
@@ -195,10 +183,20 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(16, 16);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 95;
+            this.pictureBox1.TabIndex = 108;
             this.pictureBox1.TabStop = false;
             // 
-            // StatisticsServerAddDialog
+            // pictureBox3
+            // 
+            this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
+            this.pictureBox3.Location = new System.Drawing.Point(104, 106);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(16, 16);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox3.TabIndex = 104;
+            this.pictureBox3.TabStop = false;
+            // 
+            // StatisticsServerEditDialog
             // 
             this.AcceptButton = this.saveButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -223,12 +221,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "StatisticsServerAddDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add a statistics server - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Name = "StatisticsServerEditDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Edit a statistics server - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Load += new System.EventHandler(this.StatisticsServerEditDialog_Load);
             this.controlPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -236,20 +235,20 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private Controls.ControlPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button saveButton;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox usernameTextBox;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label14;
-        private CueTextBox hostTextBox;
-        private System.Windows.Forms.PictureBox pictureBox3;
-        private CueTextBox databaseTextBox;
-        private Controls.Line line2;
         private System.Windows.Forms.Label label1;
+        private Controls.ControlPanel controlPanel1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label4;
+        private Controls.Line line2;
+        private System.Windows.Forms.TextBox usernameTextBox;
+        private Controls.CueTextBox databaseTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private Controls.CueTextBox hostTextBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label12;
     }
 }

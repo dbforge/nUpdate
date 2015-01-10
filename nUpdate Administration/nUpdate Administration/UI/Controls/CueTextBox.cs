@@ -5,11 +5,11 @@ using nUpdate.Administration.Core.Win32;
 
 namespace nUpdate.Administration.UI.Controls
 {
-    public class WatermarkTextBox : TextBox
+    public class CueTextBox : TextBox
     {
         private string _mCue;
 
-        public WatermarkTextBox()
+        public CueTextBox()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             UpdateStyles();

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessStopOperationPanel));
-            this.processNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.processNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -105,7 +105,7 @@
 
         #endregion
 
-        private UI.Controls.WatermarkTextBox processNameTextBox;
+        private UI.Controls.CueTextBox processNameTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;

@@ -35,8 +35,8 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.newNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.newNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.pathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -129,9 +129,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         #endregion
 
-        private WatermarkTextBox newNameTextBox;
+        private CueTextBox newNameTextBox;
         private System.Windows.Forms.Label label1;
-        private WatermarkTextBox pathTextBox;
+        private CueTextBox pathTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
