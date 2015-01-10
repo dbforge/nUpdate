@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -29,6 +30,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
         private TabPage _sender;
+        private List<ProjectConfiguration> _projectConfiguration;
 
         public NewProjectDialog()
         {
@@ -97,6 +99,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     string localPath = null;
                     Invoke(new Action(() => localPath = localPathTextBox.Text));
                     File.Delete(localPath);
+                    _projectFileCreated = false;
                 }
                 catch (Exception ex)
                 {
@@ -112,16 +115,16 @@ namespace nUpdate.Administration.UI.Dialogs
             if (_projectConfigurationEdited)
             {
                 string name = null;
-                Invoke(new Action(() => name = nameTextBox.Text));
-                Program.ExisitingProjects.Remove(name);
+                Invoke(
+                    new Action(
+                        () =>
+                            name = nameTextBox.Text));
+                _projectConfiguration.RemoveAt(_projectConfiguration.FindIndex(item => item.Name == name));
 
                 try
                 {
-                    var projectEntries =
-                        Program.ExisitingProjects.Select(
-                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
-
-                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
+                    File.WriteAllText(Program.ProjectsConfigFilePath, Serializer.Serialize(_projectConfiguration));
+                    _projectConfigurationEdited = false;
                 }
                 catch (Exception ex)
                 {
@@ -265,46 +268,25 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                if (nameTextBox.Text.Contains("%") || localPathTextBox.Text.Contains("%"))
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Illegal character specified.",
-                        "The name and/or local path mustn't contain the char \"%\".", PopupButtons.Ok);
-                    return;
-                }
-
                 if (!_generalTabPassed)
                 {
-                    if (Program.ExisitingProjects.Any(item => item.Key == nameTextBox.Text))
+                    _projectConfiguration =
+                        Serializer.Deserialize<List<ProjectConfiguration>>(
+                            File.ReadAllText(Program.ProjectsConfigFilePath));
+                    if (_projectConfiguration != null)
                     {
-                        var relatingProject =
-                            Program.ExisitingProjects.First(item => item.Key == nameTextBox.Text);
-                        if (File.Exists(relatingProject.Value))
+                        if (_projectConfiguration.Any(item => item.Name == nameTextBox.Text))
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
                                 String.Format(
-                                    "The project \"{0}\" is already existing. Please choose another name for it.",
+                                    "The project \"{0}\" is already existing.",
                                     nameTextBox.Text), PopupButtons.Ok);
                             return;
                         }
-
-                        Program.ExisitingProjects.Remove(relatingProject.Key);
-                        try
-                        {
-                            var projectEntries =
-                                Program.ExisitingProjects.Select(
-                                    projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value))
-                                    .ToList();
-
-                            File.WriteAllText(Program.ProjectsConfigFilePath, String.Join("\n", projectEntries));
-                        }
-                        catch (Exception ex)
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while editing the project confiuration file. Please choose another name for the project.",
-                                ex,
-                                PopupButtons.Ok);
-                            return;
-                        }
+                    }
+                    else
+                    {
+                        _projectConfiguration = new List<ProjectConfiguration>();
                     }
                 }
 
@@ -483,19 +465,17 @@ namespace nUpdate.Administration.UI.Dialogs
                     Close();
                 }
 
-                Program.ExisitingProjects.Add(project.Name, project.Path);
                 try
                 {
-                    var projectEntries =
-                        Program.ExisitingProjects.Select(
-                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
-
-                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join(Environment.NewLine, projectEntries));
+                    _projectConfiguration.Add(new ProjectConfiguration(nameTextBox.Text, localPathTextBox.Text));
+                    File.WriteAllText(Program.ProjectsConfigFilePath, Serializer.Serialize(_projectConfiguration));
                     _projectConfigurationEdited = true;
                 }
                 catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to create the project-entry.", ex,
+                    Popup.ShowPopup(this, SystemIcons.Error,
+                        "Error while editing the project confiuration file. Please choose another name for the project.",
+                        ex,
                         PopupButtons.Ok);
                     Reset();
                     Close();

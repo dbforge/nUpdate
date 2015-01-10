@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectRemovalDialog : BaseDialog
     {
+        private List<ProjectConfiguration> _projectConfiguration; 
         private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
         private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
@@ -23,7 +25,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void CheckProjectsAreAvailable()
         {
-            if (projectsTreeView.Nodes[0].Nodes.Count != 0) return;
+            if (projectsTreeView.Nodes[0].Nodes.Count != 0) 
+                return;
             projectsTreeView.Visible = false;
             noProjectsLabel.Visible = true;
         }
@@ -33,11 +36,18 @@ namespace nUpdate.Administration.UI.Dialogs
             var mainNode = new TreeNode("nUpdate Administration (Projects)");
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();
+            _projectConfiguration =
+                        Serializer.Deserialize<List<ProjectConfiguration>>(
+                            File.ReadAllText(Program.ProjectsConfigFilePath));
+            if (_projectConfiguration != null)
+            {
+            }
+            else
+            {
+                _projectConfiguration = new List<ProjectConfiguration>();
+            }
 
-            foreach (
-                var projectNode in
-                    Program.ExisitingProjects.Select(
-                        existingProject => new TreeNode(existingProject.Key) {Checked = true}))
+            foreach (var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true}))
             {
                 projectsTreeView.Nodes[0].Nodes.Add(projectNode);
 
@@ -74,6 +84,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
 
             var projectName = e.Node.Text;
+            int index = _projectConfiguration.FindIndex(item => item.Name == projectName);
 
             if (
                 Popup.ShowPopup(this, SystemIcons.Question, String.Format("Delete project {0}?", projectName),
@@ -101,7 +112,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                File.Delete(Program.ExisitingProjects.First(item => item.Key == projectName).Value);
+                File.Delete(_projectConfiguration[index].Path);
             }
             catch (Exception ex)
             {
@@ -116,17 +127,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                if (Program.ExisitingProjects.Any(item => item.Key == projectName))
-                {
-                    Program.ExisitingProjects.Remove(
-                        Program.ExisitingProjects.First(item => item.Key == projectName).Key);
-
-                    var projectEntries =
-                        Program.ExisitingProjects.Select(
-                            projectEntry => String.Format("{0}%{1}", projectEntry.Key, projectEntry.Value)).ToList();
-
-                    File.WriteAllText(Program.ProjectsConfigFilePath, String.Join("\n", projectEntries));
-                }
+                _projectConfiguration.RemoveAt(index);
             }
             catch (Exception ex)
             {

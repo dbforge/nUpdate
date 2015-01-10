@@ -32,8 +32,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.pathLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.argumentTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.argumentTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.pathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -127,9 +127,9 @@
 
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private UI.Controls.WatermarkTextBox pathTextBox;
+        private UI.Controls.CueTextBox pathTextBox;
         private System.Windows.Forms.Label pathLabel;
-        private UI.Controls.WatermarkTextBox argumentTextBox;
+        private UI.Controls.CueTextBox argumentTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button environmentVariablesButton;
     }

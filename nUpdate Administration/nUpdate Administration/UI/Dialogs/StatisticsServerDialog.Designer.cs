@@ -35,9 +35,10 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.addServerButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.editServerButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteServerButton = new System.Windows.Forms.ToolStripButton();
+            this.noServersLabel = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +51,7 @@
             this.serverList.ItemHeight = 60;
             this.serverList.Location = new System.Drawing.Point(0, 26);
             this.serverList.Name = "serverList";
-            this.serverList.Size = new System.Drawing.Size(479, 200);
+            this.serverList.Size = new System.Drawing.Size(479, 244);
             this.serverList.TabIndex = 8;
             // 
             // imageList1
@@ -65,7 +66,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addServerButton,
             this.toolStripSeparator1,
-            this.toolStripButton2,
+            this.editServerButton,
             this.toolStripSeparator2,
             this.deleteServerButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -80,42 +81,54 @@
             this.addServerButton.Image = ((System.Drawing.Image)(resources.GetObject("addServerButton.Image")));
             this.addServerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addServerButton.Name = "addServerButton";
-            this.addServerButton.Size = new System.Drawing.Size(92, 28);
+            this.addServerButton.Size = new System.Drawing.Size(92, 22);
             this.addServerButton.Text = "Add a server";
             this.addServerButton.Click += new System.EventHandler(this.addServerButton_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton2
+            // editServerButton
             // 
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(81, 28);
-            this.toolStripButton2.Text = "Edit server";
+            this.editServerButton.Image = ((System.Drawing.Image)(resources.GetObject("editServerButton.Image")));
+            this.editServerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.editServerButton.Name = "editServerButton";
+            this.editServerButton.Size = new System.Drawing.Size(81, 22);
+            this.editServerButton.Text = "Edit server";
+            this.editServerButton.Click += new System.EventHandler(this.editServerButton_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // deleteServerButton
             // 
             this.deleteServerButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteServerButton.Image")));
             this.deleteServerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteServerButton.Name = "deleteServerButton";
-            this.deleteServerButton.Size = new System.Drawing.Size(94, 28);
+            this.deleteServerButton.Size = new System.Drawing.Size(94, 22);
             this.deleteServerButton.Text = "Delete server";
             this.deleteServerButton.Click += new System.EventHandler(this.deleteServerButton_Click);
+            // 
+            // noServersLabel
+            // 
+            this.noServersLabel.AutoSize = true;
+            this.noServersLabel.Location = new System.Drawing.Point(159, 128);
+            this.noServersLabel.Name = "noServersLabel";
+            this.noServersLabel.Size = new System.Drawing.Size(153, 13);
+            this.noServersLabel.TabIndex = 10;
+            this.noServersLabel.Text = "No statistic servers available.";
+            this.noServersLabel.Visible = false;
             // 
             // StatisticsServerDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(479, 226);
+            this.ClientSize = new System.Drawing.Size(479, 270);
+            this.Controls.Add(this.noServersLabel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.serverList);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -125,7 +138,7 @@
             this.MaximizeBox = false;
             this.Name = "StatisticsServerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Statistic servers - {0}";
+            this.Text = "Statistic servers - nUpdate Administration 0.1.0.0 Alpha 1";
             this.Load += new System.EventHandler(this.StatisticsServerDialog_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatisticsServerDialog_KeyDown);
             this.toolStrip1.ResumeLayout(false);
@@ -142,8 +155,9 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton addServerButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton editServerButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton deleteServerButton;
+        private System.Windows.Forms.Label noServersLabel;
     }
 }

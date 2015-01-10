@@ -31,9 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RegistrySetValueOperationPanel));
             this.label3 = new System.Windows.Forms.Label();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
-            this.valueTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.valueTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.dataTypeLabel = new System.Windows.Forms.Label();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.valueKindComboBox = new System.Windows.Forms.ComboBox();
             this.valueLabel = new System.Windows.Forms.Label();
@@ -47,7 +47,7 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label4 = new System.Windows.Forms.Label();
-            this.nameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.line1 = new nUpdate.Administration.UI.Controls.Line();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -267,9 +267,9 @@
 
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
-        private UI.Controls.WatermarkTextBox valueTextBox;
+        private UI.Controls.CueTextBox valueTextBox;
         private System.Windows.Forms.Label dataTypeLabel;
-        private UI.Controls.WatermarkTextBox subKeyTextBox;
+        private UI.Controls.CueTextBox subKeyTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ComboBox valueKindComboBox;
         private System.Windows.Forms.Label valueLabel;
@@ -283,7 +283,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.Label label4;
-        private UI.Controls.WatermarkTextBox nameTextBox;
+        private UI.Controls.CueTextBox nameTextBox;
         private UI.Controls.Line line1;
     }
 }

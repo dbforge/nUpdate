@@ -31,9 +31,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private void InitializeComponent()
         {
             this.addButton = new System.Windows.Forms.Button();
-            this.keyNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.keyNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.subKeysToCreateListBox = new System.Windows.Forms.ListBox();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
@@ -150,9 +150,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         #endregion
 
         private System.Windows.Forms.Button addButton;
-        private WatermarkTextBox keyNameTextBox;
+        private CueTextBox keyNameTextBox;
         private System.Windows.Forms.Label label1;
-        private WatermarkTextBox subKeyTextBox;
+        private CueTextBox subKeyTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ListBox subKeysToCreateListBox;
         private System.Windows.Forms.ComboBox mainKeyComboBox;

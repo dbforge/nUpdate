@@ -31,11 +31,11 @@
             this.valueLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
             this.addButton = new System.Windows.Forms.Button();
-            this.valueNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.valueNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.nameValuePairsToDeleteListBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
@@ -151,11 +151,11 @@
         private System.Windows.Forms.Label valueLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
-        private UI.Controls.WatermarkTextBox subKeyTextBox;
+        private UI.Controls.CueTextBox subKeyTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button addButton;
-        private UI.Controls.WatermarkTextBox valueNameTextBox;
+        private UI.Controls.CueTextBox valueNameTextBox;
         private System.Windows.Forms.ListBox nameValuePairsToDeleteListBox;
     }
 }
