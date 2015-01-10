@@ -36,8 +36,8 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             this.pathLabel = new System.Windows.Forms.Label();
             this.filesToDeleteListBox = new System.Windows.Forms.ListBox();
             this.removeButton = new System.Windows.Forms.Button();
-            this.fileNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
-            this.pathTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.fileNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.pathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.environmentVariablesButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -138,9 +138,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         #endregion
 
         private System.Windows.Forms.Button addButton;
-        private WatermarkTextBox fileNameTextBox;
+        private CueTextBox fileNameTextBox;
         private System.Windows.Forms.Label label1;
-        private WatermarkTextBox pathTextBox;
+        private CueTextBox pathTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ListBox filesToDeleteListBox;
         private System.Windows.Forms.Button removeButton;

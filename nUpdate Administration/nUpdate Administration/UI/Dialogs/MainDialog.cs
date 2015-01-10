@@ -125,21 +125,6 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
-            try
-            {
-                foreach (
-                    var entryParts in
-                        File.ReadAllLines(Program.ProjectsConfigFilePath).Select(entry => entry.Split('%')))
-                {
-                    Program.ExisitingProjects.Add(entryParts[0], entryParts[1]);
-                }
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error wile reading the project data.", ex,
-                    PopupButtons.Ok);
-            }
-
             //SetLanguage();
             sectionsListView.DoubleBuffer();
         }

@@ -31,14 +31,14 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         private void InitializeComponent()
         {
             this.addButton = new System.Windows.Forms.Button();
-            this.keyNameTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.keyNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pathLabel = new System.Windows.Forms.Label();
             this.subKeysToDeleteListBox = new System.Windows.Forms.ListBox();
             this.removeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.WatermarkTextBox();
+            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.SuspendLayout();
             // 
             // addButton
@@ -150,13 +150,13 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         #endregion
 
         private System.Windows.Forms.Button addButton;
-        private WatermarkTextBox keyNameTextBox;
+        private CueTextBox keyNameTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ListBox subKeysToDeleteListBox;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
-        private WatermarkTextBox subKeyTextBox;
+        private CueTextBox subKeyTextBox;
     }
 }

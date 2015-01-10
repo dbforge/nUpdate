@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -21,17 +20,12 @@ namespace nUpdate.Administration
         /// <summary>
         ///     The path of the config file for all projects.
         /// </summary>
-        public static string ProjectsConfigFilePath = System.IO.Path.Combine(Path, "projconf.txt");
+        public static string ProjectsConfigFilePath = System.IO.Path.Combine(Path, "projconf.json");
 
         /// <summary>
         ///     The path of the statistic server file.
         /// </summary>
-        public static string StatisticServersFilePath = System.IO.Path.Combine(Path, "statservers.txt");
-
-        /// <summary>
-        ///     The currently existing projects.
-        /// </summary>
-        public static Dictionary<string, string> ExisitingProjects = new Dictionary<string, string>();
+        public static string StatisticServersFilePath = System.IO.Path.Combine(Path, "statservers.json");
 
         /// <summary>
         ///     The path of the languages directory.
