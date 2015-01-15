@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.IO;
 using System.Windows.Forms;
 using nUpdate.Internal.UpdateEventArgs;
@@ -65,7 +67,7 @@ namespace nUpdate.Internal
                     Changelog = UpdateManagerInstance.Changelog,
                     PackageSize = UpdateManagerInstance.PackageSize,
                     MustUpdate = UpdateManagerInstance.MustUpdate,
-                    OperationAreas = UpdateManagerInstance.OperationAreas,
+                    OperationAreas = UpdateManagerInstance.OperationAreas
                 };
                 if (newUpdateDialog.ShowDialog() == DialogResult.OK)
                     newUpdateDialog.Close();
@@ -102,7 +104,7 @@ namespace nUpdate.Internal
             {
                 if (!UpdateManagerInstance.CheckPackageValidity())
                 {
-                    string errorMessage =
+                    var errorMessage =
                         String.Format(
                             "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.",
                             Environment.NewLine);

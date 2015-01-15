@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -25,7 +27,7 @@ namespace nUpdate.Administration.Core
         {
             if (SystemInformation.TerminalServerSession)
                 return;
-            PropertyInfo dbProp = typeof (Control).GetProperty("DoubleBuffered",
+            var dbProp = typeof (Control).GetProperty("DoubleBuffered",
                 BindingFlags.NonPublic | BindingFlags.Instance);
             dbProp.SetValue(control, true, null);
         }
@@ -57,7 +59,7 @@ namespace nUpdate.Administration.Core
 
         public static T Remove<T>(this Stack<T> stack, T element)
         {
-            T obj = stack.Pop();
+            var obj = stack.Pop();
             if (obj.Equals(element))
                 return obj;
             T toReturn = stack.Remove(element);
@@ -67,7 +69,7 @@ namespace nUpdate.Administration.Core
 
         public static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
         {
-            foreach (T i in ie)
+            foreach (var i in ie)
             {
                 action(i);
             }
@@ -78,7 +80,7 @@ namespace nUpdate.Administration.Core
             if (securePassword == null)
                 throw new ArgumentNullException("securePassword");
 
-            IntPtr unmanagedString = IntPtr.Zero;
+            var unmanagedString = IntPtr.Zero;
             try
             {
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);

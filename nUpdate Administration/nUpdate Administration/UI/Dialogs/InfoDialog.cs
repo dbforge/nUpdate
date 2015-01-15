@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -36,7 +38,6 @@ namespace nUpdate.Administration.UI.Dialogs
             Process.Start("https://github.com/timmi31061");
         }
 
-
         private void artentusLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Artentus");
@@ -59,7 +60,7 @@ namespace nUpdate.Administration.UI.Dialogs
             const string country = "DE";
             const string currency = "EUR";
 
-            string url = 
+            var url =
                 String.Format(
                     "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business={0}&lc={1}&item_name={2}&currency_code={3}&bn=PP%2dDonationsBF",
                     business, country, description, currency);

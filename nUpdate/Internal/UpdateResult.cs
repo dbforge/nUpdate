@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using nUpdate.Core;
@@ -7,29 +9,32 @@ namespace nUpdate.Internal
 {
     internal class UpdateResult
     {
+        private UpdateConfiguration _newestConfiguration;
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
         private readonly bool _updatesFound;
-        private UpdateConfiguration _newestConfiguration;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateResult"/> class.
+        ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
         public UpdateResult(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
             bool isAlphaWished, bool isBetaWished)
         {
             if (packageConfigurations != null)
             {
-                bool is64Bit = Environment.Is64BitOperatingSystem;
+                var is64Bit = Environment.Is64BitOperatingSystem;
                 foreach (
-                    UpdateConfiguration config in
+                    var config in
                         packageConfigurations.Where(item => new UpdateVersion(item.LiteralVersion) > currentVersion)
                             .Where(
                                 config =>
-                                    new UpdateVersion(config.LiteralVersion).DevelopmentalStage == DevelopmentalStage.Release ||
+                                    new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
+                                    DevelopmentalStage.Release ||
                                     ((isAlphaWished &&
-                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage == DevelopmentalStage.Alpha) ||
+                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
+                                      DevelopmentalStage.Alpha) ||
                                      (isBetaWished &&
-                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage == DevelopmentalStage.Beta)))
+                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
+                                      DevelopmentalStage.Beta)))
                     )
                 {
                     if (config.UnsupportedVersions != null)
@@ -75,7 +80,8 @@ namespace nUpdate.Internal
         {
             get
             {
-                var allVersions = NewestConfigurations.Select(config => new UpdateVersion(config.LiteralVersion)).ToList();
+                var allVersions =
+                    NewestConfigurations.Select(config => new UpdateVersion(config.LiteralVersion)).ToList();
                 return
                     NewestConfigurations.First(
                         item => item.LiteralVersion == UpdateVersion.GetHighestUpdateVersion(allVersions).ToString());

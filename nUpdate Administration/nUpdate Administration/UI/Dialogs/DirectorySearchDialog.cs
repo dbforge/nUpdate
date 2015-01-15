@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -17,13 +19,12 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private bool _allowCancel;
-        private bool _nodeSelectedByUser = true;
         private FtpManager _ftp;
-
         private List<FtpItem> _listedFtpItems = new List<FtpItem>();
         private Margins _margins;
+        private bool _nodeSelectedByUser = true;
+        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
 
         public DirectorySearchDialog()
         {
@@ -78,7 +79,10 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             BeginInvoke(new Action(() =>
             {
-                foreach (Control c in (from Control c in Controls where c.Visible select c).Where(c => c.GetType() != typeof(ExplorerNavigationButton.ExplorerNavigationButton)))
+                foreach (
+                    var c in
+                        (from Control c in Controls where c.Visible select c).Where(
+                            c => c.GetType() != typeof (ExplorerNavigationButton.ExplorerNavigationButton)))
                 {
                     c.Enabled = enabled;
                 }
@@ -99,7 +103,7 @@ namespace nUpdate.Administration.UI.Dialogs
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            if (!NativeMethods.DwmIsCompositionEnabled()) 
+            if (!NativeMethods.DwmIsCompositionEnabled())
                 return;
 
             _margins.Top = 38;
@@ -164,14 +168,14 @@ namespace nUpdate.Administration.UI.Dialogs
                 backButton.Enabled = true;
 
             var directories = new Stack<string>();
-            TreeNode currentNode = e.Node;
+            var currentNode = e.Node;
             while (currentNode.Parent != null && currentNode.Parent != serverDataTreeView.Nodes[0])
             {
                 directories.Push(currentNode.Parent.Text);
                 currentNode = currentNode.Parent;
             }
 
-            string directory = String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text);
+            var directory = String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text);
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
@@ -201,7 +205,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_listedFtpItems != null)
             {
-                ListingItem root = ConvertToListingItem(_listedFtpItems, "/");
+                var root = ConvertToListingItem(_listedFtpItems, "/");
                 var rootNode = new TreeNode("Server", 0, 0);
                 BeginInvoke(new Action(() =>
                 {
@@ -234,9 +238,9 @@ namespace nUpdate.Administration.UI.Dialogs
             var root = new ListingItem("Root", false);
             foreach (var item in inputItems)
             {
-                ListingItem currentParent = root;
+                var currentParent = root;
                 foreach (
-                    string pathSegment in item.FullPath.Remove(0, 1).Split(new[] {seperator}, StringSplitOptions.None))
+                    var pathSegment in item.FullPath.Remove(0, 1).Split(new[] {seperator}, StringSplitOptions.None))
                 {
                     if (currentParent.Children.All(t => t.Text != pathSegment))
                     {
@@ -258,15 +262,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             SelectedDirectory = directoryTextBox.Text;
             DialogResult = DialogResult.OK;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Margins
-        {
-            public int Left;
-            public int Right;
-            public int Top;
-            public int Bottom;
         }
 
         private void backButton_Click(object sender, EventArgs e)
@@ -291,6 +286,15 @@ namespace nUpdate.Administration.UI.Dialogs
                 forwardButton.Enabled = false;
             if (_nav.CanGoBack)
                 backButton.Enabled = true;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Margins
+        {
+            public int Left;
+            public int Right;
+            public int Top;
+            public int Bottom;
         }
     }
 }

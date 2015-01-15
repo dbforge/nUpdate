@@ -1,4 +1,6 @@
-﻿namespace ExplorerNavigationButton
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace ExplorerNavigationButton
 {
     public partial class ExplorerNavigationButton
     {
@@ -7,7 +9,7 @@
             Normal,
             Hover,
             Pressed,
-            Disabled,
+            Disabled
         }
     }
 }

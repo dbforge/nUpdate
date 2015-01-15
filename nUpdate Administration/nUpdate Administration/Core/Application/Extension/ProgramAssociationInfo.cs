@@ -1,31 +1,4 @@
-﻿/*
-* Copyright (c) 2006, Brendan Grant (grantb@dahat.com)
-* All rights reserved.
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*     * All original and modified versions of this source code must include the
-*       above copyright notice, this list of conditions and the following
-*       disclaimer.
-*     * This code may not be used with or within any modules or code that is 
-*       licensed in any way that that compels or requires users or modifiers
-*       to release their source code or changes as a requirement for
-*       the use, modification or distribution of binary, object or source code
-*       based on the licensed source code. (ex: Cannot be used with GPL code.)
-*     * The name of Brendan Grant may be used to endorse or promote products
-*       derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY BRENDAN GRANT ``AS IS'' AND ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-* EVENT SHALL BRENDAN GRANT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
 using System.Collections.Generic;
@@ -150,12 +123,12 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// </summary>
     public class ProgramAssociationInfo
     {
-        private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
-
         /// <summary>
         ///     Actual name of Programmatic Identifier
         /// </summary>
         protected string ProgId;
+
+        private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProgramAssociationInfo" /> class, which acts as a wrapper for a
@@ -164,7 +137,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="progId">Name of program id to interface with.</param>
         public ProgramAssociationInfo(string progId)
         {
-            this.ProgId = progId;
+            ProgId = progId;
         }
 
         /// <summary>
@@ -175,7 +148,6 @@ namespace nUpdate.Administration.Core.Application.Extension
             get { return GetAlwaysShowExt(); }
             set { SetAlwaysShowExt(value); }
         }
-
 
         /// <summary>
         ///     Gets or sets a value that determines what the friendly name of the file is.
@@ -229,13 +201,13 @@ namespace nUpdate.Administration.Core.Application.Extension
         {
             get
             {
-                RegistryKey root = Registry.ClassesRoot;
+                var root = Registry.ClassesRoot;
                 try
                 {
                     if (ProgId == string.Empty)
                         return false;
 
-                    RegistryKey key = root.OpenSubKey(ProgId);
+                    var key = root.OpenSubKey(ProgId);
 
                     if (key == null)
                         return false;
@@ -251,6 +223,78 @@ namespace nUpdate.Administration.Core.Application.Extension
             }
         }
 
+        /// <summary>
+        ///     Deletes the current prog id.
+        /// </summary>
+        public void Delete()
+        {
+            if (!Exists)
+                throw new Exception("Key not found.");
+
+            var root = Registry.ClassesRoot;
+
+            root.DeleteSubKeyTree(ProgId);
+        }
+
+        /// <summary>
+        ///     Adds single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
+        /// </summary>
+        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
+        public void AddVerb(ProgramVerb verb)
+        {
+            AddVerbpublic(verb);
+        }
+
+        /// <summary>
+        ///     Removes single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
+        /// </summary>
+        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
+        public void RemoveVerb(ProgramVerb verb)
+        {
+            if (verb == null)
+                throw new NullReferenceException();
+
+            RemoveVerb(verb.Name);
+        }
+
+        /// <summary>
+        ///     Removes single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
+        /// </summary>
+        /// <param name="name">Name of verb to remove.</param>
+        public void RemoveVerb(string name)
+        {
+            RemoveVerbpublic(name);
+        }
+
+        /// <summary>
+        ///     Attempts to convert the value within the input byte array into an integer.
+        /// </summary>
+        /// <param name="arr">Byte array containing number.</param>
+        /// <param name="val">Converted integer if successful.</param>
+        /// <returns>True on success, false on failure.</returns>
+        private bool TryGetInt(byte[] arr, out int val)
+        {
+            try
+            {
+                if (arr.Length == 0)
+                {
+                    val = -1;
+                    return false;
+                }
+                if (arr.Length == 1)
+                    val = arr[0];
+                else
+                    val = BitConverter.ToInt32(arr, 0);
+
+                return true;
+            }
+            catch
+            {
+            }
+            val = 0;
+            return false;
+        }
+
         #region Public Functions - Creators
 
         /// <summary>
@@ -261,7 +305,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (Exists)
                 return;
 
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
             root.CreateSubKey(ProgId);
         }
@@ -358,11 +402,11 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(ProgId);
+            var key = root.OpenSubKey(ProgId);
 
-            object o = key.GetValue("AlwaysShowExt", "ThisValueShouldNotExist");
+            var o = key.GetValue("AlwaysShowExt", "ThisValueShouldNotExist");
             if (o.ToString() == "ThisValueShouldNotExist")
                 return false;
 
@@ -395,7 +439,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = _registryWrapper.Read(ProgId, string.Empty);
+            var val = _registryWrapper.Read(ProgId, string.Empty);
 
             if (val == null)
                 return string.Empty;
@@ -428,7 +472,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = _registryWrapper.Read(ProgId, "EditFlags");
+            var val = _registryWrapper.Read(ProgId, "EditFlags");
 
             if (val == null)
                 return EditFlags.None;
@@ -478,7 +522,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            object val = _registryWrapper.Read(ProgId + "\\DefaultIcon", "");
+            var val = _registryWrapper.Read(ProgId + "\\DefaultIcon", "");
 
             if (val == null)
                 return ProgramIcon.None;
@@ -511,19 +555,19 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(ProgId);
+            var key = root.OpenSubKey(ProgId);
             var verbs = new List<ProgramVerb>();
 
             key = key.OpenSubKey("shell", false);
             if (key != null)
             {
-                string[] keyNames = key.GetSubKeyNames();
+                var keyNames = key.GetSubKeyNames();
 
-                foreach (string s in keyNames)
+                foreach (var s in keyNames)
                 {
-                    RegistryKey verb = key.OpenSubKey(s);
+                    var verb = key.OpenSubKey(s);
                     if (verb == null)
                         continue;
 
@@ -553,21 +597,21 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!Exists)
                 throw new Exception("Extension does not exist");
 
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(ProgId, true);
+            var key = root.OpenSubKey(ProgId, true);
 
-            RegistryKey tmpKey = key.OpenSubKey("shell", true);
+            var tmpKey = key.OpenSubKey("shell", true);
 
             if (tmpKey != null)
                 key.DeleteSubKeyTree("shell");
 
             tmpKey = key.CreateSubKey("shell");
 
-            foreach (ProgramVerb verb in verbs)
+            foreach (var verb in verbs)
             {
-                RegistryKey newVerb = tmpKey.CreateSubKey(verb.Name.ToLower());
-                RegistryKey command = newVerb.CreateSubKey("command");
+                var newVerb = tmpKey.CreateSubKey(verb.Name.ToLower());
+                var command = newVerb.CreateSubKey("command");
 
                 command.SetValue(string.Empty, verb.Command, RegistryValueKind.ExpandString);
 
@@ -588,14 +632,14 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
         protected void AddVerbpublic(ProgramVerb verb)
         {
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(ProgId).OpenSubKey("shell", true);
+            var key = root.OpenSubKey(ProgId).OpenSubKey("shell", true);
 
             if (key == null)
                 key = root.OpenSubKey(ProgId, true).CreateSubKey("shell");
 
-            RegistryKey tmpkey = key.OpenSubKey(verb.Name, true);
+            var tmpkey = key.OpenSubKey(verb.Name, true);
             if (tmpkey == null)
                 tmpkey = key.CreateSubKey(verb.Name);
             key = tmpkey;
@@ -620,17 +664,17 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <param name="name">Name of verb to remove</param>
         protected void RemoveVerbpublic(string name)
         {
-            RegistryKey root = Registry.ClassesRoot;
+            var root = Registry.ClassesRoot;
 
-            RegistryKey key = root.OpenSubKey(ProgId);
+            var key = root.OpenSubKey(ProgId);
 
             key = key.OpenSubKey("shell", true);
 
             if (key == null)
                 throw new RegistryException("Shell key not found");
 
-            string[] subkeynames = key.GetSubKeyNames();
-            foreach (string s in subkeynames)
+            var subkeynames = key.GetSubKeyNames();
+            foreach (var s in subkeynames)
             {
                 if (s == name)
                 {
@@ -646,77 +690,5 @@ namespace nUpdate.Administration.Core.Application.Extension
         }
 
         #endregion
-
-        /// <summary>
-        ///     Deletes the current prog id.
-        /// </summary>
-        public void Delete()
-        {
-            if (!Exists)
-                throw new Exception("Key not found.");
-
-            RegistryKey root = Registry.ClassesRoot;
-
-            root.DeleteSubKeyTree(ProgId);
-        }
-
-        /// <summary>
-        ///     Adds single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
-        /// </summary>
-        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
-        public void AddVerb(ProgramVerb verb)
-        {
-            AddVerbpublic(verb);
-        }
-
-        /// <summary>
-        ///     Removes single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
-        /// </summary>
-        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
-        public void RemoveVerb(ProgramVerb verb)
-        {
-            if (verb == null)
-                throw new NullReferenceException();
-
-            RemoveVerb(verb.Name);
-        }
-
-        /// <summary>
-        ///     Removes single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
-        /// </summary>
-        /// <param name="name">Name of verb to remove.</param>
-        public void RemoveVerb(string name)
-        {
-            RemoveVerbpublic(name);
-        }
-
-        /// <summary>
-        ///     Attempts to convert the value within the input byte array into an integer.
-        /// </summary>
-        /// <param name="arr">Byte array containing number.</param>
-        /// <param name="val">Converted integer if successful.</param>
-        /// <returns>True on success, false on failure.</returns>
-        private bool TryGetInt(byte[] arr, out int val)
-        {
-            try
-            {
-                if (arr.Length == 0)
-                {
-                    val = -1;
-                    return false;
-                }
-                if (arr.Length == 1)
-                    val = arr[0];
-                else
-                    val = BitConverter.ToInt32(arr, 0);
-
-                return true;
-            }
-            catch
-            {
-            }
-            val = 0;
-            return false;
-        }
     }
 }

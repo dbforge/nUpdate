@@ -137,8 +137,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(325, 26);
             this.label14.TabIndex = 90;
-            this.label14.Text = "If the database is already existing the old one will be deleted to\r\nguarantee no " +
-    "problems during the setup of the necessary tables.";
+            this.label14.Text = "If the tables are already existing the old ones will be deleted to\r\nguarantee no " +
+    "problems during the setup.";
             // 
             // hostTextBox
             // 

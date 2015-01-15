@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -72,7 +74,10 @@ namespace nUpdate.Internal
         /// </summary>
         /// <param name="configFileUrl">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <returns>Returns an <see cref="IEnumerable"/> of type <see cref="UpdateConfiguration"/> containing the package configurations.</returns>
+        /// <returns>
+        ///     Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
+        ///     configurations.
+        /// </returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUrl, WebProxy proxy)
         {
             using (var wc = new WebClientWrapper(10000))
@@ -84,7 +89,7 @@ namespace nUpdate.Internal
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                string source = wc.DownloadString(configFileUrl);
+                var source = wc.DownloadString(configFileUrl);
                 if (!String.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }

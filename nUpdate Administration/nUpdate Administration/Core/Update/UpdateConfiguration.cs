@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -92,7 +94,7 @@ namespace nUpdate.Administration.Core.Update
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                string source = wc.DownloadString(configFileUrl);
+                var source = wc.DownloadString(configFileUrl);
                 if (!String.IsNullOrEmpty(source))
                     return Serializer.Deserialize<List<UpdateConfiguration>>(source);
             }

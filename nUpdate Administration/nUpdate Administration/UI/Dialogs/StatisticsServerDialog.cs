@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -49,7 +51,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                string sourceContent = File.ReadAllText(Program.StatisticServersFilePath);
+                var sourceContent = File.ReadAllText(Program.StatisticServersFilePath);
                 _statisticsServers = Serializer.Deserialize<List<StatisticsServer>>(sourceContent);
                 if (_statisticsServers == null || _statisticsServers.Count == 0)
                 {
@@ -72,7 +74,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 try
                 {
-                    var listItem = new ServerListItem()
+                    var listItem = new ServerListItem
                     {
                         ItemImage = imageList1.Images[0],
                         HeaderText = server.DatabaseName,
@@ -116,7 +118,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                _statisticsServers.Add(new StatisticsServer(statisticsServerAddDialog.WebUrl, statisticsServerAddDialog.DatabaseName, statisticsServerAddDialog.Username));
+                _statisticsServers.Add(new StatisticsServer(statisticsServerAddDialog.WebUrl,
+                    statisticsServerAddDialog.DatabaseName, statisticsServerAddDialog.Username));
                 File.WriteAllText(Program.StatisticServersFilePath, Serializer.Serialize(_statisticsServers));
             }
             catch (Exception ex)
@@ -131,11 +134,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void deleteServerButton_Click(object sender, EventArgs e)
         {
-            if (serverList.SelectedItem == null) 
+            if (serverList.SelectedItem == null)
                 return;
             if (Popup.ShowPopup(this, SystemIcons.Warning, "Delete this server?",
                 "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) !=
-                DialogResult.Yes) 
+                DialogResult.Yes)
                 return;
 
             try
@@ -174,25 +177,22 @@ namespace nUpdate.Administration.UI.Dialogs
             if (serverList.SelectedItem == null)
                 return;
 
-            int itemIndex = serverList.SelectedIndex;
+            var itemIndex = serverList.SelectedIndex;
             var statisticsServer = _statisticsServers.ElementAt(itemIndex);
             var statisticsServerEditDialog = new StatisticsServerEditDialog
             {
                 DatabaseName = statisticsServer.DatabaseName,
                 WebUrl = statisticsServer.WebUrl,
-                Username = statisticsServer.Username,
+                Username = statisticsServer.Username
             };
 
             if (statisticsServerEditDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            SqlDatabaseName = statisticsServerEditDialog.DatabaseName;
-            SqlWebUrl = statisticsServerEditDialog.WebUrl;
-            SqlUsername = statisticsServerEditDialog.Username;
-
             try
             {
-                _statisticsServers[itemIndex] = new StatisticsServer(statisticsServerEditDialog.WebUrl, statisticsServerEditDialog.DatabaseName, statisticsServerEditDialog.Username);
+                _statisticsServers[itemIndex] = new StatisticsServer(statisticsServerEditDialog.WebUrl,
+                    statisticsServerEditDialog.DatabaseName, statisticsServerEditDialog.Username);
                 File.WriteAllText(Program.StatisticServersFilePath, Serializer.Serialize(_statisticsServers));
             }
             catch (Exception ex)

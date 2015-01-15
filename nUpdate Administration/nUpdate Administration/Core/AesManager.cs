@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.IO;
 using System.Security;
 using System.Security.Cryptography;
@@ -37,7 +39,7 @@ namespace nUpdate.Administration.Core
                 aesAlg.IV = ivPasswordDeriveBytes.GetBytes(aesAlg.BlockSize/8);
 
                 // Create a decrytor to perform the stream transform.
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for encryption.
                 using (var msEncrypt = new MemoryStream())
@@ -93,7 +95,7 @@ namespace nUpdate.Administration.Core
                 aesAlg.IV = ivPasswordDeriveBytes.GetBytes(aesAlg.BlockSize/8);
 
                 // Create a decrytor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for decryption.
                 using (var msDecrypt = new MemoryStream(cipherText))
@@ -111,7 +113,7 @@ namespace nUpdate.Administration.Core
             }
 
             var securedPlainText = new SecureString();
-            foreach (Char c in plaintext)
+            foreach (var c in plaintext)
             {
                 securedPlainText.AppendChar(c);
             }

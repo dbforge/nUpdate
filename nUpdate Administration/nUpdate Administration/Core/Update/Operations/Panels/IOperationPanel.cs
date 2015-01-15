@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Core.Update.Operations.Panels
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace nUpdate.Administration.Core.Update.Operations.Panels
 {
     public interface IOperationPanel
     {

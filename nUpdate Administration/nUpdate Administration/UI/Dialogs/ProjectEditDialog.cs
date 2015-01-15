@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -22,7 +24,31 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private readonly FtpManager _ftp = new FtpManager();
+        private bool _allowCancel = true;
+        private bool _commandsExecuted;
+        private bool _ftpDirectoryChanged;
+        private bool _generalTabPassed;
+        private string _localPath;
+        private LocalizationProperties _lp = new LocalizationProperties();
+        private string _name;
+        private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
+        private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
+        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
+        private bool _phpFileCreated;
+        private bool _phpFileDeleted;
+        private bool _phpFileOnlineDeleted;
+        private bool _phpFileUploaded;
+        private List<ProjectConfiguration> _projectConfiguration;
+        private bool _projectConfigurationEdited;
+        private bool _projectDirectoryMoved;
+        private bool _projectFileMoved;
+        private TabPage _sender;
+        private bool _sqlDataDeleted;
+        private bool _sqlDataInitialized;
+        private bool _updateConfigurationSaved;
+        private string _updateUrl;
+        private bool _updateUrlChanged;
+        private bool _useStatistics;
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -39,33 +65,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public SecureString SqlPassword = new SecureString();
 
-        private bool _allowCancel = true;
-        private bool _commandsExecuted;
-        private bool _ftpDirectoryChanged;
-        private bool _generalTabPassed;
-        private string _name;
-        private string _localPath;
-        private string _updateUrl;
-        private bool _phpFileCreated;
-        private bool _phpFileDeleted;
-        private bool _phpFileUploaded;
-        private bool _phpFileOnlineDeleted;
-        private bool _projectConfigurationEdited;
-        private bool _projectDirectoryMoved;
-        private bool _projectFileMoved;
-        private bool _sqlDataDeleted;
-        private bool _sqlDataInitialized;
-        private bool _updateConfigurationSaved;
-        private bool _updateUrlChanged;
-        private bool _useStatistics;
-
-        private TabPage _sender;
-        private LocalizationProperties _lp = new LocalizationProperties();
-        private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
-        private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
-        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
-        private List<ProjectConfiguration> _projectConfiguration; 
-        
+        private readonly FtpManager _ftp = new FtpManager();
 
         public ProjectEditDialog()
         {
@@ -135,7 +135,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             loadingLabel.Text = "Removing project configuration entry..."));
 
-                _projectConfiguration[_projectConfiguration.FindIndex(item => item.Name == _name)] = new ProjectConfiguration(Project.Name, Project.Path);
+                _projectConfiguration[_projectConfiguration.FindIndex(item => item.Name == _name)] =
+                    new ProjectConfiguration(Project.Name, Project.Path);
 
                 try
                 {
@@ -222,7 +223,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Invoke(
                         new Action(
-                            () => 
+                            () =>
                                 _ftp.Directory = ftpDirectoryTextBox.Text));
                     _ftp.MoveContent(Project.FtpDirectory);
                     _ftpDirectoryChanged = false;
@@ -252,7 +253,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                    var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                     File.WriteAllText(localConfigurationPath, Serializer.Serialize(_oldUpdateConfiguration));
 
                     Invoke(
@@ -330,7 +331,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            string phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
+            var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
             if (_phpFileDeleted)
             {
                 try
@@ -339,7 +340,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         File.WriteAllBytes(phpFilePath, Resources.statistics);
 
-                        string phpFileContent = File.ReadAllText(phpFilePath);
+                        var phpFileContent = File.ReadAllText(phpFilePath);
                         phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
                         phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
                         phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
@@ -393,8 +394,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_updateConfigurationSaved)
             {
-                string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                 File.WriteAllText(localConfigurationPath, String.Empty);
+                _updateConfigurationSaved = false;
             }
         }
 
@@ -497,7 +499,8 @@ namespace nUpdate.Administration.UI.Dialogs
                             File.ReadAllText(Program.ProjectsConfigFilePath));
                     if (_projectConfiguration != null)
                     {
-                        if (_projectConfiguration.Any(item => item.Name == nameTextBox.Text) && Project.Name != nameTextBox.Text)
+                        if (_projectConfiguration.Any(item => item.Name == nameTextBox.Text) &&
+                            Project.Name != nameTextBox.Text)
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
                                 String.Format(
@@ -555,7 +558,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Username = ftpUserTextBox.Text;
 
                 var ftpPassword = new SecureString();
-                foreach (Char c in ftpPasswordTextBox.Text)
+                foreach (var c in ftpPasswordTextBox.Text)
                 {
                     ftpPassword.AppendChar(c);
                 }
@@ -663,9 +666,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }));
 
             Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Getting old configuration..."));
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Getting old configuration..."));
 
             try
             {
@@ -726,7 +729,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                string projectDirectory = Path.Combine(Program.Path, "Projects", Project.Name);
+                var projectDirectory = Path.Combine(Program.Path, "Projects", Project.Name);
                 if (Directory.Exists(projectDirectory))
                 {
                     Invoke(
@@ -842,7 +845,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                        var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                         File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                         _updateConfigurationSaved = true;
 
@@ -862,7 +865,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            string phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
+            var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
             if (!Project.UseStatistics && useStatisticsServerRadioButton.Checked)
             {
                 /*
@@ -877,7 +880,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     // Create the file
                     File.WriteAllBytes(phpFilePath, Resources.statistics);
 
-                    string phpFileContent = File.ReadAllText(phpFilePath);
+                    var phpFileContent = File.ReadAllText(phpFilePath);
                     phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
                     phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
                     phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
@@ -925,15 +928,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 #region "Setup-String"
 
-                string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+                var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
+DROP TABLE IF EXISTS Application;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS Version;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Version` VARCHAR(40) NOT NULL,
@@ -947,6 +952,7 @@ CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS Download;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Download` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Version_ID` INT NOT NULL,
@@ -970,21 +976,26 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 setupString = setupString.Replace("_APPID",
                     Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
 
-                foreach (var updateConfig in _newUpdateConfiguration.Where(updateConfig => _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion)))
+                foreach (
+                    var updateConfig in
+                        _newUpdateConfiguration.Where(
+                            updateConfig =>
+                                _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion)))
                 {
                     updateConfig.UseStatistics = true;
-                    setupString += String.Format("\nINSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
+                    setupString +=
+                        String.Format("\nINSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
                             updateConfig.LiteralVersion, Project.ApplicationId);
                 }
 
                 Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Uploading new configuration..."));
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Uploading new configuration..."));
 
                 try
                 {
-                    string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                    var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                     File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                     _updateConfigurationSaved = true;
 
@@ -1051,7 +1062,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         () =>
                             loadingLabel.Text = "Executing setup commands..."));
 
-                MySqlCommand command = myConnection.CreateCommand();
+                var command = myConnection.CreateCommand();
                 command.CommandText = setupString;
 
                 try
@@ -1129,7 +1140,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 #region "Setup-String"
 
-                string setupString = @"USE _DBNAME;
+                var setupString = @"USE _DBNAME;
 DELETE FROM `Application` WHERE `ID` = _APPID;
 DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
@@ -1146,13 +1157,13 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                             configuration.VersionId));
 
                 Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Uploading new configuration..."));
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Uploading new configuration..."));
 
                 try
                 {
-                    string localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                    var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                     File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                     _updateConfigurationSaved = true;
 
@@ -1220,7 +1231,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                         () =>
                             loadingLabel.Text = "Executing setup commands..."));
 
-                MySqlCommand command = myConnection.CreateCommand();
+                var command = myConnection.CreateCommand();
                 command.CommandText = setupString;
 
                 try
@@ -1240,7 +1251,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                     return;
                 }
             }
-            
+
             Project.Name = _name;
             Project.Path = _localPath;
             Project.UpdateUrl = _updateUrl;
@@ -1342,7 +1353,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
             }
 
             var securePwd = new SecureString();
-            foreach (char sign in ftpPasswordTextBox.Text)
+            foreach (var sign in ftpPasswordTextBox.Text)
             {
                 securePwd.AppendChar(sign);
             }
@@ -1355,12 +1366,13 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                Protocol = ftpProtocolComboBox.SelectedIndex,
+                Protocol = ftpProtocolComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)
                 ftpDirectoryTextBox.Text = searchDialog.SelectedDirectory;
 
+            securePwd.Dispose();
             searchDialog.Close();
         }
 
@@ -1413,7 +1425,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
                 try
                 {
-                    UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                    var importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
                     ftpHostTextBox.Text = importProject.FtpHost;
                     ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = importProject.FtpUsername;
@@ -1432,14 +1444,14 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
         private void selectServerButton_Click(object sender, EventArgs e)
         {
-            var statisticsServerDialog = new StatisticsServerDialog { ReactsOnKeyDown = true };
+            var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = true};
             if (statisticsServerDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             SqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
             SqlWebUrl = statisticsServerDialog.SqlWebUrl;
             SqlUsername = statisticsServerDialog.SqlUsername;
-            string sqlNameString = SqlDatabaseName;
+            var sqlNameString = SqlDatabaseName;
             databaseNameLabel.Text = sqlNameString;
         }
 

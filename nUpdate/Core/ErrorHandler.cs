@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Windows.Forms;
 using nUpdate.UI.Dialogs;
 
@@ -17,7 +19,7 @@ namespace nUpdate.Core
             {
                 ErrorCode = errorCode,
                 Error = error,
-                InfoMessage = infoMessage,
+                InfoMessage = infoMessage
             };
 
             if (owner != null)

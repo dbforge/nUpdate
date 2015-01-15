@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Security.Cryptography;
 
 namespace nUpdate.Administration.Core
@@ -13,8 +15,8 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public const int DefaultKeySize = 8192;
 
-        private readonly RSACryptoServiceProvider _rsa;
         private bool _disposed;
+        private readonly RSACryptoServiceProvider _rsa;
 
         /// <summary>
         ///     Creates a new instance of the <see cref="RsaSignature" />-class.

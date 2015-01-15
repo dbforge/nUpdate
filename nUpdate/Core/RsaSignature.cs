@@ -1,15 +1,4 @@
-﻿/**
- *  Class to sign data with the RSA-class
- *  
- *  Author: Tim Schiewe (timmi31061)
- *  License: GPL v3
- *  Created: 09th December 2013
- *  Modified: Dominic B. (Trade) - 15.12.13 - Improved design of constructor
- *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Parameter validation added; more IntelliSense.
- *  Modified: Tim Schiewe (timmi31061) - 04.01.14 - Critical security update
- *  Modified: Dominic B. (Trade) - 23.01.2014 - Changed language of comments
- *  Modified: Dominic B. (Trade) - 23.12.2014 - Implemented IDisposable
- */
+﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
 using System.Security.Cryptography;
@@ -71,6 +60,12 @@ namespace nUpdate.Core
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         ///     Calculates the signature for the given data.
         /// </summary>
@@ -93,15 +88,9 @@ namespace nUpdate.Core
             // Checks if the signature for the given signature is correct.
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing || _disposed) 
+            if (!disposing || _disposed)
                 return;
 
             _rsa.Dispose();

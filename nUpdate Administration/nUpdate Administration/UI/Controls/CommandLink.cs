@@ -1,6 +1,5 @@
 // Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,7 +33,7 @@ namespace nUpdate.Administration.UI.Controls
         {
             get
             {
-                CreateParams cParams = base.CreateParams;
+                var cParams = base.CreateParams;
                 cParams.Style |= BS_COMMANDLINK;
                 return cParams;
             }
@@ -62,7 +61,6 @@ namespace nUpdate.Administration.UI.Controls
             set { SetNoteText(value); }
         }
 
-
         private void SetNoteText(string value)
         {
             NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
@@ -70,7 +68,7 @@ namespace nUpdate.Administration.UI.Controls
 
         private string GetNoteText()
         {
-            int length =
+            var length =
                 NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTELENGTH, IntPtr.Zero, IntPtr.Zero)
                     .ToInt32() + 1;
 
