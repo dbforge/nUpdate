@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Popups;
@@ -20,7 +22,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Processes, OperationMethods.Stop, ProcessName); }
+            get { return new Operation(OperationArea.Processes, OperationMethod.Stop, ProcessName); }
         }
 
         private void ProcessStopOperationPanel_Load(object sender, EventArgs e)

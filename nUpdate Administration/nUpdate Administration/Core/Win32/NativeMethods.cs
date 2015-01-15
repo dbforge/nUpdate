@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using nUpdate.Administration.UI.Dialogs;

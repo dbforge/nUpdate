@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Linq;
 using System.Text;
 
 namespace nUpdate.Administration.Core
@@ -9,12 +11,12 @@ namespace nUpdate.Administration.Core
 
         public static string FormatJson(string str)
         {
-            int indent = 0;
-            bool quoted = false;
+            var indent = 0;
+            var quoted = false;
             var sb = new StringBuilder();
-            for (int i = 0; i < str.Length; i++)
+            for (var i = 0; i < str.Length; i++)
             {
-                char ch = str[i];
+                var ch = str[i];
                 switch (ch)
                 {
                     case '{':
@@ -37,8 +39,8 @@ namespace nUpdate.Administration.Core
                         break;
                     case '"':
                         sb.Append(ch);
-                        bool escaped = false;
-                        int index = i;
+                        var escaped = false;
+                        var index = i;
                         while (index > 0 && str[--index] == '\\')
                         {
                             escaped = !escaped;

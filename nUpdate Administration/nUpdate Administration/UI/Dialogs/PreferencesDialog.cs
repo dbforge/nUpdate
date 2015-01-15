@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using nUpdate.Administration.Core;
@@ -10,13 +12,12 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PreferencesDialog : BaseDialog
     {
+        private CultureInfo[] _cultureInfos = {};
         private readonly List<string> _cultureNames = new List<string>();
 
         private readonly UpdateManager _manager =
             new UpdateManager(new Uri("http://www.nupdate.net/updates.json"), "NochNix",
                 new UpdateVersion("0.1.0.0"), new CultureInfo("en"));
-
-        private CultureInfo[] _cultureInfos = {};
 
         public PreferencesDialog()
         {
@@ -26,7 +27,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void PreferencesDialog_Load(object sender, EventArgs e)
         {
             _cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-            foreach (CultureInfo info in _cultureInfos)
+            foreach (var info in _cultureInfos)
             {
                 languagesComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
                 _cultureNames.Add(info.Name);
@@ -91,7 +92,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void editLanguageButton_Click(object sender, EventArgs e)
         {
             var lp = new LocalizationProperties();
-            string name =
+            var name =
                 new CultureInfo(
                     languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim()).Name;
 

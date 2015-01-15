@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
 {

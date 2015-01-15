@@ -1,8 +1,9 @@
-﻿namespace nUpdate.Core
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace nUpdate.Core
 {
     public class ConnectionChecker
     {
-        
         /// <summary>
         ///     Checks if an internet connection is available.
         /// </summary>

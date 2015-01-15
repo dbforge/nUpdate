@@ -1,6 +1,4 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
 
 using System;
 using System.IO;
@@ -9,7 +7,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
 {
     public class Operation
     {
-        public Operation(OperationArea area, OperationMethods method, object value, object value2 = null)
+        public Operation(OperationArea area, OperationMethod method, string value, object value2 = null)
         {
             Area = area;
             Method = method;
@@ -25,12 +23,12 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         /// <summary>
         ///     The method of the current oepration.
         /// </summary>
-        public OperationMethods Method { get; set; }
+        public OperationMethod Method { get; set; }
 
         /// <summary>
         ///     The value of the current operation.
         /// </summary>
-        public object Value { get; set; }
+        public string Value { get; set; }
 
         /// <summary>
         ///     The second value of the current operation if it needs more than one argument.
@@ -42,31 +40,31 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         /// </summary>
         /// <param name="areaTag">The tag to check.</param>
         /// <returns>Returns a new Tuple with the area and method for the given tag.</returns>
-        public static Tuple<OperationArea, OperationMethods> GetOperation(object areaTag)
+        public static Tuple<OperationArea, OperationMethod> GetOperation(object areaTag)
         {
-            string areaTagString = areaTag.ToString();
+            var areaTagString = areaTag.ToString();
             switch (areaTagString)
             {
                 case "DeleteFile":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Delete);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Delete);
                 case "RenameFile":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Files, OperationMethods.Rename);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Rename);
                 case "CreateRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Create);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Create);
                 case "DeleteRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.Delete);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Delete);
                 case "SetRegistryValue":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.SetValue);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.SetValue);
                 case "DeleteRegistryValue":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Registry, OperationMethods.DeleteValue);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.DeleteValue);
                 case "StartProcess":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Start);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Start);
                 case "TerminateProcess":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Processes, OperationMethods.Stop);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Stop);
                 case "StartService":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Services, OperationMethods.Start);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Start);
                 case "StopService":
-                    return new Tuple<OperationArea, OperationMethods>(OperationArea.Services, OperationMethods.Stop);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Stop);
             }
             return null;
         }
@@ -76,7 +74,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         /// </summary>
         /// <param name="operation">The operation to get the tag from.</param>
         /// <returns>
-        /// Returns the tag as a string.
+        ///     Returns the tag as a string.
         /// </returns>
         public static string GetOperationTag(Operation operation)
         {
@@ -85,38 +83,38 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                 case OperationArea.Files:
                     switch (operation.Method)
                     {
-                        case OperationMethods.Delete:
+                        case OperationMethod.Delete:
                             return "DeleteFile";
-                        case OperationMethods.Rename:
+                        case OperationMethod.Rename:
                             return "RenameFile";
                     }
                     break;
                 case OperationArea.Registry:
                     switch (operation.Method)
                     {
-                        case OperationMethods.Create:
+                        case OperationMethod.Create:
                             return "CreateRegistrySubKey";
-                        case OperationMethods.Delete:
+                        case OperationMethod.Delete:
                             return "DeleteRegistrySubKey";
-                        case OperationMethods.SetValue:
+                        case OperationMethod.SetValue:
                             return "SetRegistryValue";
                     }
                     break;
                 case OperationArea.Processes:
                     switch (operation.Method)
                     {
-                        case OperationMethods.Start:
+                        case OperationMethod.Start:
                             return "StartProcess";
-                        case OperationMethods.Stop:
+                        case OperationMethod.Stop:
                             return "TerminateProcess";
                     }
                     break;
                 case OperationArea.Services:
                     switch (operation.Method)
                     {
-                        case OperationMethods.Start:
+                        case OperationMethod.Start:
                             return "StartService";
-                        case OperationMethods.Stop:
+                        case OperationMethod.Stop:
                             return "StopService";
                     }
                     break;

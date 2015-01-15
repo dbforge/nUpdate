@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -10,7 +12,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Update;
@@ -18,6 +19,7 @@ using nUpdate.Administration.Core.Update.Operations;
 using nUpdate.Administration.Core.Update.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using Newtonsoft.Json.Linq;
 using Starksoft.Net.Ftp;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
@@ -25,6 +27,29 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PackageEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+        private bool _allowCancel = true;
+        private bool _configurationUploaded;
+        private string _existingVersion;
+        private List<UpdateConfiguration> _newConfiguration = new List<UpdateConfiguration>();
+        private string _newPackageDirectory;
+        private string _oldPackageDirectoryPath;
+        private UpdateConfiguration _packageConfiguration;
+
+        /// <summary>
+        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString FtpPassword = new SecureString();
+
+        /// <summary>
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString ProxyPassword = new SecureString();
+
+        /// <summary>
+        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString SqlPassword = new SecureString();
+
         private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry subkey", 14, 14)
         {
             Tag = "CreateRegistrySubKey"
@@ -52,7 +77,6 @@ namespace nUpdate.Administration.UI.Dialogs
         };
 
         private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
-
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
 
@@ -60,29 +84,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {Tag = "StopProcess"};
 
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
-
-        /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword = new SecureString();
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword = new SecureString();
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword = new SecureString();
-
-        private bool _allowCancel = true;
-        private bool _configurationUploaded;
-        private string _existingVersion;
-        private List<UpdateConfiguration> _newConfiguration = new List<UpdateConfiguration>();
-        private string _newPackageDirectory;
-        private string _oldPackageDirectoryPath;
-        private UpdateConfiguration _packageConfiguration;
 
         public PackageEditDialog()
         {
@@ -137,7 +138,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Directory.Move(_newPackageDirectory, _oldPackageDirectoryPath);
                 if (_configurationUploaded)
                 {
-                    string configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+                    var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
                     File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
                     _ftp.UploadFile(configurationFilePath);
                     _configurationUploaded = false;
@@ -229,17 +230,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 : 1;
             developmentBuildNumericUpDown.Enabled = (packageVersion.DevelopmentalStage != DevelopmentalStage.Release);
             mustUpdateCheckBox.Checked = _packageConfiguration.MustUpdate;
-            foreach (UpdatePackage package in Project.Packages.Where(package => package.Version == packageVersion))
+            foreach (var package in Project.Packages.Where(package => package.Version == packageVersion))
             {
                 descriptionTextBox.Text = package.Description;
             }
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
-            Array devStages = Enum.GetValues(typeof (DevelopmentalStage));
+            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
-            List<CultureInfo> cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
-            foreach (CultureInfo info in cultureInfos)
+            var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+            foreach (var info in cultureInfos)
             {
                 changelogLanguageComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
                 _cultures.Add(info);
@@ -256,7 +257,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     var page = new TabPage("Changelog")
                     {
                         BackColor = SystemColors.Window,
-                        Tag = culture,
+                        Tag = culture
                     };
                     page.Controls.Add(new ChangelogPanel {Changelog = changelogDictionaryEntry.Value});
                     changelogContentTabControl.TabPages.Add(page);
@@ -296,8 +297,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
                         deletePage.Controls.Add(new FileDeleteOperationPanel
                         {
-                            Path = operation.Value.ToString(),
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>()),
+                            Path = operation.Value,
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
                         });
                         categoryTabControl.TabPages.Add(deletePage);
                         break;
@@ -308,7 +309,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
                         renamePage.Controls.Add(new FileRenameOperationPanel
                         {
-                            Path = operation.Value.ToString(),
+                            Path = operation.Value,
                             NewName = operation.Value2.ToString()
                         });
                         categoryTabControl.TabPages.Add(renamePage);
@@ -323,8 +324,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         };
                         createRegistrySubKeyPage.Controls.Add(new RegistrySubKeyCreateOperationPanel
                         {
-                            KeyPath = operation.Value.ToString(),
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>()),
+                            KeyPath = operation.Value,
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
                         });
                         categoryTabControl.TabPages.Add(createRegistrySubKeyPage);
                         break;
@@ -338,8 +339,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         };
                         deleteRegistrySubKeyPage.Controls.Add(new RegistrySubKeyDeleteOperationPanel
                         {
-                            KeyPath = operation.Value.ToString(),
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>()),
+                            KeyPath = operation.Value,
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
                         });
                         categoryTabControl.TabPages.Add(deleteRegistrySubKeyPage);
                         break;
@@ -353,9 +354,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         };
                         setRegistryValuePage.Controls.Add(new RegistrySetValueOperationPanel
                         {
-                            KeyPath = operation.Value.ToString(),
+                            KeyPath = operation.Value,
                             NameValuePairs =
-                                ((JObject) operation.Value2).ToObject<List<Tuple<string, object, RegistryValueKind>>>(),
+                                ((JObject) operation.Value2).ToObject<List<Tuple<string, object, RegistryValueKind>>>()
                         });
                         categoryTabControl.TabPages.Add(setRegistryValuePage);
                         break;
@@ -369,8 +370,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         };
                         deleteRegistryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel
                         {
-                            KeyPath = operation.Value.ToString(),
-                            ItemList = ((JObject) operation.Value2).ToObject<BindingList<string>>(),
+                            KeyPath = operation.Value,
+                            ItemList = ((JObject) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(deleteRegistryValuePage);
                         break;
@@ -381,7 +382,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         var startProcessPage = new TabPage("Start process") {BackColor = SystemColors.Window};
                         startProcessPage.Controls.Add(new ProcessStartOperationPanel
                         {
-                            Path = operation.Value.ToString(),
+                            Path = operation.Value,
                             Arguments = ((JArray) operation.Value2).ToObject<string[]>()
                         });
                         categoryTabControl.TabPages.Add(startProcessPage);
@@ -393,7 +394,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         var terminateProcessPage = new TabPage("Terminate process") {BackColor = SystemColors.Window};
                         terminateProcessPage.Controls.Add(new ProcessStopOperationPanel
                         {
-                            ProcessName = operation.Value.ToString()
+                            ProcessName = operation.Value
                         });
                         categoryTabControl.TabPages.Add(terminateProcessPage);
                         break;
@@ -404,7 +405,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
                         startServicePage.Controls.Add(new ServiceStartOperationPanel
                         {
-                            ServiceName = operation.Value.ToString()
+                            ServiceName = operation.Value
                         });
                         categoryTabControl.TabPages.Add(startServicePage);
                         break;
@@ -415,7 +416,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                         stopServicePage.Controls.Add(new ServiceStopOperationPanel
                         {
-                            ServiceName = operation.Value.ToString()
+                            ServiceName = operation.Value
                         });
                         categoryTabControl.TabPages.Add(stopServicePage);
                         break;
@@ -475,7 +476,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {new CultureInfo("en"), englishChangelogTextBox.Text}
             };
             foreach (
-                TabPage tabPage in
+                var tabPage in
                     changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
             {
                 var panel = (ChangelogPanel) tabPage.Controls[0];
@@ -544,7 +545,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_existingVersion == _packageConfiguration.LiteralVersion)
             {
-                string configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
                 try
                 {
                     File.WriteAllText(configurationFilePath, Serializer.Serialize(_newConfiguration));
@@ -560,7 +561,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 _oldPackageDirectoryPath = Path.Combine(Program.Path, "Projects", Project.Name,
                     _existingVersion);
-                string configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
                 try
                 {
                     Directory.Move(_oldPackageDirectoryPath, _newPackageDirectory);
@@ -650,11 +651,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
         {
-            TreeNode nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
+            var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
             if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
                 return;
 
-            object data = e.Data.GetData(typeof (string));
+            var data = e.Data.GetData(typeof (string));
             if (data == null)
                 return;
 
@@ -774,7 +775,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 changelogContentTabControl.TabPages.Cast<TabPage>()
                     .Any(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex])))
             {
-                TabPage aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
+                var aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
                     .First(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex]));
                 changelogContentTabControl.SelectTab(aimPage);
             }

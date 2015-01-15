@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 
 namespace nUpdate.Administration.Core.Localization
 {
@@ -246,36 +248,33 @@ namespace nUpdate.Administration.Core.Localization
 
         // The title in the forms
         public string ProductTitle { get; set; }
-
         // The "Cancel"-button text
         public string CancelButtonText { get; set; }
-
         // The "Continue"-button text
         public string ContinueButtonText { get; set; }
-
         // The "Save"-button text
         public string SaveButtonText { get; set; }
-
         // The "Done"-button text
         public string DoneButtonText { get; set; }
-
         // The "Create package"-button text
         public string CreatePackageButtonText { get; set; }
-
         // The "Edit package"-button text
         public string EditPackageButtonText { get; set; }
-
         // The "Send"-button text
         public string SendButtonText { get; set; }
-
         // The "Save language"-button text
         public string SaveLanguageButtonText { get; set; }
-
         // The caption of an "Invalid argument"-error
         public string InvalidArgumentErrorCaption { get; set; }
-
         // The text of an "Invalid argument"-error
         public string InvalidArgumentErrorText { get; set; }
+
+        #region "JSONEditorDialog"
+
+        // The title of the JSONEditorDialog
+        public string JsonEditorDialogTitle { get; set; }
+
+        #endregion
 
         #region "CredentialsDialog"
 
@@ -390,13 +389,6 @@ namespace nUpdate.Administration.Core.Localization
 
         // The text of the "or have a look at..."-label
         public string InfoDialogOrHaveALookLabelText { get; set; }
-
-        #endregion
-
-        #region "JSONEditorDialog"
-
-        // The title of the JSONEditorDialog
-        public string JsonEditorDialogTitle { get; set; }
 
         #endregion
 

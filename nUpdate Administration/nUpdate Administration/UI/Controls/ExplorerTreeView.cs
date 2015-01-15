@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Win32;
@@ -71,18 +73,18 @@ namespace nUpdate.Administration.UI.Controls
                 case 15:
                 {
                     var paintStruct = new PaintStruct();
-                    IntPtr targetDc = NativeMethods.BeginPaint(message.HWnd, ref paintStruct);
+                    var targetDc = NativeMethods.BeginPaint(message.HWnd, ref paintStruct);
                     var rectangle = new Rectangle(paintStruct.rcPaint_left, paintStruct.rcPaint_top,
                         paintStruct.rcPaint_right - paintStruct.rcPaint_left,
                         paintStruct.rcPaint_bottom - paintStruct.rcPaint_top);
                     if ((rectangle.Width > 0) && (rectangle.Height > 0))
                     {
                         using (
-                            BufferedGraphics graphics = BufferedGraphicsManager.Current.Allocate(targetDc,
+                            var graphics = BufferedGraphicsManager.Current.Allocate(targetDc,
                                 ClientRectangle))
                         {
-                            IntPtr hdc = graphics.Graphics.GetHdc();
-                            Message m = Message.Create(Handle, 0x318, hdc, IntPtr.Zero);
+                            var hdc = graphics.Graphics.GetHdc();
+                            var m = Message.Create(Handle, 0x318, hdc, IntPtr.Zero);
                             DefWndProc(ref m);
                             graphics.Graphics.ReleaseHdc(hdc);
                             graphics.Render();
@@ -96,7 +98,7 @@ namespace nUpdate.Administration.UI.Controls
                     message.Result = (IntPtr) 1;
                     return;
 
-                    /*case 0x20:
+                /*case 0x20:
                 LinkLabel2.SetCursor(LinkLabel2.LoadCursor(0, 0x7f00));
                 message.Result = IntPtr.Zero;
                 return;*/
@@ -111,7 +113,7 @@ namespace nUpdate.Administration.UI.Controls
             {
                 ShowLines = false;
                 HotTracking = true;
-                IntPtr lParam = NativeMethods.SendMessage(Handle, 0x112d, new IntPtr(0), new IntPtr(0));
+                var lParam = NativeMethods.SendMessage(Handle, 0x112d, new IntPtr(0), new IntPtr(0));
                 NativeMethods.SendMessage(Handle, 0x112c, new IntPtr(0), lParam);
                 NativeMethods.SetWindowTheme(Handle, "explorer", null);
             }
@@ -122,8 +124,8 @@ namespace nUpdate.Administration.UI.Controls
         protected override void OnDragOver(DragEventArgs drgevent)
         {
             base.OnDragOver(drgevent);
-            Point pt = PointToClient(new Point(drgevent.X, drgevent.Y));
-            TreeNode nodeAt = GetNodeAt(pt);
+            var pt = PointToClient(new Point(drgevent.X, drgevent.Y));
+            var nodeAt = GetNodeAt(pt);
             if (nodeAt == null)
                 return;
 

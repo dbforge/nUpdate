@@ -1,10 +1,17 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class StatisticsServerEditDialog : BaseDialog
     {
+        public StatisticsServerEditDialog()
+        {
+            InitializeComponent();
+        }
+
         /// <summary>
         ///     The url of the SQL-host.
         /// </summary>
@@ -19,11 +26,6 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The username for the SQL-connection.
         /// </summary>
         public string Username { get; set; }
-
-        public StatisticsServerEditDialog()
-        {
-            InitializeComponent();
-        }
 
         private void StatisticsServerEditDialog_Load(object sender, EventArgs e)
         {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Net;
 using nUpdate.Administration.Core.Application.History;

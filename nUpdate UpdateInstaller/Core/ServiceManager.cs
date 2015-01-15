@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.ServiceProcess;
 
 namespace nUpdate.UpdateInstaller.Core
@@ -6,7 +8,7 @@ namespace nUpdate.UpdateInstaller.Core
     public class ServiceManager
     {
         /// <summary>
-        /// Starts a windows service with the given name. If the service is already running, it will be restarted.
+        ///     Starts a windows service with the given name. If the service is already running, it will be restarted.
         /// </summary>
         /// <param name="serviceName">The name of the service to start.</param>
         /// <param name="arguments">The arguments to handle over.</param>
@@ -19,13 +21,13 @@ namespace nUpdate.UpdateInstaller.Core
             }
             else
             {
-                TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
+                var timeout = TimeSpan.FromMilliseconds(5000);
 
                 if (arguments != null || arguments.Length != 0)
                     serviceController.Start(arguments);
                 else
                     serviceController.Start();
-                
+
                 serviceController.WaitForStatus(ServiceControllerStatus.Running, timeout);
             }
         }
@@ -37,13 +39,13 @@ namespace nUpdate.UpdateInstaller.Core
         public static void RestartService(string serviceName)
         {
             var serviceController = new ServiceController(serviceName);
-            int millisec1 = Environment.TickCount;
-            TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
+            var millisec1 = Environment.TickCount;
+            var timeout = TimeSpan.FromMilliseconds(5000);
 
             serviceController.Stop();
             serviceController.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
 
-            int millisec2 = Environment.TickCount;
+            var millisec2 = Environment.TickCount;
             timeout = TimeSpan.FromMilliseconds(5000 - (millisec2 - millisec1));
 
             serviceController.Start();
@@ -57,7 +59,7 @@ namespace nUpdate.UpdateInstaller.Core
         public static void StopService(string serviceName)
         {
             var serviceController = new ServiceController(serviceName);
-            TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
+            var timeout = TimeSpan.FromMilliseconds(5000);
 
             serviceController.Stop();
             serviceController.WaitForStatus(ServiceControllerStatus.Stopped, timeout);

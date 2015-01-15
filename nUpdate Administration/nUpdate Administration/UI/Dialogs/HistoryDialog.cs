@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Project.Log == null) return;
             if (Project.Log.Count == 0) return;
-            foreach (Log logEntry in Project.Log)
+            foreach (var logEntry in Project.Log)
             {
                 var item = new ActionListItem
                 {

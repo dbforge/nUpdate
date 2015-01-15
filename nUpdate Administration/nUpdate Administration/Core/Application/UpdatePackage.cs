@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using nUpdate.Administration.Core.Update;
 
 namespace nUpdate.Administration.Core.Application

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Linq;
 using Microsoft.Win32;
 
@@ -10,7 +12,7 @@ namespace nUpdate.UpdateInstaller.Core
         ///     Gets the name of the root key relating to the given name.
         /// </summary>
         /// <param name="name">The name of the root key.</param>
-        /// <returns>Returns a new <see cref="RegistryKey"/>-instance of the found relating key.</returns>
+        /// <returns>Returns a new <see cref="RegistryKey" />-instance of the found relating key.</returns>
         private static RegistryKey GetRootKeyByName(string name)
         {
             switch (name)

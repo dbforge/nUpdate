@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,16 +13,16 @@ namespace nUpdate.Administration.Core
 {
     public class FtpManager : IDisposable
     {
-        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
+        private bool _disposed;
+        private bool _hasAlreadyFixedStrings;
+        private FtpClient _packageFtpClient;
 
         /// <summary>
         ///     Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles" />-method.
         /// </summary>
         public IEnumerable<FtpItem> ListedFtpItems;
 
-        private bool _disposed;
-        private bool _hasAlreadyFixedStrings;
-        private FtpClient _packageFtpClient;
+        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
 
         /// <summary>
         ///     Returns the adress that was created by the <see cref="FtpManager" />-class during the call of the last function.
@@ -90,14 +92,14 @@ namespace nUpdate.Administration.Core
 
         protected internal void OnProgressChanged(TransferProgressEventArgs e)
         {
-            EventHandler<TransferProgressEventArgs> handler = ProgressChanged;
+            var handler = ProgressChanged;
             if (handler != null)
                 handler(this, e);
         }
 
         protected internal void OnCancellationFinished(object sender, EventArgs e)
         {
-            EventHandler<EventArgs> handler = CancellationFinished;
+            var handler = CancellationFinished;
             if (handler != null)
                 handler(this, e);
         }
@@ -274,13 +276,13 @@ namespace nUpdate.Administration.Core
                         DeleteDirectory(item.FullPath);
                     }
                     else if (item.ItemType == FtpItemType.File &&
-                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split(new[] {'.'})[0], out guid)))
+                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
                         // Second condition determines whether the item is a package-file or not
                     {
                         // "MoveFile"-method damages the files, so we do it manually with a work-around
                         //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
 
-                        string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
+                        var localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
                         ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
                         ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name), FileAction.Create);
                         File.Delete(localFilePath);
@@ -355,7 +357,7 @@ namespace nUpdate.Administration.Core
             _packageFtpClient = new FtpClient(Host, Port, Protocol)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary,
+                FileTransferType = TransferType.Binary
             };
             _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
             _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;

@@ -1,7 +1,8 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Runtime.Remoting.Messaging;
 
 namespace nUpdate.Core
 {
@@ -13,7 +14,11 @@ namespace nUpdate.Core
         /// <returns>Returns the found mac address.</returns>
         public static string GetMacAddress()
         {
-            return NetworkInterface.GetAllNetworkInterfaces().Where(nic => nic.OperationalStatus == OperationalStatus.Up).Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
+            return
+                NetworkInterface.GetAllNetworkInterfaces()
+                    .Where(nic => nic.OperationalStatus == OperationalStatus.Up)
+                    .Select(nic => nic.GetPhysicalAddress().ToString())
+                    .FirstOrDefault();
         }
 
         /// <summary>

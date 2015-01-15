@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -21,7 +23,7 @@ namespace nUpdate.Administration.UI.Popups
                 Title = title,
                 InfoMessage = infoMessage,
                 Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterParent
             };
 
             return popupWindow.ShowDialog();
@@ -43,7 +45,7 @@ namespace nUpdate.Administration.UI.Popups
                 InfoMessage = ex.Message,
                 Buttons = buttons,
                 StartPosition = FormStartPosition.CenterParent,
-                Exception = ex,
+                Exception = ex
             };
 
             return popupWindow.ShowDialog();
@@ -66,7 +68,7 @@ namespace nUpdate.Administration.UI.Popups
                 Title = title,
                 InfoMessage = infoMessage,
                 Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterParent
             };
 
             return popupWindow.ShowDialog(owner);
@@ -90,7 +92,7 @@ namespace nUpdate.Administration.UI.Popups
                 InfoMessage = exception.Message,
                 StartPosition = FormStartPosition.CenterParent,
                 Buttons = buttons,
-                Exception = exception,
+                Exception = exception
             };
 
             return popupWindow.ShowDialog();

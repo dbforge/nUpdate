@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using nUpdate.Core;
@@ -24,7 +26,7 @@ namespace nUpdate.Internal
             if (!IsValid(version))
                 throw new ArgumentException("The specified version is not valid.");
 
-            string[] versionParts = version.Split(new[] { '.' });
+            var versionParts = version.Split('.');
 
             Major = int.Parse(versionParts[0]);
             Minor = int.Parse(versionParts[1]);
@@ -34,14 +36,14 @@ namespace nUpdate.Internal
             if (versionParts[3].Contains("a"))
             {
                 DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split(new[] { 'a' });
+                parts = versionParts[3].Split('a');
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
             else if (versionParts[3].Contains("b"))
             {
                 DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split(new[] { 'b' });
+                parts = versionParts[3].Split('b');
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
@@ -160,7 +162,9 @@ namespace nUpdate.Internal
         {
             get
             {
-                return DevelopmentalStage != DevelopmentalStage.Release ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild) : BasicVersion;
+                return DevelopmentalStage != DevelopmentalStage.Release
+                    ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild)
+                    : BasicVersion;
             }
         }
 
@@ -175,7 +179,7 @@ namespace nUpdate.Internal
         // Overwritten Instance Methods
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         public override string ToString()
         {
@@ -188,14 +192,14 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///     Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
-            int accumulator = 0;
+            var accumulator = 0;
 
             accumulator |= (Major & 0x0000000F) << 28;
             accumulator |= (Minor & 0x000000FF) << 20;
@@ -206,26 +210,26 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        ///     Determines whether the specified <see cref="System.Object" />, is equal to this instance.
         /// </summary>
         /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
         /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
+            return obj.GetType() == typeof (UpdateVersion) && ToString() == obj.ToString();
         }
 
         // Operators
 
         /// <summary>
-        /// Implements the operator &gt;.
+        ///     Implements the operator &gt;.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator >(UpdateVersion left, UpdateVersion right)
         {
@@ -258,12 +262,12 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Implements the operator &lt;.
+        ///     Implements the operator &lt;.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator <(UpdateVersion left, UpdateVersion right)
         {
@@ -296,12 +300,12 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Implements the operator &lt;=.
+        ///     Implements the operator &lt;=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator <=(UpdateVersion left, UpdateVersion right)
         {
@@ -336,12 +340,12 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Implements the operator &gt;=.
+        ///     Implements the operator &gt;=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator >=(UpdateVersion left, UpdateVersion right)
         {
@@ -376,12 +380,12 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Implements the operator ==.
+        ///     Implements the operator ==.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator ==(UpdateVersion left, UpdateVersion right)
         {
@@ -389,12 +393,12 @@ namespace nUpdate.Internal
         }
 
         /// <summary>
-        /// Implements the operator !=.
+        ///     Implements the operator !=.
         /// </summary>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>
-        /// The result of the operator.
+        ///     The result of the operator.
         /// </returns>
         public static bool operator !=(UpdateVersion left, UpdateVersion right)
         {
@@ -409,7 +413,7 @@ namespace nUpdate.Internal
         public static UpdateVersion GetHighestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
         {
             var newestVersion = new UpdateVersion();
-            foreach (UpdateVersion i in updateVersions)
+            foreach (var i in updateVersions)
             {
                 if (i > newestVersion)
                     newestVersion = i;
@@ -417,7 +421,6 @@ namespace nUpdate.Internal
 
             return newestVersion;
         }
-
 
         /// <summary>
         ///     Determines whether the specified update version is valid.

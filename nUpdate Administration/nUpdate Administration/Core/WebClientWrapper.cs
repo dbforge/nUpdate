@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Net;
 
 namespace nUpdate.Administration.Core
@@ -28,7 +30,7 @@ namespace nUpdate.Administration.Core
 
         protected override WebRequest GetWebRequest(Uri address)
         {
-            WebRequest request = base.GetWebRequest(address);
+            var request = base.GetWebRequest(address);
             if (request != null)
                 request.Timeout = Timeout;
             return request;

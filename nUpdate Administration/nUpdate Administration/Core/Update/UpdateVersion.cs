@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -23,7 +25,7 @@ namespace nUpdate.Administration.Core.Update
             if (!IsValid(version))
                 throw new ArgumentException("The specified version is not valid.");
 
-            string[] versionParts = version.Split(new[] {'.'});
+            var versionParts = version.Split('.');
 
             Major = int.Parse(versionParts[0]);
             Minor = int.Parse(versionParts[1]);
@@ -33,14 +35,14 @@ namespace nUpdate.Administration.Core.Update
             if (versionParts[3].Contains("a"))
             {
                 DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split(new[] {'a'});
+                parts = versionParts[3].Split('a');
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
             else if (versionParts[3].Contains("b"))
             {
                 DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split(new[] {'b'});
+                parts = versionParts[3].Split('b');
                 Revision = int.Parse(parts[0]);
                 DevelopmentBuild = int.Parse(parts[1]);
             }
@@ -196,7 +198,7 @@ namespace nUpdate.Administration.Core.Update
         /// </returns>
         public override int GetHashCode()
         {
-            int accumulator = 0;
+            var accumulator = 0;
 
             accumulator |= (Major & 0x0000000F) << 28;
             accumulator |= (Minor & 0x000000FF) << 20;
@@ -410,7 +412,7 @@ namespace nUpdate.Administration.Core.Update
         public static UpdateVersion GetHighestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
         {
             var newestVersion = new UpdateVersion();
-            foreach (UpdateVersion i in updateVersions)
+            foreach (var i in updateVersions)
             {
                 if (i > newestVersion)
                     newestVersion = i;
@@ -418,7 +420,6 @@ namespace nUpdate.Administration.Core.Update
 
             return newestVersion;
         }
-
 
         /// <summary>
         ///     Determines whether the specified update version is valid.

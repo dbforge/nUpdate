@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
 using System.IO;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace nUpdate.Core
 {

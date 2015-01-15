@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace ExplorerNavigationButton

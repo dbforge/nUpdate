@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
@@ -36,8 +38,8 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                     _dataSet = true;
                 }
 
-                extractProgressBar.Value = (int)percentage;
-                updateLabel.Text = String.Format("{0} {1}... ", "Updating", currentFile);
+                extractProgressBar.Value = (int) percentage;
+                updateLabel.Text = String.Format("{0} {1} ", "Updating", currentFile); // Hardcoded string because it serves as a plcaholder until the localiazation appear.
                 percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
@@ -47,7 +49,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(new Action(() =>
             {
                 extractProgressBar.Value += 1;
-                updateLabel.Text = String.Format("{0}...", currentOperation);
+                updateLabel.Text = String.Format("{0}", currentOperation);
                 percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
@@ -60,7 +62,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                     () =>
                         result =
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.",
-                                String.Format("{0}. Should the updating be cancelled?", ex), 
+                                String.Format("{0}. Should the updating be cancelled?", ex),
                                 PopupButtons.YesNo)));
             return result == DialogResult.Yes;
         }

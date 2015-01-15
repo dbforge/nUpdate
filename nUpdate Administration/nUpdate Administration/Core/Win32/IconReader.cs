@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -25,7 +27,7 @@ namespace nUpdate.Administration.Core.Win32
                 NativeMethods.ShGetFileInfoFlags.UseFileAttributes |
                 NativeMethods.ShGetFileInfoFlags.SmallIcon;
 
-            IntPtr hIcon = IntPtr.Zero;
+            var hIcon = IntPtr.Zero;
 
             try
             {

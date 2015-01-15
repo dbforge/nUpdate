@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -28,6 +30,36 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PackageAddDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+        private bool _allowCancel = true;
+        private int _architectureIndex = 2;
+        private Uri _configurationFileUrl;
+        private DevelopmentalStage _developmentalStage;
+        private bool _includeIntoStatistics;
+        private MySqlConnection _insertConnection;
+        private bool _mustUpdate;
+        private bool _nodeInitializingFailed;
+        private string _packageFolder;
+        private bool _packageUploaded;
+        private UpdateVersion _packageVersion;
+        private bool _publishUpdate;
+        private string _updateConfigFile;
+        private bool _uploadCancelled;
+
+        /// <summary>
+        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString FtpPassword = new SecureString();
+
+        /// <summary>
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString ProxyPassword = new SecureString();
+
+        /// <summary>
+        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString SqlPassword = new SecureString();
+
         private readonly UpdateConfiguration _configuration = new UpdateConfiguration();
 
         private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry sub key", 14, 14)
@@ -66,146 +98,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly Log _updateLog = new Log();
         private readonly ZipFile _zip = new ZipFile();
 
-        /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword = new SecureString();
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword = new SecureString();
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword = new SecureString();
-
-        private bool _allowCancel = true;
-        private int _architectureIndex = 2;
-        private Uri _configurationFileUrl;
-        private DevelopmentalStage _developmentalStage;
-        private bool _includeIntoStatistics;
-        private MySqlConnection _insertConnection;
-        private bool _mustUpdate;
-        private bool _nodeInitializingFailed;
-
-        private string _packageFolder;
-        private bool _packageUploaded;
-        private UpdateVersion _packageVersion;
-        private bool _publishUpdate;
-        private string _updateConfigFile;
-        private bool _uploadCancelled;
-
-        #region "Localization"
-
-        //private string configDownloadErrorCaption;
-        //private string creatingPackageDataErrorCaption;
-        //private string ftpDataLoadErrorCaption;
-        //private string gettingUrlErrorCaption;
-        //private string initializingArchiveInfoText;
-        //private string initializingConfigInfoText;
-        //private string invalidArgumentCaption;
-        //private string invalidArgumentText;
-        //private string invalidServerDirectoryErrorCaption;
-        //private string invalidServerDirectoryErrorText;
-        //private string invalidVersionCaption;
-        //private string invalidVersionText;
-        //private string loadingProjectDataErrorCaption;
-        //private string noChangelogCaption;
-        //private string noChangelogText;
-        //private string noFilesCaption;
-        //private string noFilesText;
-        //private string noNetworkCaption;
-        //private string noNetworkText;
-        //private string preparingUpdateInfoText;
-        //private string readingPackageBytesErrorCaption;
-        //private string relativeUriErrorText;
-        //private string savingInformationErrorCaption;
-        //private string serializingDataErrorCaption;
-        //private string signingPackageInfoText;
-        //private string unsupportedArchiveCaption;
-        //private string unsupportedArchiveText;
-        //private string uploadFailedErrorCaption;
-        //private string uploadingConfigInfoText;
-        //private string uploadingPackageInfoText;
-
-        //private void SetLanguage()
-        //{
-        //    //string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-        //    //    String.Format("{0}.json", Settings.Default.Language.Name));
-        //    //var ls = new LocalizationProperties();
-        //    //if (File.Exists(languageFilePath))
-        //    //    ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-        //    //else
-        //    //{
-        //    //    string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-        //    //    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-        //    //    {
-        //    //        ls = Serializer.Deserialize<LocalizationProperties>(stream);
-        //    //    }
-        //    //}
-
-        //    //noNetworkCaption = ls.PackageAddDialogNoInternetWarningCaption;
-        //    //noNetworkText = ls.PackageAddDialogNoInternetWarningText;
-        //    //noFilesCaption = ls.PackageAddDialogNoFilesSpecifiedWarningCaption;
-        //    //noFilesText = ls.PackageAddDialogNoFilesSpecifiedWarningText;
-        //    //unsupportedArchiveCaption = ls.PackageAddDialogUnsupportedArchiveWarningCaption;
-        //    //unsupportedArchiveText = ls.PackageAddDialogUnsupportedArchiveWarningText;
-        //    //invalidVersionCaption = ls.PackageAddDialogVersionInvalidWarningCaption;
-        //    //invalidVersionText = ls.PackageAddDialogVersionInvalidWarningText;
-        //    //noChangelogCaption = ls.PackageAddDialogNoChangelogWarningCaption;
-        //    //noChangelogText = ls.PackageAddDialogNoChangelogWarningText;
-        //    //invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
-        //    //invalidArgumentText = ls.InvalidArgumentErrorText;
-        //    //creatingPackageDataErrorCaption = ls.PackageAddDialogPackageDataCreationErrorCaption;
-        //    //loadingProjectDataErrorCaption = ls.PackageAddDialogProjectDataLoadingErrorCaption;
-        //    //gettingUrlErrorCaption = ls.PackageAddDialogGettingUrlErrorCaption;
-        //    //readingPackageBytesErrorCaption = ls.PackageAddDialogReadingPackageBytesErrorCaption;
-        //    //invalidServerDirectoryErrorCaption = ls.PackageAddDialogInvalidServerDirectoryErrorCaption;
-        //    //invalidServerDirectoryErrorText = ls.PackageAddDialogInvalidServerDirectoryErrorText;
-        //    //ftpDataLoadErrorCaption = ls.PackageAddDialogLoadingFtpDataErrorCaption;
-        //    //configDownloadErrorCaption = ls.PackageAddDialogConfigurationDownloadErrorCaption;
-        //    //serializingDataErrorCaption = ls.PackageAddDialogSerializingDataErrorCaption;
-        //    //relativeUriErrorText = ls.PackageAddDialogRelativeUriErrorText;
-        //    //savingInformationErrorCaption = ls.PackageAddDialogPackageInformationSavingErrorCaption;
-        //    //uploadFailedErrorCaption = ls.PackageAddDialogUploadFailedErrorCaption;
-
-        //    //initializingArchiveInfoText = ls.PackageAddDialogArchiveInitializerInfoText;
-        //    //preparingUpdateInfoText = ls.PackageAddDialogPrepareInfoText;
-        //    //signingPackageInfoText = ls.PackageAddDialogSigningInfoText;
-        //    //initializingConfigInfoText = ls.PackageAddDialogConfigInitializerInfoText;
-        //    //uploadingPackageInfoText = ls.PackageAddDialogUploadingPackageInfoText;
-        //    //uploadingConfigInfoText = ls.PackageAddDialogUploadingConfigInfoText;
-
-        //    //Text = String.Format(ls.PackageAddDialogTitle, Project.Name, ls.ProductTitle);
-        //    //cancelButton.Text = ls.CancelButtonText;
-        //    //createButton.Text = ls.CreatePackageButtonText;
-
-        //    //devStageLabel.Text = ls.PackageAddDialogDevelopmentalStageLabelText;
-        //    //versionLabel.Text = ls.PackageAddDialogVersionLabelText;
-        //    //descriptionLabel.Text = ls.PackageAddDialogDescriptionLabelText;
-        //    //publishCheckBox.Text = ls.PackageAddDialogPublishCheckBoxText;
-        //    //publishInfoLabel.Text = ls.PackageAddDialogPublishInfoLabelText;
-        //    //environmentLabel.Text = ls.PackageAddDialogEnvironmentLabelText;
-        //    //architectureInfoLabel.Text = ls.PackageAddDialogEnvironmentInfoLabelText;
-
-        //    //changelogLoadButton.Text = ls.PackageAddDialogLoadButtonText;
-        //    //changelogClearButton.Text = ls.PackageAddDialogClearButtonText;
-
-        //    //addFilesButton.Text = ls.PackageAddDialogAddFileButtonText;
-        //    //removeEntryButton.Text = ls.PackageAddDialogRemoveFileButtonText;
-        //    //filesList.Columns[0].Text = ls.PackageAddDialogNameHeaderText;
-        //    //filesList.Columns[1].Text = ls.PackageAddDialogSizeHeaderText;
-
-        //    //allVersionsRadioButton.Text = ls.PackageAddDialogAvailableForAllRadioButtonText;
-        //    //someVersionsRadioButton.Text = ls.PackageAddDialogAvailableForSomeRadioButtonText;
-        //    //allVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForAllInfoText;
-        //    //someVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForSomeInfoText;
-        //}
-
-        #endregion
-
         public PackageAddDialog()
         {
             InitializeComponent();
@@ -227,7 +119,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             Invoke(new Action(() =>
             {
-                foreach (Control c in from Control c in Controls where c.Visible select c)
+                foreach (var c in from Control c in Controls where c.Visible select c)
                 {
                     c.Enabled = enabled;
                 }
@@ -346,11 +238,11 @@ namespace nUpdate.Administration.UI.Dialogs
             categoryTreeView.Nodes[3].Toggle();
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
-            Array devStages = Enum.GetValues(typeof (DevelopmentalStage));
+            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
-            List<CultureInfo> cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
-            foreach (CultureInfo info in cultureInfos)
+            var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+            foreach (var info in cultureInfos)
             {
                 changelogLanguageComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
                 _cultures.Add(info);
@@ -375,8 +267,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
             {
-                Assembly projectAssembly = Assembly.LoadFile(Project.AssemblyVersionPath);
-                FileVersionInfo info = FileVersionInfo.GetVersionInfo(projectAssembly.Location);
+                var projectAssembly = Assembly.LoadFile(Project.AssemblyVersionPath);
+                var info = FileVersionInfo.GetVersionInfo(projectAssembly.Location);
                 var assemblyVersion = new UpdateVersion(info.FileVersion);
 
                 majorNumericUpDown.Value = assemblyVersion.Major;
@@ -471,10 +363,10 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             foreach (TreeNode node in treeNode.Nodes)
             {
-                bool isDirectory = false;
+                var isDirectory = false;
                 if (node.Tag != null)
                 {
-                    FileAttributes attributes = File.GetAttributes(node.Tag.ToString());
+                    var attributes = File.GetAttributes(node.Tag.ToString());
                     if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
                         isDirectory = true;
                 }
@@ -485,7 +377,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 if (isDirectory)
                 {
-                    string tmpDir = string.Format("{0}/{1}", currentDirectory, node.Text);
+                    var tmpDir = string.Format("{0}/{1}", currentDirectory, node.Text);
                     try
                     {
                         _zip.AddDirectoryByName(tmpDir);
@@ -493,7 +385,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     catch (ArgumentException)
                     {
-                        TreeNode nodePlaceHolder = node;
+                        var nodePlaceHolder = node;
                         Invoke(
                             new Action(
                                 () =>
@@ -511,7 +403,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     catch (ArgumentException)
                     {
-                        TreeNode nodePlaceHolder = node;
+                        var nodePlaceHolder = node;
                         Invoke(
                             new Action(
                                 () =>
@@ -570,7 +462,7 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeArchiveContents(filesDataTreeView.Nodes[2], "Temp");
             InitializeArchiveContents(filesDataTreeView.Nodes[3], "Desktop");
 
-            string packageFile = String.Format("{0}.zip", Project.Guid);
+            var packageFile = String.Format("{0}.zip", Project.Guid);
             _zip.Save(Path.Combine(_packageFolder, packageFile));
 
             _updateLog.Write(LogEntry.Create, _packageVersion.ToString());
@@ -589,7 +481,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             var changelog = new Dictionary<CultureInfo, string> {{new CultureInfo("en"), englishChangelogTextBox.Text}};
             foreach (
-                TabPage tabPage in
+                var tabPage in
                     changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
             {
                 var panel = (ChangelogPanel) tabPage.Controls[0];
@@ -705,10 +597,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     try
                     {
-                        string connectionString = String.Format("SERVER={0};" +
-                                                                "DATABASE={1};" +
-                                                                "UID={2};" +
-                                                                "PASSWORD={3};",
+                        var connectionString = String.Format("SERVER={0};" +
+                                                             "DATABASE={1};" +
+                                                             "UID={2};" +
+                                                             "PASSWORD={3};",
                             Project.SqlWebUrl, Project.SqlDatabaseName,
                             Project.SqlUsername,
                             SqlPassword.ConvertToUnsecureString());
@@ -739,11 +631,11 @@ namespace nUpdate.Administration.UI.Dialogs
                         return;
                     }
 
-                    MySqlCommand command = _insertConnection.CreateCommand();
+                    var command = _insertConnection.CreateCommand();
                     command.CommandText =
                         String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
                             _packageVersion, Project.ApplicationId);
-                        // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
+                    // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
 
                     try
                     {
@@ -944,7 +836,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var directoryNode = new TreeNode(directoryInfo.Name, 0, 0) {Tag = directoryInfo.FullName};
             try
             {
-                foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+                foreach (var directory in directoryInfo.GetDirectories())
                 {
                     if (_nodeInitializingFailed)
                     {
@@ -968,7 +860,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     TreeNode fileNode;
                     if (filesImageList.Images.ContainsKey(file.Extension))
                     {
-                        int index = filesImageList.Images.IndexOfKey(file.Extension);
+                        var index = filesImageList.Images.IndexOfKey(file.Extension);
                         fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
                     }
                     else
@@ -976,8 +868,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         var icon = IconReader.GetFileIcon(file.Extension);
                         if (icon != null)
                         {
-                            int index = 0;
-                            FileInfo file1 = file;
+                            var index = 0;
+                            var file1 = file;
                             Invoke(new Action(() =>
                             {
                                 filesImageList.Images.Add(file1.Extension, icon.ToBitmap());
@@ -1042,7 +934,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     var fileInfo = new FileInfo(fileName);
                     if (filesImageList.Images.ContainsKey(fileInfo.Extension))
                     {
-                        int index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
+                        var index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
                         fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
                     }
                     else
@@ -1051,7 +943,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         if (icon != null)
                         {
                             filesImageList.Images.Add(fileInfo.Extension, icon.ToBitmap());
-                            int index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
+                            var index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
                             fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
                         }
                         else
@@ -1150,7 +1042,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 changelogContentTabControl.TabPages.Cast<TabPage>()
                     .Any(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex])))
             {
-                TabPage aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
+                var aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
                     .First(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex]));
                 changelogContentTabControl.SelectTab(aimPage);
             }
@@ -1214,11 +1106,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
         {
-            TreeNode nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
+            var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
             if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
                 return;
 
-            object data = e.Data.GetData(typeof (string));
+            var data = e.Data.GetData(typeof (string));
             if (data == null)
                 return;
 
@@ -1528,5 +1420,114 @@ namespace nUpdate.Administration.UI.Dialogs
             var updatingInfoDialog = new UpdatingInfoDialog();
             updatingInfoDialog.ShowDialog();
         }
+
+        #region "Localization"
+
+        //private string configDownloadErrorCaption;
+        //private string creatingPackageDataErrorCaption;
+        //private string ftpDataLoadErrorCaption;
+        //private string gettingUrlErrorCaption;
+        //private string initializingArchiveInfoText;
+        //private string initializingConfigInfoText;
+        //private string invalidArgumentCaption;
+        //private string invalidArgumentText;
+        //private string invalidServerDirectoryErrorCaption;
+        //private string invalidServerDirectoryErrorText;
+        //private string invalidVersionCaption;
+        //private string invalidVersionText;
+        //private string loadingProjectDataErrorCaption;
+        //private string noChangelogCaption;
+        //private string noChangelogText;
+        //private string noFilesCaption;
+        //private string noFilesText;
+        //private string noNetworkCaption;
+        //private string noNetworkText;
+        //private string preparingUpdateInfoText;
+        //private string readingPackageBytesErrorCaption;
+        //private string relativeUriErrorText;
+        //private string savingInformationErrorCaption;
+        //private string serializingDataErrorCaption;
+        //private string signingPackageInfoText;
+        //private string unsupportedArchiveCaption;
+        //private string unsupportedArchiveText;
+        //private string uploadFailedErrorCaption;
+        //private string uploadingConfigInfoText;
+        //private string uploadingPackageInfoText;
+
+        //private void SetLanguage()
+        //{
+        //    //string languageFilePath = Path.Combine(Program.LanguagesDirectory,
+        //    //    String.Format("{0}.json", Settings.Default.Language.Name));
+        //    //var ls = new LocalizationProperties();
+        //    //if (File.Exists(languageFilePath))
+        //    //    ls = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+        //    //else
+        //    //{
+        //    //    string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
+        //    //    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        //    //    {
+        //    //        ls = Serializer.Deserialize<LocalizationProperties>(stream);
+        //    //    }
+        //    //}
+
+        //    //noNetworkCaption = ls.PackageAddDialogNoInternetWarningCaption;
+        //    //noNetworkText = ls.PackageAddDialogNoInternetWarningText;
+        //    //noFilesCaption = ls.PackageAddDialogNoFilesSpecifiedWarningCaption;
+        //    //noFilesText = ls.PackageAddDialogNoFilesSpecifiedWarningText;
+        //    //unsupportedArchiveCaption = ls.PackageAddDialogUnsupportedArchiveWarningCaption;
+        //    //unsupportedArchiveText = ls.PackageAddDialogUnsupportedArchiveWarningText;
+        //    //invalidVersionCaption = ls.PackageAddDialogVersionInvalidWarningCaption;
+        //    //invalidVersionText = ls.PackageAddDialogVersionInvalidWarningText;
+        //    //noChangelogCaption = ls.PackageAddDialogNoChangelogWarningCaption;
+        //    //noChangelogText = ls.PackageAddDialogNoChangelogWarningText;
+        //    //invalidArgumentCaption = ls.InvalidArgumentErrorCaption;
+        //    //invalidArgumentText = ls.InvalidArgumentErrorText;
+        //    //creatingPackageDataErrorCaption = ls.PackageAddDialogPackageDataCreationErrorCaption;
+        //    //loadingProjectDataErrorCaption = ls.PackageAddDialogProjectDataLoadingErrorCaption;
+        //    //gettingUrlErrorCaption = ls.PackageAddDialogGettingUrlErrorCaption;
+        //    //readingPackageBytesErrorCaption = ls.PackageAddDialogReadingPackageBytesErrorCaption;
+        //    //invalidServerDirectoryErrorCaption = ls.PackageAddDialogInvalidServerDirectoryErrorCaption;
+        //    //invalidServerDirectoryErrorText = ls.PackageAddDialogInvalidServerDirectoryErrorText;
+        //    //ftpDataLoadErrorCaption = ls.PackageAddDialogLoadingFtpDataErrorCaption;
+        //    //configDownloadErrorCaption = ls.PackageAddDialogConfigurationDownloadErrorCaption;
+        //    //serializingDataErrorCaption = ls.PackageAddDialogSerializingDataErrorCaption;
+        //    //relativeUriErrorText = ls.PackageAddDialogRelativeUriErrorText;
+        //    //savingInformationErrorCaption = ls.PackageAddDialogPackageInformationSavingErrorCaption;
+        //    //uploadFailedErrorCaption = ls.PackageAddDialogUploadFailedErrorCaption;
+
+        //    //initializingArchiveInfoText = ls.PackageAddDialogArchiveInitializerInfoText;
+        //    //preparingUpdateInfoText = ls.PackageAddDialogPrepareInfoText;
+        //    //signingPackageInfoText = ls.PackageAddDialogSigningInfoText;
+        //    //initializingConfigInfoText = ls.PackageAddDialogConfigInitializerInfoText;
+        //    //uploadingPackageInfoText = ls.PackageAddDialogUploadingPackageInfoText;
+        //    //uploadingConfigInfoText = ls.PackageAddDialogUploadingConfigInfoText;
+
+        //    //Text = String.Format(ls.PackageAddDialogTitle, Project.Name, ls.ProductTitle);
+        //    //cancelButton.Text = ls.CancelButtonText;
+        //    //createButton.Text = ls.CreatePackageButtonText;
+
+        //    //devStageLabel.Text = ls.PackageAddDialogDevelopmentalStageLabelText;
+        //    //versionLabel.Text = ls.PackageAddDialogVersionLabelText;
+        //    //descriptionLabel.Text = ls.PackageAddDialogDescriptionLabelText;
+        //    //publishCheckBox.Text = ls.PackageAddDialogPublishCheckBoxText;
+        //    //publishInfoLabel.Text = ls.PackageAddDialogPublishInfoLabelText;
+        //    //environmentLabel.Text = ls.PackageAddDialogEnvironmentLabelText;
+        //    //architectureInfoLabel.Text = ls.PackageAddDialogEnvironmentInfoLabelText;
+
+        //    //changelogLoadButton.Text = ls.PackageAddDialogLoadButtonText;
+        //    //changelogClearButton.Text = ls.PackageAddDialogClearButtonText;
+
+        //    //addFilesButton.Text = ls.PackageAddDialogAddFileButtonText;
+        //    //removeEntryButton.Text = ls.PackageAddDialogRemoveFileButtonText;
+        //    //filesList.Columns[0].Text = ls.PackageAddDialogNameHeaderText;
+        //    //filesList.Columns[1].Text = ls.PackageAddDialogSizeHeaderText;
+
+        //    //allVersionsRadioButton.Text = ls.PackageAddDialogAvailableForAllRadioButtonText;
+        //    //someVersionsRadioButton.Text = ls.PackageAddDialogAvailableForSomeRadioButtonText;
+        //    //allVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForAllInfoText;
+        //    //someVersionsInfoLabel.Text = ls.PackageAddDialogAvailableForSomeInfoText;
+        //}
+
+        #endregion
     }
 }

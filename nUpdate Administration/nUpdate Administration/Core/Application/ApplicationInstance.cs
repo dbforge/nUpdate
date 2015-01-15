@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.IO;
 
 namespace nUpdate.Administration.Core.Application
 {
@@ -21,7 +23,7 @@ namespace nUpdate.Administration.Core.Application
         /// <param name="project">The project to save.</param>
         public static void SaveProject(string path, UpdateProject project)
         {
-            string serializedContent = Serializer.Serialize(project);
+            var serializedContent = Serializer.Serialize(project);
             File.WriteAllText(path, serializedContent);
         }
     }

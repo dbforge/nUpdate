@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -15,11 +17,11 @@ namespace ExplorerNavigationButton
     [Description("A button with the appearance of the explorer navigation buttons.")]
     public partial class ExplorerNavigationButton : Control
     {
-        private readonly Bitmap[] _arrows;
         private ArrowDirection _arrowDirection;
         private ButtonState _state;
         private Template _template;
         private ButtonTheme _theme;
+        private readonly Bitmap[] _arrows;
 
         /// <summary>
         ///     Creates a new ExplorerNavigationButton.
@@ -136,7 +138,7 @@ namespace ExplorerNavigationButton
                 var metroVersion = new Version(6, 2);
                 var aeroVersion = new Version(6, 0);
 
-                Version version = Environment.OSVersion.Version;
+                var version = Environment.OSVersion.Version;
                 if (version >= metroVersion)
                     return new MetroTemplate();
                 if (version >= aeroVersion)
@@ -191,7 +193,7 @@ namespace ExplorerNavigationButton
             if (state == ButtonState.Disabled)
                 arrowIndex += 2;
 
-            int arrowSize = Math.Min(16, Math.Min(Width, Height));
+            var arrowSize = Math.Min(16, Math.Min(Width, Height));
             var arrowRect = new Rectangle((Width - arrowSize)/2, (Height - arrowSize)/2, arrowSize, arrowSize);
 
             ButtonRenderer.DrawButton(g, ClientRectangle, _arrows[arrowIndex], arrowRect, false,
@@ -202,12 +204,12 @@ namespace ExplorerNavigationButton
         {
             if (_template != null)
             {
-                Graphics g = e.Graphics;
+                var g = e.Graphics;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                int buttonSize = Math.Min(Width, Height);
-                float sizeFactor = buttonSize/24.0f;
+                var buttonSize = Math.Min(Width, Height);
+                var sizeFactor = buttonSize/24.0f;
                 g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (Width - buttonSize)/2.0f,
                     (Height - buttonSize)/2.0f);
 
@@ -221,7 +223,7 @@ namespace ExplorerNavigationButton
 
         protected override void Dispose(bool disposing)
         {
-            foreach (Bitmap bmp in _arrows)
+            foreach (var bmp in _arrows)
             {
                 bmp.Dispose();
             }

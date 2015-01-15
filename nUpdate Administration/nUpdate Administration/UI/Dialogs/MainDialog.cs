@@ -1,7 +1,8 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
@@ -15,10 +16,10 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class MainDialog : BaseDialog
     {
-        private readonly LocalizationProperties _lp = new LocalizationProperties();
         private SecureString _ftpPassword = new SecureString();
         private SecureString _proxyPassword = new SecureString();
         private SecureString _sqlPassword = new SecureString();
+        private readonly LocalizationProperties _lp = new LocalizationProperties();
 
         public MainDialog()
         {
@@ -67,7 +68,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                DialogResult dr = MessageBox.Show(_lp.OperatingSystemNotSupportedWarn, String.Empty,
+                var dr = MessageBox.Show(_lp.OperatingSystemNotSupportedWarn, String.Empty,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
@@ -103,7 +104,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 // Save the language content
                 var lang = new LocalizationProperties();
-                string content = Serializer.Serialize(lang);
+                var content = Serializer.Serialize(lang);
                 File.WriteAllText(Path.Combine(Program.LanguagesDirectory, "en.json"), content);
             }
 
@@ -121,7 +122,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            string projectsPath = Path.Combine(Program.Path, "Projects");
+            var projectsPath = Path.Combine(Program.Path, "Projects");
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 

@@ -1,6 +1,9 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
@@ -56,9 +59,9 @@ namespace nUpdate.UpdateInstaller
         public static string FileDeletingOperationText { get; set; }
 
         /// <summary>
-        ///     The text of the registry key creation information.
+        ///     The text of the registry sub key creation information.
         /// </summary>
-        public static string RegistryKeyCreateOperationText { get; set; }
+        public static string RegistrySubKeyCreateOperationText { get; set; }
 
         /// <summary>
         ///     The text of the registry name-value-pair value setting information.
@@ -71,9 +74,9 @@ namespace nUpdate.UpdateInstaller
         public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
 
         /// <summary>
-        ///     The text of the registry key deletion information.
+        ///     The text of the registry sub key deletion information.
         /// </summary>
-        public static string RegistryKeyDeleteOperationText { get; set; }
+        public static string RegistrySubKeyDeleteOperationText { get; set; }
 
         /// <summary>
         ///     The text of the process start information.
@@ -112,7 +115,7 @@ namespace nUpdate.UpdateInstaller
                 return;
             }
 
-            string[] appArguments = args[0].Split('|');
+            var appArguments = args[0].Split('|');
 
             try
             {
@@ -120,7 +123,7 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                Operations = Serializer.Deserialize<IEnumerable<Operation>>(appArguments[4]);
+                Operations = Serializer.Deserialize<IEnumerable<Operation>>(Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
                 ExternalGuiAssemblyPath = appArguments[5];
             }
             catch (Exception ex)
@@ -128,7 +131,20 @@ namespace nUpdate.UpdateInstaller
                 Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
                 return;
             }
-            
+
+
+            UpdatingText = "Updating...";
+            FileDeletingOperationText = "Deleting file \"{0}\"...";
+            FileRenamingOperationText = "Renaming file \"{0}\" to \"{1}\"...";
+            RegistrySubKeyCreateOperationText = "Creating registry subkey \"{0}\"...";
+            RegistrySubKeyDeleteOperationText = "Deleting registry subkey \"{0}\"...";
+            RegistryNameValuePairSetValueOperationText = "Setting value of \"{0}\" in the registry to \"{1}\"...";
+            RegistrySubKeyDeleteOperationText = "Deleting name-value-pair \"{0}\"...";
+            ProcessStartOperationText = "Starting process \"{0}\"...";
+            ProcessStopOperationText = "Terminating process \"{1}\"...";
+            ServiceStartOperationText = "Starting service \"{0}\"...";
+            ServiceStopOperationText = "Stopping service \"{0}\"...";
+
             new Updater().RunUpdate();
         }
     }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -12,11 +14,11 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectRemovalDialog : BaseDialog
     {
-        private List<ProjectConfiguration> _projectConfiguration; 
         private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
         private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
         private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
         private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
+        private List<ProjectConfiguration> _projectConfiguration;
 
         public ProjectRemovalDialog()
         {
@@ -25,7 +27,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void CheckProjectsAreAvailable()
         {
-            if (projectsTreeView.Nodes[0].Nodes.Count != 0) 
+            if (projectsTreeView.Nodes[0].Nodes.Count != 0)
                 return;
             projectsTreeView.Visible = false;
             noProjectsLabel.Visible = true;
@@ -37,8 +39,8 @@ namespace nUpdate.Administration.UI.Dialogs
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();
             _projectConfiguration =
-                        Serializer.Deserialize<List<ProjectConfiguration>>(
-                            File.ReadAllText(Program.ProjectsConfigFilePath));
+                Serializer.Deserialize<List<ProjectConfiguration>>(
+                    File.ReadAllText(Program.ProjectsConfigFilePath));
             if (_projectConfiguration != null)
             {
             }
@@ -47,7 +49,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 _projectConfiguration = new List<ProjectConfiguration>();
             }
 
-            foreach (var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true}))
+            foreach (
+                var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true}))
             {
                 projectsTreeView.Nodes[0].Nodes.Add(projectNode);
 
@@ -63,7 +66,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private string GetNameOfExceptionType(Exception ex)
         {
-            int hrEx = Marshal.GetHRForException(ex);
+            var hrEx = Marshal.GetHRForException(ex);
             switch (hrEx)
             {
                 case COR_E_DIRECTORYNOTFOUND:
@@ -84,7 +87,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
 
             var projectName = e.Node.Text;
-            int index = _projectConfiguration.FindIndex(item => item.Name == projectName);
+            var index = _projectConfiguration.FindIndex(item => item.Name == projectName);
 
             if (
                 Popup.ShowPopup(this, SystemIcons.Question, String.Format("Delete project {0}?", projectName),

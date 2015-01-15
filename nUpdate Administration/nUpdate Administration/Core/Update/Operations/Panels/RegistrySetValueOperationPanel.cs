@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,8 +24,8 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             }
             set
             {
-                string[] pathParts = value.Split('\\');
-                foreach (string pathPart in pathParts)
+                var pathParts = value.Split('\\');
+                foreach (var pathPart in pathParts)
                 {
                     if (pathPart == pathParts[0])
                     {
@@ -43,8 +45,9 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             {
                 return (from ListViewItem listViewItem in nameValuePairListView.Items
                     select
-                        new Tuple<string, object, RegistryValueKind>(listViewItem.SubItems[0].Text, listViewItem.SubItems[1].Text,
-                            (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), listViewItem.SubItems[2].Text)))
+                        new Tuple<string, object, RegistryValueKind>(listViewItem.SubItems[0].Text,
+                            listViewItem.SubItems[1].Text,
+                            (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), listViewItem.SubItems[2].Text)))
                     .ToList();
             }
             set
@@ -60,7 +63,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Registry, OperationMethods.SetValue, KeyPath, NameValuePairs); }
+            get { return new Operation(OperationArea.Registry, OperationMethod.SetValue, KeyPath, NameValuePairs); }
         }
 
         private void RegistryEntrySetValueOperationPanel_Load(object sender, EventArgs e)

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Popups;
@@ -26,7 +28,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Files, OperationMethods.Rename, Path, NewName); }
+            get { return new Operation(OperationArea.Files, OperationMethod.Rename, Path, NewName); }
         }
 
         private void FileRenameOperationPanel_Load(object sender, EventArgs e)

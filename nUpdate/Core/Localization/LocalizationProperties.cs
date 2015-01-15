@@ -1,5 +1,6 @@
-﻿using System;
-using System.IO;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 
 namespace nUpdate.Core.Localization
 {
@@ -101,7 +102,6 @@ namespace nUpdate.Core.Localization
         public string UpdateDownloadDialogFinishedPackageText { get; set; }
         public string UpdateErrorDialogHeader { get; set; }
         public string UpdateErrorDialogErrorCodeText { get; set; }
-
         public string SearchErrorCaption { get; set; }
         public string LocalDataCreationErrorCaption { get; set; }
         public string LocalDataCreationErrorText { get; set; }

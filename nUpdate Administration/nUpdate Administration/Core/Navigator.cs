@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace nUpdate.Administration.Core
@@ -7,16 +9,6 @@ namespace nUpdate.Administration.Core
     {
         private int _currentIndex;
         private readonly List<T> _itemList = new List<T>();
-
-        /// <summary>
-        ///     Adds a new item to the current navigator's list.
-        /// </summary>
-        /// <param name="item"></param>
-        public void Add(T item)
-        {
-            _itemList.Add(item);
-            ++_currentIndex;
-        }
 
         /// <summary>
         ///     Gets a value indicating whether the navigator can go back or not.
@@ -40,6 +32,16 @@ namespace nUpdate.Administration.Core
         public T Current
         {
             get { return _itemList.ElementAt(_currentIndex); }
+        }
+
+        /// <summary>
+        ///     Adds a new item to the current navigator's list.
+        /// </summary>
+        /// <param name="item"></param>
+        public void Add(T item)
+        {
+            _itemList.Add(item);
+            ++_currentIndex;
         }
 
         /// <summary>

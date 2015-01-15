@@ -1,6 +1,4 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
 
 using System;
 using System.Drawing;
@@ -25,7 +23,7 @@ namespace nUpdate.UpdateInstaller.UI.Popups
                 Title = title,
                 InfoMessage = infoMessage,
                 Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterParent
             };
 
             return popupWindow.ShowDialog();
@@ -47,7 +45,7 @@ namespace nUpdate.UpdateInstaller.UI.Popups
                 InfoMessage = ex.Message,
                 Buttons = buttons,
                 StartPosition = FormStartPosition.CenterParent,
-                Exception = ex,
+                Exception = ex
             };
 
             return popupWindow.ShowDialog();
@@ -70,7 +68,7 @@ namespace nUpdate.UpdateInstaller.UI.Popups
                 Title = title,
                 InfoMessage = infoMessage,
                 Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterParent
             };
 
             return popupWindow.ShowDialog(owner);
@@ -94,7 +92,7 @@ namespace nUpdate.UpdateInstaller.UI.Popups
                 InfoMessage = exception.Message,
                 StartPosition = FormStartPosition.CenterParent,
                 Buttons = buttons,
-                Exception = exception,
+                Exception = exception
             };
 
             return popupWindow.ShowDialog();

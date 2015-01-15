@@ -1,4 +1,6 @@
-﻿namespace ExplorerNavigationButton
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace ExplorerNavigationButton
 {
     /// <summary>
     ///     The theme of the ExplorerNavigationButton.
@@ -23,6 +25,6 @@
         /// <summary>
         ///     The metro theme.
         /// </summary>
-        Metro,
+        Metro
     }
 }

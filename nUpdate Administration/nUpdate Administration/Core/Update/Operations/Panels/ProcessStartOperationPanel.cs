@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -22,7 +24,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public IEnumerable<string> Arguments
         {
-            get { return argumentTextBox.Text.Split(new[] {','}); }
+            get { return argumentTextBox.Text.Split(','); }
             set { argumentTextBox.Text = String.Join(",", value); }
         }
 
@@ -30,7 +32,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         {
             get
             {
-                return new Operation(OperationArea.Processes, OperationMethods.Start, pathTextBox.Text,
+                return new Operation(OperationArea.Processes, OperationMethod.Start, pathTextBox.Text,
                     Arguments.ToList());
             }
         }

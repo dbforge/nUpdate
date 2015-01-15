@@ -1,4 +1,6 @@
-﻿namespace ExplorerNavigationButton
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace ExplorerNavigationButton
 {
     /// <summary>
     ///     The direction of an arrow.
@@ -13,6 +15,6 @@
         /// <summary>
         ///     The arrow points to the right.
         /// </summary>
-        Right,
+        Right
     }
 }
