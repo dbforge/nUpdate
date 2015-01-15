@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -47,7 +49,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     else
                     {
-                        string helpData = args.Result;
+                        var helpData = args.Result;
                         if (String.IsNullOrEmpty(helpData))
                             BeginInvoke(new Action(() => informationLabel.Text = "No entries available."));
                         else
@@ -78,10 +80,10 @@ namespace nUpdate.Administration.UI.Dialogs
                                         {
                                             HeaderText = contentPart.Question,
                                             ItemText = contentPart.Answer,
-                                            ItemImage = Resources.Question,
+                                            ItemImage = Resources.Question
                                         }))
                                 {
-                                    ActionListItem item = actionListItem;
+                                    var item = actionListItem;
                                     BeginInvoke(new Action(() => helpEntryActionList.Items.Add(item)));
                                 }
 

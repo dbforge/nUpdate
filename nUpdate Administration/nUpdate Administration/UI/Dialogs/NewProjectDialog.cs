@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -20,17 +22,16 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private readonly FtpManager _ftp = new FtpManager();
         private bool _allowCancel;
         private bool _generalTabPassed;
-
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
+        private List<ProjectConfiguration> _projectConfiguration;
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
         private TabPage _sender;
-        private List<ProjectConfiguration> _projectConfiguration;
+        private readonly FtpManager _ftp = new FtpManager();
 
         public NewProjectDialog()
         {
@@ -139,7 +140,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_phpFileCreated)
             {
-                string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
+                var phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
                 try
                 {
                     File.Delete(phpFilePath);
@@ -451,7 +452,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     SqlPassword = sqlPassword,
                     PrivateKey = PrivateKey,
                     PublicKey = PublicKey,
-                    Log = null,
+                    Log = null
                 };
 
                 try
@@ -483,12 +484,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    string phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
+                    var phpFilePath = Path.Combine(Program.Path, "Projects", nameTextBox.Text, "statistics.php");
                     try
                     {
                         File.WriteAllBytes(phpFilePath, Resources.statistics);
 
-                        string phpFileContent = File.ReadAllText(phpFilePath);
+                        var phpFileContent = File.ReadAllText(phpFilePath);
                         phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
                         phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
                         phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
@@ -509,7 +510,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 ThreadPool.QueueUserWorkItem(arg => InitializeProject());
             }
         }
-
 
         /// <summary>
         ///     Provides a new thread that sets up the project data.
@@ -554,7 +554,7 @@ namespace nUpdate.Administration.UI.Dialogs
              *  Setup the "statistics.php" if necessary.
              */
 
-            bool useStatistics = false;
+            var useStatistics = false;
             BeginInvoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
 
             string name = null;
@@ -567,7 +567,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 name = nameTextBox.Text));
 
-                    string phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
+                    var phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
                     _ftp.UploadFile(phpFilePath);
                     _phpFileUploaded = true;
                 }
@@ -594,7 +594,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 #region "Setup-String"
 
-                string setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+                var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
@@ -688,7 +688,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         () =>
                             loadingLabel.Text = "Executing setup commands..."));
 
-                MySqlCommand command = myConnection.CreateCommand();
+                var command = myConnection.CreateCommand();
                 command.CommandText = setupString;
 
                 try
@@ -752,7 +752,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
 
             var securePwd = new SecureString();
-            foreach (char sign in ftpPasswordTextBox.Text)
+            foreach (var sign in ftpPasswordTextBox.Text)
             {
                 securePwd.AppendChar(sign);
             }
@@ -765,12 +765,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                Protocol = ftpProtocolComboBox.SelectedIndex,
+                Protocol = ftpProtocolComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)
                 ftpDirectoryTextBox.Text = searchDialog.SelectedDirectory;
 
+            securePwd.Dispose();
             searchDialog.Close();
         }
 
@@ -809,7 +810,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 try
                 {
-                    UpdateProject importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                    var importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
                     ftpHostTextBox.Text = importProject.FtpHost;
                     ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = importProject.FtpUsername;
@@ -829,13 +830,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void selectServerButton_Click(object sender, EventArgs e)
         {
             var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = true};
-            if (statisticsServerDialog.ShowDialog() != DialogResult.OK) 
+            if (statisticsServerDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             SqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
             SqlWebUrl = statisticsServerDialog.SqlWebUrl;
             SqlUsername = statisticsServerDialog.SqlUsername;
-            string sqlNameString = SqlDatabaseName;
+            var sqlNameString = SqlDatabaseName;
             databaseNameLabel.Text = sqlNameString;
         }
 

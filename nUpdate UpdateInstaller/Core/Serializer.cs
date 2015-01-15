@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.IO;
 using Newtonsoft.Json;
 
 namespace nUpdate.UpdateInstaller.Core

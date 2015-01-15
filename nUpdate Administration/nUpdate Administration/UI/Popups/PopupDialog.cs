@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;

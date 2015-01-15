@@ -1,6 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
+
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -31,13 +30,12 @@ namespace nUpdate.Administration.UI.Controls
             set { base.DoubleBuffered = value; }
         }
 
-
         public void MakeCollapsable()
         {
             const int lvmFirst = 0x1000;
             const int LVM_SETGROUPINFO = (lvmFirst + 147);
 
-            for (int i = 0; i <= Groups.Count - 1; i++)
+            for (var i = 0; i <= Groups.Count - 1; i++)
             {
                 var grp = new LvGroup();
                 grp.CbSize = Marshal.SizeOf(grp);
@@ -52,13 +50,13 @@ namespace nUpdate.Administration.UI.Controls
 
         private static int GetGroupId(ListViewGroup lstvwgrp)
         {
-            int rtnval = -1;
-            Type grpTp = lstvwgrp.GetType();
+            var rtnval = -1;
+            var grpTp = lstvwgrp.GetType();
             {
-                PropertyInfo pi = grpTp.GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance);
+                var pi = grpTp.GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (pi != null)
                 {
-                    object tmprtnval = pi.GetValue(lstvwgrp, null);
+                    var tmprtnval = pi.GetValue(lstvwgrp, null);
                     if (tmprtnval != null)
                         rtnval = (int) tmprtnval;
                 }

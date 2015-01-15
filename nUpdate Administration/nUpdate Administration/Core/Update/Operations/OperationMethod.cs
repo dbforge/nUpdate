@@ -1,9 +1,11 @@
-﻿namespace nUpdate.Administration.Core.Update.Operations
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace nUpdate.Administration.Core.Update.Operations
 {
     /// <summary>
     ///     Represents the different methods of the operations performed in different areas.
     /// </summary>
-    public enum OperationMethods
+    public enum OperationMethod
     {
         Create,
         Delete,
@@ -11,6 +13,6 @@
         SetValue,
         DeleteValue,
         Start,
-        Stop,
+        Stop
     }
 }

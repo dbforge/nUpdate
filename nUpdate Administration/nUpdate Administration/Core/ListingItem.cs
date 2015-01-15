@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Collections.Generic;
 
 namespace nUpdate.Administration.Core
 {

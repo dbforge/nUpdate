@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
@@ -24,7 +26,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Services, OperationMethods.Start, ServiceName, Arguments); }
+            get { return new Operation(OperationArea.Services, OperationMethod.Start, ServiceName, Arguments); }
         }
     }
 }

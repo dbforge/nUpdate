@@ -1,11 +1,13 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using FastColoredTextBoxNS;
-using Newtonsoft.Json.Linq;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
+using Newtonsoft.Json.Linq;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -35,7 +37,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void JSONEditorDialog_Load(object sender, EventArgs e)
         {
-            byte[] bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
+            var bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
             codeTextBox.Text = Encoding.UTF8.GetString(bytes);
         }
 
@@ -63,7 +65,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                string filePath = Path.Combine(Program.Path, "Localization", String.Format("{0}.json", CultureName));
+                var filePath = Path.Combine(Program.Path, "Localization", String.Format("{0}.json", CultureName));
                 using (File.Create(filePath))
                 {
                 }

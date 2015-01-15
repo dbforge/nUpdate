@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace ExplorerNavigationButton
@@ -19,11 +21,9 @@ namespace ExplorerNavigationButton
             private readonly PathGradientBrush _hoverUpperBackgroundBrush;
             private readonly GraphicsPath _lowerBackgroundPath;
             private readonly Pen _normalArrowPen;
-
             private readonly SolidBrush _normalBackgrounBrush;
             private readonly PathGradientBrush _normalLowerBackgroundBrush;
             private readonly PathGradientBrush _normalUpperBackgroundBrush;
-
             private readonly SolidBrush _pressedBackgrounBrush;
             private readonly PathGradientBrush _pressedLowerBackgroundBrush;
             private readonly PathGradientBrush _pressedUpperBackgroundBrush;

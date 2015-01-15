@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -30,7 +32,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Files, OperationMethods.Delete, Path, ItemList.ToList()); }
+            get { return new Operation(OperationArea.Files, OperationMethod.Delete, Path, ItemList.ToList()); }
         }
 
         private void FileDeleteOperationPanel_Load(object sender, EventArgs e)

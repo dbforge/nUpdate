@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Controls;
@@ -27,7 +29,7 @@ namespace nUpdate.Administration.Core
         /// <returns>This function returns a boolean.</returns>
         public static bool ValidatePanel(Panel owner)
         {
-            foreach (Control control in from Control control in owner.Controls
+            foreach (var control in from Control control in owner.Controls
                 where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 select control)

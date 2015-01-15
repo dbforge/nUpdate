@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,8 +25,8 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             }
             set
             {
-                string[] pathParts = value.Split(new[] {'\\'});
-                foreach (string pathPart in pathParts)
+                var pathParts = value.Split('\\');
+                foreach (var pathPart in pathParts)
                 {
                     if (pathPart == pathParts[0])
                     {
@@ -46,7 +48,7 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
 
         public Operation Operation
         {
-            get { return new Operation(OperationArea.Registry, OperationMethods.Delete, KeyPath, ItemList.ToList()); }
+            get { return new Operation(OperationArea.Registry, OperationMethod.Delete, KeyPath, ItemList.ToList()); }
         }
 
         private void RegistryEntryDeleteValueOperationPanel_Load(object sender, EventArgs e)

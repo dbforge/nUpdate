@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Controls
@@ -8,7 +10,7 @@ namespace nUpdate.Administration.UI.Controls
         public enum Alignment
         {
             Horizontal,
-            Vertical,
+            Vertical
         }
 
         public Alignment LineAlignment { get; set; }

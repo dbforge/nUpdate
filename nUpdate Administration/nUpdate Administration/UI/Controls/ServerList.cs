@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -8,44 +10,6 @@ namespace nUpdate.Administration.UI.Controls
     public sealed partial class ServerList : ListBox
     {
         private VisualStyleRenderer _ren;
-
-        #region Flags
-
-        public enum GroupHeaderStates
-        {
-            LVGH_OPEN = 1,
-            LVGH_OPENHOT = 2,
-            LVGH_OPENSELECTED = 3,
-            LVGH_OPENSELECTEDHOT = 4,
-            LVGH_OPENSELECTEDNOTFOCUSED = 5,
-            LVGH_OPENSELECTEDNOTFOCUSEDHOT = 6,
-            LVGH_OPENMIXEDSELECTION = 7,
-            LVGH_OPENMIXEDSELECTIONHOT = 8,
-            LVGH_CLOSE = 9,
-            LVGH_CLOSEHOT = 10,
-            LVGH_CLOSESELECTED = 11,
-            LVGH_CLOSESELECTEDHOT = 12,
-            LVGH_CLOSESELECTEDNOTFOCUSED = 13,
-            LVGH_CLOSESELECTEDNOTFOCUSEDHOT = 14,
-            LVGH_CLOSEMIXEDSELECTION = 15,
-            LVGH_CLOSEMIXEDSELECTIONHOT = 16,
-        }
-
-        public enum ListViewParts
-        {
-            LVP_LISTITEM = 1,
-            LVP_LISTGROUP = 2,
-            LVP_LISTDETAIL = 3,
-            LVP_LISTSORTEDDETAIL = 4,
-            LVP_EMPTYTEXT = 5,
-            LVP_GROUPHEADER = 6,
-            LVP_GROUPHEADERLINE = 7,
-            LVP_EXPANDBUTTON = 8,
-            LVP_COLLAPSEBUTTON = 9,
-            LVP_COLUMNDETAIL = 10,
-        }
-
-        #endregion
 
         public ServerList()
         {
@@ -96,6 +60,44 @@ namespace nUpdate.Administration.UI.Controls
                     Items.RemoveAt(e.Index);
             }
         }
+
+        #region Flags
+
+        public enum GroupHeaderStates
+        {
+            LVGH_OPEN = 1,
+            LVGH_OPENHOT = 2,
+            LVGH_OPENSELECTED = 3,
+            LVGH_OPENSELECTEDHOT = 4,
+            LVGH_OPENSELECTEDNOTFOCUSED = 5,
+            LVGH_OPENSELECTEDNOTFOCUSEDHOT = 6,
+            LVGH_OPENMIXEDSELECTION = 7,
+            LVGH_OPENMIXEDSELECTIONHOT = 8,
+            LVGH_CLOSE = 9,
+            LVGH_CLOSEHOT = 10,
+            LVGH_CLOSESELECTED = 11,
+            LVGH_CLOSESELECTEDHOT = 12,
+            LVGH_CLOSESELECTEDNOTFOCUSED = 13,
+            LVGH_CLOSESELECTEDNOTFOCUSEDHOT = 14,
+            LVGH_CLOSEMIXEDSELECTION = 15,
+            LVGH_CLOSEMIXEDSELECTIONHOT = 16
+        }
+
+        public enum ListViewParts
+        {
+            LVP_LISTITEM = 1,
+            LVP_LISTGROUP = 2,
+            LVP_LISTDETAIL = 3,
+            LVP_LISTSORTEDDETAIL = 4,
+            LVP_EMPTYTEXT = 5,
+            LVP_GROUPHEADER = 6,
+            LVP_GROUPHEADERLINE = 7,
+            LVP_EXPANDBUTTON = 8,
+            LVP_COLLAPSEBUTTON = 9,
+            LVP_COLUMNDETAIL = 10
+        }
+
+        #endregion
     }
 
     public class ServerListItem

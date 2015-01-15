@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Core.Update.Operations
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace nUpdate.Administration.Core.Update.Operations
 {
     /// <summary>
     ///     Represents the different areas in which operations can take place.
@@ -8,6 +10,6 @@
         Files,
         Registry,
         Processes,
-        Services,
+        Services
     }
 }
