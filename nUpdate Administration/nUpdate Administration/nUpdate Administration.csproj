@@ -49,7 +49,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FastColoredTextBox">
-      <HintPath>..\..\packages\FastColoredTextBox.1.0.0\lib\net40\FastColoredTextBox.dll</HintPath>
+      <HintPath>..\..\packages\FCTB.2.16.1.1\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
@@ -58,18 +58,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\MySql.Data.6.8.3\lib\net40\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Starksoft.Net.Ftp">
       <HintPath>..\..\lib\Starksoft.Net.Ftp.dll</HintPath>
     </Reference>
-    <Reference Include="Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Starksoft.Net.Proxy">
       <HintPath>..\..\lib\Starksoft.Net.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -94,13 +92,15 @@
     <Compile Include="Core\Application\Extension\RegistryException.cs" />
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
-    <Compile Include="Core\Application\Sql.cs" />
     <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\HelpContent.cs" />
     <Compile Include="Core\HelpEntry.cs" />
     <Compile Include="Core\IAsyncSupportable.cs" />
     <Compile Include="Core\IResettable.cs" />
+    <Compile Include="Core\ListingItem.cs" />
     <Compile Include="Core\ProgrammingLanguage.cs" />
+    <Compile Include="Core\ProjectConfiguration.cs" />
+    <Compile Include="Core\StatisticsServer.cs" />
     <Compile Include="Core\Update\History\LogEntry.cs" />
     <Compile Include="Core\Application\UpdatePackage.cs" />
     <Compile Include="Core\Application\UpdateProject.cs" />
@@ -139,20 +139,32 @@
     <Compile Include="Core\Update\Operations\Panels\ProcessStopOperationPanel.Designer.cs">
       <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntryCreateOperationPanel.cs" />
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntryCreateOperationPanel.Designer.cs">
-      <DependentUpon>RegistryEntryCreateOperationPanel.cs</DependentUpon>
+    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Update\Operations\Operation.cs" />
     <Compile Include="Core\Update\Operations\OperationArea.cs" />
-    <Compile Include="Core\Update\Operations\OperationMethods.cs" />
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntryDeleteOperationPanel.cs" />
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntryDeleteOperationPanel.Designer.cs">
-      <DependentUpon>RegistryEntryDeleteOperationPanel.cs</DependentUpon>
+    <Compile Include="Core\Update\Operations\OperationMethod.cs" />
+    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntrySetValueOperationPanel.cs" />
-    <Compile Include="Core\Update\Operations\Panels\RegistryEntrySetValueOperationPanel.Designer.cs">
-      <DependentUpon>RegistryEntrySetValueOperationPanel.cs</DependentUpon>
+    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.Designer.cs">
+      <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Update\Operations\Panels\ServiceStartOperationPanel.cs">
       <SubType>UserControl</SubType>
@@ -174,7 +186,12 @@
     <Compile Include="Core\UriConnector.cs" />
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="Core\Win32\IconReader.cs" />
+    <Compile Include="Core\Win32\LvGroup.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
+    <Compile Include="Core\IDeepCopy.cs" />
+    <Compile Include="Core\Win32\PaintStruct.cs" />
+    <Compile Include="Core\Win32\TvItem.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UI\Controls\ActionList.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -305,7 +322,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Controls\WatermarkTextBox.cs" />
+    <Compile Include="UI\Controls\CueTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Dialogs\InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -342,6 +361,18 @@
     <Compile Include="UI\Dialogs\StatisticsServerDialog.Designer.cs">
       <DependentUpon>StatisticsServerDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerEditDialog.Designer.cs">
+      <DependentUpon>StatisticsServerEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdatingInfoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdatingInfoDialog.Designer.cs">
+      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Popups\Popup.cs" />
     <Compile Include="UI\Popups\PopupButtons.cs" />
     <Compile Include="UI\Popups\PopupDialog.cs">
@@ -362,14 +393,17 @@
     <EmbeddedResource Include="Core\Update\Operations\Panels\ProcessStopOperationPanel.resx">
       <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistryEntryCreateOperationPanel.resx">
-      <DependentUpon>RegistryEntryCreateOperationPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.resx">
+      <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistryEntryDeleteOperationPanel.resx">
-      <DependentUpon>RegistryEntryDeleteOperationPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.resx">
+      <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistryEntrySetValueOperationPanel.resx">
-      <DependentUpon>RegistryEntrySetValueOperationPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.resx">
+      <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.resx">
+      <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Core\Update\Operations\Panels\ServiceStartOperationPanel.resx">
       <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
@@ -449,6 +483,12 @@
     <EmbeddedResource Include="UI\Dialogs\StatisticsServerDialog.resx">
       <DependentUpon>StatisticsServerDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\StatisticsServerEditDialog.resx">
+      <DependentUpon>StatisticsServerEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdatingInfoDialog.resx">
+      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -524,7 +564,6 @@
     <None Include="Resources\folder--minus.png" />
     <None Include="Resources\folder--pencil.png" />
     <None Include="Resources\folder-rename.png" />
-    <None Include="Resources\Ouch 1 %28Pain%29 Sound Effect Fx.mp3" />
     <None Include="Resources\Left_Disabled.png" />
     <None Include="Resources\Left_Normal.png" />
     <None Include="Resources\Right_Disabled.png" />
@@ -539,7 +578,7 @@
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
