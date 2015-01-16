@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>cd9b7350</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -45,33 +46,44 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>C:\Users\Trade\AppData\Local\Temp\nUpdate Installer\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\ControlPanel.cs" />
+    <Compile Include="UI\Controls\ControlPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
-    <Compile Include="Core\Operations\OperationMethods.cs" />
+    <Compile Include="Core\Operations\OperationMethod.cs" />
     <Compile Include="Core\RegistryManager.cs" />
     <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\ServiceManager.cs" />
-    <Compile Include="Dialogs\MainForm.cs" />
-    <Compile Include="Dialogs\MainForm.Designer.cs">
+    <Compile Include="UI\Dialogs\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Popups\Popup.cs" />
+    <Compile Include="UI\Popups\PopupButtons.cs" />
+    <Compile Include="UI\Popups\PopupDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\PopupDialog.Designer.cs">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Updater.cs" />
-    <EmbeddedResource Include="Dialogs\MainForm.resx">
+    <EmbeddedResource Include="UI\Dialogs\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -84,6 +96,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -111,7 +126,7 @@
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
