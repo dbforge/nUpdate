@@ -110,7 +110,7 @@
             this.changelogContentTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.englishChangelogTabPage = new System.Windows.Forms.TabPage();
             this.englishChangelogTextBox = new System.Windows.Forms.TextBox();
-            this.toolStrip5 = new System.Windows.Forms.ToolStrip();
+            this.changelogToolStrip = new System.Windows.Forms.ToolStrip();
             this.changelogLanguageComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
@@ -164,7 +164,7 @@
             this.changelogPanel.SuspendLayout();
             this.changelogContentTabControl.SuspendLayout();
             this.englishChangelogTabPage.SuspendLayout();
-            this.toolStrip5.SuspendLayout();
+            this.changelogToolStrip.SuspendLayout();
             this.availabilityTabPage.SuspendLayout();
             this.availabilityPanel.SuspendLayout();
             this.unsupportedVersionsPanel.SuspendLayout();
@@ -190,7 +190,7 @@
             this.categoryImageList.Images.SetKeyName(7, "system-monitor--minus.png");
             this.categoryImageList.Images.SetKeyName(8, "system-monitor--plus.png");
             this.categoryImageList.Images.SetKeyName(9, "document--minus.png");
-            this.categoryImageList.Images.SetKeyName(10, "document--pencil.png");
+            this.categoryImageList.Images.SetKeyName(10, "document-rename.png");
             this.categoryImageList.Images.SetKeyName(11, "document--arrow.png");
             this.categoryImageList.Images.SetKeyName(12, "wall--minus.png");
             this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
@@ -606,7 +606,7 @@
             // changelogPanel
             // 
             this.changelogPanel.Controls.Add(this.changelogContentTabControl);
-            this.changelogPanel.Controls.Add(this.toolStrip5);
+            this.changelogPanel.Controls.Add(this.changelogToolStrip);
             this.changelogPanel.Location = new System.Drawing.Point(0, 2);
             this.changelogPanel.Name = "changelogPanel";
             this.changelogPanel.Size = new System.Drawing.Size(474, 235);
@@ -643,10 +643,10 @@
             this.englishChangelogTextBox.TabIndex = 0;
             this.englishChangelogTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.englishChangelogTextBox_KeyDown);
             // 
-            // toolStrip5
+            // changelogToolStrip
             // 
-            this.toolStrip5.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changelogToolStrip.BackColor = System.Drawing.Color.Transparent;
+            this.changelogToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changelogLanguageComboBox,
             this.toolStripSeparator3,
             this.changelogLoadButton,
@@ -654,13 +654,13 @@
             this.changelogClearButton,
             this.toolStripSeparator6,
             this.specialCharactersComboBox});
-            this.toolStrip5.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.toolStrip5.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip5.Name = "toolStrip5";
-            this.toolStrip5.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip5.Size = new System.Drawing.Size(474, 23);
-            this.toolStrip5.TabIndex = 3;
-            this.toolStrip5.Text = "toolStrip5";
+            this.changelogToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.changelogToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.changelogToolStrip.Name = "changelogToolStrip";
+            this.changelogToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.changelogToolStrip.Size = new System.Drawing.Size(474, 23);
+            this.changelogToolStrip.TabIndex = 3;
+            this.changelogToolStrip.Text = "toolStrip5";
             // 
             // changelogLanguageComboBox
             // 
@@ -1071,8 +1071,8 @@
             this.changelogContentTabControl.ResumeLayout(false);
             this.englishChangelogTabPage.ResumeLayout(false);
             this.englishChangelogTabPage.PerformLayout();
-            this.toolStrip5.ResumeLayout(false);
-            this.toolStrip5.PerformLayout();
+            this.changelogToolStrip.ResumeLayout(false);
+            this.changelogToolStrip.PerformLayout();
             this.availabilityTabPage.ResumeLayout(false);
             this.availabilityPanel.ResumeLayout(false);
             this.availabilityPanel.PerformLayout();
@@ -1147,7 +1147,7 @@
         private Controls.TablessTabControl changelogContentTabControl;
         private System.Windows.Forms.TabPage englishChangelogTabPage;
         private System.Windows.Forms.TextBox englishChangelogTextBox;
-        private System.Windows.Forms.ToolStrip toolStrip5;
+        private System.Windows.Forms.ToolStrip changelogToolStrip;
         private System.Windows.Forms.ToolStripComboBox changelogLanguageComboBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton changelogLoadButton;
