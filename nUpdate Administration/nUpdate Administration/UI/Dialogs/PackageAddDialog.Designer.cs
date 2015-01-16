@@ -117,7 +117,7 @@
             this.changelogContentTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.englishChangelogTabPage = new System.Windows.Forms.TabPage();
             this.englishChangelogTextBox = new System.Windows.Forms.TextBox();
-            this.toolStrip5 = new System.Windows.Forms.ToolStrip();
+            this.changelogToolStrip = new System.Windows.Forms.ToolStrip();
             this.changelogLanguageComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
@@ -159,7 +159,7 @@
             this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
             this.filesPanel = new System.Windows.Forms.Panel();
             this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.toolStrip4 = new System.Windows.Forms.ToolStrip();
+            this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.addFolderButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -190,7 +190,7 @@
             this.changelogPanel.SuspendLayout();
             this.changelogContentTabControl.SuspendLayout();
             this.englishChangelogTabPage.SuspendLayout();
-            this.toolStrip5.SuspendLayout();
+            this.changelogToolStrip.SuspendLayout();
             this.availabilityTabPage.SuspendLayout();
             this.availabilityPanel.SuspendLayout();
             this.unsupportedVersionsPanel.SuspendLayout();
@@ -202,7 +202,7 @@
             this.operationsPanel.SuspendLayout();
             this.replaceFilesTabPage.SuspendLayout();
             this.filesPanel.SuspendLayout();
-            this.toolStrip4.SuspendLayout();
+            this.replaceFilesToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // filesImageList
@@ -226,7 +226,7 @@
             this.categoryImageList.Images.SetKeyName(7, "system-monitor--minus.png");
             this.categoryImageList.Images.SetKeyName(8, "system-monitor--plus.png");
             this.categoryImageList.Images.SetKeyName(9, "document--minus.png");
-            this.categoryImageList.Images.SetKeyName(10, "document--pencil.png");
+            this.categoryImageList.Images.SetKeyName(10, "document-rename.png");
             this.categoryImageList.Images.SetKeyName(11, "document--arrow.png");
             this.categoryImageList.Images.SetKeyName(12, "wall--minus.png");
             this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
@@ -631,7 +631,7 @@
             // changelogPanel
             // 
             this.changelogPanel.Controls.Add(this.changelogContentTabControl);
-            this.changelogPanel.Controls.Add(this.toolStrip5);
+            this.changelogPanel.Controls.Add(this.changelogToolStrip);
             this.changelogPanel.Location = new System.Drawing.Point(0, 1);
             this.changelogPanel.Name = "changelogPanel";
             this.changelogPanel.Size = new System.Drawing.Size(474, 235);
@@ -668,10 +668,10 @@
             this.englishChangelogTextBox.TabIndex = 0;
             this.englishChangelogTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.englishChangelogTextBox_KeyDown);
             // 
-            // toolStrip5
+            // changelogToolStrip
             // 
-            this.toolStrip5.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changelogToolStrip.BackColor = System.Drawing.Color.Transparent;
+            this.changelogToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changelogLanguageComboBox,
             this.toolStripSeparator3,
             this.changelogLoadButton,
@@ -679,13 +679,13 @@
             this.changelogClearButton,
             this.toolStripSeparator6,
             this.specialCharactersComboBox});
-            this.toolStrip5.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.toolStrip5.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip5.Name = "toolStrip5";
-            this.toolStrip5.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip5.Size = new System.Drawing.Size(474, 23);
-            this.toolStrip5.TabIndex = 3;
-            this.toolStrip5.Text = "toolStrip5";
+            this.changelogToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.changelogToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.changelogToolStrip.Name = "changelogToolStrip";
+            this.changelogToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.changelogToolStrip.Size = new System.Drawing.Size(474, 23);
+            this.changelogToolStrip.TabIndex = 3;
+            this.changelogToolStrip.Text = "toolStrip5";
             // 
             // changelogLanguageComboBox
             // 
@@ -1077,7 +1077,7 @@
             // filesPanel
             // 
             this.filesPanel.Controls.Add(this.filesDataTreeView);
-            this.filesPanel.Controls.Add(this.toolStrip4);
+            this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
             this.filesPanel.Controls.Add(this.filesList);
             this.filesPanel.Location = new System.Drawing.Point(0, 0);
             this.filesPanel.Name = "filesPanel";
@@ -1121,13 +1121,13 @@
             this.filesDataTreeView.TabIndex = 5;
             this.filesDataTreeView.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.filesDataTreeView_BeforeLabelEdit);
             // 
-            // toolStrip4
+            // replaceFilesToolStrip
             // 
-            this.toolStrip4.AutoSize = false;
-            this.toolStrip4.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip4.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip4.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.replaceFilesToolStrip.AutoSize = false;
+            this.replaceFilesToolStrip.BackColor = System.Drawing.Color.Transparent;
+            this.replaceFilesToolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.replaceFilesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.replaceFilesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripSeparator2,
             this.addFolderButton,
@@ -1137,12 +1137,12 @@
             this.removeEntryButton,
             this.toolStripSeparator9,
             this.infoButton});
-            this.toolStrip4.Location = new System.Drawing.Point(3, 2);
-            this.toolStrip4.Name = "toolStrip4";
-            this.toolStrip4.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip4.Size = new System.Drawing.Size(468, 25);
-            this.toolStrip4.TabIndex = 4;
-            this.toolStrip4.Text = "toolStrip4";
+            this.replaceFilesToolStrip.Location = new System.Drawing.Point(3, 2);
+            this.replaceFilesToolStrip.Name = "replaceFilesToolStrip";
+            this.replaceFilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.replaceFilesToolStrip.Size = new System.Drawing.Size(468, 25);
+            this.replaceFilesToolStrip.TabIndex = 4;
+            this.replaceFilesToolStrip.Text = "toolStrip4";
             // 
             // toolStripButton1
             // 
@@ -1336,8 +1336,8 @@
             this.changelogContentTabControl.ResumeLayout(false);
             this.englishChangelogTabPage.ResumeLayout(false);
             this.englishChangelogTabPage.PerformLayout();
-            this.toolStrip5.ResumeLayout(false);
-            this.toolStrip5.PerformLayout();
+            this.changelogToolStrip.ResumeLayout(false);
+            this.changelogToolStrip.PerformLayout();
             this.availabilityTabPage.ResumeLayout(false);
             this.availabilityPanel.ResumeLayout(false);
             this.availabilityPanel.PerformLayout();
@@ -1350,8 +1350,8 @@
             this.operationsPanel.ResumeLayout(false);
             this.replaceFilesTabPage.ResumeLayout(false);
             this.filesPanel.ResumeLayout(false);
-            this.toolStrip4.ResumeLayout(false);
-            this.toolStrip4.PerformLayout();
+            this.replaceFilesToolStrip.ResumeLayout(false);
+            this.replaceFilesToolStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1384,13 +1384,13 @@
         private System.Windows.Forms.RadioButton someVersionsRadioButton;
         private System.Windows.Forms.RadioButton allVersionsRadioButton;
         private System.Windows.Forms.Panel filesPanel;
-        private System.Windows.Forms.ToolStrip toolStrip4;
+        private System.Windows.Forms.ToolStrip replaceFilesToolStrip;
         private System.Windows.Forms.ToolStripButton addFilesButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton removeEntryButton;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ToolStrip toolStrip5;
+        private System.Windows.Forms.ToolStrip changelogToolStrip;
         private System.Windows.Forms.ToolStripButton changelogLoadButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton changelogClearButton;

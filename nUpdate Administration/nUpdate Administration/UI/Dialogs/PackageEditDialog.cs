@@ -844,10 +844,13 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (categoryTreeView.SelectedNode == null) return;
+            if (categoryTreeView.SelectedNode == null) 
+                return;
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null)
-                categoryTabControl.TabPages.Remove(
-                    categoryTabControl.TabPages[3 + categoryTreeView.SelectedNode.Index]);
+                return;
+
+            categoryTabControl.TabPages.Remove(
+                    categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
             categoryTreeView.SelectedNode.Remove();
         }
 
