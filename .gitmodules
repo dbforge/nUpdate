@@ -1,0 +1,3 @@
+[submodule "lib/dotnetzip"]
+	path = lib/dotnetzip
+	url = https://github.com/eropple/dotnetzip
