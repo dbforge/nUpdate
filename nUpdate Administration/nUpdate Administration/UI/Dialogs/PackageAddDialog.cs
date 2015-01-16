@@ -1096,9 +1096,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (categoryTreeView.SelectedNode == null) return;
+            if (categoryTreeView.SelectedNode == null) 
+                return;
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null ||
-                categoryTreeView.SelectedNode.Text == "Replace file/folder") return;
+                categoryTreeView.SelectedNode.Text == "Replace file/folder") 
+                return;
             categoryTabControl.TabPages.Remove(
                 categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
             categoryTreeView.SelectedNode.Remove();
