@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,9 +38,9 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -73,40 +75,28 @@
     <Compile Include="UI\Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\BaseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\BaseForm.cs" />
     <Compile Include="UI\Controls\ControlPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\ConnectionChecker.cs" />
-    <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\NewUpdateDialog.cs" />
     <Compile Include="UI\Dialogs\NewUpdateDialog.Designer.cs">
       <DependentUpon>NewUpdateDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.cs" />
     <Compile Include="UI\Dialogs\NoUpdateFoundDialog.Designer.cs">
       <DependentUpon>NoUpdateFoundDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\UpdateSearchDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\UpdateSearchDialog.cs" />
     <Compile Include="UI\Dialogs\UpdateSearchDialog.Designer.cs">
       <DependentUpon>UpdateSearchDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\UpdateDownloadDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\UpdateDownloadDialog.cs" />
     <Compile Include="UI\Dialogs\UpdateDownloadDialog.Designer.cs">
       <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\UpdateErrorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI\Dialogs\UpdateErrorDialog.cs" />
     <Compile Include="UI\Dialogs\UpdateErrorDialog.Designer.cs">
       <DependentUpon>UpdateErrorDialog.cs</DependentUpon>
     </Compile>
@@ -159,6 +149,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="UpdateManager.cd" />
     <None Include="Resources\line.PNG" />
   </ItemGroup>
@@ -185,6 +176,13 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
