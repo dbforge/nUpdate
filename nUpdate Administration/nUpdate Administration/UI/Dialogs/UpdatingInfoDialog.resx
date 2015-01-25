@@ -120,50 +120,50 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAKkAAABgCAYAAABmMlJTAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAABddEVYdFNvdXJjZQBIb2x6U2hvdHMgdjAuOS44LjEyIC0g
-        d3d3LmhvbHpzaG90cy5kZSAtIChDKSBuaWtlZWUgU29mdHdhcmUgLSAyMDE0ERAREBEQERAREBEQEcV8
-        elgjzEiM8CMAAAfbSURBVHhe7Z0tcyM5EIbzd+4vGB48ePDoVZksPLj04AKDhUsXBiYsNNAwJFWhhoaG
-        s9368LQ0Lc1kRz2reN+nSrczo5bkWI814yr1+W4AoHMgKegeU0nPp5fh9PKwqHAsABqmkrJ8w4XL/Uzx
-        ogKgsYGkJOH5e71QDCQFJYwlZUEXSEoxLhYAhQ0kJQlPM4Vi5iV9HPZ3d8PdteyGw2uo+lDw3xFfOx/v
-        6b9rkX3eHraSHqOk3+qFJeXYKtlEPO5J1BYTvDUWQkHSn+Z09IJe3urFS0qxVfKJ4HOW1F/f73fD3e4w
-        +Gq+Vlpxx7rd4SD6zPt5HQ672AfHxk5EXLj+uA9x+9JHRrye/X4ypj5+vKb1nfcXjqmkrzNez9+3OA61
-        pb/x2jV/8K9j94OppG8k3sVJ+rVYWOK3588+9nIOLTX8mxvf7NdDnEw/GePk8HstzrM3Xta5PhJJ0n5G
-        uC6u2iLu9TDs6NhNsjvWV/bJ60nGLI/P7bxA/IEZ/3b3oZhIO9Yz5fcgHce9B6EvPpbj94KxpHVBubw9
-        kaBUYnwZ/+bGFWO81ecTVDt/Tx3hhIrjaXEz7R359aXt+Vz+vVHYPI7R2pbOszr+cDmB0w9CT9hK+hwk
-        ffmiF6o73n/yMSG+jDY5zIoJqtVNVh8trtL+Sn59aful/TFzbeV5XhfkfIyy9oe9pCTj+eV/tXDd8f5f
-        9+/pcmkkKV0p3ur8c2ZSV5o8rou31GJc6ViydMy8fdbuinZ9Onb9dp/G8m1+T8+207H6wFTSl2e/ip6P
-        JKVSnKTfvaRv57OLL1OSQLvO1/LbdCA8R7q64pcYRvQx82VHby9YNKbSXrZLnnc5NvYXHnr4OZXOR9FE
-        TNKvMk7ywekPW0mfvvpV8/hZL1T3/P0f9++fRx+/JeOXr9+b3t8HU0mPD2HVpG/vaqG6p29/u3//eLi4
-        eGvchKgrzO+If3To/X0wlfT5/r/hEm7tWuG6hy9/uX859nR6Cy0BGDGT9EJfhJ7uvw4P3z4tKhzLbQDI
-        MV1JAWgBJAXdA0lB90BS0D2QFHQPJAXdYyopskVBC0wlZfmQLQrWsoGkJCGnkNQKxUBSUMJYUhZ0gaTI
-        FgUVNpCUJNQyRGWhmMWSuu1rrTZEyO1soSRpGSWU7W7ADFtJm2aLetpu0M1lC7uCZkWFpFtiLKkXVMsQ
-        lcVLSrGzsEQhQzTZ/xikOfDmXb8ijp4tqEtkk9fiVjZf/AeD6/NrWhxohamkbbNFCb7Vi53oqWwkSLzg
-        dpqn2Z3lulxSL9zYd4Rja+0iMg60wFjSuqBclmeLsl9CHpZtPMmkkefvqWMySZ3UcZWstFPjQAtsJW2e
-        LRoliKW0stVErNUR7otZ6JfFUxPYsnbFONACe0lJxpgdmheuW5wtmqycnnFlZTHGZ8E0Z2euTgqVxiZj
-        upWyIqkaB1pgKmnLbNH0GTRwlcNLE//XN6kkc3VyZc7HEPVJlicP7a97octxYD22km6WLepF1MWo1YGP
-        gKmk22WLQtJbxlRSZIuCFphJimxR0ArTlRSAFkBS0D2QFHQPJAXdA0lB90BS0D2mkiJbFLTAVFKWD9mi
-        YC0bSEoScgpJrVAMJAUljCVlQRdIimxRUGEDSUlCLUNUFoqZkzTfUvfr9mzKDSt83CJVBJtgathK2jxb
-        tIfJtHgNkLSGsaReUC1DVBYvKcXOok0mXwur63XHso+r//5n6EvNIs2RY9R/4ga/DdoeU0mbZ4uGCRon
-        jOclThIn0ElhwoSH30JyMTJ/KUoQZ9ilfei3bh4jSSnJxJyMGdBfm78+lXb6dyVj1tJhQl98LMe/FYwl
-        rQvK5T3ZotPJ9BMWVyEufr5k3JJjJj+P1OLm+pt7bRGtbek8q+MPnhM4/SDcEraSNs0WZeYmM1Ka1NIx
-        s6QvpnV/zFxbeZ7XBTk7/m3QtdhLSjLG7NC8cN3y3xZltAlKb7Ge0qTmx9ltU53kbIzq7T4eM6XXpl3P
-        2/Iw2ZjJ7T6N5dfe82+DrsVU0ra/LcpMJ8jd7q63VC0Pv36sZ5FmyDFmvjglfaivjeHY2F94xfycSuej
-        aCIm6VcZJ/ng3B62knb926LKZH9QyneB28BU0h5/W3TkFiT1jw63vIoyppIiWxS0wExSZIuCVpiupAC0
-        AJKC7oGkoHsgKegeSAq6B5KC7jGVFNmioAWmkrJ8yBYFa9lAUpKQU0hqhWIgKShhLCkLukBSZIuCChtI
-        ShJqGaKyUMy8pHLrWihJCsZ7KG0uuZ2dUbeEraRNs0VzgcIOoJ8SFZJ+JIwl9YJqGaKyeEkptoomUH6N
-        z6errNtv6a6XNkVz/pFoS2Xx5uNF2aZgDaaSts0WlWJF/Goa5dCzM7ldngUa+5JxzHSMuazN64fB7Y7X
-        s03BOowlrQvKZXm26JykQRpRRmGFTA7f104I7snHqJ3PxYJW2EraNFtUkWCSR1+WxN/yZSytkLSKpslr
-        c+LJ87lY0Ap7SUnGmB2aF65bni2qSSGfHf2KmUonyR8B/HFyO1dEm7vdx7pbzzP6lZhK2jZb1EsxvZ0L
-        ipmj4dq1gZQxfRx4b9bmomxTsApbSbvOFl2LFB1YYipp39mia4GkW2EqKbJFQQvMJEW2KGiF6UoKQAsg
-        KegeSAq6B5KC7oGkoHsgKegeSAq6B5KC7oGkoHsgKegeSAq6B5KCzhmGH4nxWPbocrYkAAAAAElFTkSu
-        QmCC
+        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
 </value>
   </data>
   <data name="label1.Text" xml:space="preserve">
     <value>No whole directories are replaced, only th files will be copied and replace old ones if necessary.
 If your data is stored in a folder that can be found in e. g. %appdata%, then make sure to add a 
-virtual folder with an equal name.</value>
+virtual folder with an equal name. For example "%appdata%\myfolder\test.exe" would require a
+virtual folder which is called "myfolder".</value>
   </data>
   <data name="pictureBox2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -231,9 +231,9 @@ virtual folder with an equal name.</value>
   </data>
   <data name="label11.Text" xml:space="preserve">
     <value>This configuration will replace the files "nUpdate-Tester.exe" 
-and "/data/test.txt"with the once we added here.
-If for example the file "/data/test2.text"didn't exists, it would 
-be created by the UpdateInstaller.
+and "/data/test.txt"with the ones, we added here.
+If for example the file "/data/test2.text"didn't exist, it would 
+be created by the UpdateInstaller when copying the data.
 
 The added directory "data" won't replace the whole existing 
 directory, it will just replace the files in the directory.

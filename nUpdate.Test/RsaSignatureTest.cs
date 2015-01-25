@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Core;
@@ -10,7 +12,6 @@ namespace nUpdate.Test
     {
         private static byte[] data;
         private static string desktopPath;
-
         private static string keyFile;
         private static string signatureFile;
 

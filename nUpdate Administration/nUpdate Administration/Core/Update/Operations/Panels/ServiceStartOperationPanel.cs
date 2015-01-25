@@ -12,6 +12,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public bool IsValid
+        {
+            get { return !String.IsNullOrEmpty(serviceNameTextBox.Text) ; }
+        }
+
         public string ServiceName
         {
             get { return serviceNameTextBox.Text; }

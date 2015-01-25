@@ -2,7 +2,9 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.Core.Update.Operations.Panels
@@ -12,6 +14,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         public FileRenameOperationPanel()
         {
             InitializeComponent();
+        }
+
+        public bool IsValid
+        {
+            get { return !Controls.OfType<CueTextBox>().Any(item => String.IsNullOrEmpty(item.Text)) && Path.Contains("\\") && Path.Split(new[] { "\\" }, StringSplitOptions.RemoveEmptyEntries).Length >= 2; }
         }
 
         public string Path
@@ -41,6 +48,15 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             Popup.ShowPopup(this, SystemIcons.Information, "Environment variables.",
                 "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
                 PopupButtons.Ok);
+        }
+
+        private void pathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (pathTextBox.Text.Last() != '/')
+                return;
+            pathTextBox.Text = pathTextBox.Text.Replace(pathTextBox.Text.Last(), '\\');
+            pathTextBox.SelectionStart = pathTextBox.Text.Length;
+            pathTextBox.SelectionLength = 0;
         }
     }
 }

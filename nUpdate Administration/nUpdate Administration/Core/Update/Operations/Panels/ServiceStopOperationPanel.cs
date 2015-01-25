@@ -12,6 +12,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public bool IsValid
+        {
+            get { return !String.IsNullOrEmpty(serviceNameTextBox.Text); }
+        }
+
         public string ServiceName
         {
             get { return serviceNameTextBox.Text; }
@@ -21,10 +26,6 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         public Operation Operation
         {
             get { return new Operation(OperationArea.Services, OperationMethod.Stop, ServiceName); }
-        }
-
-        private void ServiceStopOperationPanel_Load(object sender, EventArgs e)
-        {
         }
     }
 }

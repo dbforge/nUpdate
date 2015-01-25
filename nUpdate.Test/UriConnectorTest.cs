@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Core;
 
@@ -10,7 +12,6 @@ namespace nUpdate.Test
         private static string _baseUri;
         private static string _baseUriWithoutSlash;
         private static string _endUri;
-
 
         /// <summary>
         ///     Initializes the members.

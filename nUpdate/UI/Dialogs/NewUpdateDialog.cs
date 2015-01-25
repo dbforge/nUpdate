@@ -1,5 +1,8 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,10 +19,9 @@ namespace nUpdate.UI.Dialogs
     {
         private const int MB = 1048576;
         private const int KB = 1024;
-
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private bool _allowCancel;
-        private LocalizationProperties _lp; 
+        private LocalizationProperties _lp;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public NewUpdateDialog()
         {
@@ -142,7 +144,9 @@ namespace nUpdate.UI.Dialogs
                 return;
             }
 
-            accessLabel.Text += String.Format(" {0}", String.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().ToArray())));
+            accessLabel.Text += String.Format(" {0}",
+                String.Join(", ",
+                    LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().ToArray())));
         }
 
         private void installButton_Click(object sender, EventArgs e)
@@ -156,6 +160,11 @@ namespace nUpdate.UI.Dialogs
         {
             if (!_allowCancel)
                 e.Cancel = true;
+        }
+
+        private void changelogTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            Process.Start(e.LinkText);
         }
     }
 }

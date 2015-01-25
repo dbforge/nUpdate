@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
 using System.Drawing;
 using System.Windows.Forms;
 

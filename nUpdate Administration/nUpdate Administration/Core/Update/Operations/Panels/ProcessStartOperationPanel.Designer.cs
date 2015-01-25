@@ -74,11 +74,12 @@
             // 
             // pathTextBox
             // 
-            this.pathTextBox.Cue = "%temp%/MyApp.exe";
+            this.pathTextBox.Cue = "%temp%\\MyApp.exe";
             this.pathTextBox.Location = new System.Drawing.Point(145, 13);
             this.pathTextBox.Name = "pathTextBox";
             this.pathTextBox.Size = new System.Drawing.Size(193, 22);
             this.pathTextBox.TabIndex = 27;
+            this.pathTextBox.TextChanged += new System.EventHandler(this.pathTextBox_TextChanged);
             // 
             // pictureBox1
             // 
@@ -116,7 +117,6 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ProcessStartOperationPanel";
             this.Size = new System.Drawing.Size(488, 225);
-            this.Load += new System.EventHandler(this.ProcessStartOperationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

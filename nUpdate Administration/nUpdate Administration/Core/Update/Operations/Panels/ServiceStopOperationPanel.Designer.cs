@@ -84,7 +84,6 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ServiceStopOperationPanel";
             this.Size = new System.Drawing.Size(488, 225);
-            this.Load += new System.EventHandler(this.ServiceStopOperationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

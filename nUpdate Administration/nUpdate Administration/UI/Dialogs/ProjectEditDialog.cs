@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
@@ -29,7 +28,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _ftpDirectoryChanged;
         private bool _generalTabPassed;
         private string _localPath;
-        private LocalizationProperties _lp = new LocalizationProperties();
+        //private LocalizationProperties _lp = new LocalizationProperties();
         private string _name;
         private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
         private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
@@ -150,7 +149,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Error while resetting the project configuration.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -178,7 +176,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while undoing the renaming of the project folder.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -205,7 +202,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while undoing the renaming of the project file.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -237,7 +233,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while undoing the directory changing.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -268,12 +263,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
+                    SetUiState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while saving and uploading the old configuration.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -294,12 +289,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
+                    SetUiState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while deleting the file \"statistics.php\" again.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                     return;
@@ -322,10 +317,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Invoke(new Action(() =>
                     {
+                        SetUiState(true);
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while deleting the file \"statistics.php\" on the server.",
                             ex, PopupButtons.Ok);
-                        SetUiState(true);
                         Close();
                     }));
                 }
@@ -355,6 +350,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
+                    SetUiState(true);
                     Invoke(
                         new Action(
                             () =>
@@ -362,7 +358,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error,
                                     "Error while undoing the deleting of the PHP-file.",
                                     ex, PopupButtons.Ok);
-                                SetUiState(true);
                                 Close();
                             }));
                     return;
@@ -378,6 +373,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
+                    SetUiState(true);
                     Invoke(
                         new Action(
                             () =>
@@ -385,7 +381,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error,
                                     "Error while undoing the deleting of the PHP-file on the server.",
                                     ex, PopupButtons.Ok);
-                                SetUiState(true);
                                 Close();
                             }));
                     return;
@@ -395,8 +390,24 @@ namespace nUpdate.Administration.UI.Dialogs
             if (_updateConfigurationSaved)
             {
                 var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
-                File.WriteAllText(localConfigurationPath, String.Empty);
-                _updateConfigurationSaved = false;
+                try
+                {
+                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    _updateConfigurationSaved = false;
+                }
+                catch (Exception ex)
+                {
+                    SetUiState(true);
+                    Invoke(
+                        new Action(
+                            () =>
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while undoing the deleting of the PHP-file on the server.",
+                                    ex, PopupButtons.Ok);
+                                Close();
+                            }));
+                }
             }
         }
 
@@ -439,6 +450,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void ProjectEditDialog_Load(object sender, EventArgs e)
         {
+            if (!ConnectionChecker.IsConnectionAvailable())
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
+                       "No active network connection was found. In order to edit a project a network connection is required in order to communicate with the server.",
+                       PopupButtons.Ok);
+                Close();
+                return;
+            }
+
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
@@ -665,37 +685,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 _useStatistics = useStatisticsServerRadioButton.Checked;
             }));
 
-            Invoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text = "Getting old configuration..."));
-
-            try
-            {
-                _oldUpdateConfiguration =
-                    UpdateConfiguration.Download(UriConnector.ConnectUri(_updateUrl, "updates.json"), null);
-                if (_oldUpdateConfiguration != null)
-                    _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
-                else
-                {
-                    _oldUpdateConfiguration = new List<UpdateConfiguration>();
-                    _newUpdateConfiguration = new List<UpdateConfiguration>();
-                }
-                // TODO: Proxy
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while downloading the old configuration.", ex,
-                                PopupButtons.Ok)));
-                Reset();
-                SetUiState(true);
-                return;
-            }
-
             if (Project.Name != _name)
             {
                 Invoke(
@@ -725,7 +714,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         ex,
                         PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -749,7 +737,6 @@ namespace nUpdate.Administration.UI.Dialogs
                             ex,
                             PopupButtons.Ok)));
                         Reset();
-                        SetUiState(true);
                         return;
                     }
                 }
@@ -775,7 +762,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the project file.", ex,
                                     PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
             }
@@ -804,13 +790,18 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the directory content.", ex,
                                     PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
             }
 
             if (Project.UpdateUrl != _updateUrl)
             {
+                if (_newUpdateConfiguration == null && !LoadConfiguration())
+                {
+                    Reset();
+                    return;
+                }
+
                 Invoke(
                     new Action(
                         () =>
@@ -832,7 +823,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
                         "Error while editing the update configuration's update url.", ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -859,7 +849,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while saving and uploading the new configuration.", ex, PopupButtons.Ok)));
                         Reset();
-                        SetUiState(true);
                         return;
                     }
                 }
@@ -868,6 +857,12 @@ namespace nUpdate.Administration.UI.Dialogs
             var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
             if (!Project.UseStatistics && useStatisticsServerRadioButton.Checked)
             {
+                if (_newUpdateConfiguration == null && !LoadConfiguration())
+                {
+                    Reset();
+                    return;
+                }
+
                 /*
                  *  Setup the "statistics.php".
                 */
@@ -901,7 +896,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                     "Error while creating and editing the PHP-file.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -918,7 +912,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -976,41 +969,45 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 setupString = setupString.Replace("_APPID",
                     Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
 
-                foreach (
-                    var updateConfig in
-                        _newUpdateConfiguration.Where(
-                            updateConfig =>
-                                _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion)))
+                if (_newUpdateConfiguration != null)
                 {
-                    updateConfig.UseStatistics = true;
-                    setupString +=
-                        String.Format("\nINSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                            updateConfig.LiteralVersion, Project.ApplicationId);
-                }
+                    foreach (
+                        var updateConfig in
+                            _newUpdateConfiguration.Where(
+                                updateConfig =>
+                                    _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion))
+                        )
+                    {
+                        updateConfig.UseStatistics = true;
+                        setupString +=
+                            String.Format(
+                                "\nINSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
+                                updateConfig.LiteralVersion, Project.ApplicationId);
+                    }
 
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Uploading new configuration..."));
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text = "Uploading new configuration..."));
 
-                try
-                {
-                    var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
-                    File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
-                    _updateConfigurationSaved = true;
+                    try
+                    {
+                        var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                        File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
+                        _updateConfigurationSaved = true;
 
-                    _ftp.UploadFile(localConfigurationPath);
-                    File.WriteAllText(localConfigurationPath, String.Empty);
-                    _updateConfigurationSaved = false;
-                    _updateUrlChanged = true;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
-                        "Error while saving and uploading the new configuration.", ex, PopupButtons.Ok)));
-                    Reset();
-                    SetUiState(true);
-                    return;
+                        _ftp.UploadFile(localConfigurationPath);
+                        File.WriteAllText(localConfigurationPath, String.Empty);
+                        _updateConfigurationSaved = false;
+                        _updateUrlChanged = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while saving and uploading the new configuration.", ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
                 }
 
                 Invoke(
@@ -1042,7 +1039,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
                 catch (Exception ex)
@@ -1053,7 +1049,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -1078,12 +1073,17 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
             }
             else if (Project.UseStatistics && !_useStatistics)
             {
+                if (_newUpdateConfiguration == null && !LoadConfiguration())
+                {
+                    Reset();
+                    return;
+                }
+
                 Invoke(
                     new Action(
                         () =>
@@ -1104,7 +1104,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                     "Error while deleting the PHP-file.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -1125,130 +1124,129 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
                                     ex, PopupButtons.Ok)));
-                    SetUiState(true);
                     return;
                 }
 
-                foreach (var updateConfig in _newUpdateConfiguration)
+                if (_newUpdateConfiguration != null)
                 {
-                    updateConfig.UseStatistics = false;
-                }
+                    foreach (var updateConfig in _newUpdateConfiguration)
+                    {
+                        updateConfig.UseStatistics = false;
+                    }
 
-                /*
+                    /*
                     *  Setup the SQL-server and database.
                     */
 
-                #region "Setup-String"
+                    #region "Setup-String"
 
-                var setupString = @"USE _DBNAME;
+                    var setupString = @"USE _DBNAME;
 DELETE FROM `Application` WHERE `ID` = _APPID;
 DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
-                #endregion
+                    #endregion
 
-                setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
-                setupString = setupString.Replace("_APPID",
-                    Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
+                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                    setupString = setupString.Replace("_APPID",
+                        Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
 
-                setupString = _newUpdateConfiguration.Aggregate(setupString,
-                    (current, configuration) =>
-                        current +
-                        String.Format("\nDELETE FROM `Download` WHERE `Version_ID` = {0}",
-                            configuration.VersionId));
+                    setupString = _newUpdateConfiguration.Aggregate(setupString,
+                        (current, configuration) =>
+                            current +
+                            String.Format("\nDELETE FROM `Download` WHERE `Version_ID` = {0}",
+                                configuration.VersionId));
 
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Uploading new configuration..."));
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text = "Uploading new configuration..."));
 
-                try
-                {
-                    var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
-                    File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
-                    _updateConfigurationSaved = true;
-
-                    _ftp.UploadFile(localConfigurationPath);
-                    File.WriteAllText(localConfigurationPath, String.Empty);
-                    _updateConfigurationSaved = false;
-                    _updateUrlChanged = true;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
-                        "Error while saving and uploading the new configuration.", ex, PopupButtons.Ok)));
-                    Reset();
-                    SetUiState(true);
-                    return;
-                }
-
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Connecting to SQL-server..."));
-
-                MySqlConnection myConnection;
-                try
-                {
-                    string myConnectionString = null;
-                    Invoke(new Action(() =>
+                    try
                     {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
-                    }));
+                        var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
+                        File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
+                        _updateConfigurationSaved = true;
 
-                    myConnection = new MySqlConnection(myConnectionString);
-                    myConnection.Open();
-                }
-                catch (MySqlException ex)
-                {
+                        _ftp.UploadFile(localConfigurationPath);
+                        File.WriteAllText(localConfigurationPath, String.Empty);
+                        _updateConfigurationSaved = false;
+                        _updateUrlChanged = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while saving and uploading the new configuration.", ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    SetUiState(true);
-                    return;
-                }
-                catch (Exception ex)
-                {
+                                loadingLabel.Text = "Connecting to SQL-server..."));
+
+                    MySqlConnection myConnection;
+                    try
+                    {
+                        string myConnectionString = null;
+                        Invoke(new Action(() =>
+                        {
+                            myConnectionString = String.Format("SERVER={0};" +
+                                                               "DATABASE={1};" +
+                                                               "UID={2};" +
+                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                                SqlUsername, sqlPasswordTextBox.Text);
+                        }));
+
+                        myConnection = new MySqlConnection(myConnectionString);
+                        myConnection.Open();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        SetUiState(true);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error,
+                                        "Error while connecting to the database.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error,
-                                    "Error while connecting to the database.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    SetUiState(true);
-                    return;
-                }
+                                loadingLabel.Text = "Executing setup commands..."));
 
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Executing setup commands..."));
+                    var command = myConnection.CreateCommand();
+                    command.CommandText = setupString;
 
-                var command = myConnection.CreateCommand();
-                command.CommandText = setupString;
-
-                try
-                {
-                    command.ExecuteNonQuery();
-                    _sqlDataDeleted = true;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    SetUiState(true);
-                    return;
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        _sqlDataDeleted = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
                 }
             }
 
@@ -1306,12 +1304,45 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new project-data.",
                                 ex, PopupButtons.Ok)));
                 Reset();
-                SetUiState(true);
                 return;
             }
 
             SetUiState(true);
             Invoke(new Action(Close));
+        }
+
+        private bool LoadConfiguration()
+        {
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Getting old configuration..."));
+
+            try
+            {
+                _oldUpdateConfiguration =
+                    UpdateConfiguration.Download(UriConnector.ConnectUri(_updateUrl, "updates.json"), null);
+                if (_oldUpdateConfiguration != null)
+                    _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
+                else
+                {
+                    _oldUpdateConfiguration = new List<UpdateConfiguration>();
+                    _newUpdateConfiguration = new List<UpdateConfiguration>();
+                }
+
+                return true;
+                // TODO: Proxy
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error,
+                                "Error while downloading the old configuration.", ex,
+                                PopupButtons.Ok)));
+                return false;
+            }
         }
 
         private void backButton_Click(object sender, EventArgs e)

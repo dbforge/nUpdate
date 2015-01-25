@@ -270,7 +270,8 @@ namespace nUpdate.Administration.Core
                     if (item.ItemType == FtpItemType.Directory && UpdateVersion.IsValid(item.Name))
                     {
                         ftp.ChangeDirectoryMultiPath(aimPath);
-                        ftp.MakeDirectory(item.Name);
+                        if (!IsExisting(aimPath, item.Name))
+                            ftp.MakeDirectory(item.Name);
                         ftp.ChangeDirectoryMultiPath(item.Name);
                         InternalMoveContent(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
                         DeleteDirectory(item.FullPath);
@@ -279,13 +280,16 @@ namespace nUpdate.Administration.Core
                              (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
                         // Second condition determines whether the item is a package-file or not
                     {
-                        // "MoveFile"-method damages the files, so we do it manually with a work-around
-                        //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
+                        if (!IsExisting(item.Name))
+                        {
+                            // "MoveFile"-method damages the files, so we do it manually with a work-around
+                            //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
 
-                        var localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
-                        ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                        ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name), FileAction.Create);
-                        File.Delete(localFilePath);
+                            var localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
+                            ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
+                            ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name), FileAction.Create);
+                            File.Delete(localFilePath);
+                        }
                         ftp.DeleteFile(item.FullPath);
                     }
                 }
@@ -309,6 +313,39 @@ namespace nUpdate.Administration.Core
 
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
+                string nameList;
+                try
+                {
+                    nameList = ftp.GetNameList(destinationName);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("No such file or directory"))
+                        return false;
+                    throw;
+                }
+                return !string.IsNullOrEmpty(nameList);
+            }
+        }
+
+        /// <summary>
+        ///     Returns if a file or directory is existing on the server.
+        /// </summary>
+        /// <param name="directoryPath">The directory in which the file should be existing.</param>
+        /// <param name="destinationName">The name of the file or folder to check.</param>
+        /// <returns>Returns "true" if the file or folder exists, otherwise "false".</returns>
+        public bool IsExisting(string directoryPath, string destinationName)
+        {
+            if (!_hasAlreadyFixedStrings)
+                FixProperties();
+
+            using (var ftp = new FtpClient(Host, Port, Protocol))
+            {
+                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
+                ftp.FileTransferType = TransferType.Binary;
+
+                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.ChangeDirectoryMultiPath(directoryPath);
                 string nameList;
                 try
                 {

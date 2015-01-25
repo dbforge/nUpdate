@@ -194,7 +194,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MinimizeBox = false;
             this.Name = "DirectorySearchDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FormTitle";
+            this.Text = "Set directory - {0} - nUpdate Administration 0.1.0.0 Alpha 1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectorySearchForm_FormClosing);
             this.Shown += new System.EventHandler(this.DirectorySearchDialog_Shown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DirectorySearchDialog_MouseDown);

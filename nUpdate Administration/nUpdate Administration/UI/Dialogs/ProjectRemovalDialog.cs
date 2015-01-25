@@ -40,14 +40,7 @@ namespace nUpdate.Administration.UI.Dialogs
             projectsTreeView.Nodes[0].HideCheckBox();
             _projectConfiguration =
                 Serializer.Deserialize<List<ProjectConfiguration>>(
-                    File.ReadAllText(Program.ProjectsConfigFilePath));
-            if (_projectConfiguration != null)
-            {
-            }
-            else
-            {
-                _projectConfiguration = new List<ProjectConfiguration>();
-            }
+                    File.ReadAllText(Program.ProjectsConfigFilePath)) ?? new List<ProjectConfiguration>();
 
             foreach (
                 var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true}))
@@ -131,6 +124,7 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 _projectConfiguration.RemoveAt(index);
+                File.WriteAllText(Program.ProjectsConfigFilePath, Serializer.Serialize(_projectConfiguration));
             }
             catch (Exception ex)
             {

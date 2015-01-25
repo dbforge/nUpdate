@@ -223,6 +223,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
+            if (!ConnectionChecker.IsConnectionAvailable())
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
+                       "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
+                       PopupButtons.Ok);
+                Close();
+                return;
+            }
+
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;

@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Administration.Core;
 
 namespace nUpdate.Test

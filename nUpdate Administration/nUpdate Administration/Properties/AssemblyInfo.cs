@@ -1,6 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
-// License: Creative Commons Attribution NoDerivs (CC-ND)
-// Created: 01-08-2014 12:11
+
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -10,11 +9,11 @@ using System.Runtime.InteropServices;
 // die mit einer Assembly verknüpft sind.
 
 [assembly: AssemblyTitle("nUpdate Administration")]
-[assembly: AssemblyDescription("This is the official administration for the nUpdate library.")]
+[assembly: AssemblyDescription("The administration of the nUpdate library.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("nUpdate Administration")]
-[assembly: AssemblyCopyright("Copyright © Dominic Beger 2014")]
+[assembly: AssemblyCopyright("Copyright © Dominic Beger (Trade/ProgTrade) 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -40,5 +39,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
 [assembly: NeutralResourcesLanguage("")]

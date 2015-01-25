@@ -14,6 +14,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public bool IsValid
+        {
+            get { return !String.IsNullOrEmpty(processNameTextBox.Text); }
+        }
+
         public string ProcessName
         {
             get { return processNameTextBox.Text; }
@@ -23,10 +28,6 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
         public Operation Operation
         {
             get { return new Operation(OperationArea.Processes, OperationMethod.Stop, ProcessName); }
-        }
-
-        private void ProcessStopOperationPanel_Load(object sender, EventArgs e)
-        {
         }
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -10,23 +12,6 @@ namespace nUpdate.Administration
 {
     public static class Program
     {
-        /// <summary>
-        ///     The root path of nUpdate Administration.
-        /// </summary>
-        public static string Path =
-            System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "nUpdate Administration");
-
-        /// <summary>
-        ///     The path of the config file for all projects.
-        /// </summary>
-        public static string ProjectsConfigFilePath = System.IO.Path.Combine(Path, "projconf.json");
-
-        /// <summary>
-        ///     The path of the statistic server file.
-        /// </summary>
-        public static string StatisticServersFilePath = System.IO.Path.Combine(Path, "statservers.json");
-
         /// <summary>
         ///     The path of the languages directory.
         /// </summary>
@@ -75,5 +60,22 @@ namespace nUpdate.Administration
                 e.Exception, PopupButtons.Ok);
             Application.Exit();
         }
+
+        /// <summary>
+        ///     The root path of nUpdate Administration.
+        /// </summary>
+        public static string Path =
+            System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "nUpdate Administration");
+
+        /// <summary>
+        ///     The path of the config file for all projects.
+        /// </summary>
+        public static string ProjectsConfigFilePath = System.IO.Path.Combine(Path, "projconf.json");
+
+        /// <summary>
+        ///     The path of the statistic server file.
+        /// </summary>
+        public static string StatisticServersFilePath = System.IO.Path.Combine(Path, "statservers.json");
     }
 }

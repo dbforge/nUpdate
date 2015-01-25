@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -13,8 +15,8 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateDownloadDialog : BaseDialog
     {
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private LocalizationProperties _lp;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public UpdateDownloadDialog()
         {

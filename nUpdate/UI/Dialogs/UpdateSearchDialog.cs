@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -69,7 +71,8 @@ namespace nUpdate.UI.Dialogs
         {
             Invoke(new Action(() =>
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", e.Exception, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", e.Exception,
+                    PopupButtons.Ok);
                 DialogResult = DialogResult.Cancel;
             }));
         }

@@ -39,6 +39,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _mustUpdate;
         private bool _nodeInitializingFailed;
         private string _packageFolder;
+        private bool _packageInitialized;
         private bool _packageUploaded;
         private UpdateVersion _packageVersion;
         private bool _publishUpdate;
@@ -155,39 +156,37 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             SetUiState(true);
-            if (Project.Packages != null)
+            if (_packageInitialized)
             {
-                Project.Packages.Remove(_package); // Remove the saved package again
+                if (Project.Packages != null)
+                {
+                    Project.Packages.Remove(_package); // Remove the saved package again
+                }
+
+                _package.IsReleased = false;
+
+                if (Project.Packages == null)
+                    Project.Packages = new List<UpdatePackage>();
+                Project.Packages.Add(_package);
+
+                try
+                {
+                    ApplicationInstance.SaveProject(Project.Path, Project);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex,
+                                    PopupButtons.Ok)));
+                }
             }
 
-            _package.IsReleased = false;
-
-            if (Project.Packages == null)
-                Project.Packages = new List<UpdatePackage>();
-            Project.Packages.Add(_package);
-
-            try
-            {
-                ApplicationInstance.SaveProject(Project.Path, Project);
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex,
-                                PopupButtons.Ok)));
-            }
-            finally
-            {
-                DialogResult = DialogResult.OK;
-            }
+            DialogResult = DialogResult.OK;
         }
 
-        /// <summary>
-        ///     Initializes the FTP-data.
-        /// </summary>
-        private bool InitializeFtpData()
+        private void PackageAddDialog_Load(object sender, EventArgs e)
         {
             try
             {
@@ -198,40 +197,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
                 _ftp.Directory = Project.FtpDirectory;
-
-                return true;
-            }
-            catch (IOException ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                return false;
-            }
-            catch (NullReferenceException)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.",
-                    "The project file is corrupt and does not have the necessary arguments.", PopupButtons.Ok);
-                return false;
+                _ftp.ProgressChanged += ProgressChanged;
+                _ftp.CancellationFinished += CancellationFinished;
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                return false;
-            }
-        }
-
-        private void PackageAddDialog_Load(object sender, EventArgs e)
-        {
-            _ftp.ProgressChanged += ProgressChanged;
-            _ftp.CancellationFinished += CancellationFinished;
-
-            _updateLog.Project = Project;
-
-            if (!InitializeFtpData())
-            {
                 Close();
                 return;
             }
 
+            _updateLog.Project = Project;
             //SetLanguage();
 
             categoryTreeView.Nodes[3].Nodes.Add(_replaceNode);
@@ -328,23 +304,34 @@ namespace nUpdate.Administration.UI.Dialogs
             if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.",
-                    "Please specify a changelog for the package.", PopupButtons.Ok);
+                    "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.", PopupButtons.Ok);
                 changelogPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
                 return;
             }
 
-            if (!filesDataTreeView.Nodes.Cast<TreeNode>().Any(node => node.Nodes.Count > 0))
+            if (!filesDataTreeView.Nodes.Cast<TreeNode>().Any(node => node.Nodes.Count > 0) &&
+                categoryTreeView.Nodes[3].Nodes.Count <= 1)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "No files and/or folders set.",
-                    "Please specify some files and/or folders that should be included into the package.",
+                Popup.ShowPopup(this, SystemIcons.Error, "No files and/or folders or operations set.",
+                    "Please specify some files and/or folders that should be included or operations into the package.",
                     PopupButtons.Ok);
                 filesPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[3].Nodes[0];
                 return;
             }
+            
+            foreach (var tabPage in from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 4) let operationPanel = tabPage.Controls[0] as IOperationPanel where operationPanel != null && !operationPanel.IsValid select tabPage)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
+                    "Please make sure to fill out all required fields correctly.",
+                    PopupButtons.Ok);
+                categoryTreeView.SelectedNode =
+                    categoryTreeView.Nodes[3].Nodes.Cast<TreeNode>()
+                        .First(item => item.Index == tabPage.TabIndex - 4);
+                return;
+            }
 
-            _allowCancel = false;
             SetUiState(false);
 
             loadingPanel.Location = new Point(180, 91);
@@ -585,6 +572,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
                 String.Format("{0}.zip", Project.Guid));
             _package.Version = _packageVersion;
+            _packageInitialized = true;
 
             if (Project.Packages == null)
                 Project.Packages = new List<UpdatePackage>();
@@ -883,7 +871,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         }
                     }
 
-                    Invoke(new Action(() => directoryNode.Nodes.Add(fileNode)));
+                    var node = directoryNode;
+                    Invoke(new Action(() => node.Nodes.Add(fileNode)));
                 }
             }
             catch (Exception ex)
@@ -1096,10 +1085,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (categoryTreeView.SelectedNode == null) 
+            if (categoryTreeView.SelectedNode == null)
                 return;
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null ||
-                categoryTreeView.SelectedNode.Text == "Replace file/folder") 
+                categoryTreeView.SelectedNode.Text == "Replace file/folder")
                 return;
             categoryTabControl.TabPages.Remove(
                 categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);

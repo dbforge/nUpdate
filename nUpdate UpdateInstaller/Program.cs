@@ -44,9 +44,9 @@ namespace nUpdate.UpdateInstaller
         public static string ExternalGuiAssemblyPath { get; set; }
 
         /// <summary>
-        ///     The text of the "Updating..."-label.
+        ///     The text of the "Copying..."-label.
         /// </summary>
-        public static string UpdatingText { get; set; }
+        public static string CopyingText { get; set; }
 
         /// <summary>
         ///     The text of the file rename information.
@@ -123,7 +123,9 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                Operations = Serializer.Deserialize<IEnumerable<Operation>>(Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
+                Operations =
+                    Serializer.Deserialize<IEnumerable<Operation>>(
+                        Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
                 ExternalGuiAssemblyPath = appArguments[5];
             }
             catch (Exception ex)
@@ -133,7 +135,7 @@ namespace nUpdate.UpdateInstaller
             }
 
 
-            UpdatingText = "Updating...";
+            CopyingText = "Copying {0}...";
             FileDeletingOperationText = "Deleting file \"{0}\"...";
             FileRenamingOperationText = "Renaming file \"{0}\" to \"{1}\"...";
             RegistrySubKeyCreateOperationText = "Creating registry subkey \"{0}\"...";

@@ -39,7 +39,8 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 }
 
                 extractProgressBar.Value = (int) percentage;
-                updateLabel.Text = String.Format("{0} {1} ", "Updating", currentFile); // Hardcoded string because it serves as a plcaholder until the localiazation appear.
+                updateLabel.Text = String.Format(Program.CopyingText, currentFile);
+                    // Hardcoded string because it serves as a plcaholder until the localiazation appear.
                 percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
@@ -62,7 +63,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                     () =>
                         result =
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.",
-                                String.Format("{0}. Should the updating be cancelled?", ex),
+                                String.Format("{0}. Should the updating be stopped?", ex),
                                 PopupButtons.YesNo)));
             return result == DialogResult.Yes;
         }

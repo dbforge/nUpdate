@@ -56,6 +56,7 @@
             this.changelogTextBox.Size = new System.Drawing.Size(351, 102);
             this.changelogTextBox.TabIndex = 0;
             this.changelogTextBox.Text = "";
+            this.changelogTextBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.changelogTextBox_LinkClicked);
             // 
             // headerLabel
             // 
@@ -84,16 +85,16 @@
             this.newestVersionLabel.Name = "newestVersionLabel";
             this.newestVersionLabel.Size = new System.Drawing.Size(107, 13);
             this.newestVersionLabel.TabIndex = 12;
-            this.newestVersionLabel.Text = "Newest Version: {0}";
+            this.newestVersionLabel.Text = "Newest version: {0}";
             // 
             // currentVersionLabel
             // 
             this.currentVersionLabel.AutoSize = true;
             this.currentVersionLabel.Location = new System.Drawing.Point(9, 100);
             this.currentVersionLabel.Name = "currentVersionLabel";
-            this.currentVersionLabel.Size = new System.Drawing.Size(106, 13);
+            this.currentVersionLabel.Size = new System.Drawing.Size(104, 13);
             this.currentVersionLabel.TabIndex = 13;
-            this.currentVersionLabel.Text = "Current Version: {0}";
+            this.currentVersionLabel.Text = "Current version: {0}";
             // 
             // updateSizeLabel
             // 

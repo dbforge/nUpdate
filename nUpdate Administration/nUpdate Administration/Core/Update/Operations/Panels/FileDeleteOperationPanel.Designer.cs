@@ -96,11 +96,12 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             // 
             // pathTextBox
             // 
-            this.pathTextBox.Cue = "%appdata%/myapp";
+            this.pathTextBox.Cue = "%appdata%\\myapp\\";
             this.pathTextBox.Location = new System.Drawing.Point(106, 14);
             this.pathTextBox.Name = "pathTextBox";
             this.pathTextBox.Size = new System.Drawing.Size(267, 22);
             this.pathTextBox.TabIndex = 12;
+            this.pathTextBox.TextChanged += new System.EventHandler(this.pathTextBox_TextChanged);
             // 
             // environmentVariablesButton
             // 

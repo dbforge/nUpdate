@@ -16,8 +16,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly List<string> _cultureNames = new List<string>();
 
         private readonly UpdateManager _manager =
-            new UpdateManager(new Uri("http://www.nupdate.net/updates.json"), "NochNix",
-                new UpdateVersion("0.1.0.0"), new CultureInfo("en"));
+            new UpdateManager(new Uri(""), "Nothing",
+                new UpdateVersion("0.1.0.0"), new CultureInfo("en")); // TODO: Set correct data at the end
 
         public PreferencesDialog()
         {
@@ -42,8 +42,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private void searchUpdatesButton_Click(object sender, EventArgs e)
         {
             //this.manager.LanguageCulture = nUpdate.Core.Language.Language.Spanish;
-            var updaterUi = new UpdaterUi(_manager);
-            updaterUi.ShowUserInterface();
+            //var updaterUi = new UpdaterUi(_manager);
+            //updaterUi.ShowUserInterface();
         }
 
         private void includeAlphaCheckBox_CheckedChanged(object sender, EventArgs e)

@@ -15,6 +15,11 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public bool IsValid
+        {
+            get { return !String.IsNullOrEmpty(subKeyTextBox.Text) && nameValuePairListView.Items.Count > 0; }
+        }
+
         public string KeyPath
         {
             get

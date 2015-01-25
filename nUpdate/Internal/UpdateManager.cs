@@ -384,7 +384,9 @@ namespace nUpdate.Internal
                 String.Format("\"{0}\"", _updateFilePath), String.Format("\"{0}\"", Application.StartupPath),
                 String.Format("\"{0}\"", Application.ExecutablePath),
                 String.Format("\"{0}\"", Application.ProductName),
-                String.Format("\"{0}\"", Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Operations)))), "\"Unpacking\"",
+                String.Format("\"{0}\"",
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Operations)))),
+                "\"Unpacking\"",
                 "\"The installation of the update failed.\"",
                 "\"{0}... \nPossibly the program won't be able to run properly as important components could be missing then.\"",
                 "\"OK\"", installerUiAssemblyPath
@@ -445,7 +447,7 @@ namespace nUpdate.Internal
         /// <summary>
         ///     Returns if there were updates found.
         /// </summary>
-        public bool UpdatesFound { get; private set; }
+        public bool UpdatesFound { get; internal set; }
 
         /// <summary>
         ///     Gets or sets the url of the configuration file.
