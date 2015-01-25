@@ -37,10 +37,10 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
             this.overviewTabPage = new System.Windows.Forms.TabPage();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -119,7 +119,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
-            this.tabControl1.SuspendLayout();
+            this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.projectDataPartsTabControl.SuspendLayout();
             this.overviewTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.buildNumericUpDown)).BeginInit();
@@ -148,18 +149,18 @@ namespace nUpdate.Administration.UI.Dialogs
             this.imageList1.Images.SetKeyName(2, "wrench.png");
             this.imageList1.Images.SetKeyName(3, "counter-count-up.png");
             // 
-            // tabControl1
+            // projectDataPartsTabControl
             // 
-            this.tabControl1.Controls.Add(this.overviewTabPage);
-            this.tabControl1.Controls.Add(this.packagesTabPage);
-            this.tabControl1.Controls.Add(this.statisticsTabPage);
-            this.tabControl1.HotTrack = true;
-            this.tabControl1.ImageList = this.imageList1;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(574, 413);
-            this.tabControl1.TabIndex = 3;
+            this.projectDataPartsTabControl.Controls.Add(this.overviewTabPage);
+            this.projectDataPartsTabControl.Controls.Add(this.packagesTabPage);
+            this.projectDataPartsTabControl.Controls.Add(this.statisticsTabPage);
+            this.projectDataPartsTabControl.HotTrack = true;
+            this.projectDataPartsTabControl.ImageList = this.imageList1;
+            this.projectDataPartsTabControl.Location = new System.Drawing.Point(0, 0);
+            this.projectDataPartsTabControl.Name = "projectDataPartsTabControl";
+            this.projectDataPartsTabControl.SelectedIndex = 0;
+            this.projectDataPartsTabControl.Size = new System.Drawing.Size(574, 413);
+            this.projectDataPartsTabControl.TabIndex = 3;
             // 
             // overviewTabPage
             // 
@@ -501,9 +502,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.infoFileloadingLabel.AutoSize = true;
             this.infoFileloadingLabel.Location = new System.Drawing.Point(24, 234);
             this.infoFileloadingLabel.Name = "infoFileloadingLabel";
-            this.infoFileloadingLabel.Size = new System.Drawing.Size(160, 13);
+            this.infoFileloadingLabel.Size = new System.Drawing.Size(169, 13);
             this.infoFileloadingLabel.TabIndex = 24;
-            this.infoFileloadingLabel.Text = "Status of the update-info file:";
+            this.infoFileloadingLabel.Text = "Status of the configuration file:";
             // 
             // ftpDirectoryTextBox
             // 
@@ -740,16 +741,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader3,
             this.columnHeader4});
             this.packagesList.FullRowSelect = true;
-            listViewGroup1.Header = "Released";
-            listViewGroup1.Name = "listViewGroup1";
-            listViewGroup2.Header = "Not released";
-            listViewGroup2.Name = "listViewGroup2";
+            listViewGroup3.Header = "Released";
+            listViewGroup3.Name = "listViewGroup1";
+            listViewGroup4.Header = "Not released";
+            listViewGroup4.Name = "listViewGroup2";
             this.packagesList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+            listViewGroup3,
+            listViewGroup4});
             this.packagesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.packagesList.Location = new System.Drawing.Point(4, 31);
-            this.packagesList.MultiSelect = false;
             this.packagesList.Name = "packagesList";
             this.packagesList.Size = new System.Drawing.Size(558, 351);
             this.packagesList.TabIndex = 3;
@@ -887,7 +887,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // searchTextBox
             // 
-            this.searchTextBox.Cue = null;
+            this.searchTextBox.Cue = "Search...";
             this.searchTextBox.Location = new System.Drawing.Point(429, 4);
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.Size = new System.Drawing.Size(132, 22);
@@ -979,7 +979,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel.Controls.Add(this.cancelLabel);
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(207, 417);
+            this.loadingPanel.Location = new System.Drawing.Point(148, 419);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(269, 51);
             this.loadingPanel.TabIndex = 66;
@@ -991,7 +991,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.cancelLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cancelLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cancelLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.cancelLabel.Location = new System.Drawing.Point(241, 0);
+            this.cancelLabel.Location = new System.Drawing.Point(252, 0);
             this.cancelLabel.Name = "cancelLabel";
             this.cancelLabel.Size = new System.Drawing.Size(14, 17);
             this.cancelLabel.TabIndex = 22;
@@ -1002,9 +1002,9 @@ namespace nUpdate.Administration.UI.Dialogs
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(16, 18);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.Size = new System.Drawing.Size(17, 16);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
@@ -1018,14 +1018,20 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
             // 
+            // cancelToolTip
+            // 
+            this.cancelToolTip.IsBalloon = true;
+            this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
+            // 
             // ProjectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(572, 412);
+            this.ClientSize = new System.Drawing.Size(572, 411);
             this.Controls.Add(this.loadingPanel);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.projectDataPartsTabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1036,7 +1042,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectDialog_FormClosing);
             this.Load += new System.EventHandler(this.ProjectDialog_Load);
             this.Shown += new System.EventHandler(this.ProjectDialog_Shown);
-            this.tabControl1.ResumeLayout(false);
+            this.projectDataPartsTabControl.ResumeLayout(false);
             this.overviewTabPage.ResumeLayout(false);
             this.overviewTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).EndInit();
@@ -1079,7 +1085,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton historyButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl projectDataPartsTabControl;
         private System.Windows.Forms.TabPage overviewTabPage;
         private System.Windows.Forms.TabPage packagesTabPage;
         private System.Windows.Forms.ImageList imageList1;
@@ -1147,5 +1153,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.NumericUpDown revisionNumericUpDown;
         private System.Windows.Forms.ComboBox developmentalStageComboBox;
         private System.Windows.Forms.NumericUpDown minorNumericUpDown;
+        private System.Windows.Forms.ToolTip cancelToolTip;
     }
 }

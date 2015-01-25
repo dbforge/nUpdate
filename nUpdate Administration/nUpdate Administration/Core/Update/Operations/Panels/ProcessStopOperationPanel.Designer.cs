@@ -39,7 +39,7 @@
             // 
             // processNameTextBox
             // 
-            this.processNameTextBox.Cue = "%temp%/MyApp.exe";
+            this.processNameTextBox.Cue = "MyProcess";
             this.processNameTextBox.Location = new System.Drawing.Point(145, 13);
             this.processNameTextBox.Name = "processNameTextBox";
             this.processNameTextBox.Size = new System.Drawing.Size(193, 22);
@@ -96,7 +96,6 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ProcessStopOperationPanel";
             this.Size = new System.Drawing.Size(488, 225);
-            this.Load += new System.EventHandler(this.ProcessStopOperationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

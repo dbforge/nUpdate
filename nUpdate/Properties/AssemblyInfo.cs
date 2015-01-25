@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
@@ -6,11 +8,11 @@ using System.Runtime.InteropServices;
 // die mit einer Assembly verknüpft sind.
 
 [assembly: AssemblyTitle("nUpdate")]
-[assembly: AssemblyDescription("Eine einfache Updatesystem-Klassenbibliothek")]
+[assembly: AssemblyDescription("A class library for updating .NET-applications.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("nUpdate")]
-[assembly: AssemblyCopyright("Copyright © Trade 2013/2014")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("Copyright © Dominc Beger (Trade/ProgTrade) 2013/2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -36,4 +38,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

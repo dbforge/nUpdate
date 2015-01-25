@@ -121,7 +121,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
-            Text = String.Format("Set directory - {0} - nUpdate Administration 0.1.0.0", ProjectName);
+            Text = String.Format(Text, ProjectName);
 
             if (NativeMethods.DwmIsCompositionEnabled())
             {
@@ -199,7 +199,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
                                 PopupButtons.Ok);
-                            Close();
+                            SetUiState(true);
+                            DialogResult = DialogResult.OK;
                         }));
             }
 
@@ -233,25 +234,22 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        public static ListingItem ConvertToListingItem(IEnumerable<FtpItem> inputItems, string seperator)
+        public static ListingItem ConvertToListingItem(IEnumerable<FtpItem> inputItems, string separator)
         {
             var root = new ListingItem("Root", false);
             foreach (var item in inputItems)
             {
                 var currentParent = root;
                 foreach (
-                    var pathSegment in item.FullPath.Remove(0, 1).Split(new[] {seperator}, StringSplitOptions.None))
+                    var pathSegment in item.FullPath.Remove(0, 1).Split(new[] {separator}, StringSplitOptions.None))
                 {
-                    if (currentParent.Children.All(t => t.Text != pathSegment))
+                    var child = currentParent.Children.FirstOrDefault(t => t.Text == pathSegment);
+                    if (child == null)
                     {
-                        var nodeToken = new ListingItem(pathSegment, item.ItemType == FtpItemType.Directory);
-                        currentParent.Children.Add(nodeToken);
-                        currentParent = nodeToken;
+                        child = new ListingItem(pathSegment, item.ItemType == FtpItemType.Directory);
+                        currentParent.Children.Add(child);
                     }
-                    else
-                    {
-                        currentParent = currentParent.Children.First(t => t.Text == pathSegment);
-                    }
+                    currentParent = child;
                 }
             }
 

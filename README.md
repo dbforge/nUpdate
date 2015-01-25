@@ -4,13 +4,13 @@ nUpdate is a modern update system providing high security and an easy-to-use int
 
 **IMPORTANT: This is currently a Pre-Alpha-version of nUpdate. Make sure to wait for an Alpha-version in order to get a working and functional version.**
 
-  - Easy management of update packages 
-  - Easy usable library
-  - Automated updating for all clients
-  - Many configuration settings which let you control your updates easily
-  - Secured update packages by signing with SHA512 and 8912 Bit RSA-keys
-  - Smart error handling with automated resetting data if an operation failed
-  - Interfaces and event system provide the possibility to use own Graphic User Interfaces that can be shown to the client
+- Easy management of update packages
+- Easy usable library
+- Automated updating for all clients
+- Many configuration settings which let you control your updates easily
+- Secured update packages by signing with SHA512 and 8912 Bit RSA-keys
+- Smart error handling with automated resetting data if an operation failed
+- Interfaces and event system provide the possibility to use own Graphic User Interfaces that can be shown to the client
 
 ### Version
 0.1.0.0 Pre-Alpha Build 6 (Not stable and features missing)
@@ -36,7 +36,7 @@ Just use GitHub's functions for creating issues on problems so that I could have
 There are still a lot of things to do till a usable version will appear. I'm giving my best to hurry up a bit.
 
 ###License
-SugarCRM 
+SugarCRM
 
 
 [nUpdate]:http://www.nupdate.net/

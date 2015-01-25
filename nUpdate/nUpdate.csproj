@@ -167,7 +167,6 @@
     <None Include="UpdateVersion.cd" />
     <None Include="UpdaterUi.cd" />
     <None Include="UpdateManager.cd" />
-    <None Include="Resources\line.PNG" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\en.xml" />
@@ -188,13 +187,13 @@
     <None Include="Resources\Ionic.Zip.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\nUpdate UpdateInstaller.exe" />
+    <None Include="Resources\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Newtonsoft.Json.dll" />
+    <None Include="Resources\nUpdate UpdateInstaller.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
