@@ -1,8 +1,10 @@
-﻿namespace nUpdate.UI.Popups
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+namespace nUpdate.UI.Popups
 {
     public enum PopupButtons
     {
         YesNo,
-        Ok,
+        Ok
     }
 }

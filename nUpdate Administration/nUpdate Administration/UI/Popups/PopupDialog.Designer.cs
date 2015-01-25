@@ -45,10 +45,12 @@
             // 
             // messageLabel
             // 
+            this.messageLabel.AutoSize = true;
             this.messageLabel.ContextMenuStrip = this.contextMenu;
             this.messageLabel.Location = new System.Drawing.Point(12, 77);
+            this.messageLabel.MaximumSize = new System.Drawing.Size(335, 0);
             this.messageLabel.Name = "messageLabel";
-            this.messageLabel.Size = new System.Drawing.Size(335, 41);
+            this.messageLabel.Size = new System.Drawing.Size(68, 13);
             this.messageLabel.TabIndex = 1;
             this.messageLabel.Text = "Information";
             // 
@@ -153,6 +155,7 @@
             this.controlPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -57,7 +57,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
         private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
-
         private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry subkey", 12, 12)
         {
             Tag = "DeleteRegistrySubKey"
@@ -70,7 +69,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly FtpManager _ftp = new FtpManager();
         private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
-
         private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry value", 13, 13)
         {
             Tag = "SetRegistryValue"
@@ -79,7 +77,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
-
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
         {Tag = "StopProcess"};
 
@@ -155,38 +152,17 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        /// <summary>
-        ///     Initializes the FTP-data.
-        /// </summary>
-        /// <returns>Returns whether the operation was successful or not.</returns>
-        private bool InitializeFtpData()
-        {
-            try
-            {
-                _ftp.Host = Project.FtpHost;
-                _ftp.Port = Project.FtpPort;
-                _ftp.Username = Project.FtpUsername;
-                _ftp.Password = FtpPassword;
-                _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
-                _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
-                _ftp.Directory = Project.FtpDirectory;
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading FTP-data.", ex, PopupButtons.Ok);
-                return false;
-            }
-
-            return true;
-        }
-
         private void PackageEditDialog_Load(object sender, EventArgs e)
         {
-            if (!InitializeFtpData())
-            {
-                Close();
-                return;
-            }
+            Text = String.Format(Text, PackageVersion);
+
+            _ftp.Host = Project.FtpHost;
+            _ftp.Port = Project.FtpPort;
+            _ftp.Username = Project.FtpUsername;
+            _ftp.Password = FtpPassword;
+            _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
+            _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
+            _ftp.Directory = Project.FtpDirectory;
 
             if (UpdateConfiguration == null)
             {
@@ -469,6 +445,49 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            if (new UpdateVersion(_packageConfiguration.LiteralVersion).BasicVersion == "0.0.0.0")
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
+                    "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
+                generalPanel.BringToFront();
+                categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
+                return;
+            }
+
+            if (Project.Packages != null && Project.Packages.Count != 0)
+            {
+                if (PackageVersion.ToString() != _packageConfiguration.LiteralVersion && Project.Packages.Any(item => item.Version == PackageVersion))
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
+                        String.Format(
+                            "Version \"{0}\" is already existing.",
+                            PackageVersion.FullText), PopupButtons.Ok);
+                    generalPanel.BringToFront();
+                    categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
+                    return;
+                }
+            }
+
+            if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.",
+                    "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.", PopupButtons.Ok);
+                changelogPanel.BringToFront();
+                categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
+                return;
+            }
+
+            foreach (var tabPage in from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 3) let operationPanel = tabPage.Controls[0] as IOperationPanel where operationPanel != null && !operationPanel.IsValid select tabPage)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
+                    "Please make sure to fill out all required fields correctly.",
+                    PopupButtons.Ok);
+                categoryTreeView.SelectedNode =
+                    categoryTreeView.Nodes[3].Nodes.Cast<TreeNode>()
+                        .First(item => item.Index == tabPage.TabIndex - 4);
+                return;
+            }
+
             _newConfiguration = UpdateConfiguration;
 
             var changelog = new Dictionary<CultureInfo, string>
@@ -844,13 +863,13 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (categoryTreeView.SelectedNode == null) 
+            if (categoryTreeView.SelectedNode == null)
                 return;
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null)
                 return;
 
             categoryTabControl.TabPages.Remove(
-                    categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
+                categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
             categoryTreeView.SelectedNode.Remove();
         }
 

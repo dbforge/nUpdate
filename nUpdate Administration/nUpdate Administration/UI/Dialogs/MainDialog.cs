@@ -19,7 +19,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private SecureString _ftpPassword = new SecureString();
         private SecureString _proxyPassword = new SecureString();
         private SecureString _sqlPassword = new SecureString();
-        private readonly LocalizationProperties _lp = new LocalizationProperties();
+        //private readonly LocalizationProperties _lp = new LocalizationProperties();
 
         public MainDialog()
         {
@@ -68,7 +68,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                var dr = MessageBox.Show(_lp.OperatingSystemNotSupportedWarn, String.Empty,
+                var dr = MessageBox.Show("Your operating system is not supported.", String.Empty,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
@@ -93,7 +93,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             catch (UnauthorizedAccessException)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, _lp.MissingRightsWarnCaption, _lp.MissingRightsWarnText,
+                Popup.ShowPopup(this, SystemIcons.Error, "Missing rights.", "You don't own the rights to create the extension's registry entry.",
                     PopupButtons.Ok);
             }
 
@@ -139,7 +139,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, _lp.ProjectReadingErrorCaption, ex,
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the project.", ex,
                     PopupButtons.Ok);
                 return null;
             }

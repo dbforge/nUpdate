@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Internal;
 

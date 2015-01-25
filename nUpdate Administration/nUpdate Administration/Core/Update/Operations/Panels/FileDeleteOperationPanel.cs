@@ -18,9 +18,14 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             InitializeComponent();
         }
 
+        public bool IsValid
+        {
+            get { return ItemList.Any(); }
+        }
+
         public string Path
         {
-            get { return pathTextBox.Text; }
+            get { return pathTextBox.Text.EndsWith("\\") ? pathTextBox.Text : pathTextBox.Text += "\\"; }
             set { pathTextBox.Text = value; }
         }
 
@@ -64,6 +69,15 @@ namespace nUpdate.Administration.Core.Update.Operations.Panels
             Popup.ShowPopup(this, SystemIcons.Information, "Environment variables.",
                 "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
                 PopupButtons.Ok);
+        }
+
+        private void pathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (pathTextBox.Text.Last() != '/') 
+                return;
+            pathTextBox.Text = pathTextBox.Text.Replace(pathTextBox.Text.Last(), '\\');
+            pathTextBox.SelectionStart = pathTextBox.Text.Length;
+            pathTextBox.SelectionLength = 0;
         }
     }
 }

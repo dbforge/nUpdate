@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade)
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -51,7 +53,9 @@ namespace nUpdate.UI.Dialogs
 
         private void showStackTraceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            errorMessageTextBox.Text = showStackTraceCheckBox.Checked ? String.Format("{0}\n{1}", Error.Message, Error.StackTrace) : Error.Message;
+            errorMessageTextBox.Text = showStackTraceCheckBox.Checked
+                ? String.Format("{0}\n{1}", Error.Message, Error.StackTrace)
+                : Error.Message;
         }
     }
 }

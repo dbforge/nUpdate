@@ -99,7 +99,7 @@
             this.label5.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(198, 120);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 13);
+            this.label5.Size = new System.Drawing.Size(87, 13);
             this.label5.TabIndex = 12;
             this.label5.Text = "Temp directory:";
             // 
@@ -159,14 +159,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 186);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(501, 39);
+            this.label1.Size = new System.Drawing.Size(501, 52);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             // 
             // pictureBox2
             // 
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(15, 238);
+            this.pictureBox2.Location = new System.Drawing.Point(15, 250);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(188, 180);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -176,7 +176,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(223, 241);
+            this.label11.Location = new System.Drawing.Point(223, 253);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(332, 169);
             this.label11.TabIndex = 19;
