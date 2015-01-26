@@ -200,8 +200,9 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
                                 PopupButtons.Ok);
                             SetUiState(true);
-                            DialogResult = DialogResult.OK;
                         }));
+
+                DialogResult = DialogResult.OK;
             }
 
             if (_listedFtpItems != null)

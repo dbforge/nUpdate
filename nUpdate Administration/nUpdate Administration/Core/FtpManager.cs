@@ -313,16 +313,15 @@ namespace nUpdate.Administration.Core
 
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
-                string nameList;
+                string nameList = null;
                 try
                 {
                     nameList = ftp.GetNameList(destinationName);
                 }
                 catch (Exception ex)
                 {
-                    if (ex.Message.Contains("No such file or directory"))
+                    if (ex.Message.Contains("No such file or directory") || ex.Message.Contains("Directory not found"))
                         return false;
-                    throw;
                 }
                 return !string.IsNullOrEmpty(nameList);
             }

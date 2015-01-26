@@ -2,10 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
+using nUpdate.Administration.UI.Popups;
 using nUpdate.Internal;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -15,9 +17,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private CultureInfo[] _cultureInfos = {};
         private readonly List<string> _cultureNames = new List<string>();
 
-        private readonly UpdateManager _manager =
-            new UpdateManager(new Uri(""), "Nothing",
-                new UpdateVersion("0.1.0.0"), new CultureInfo("en")); // TODO: Set correct data at the end
+        //private readonly UpdateManager _manager =
+        //    new UpdateManager(new Uri(""), "Nothing",
+        //        new UpdateVersion("0.1.0.0"), new CultureInfo("en")); // TODO: Set correct data at the end
 
         public PreferencesDialog()
         {
@@ -41,19 +43,21 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void searchUpdatesButton_Click(object sender, EventArgs e)
         {
-            //this.manager.LanguageCulture = nUpdate.Core.Language.Language.Spanish;
+            Popup.ShowPopup(this, SystemIcons.Error, "Not implemented yet.", "This feature will be implemented soon.",
+                PopupButtons.Ok)
+                ; //this.manager.LanguageCulture = nUpdate.Core.Language.Language.Spanish;
             //var updaterUi = new UpdaterUi(_manager);
             //updaterUi.ShowUserInterface();
         }
 
         private void includeAlphaCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            _manager.IncludeAlpha = includeAlphaCheckBox.Checked;
+            //_manager.IncludeAlpha = includeAlphaCheckBox.Checked;
         }
 
         private void includeBetaCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            _manager.IncludeBeta = includeBetaCheckBox.Checked;
+            //_manager.IncludeBeta = includeBetaCheckBox.Checked;
         }
 
         private void languagesComboBox_SelectedIndexChanged(object sender, EventArgs e)

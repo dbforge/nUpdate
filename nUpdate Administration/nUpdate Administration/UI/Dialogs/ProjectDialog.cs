@@ -446,6 +446,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            if (packagesList.SelectedItems[0] == null)
+                return;
+
             var packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag;
             UpdatePackage correspondingPackage;
 
