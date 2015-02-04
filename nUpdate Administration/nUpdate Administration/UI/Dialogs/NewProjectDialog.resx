@@ -304,7 +304,7 @@
     <value>6</value>
   </data>
   <data name="keyPairInfoLabel.Text" xml:space="preserve">
-    <value>nUpdate uses a 8192-bit RSA-Signature to serve for the security of your update packages. 
+    <value>nUpdate uses a 8192 Bit RSA-Signature to serve for the security of your update packages. 
 The generation of these keys may take a different amount of time, depending on your PC.
 Please be patient.</value>
   </data>
@@ -714,7 +714,7 @@ Please be patient.</value>
     <value>updateUrlTextBox</value>
   </data>
   <data name="&gt;&gt;updateUrlTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;updateUrlTextBox.Parent" xml:space="preserve">
     <value>generalPanel</value>
@@ -768,7 +768,7 @@ Please be patient.</value>
     <value>nameTextBox</value>
   </data>
   <data name="&gt;&gt;nameTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;nameTextBox.Parent" xml:space="preserve">
     <value>generalPanel</value>
@@ -858,7 +858,7 @@ Please be patient.</value>
     <value>localPathTextBox</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.Parent" xml:space="preserve">
     <value>generalPanel</value>
@@ -1264,7 +1264,7 @@ Please be patient.</value>
     <value>ftpPortTextBox</value>
   </data>
   <data name="&gt;&gt;ftpPortTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ftpPortTextBox.Parent" xml:space="preserve">
     <value>ftpPanel</value>
@@ -1288,7 +1288,7 @@ Please be patient.</value>
     <value>ftpUserTextBox</value>
   </data>
   <data name="&gt;&gt;ftpUserTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ftpUserTextBox.Parent" xml:space="preserve">
     <value>ftpPanel</value>
@@ -1312,7 +1312,7 @@ Please be patient.</value>
     <value>ftpHostTextBox</value>
   </data>
   <data name="&gt;&gt;ftpHostTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ftpHostTextBox.Parent" xml:space="preserve">
     <value>ftpPanel</value>
@@ -2012,7 +2012,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>proxyUserTextBox</value>
   </data>
   <data name="&gt;&gt;proxyUserTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;proxyUserTextBox.Parent" xml:space="preserve">
     <value>proxyPanel</value>
@@ -2147,7 +2147,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>proxyHostTextBox</value>
   </data>
   <data name="&gt;&gt;proxyHostTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.WatermarkTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;proxyHostTextBox.Parent" xml:space="preserve">
     <value>proxyPanel</value>

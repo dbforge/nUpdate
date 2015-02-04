@@ -1,5 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
+using nUpdate.Core.Win32;
+
 namespace nUpdate.Core
 {
     public class ConnectionChecker

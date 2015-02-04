@@ -9,9 +9,9 @@ namespace nUpdate.Core.Operations
     /// </summary>
     public enum OperationArea
     {
-        [Description("NewUpdateDialogDemandsFilesAccessText")] Files,
-        [Description("NewUpdateDialogDemandsRegistryAccessText")] Registry,
-        [Description("NewUpdateDialogDemandsProcessesAccessText")] Processes,
-        [Description("NewUpdateDialogDemandsServicesAccessText")] Services
+        [Description("NewUpdateDialogFilesAccessText")] Files,
+        [Description("NewUpdateDialogRegistryAccessText")] Registry,
+        [Description("NewUpdateDialogProcessesAccessText")] Processes,
+        [Description("NewUpdateDialogServicesAccessText")] Services
     }
 }

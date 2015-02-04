@@ -37,8 +37,8 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
             this.overviewTabPage = new System.Windows.Forms.TabPage();
@@ -109,8 +109,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
-            this.label6 = new System.Windows.Forms.Label();
             this.updateStatisticsButton = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lastUpdatedLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.noDownloadsLabel = new System.Windows.Forms.Label();
             this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.noStatisticsPanel = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
@@ -120,6 +122,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.updateStatisticsButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.projectDataPartsTabControl.SuspendLayout();
             this.overviewTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.developmentBuildNumericUpDown)).BeginInit();
@@ -133,6 +136,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.packagesTabPage.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statisticsTabPage.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.noStatisticsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -741,13 +745,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader3,
             this.columnHeader4});
             this.packagesList.FullRowSelect = true;
-            listViewGroup3.Header = "Released";
-            listViewGroup3.Name = "listViewGroup1";
-            listViewGroup4.Header = "Not released";
-            listViewGroup4.Name = "listViewGroup2";
+            listViewGroup1.Header = "Released";
+            listViewGroup1.Name = "listViewGroup1";
+            listViewGroup2.Header = "Not released";
+            listViewGroup2.Name = "listViewGroup2";
             this.packagesList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.packagesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.packagesList.Location = new System.Drawing.Point(4, 31);
             this.packagesList.Name = "packagesList";
@@ -808,7 +812,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(52, 22);
             this.addButton.Text = "Add ";
-            this.addButton.ToolTipText = "Add a new update package that contains updated files/folders.";
+            this.addButton.ToolTipText = "Add a new update package that contains updated files/folders and/or operations to" +
+    " perform.";
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // toolStripSeparator1
@@ -843,7 +848,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(63, 22);
             this.deleteButton.Text = "Delete ";
-            this.deleteButton.ToolTipText = "Delete the selected package from the server and locally.";
+            this.deleteButton.ToolTipText = "Delete the selected package from the server and/or locally.";
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // toolStripSeparator3
@@ -860,8 +865,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.uploadButton.Name = "uploadButton";
             this.uploadButton.Size = new System.Drawing.Size(68, 22);
             this.uploadButton.Text = "Upload ";
-            this.uploadButton.ToolTipText = "Upload the selected package to the FTP-server to make it available for all client" +
-    "s.";
+            this.uploadButton.ToolTipText = "Upload the selected package onto the server and make it available for all clients" +
+    ".";
             this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
             // 
             // toolStripSeparator4
@@ -877,7 +882,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.historyButton.Name = "historyButton";
             this.historyButton.Size = new System.Drawing.Size(65, 22);
             this.historyButton.Text = "History";
-            this.historyButton.ToolTipText = "Load the history for the packages.";
+            this.historyButton.ToolTipText = "Load the history of the packages.";
             this.historyButton.Click += new System.EventHandler(this.historyButton_Click);
             // 
             // toolStripSeparator5
@@ -896,8 +901,9 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // statisticsTabPage
             // 
-            this.statisticsTabPage.Controls.Add(this.label6);
             this.statisticsTabPage.Controls.Add(this.updateStatisticsButton);
+            this.statisticsTabPage.Controls.Add(this.statusStrip1);
+            this.statisticsTabPage.Controls.Add(this.noDownloadsLabel);
             this.statisticsTabPage.Controls.Add(this.statisticsDataGridView);
             this.statisticsTabPage.Controls.Add(this.noStatisticsPanel);
             this.statisticsTabPage.ImageIndex = 3;
@@ -909,23 +915,42 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsTabPage.Text = "Statistics";
             this.statisticsTabPage.UseVisualStyleBackColor = true;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(241, 188);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 13);
-            this.label6.TabIndex = 93;
-            this.label6.Text = "No downloads.";
-            // 
             // updateStatisticsButton
             // 
             this.updateStatisticsButton.Image = ((System.Drawing.Image)(resources.GetObject("updateStatisticsButton.Image")));
-            this.updateStatisticsButton.Location = new System.Drawing.Point(506, 220);
+            this.updateStatisticsButton.Location = new System.Drawing.Point(534, 359);
             this.updateStatisticsButton.Name = "updateStatisticsButton";
-            this.updateStatisticsButton.Size = new System.Drawing.Size(26, 23);
+            this.updateStatisticsButton.Size = new System.Drawing.Size(25, 22);
             this.updateStatisticsButton.TabIndex = 92;
             this.updateStatisticsButton.UseVisualStyleBackColor = true;
+            this.updateStatisticsButton.Click += new System.EventHandler(this.updateStatisticsButton_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.AutoSize = false;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lastUpdatedLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(3, 357);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(560, 26);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.TabIndex = 94;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lastUpdatedLabel
+            // 
+            this.lastUpdatedLabel.Name = "lastUpdatedLabel";
+            this.lastUpdatedLabel.Size = new System.Drawing.Size(78, 21);
+            this.lastUpdatedLabel.Text = "Last updated:";
+            // 
+            // noDownloadsLabel
+            // 
+            this.noDownloadsLabel.AutoSize = true;
+            this.noDownloadsLabel.Location = new System.Drawing.Point(241, 188);
+            this.noDownloadsLabel.Name = "noDownloadsLabel";
+            this.noDownloadsLabel.Size = new System.Drawing.Size(86, 13);
+            this.noDownloadsLabel.TabIndex = 93;
+            this.noDownloadsLabel.Text = "No downloads.";
             // 
             // statisticsDataGridView
             // 
@@ -941,7 +966,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.statisticsDataGridView.ShowEditingIcon = false;
-            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 374);
+            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 352);
             this.statisticsDataGridView.TabIndex = 88;
             // 
             // noStatisticsPanel
@@ -1060,6 +1085,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStrip1.PerformLayout();
             this.statisticsTabPage.ResumeLayout(false);
             this.statisticsTabPage.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.noStatisticsPanel.ResumeLayout(false);
             this.noStatisticsPanel.PerformLayout();
@@ -1141,7 +1168,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.RadioButton enterVersionManuallyRadioButton;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button updateStatisticsButton;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label noDownloadsLabel;
         private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.Label cancelLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
@@ -1154,5 +1181,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ComboBox developmentalStageComboBox;
         private System.Windows.Forms.NumericUpDown minorNumericUpDown;
         private System.Windows.Forms.ToolTip cancelToolTip;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel lastUpdatedLabel;
+        private System.Windows.Forms.ToolTip updateStatisticsButtonToolTip;
     }
 }

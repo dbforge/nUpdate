@@ -12,8 +12,6 @@ namespace nUpdate.Administration.Core
 {
     public static class Extensions
     {
-        #region "Control"
-
         private const int TVIF_STATE = 0x8;
         private const int TVIS_STATEIMAGEMASK = 0xF000;
         private const int TV_FIRST = 0x1100;
@@ -40,10 +38,6 @@ namespace nUpdate.Administration.Core
             var tvi = new TvItem {hItem = node.Handle, mask = TVIF_STATE, stateMask = TVIS_STATEIMAGEMASK, state = 0};
             NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
-
-        #endregion
-
-        #region "Other"
 
         public static T[] RemoveAt<T>(this T[] source, int index)
         {
@@ -91,7 +85,5 @@ namespace nUpdate.Administration.Core
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
-
-        #endregion
     }
 }

@@ -40,22 +40,20 @@ namespace nUpdate.UI.Dialogs
                 }
                 catch (Exception)
                 {
-                    /*string resourceName = "nUpdate.Core.Localization.en.json";
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                    }*/
-
                     _lp = new LocalizationProperties();
                 }
             }
-            else
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
+            }
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            {
+                _lp = new LocalizationProperties();
             }
 
             closeButton.Text = _lp.CloseButtonText;
