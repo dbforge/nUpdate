@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Win32;
 
 namespace nUpdate.Administration.Core.Application.Extension
@@ -308,19 +309,15 @@ namespace nUpdate.Administration.Core.Application.Extension
                     val = -1;
                     return false;
                 }
-                if (arr.Length == 1)
-                    val = arr[0];
-                else
-                    val = BitConverter.ToInt32(arr, 0);
+                val = arr.Length == 1 ? arr[0] : BitConverter.ToInt32(arr, 0);
 
                 return true;
             }
             catch
             {
-            }
-            val = 0;
-            return false;
-        }
+                val = 0;
+                return false;
+            }        }
 
         #region Public Functions - Creators
 
@@ -430,14 +427,12 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             var root = Registry.ClassesRoot;
-
             var key = root.OpenSubKey(ProgId);
+            if (key == null) 
+                return true;
 
             var o = key.GetValue("AlwaysShowExt", "ThisValueShouldNotExist");
-            if (o.ToString() == "ThisValueShouldNotExist")
-                return false;
-
-            return true;
+            return o.ToString() != "ThisValueShouldNotExist";
         }
 
         /// <summary>
@@ -583,31 +578,33 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             var root = Registry.ClassesRoot;
-
             var key = root.OpenSubKey(ProgId);
             var verbs = new List<ProgramVerb>();
 
-            key = key.OpenSubKey("shell", false);
             if (key != null)
             {
-                var keyNames = key.GetSubKeyNames();
-
-                foreach (var s in keyNames)
+                key = key.OpenSubKey("shell", false);
+                if (key != null)
                 {
-                    var verb = key.OpenSubKey(s);
-                    if (verb == null)
-                        continue;
+                    var keyNames = key.GetSubKeyNames();
 
-                    verb = verb.OpenSubKey("command");
-                    if (verb == null)
-                        continue;
+                    foreach (var s in keyNames)
+                    {
+                        var verb = key.OpenSubKey(s);
+                        if (verb == null)
+                            continue;
 
-                    var command = (string) verb.GetValue("", "", RegistryValueOptions.DoNotExpandEnvironmentNames);
+                        verb = verb.OpenSubKey("command");
+                        if (verb == null)
+                            continue;
 
-                    verbs.Add(new ProgramVerb(s, command));
+                        var command = (string) verb.GetValue("", "", RegistryValueOptions.DoNotExpandEnvironmentNames);
+
+                        verbs.Add(new ProgramVerb(s, command));
+                    }
+
+                    key.Close();
                 }
-
-                key.Close();
             }
 
             root.Close();
@@ -625,25 +622,33 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             var root = Registry.ClassesRoot;
-
             var key = root.OpenSubKey(ProgId, true);
-
-            var tmpKey = key.OpenSubKey("shell", true);
-
-            if (tmpKey != null)
-                key.DeleteSubKeyTree("shell");
-
-            tmpKey = key.CreateSubKey("shell");
-
-            foreach (var verb in verbs)
+            if (key != null)
             {
-                var newVerb = tmpKey.CreateSubKey(verb.Name.ToLower());
-                var command = newVerb.CreateSubKey("command");
+                var tmpKey = key.OpenSubKey("shell", true);
 
-                command.SetValue(string.Empty, verb.Command, RegistryValueKind.ExpandString);
+                if (tmpKey != null)
+                    key.DeleteSubKeyTree("shell");
 
-                command.Close();
-                newVerb.Close();
+                tmpKey = key.CreateSubKey("shell");
+                foreach (var verb in verbs)
+                {
+                    if (tmpKey != null)
+                    {
+                        var newVerb = tmpKey.CreateSubKey(verb.Name.ToLower());
+                        if (newVerb != null)
+                        {
+                            var command = newVerb.CreateSubKey("command");
+                            if (command != null)
+                            {
+                                command.SetValue(string.Empty, verb.Command, RegistryValueKind.ExpandString);
+                                command.Close();
+                            }
+                        }
+                        if (newVerb != null) 
+                            newVerb.Close();
+                    }
+                }
             }
 
             ShellNotification.NotifyOfChange();
@@ -660,26 +665,33 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void AddVerbpublic(ProgramVerb verb)
         {
             var root = Registry.ClassesRoot;
+            var openSubKey = root.OpenSubKey(ProgId);
+            if (openSubKey != null)
+            {
+                var key = openSubKey.OpenSubKey("shell", true);
+                if (key == null)
+                {
+                    var registryKey = root.OpenSubKey(ProgId, true);
+                    if (registryKey != null)
+                        key = registryKey.CreateSubKey("shell");
+                }
 
-            var key = root.OpenSubKey(ProgId).OpenSubKey("shell", true);
+                if (key != null)
+                {
+                    var tmpkey = key.OpenSubKey(verb.Name, true) ?? key.CreateSubKey(verb.Name);
+                    key = tmpkey;
 
-            if (key == null)
-                key = root.OpenSubKey(ProgId, true).CreateSubKey("shell");
-
-            var tmpkey = key.OpenSubKey(verb.Name, true);
-            if (tmpkey == null)
-                tmpkey = key.CreateSubKey(verb.Name);
-            key = tmpkey;
-
-            tmpkey = key.OpenSubKey("command", true);
-            if (tmpkey == null)
-                tmpkey = key.CreateSubKey("command");
-
-            tmpkey.SetValue(string.Empty, verb.Command, RegistryValueKind.ExpandString);
-
-
-            tmpkey.Close();
-            key.Close();
+                    if (key != null)
+                    {
+                        tmpkey = key.OpenSubKey("command", true) ?? key.CreateSubKey("command");
+                        if (tmpkey != null)
+                        {
+                            tmpkey.Close();
+                        }
+                        key.Close();
+                    }
+                }
+            }
             root.Close();
 
             ShellNotification.NotifyOfChange();
@@ -692,25 +704,21 @@ namespace nUpdate.Administration.Core.Application.Extension
         protected void RemoveVerbpublic(string name)
         {
             var root = Registry.ClassesRoot;
-
             var key = root.OpenSubKey(ProgId);
-
-            key = key.OpenSubKey("shell", true);
-
-            if (key == null)
-                throw new RegistryException("Shell key not found");
-
-            var subkeynames = key.GetSubKeyNames();
-            foreach (var s in subkeynames)
+            if (key != null)
             {
-                if (s == name)
+                key = key.OpenSubKey("shell", true);
+                if (key == null)
+                    throw new RegistryException("Shell key not found");
+
+                var subkeynames = key.GetSubKeyNames();
+                if (subkeynames.Any(s => s == name))
                 {
                     key.DeleteSubKeyTree(name);
-                    break;
                 }
-            }
 
-            key.Close();
+                key.Close();
+            }
             root.Close();
 
             ShellNotification.NotifyOfChange();

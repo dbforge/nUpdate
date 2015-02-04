@@ -49,7 +49,7 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanSignAndValidateData()
         {
-            var rsa = new RsaSignature();
+            var rsa = new RsaManager();
             byte[] signature = rsa.SignData(data);
 
             Assert.IsTrue(rsa.VerifyData(data, signature));
@@ -61,13 +61,13 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanSignAndValidateDataWithSaving()
         {
-            var rsa = new RsaSignature();
+            var rsa = new RsaManager();
             byte[] signature = rsa.SignData(data);
 
             File.WriteAllBytes(signatureFile, signature);
             File.WriteAllText(keyFile, rsa.PublicKey);
 
-            var givenRsa = new RsaSignature(File.ReadAllText(keyFile));
+            var givenRsa = new RsaManager(File.ReadAllText(keyFile));
             byte[] givenSignature = File.ReadAllBytes(signatureFile);
 
             Assert.IsTrue(givenRsa.VerifyData(data, givenSignature));

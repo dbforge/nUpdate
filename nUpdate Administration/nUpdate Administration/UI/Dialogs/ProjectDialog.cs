@@ -17,10 +17,10 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Application.History;
-using nUpdate.Administration.Core.Update;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Ftp.EventArgs;
+using nUpdate.Administration.Core.History;
 using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -29,18 +29,17 @@ namespace nUpdate.Administration.UI.Dialogs
         private const float KB = 1024;
         private const float MB = 1048576;
         private const float GB = 1073741824;
-        private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
-        private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
-        private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
-        private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
         private bool _allowCancel = true;
         private Uri _configurationFileUrl;
-        private MySqlConnection _deleteConnection;
+        private IEnumerable<UpdateConfiguration> _uploadBackupConfiguration;
         private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
+        private MySqlConnection _queryConnection;
         private MySqlConnection _insertConnection;
+        private MySqlConnection _deleteConnection;
+        private ResetActionSender _resetActionSender;
         private bool _isSetByUser;
         private bool _packageExisting;
-        private MySqlConnection _queryConnection;
+        private bool _commandsExecuted;
         private bool _uploadCancelled;
 
         /// <summary>
@@ -65,6 +64,115 @@ namespace nUpdate.Administration.UI.Dialogs
         public ProjectDialog()
         {
             InitializeComponent();
+        }
+
+        private enum ResetActionSender
+        {
+            Delete,
+            Upload
+        }
+
+        public void Reset()
+        {
+            switch (_resetActionSender)
+            {
+                case ResetActionSender.Delete:
+                    break;
+                case ResetActionSender.Upload:
+                    if (_commandsExecuted)
+                    {
+                        UpdateVersion packageVersion = null;
+                        Invoke(new Action(() =>
+                        {
+                            packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag;
+                            loadingLabel.Text = "Undoing SQL-command execution...";
+                        }));
+
+                        try
+                        {
+                            var connectionString = String.Format("SERVER={0};" +
+                                                                 "DATABASE={1};" +
+                                                                 "UID={2};" +
+                                                                 "PASSWORD={3};",
+                                Project.SqlWebUrl, Project.SqlDatabaseName,
+                                Project.SqlUsername,
+                                SqlPassword.ConvertToUnsecureString());
+
+                            _insertConnection = new MySqlConnection(connectionString);
+                            _insertConnection.Open();
+                        }
+                        catch (MySqlException ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            SetUiState(true);
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            SetUiState(true);
+                            return;
+                        }
+
+                        var command = _insertConnection.CreateCommand();
+                        command.CommandText = String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
+
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                            _commandsExecuted = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            SetUiState(true);
+                            return;
+                        }
+                    }
+
+                    if (_packageExisting)
+                    {
+                        try
+                        {
+                            UpdateVersion packageVersion = null;
+                            Invoke(new Action(() => packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
+
+                            Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
+                            _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
+                        }
+                        catch (Exception ex)
+                        {
+                            if (!ex.Message.Contains("No such file or directory"))
+                            {
+                                Invoke(
+                                    new Action(
+                                        () =>
+                                            Popup.ShowPopup(this, SystemIcons.Error,
+                                                "Error while undoing the package upload.",
+                                                ex,
+                                                PopupButtons.Ok)));
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            SetUiState(true);
         }
 
         /// <summary>
@@ -222,13 +330,13 @@ namespace nUpdate.Administration.UI.Dialogs
                     var sizeInBytes = packageFileInfo.Length;
                     string sizeText = null;
 
-                    if (sizeInBytes > 107374182.4) // 0,1 GB
+                    if (sizeInBytes >= 107374182.4) // 0,1 GB
                         sizeText = String.Format("{0} GB", (float) Math.Round(sizeInBytes/GB, 1));
-                    else if (sizeInBytes > 104857.6) // 0,1 MB
+                    else if (sizeInBytes >= 104857.6) // 0,1 MB
                         sizeText = String.Format("{0} MB", (float) Math.Round(sizeInBytes/MB, 1));
-                    else if (sizeInBytes > 102.4) // 0,1 KB
+                    else if (sizeInBytes >= 102.4) // 0,1 KB
                         sizeText = String.Format("{0} KB", (float) Math.Round(sizeInBytes/KB, 1));
-                    else if (sizeInBytes > 1) // 1 B
+                    else if (sizeInBytes >= 1) // 1 B
                         sizeText = String.Format("{0} B", sizeInBytes);
 
                     packageListViewItem.SubItems.Add(sizeText);
@@ -291,6 +399,7 @@ namespace nUpdate.Administration.UI.Dialogs
             programmingLanguageComboBox.DataSource = Enum.GetValues(typeof (ProgrammingLanguage));
             programmingLanguageComboBox.SelectedIndex = 0;
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
+            updateStatisticsButtonToolTip.SetToolTip(updateStatisticsButton, "Update the statistics.");
 
             var values = Enum.GetValues(typeof (DevelopmentalStage));
             Array.Reverse(values);
@@ -325,55 +434,7 @@ namespace nUpdate.Administration.UI.Dialogs
             StartCheckingUpdateConfiguration();
             if (Project.UseStatistics)
             {
-                try
-                {
-                    var connectionString = String.Format("SERVER={0};" +
-                                                         "DATABASE={1};" +
-                                                         "UID={2};" +
-                                                         "PASSWORD={3};",
-                        Project.SqlWebUrl, Project.SqlDatabaseName,
-                        Project.SqlUsername,
-                        SqlPassword.ConvertToUnsecureString());
-
-                    _queryConnection = new MySqlConnection(connectionString);
-                    _queryConnection.Open();
-                }
-                catch (MySqlException ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                    ex, PopupButtons.Ok)));
-                    _queryConnection.Close();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                    ex, PopupButtons.Ok)));
-                    _queryConnection.Close();
-                    return;
-                }
-
-                var dataAdapter =
-                    new MySqlDataAdapter(
-                        String.Format(
-                            "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {0} GROUP BY Version_ID;",
-                            Project.ApplicationId),
-                        _queryConnection);
-                var dataSet = new DataSet();
-                dataAdapter.Fill(dataSet);
-
-
-                statisticsDataGridView.DataSource = dataSet.Tables[0];
-                _queryConnection.Close();
-
-                statisticsDataGridView.Columns[0].Width = 278;
-                statisticsDataGridView.Columns[1].Width = 278;
+                InitializeStatisticsData();
             }
             else
             {
@@ -397,6 +458,61 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!_allowCancel)
                 e.Cancel = true;
+        }
+
+        private void InitializeStatisticsData()
+        {
+            try
+            {
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
+
+                _queryConnection = new MySqlConnection(connectionString);
+                _queryConnection.Open();
+            }
+            catch (MySqlException ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                ex, PopupButtons.Ok)));
+                _queryConnection.Close();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                ex, PopupButtons.Ok)));
+                _queryConnection.Close();
+                return;
+            }
+
+            var dataAdapter =
+                new MySqlDataAdapter(
+                    String.Format(
+                        "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {0} GROUP BY Version_ID;",
+                        Project.ApplicationId),
+                    _queryConnection);
+            var dataSet = new DataSet();
+            dataAdapter.Fill(dataSet); // TODO: Try Catch
+
+
+            statisticsDataGridView.DataSource = dataSet.Tables[0];
+            _queryConnection.Close();
+
+            statisticsDataGridView.Columns[0].Width = 278;
+            statisticsDataGridView.Columns[1].Width = 278;
+            noDownloadsLabel.Visible = statisticsDataGridView.Rows.Count <= 0;
+            lastUpdatedLabel.Text = String.Format("Last updated: {0}", DateTime.Now);
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -446,7 +562,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems[0] == null)
+            if (packagesList.SelectedItems.Count == 0)
                 return;
 
             var packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag;
@@ -613,18 +729,19 @@ namespace nUpdate.Administration.UI.Dialogs
                 uploadButton.Enabled = false;
                 deleteButton.Enabled = true;
             }
-            else if (packagesList.SelectedItems.Count == 0)
+            else switch (packagesList.SelectedItems.Count)
             {
-                editButton.Enabled = false;
-                uploadButton.Enabled = false;
-                deleteButton.Enabled = false;
-            }
-            else if (packagesList.SelectedItems.Count == 1)
-            {
-                editButton.Enabled = true;
-                deleteButton.Enabled = true;
-                if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
-                    uploadButton.Enabled = true;
+                case 0:
+                    editButton.Enabled = false;
+                    uploadButton.Enabled = false;
+                    deleteButton.Enabled = false;
+                    break;
+                case 1:
+                    editButton.Enabled = true;
+                    deleteButton.Enabled = true;
+                    if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
+                        uploadButton.Enabled = true;
+                    break;
             }
         }
 
@@ -656,7 +773,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    ApplicationInstance.SaveProject(Project.Path, Project);
+                    UpdateProject.SaveProject(Project.Path, Project);
                 }
                 catch (Exception ex)
                 {
@@ -670,6 +787,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 InitializeProjectData();
             }
+        }
+
+        private void updateStatisticsButton_Click(object sender, EventArgs e)
+        {
+            InitializeStatisticsData();
         }
 
         private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -694,7 +816,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                UpdateProject.SaveProject(Project.Path, Project);
             }
             catch (Exception ex)
             {
@@ -717,39 +839,6 @@ namespace nUpdate.Administration.UI.Dialogs
         #region "Upload"
 
         /// <summary>
-        ///     Resets the MySQL-data and undoes the package upload.
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: MySQL
-            if (_packageExisting)
-            {
-                try
-                {
-                    UpdateVersion packageVersion = null;
-                    Invoke(new Action(() => packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
-
-                    Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                    _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
-                }
-                catch (Exception ex)
-                {
-                    if (!ex.Message.Contains("No such file or directory"))
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
-                                        ex,
-                                        PopupButtons.Ok)));
-                    }
-                }
-            }
-
-            SetUiState(true);
-        }
-
-        /// <summary>
         ///     Undoes the MySQL-insertion.
         /// </summary>
         private void UndoSqlInsertion(UpdateVersion packageVersion)
@@ -763,10 +852,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 Project.SqlUsername,
                 SqlPassword.ConvertToUnsecureString());
 
-            var deleteConnection = new MySqlConnection(connectionString);
+            _deleteConnection = new MySqlConnection(connectionString);
             try
             {
-                deleteConnection.Open();
+                _deleteConnection.Open();
             }
             catch (MySqlException ex)
             {
@@ -776,7 +865,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error,
                                 "An MySQL-exception occured when trying to undo the SQL-insertions...",
                                 ex, PopupButtons.Ok)));
-                deleteConnection.Close();
+                _deleteConnection.Close();
                 return;
             }
             catch (Exception ex)
@@ -787,11 +876,11 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error,
                                 "Error while connecting to the database when trying to undo the SQL-insertions...",
                                 ex, PopupButtons.Ok)));
-                deleteConnection.Close();
+                _deleteConnection.Close();
                 return;
             }
 
-            var command = deleteConnection.CreateCommand();
+            var command = _deleteConnection.CreateCommand();
             command.CommandText =
                 String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
 
@@ -807,12 +896,14 @@ namespace nUpdate.Administration.UI.Dialogs
                             Popup.ShowPopup(this, SystemIcons.Error,
                                 "Error while executing the commands when trying to undo the SQL-insertions...",
                                 ex, PopupButtons.Ok)));
-                deleteConnection.Close();
+                _deleteConnection.Close();
             }
         }
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
+            _resetActionSender = ResetActionSender.Upload;
+
             var version = (UpdateVersion) packagesList.SelectedItems[0].Tag;
             ThreadPool.QueueUserWorkItem(arg => UploadPackage(version));
         }
@@ -823,11 +914,26 @@ namespace nUpdate.Administration.UI.Dialogs
         private void UploadPackage(UpdateVersion packageVersion)
         {
             SetUiState(false);
+            Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
+            try
+            {
+                var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                if (rawUpdateConfiguration != null)
+                    _uploadBackupConfiguration = rawUpdateConfiguration.ToList();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () => Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while downloading the old configuration.", ex, PopupButtons.Ok)));
+                SetUiState(true);
+                return;
+            }
 
-            /* -------------- MySQL Initializing -------------*/
             if (Project.UseStatistics)
             {
-                Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
                 try
                 {
@@ -850,7 +956,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
                     _insertConnection.Close();
-                    SetUiState(true); // Single call is faster than "Reset"-method
+                    SetUiState(true);
                     return;
                 }
                 catch (Exception ex)
@@ -865,6 +971,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
+                Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
                 var command = _insertConnection.CreateCommand();
                 command.CommandText =
                     String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
@@ -873,6 +981,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     command.ExecuteNonQuery();
+                    _commandsExecuted = true;
                 }
                 catch (Exception ex)
                 {
@@ -887,7 +996,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            /* -------------- Package upload -----------------*/
             Invoke(new Action(() =>
             {
                 loadingLabel.Text = String.Format("Uploading... {0}", "0%");
@@ -900,6 +1008,7 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 _ftp.UploadPackage(packagePath, packageVersion.ToString());
+                _packageExisting = true;
             }
             catch (Exception ex) // Errors that were thrown directly relate to the directory
             {
@@ -908,7 +1017,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the package directory.",
                                 ex, PopupButtons.Ok)));
-                SetUiState(true);
+                Reset();
                 return;
             }
 
@@ -957,7 +1066,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Project.Packages.First(x => x.Version == packageVersion).IsReleased = true;
                 Project.NewestPackage = packageVersion.FullText;
                 Project.ReleasedPackages += 1;
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                UpdateProject.SaveProject(Project.Path, Project);
             }
             catch (Exception ex)
             {
@@ -982,7 +1091,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     () =>
                         loadingLabel.Text =
                             String.Format("Uploading... {0}",
-                                String.Format("{0}% | {1}KiB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
+                                String.Format("{0}% | {1}KiB/s", e.Percentage, e.BytesPerSecond/1024))));
 
             if (_uploadCancelled)
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -1252,8 +1361,10 @@ namespace nUpdate.Administration.UI.Dialogs
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
+            _resetActionSender = ResetActionSender.Delete;
+
             var answer = Popup.ShowPopup(this, SystemIcons.Question,
-                "Delete the selected update packages?", "Are you sure that you want to delete this package?",
+                "Delete the selected update packages?", "Are you sure that you want to delete this/these package(s)?",
                 PopupButtons.YesNo);
             if (answer != DialogResult.Yes)
                 return;
@@ -1273,8 +1384,7 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                if (rawUpdateConfiguration != null)
-                    updateConfig = rawUpdateConfiguration.ToList();
+                _uploadBackupConfiguration = rawUpdateConfiguration != null ? rawUpdateConfiguration.ToList() : Enumerable.Empty<UpdateConfiguration>();
             }
             catch (Exception ex)
             {
@@ -1296,14 +1406,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 var selectedItem = (ListViewItem) enumerator.Current;
                 ListViewGroup releasedGroup = null;
                 Invoke(new Action(() => releasedGroup = packagesList.Groups[0]));
-
                 if (selectedItem.Group == releasedGroup) // Must be deleted online, too.
                 {
                     Invoke(
                         new Action(
                             () =>
                                 loadingLabel.Text =
-                                    String.Format("Deleting package {0} on server...", selectedItem.Text)));
+                                    String.Format("Deleting package {0} on the server...", selectedItem.Text)));
 
                     try
                     {
@@ -1382,7 +1491,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     else
                         Project.NewestPackage = null;
 
-                    ApplicationInstance.SaveProject(Project.Path, Project);
+                    UpdateProject.SaveProject(Project.Path, Project);
                 }
                 catch (Exception ex)
                 {

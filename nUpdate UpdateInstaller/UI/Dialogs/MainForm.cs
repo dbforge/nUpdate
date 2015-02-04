@@ -18,12 +18,11 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             InitializeComponent();
         }
 
-        public bool IsCancelled { get; set; }
-
         public void Initialize()
         {
             Icon = Icon.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
             Text = Program.AppName;
+            copyingLabel.Text = Program.ExtractFilesText;
             ShowDialog(); // We currently only have an instance, so we show the form as a modal dialog now.
         }
 
@@ -39,7 +38,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 }
 
                 extractProgressBar.Value = (int) percentage;
-                updateLabel.Text = String.Format(Program.CopyingText, currentFile);
+                copyingLabel.Text = String.Format(Program.CopyingText, currentFile);
                     // Hardcoded string because it serves as a plcaholder until the localiazation appear.
                 percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
@@ -50,7 +49,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(new Action(() =>
             {
                 extractProgressBar.Value += 1;
-                updateLabel.Text = String.Format("{0}", currentOperation);
+                copyingLabel.Text = String.Format("{0}", currentOperation);
                 percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
             }));
         }
@@ -62,15 +61,15 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 new Action(
                     () =>
                         result =
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while updating the application.",
-                                String.Format("{0}. Should the updating be stopped?", ex),
+                            Popup.ShowPopup(this, SystemIcons.Error, Program.UpdatingErrorCaption,
+                                String.Format(Program.UpdatingErrorText, ex),
                                 PopupButtons.YesNo)));
             return result == DialogResult.Yes;
         }
 
         public void InitializingFail(Exception ex)
         {
-            Popup.ShowPopup(this, SystemIcons.Error, "Error while iniaitializing the data.", ex,
+            Popup.ShowPopup(this, SystemIcons.Error, Program.InitializingErrorCaption, ex,
                 PopupButtons.Ok);
         }
 

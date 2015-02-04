@@ -17,14 +17,14 @@ using Ionic.Zip;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Application.History;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.Core.Update.Operations;
-using nUpdate.Administration.Core.Update.Operations.Panels;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Ftp.EventArgs;
+using nUpdate.Administration.Core.History;
+using nUpdate.Administration.Core.Operations;
+using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -171,7 +171,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    ApplicationInstance.SaveProject(Project.Path, Project);
+                    UpdateProject.SaveProject(Project.Path, Project);
                 }
                 catch (Exception ex)
                 {
@@ -418,9 +418,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
             Invoke(new Action(() => loadingLabel.Text = "Initializing archive..."));
 
-            // Save the package first
-            // ----------------------
-
             try
             {
                 Directory.CreateDirectory(_packageFolder); // Create the content folder
@@ -455,8 +452,6 @@ namespace nUpdate.Administration.UI.Dialogs
             _updateLog.Write(LogEntry.Create, _packageVersion.ToString());
             Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
 
-            // Initialize the package itself
-            // -----------------------------
             string[] unsupportedVersionLiterals = null;
 
             if (unsupportedVersionsListBox.Items.Count == 0)
@@ -503,7 +498,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     data = reader.ReadBytes((int) reader.BaseStream.Length);
                 }
-                _configuration.Signature = Convert.ToBase64String(new RsaSignature(Project.PrivateKey).SignData(data));
+                _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(data));
             }
             catch (Exception ex)
             {
@@ -517,16 +512,18 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             _configuration.UnsupportedVersions = unsupportedVersionLiterals;
-            _configuration.UpdatePhpFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "getfile.php");
+            _configuration.UpdatePhpFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
             _configuration.UpdatePackageUrl = UriConnector.ConnectUri(Project.UpdateUrl,
                 String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
             _configuration.LiteralVersion = _packageVersion.ToString();
             _configuration.UseStatistics = _includeIntoStatistics;
 
             if (Project.UseStatistics)
-                _configuration.VersionId = Project.VersionId + 1;
-
-            /* -------- Configuration initializing ------------*/
+            {
+                Project.VersionId += 1;
+                _configuration.VersionId = Project.VersionId;
+            }
+                
             Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
 
             var configurationList = new List<UpdateConfiguration>();
@@ -566,8 +563,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            /* ------------- Save package info  ------------- */
-            Invoke(new Action(() => _package.Description = descriptionTextBox.Text));
+            Invoke(
+                new Action(
+                    () => 
+                        _package.Description = descriptionTextBox.Text));
+
             _package.IsReleased = _publishUpdate;
             _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
                 String.Format("{0}.zip", Project.Guid));
@@ -580,9 +580,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_publishUpdate)
             {
-                /* -------------- MySQL Initializing -------------*/
                 if (Project.UseStatistics)
                 {
+                    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
                     try
                     {
                         var connectionString = String.Format("SERVER={0};" +
@@ -618,6 +618,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         Reset();
                         return;
                     }
+
+                    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
 
                     var command = _insertConnection.CreateCommand();
                     command.CommandText =
@@ -742,7 +744,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                UpdateProject.SaveProject(Project.Path, Project);
             }
             catch (Exception ex)
             {
@@ -763,7 +765,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            String.Format("Uploading package... {0}% | {1}KiB/s", Math.Round(e.Percentage, 1),
+                            String.Format("Uploading package... {0}% | {1}KiB/s", e.Percentage,
                                 e.BytesPerSecond/1024)));
             if (_uploadCancelled)
             {

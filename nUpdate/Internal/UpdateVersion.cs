@@ -52,18 +52,6 @@ namespace nUpdate.Internal
                 DevelopmentalStage = DevelopmentalStage.Release;
                 Revision = int.Parse(versionParts[3]);
             }
-
-            if (Major < 0)
-                throw new ArgumentOutOfRangeException("Major", "Index must be 0 or higher");
-
-            if (Minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
-
-            if (Build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
-
-            if (Revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
         }
 
         /// <summary>
@@ -75,18 +63,6 @@ namespace nUpdate.Internal
         /// <param name="revision">The revision version.</param>
         public UpdateVersion(int major, int minor, int build, int revision)
         {
-            if (major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
-
-            if (minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
-
-            if (build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
-
-            if (revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
-
             Major = major;
             Minor = minor;
             Build = build;
@@ -105,18 +81,6 @@ namespace nUpdate.Internal
         public UpdateVersion(int major, int minor, int build, int revision, DevelopmentalStage devStage,
             int developmentBuild)
         {
-            if (major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
-
-            if (minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
-
-            if (build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
-
-            if (revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
-
             Major = major;
             Minor = minor;
             Build = build;
@@ -389,6 +353,12 @@ namespace nUpdate.Internal
         /// </returns>
         public static bool operator ==(UpdateVersion left, UpdateVersion right)
         {
+            if (ReferenceEquals(left, null))
+                throw new ArgumentNullException("left");
+
+            if (ReferenceEquals(right, null))
+                throw new ArgumentNullException("right");
+
             return left.ToString() == right.ToString();
         }
 
@@ -402,6 +372,12 @@ namespace nUpdate.Internal
         /// </returns>
         public static bool operator !=(UpdateVersion left, UpdateVersion right)
         {
+            if (ReferenceEquals(left, null))
+                throw new ArgumentNullException("left");
+
+            if (ReferenceEquals(right, null))
+                throw new ArgumentNullException("right");
+
             return left.ToString() != right.ToString();
         }
 

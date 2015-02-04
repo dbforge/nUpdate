@@ -28,7 +28,7 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 
@@ -195,18 +195,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         public static string[] GetExtensions()
         {
             var root = Registry.ClassesRoot;
-            var extensionList = new List<string>();
-
             var subKeys = root.GetSubKeyNames();
-
-            foreach (var subKey in subKeys)
-            {
-                //TODO: Consider removing dot?
-                if (subKey.StartsWith("."))
-                    extensionList.Add(subKey);
-            }
-            return extensionList.ToArray();
-            ;
+            return subKeys.Where(subKey => subKey.StartsWith(".")).ToArray();
         }
 
         /// <summary>
@@ -238,10 +228,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!fai.Exists)
                 return false;
 
-            if (progId != fai.ProgId)
-                return false;
-
-            return true;
+            return progId == fai.ProgId;
         }
 
         /// <summary>
@@ -355,15 +342,19 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             var root = Registry.ClassesRoot;
-
             var key = root.OpenSubKey(file._extension);
 
-            key = key.OpenSubKey("OpenWithList");
+            if (key != null)
+            {
+                key = key.OpenSubKey("OpenWithList");
 
-            if (key == null)
-                return new string[0];
+                if (key == null)
+                    return new string[0];
 
-            return key.GetSubKeyNames();
+                return key.GetSubKeyNames();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -379,17 +370,18 @@ namespace nUpdate.Administration.Core.Application.Extension
             var root = Registry.ClassesRoot;
 
             var key = root.OpenSubKey(file._extension, true);
-
-            var tmpkey = key.OpenSubKey("OpenWithList", true);
-
-            if (tmpkey != null)
-                key.DeleteSubKeyTree("OpenWithList");
-
-            key = key.CreateSubKey("OpenWithList");
-
-            foreach (var s in programList)
+            if (key != null)
             {
-                key.CreateSubKey(s);
+                var tmpkey = key.OpenSubKey("OpenWithList", true);
+                if (tmpkey != null)
+                    key.DeleteSubKeyTree("OpenWithList");
+
+                key = key.CreateSubKey("OpenWithList");
+                foreach (var s in programList)
+                {
+                    if (key != null) 
+                        key.CreateSubKey(s);
+                }
             }
 
             ShellNotification.NotifyOfChange();

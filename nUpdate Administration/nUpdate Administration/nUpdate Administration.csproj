@@ -64,14 +64,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Starksoft.Net.Ftp.dll</HintPath>
-    </Reference>
-    <Reference Include="Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Starksoft.Net.Proxy.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -85,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AesManager.cs" />
-    <Compile Include="Core\Application\ApplicationInstance.cs" />
     <Compile Include="Core\Application\Extension\AssociationManager.cs" />
     <Compile Include="Core\Application\Extension\FileAssociationInfo.cs" />
     <Compile Include="Core\Application\Extension\ProgramAssociationInfo.cs" />
@@ -95,6 +86,48 @@
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
     <Compile Include="Core\Architecture.cs" />
+    <Compile Include="Core\Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpRequestEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpResponseEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpTransferEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FxpCopyAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetDirListAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetDirListDeepAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetFileAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\OpenAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\PutFileAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\PutFileUniqueAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\TransferCompleteEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\TransferProgressEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\ValidateServerCertificateEventArgs.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpAsynchronousOperationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpAuthenticationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpCertificateValidationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpCommandResponseTimeoutException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionBrokenException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionClosedException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionOpenException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataCompressionException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionTimeoutException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataTransferException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpFileIntegrityException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpLoginException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpProxyException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpResponseException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpSecureConnectionException.cs" />
+    <Compile Include="Core\Ftp\FtpBase.cs" />
+    <Compile Include="Core\Ftp\FtpClient.cs" />
+    <Compile Include="Core\Ftp\FtpGenericParser.cs" />
+    <Compile Include="Core\Ftp\FtpItem.cs" />
+    <Compile Include="Core\Ftp\FtpItemCollection.cs" />
+    <Compile Include="Core\Ftp\FtpRequest.cs" />
+    <Compile Include="Core\Ftp\FtpResponse.cs" />
+    <Compile Include="Core\Ftp\FtpResponseCollection.cs" />
+    <Compile Include="Core\Ftp\FtpResponseQueue.cs" />
+    <Compile Include="Core\Ftp\Hashing\Crc32.cs" />
+    <Compile Include="Core\Ftp\IFtpItemParser.cs" />
     <Compile Include="Core\HelpContent.cs" />
     <Compile Include="Core\HelpEntry.cs" />
     <Compile Include="Core\IAsyncSupportable.cs" />
@@ -103,10 +136,10 @@
     <Compile Include="Core\ProgrammingLanguage.cs" />
     <Compile Include="Core\ProjectConfiguration.cs" />
     <Compile Include="Core\StatisticsServer.cs" />
-    <Compile Include="Core\Update\History\LogEntry.cs" />
+    <Compile Include="Core\History\LogEntry.cs" />
     <Compile Include="Core\Application\UpdatePackage.cs" />
     <Compile Include="Core\Application\UpdateProject.cs" />
-    <Compile Include="Core\Update\History\Log.cs" />
+    <Compile Include="Core\History\Log.cs" />
     <Compile Include="Core\ConnectionChecker.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
@@ -114,74 +147,74 @@
     <Compile Include="Core\Navigator.cs" />
     <Compile Include="Core\FtpManager.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
-    <Compile Include="Core\RsaSignature.cs" />
+    <Compile Include="Core\RsaManager.cs" />
     <Compile Include="Core\Serializer.cs" />
-    <Compile Include="Core\Update\Operations\Panels\FileDeleteOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\FileDeleteOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\FileDeleteOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\FileDeleteOperationPanel.Designer.cs">
       <DependentUpon>FileDeleteOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\FileRenameOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\FileRenameOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\FileRenameOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\FileRenameOperationPanel.Designer.cs">
       <DependentUpon>FileRenameOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\IOperationPanel.cs" />
-    <Compile Include="Core\Update\Operations\Panels\ProcessStartOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\IOperationPanel.cs" />
+    <Compile Include="Core\Operations\Panels\ProcessStartOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ProcessStartOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\ProcessStartOperationPanel.Designer.cs">
       <DependentUpon>ProcessStartOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ProcessStopOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\ProcessStopOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ProcessStopOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\ProcessStopOperationPanel.Designer.cs">
       <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.Designer.cs">
       <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Operation.cs" />
-    <Compile Include="Core\Update\Operations\OperationArea.cs" />
-    <Compile Include="Core\Update\Operations\OperationMethod.cs" />
-    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.cs">
+    <Compile Include="Core\Operations\Operation.cs" />
+    <Compile Include="Core\Operations\OperationArea.cs" />
+    <Compile Include="Core\Operations\OperationMethod.cs" />
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.Designer.cs">
       <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.Designer.cs">
       <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\RegistrySetValueOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\RegistrySetValueOperationPanel.Designer.cs">
       <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ServiceStartOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\ServiceStartOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ServiceStartOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\ServiceStartOperationPanel.Designer.cs">
       <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ServiceStopOperationPanel.cs">
+    <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Core\Update\Operations\Panels\ServiceStopOperationPanel.Designer.cs">
+    <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.Designer.cs">
       <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Update\UpdateConfiguration.cs" />
-    <Compile Include="Core\Update\UpdateVersion.cs" />
+    <Compile Include="Core\UpdateConfiguration.cs" />
+    <Compile Include="Core\UpdateVersion.cs" />
     <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -383,34 +416,34 @@
     <Compile Include="UI\Popups\PopupDialog.Designer.cs">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\FileDeleteOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\FileDeleteOperationPanel.resx">
       <DependentUpon>FileDeleteOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\FileRenameOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\FileRenameOperationPanel.resx">
       <DependentUpon>FileRenameOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\ProcessStartOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\ProcessStartOperationPanel.resx">
       <DependentUpon>ProcessStartOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\ProcessStopOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\ProcessStopOperationPanel.resx">
       <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySubKeyCreateOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.resx">
       <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySubKeyDeleteOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.resx">
       <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistryDeleteValueOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.resx">
       <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\RegistrySetValueOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySetValueOperationPanel.resx">
       <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\ServiceStartOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\ServiceStartOperationPanel.resx">
       <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Core\Update\Operations\Panels\ServiceStopOperationPanel.resx">
+    <EmbeddedResource Include="Core\Operations\Panels\ServiceStopOperationPanel.resx">
       <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\ChangelogPanel.resx">
@@ -524,6 +557,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\getfile.php" />
+    <None Include="Resources\statistics.php" />
     <None Include="Resources\table_key.png" />
   </ItemGroup>
   <ItemGroup>
@@ -576,6 +610,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

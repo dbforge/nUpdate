@@ -12,6 +12,9 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
+using FtpItem = nUpdate.Administration.Core.Ftp.FtpItem;
+using FtpItemType = nUpdate.Administration.Core.Ftp.FtpItemType;
+using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -122,7 +125,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
             Text = String.Format(Text, ProjectName);
-
             if (NativeMethods.DwmIsCompositionEnabled())
             {
                 _margins = new Margins {Top = 38};
@@ -219,7 +221,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             SetUiState(true);
-            _allowCancel = true;
         }
 
         private void RecursiveAdd(ListingItem item, TreeNode target)

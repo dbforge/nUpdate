@@ -135,7 +135,7 @@ namespace nUpdate.Administration.UI.Dialogs
             UpdateProject project;
             try
             {
-                project = ApplicationInstance.LoadProject(projectPath);
+                project = UpdateProject.LoadProject(projectPath);
             }
             catch (Exception ex)
             {

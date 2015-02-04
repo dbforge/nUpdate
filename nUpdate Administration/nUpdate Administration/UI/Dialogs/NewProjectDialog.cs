@@ -17,6 +17,8 @@ using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
+using FtpAuthenticationException = nUpdate.Administration.Core.Ftp.Exceptions.FtpAuthenticationException;
+using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -253,7 +255,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void GenerateKeyPair()
         {
-            var rsa = new RsaSignature();
+            var rsa = new RsaManager();
             PrivateKey = rsa.PrivateKey;
             PublicKey = rsa.PublicKey;
 
@@ -466,7 +468,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    ApplicationInstance.SaveProject(localPathTextBox.Text, project); // ... and save it
+                    UpdateProject.SaveProject(localPathTextBox.Text, project); // ... and save it
                 }
                 catch (IOException ex)
                 {
@@ -819,7 +821,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 try
                 {
-                    var importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                    var importProject = UpdateProject.LoadProject(fileDialog.FileName);
                     ftpHostTextBox.Text = importProject.FtpHost;
                     ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = importProject.FtpUsername;

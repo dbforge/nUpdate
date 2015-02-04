@@ -42,22 +42,20 @@ namespace nUpdate.UI.Dialogs
                 }
                 catch (Exception)
                 {
-                    /*string resourceName = "nUpdate.Core.Localization.en.json";
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                    }*/
-
                     _lp = new LocalizationProperties();
                 }
             }
-            else
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
+            }
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            {
+                _lp = new LocalizationProperties();
             }
 
             cancelButton.Text = _lp.CancelButtonText;
@@ -71,7 +69,7 @@ namespace nUpdate.UI.Dialogs
         {
             Invoke(new Action(() =>
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while searching for updates.", e.Exception,
+                Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, e.Exception,
                     PopupButtons.Ok);
                 DialogResult = DialogResult.Cancel;
             }));

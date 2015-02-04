@@ -1,15 +1,24 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
+using nUpdate.Core;
+using nUpdate.Core.Localization;
 using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.UI.Dialogs;
+using nUpdate.UI.Popups;
 
 namespace nUpdate.Internal
 {
     public class UpdaterUi
     {
+        private LocalizationProperties _lp;
+        private UpdateManager _updateManager;
         private bool _updateAvailable;
 
         /// <summary>
@@ -19,12 +28,50 @@ namespace nUpdate.Internal
         public UpdaterUi(UpdateManager updateManagerInstance)
         {
             UpdateManagerInstance = updateManagerInstance;
+
+            string languageFilePath;
+            try
+            {
+                languageFilePath = _updateManager.CultureFilePaths.First(item => item.Key.Equals(_updateManager.LanguageCulture)).Value;
+            }
+            catch (InvalidOperationException)
+            {
+                languageFilePath = null;
+            }
+
+            if (!String.IsNullOrEmpty(languageFilePath))
+            {
+                try
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+                }
+                catch (Exception)
+                {
+                    _lp = new LocalizationProperties();
+                }
+            }
+            else if (String.IsNullOrEmpty(languageFilePath) && _updateManager.LanguageCulture.Name != "en")
+            {
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", _updateManager.LanguageCulture.Name);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                }
+            }
+            else if (String.IsNullOrEmpty(languageFilePath) && _updateManager.LanguageCulture.Name == "en")
+            {
+                _lp = new LocalizationProperties();
+            }
         }
 
         /// <summary>
         ///     Sets the given instance of the <see cref="UpdateManager" />-class.
         /// </summary>
-        internal UpdateManager UpdateManagerInstance { get; set; }
+        internal UpdateManager UpdateManagerInstance
+        {
+            get { return _updateManager; }
+            set { _updateManager = value; }
+        }
 
         internal void SearchFinishedEventHandler(object sender, UpdateSearchFinishedEventArgs e)
         {
@@ -36,14 +83,13 @@ namespace nUpdate.Internal
         /// </summary>
         public void ShowUserInterface()
         {
-            var searchDialog = new UpdateSearchDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
-            UpdateManagerInstance.UpdateSearchFinished += SearchFinishedEventHandler;
-            UpdateManagerInstance.UpdateSearchFinished += searchDialog.SearchFinishedEventHandler;
-            UpdateManagerInstance.UpdateSearchFailed += searchDialog.SearchFailedEventHandler;
+            var searchDialog = new UpdateSearchDialog { LanguageName = _updateManager.LanguageCulture.Name };
+            _updateManager.UpdateSearchFinished += SearchFinishedEventHandler;
+            _updateManager.UpdateSearchFinished += searchDialog.SearchFinishedEventHandler;
+            _updateManager.UpdateSearchFailed += searchDialog.SearchFailedEventHandler;
+            _updateManager.SearchForUpdatesAsync();
 
-            UpdateManagerInstance.SearchForUpdatesAsync();
-
-            if (!UpdateManagerInstance.UseHiddenSearch)
+            if (!_updateManager.UseHiddenSearch)
             {
                 if (searchDialog.ShowDialog() == DialogResult.Cancel)
                 {
@@ -53,21 +99,21 @@ namespace nUpdate.Internal
                 searchDialog.Close();
             }
 
-            UpdateManagerInstance.UpdateSearchFinished -= SearchFinishedEventHandler;
-            UpdateManagerInstance.UpdateSearchFinished -= searchDialog.SearchFinishedEventHandler;
-            UpdateManagerInstance.UpdateSearchFailed -= searchDialog.SearchFailedEventHandler;
+            _updateManager.UpdateSearchFinished -= SearchFinishedEventHandler;
+            _updateManager.UpdateSearchFinished -= searchDialog.SearchFinishedEventHandler;
+            _updateManager.UpdateSearchFailed -= searchDialog.SearchFailedEventHandler;
 
             if (_updateAvailable)
             {
                 var newUpdateDialog = new NewUpdateDialog
                 {
-                    LanguageName = UpdateManagerInstance.LanguageCulture.Name,
-                    CurrentVersion = UpdateManagerInstance.CurrentVersion,
-                    UpdateVersion = UpdateManagerInstance.UpdateVersion,
-                    Changelog = UpdateManagerInstance.Changelog,
-                    PackageSize = UpdateManagerInstance.PackageSize,
-                    MustUpdate = UpdateManagerInstance.MustUpdate,
-                    OperationAreas = UpdateManagerInstance.OperationAreas
+                    LanguageName = _updateManager.LanguageCulture.Name,
+                    CurrentVersion = _updateManager.CurrentVersion,
+                    UpdateVersion = _updateManager.UpdateVersion,
+                    Changelog = _updateManager.Changelog,
+                    PackageSize = _updateManager.PackageSize,
+                    MustUpdate = _updateManager.MustUpdate,
+                    OperationAreas = _updateManager.OperationAreas
                 };
                 if (newUpdateDialog.ShowDialog() == DialogResult.OK)
                     newUpdateDialog.Close();
@@ -77,60 +123,58 @@ namespace nUpdate.Internal
                     return;
                 }
             }
-            else if (!_updateAvailable && UpdateManagerInstance.UseHiddenSearch)
+            else if (!_updateAvailable && _updateManager.UseHiddenSearch)
                 return;
-            else if (!_updateAvailable && !UpdateManagerInstance.UseHiddenSearch)
+            else if (!_updateAvailable && !_updateManager.UseHiddenSearch)
             {
-                var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
+                var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = _updateManager.LanguageCulture.Name };
                 if (noUpdateDialog.ShowDialog() == DialogResult.OK)
                     return;
             }
 
-            var downloadDialog = new UpdateDownloadDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
+            var downloadDialog = new UpdateDownloadDialog { LanguageName = _updateManager.LanguageCulture.Name };
 
-            UpdateManagerInstance.PackageDownloadProgressChanged += downloadDialog.ProgressChangedEventHandler;
-            UpdateManagerInstance.PackageDownloadFinished += downloadDialog.DownloadFinishedEventHandler;
-            //UpdateManagerInstance.PackageDownloadFailed += downloadDialog.DownloadFailedEventHandler;
+            _updateManager.PackageDownloadProgressChanged += downloadDialog.ProgressChangedEventHandler;
+            _updateManager.PackageDownloadFinished += downloadDialog.DownloadFinishedEventHandler;
+            //_updateManager.PackageDownloadFailed += downloadDialog.DownloadFailedEventHandler;
 
-            UpdateManagerInstance.DownloadPackageAsync();
+            _updateManager.DownloadPackageAsync();
 
             if (downloadDialog.ShowDialog() == DialogResult.Cancel)
             {
-                UpdateManagerInstance.CancelDownload();
+                if (_updateManager.IsDownloading)
+                    _updateManager.CancelDownload();
                 return;
             }
 
+            bool isValid = false;
             try
             {
-                if (!UpdateManagerInstance.CheckPackageValidity())
-                {
-                    var errorMessage =
-                        String.Format(
-                            "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.",
-                            Environment.NewLine);
-
-                    var errorDialog = new UpdateErrorDialog
-                    {
-                        ErrorCode = 0,
-                        InfoMessage = "Invalid signature.",
-                        Error = new Exception(errorMessage)
-                    };
-
-                    if (errorDialog.ShowDialog() == DialogResult.OK)
-                    {
-                    }
-                }
-                else
-                    UpdateManagerInstance.InstallPackage();
+                isValid = _updateManager.CheckPackageValidity();
             }
             catch (FileNotFoundException)
             {
-                // TODO: Show not found
+                Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                    _lp.PackageNotFoundErrorText,
+                    PopupButtons.Ok);
             }
-            catch (NullReferenceException)
+            catch (ArgumentException)
             {
-                // TODO: Show no signature
+                Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption, 
+                    _lp.InvalidSignatureErrorText, PopupButtons.Ok);
             }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                    ex, PopupButtons.Ok);
+            }
+
+            if (!isValid)
+                Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
+                    _lp.SignatureNotMatchingErrorText,
+                    PopupButtons.Ok);
+            else
+                _updateManager.InstallPackage();
         }
     }
 }

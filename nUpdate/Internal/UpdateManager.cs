@@ -8,15 +8,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using nUpdate.Core;
+using nUpdate.Core.Localization;
 using nUpdate.Core.Operations;
 using nUpdate.Internal.Exceptions;
 using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.Properties;
+using SystemInformation = nUpdate.Core.SystemInformation;
 
 namespace nUpdate.Internal
 {
@@ -33,13 +36,32 @@ namespace nUpdate.Internal
         private UpdateConfiguration _updateConfiguration = new UpdateConfiguration();
         private string _updateFilePath;
         internal List<OperationArea> OperationAreas = new List<OperationArea>();
-
         private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
             Application.ProductName);
 
         private readonly ManualResetEvent _downloadResetEvent = new ManualResetEvent(false);
         private readonly WebClient _packageDownloader = new WebClient();
         private readonly WebClientWrapper _searchWebClient = new WebClientWrapper();
+        private LocalizationProperties _lp;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UpdateManager" />
+        /// </summary>
+        /// <param name="updateConfigurationFileUrl">The url of the configuration file.</param>
+        /// <param name="publicKey">The public key to check the signature of the update packages.</param>
+        /// <param name="currentVersion">The current version of the application.</param>
+        /// <param name="languageCulture">The language culture to use for the localization of the integrated UpdaterUI.</param>
+        public UpdateManager(Uri updateConfigurationFileUrl, string publicKey, UpdateVersion currentVersion,
+            CultureInfo languageCulture)
+        {
+            UpdateConfigurationFileUrl = updateConfigurationFileUrl;
+            PublicKey = publicKey;
+            CurrentVersion = currentVersion;
+            LanguageCulture = languageCulture;
+
+            CheckArguments();
+            InitializeWorkingArea();
+        }
 
         /// <summary>
         ///     Gets a value indicating whether a download is currently active or not.
@@ -48,6 +70,109 @@ namespace nUpdate.Internal
         {
             get { return _packageDownloader.IsBusy; }
         }
+
+        /// <summary>
+        ///     Returns if there were updates found.
+        /// </summary>
+        public bool UpdatesFound { get; internal set; }
+
+        /// <summary>
+        ///     Gets or sets the url of the configuration file.
+        /// </summary>
+        public Uri UpdateConfigurationFileUrl { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the public key for checking the signature.
+        /// </summary>
+        public string PublicKey { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the version of the current application.
+        /// </summary>
+        public UpdateVersion CurrentVersion { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the culture of the language to use.
+        /// </summary>
+        /// <remarks>
+        ///     "en" (English) and "de" (German) are currently the only language cultures that are already implemented in
+        ///     nUpdate. In order to use own languages download the language template from
+        ///     http://www.nupdate.net/langtemplate.json, edit it, save it as a JSON-file and add a new entry to property
+        ///     <see cref="CultureFilePaths" /> with the relating CultureInfo and path which locates the JSON-file on the client's
+        ///     system (e. g. AppData).
+        /// </remarks>
+        public CultureInfo LanguageCulture { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the paths for the file with the content for the cultures.
+        /// </summary>
+        public Dictionary<CultureInfo, string> CultureFilePaths = new Dictionary<CultureInfo, string>();
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether a custom user interface should be used for the update installer or not.
+        /// </summary>
+        public bool UseCustomInstallerUserInterface { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the path of the custom assembly'S location that should be used for the update installer's user
+        ///     interface.
+        /// </summary>
+        public string CustomInstallerUiAssemblyPath { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions or not.
+        /// </summary>
+        public bool IncludeAlpha { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user should be able to update to Beta-versions or not.
+        /// </summary>
+        public bool IncludeBeta { get; set; }
+
+        /// <summary>
+        ///     Sets if a hidden search should be provided in order to search in the background without informing the user.
+        /// </summary>
+        public bool UseHiddenSearch { get; set; }
+
+        /// <summary>
+        ///     Sets if the found update is a duty update and must be installed.
+        /// </summary>
+        public bool MustUpdate { get; private set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user can choose between newer versions or must use the very newest one.
+        /// </summary>
+        public bool VersionIsChoosable { get; set; }
+
+        /// <summary>
+        ///     Sets if the current PC using nUpdate for updating should be involved in stats of a statistics server, if available.
+        /// </summary>
+        public bool IncludeCurrentPcIntoStatistics { get; set; }
+
+        /// <summary>
+        ///     Gets the version of the update package.
+        /// </summary>
+        public UpdateVersion UpdateVersion { get; private set; }
+
+        /// <summary>
+        ///     Gets the changelog of the update package.
+        /// </summary>
+        public string Changelog { get; private set; }
+
+        /// <summary>
+        ///     Gets the size of the update package.
+        /// </summary>
+        public double PackageSize { get; private set; }
+
+        /// <summary>
+        ///     Gets the signature of the update package.
+        /// </summary>
+        private byte[] Signature { get; set; }
+
+        /// <summary>
+        ///     Gets or  sets the operations of the update package.
+        /// </summary>
+        private IEnumerable<Operation> Operations { get; set; }
 
         public void Dispose()
         {
@@ -116,10 +241,10 @@ namespace nUpdate.Internal
         public void SearchForUpdates()
         {
             if (_searchWebClient.IsBusy)
-                throw new InvalidOperationException("There is already a search process running.");
+                throw new InvalidOperationException(_lp.SearchProcessRunningExceptionText);
 
             if (!ConnectionChecker.IsConnectionAvailable())
-                throw new NetworkException("No network connection available.");
+                throw new NetworkException(_lp.NetworkConnectionExceptionText);
 
             //var wc = new WebClientWrapper();
             //if (proxy != null)
@@ -156,8 +281,7 @@ namespace nUpdate.Internal
                 var updatePackageSize = GetUpdatePackageSize(_updateConfiguration.UpdatePackageUrl);
                 if (updatePackageSize == null)
                 {
-                    throw new SizeCalculationException(
-                        "The package size couldn't be calculated because an unknown error appeared. Possibly the package file does not exist.");
+                    throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
                 }
 
                 PackageSize = updatePackageSize.Value;
@@ -210,10 +334,10 @@ namespace nUpdate.Internal
         public void DownloadPackage()
         {
             if (_packageDownloader.IsBusy)
-                throw new InvalidOperationException("There is already a download process running.");
+                throw new InvalidOperationException(_lp.DownloadingProcessRunningExceptionText);
 
             if (!ConnectionChecker.IsConnectionAvailable())
-                throw new NetworkException("No network connection available.");
+                throw new NetworkException(_lp.NetworkConnectionExceptionText);
 
             if (_updateConfiguration.UpdatePackageUrl == null)
                 throw new ArgumentException("UpdatePackageUrl");
@@ -240,8 +364,13 @@ namespace nUpdate.Internal
 
             try
             {
-                new WebClient().DownloadString(String.Format("{0}?versionid={1}",
-                    _updateConfiguration.UpdatePhpFileUrl, _updateConfiguration.VersionId)); // Only for calling it
+                string response = new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
+                    _updateConfiguration.UpdatePhpFileUrl, _updateConfiguration.VersionId,
+                    SystemInformation.GetOperatingSystemName())); // Only for calling it
+                if (!String.IsNullOrEmpty(response))
+                    throw new StatisticsScriptException(
+                        String.Format(
+                            _lp.StatisticsScriptExceptionText, response));
             }
             catch (Exception ex)
             {
@@ -251,17 +380,15 @@ namespace nUpdate.Internal
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Cancelled)
+            if (e.Error != null)
+                _hasDownloadFailed = true;
+
+            if (e.Cancelled || e.Error != null)
             {
                 _packageDownloader.Dispose();
                 DeletePackage();
             }
 
-            if (e.Error != null && e.Error.InnerException != null)
-            {
-                _hasDownloadFailed = true;
-                OnPackageDownloadFailed(e.Error.InnerException);
-            }
             _downloadResetEvent.Set();
         }
 
@@ -319,7 +446,7 @@ namespace nUpdate.Internal
         public bool CheckPackageValidity()
         {
             if (!File.Exists(_updateFilePath))
-                throw new FileNotFoundException("The update package to check could not be found.");
+                throw new FileNotFoundException(_lp.PackageFileNotFoundExceptionText);
 
             if (Signature == null || Signature.Length <= 0)
                 throw new ArgumentException("Signature");
@@ -332,21 +459,36 @@ namespace nUpdate.Internal
                 data = reader.ReadBytes((int) reader.BaseStream.Length);
             }
 
-            RsaSignature rsa;
+            RsaManager rsa;
 
             try
             {
-                rsa = new RsaSignature(PublicKey);
+                rsa = new RsaManager(PublicKey);
             }
             catch
             {
-                DeletePackage();
+                try
+                {
+                    DeletePackage();
+                }
+                catch (Exception ex)
+                {
+                    throw new PackageDeleteException(ex.Message);
+                }
                 return false;
             }
 
             if (rsa.VerifyData(data, Signature))
                 return true;
-            DeletePackage();
+
+            try
+            {
+                DeletePackage();
+            }
+            catch (Exception ex)
+            {
+                throw new PackageDeleteException(ex.Message);
+            }
             return false;
         }
 
@@ -385,13 +527,24 @@ namespace nUpdate.Internal
                 String.Format("\"{0}\"", Application.ExecutablePath),
                 String.Format("\"{0}\"", Application.ProductName),
                 String.Format("\"{0}\"",
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Operations)))),
-                "\"Unpacking\"",
-                "\"The installation of the update failed.\"",
-                "\"{0}... \nPossibly the program won't be able to run properly as important components could be missing then.\"",
-                "\"OK\"", installerUiAssemblyPath
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Operations)))), 
+                    String.Format("\"{0}\"", installerUiAssemblyPath),
+                    _lp.InstallerExtractingFilesText,
+                    _lp.InstallerCopyingText,
+                    _lp.FileDeletingOperationText,
+                    _lp.FileRenamingOperationText,
+                    _lp.RegistrySubKeyCreateOperationText,
+                    _lp.RegistrySubKeyDeleteOperationText,
+                    _lp.RegistryNameValuePairDeleteValueOperationText,
+                    _lp.RegistryNameValuePairSetValueOperationText,
+                    _lp.ProcessStartOperationText,
+                    _lp.ProcessStopOperationText,
+                    _lp.ServiceStartOperationText,
+                    _lp.ServiceStopOperationText,
+                    _lp.InstallerUpdatingErrorCaption, 
+                    _lp.InstallerUpdatingErrorText,
+                    _lp.InstallerInitializingErrorCaption
             };
-            // TODO: lp.UnpackingText and lp.UnpackingErrorTitle + lp.UnpackingErrorMessage
 
             var startInfo = new ProcessStartInfo
             {
@@ -423,145 +576,31 @@ namespace nUpdate.Internal
                 File.Delete(_updateFilePath);
         }
 
-        #region "Members"
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateManager" />
-        /// </summary>
-        /// <param name="updateConfigurationFileUrl">The url of the configuration file.</param>
-        /// <param name="publicKey">The public key to check the signature of the update packages.</param>
-        /// <param name="currentVersion">The current version of the application.</param>
-        /// <param name="languageCulture">The language culture to use for the localization of the integrated UpdaterUI.</param>
-        public UpdateManager(Uri updateConfigurationFileUrl, string publicKey, UpdateVersion currentVersion,
-            CultureInfo languageCulture)
-        {
-            UpdateConfigurationFileUrl = updateConfigurationFileUrl;
-            PublicKey = publicKey;
-            CurrentVersion = currentVersion;
-            LanguageCulture = languageCulture;
-
-            CheckArguments();
-            InitializeWorkingArea();
-        }
-
-        /// <summary>
-        ///     Returns if there were updates found.
-        /// </summary>
-        public bool UpdatesFound { get; internal set; }
-
-        /// <summary>
-        ///     Gets or sets the url of the configuration file.
-        /// </summary>
-        public Uri UpdateConfigurationFileUrl { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the public key for checking the signature.
-        /// </summary>
-        public string PublicKey { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the version of the current application.
-        /// </summary>
-        public UpdateVersion CurrentVersion { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the culture of the language to use.
-        /// </summary>
-        public CultureInfo LanguageCulture { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the paths for the file with the content for the cultures.
-        /// </summary>
-        public Dictionary<CultureInfo, string> CultureFilePaths { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether a custom user interface should be used for the update installer or not.
-        /// </summary>
-        public bool UseCustomInstallerUserInterface { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the path of the custom assembly'S location that should be used for the update installer's user
-        ///     interface.
-        /// </summary>
-        public string CustomInstallerUiAssemblyPath { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions or not.
-        /// </summary>
-        public bool IncludeAlpha { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Beta-versions or not.
-        /// </summary>
-        public bool IncludeBeta { get; set; }
-
-        /// <summary>
-        ///     Sets if a hidden search should be provided in order to search in the background without informing the user.
-        /// </summary>
-        public bool UseHiddenSearch { get; set; }
-
-        /// <summary>
-        ///     Sets if the found update is a duty update and must be installed.
-        /// </summary>
-        public bool MustUpdate { get; private set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the user can choose between newer versions or must use the very newest one.
-        /// </summary>
-        public bool VersionIsChoosable { get; set; }
-
-        /// <summary>
-        ///     Sets if the current PC using nUpdate for updating should be involved in stats of a statistics server, if available.
-        /// </summary>
-        public bool IncludeCurrentPcIntoStatistics { get; set; }
-
-        /// <summary>
-        ///     Gets the version of the update package.
-        /// </summary>
-        public UpdateVersion UpdateVersion { get; private set; }
-
-        /// <summary>
-        ///     Gets the changelog of the update package.
-        /// </summary>
-        public string Changelog { get; private set; }
-
-        /// <summary>
-        ///     Gets the size of the update package.
-        /// </summary>
-        public double PackageSize { get; private set; }
-
-        /// <summary>
-        ///     Gets the signature of the update package.
-        /// </summary>
-        private byte[] Signature { get; set; }
-
-        /// <summary>
-        ///     Gets or  sets the operations of the update package.
-        /// </summary>
-        private IEnumerable<Operation> Operations { get; set; }
-
         /// <summary>
         ///     Checks if all arguments have been given.
         /// </summary>
         private void CheckArguments()
         {
-            // UpdateInfo-property
             if (UpdateConfigurationFileUrl == null)
                 throw new ArgumentException("The property \"UpdateInfoFileUrl\" is not initialized.");
 
             if (!UpdateConfigurationFileUrl.ToString().EndsWith(".json"))
                 throw new InvalidJsonFileException("The update configuration file is not a valid JSON-file.");
 
-            // PublicKey-property
             if (String.IsNullOrEmpty(PublicKey))
                 throw new ArgumentException("The property \"PublicKey\" is not initialized.");
 
-            // CurrentVersion-property
             if (ReferenceEquals(CurrentVersion, null))
                 throw new ArgumentException("The current version must have a value.");
 
             if (LanguageCulture == null)
-                throw new ArgumentException("The property \"Language\" is not initialized.");
+                throw new ArgumentException("The property \"LanguageCulture\" is not initialized.");
+
+            var existingCultureInfos = new[] {new CultureInfo("en"), new CultureInfo("de")};
+            if (!existingCultureInfos.Any(item => item.Equals(LanguageCulture)) &&
+                !CultureFilePaths.ContainsKey(LanguageCulture))
+                throw new ArgumentException(
+                    "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
 
             if (UseCustomInstallerUserInterface && String.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
@@ -581,17 +620,45 @@ namespace nUpdate.Internal
                 }
                 catch (Exception ex)
                 {
-                    throw new IOException(String.Format("The application's main folder could not be created. {0}",
+                    throw new IOException(String.Format(_lp.MainFolderCreationExceptionText,
                         ex.Message));
                 }
             }
 
-            CultureFilePaths = new Dictionary<CultureInfo, string> {{new CultureInfo("en"), "en.json"}};
+            string languageFilePath;
+            try
+            {
+                languageFilePath = CultureFilePaths.First(item => item.Key.Equals(LanguageCulture)).Value;
+            }
+            catch (InvalidOperationException)
+            {
+                languageFilePath = null;
+            }
+
+            if (!String.IsNullOrEmpty(languageFilePath))
+            {
+                try
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+                }
+                catch (Exception)
+                {
+                    _lp = new LocalizationProperties();
+                }
+            }
+            else if (String.IsNullOrEmpty(languageFilePath) && LanguageCulture.Name != "en")
+            {
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageCulture.Name);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+                }
+            }
+            else if (String.IsNullOrEmpty(languageFilePath) && LanguageCulture.Name == "en")
+            {
+                _lp = new LocalizationProperties();
+            }
         }
-
-        #endregion
-
-        #region "Events"
 
         /// <summary>
         ///     The event fired when the update search begins.
@@ -616,6 +683,7 @@ namespace nUpdate.Internal
         /// <summary>
         ///     The event fired when the download of the package fails.
         /// </summary>
+        [Obsolete("Use the Error-property of the AsyncCompletedEventArgs of the PackageDownloadFinished-method instead.")]
         public event EventHandler<FailedEventArgs> PackageDownloadFailed;
 
         public event DownloadProgressChangedEventHandler PackageDownloadProgressChanged
@@ -659,7 +727,5 @@ namespace nUpdate.Internal
             if (PackageDownloadFailed != null)
                 PackageDownloadFailed(this, new FailedEventArgs(exception));
         }
-
-        #endregion
     }
 }

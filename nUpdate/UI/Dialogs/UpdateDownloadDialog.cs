@@ -43,16 +43,10 @@ namespace nUpdate.UI.Dialogs
                 }
                 catch (Exception)
                 {
-                    /*string resourceName = "nUpdate.Core.Localization.en.json";
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                    }*/
-
                     _lp = new LocalizationProperties();
                 }
             }
-            else
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
@@ -60,9 +54,15 @@ namespace nUpdate.UI.Dialogs
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            {
+                _lp = new LocalizationProperties();
+            }
 
-            //headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
-            //infoLabel.Text = _lp.UpdateDownloadDialogLoadingInfo;
+            headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
+            infoLabel.Text = String.Format(
+                        _lp.UpdateDownloadDialogLoadingInfo, "0");
+            cancelButton.Text = _lp.CancelButtonText;
 
             Text = Application.ProductName;
             Icon = _appIcon;
@@ -78,7 +78,7 @@ namespace nUpdate.UI.Dialogs
                 {
                     downloadProgressBar.Value = e.ProgressPercentage;
                     infoLabel.Text = String.Format(
-                        "Please wait while the available updates are\ndownloaded...  ({0}%)", e.ProgressPercentage);
+                        _lp.UpdateDownloadDialogLoadingInfo, e.ProgressPercentage);
                 }));
             }
             catch (InvalidOperationException)
@@ -89,15 +89,23 @@ namespace nUpdate.UI.Dialogs
 
         public void DownloadFinishedEventHandler(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Error != null && e.Error.InnerException != null)
+            if (e.Cancelled)
+            {
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
+
+            if (e.Error != null)
             {
                 Invoke(new Action(() =>
                 {
-                    if (
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the update package.",
-                            e.Error.InnerException, PopupButtons.Ok) == DialogResult.OK)
-                        DialogResult = DialogResult.Cancel;
+                    Popup.ShowPopup(this, SystemIcons.Error,
+                        "Error while downloading the update package.",
+                        e.Error.InnerException ?? e.Error, PopupButtons.Ok);
                 }));
+
+                DialogResult = DialogResult.Cancel;
+                return;
             }
 
             DialogResult = DialogResult.OK;

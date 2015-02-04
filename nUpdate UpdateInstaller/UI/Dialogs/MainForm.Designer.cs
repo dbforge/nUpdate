@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.extractProgressBar = new System.Windows.Forms.ProgressBar();
-            this.updateLabel = new System.Windows.Forms.Label();
+            this.copyingLabel = new System.Windows.Forms.Label();
             this.percentageLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -42,14 +42,14 @@
             this.extractProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.extractProgressBar.TabIndex = 0;
             // 
-            // updateLabel
+            // copyingLabel
             // 
-            this.updateLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.updateLabel.Location = new System.Drawing.Point(9, 13);
-            this.updateLabel.Name = "updateLabel";
-            this.updateLabel.Size = new System.Drawing.Size(270, 13);
-            this.updateLabel.TabIndex = 1;
-            this.updateLabel.Text = "Extracting files...";
+            this.copyingLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.copyingLabel.Location = new System.Drawing.Point(9, 13);
+            this.copyingLabel.Name = "copyingLabel";
+            this.copyingLabel.Size = new System.Drawing.Size(270, 13);
+            this.copyingLabel.TabIndex = 1;
+            this.copyingLabel.Text = "Extracting files...";
             // 
             // percentageLabel
             // 
@@ -69,7 +69,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(326, 67);
             this.Controls.Add(this.percentageLabel);
-            this.Controls.Add(this.updateLabel);
+            this.Controls.Add(this.copyingLabel);
             this.Controls.Add(this.extractProgressBar);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -87,7 +87,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar extractProgressBar;
-        private System.Windows.Forms.Label updateLabel;
+        private System.Windows.Forms.Label copyingLabel;
         private System.Windows.Forms.Label percentageLabel;
     }
 }

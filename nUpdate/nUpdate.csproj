@@ -52,21 +52,22 @@
   <ItemGroup>
     <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
-    <Compile Include="Core\ErrorHandler.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
-    <Compile Include="Core\NativeMethods.cs" />
+    <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
     <Compile Include="Core\Operations\OperationMethod.cs" />
-    <Compile Include="Core\RsaSignature.cs" />
+    <Compile Include="Core\RsaManager.cs" />
     <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\SystemInformation.cs" />
     <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Internal\Exceptions\PackageDeleteException.cs" />
     <Compile Include="Internal\Exceptions\SizeCalculationException.cs" />
     <Compile Include="Internal\Exceptions\StatisticsException.cs" />
+    <Compile Include="Internal\Exceptions\StatisticsScriptException.cs" />
     <Compile Include="Internal\UpdateEventArgs\FailedEventArgs.cs" />
     <Compile Include="Internal\UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
     <Compile Include="Internal\Exceptions\InvalidJsonFileException.cs" />
@@ -109,12 +110,6 @@
     <Compile Include="UI\Dialogs\UpdateDownloadDialog.Designer.cs">
       <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Dialogs\UpdateErrorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\UpdateErrorDialog.Designer.cs">
-      <DependentUpon>UpdateErrorDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -150,10 +145,6 @@
     <EmbeddedResource Include="UI\Dialogs\UpdateDownloadDialog.resx">
       <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\UpdateErrorDialog.resx">
-      <DependentUpon>UpdateErrorDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -164,6 +155,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Core\Localization\de.json" />
     <None Include="UpdateVersion.cd" />
     <None Include="UpdaterUi.cd" />
     <None Include="UpdateManager.cd" />
@@ -173,15 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Core\Localization\en.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\de.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\es.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\ru.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ionic.Zip.dll" />

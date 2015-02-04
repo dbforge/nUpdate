@@ -1,7 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using System;
-
 namespace nUpdate.Core.Localization
 {
     public class LocalizationProperties
@@ -21,64 +19,60 @@ namespace nUpdate.Core.Localization
             NewUpdateDialogCurrentVersionText = "Current version: {0}";
             NewUpdateDialogSizeText = "Package size: {0}";
             NewUpdateDialogChangelogText = "Changelog:";
-            NewUpdateDialogDemandsText = "Demands:";
-            NewUpdateDialogDemandsFilesAccessText = "File system";
-            NewUpdateDialogDemandsRegistryAccessText = "Registry";
-            NewUpdateDialogDemandsProcessesAccessText = "Processes";
-            NewUpdateDialogDemandsServicesAccessText = "Services";
+            NewUpdateDialogAccessText = "Accesses:";
+            NewUpdateDialogFilesAccessText = "File system";
+            NewUpdateDialogRegistryAccessText = "Registry";
+            NewUpdateDialogProcessesAccessText = "Processes";
+            NewUpdateDialogServicesAccessText = "Services";
 
             NoUpdateDialogHeader = "There are no new updates available.";
-            NoUpdateDialogInfoText = "The application is up-to-date.";
+            NoUpdateDialogInfoText = "The application is currently up-to-date.";
 
-            UpdateDownloadDialogLoadingHeader = "Updates are being downloaded...";
-            UpdateDownloadDialogLoadingInfo = "Please be patient...";
-            UpdateDownloadDialogLoadingPackageText = "Package is being downloaded...";
-            UpdateDownloadDialogFinishedHeader = "The updates have been downloaded.";
-            UpdateDownloadDialogFinishedInfoText = "Download completed.";
-            UpdateDownloadDialogFinishedPackageText = "Package downloaded.";
+            UpdateDownloadDialogLoadingHeader = "Downloading updates...";
+            UpdateDownloadDialogLoadingInfo = "Please wait while the available updates are\ndownloaded...  ({0}%)";
 
-            UpdateErrorDialogHeader = "Updating the application has failed.";
-            UpdateErrorDialogErrorCodeText = "Errorcode:";
+            // Put the strings into \" because they are handled over as process arguments (Installer)
+            
+            InstallerExtractingFilesText = "\"Extracting files...\"";
+            InstallerCopyingText = "\"Copying {0}...\"";
+            InstallerInitializingErrorCaption = "\"Error while iniaitializing the data.\"";
+            InstallerUpdatingErrorCaption = "\"Error while updating the application\"";
+            InstallerUpdatingErrorText = "\"{0}. Should the updating be cancelled?\"";
+            FileDeletingOperationText = "\"Deleting file \"{0}\"...\"";
+            FileRenamingOperationText = "\"Renaming file \"{0}\" to \"{1}\"...\"";
+            RegistrySubKeyCreateOperationText = "\"Creating registry subkey \"{0}\"...\"";
+            RegistrySubKeyDeleteOperationText = "\"Deleting registry subkey \"{0}\"...\"";
+            RegistryNameValuePairSetValueOperationText = "\"Setting value of \"{0}\" in the registry to \"{1}\"...\"";
+            RegistryNameValuePairDeleteValueOperationText = "\"Deleting name-value-pair \"{0}\"...\"";
+            ProcessStartOperationText = "\"Starting process \"{0}\"...\"";
+            ProcessStopOperationText = "\"Terminating process \"{1}\"...\"";
+            ServiceStartOperationText = "\"Starting service \"{0}\"...\"";
+            ServiceStopOperationText = "\"Stopping service \"{0}\"...\"";
 
-            SearchErrorCaption = "Error while searching for updates.";
-            LocalDataCreationErrorCaption = "Error while creating local data.";
-            LocalDataCreationErrorText = "The folder for the package data couldn't be created. {0}";
-            FileTooBigErrorCaption = "The update file is too big.";
-            FileTooBigErrorText = "nUpdate will not allow to install the update in order to save your RAM.";
-            PackageNotFoundErrorCaption = "Package not found.";
-            PackageNotFoundErrorText = "The update package couldn't be validated because it is missing.";
-            InvalidSignatureErrorCaption = "Invalid signature.";
-            InvalidSignatureErrorText =
-                String.Format(
-                    "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.",
-                    Environment.NewLine);
-            InvalidSignatureAndFileDeletingFailedErrorText =
-                "The package contains an invalid signature and could be dangerous.{0}In order to avoid any security risks, nUpdate will not allow to install the package.{0}Unfortunately nUpdate could not remove the update package because of an system error. Please delete this package immediately because it could contain viruses and/or malware in order to damage your PC.{0}{1}";
+            UpdateSearchErrorCaption = "Error while searching for updates.";
+            PackageValidityCheckErrorCaption = "Error while checking the package's signature.";
+            PackageNotFoundErrorText = "The package file couldn't be found.";
+            InvalidSignatureErrorCaption = "Invalid signature data found.";
+            SignatureNotMatchingErrorText =
+                "The package's signature does not match the application's integrated one and could be dangerous. In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.";
+            InvalidSignatureErrorText = "The signature of the package is not a valid RSA-signature.";
+
+            SearchProcessRunningExceptionText = "There is already a search process running.";
+            DownloadingProcessRunningExceptionText = "There is already a download process running.";
+            NetworkConnectionExceptionText = "No network connection available.";
+            PackageSizeCalculationExceptionText =
+                "The package size couldn't be calculated because an unknown error appeared. Possibly the package file does not exist.";
+            StatisticsScriptExceptionText =
+                "An error occured while trying to transfer data for the statistics. Please report this problem to the developer of the program in order to make him capable of fixing it. Response from the PHP-script: {0}";
+            PackageFileNotFoundExceptionText = "The update package to check could not be found.";
+            MainFolderCreationExceptionText = "The application's main folder could not be created. {0}";
         }
 
-        /// <summary>
-        ///     The text of the CancelButton.
-        /// </summary>
         public string CancelButtonText { get; set; }
-
-        /// <summary>
-        ///     The text of the ContinueButton.
-        /// </summary>
         public string ContinueButtonText { get; set; }
-
-        /// <summary>
-        ///     The text of the InstallButton.
-        /// </summary>
         public string InstallButtonText { get; set; }
-
-        /// <summary>
-        ///     The text of the CloseButton.
-        /// </summary>
         public string CloseButtonText { get; set; }
 
-        /// <summary>
-        ///     The text of the header of the UpdateSearchDialog.
-        /// </summary>
         public string UpdateSearchDialogHeader { get; set; }
 
         public string NewUpdateDialogHeader { get; set; }
@@ -87,30 +81,47 @@ namespace nUpdate.Core.Localization
         public string NewUpdateDialogCurrentVersionText { get; set; }
         public string NewUpdateDialogSizeText { get; set; }
         public string NewUpdateDialogChangelogText { get; set; }
-        public string NewUpdateDialogDemandsText { get; set; }
-        public string NewUpdateDialogDemandsRegistryAccessText { get; set; }
-        public string NewUpdateDialogDemandsFilesAccessText { get; set; }
-        public string NewUpdateDialogDemandsProcessesAccessText { get; set; }
-        public string NewUpdateDialogDemandsServicesAccessText { get; set; }
+        public string NewUpdateDialogAccessText { get; set; }
+        public string NewUpdateDialogRegistryAccessText { get; set; }
+        public string NewUpdateDialogFilesAccessText { get; set; }
+        public string NewUpdateDialogProcessesAccessText { get; set; }
+        public string NewUpdateDialogServicesAccessText { get; set; }
+
         public string NoUpdateDialogHeader { get; set; }
         public string NoUpdateDialogInfoText { get; set; }
+
         public string UpdateDownloadDialogLoadingHeader { get; set; }
         public string UpdateDownloadDialogLoadingInfo { get; set; }
-        public string UpdateDownloadDialogLoadingPackageText { get; set; }
-        public string UpdateDownloadDialogFinishedHeader { get; set; }
-        public string UpdateDownloadDialogFinishedInfoText { get; set; }
-        public string UpdateDownloadDialogFinishedPackageText { get; set; }
-        public string UpdateErrorDialogHeader { get; set; }
-        public string UpdateErrorDialogErrorCodeText { get; set; }
-        public string SearchErrorCaption { get; set; }
-        public string LocalDataCreationErrorCaption { get; set; }
-        public string LocalDataCreationErrorText { get; set; }
-        public string FileTooBigErrorCaption { get; set; }
-        public string FileTooBigErrorText { get; set; }
-        public string PackageNotFoundErrorCaption { get; set; }
+
+        public string InstallerExtractingFilesText { get; set; }
+        public string InstallerCopyingText { get; set; }
+        public string InstallerInitializingErrorCaption { get; set; }
+        public string InstallerUpdatingErrorCaption { get; set; }
+        public string InstallerUpdatingErrorText { get; set; }
+        public string FileRenamingOperationText { get; set; }
+        public string FileDeletingOperationText { get; set; }
+        public string RegistrySubKeyCreateOperationText { get; set; }
+        public string RegistrySubKeyDeleteOperationText { get; set; }
+        public string RegistryNameValuePairSetValueOperationText { get; set; }
+        public string RegistryNameValuePairDeleteValueOperationText { get; set; }
+        public string ProcessStartOperationText { get; set; }
+        public string ProcessStopOperationText { get; set; }
+        public string ServiceStartOperationText { get; set; }
+        public string ServiceStopOperationText { get; set; }
+
+        public string UpdateSearchErrorCaption { get; set; }
+        public string PackageValidityCheckErrorCaption { get; set; }
         public string PackageNotFoundErrorText { get; set; }
         public string InvalidSignatureErrorCaption { get; set; }
+        public string SignatureNotMatchingErrorText { get; set; }
         public string InvalidSignatureErrorText { get; set; }
-        public string InvalidSignatureAndFileDeletingFailedErrorText { get; set; }
+
+        public string SearchProcessRunningExceptionText { get; set; }
+        public string DownloadingProcessRunningExceptionText { get; set; }
+        public string NetworkConnectionExceptionText { get; set; }
+        public string PackageSizeCalculationExceptionText { get; set; }
+        public string StatisticsScriptExceptionText { get; set; }
+        public string PackageFileNotFoundExceptionText { get; set; }
+        public string MainFolderCreationExceptionText { get; set; }
     }
 }

@@ -12,8 +12,7 @@ namespace nUpdate.Core
                 return null;
 
             var baseUri = new Uri(start);
-            var endUri = new Uri(baseUri, end);
-            return endUri;
+            return new Uri(baseUri, end);
         }
     }
 }
