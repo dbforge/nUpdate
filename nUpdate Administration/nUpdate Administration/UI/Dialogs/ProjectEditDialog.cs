@@ -14,16 +14,18 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Update;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Net.Ftp;
+using FtpAuthenticationException = nUpdate.Administration.Core.Ftp.Exceptions.FtpAuthenticationException;
+using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private bool _allowCancel = true;
+        private bool _isSetByUser = true;
         private bool _commandsExecuted;
         private bool _ftpDirectoryChanged;
         private bool _generalTabPassed;
@@ -480,9 +482,11 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 useStatisticsServerRadioButton.Checked = true;
                 databaseNameLabel.Text = Project.SqlDatabaseName;
+                sqlPasswordTextBox.Text = SqlPassword.ConvertToUnsecureString();
             }
 
             _sender = generalTabPage;
+            _isSetByUser = false;
             //SetLanguage();
         }
 
@@ -769,7 +773,7 @@ namespace nUpdate.Administration.UI.Dialogs
             string ftpDirectory = null;
             Invoke(new Action(() => ftpDirectory = ftpDirectoryTextBox.Text));
             if (Project.FtpDirectory != ftpDirectory &&
-                Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1))
+                Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1) && Project.FtpDirectory.Substring(1) != ftpDirectory)
             {
                 Invoke(
                     new Action(
@@ -924,14 +928,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
-DROP TABLE IF EXISTS Application;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS Version;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Version` VARCHAR(40) NOT NULL,
@@ -945,7 +947,6 @@ CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS Download;
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Download` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Version_ID` INT NOT NULL,
@@ -1138,23 +1139,18 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     *  Setup the SQL-server and database.
                     */
 
-                    #region "Setup-String"
-
-                    var setupString = @"USE _DBNAME;
-DELETE FROM `Application` WHERE `ID` = _APPID;
-DELETE FROM `Version` WHERE `Application_ID` = _APPID";
-
-                    #endregion
-
-                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
-                    setupString = setupString.Replace("_APPID",
-                        Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
-
+                    var setupString = @"USE _DBNAME;";
                     setupString = _newUpdateConfiguration.Aggregate(setupString,
                         (current, configuration) =>
                             current +
                             String.Format("\nDELETE FROM `Download` WHERE `Version_ID` = {0}",
                                 configuration.VersionId));
+
+                    setupString += @"\nDELETE FROM `Version` WHERE `Application_ID` = _APPID;
+DELETE FROM `Application` WHERE `ID` = _APPID;";
+                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                    setupString = setupString.Replace("_APPID",
+                        Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
 
                     Invoke(
                         new Action(
@@ -1283,6 +1279,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
                 if (useStatisticsServerRadioButton.Checked)
                 {
+                    Project.UseStatistics = true;
                     Project.SqlDatabaseName = SqlDatabaseName;
                     Project.SqlWebUrl = SqlWebUrl;
                     Project.SqlUsername = SqlUsername;
@@ -1290,11 +1287,19 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
                         Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, ftpPasswordTextBox.Text,
                             ftpUserTextBox.Text));
                 }
+                else
+                {
+                    Project.UseStatistics = false;
+                    Project.SqlDatabaseName = null;
+                    Project.SqlWebUrl = null;
+                    Project.SqlUsername = null;
+                    Project.SqlPassword = null;
+                }
             }));
 
             try
             {
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                UpdateProject.SaveProject(Project.Path, Project);
             }
             catch (Exception ex)
             {
@@ -1427,20 +1432,24 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
         private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            var packagesToAffectDialog = new PackagesToAffectDialog();
-            if (!_useStatistics && useStatisticsServerRadioButton.Checked &&
-                (Project.Packages != null && Project.Packages.Count != 0))
+            if (!_isSetByUser)
             {
-                foreach (var existingPackage in Project.Packages)
+                var packagesToAffectDialog = new PackagesToAffectDialog();
+                if (!_useStatistics && useStatisticsServerRadioButton.Checked &&
+                    (Project.Packages != null && Project.Packages.Count != 0))
                 {
-                    packagesToAffectDialog.AvailablePackageVersions.Add(existingPackage.Version);
+                    foreach (var existingPackage in Project.Packages)
+                    {
+                        packagesToAffectDialog.AvailablePackageVersions.Add(existingPackage.Version);
+                    }
+
+                    if (packagesToAffectDialog.ShowDialog() != DialogResult.OK)
+                        return;
                 }
 
-                if (packagesToAffectDialog.ShowDialog() != DialogResult.OK)
-                    return;
+                _packageVersionsToAffect = packagesToAffectDialog.PackageVersionsToAffect;
             }
 
-            _packageVersionsToAffect = packagesToAffectDialog.PackageVersionsToAffect;
             statisticsInfoPanel.Enabled = useStatisticsServerRadioButton.Checked;
             selectServerButton.Enabled = useStatisticsServerRadioButton.Checked;
         }
@@ -1456,7 +1465,7 @@ DELETE FROM `Version` WHERE `Application_ID` = _APPID";
 
                 try
                 {
-                    var importProject = ApplicationInstance.LoadProject(fileDialog.FileName);
+                    var importProject = UpdateProject.LoadProject(fileDialog.FileName);
                     ftpHostTextBox.Text = importProject.FtpHost;
                     ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = importProject.FtpUsername;

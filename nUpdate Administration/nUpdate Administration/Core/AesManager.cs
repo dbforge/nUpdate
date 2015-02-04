@@ -15,23 +15,22 @@ namespace nUpdate.Administration.Core
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="keyPassword">The password which the key should be derived from.</param>
         /// <param name="ivPassword">The password which the initializing vector should be drived from.</param>
-        /// <returns>Returns the encrypted string as an byte-array.</returns>
+        /// <returns>Returns the encrypted string as a byte-array.</returns>
         public static byte[] Encrypt(string plainText, string keyPassword, string ivPassword)
         {
-            if (plainText == null || plainText.Length <= 0)
+            if (String.IsNullOrEmpty(plainText))
                 throw new ArgumentNullException("plainText");
             if (keyPassword == null || keyPassword.Length <= 0)
                 throw new ArgumentNullException("keyPassword");
             if (ivPassword == null || ivPassword.Length <= 0)
                 throw new ArgumentNullException("ivPassword");
 
-            var keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword,
+            var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
-            var ivPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword,
+            var ivPasswordDeriveBytes = new Rfc2898DeriveBytes(ivPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
             byte[] encrypted;
-            // Create an AesManaged object
-            // with the specified key and IV.
+
             using (var aesAlg = new AesManaged())
             {
                 aesAlg.KeySize = 256;
@@ -56,7 +55,6 @@ namespace nUpdate.Administration.Core
                 }
             }
 
-
             // Return the encrypted bytes from the memory stream.
             return encrypted;
         }
@@ -77,17 +75,12 @@ namespace nUpdate.Administration.Core
             if (ivPassword == null || ivPassword.Length <= 0)
                 throw new ArgumentNullException("ivPassword");
 
-            var keyPasswordDeriveBytes = new PasswordDeriveBytes(keyPassword,
+            var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
-            var ivPasswordDeriveBytes = new PasswordDeriveBytes(ivPassword,
+            var ivPasswordDeriveBytes = new Rfc2898DeriveBytes(ivPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
 
-            // Declare the string used to hold
-            // the decrypted text.
             string plaintext;
-
-            // Create an AesManaged object
-            // with the specified key and IV.
             using (var aesAlg = new AesManaged())
             {
                 aesAlg.KeySize = 256;
@@ -114,9 +107,7 @@ namespace nUpdate.Administration.Core
 
             var securedPlainText = new SecureString();
             foreach (var c in plaintext)
-            {
                 securedPlainText.AppendChar(c);
-            }
             return securedPlainText;
         }
     }

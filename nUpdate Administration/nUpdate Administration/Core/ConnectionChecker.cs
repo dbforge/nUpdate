@@ -9,7 +9,7 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     Checks if an internet connection is available.
         /// </summary>
-        /// <returns>This function returns a boolean.</returns>
+        /// <returns>Returns 'true' if an internet connection is available, otherwise false.</returns>
         public static bool IsConnectionAvailable()
         {
             int desc;

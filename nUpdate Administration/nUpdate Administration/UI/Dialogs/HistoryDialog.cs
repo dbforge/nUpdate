@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Application.History;
+using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 
@@ -118,7 +118,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void clearLog_Click(object sender, EventArgs e)
         {
             Project.Log.Clear();
-            ApplicationInstance.SaveProject(Project.Path, Project); // TODO: Try-Catch
+            UpdateProject.SaveProject(Project.Path, Project); // TODO: Try-Catch
             Close();
         }
 

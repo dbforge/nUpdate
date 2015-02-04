@@ -25,7 +25,7 @@ namespace nUpdate.Internal
         public bool UseStatistics { get; set; }
 
         /// <summary>
-        ///     The url of the PHP-file which redirects to the package download and does the statistic entries.
+        ///     The url of the PHP-file which does the statistic entries.
         /// </summary>
         public Uri UpdatePhpFileUrl { get; set; }
 

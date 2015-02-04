@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Update;
+using nUpdate.Administration.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

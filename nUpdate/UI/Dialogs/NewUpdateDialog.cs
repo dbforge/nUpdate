@@ -11,12 +11,14 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.Core.Operations;
+using nUpdate.Core.Win32;
 using nUpdate.Internal;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class NewUpdateDialog : BaseDialog
     {
+        private const float GB = 1073741824;
         private const int MB = 1048576;
         private const int KB = 1024;
         private bool _allowCancel;
@@ -29,12 +31,12 @@ namespace nUpdate.UI.Dialogs
         }
 
         /// <summary>
-        ///     Sets the name of the _lpuage file in the resources to use, if no own file is used.
+        ///     Sets the name of the language file in the resources to use, if no own file is used.
         /// </summary>
         public string LanguageName { get; set; }
 
         /// <summary>
-        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        ///     Sets the path of the file which contains the specific language content a user added on its own.
         /// </summary>
         public string LanguageFilePath { get; set; }
 
@@ -86,16 +88,10 @@ namespace nUpdate.UI.Dialogs
                 }
                 catch (Exception)
                 {
-                    /*string resourceName = "nUpdate.Core.Localization.en.json";
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                    }*/
-
                     _lp = new LocalizationProperties();
                 }
             }
-            else
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
@@ -103,26 +99,41 @@ namespace nUpdate.UI.Dialogs
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
+            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            {
+                _lp = new LocalizationProperties();
+            }
 
             headerLabel.Text = _lp.NewUpdateDialogHeader;
             infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
-            newestVersionLabel.Text = String.Format(newestVersionLabel.Text, UpdateVersion.FullText);
+            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogNewestVersionText, UpdateVersion.FullText);
             currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            if (PackageSize >= 104857.6)
+            if (PackageSize >= 107374182.4)
+            {
+                double packageSizeInMb = Math.Round((PackageSize/GB), 1);
+                updateSizeLabel.Text = String.Format("{0} {1}",
+                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "GB");
+            }
+            else if (PackageSize >= 104857.6)
             {
                 double packageSizeInMb = Math.Round((PackageSize/MB), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "MB");
             }
-            else
+            else if (PackageSize >= 102.4)
             {
                 double packageSizeInKb = Math.Round((PackageSize/KB), 1);
                 updateSizeLabel.Text = String.Format("{0} {1}",
                     String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb), "KB");
+            }
+            else if (PackageSize >= 1)
+            {
+                updateSizeLabel.Text = String.Format("{0} {1}",
+                    String.Format(_lp.NewUpdateDialogSizeText, PackageSize), "B");
             }
 
             Icon = _appIcon;
@@ -140,11 +151,11 @@ namespace nUpdate.UI.Dialogs
 
             if (OperationAreas == null || OperationAreas.Count == 0)
             {
-                accessLabel.Text += " -";
+                accessLabel.Text = String.Format("{0} -", _lp.NewUpdateDialogAccessText);
                 return;
             }
 
-            accessLabel.Text += String.Format(" {0}",
+            accessLabel.Text = String.Format("{0} {1}", _lp.NewUpdateDialogAccessText,
                 String.Join(", ",
                     LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().ToArray())));
         }

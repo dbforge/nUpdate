@@ -14,13 +14,12 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Update;
-using nUpdate.Administration.Core.Update.Operations;
-using nUpdate.Administration.Core.Update.Operations.Panels;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Operations;
+using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using Newtonsoft.Json.Linq;
-using Starksoft.Net.Ftp;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -651,7 +650,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         new UpdateVersion(_packageConfiguration.LiteralVersion);
                 }
 
-                ApplicationInstance.SaveProject(Project.Path, Project);
+                UpdateProject.SaveProject(Project.Path, Project);
             }
             catch (Exception ex)
             {

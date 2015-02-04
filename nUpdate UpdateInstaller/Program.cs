@@ -44,6 +44,11 @@ namespace nUpdate.UpdateInstaller
         public static string ExternalGuiAssemblyPath { get; set; }
 
         /// <summary>
+        ///     The text of the "Extracting files..."-label.
+        /// </summary>
+        public static string ExtractFilesText { get; set; }
+
+        /// <summary>
         ///     The text of the "Copying..."-label.
         /// </summary>
         public static string CopyingText { get; set; }
@@ -99,6 +104,21 @@ namespace nUpdate.UpdateInstaller
         public static string ServiceStopOperationText { get; set; }
 
         /// <summary>
+        ///     The caption of the updating error message.
+        /// </summary>
+        public static string UpdatingErrorCaption { get; set; }
+
+        /// <summary>
+        ///     The text of the updating error message.
+        /// </summary>
+        public static string UpdatingErrorText { get; set; }
+
+        /// <summary>
+        ///     The caption of the initializing error message.
+        /// </summary>
+        public static string InitializingErrorCaption { get; set; }
+
+        /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
@@ -127,25 +147,27 @@ namespace nUpdate.UpdateInstaller
                     Serializer.Deserialize<IEnumerable<Operation>>(
                         Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
                 ExternalGuiAssemblyPath = appArguments[5];
+                ExtractFilesText = appArguments[6];
+                CopyingText = appArguments[7];
+                FileDeletingOperationText = appArguments[8];
+                FileRenamingOperationText = appArguments[9];
+                RegistrySubKeyCreateOperationText = appArguments[10];
+                RegistrySubKeyDeleteOperationText = appArguments[11];
+                RegistryNameValuePairDeleteValueOperationText = appArguments[12];
+                RegistryNameValuePairSetValueOperationText = appArguments[13];
+                ProcessStartOperationText = appArguments[14];
+                ProcessStopOperationText = appArguments[15];
+                ServiceStartOperationText = appArguments[16];
+                ServiceStopOperationText = appArguments[17];
+                UpdatingErrorCaption = appArguments[18];
+                UpdatingErrorText = appArguments[19];
+                InitializingErrorCaption = appArguments[20];
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
                 return;
             }
-
-
-            CopyingText = "Copying {0}...";
-            FileDeletingOperationText = "Deleting file \"{0}\"...";
-            FileRenamingOperationText = "Renaming file \"{0}\" to \"{1}\"...";
-            RegistrySubKeyCreateOperationText = "Creating registry subkey \"{0}\"...";
-            RegistrySubKeyDeleteOperationText = "Deleting registry subkey \"{0}\"...";
-            RegistryNameValuePairSetValueOperationText = "Setting value of \"{0}\" in the registry to \"{1}\"...";
-            RegistrySubKeyDeleteOperationText = "Deleting name-value-pair \"{0}\"...";
-            ProcessStartOperationText = "Starting process \"{0}\"...";
-            ProcessStopOperationText = "Terminating process \"{1}\"...";
-            ServiceStartOperationText = "Starting service \"{0}\"...";
-            ServiceStopOperationText = "Stopping service \"{0}\"...";
 
             new Updater().RunUpdate();
         }

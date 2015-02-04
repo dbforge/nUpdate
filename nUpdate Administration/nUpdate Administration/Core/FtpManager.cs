@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
-using nUpdate.Administration.Core.Update;
-using Starksoft.Net.Ftp;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Ftp.EventArgs;
 
 namespace nUpdate.Administration.Core
 {
@@ -16,13 +16,12 @@ namespace nUpdate.Administration.Core
         private bool _disposed;
         private bool _hasAlreadyFixedStrings;
         private FtpClient _packageFtpClient;
+        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
 
         /// <summary>
         ///     Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles" />-method.
         /// </summary>
         public IEnumerable<FtpItem> ListedFtpItems;
-
-        private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
 
         /// <summary>
         ///     Returns the adress that was created by the <see cref="FtpManager" />-class during the call of the last function.
@@ -81,12 +80,12 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Occurs when the download progress changes.
+        ///     Fired when the download progress changes.
         /// </summary>
         public event EventHandler<TransferProgressEventArgs> ProgressChanged;
 
         /// <summary>
-        ///     Occurs when the cancellation is finished.
+        ///     Fired when the cancellation is finished.
         /// </summary>
         public event EventHandler<EventArgs> CancellationFinished;
 
@@ -184,11 +183,10 @@ namespace nUpdate.Administration.Core
 
             using (var ftp = new FtpClient(Host, Port, Protocol))
             {
+                var items = ListDirectoriesAndFiles(directoryPath, true);
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
-                ftp.ChangeDirectoryMultiPath(directoryPath);
-                var items = ListDirectoriesAndFiles(directoryPath, true);
                 foreach (var item in items)
                 {
                     switch (item.ItemType)
@@ -210,13 +208,18 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public IEnumerable<FtpItem> ListDirectoriesAndFiles(string path, bool recursive)
         {
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol);
+            try
             {
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 var items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
                 return items;
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -278,7 +281,7 @@ namespace nUpdate.Administration.Core
                     }
                     else if (item.ItemType == FtpItemType.File &&
                              (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
-                        // Second condition determines whether the item is a package-file or not
+                    // Second condition determines whether the item is a package-file or not
                     {
                         if (!IsExisting(item.Name))
                         {
@@ -381,7 +384,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Uploads an update package  to the server.
+        ///     Uploads an update package to the server.
         /// </summary>
         /// <param name="packagePath">The local path of the package..</param>
         /// <param name="packageVersion">The package version for the directory name.</param>
@@ -390,6 +393,7 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
+            _packageFtpClient = new FtpClient();
             _packageFtpClient = new FtpClient(Host, Port, Protocol)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
@@ -410,7 +414,7 @@ namespace nUpdate.Administration.Core
         private void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
         {
             _uploadPackageResetEvent.Set();
-
+            
             if (e.Cancelled)
             {
                 OnCancellationFinished(this, EventArgs.Empty);
