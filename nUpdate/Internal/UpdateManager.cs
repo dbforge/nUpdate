@@ -165,6 +165,11 @@ namespace nUpdate.Internal
         public double PackageSize { get; private set; }
 
         /// <summary>
+        ///     Gets or sets the custom action for the exit of the application, null to use standard action
+        /// </summary>
+        public Action CustomExitAction { get; set; }
+
+        /// <summary>
         ///     Gets the signature of the update package.
         /// </summary>
         private byte[] Signature { get; set; }
@@ -564,7 +569,10 @@ namespace nUpdate.Internal
                     return;
             }
 
-            Application.Exit();
+            if (CustomExitAction == null)
+                Application.Exit();
+            else
+                CustomExitAction();
         }
 
         /// <summary>
