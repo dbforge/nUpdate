@@ -146,7 +146,7 @@
             this.someVersionsRadioButton = new System.Windows.Forms.RadioButton();
             this.operationsTabPage = new System.Windows.Forms.TabPage();
             this.operationsPanel = new System.Windows.Forms.Panel();
-            this.operationsListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
+            this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.loadingPanel.SuspendLayout();
@@ -229,7 +229,7 @@
             this.loadingPanel.Controls.Add(this.cancelLabel);
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(186, 301);
+            this.loadingPanel.Location = new System.Drawing.Point(189, 321);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(260, 51);
             this.loadingPanel.TabIndex = 45;
@@ -251,19 +251,19 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(9, 13);
+            this.pictureBox1.Location = new System.Drawing.Point(15, 17);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.Size = new System.Drawing.Size(17, 17);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
             // 
             // loadingLabel
             // 
-            this.loadingLabel.AutoSize = true;
-            this.loadingLabel.Location = new System.Drawing.Point(34, 17);
+            this.loadingLabel.AutoEllipsis = true;
+            this.loadingLabel.Location = new System.Drawing.Point(34, 19);
             this.loadingLabel.Name = "loadingLabel";
-            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
+            this.loadingLabel.Size = new System.Drawing.Size(206, 16);
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
             // 
@@ -639,6 +639,7 @@
             this.englishChangelogTextBox.Location = new System.Drawing.Point(0, 3);
             this.englishChangelogTextBox.Multiline = true;
             this.englishChangelogTextBox.Name = "englishChangelogTextBox";
+            this.englishChangelogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.englishChangelogTextBox.Size = new System.Drawing.Size(453, 191);
             this.englishChangelogTextBox.TabIndex = 0;
             this.englishChangelogTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.englishChangelogTextBox_KeyDown);
@@ -987,16 +988,25 @@
             listViewGroup4});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.operationsListView.HoverSelection = true;
+            listViewItem1.Group = listViewGroup1;
             listViewItem1.Tag = "RenameFile";
+            listViewItem2.Group = listViewGroup1;
             listViewItem2.Tag = "DeleteFile";
+            listViewItem3.Group = listViewGroup2;
             listViewItem3.Tag = "CreateRegistrySubKey";
+            listViewItem4.Group = listViewGroup2;
             listViewItem4.Tag = "DeleteRegistrySubKey";
+            listViewItem5.Group = listViewGroup2;
             listViewItem5.Tag = "SetRegistryValue";
             listViewItem6.Group = listViewGroup2;
             listViewItem6.Tag = "DeleteRegistryValue";
+            listViewItem7.Group = listViewGroup3;
             listViewItem7.Tag = "StartProcess";
+            listViewItem8.Group = listViewGroup3;
             listViewItem8.Tag = "TerminateProcess";
+            listViewItem9.Group = listViewGroup4;
             listViewItem9.Tag = "StartService";
+            listViewItem10.Group = listViewGroup4;
             listViewItem10.Tag = "StopService";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
@@ -1091,7 +1101,7 @@
 
         private System.Windows.Forms.TabPage operationsTabPage;
         private System.Windows.Forms.Panel operationsPanel;
-        private Controls.ExtendedListView operationsListView;
+        private Controls.ExplorerListView operationsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader Description;
         private System.Windows.Forms.ImageList categoryImageList;

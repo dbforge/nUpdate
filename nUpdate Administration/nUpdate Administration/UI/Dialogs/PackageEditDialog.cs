@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Ftp;
@@ -27,12 +28,13 @@ namespace nUpdate.Administration.UI.Dialogs
     public partial class PackageEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private bool _allowCancel = true;
+        private bool _commandsExecuted;
         private bool _configurationUploaded;
-        private string _existingVersion;
-        private List<UpdateConfiguration> _newConfiguration = new List<UpdateConfiguration>();
+        private string _existingVersionString;
         private string _newPackageDirectory;
         private string _oldPackageDirectoryPath;
         private UpdateConfiguration _packageConfiguration;
+        private UpdateVersion _newVersion;
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -56,6 +58,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
         private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
+
         private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry subkey", 12, 12)
         {
             Tag = "DeleteRegistrySubKey"
@@ -68,6 +71,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly FtpManager _ftp = new FtpManager();
         private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
+
         private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry value", 13, 13)
         {
             Tag = "SetRegistryValue"
@@ -76,6 +80,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
+
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
         {Tag = "StopProcess"};
 
@@ -115,7 +120,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (enabled)
                 _allowCancel = true;
 
-            BeginInvoke(new Action(() =>
+            Invoke(new Action(() =>
             {
                 foreach (var c in from Control c in Controls where c.Visible select c)
                 {
@@ -128,23 +133,103 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public void Reset()
         {
-            Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
             try
             {
                 Directory.Move(_newPackageDirectory, _oldPackageDirectoryPath);
-                if (_configurationUploaded)
-                {
-                    var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
-                    File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
-                    _ftp.UploadFile(configurationFilePath);
-                    _configurationUploaded = false;
-                }
             }
-            catch (Exception undoException)
+            catch (Exception ex)
             {
                 Invoke(new Action(() =>
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the changes.", undoException,
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while renaming the package directory.", ex,
+                        PopupButtons.Ok);
+                    Close();
+                }));
+            }
+
+            if (_commandsExecuted)
+            {
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
+
+                var myConnection = new MySqlConnection(connectionString);
+                try
+                {
+                    myConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
+                var command = myConnection.CreateCommand();
+                command.CommandText =
+                    String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
+                        PackageVersion, _packageConfiguration.VersionId);
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    _commandsExecuted = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    Invoke(new Action(Close));
+                    return;
+                }
+                finally
+                {
+                    myConnection.Close();
+                    command.Dispose();
+                }
+            }
+
+            if (!_configurationUploaded)
+                return;
+
+            try
+            {
+                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+                File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
+                _ftp.UploadFile(configurationFilePath);
+                _configurationUploaded = false;
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the changes.", ex,
                         PopupButtons.Ok);
                     Close();
                 }));
@@ -153,7 +238,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageEditDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, PackageVersion);
+            Text = String.Format(Text, PackageVersion.FullText);
 
             _ftp.Host = Project.FtpHost;
             _ftp.Port = Project.FtpPort;
@@ -197,23 +282,26 @@ namespace nUpdate.Administration.UI.Dialogs
             buildNumericUpDown.Value = packageVersion.Build;
             revisionNumericUpDown.Value = packageVersion.Revision;
 
-            _existingVersion = _packageConfiguration.LiteralVersion;
+            _existingVersionString = _packageConfiguration.LiteralVersion;
 
-            developmentalStageComboBox.SelectedValue = packageVersion.DevelopmentalStage;
+            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
+            Array.Reverse(devStages);
+            developmentalStageComboBox.DataSource = devStages;
+            developmentalStageComboBox.SelectedIndex =
+                developmentalStageComboBox.FindStringExact(packageVersion.DevelopmentalStage.ToString());
             developmentBuildNumericUpDown.Value = (packageVersion.DevelopmentBuild > 0)
                 ? packageVersion.DevelopmentBuild
                 : 1;
             developmentBuildNumericUpDown.Enabled = (packageVersion.DevelopmentalStage != DevelopmentalStage.Release);
+            architectureComboBox.SelectedIndex = (int) _packageConfiguration.Architecture;
             mustUpdateCheckBox.Checked = _packageConfiguration.MustUpdate;
+            includeIntoStatisticsCheckBox.Checked = _packageConfiguration.UseStatistics;
             foreach (var package in Project.Packages.Where(package => package.Version == packageVersion))
             {
                 descriptionTextBox.Text = package.Description;
             }
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
-            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
-            Array.Reverse(devStages);
-            developmentalStageComboBox.DataSource = devStages;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
             foreach (var info in cultureInfos)
             {
@@ -243,10 +331,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            architectureComboBox.SelectedIndex = 2;
             categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
-            developmentalStageComboBox.SelectedIndex = 2;
-
             if (_packageConfiguration.UnsupportedVersions != null &&
                 _packageConfiguration.UnsupportedVersions.Count() != 0)
             {
@@ -273,7 +358,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         deletePage.Controls.Add(new FileDeleteOperationPanel
                         {
                             Path = operation.Value,
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
                         });
                         categoryTabControl.TabPages.Add(deletePage);
                         break;
@@ -300,7 +385,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         createRegistrySubKeyPage.Controls.Add(new RegistrySubKeyCreateOperationPanel
                         {
                             KeyPath = operation.Value,
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
                         });
                         categoryTabControl.TabPages.Add(createRegistrySubKeyPage);
                         break;
@@ -315,7 +400,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         deleteRegistrySubKeyPage.Controls.Add(new RegistrySubKeyDeleteOperationPanel
                         {
                             KeyPath = operation.Value,
-                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<List<string>>())
+                            ItemList = new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
                         });
                         categoryTabControl.TabPages.Add(deleteRegistrySubKeyPage);
                         break;
@@ -331,7 +416,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             KeyPath = operation.Value,
                             NameValuePairs =
-                                ((JObject) operation.Value2).ToObject<List<Tuple<string, object, RegistryValueKind>>>()
+                                ((JArray) operation.Value2).ToObject<List<Tuple<string, object, RegistryValueKind>>>()
                         });
                         categoryTabControl.TabPages.Add(setRegistryValuePage);
                         break;
@@ -358,7 +443,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         startProcessPage.Controls.Add(new ProcessStartOperationPanel
                         {
                             Path = operation.Value,
-                            Arguments = ((JArray) operation.Value2).ToObject<string[]>()
+                            Arguments = ((JArray) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(startProcessPage);
                         break;
@@ -444,7 +529,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if (new UpdateVersion(_packageConfiguration.LiteralVersion).BasicVersion == "0.0.0.0")
+            _newVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
+                (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value, (DevelopmentalStage)
+                    Enum.Parse(typeof (DevelopmentalStage),
+                        developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
+                (int) developmentBuildNumericUpDown.Value);
+            if (_newVersion.BasicVersion.ToString() == "0.0.0.0")
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                     "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
@@ -455,12 +545,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (Project.Packages != null && Project.Packages.Count != 0)
             {
-                if (PackageVersion.ToString() != _packageConfiguration.LiteralVersion && Project.Packages.Any(item => item.Version == PackageVersion))
+                if (PackageVersion != _newVersion && Project.Packages.Any(item => item.Version == _newVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                         String.Format(
                             "Version \"{0}\" is already existing.",
-                            PackageVersion.FullText), PopupButtons.Ok);
+                            _newVersion.FullText), PopupButtons.Ok);
                     generalPanel.BringToFront();
                     categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                     return;
@@ -470,13 +560,19 @@ namespace nUpdate.Administration.UI.Dialogs
             if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.",
-                    "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.", PopupButtons.Ok);
+                    "Please specify a changelog for the package. If you have already set a changelog in another language, you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.",
+                    PopupButtons.Ok);
                 changelogPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
                 return;
             }
 
-            foreach (var tabPage in from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 3) let operationPanel = tabPage.Controls[0] as IOperationPanel where operationPanel != null && !operationPanel.IsValid select tabPage)
+            foreach (
+                var tabPage in
+                    from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 3)
+                    let operationPanel = tabPage.Controls[0] as IOperationPanel
+                    where operationPanel != null && !operationPanel.IsValid
+                    select tabPage)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
                     "Please make sure to fill out all required fields correctly.",
@@ -486,8 +582,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         .First(item => item.Index == tabPage.TabIndex - 4);
                 return;
             }
-
-            _newConfiguration = UpdateConfiguration;
 
             var changelog = new Dictionary<CultureInfo, string>
             {
@@ -523,7 +617,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _packageConfiguration.UseStatistics = includeIntoStatisticsCheckBox.Checked;
 
-
             string[] unsupportedVersionLiterals = null;
 
             if (unsupportedVersionsListBox.Items.Count == 0)
@@ -534,52 +627,17 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             _packageConfiguration.UnsupportedVersions = unsupportedVersionLiterals;
-
-            if (developmentalStageComboBox.SelectedIndex == 2)
-                _packageConfiguration.LiteralVersion = new UpdateVersion((int) majorNumericUpDown.Value,
-                    (int) minorNumericUpDown.Value, (int) buildNumericUpDown.Value,
-                    (int) revisionNumericUpDown.Value)
-                    .ToString();
-            else
-            {
-                _packageConfiguration.LiteralVersion = new UpdateVersion((int) majorNumericUpDown.Value,
-                    (int) minorNumericUpDown.Value, (int) buildNumericUpDown.Value,
-                    (int) revisionNumericUpDown.Value,
-                    (DevelopmentalStage)
-                        Enum.Parse(typeof (DevelopmentalStage),
-                            developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
-                    (int) developmentBuildNumericUpDown.Value).ToString();
-            }
-
-            _packageConfiguration.UpdatePackageUrl = new Uri(String.Format("{0}/{1}.zip",
+            _packageConfiguration.LiteralVersion = _newVersion.ToString();
+            _packageConfiguration.UpdatePackageUri = new Uri(String.Format("{0}/{1}.zip",
                 UriConnector.ConnectUri(Project.UpdateUrl, _packageConfiguration.LiteralVersion), Project.Guid));
 
-            var index =
-                _newConfiguration.IndexOf(_newConfiguration.First(item => item.LiteralVersion == _existingVersion));
-            _newConfiguration[index] = _packageConfiguration;
-
             _newPackageDirectory = Path.Combine(Program.Path, "Projects", Project.Name,
-                _packageConfiguration.LiteralVersion);
+                _newVersion.ToString());
 
-            if (_existingVersion == _packageConfiguration.LiteralVersion)
-            {
-                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
-                try
-                {
-                    File.WriteAllText(configurationFilePath, Serializer.Serialize(_newConfiguration));
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
-                        PopupButtons.Ok);
-                    return;
-                }
-            }
-            else
+            if (_existingVersionString != _newVersion.ToString())
             {
                 _oldPackageDirectoryPath = Path.Combine(Program.Path, "Projects", Project.Name,
-                    _existingVersion);
-                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+                    _existingVersionString);
                 try
                 {
                     Directory.Move(_oldPackageDirectoryPath, _newPackageDirectory);
@@ -591,18 +649,22 @@ namespace nUpdate.Administration.UI.Dialogs
                         PopupButtons.Ok);
                     return;
                 }
+            }
 
-                try
-                {
-                    File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
-                        PopupButtons.Ok);
-                    Reset();
-                    return;
-                }
+            UpdateConfiguration[
+                UpdateConfiguration.IndexOf(
+                    UpdateConfiguration.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
+                _packageConfiguration;
+            var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
+            try
+            {
+                File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
+                    PopupButtons.Ok);
+                return;
             }
 
             loadingPanel.Location = new Point(180, 91);
@@ -617,12 +679,83 @@ namespace nUpdate.Administration.UI.Dialogs
         private void InitializePackage()
         {
             SetUiState(false);
+
+            if (Project.UseStatistics)
+            {
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
+
+                var myConnection = new MySqlConnection(connectionString);
+                try
+                {
+                    myConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Reset();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Reset();
+                    return;
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
+                var command = myConnection.CreateCommand();
+                command.CommandText =
+                    String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
+                        _newVersion, _packageConfiguration.VersionId);
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    _commandsExecuted = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+                finally
+                {
+                    myConnection.Close();
+                    command.Dispose();
+                }
+            }
+
             Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
 
             try
             {
                 _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
-                _ftp.RenameDirectory(_existingVersion, _packageConfiguration.LiteralVersion);
+                if (_newVersion != new UpdateVersion(_existingVersionString))
+                    _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
                 _configurationUploaded = true;
             }
             catch (Exception ex)
@@ -640,13 +773,14 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 string description = null;
                 Invoke(new Action(() => description = descriptionTextBox.Text));
-                Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersion)).
+                Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).
                     Description = description;
-                if (new UpdateVersion(_packageConfiguration.LiteralVersion) != new UpdateVersion(_existingVersion))
+                if (_newVersion != new UpdateVersion(_existingVersionString))
                 {
-                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersion)).LocalPackagePath
+                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
+                        .LocalPackagePath
                         = String.Format("{0}\\{1}.zip", _newPackageDirectory, Project.Guid);
-                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersion)).Version =
+                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).Version =
                         new UpdateVersion(_packageConfiguration.LiteralVersion);
                 }
 
@@ -720,6 +854,16 @@ namespace nUpdate.Administration.UI.Dialogs
                     };
                     setRegistryEntryValuePage.Controls.Add(new RegistrySetValueOperationPanel());
                     categoryTabControl.TabPages.Add(setRegistryEntryValuePage);
+                    break;
+                case "DeleteRegistryValue":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistryValueNode.Clone());
+
+                    var deleteRegistryEntryValuePage = new TabPage("Delete registry entry value")
+                    {
+                        BackColor = SystemColors.Window
+                    };
+                    deleteRegistryEntryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel());
+                    categoryTabControl.TabPages.Add(deleteRegistryEntryValuePage);
                     break;
                 case "StartProcess":
                     categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startProcessNode.Clone());
@@ -864,6 +1008,12 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (categoryTreeView.SelectedNode == null)
                 return;
+
+            if (e.Control && e.KeyCode == Keys.Up)
+                categoryTreeView.SelectedNode.MoveUp();
+            else if (e.Control && e.KeyCode == Keys.Down)
+                categoryTreeView.SelectedNode.MoveDown();
+
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null)
                 return;
 

@@ -12,7 +12,7 @@ using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.Core.Operations;
 using nUpdate.Core.Win32;
-using nUpdate.Internal;
+using nUpdate.Updating;
 
 namespace nUpdate.UI.Dialogs
 {
@@ -41,9 +41,9 @@ namespace nUpdate.UI.Dialogs
         public string LanguageFilePath { get; set; }
 
         /// <summary>
-        ///     Sets the available version.
+        ///     Gets or sets the newest version.
         /// </summary>
-        public UpdateVersion UpdateVersion { get; set; }
+        public UpdateVersion NewestVersion { get; set; }
 
         /// <summary>
         ///     Sets the current version.
@@ -106,7 +106,7 @@ namespace nUpdate.UI.Dialogs
 
             headerLabel.Text = _lp.NewUpdateDialogHeader;
             infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
-            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogNewestVersionText, UpdateVersion.FullText);
+            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogNewestVersionText, NewestVersion.FullText);
             currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
@@ -157,7 +157,7 @@ namespace nUpdate.UI.Dialogs
 
             accessLabel.Text = String.Format("{0} {1}", _lp.NewUpdateDialogAccessText,
                 String.Join(", ",
-                    LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().ToArray())));
+                    LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray())));
         }
 
         private void installButton_Click(object sender, EventArgs e)

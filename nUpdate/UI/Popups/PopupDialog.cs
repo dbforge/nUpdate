@@ -73,9 +73,6 @@ namespace nUpdate.UI.Popups
             if (Exception == null)
                 contextMenu.Enabled = false;
 
-            if (Title.Length > 40)
-                headerLabel.Location = new Point(61, 13);
-
             if (ReferenceEquals(PopupIcon, SystemIcons.Error))
                 SystemSounds.Hand.Play();
             else if (ReferenceEquals(PopupIcon, SystemIcons.Warning))

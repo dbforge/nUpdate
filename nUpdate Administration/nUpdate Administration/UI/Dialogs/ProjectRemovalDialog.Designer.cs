@@ -63,10 +63,9 @@
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(28, 238);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(354, 34);
+            this.label2.Size = new System.Drawing.Size(354, 41);
             this.label2.TabIndex = 33;
-            this.label2.Text = "To remove a project from nUpdate Administration, uncheck the relating node above." +
-    "";
+            this.label2.Text = resources.GetString("label2.Text");
             // 
             // pictureBox1
             // 
@@ -93,7 +92,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(389, 278);
+            this.ClientSize = new System.Drawing.Size(389, 288);
             this.Controls.Add(this.noProjectsLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);

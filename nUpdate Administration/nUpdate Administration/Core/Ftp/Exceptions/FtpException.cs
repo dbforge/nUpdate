@@ -105,5 +105,13 @@ namespace nUpdate.Administration.Core.Ftp.Exceptions
         {
             get { return _response; }
         }
+
+        public override void GetObjectData(
+            SerializationInfo info,
+            StreamingContext context
+            )
+        {
+            base.GetObjectData(info, context);
+        }
     }
 }

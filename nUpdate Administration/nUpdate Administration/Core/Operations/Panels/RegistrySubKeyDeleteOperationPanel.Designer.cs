@@ -53,11 +53,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
             // 
             // keyNameTextBox
             // 
-            this.keyNameTextBox.Cue = "SubKey1\\SubKey2";
+            this.keyNameTextBox.Cue = "SubKey";
             this.keyNameTextBox.Location = new System.Drawing.Point(106, 43);
             this.keyNameTextBox.Name = "keyNameTextBox";
             this.keyNameTextBox.Size = new System.Drawing.Size(267, 22);
             this.keyNameTextBox.TabIndex = 32;
+            this.keyNameTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             this.keyNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyNameTextBox_KeyDown);
             // 
             // label1
@@ -70,7 +71,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
             // 
             // pathLabel
             // 
-            this.pathLabel.Location = new System.Drawing.Point(4, 16);
+            this.pathLabel.Location = new System.Drawing.Point(4, 13);
             this.pathLabel.Name = "pathLabel";
             this.pathLabel.Size = new System.Drawing.Size(84, 19);
             this.pathLabel.TabIndex = 29;
@@ -97,7 +98,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(245, 20);
+            this.label3.Location = new System.Drawing.Point(245, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(11, 13);
             this.label3.TabIndex = 41;
@@ -111,18 +112,19 @@ namespace nUpdate.Administration.Core.Operations.Panels
             "HKEY_CLASSES_ROOT",
             "HKEY_CURRENT_USER",
             "HKEY_LOCAL_MACHINE"});
-            this.mainKeyComboBox.Location = new System.Drawing.Point(106, 16);
+            this.mainKeyComboBox.Location = new System.Drawing.Point(106, 13);
             this.mainKeyComboBox.Name = "mainKeyComboBox";
             this.mainKeyComboBox.Size = new System.Drawing.Size(133, 21);
             this.mainKeyComboBox.TabIndex = 40;
             // 
             // subKeyTextBox
             // 
-            this.subKeyTextBox.Cue = "MyApp";
-            this.subKeyTextBox.Location = new System.Drawing.Point(261, 16);
+            this.subKeyTextBox.Cue = "MyApp\\SubKey";
+            this.subKeyTextBox.Location = new System.Drawing.Point(261, 13);
             this.subKeyTextBox.Name = "subKeyTextBox";
             this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
             this.subKeyTextBox.TabIndex = 39;
+            this.subKeyTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             // 
             // RegistrySubKeyDeleteOperationPanel
             // 

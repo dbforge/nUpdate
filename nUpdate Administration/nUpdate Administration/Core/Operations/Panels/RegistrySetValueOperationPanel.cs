@@ -24,7 +24,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
         {
             get
             {
-                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex),
+                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem),
                     subKeyTextBox.Text);
             }
             set
@@ -62,6 +62,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     var item = new ListViewItem(tupleItem.Item1);
                     item.SubItems.Add(tupleItem.Item2.ToString());
                     item.SubItems.Add(tupleItem.Item3.ToString());
+                    nameValuePairListView.Items.Add(item);
                 }
             }
         }
@@ -96,6 +97,15 @@ namespace nUpdate.Administration.Core.Operations.Panels
             {
                 nameValuePairListView.Items.Remove(item);
             }
+        }
+
+        private void subKeyTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!subKeyTextBox.Text.Contains("/"))
+                return;
+            subKeyTextBox.Text = subKeyTextBox.Text.Replace('/', '\\');
+            subKeyTextBox.SelectionStart = subKeyTextBox.Text.Length;
+            subKeyTextBox.SelectionLength = 0;
         }
     }
 }

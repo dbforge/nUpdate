@@ -4,17 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
-using FtpItem = nUpdate.Administration.Core.Ftp.FtpItem;
-using FtpItemType = nUpdate.Administration.Core.Ftp.FtpItemType;
-using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -286,15 +282,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 forwardButton.Enabled = false;
             if (_nav.CanGoBack)
                 backButton.Enabled = true;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Margins
-        {
-            public int Left;
-            public int Right;
-            public int Top;
-            public int Bottom;
         }
     }
 }

@@ -32,23 +32,42 @@ namespace nUpdate.UpdateInstaller.Core
         /// </summary>
         public static void CreateSubKey(string keyPath, string subKeyName)
         {
-            var key = GetRootKeyByName(keyPath.Split('\\')[0]);
-            key.CreateSubKey(subKeyName);
+            var keyParts = keyPath.Split('\\');
+            using (var key = GetRootKeyByName(keyParts[0]))
+            {
+                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                using (var subKey = key.OpenSubKey(subKeyPath, true))
+                {
+                    if (subKey == null)
+                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+
+                    subKey.CreateSubKey(subKeyName);
+                }
+            }
         }
 
         /// <summary>
         ///     Deletes a sub key at the given path.
         /// </summary>
         /// <param name="keyPath">The path of the key to use.</param>
-        /// <param name="subKey">The sub key to delete.</param>
-        public static void DeleteSubKey(string keyPath, string subKey)
+        /// <param name="subKeyName">The sub key to delete.</param>
+        public static void DeleteSubKey(string keyPath, string subKeyName)
         {
-            var key = GetRootKeyByName(keyPath.Split('\\')[0]);
-            key.OpenSubKey(String.Join("\\", keyPath.Split('\\').Where(item => item != key.Name)));
-            key.DeleteSubKeyTree(subKey);
+            var keyParts = keyPath.Split('\\');
+            using (var key = GetRootKeyByName(keyParts[0]))
+            {
+                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                using (var subKey = key.OpenSubKey(subKeyPath, true))
+                {
+                    if (subKey == null)
+                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+
+                    subKey.DeleteSubKeyTree(subKeyName, false);
+                }
+            }
         }
 
-        /// <summary>
+        /// <summary> 
         ///     Sets the value of a name-value-pair. If the pair does not already exist, it will be created.
         /// </summary>
         /// <param name="keyPath">The path of the key to use.</param>
@@ -57,7 +76,18 @@ namespace nUpdate.UpdateInstaller.Core
         /// <param name="valueKind">The kind/type of the value.</param>
         public static void SetValue(string keyPath, string valueName, object value, RegistryValueKind valueKind)
         {
-            Registry.SetValue(keyPath, valueName, value, valueKind);
+            var keyParts = keyPath.Split('\\');
+            using (var key = GetRootKeyByName(keyParts[0]))
+            {
+                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                using (var subKey = key.OpenSubKey(subKeyPath, true))
+                {
+                    if (subKey == null)
+                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+
+                    subKey.SetValue(valueName, value, valueKind);
+                }
+            }
         }
 
         /// <summary>
@@ -67,9 +97,18 @@ namespace nUpdate.UpdateInstaller.Core
         /// <param name="valueName">The name of the value.</param>
         public static void DeleteValue(string keyPath, string valueName)
         {
-            var key = GetRootKeyByName(keyPath.Split('\\')[0]);
-            key.OpenSubKey(String.Join("\\", keyPath.Split('\\').Where(item => item != key.Name)));
-            key.DeleteValue(valueName, false);
+            var keyParts = keyPath.Split('\\');
+            using (var key = GetRootKeyByName(keyParts[0]))
+            {
+                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                using (var subKey = key.OpenSubKey(subKeyPath, true))
+                {
+                    if (subKey == null)
+                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+
+                    subKey.DeleteValue(valueName, false);
+                }
+            }
         }
     }
 }

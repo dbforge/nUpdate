@@ -109,11 +109,6 @@ namespace nUpdate.UpdateInstaller
         public static string UpdatingErrorCaption { get; set; }
 
         /// <summary>
-        ///     The text of the updating error message.
-        /// </summary>
-        public static string UpdatingErrorText { get; set; }
-
-        /// <summary>
         ///     The caption of the initializing error message.
         /// </summary>
         public static string InitializingErrorCaption { get; set; }
@@ -160,8 +155,7 @@ namespace nUpdate.UpdateInstaller
                 ServiceStartOperationText = appArguments[16];
                 ServiceStopOperationText = appArguments[17];
                 UpdatingErrorCaption = appArguments[18];
-                UpdatingErrorText = appArguments[19];
-                InitializingErrorCaption = appArguments[20];
+                InitializingErrorCaption = appArguments[19];
             }
             catch (Exception ex)
             {

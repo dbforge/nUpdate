@@ -153,17 +153,16 @@
             this.someVersionsRadioButton = new System.Windows.Forms.RadioButton();
             this.operationsTabPage = new System.Windows.Forms.TabPage();
             this.operationsPanel = new System.Windows.Forms.Panel();
-            this.operationsListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
+            this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
             this.filesPanel = new System.Windows.Forms.Panel();
             this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.addFolderButton = new System.Windows.Forms.ToolStripSplitButton();
             this.addExistingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFolderContentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addVirtualFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addFilesButton = new System.Windows.Forms.ToolStripButton();
@@ -245,7 +244,7 @@
             this.loadingPanel.Controls.Add(this.cancelLabel);
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(198, 312);
+            this.loadingPanel.Location = new System.Drawing.Point(202, 331);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(260, 51);
             this.loadingPanel.TabIndex = 21;
@@ -268,19 +267,19 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(17, 18);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.Size = new System.Drawing.Size(16, 16);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
             // 
             // loadingLabel
             // 
-            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.AutoEllipsis = true;
             this.loadingLabel.Location = new System.Drawing.Point(34, 19);
             this.loadingLabel.Name = "loadingLabel";
-            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
+            this.loadingLabel.Size = new System.Drawing.Size(206, 15);
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
             // 
@@ -664,6 +663,7 @@
             this.englishChangelogTextBox.Location = new System.Drawing.Point(0, 0);
             this.englishChangelogTextBox.Multiline = true;
             this.englishChangelogTextBox.Name = "englishChangelogTextBox";
+            this.englishChangelogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.englishChangelogTextBox.Size = new System.Drawing.Size(453, 191);
             this.englishChangelogTextBox.TabIndex = 0;
             this.englishChangelogTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.englishChangelogTextBox_KeyDown);
@@ -1128,8 +1128,6 @@
             this.replaceFilesToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.replaceFilesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.replaceFilesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripSeparator2,
             this.addFolderButton,
             this.toolStripSeparator1,
             this.addFilesButton,
@@ -1144,24 +1142,11 @@
             this.replaceFilesToolStrip.TabIndex = 4;
             this.replaceFilesToolStrip.Text = "toolStrip4";
             // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(119, 22);
-            this.toolStripButton1.Text = "Add custom path";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
             // addFolderButton
             // 
             this.addFolderButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addExistingFolderToolStripMenuItem,
+            this.addFolderContentToolStripMenuItem,
             this.addVirtualFolderToolStripMenuItem});
             this.addFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("addFolderButton.Image")));
             this.addFolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -1173,14 +1158,21 @@
             // addExistingFolderToolStripMenuItem
             // 
             this.addExistingFolderToolStripMenuItem.Name = "addExistingFolderToolStripMenuItem";
-            this.addExistingFolderToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.addExistingFolderToolStripMenuItem.Text = "Add existing folder";
-            this.addExistingFolderToolStripMenuItem.Click += new System.EventHandler(this.addExistingFolderToolStripMenuItem_Click);
+            this.addExistingFolderToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.addExistingFolderToolStripMenuItem.Text = "Add folder";
+            this.addExistingFolderToolStripMenuItem.Click += new System.EventHandler(this.addFolderButton_Click);
+            // 
+            // addFolderContentToolStripMenuItem
+            // 
+            this.addFolderContentToolStripMenuItem.Name = "addFolderContentToolStripMenuItem";
+            this.addFolderContentToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.addFolderContentToolStripMenuItem.Text = "Add folder content";
+            this.addFolderContentToolStripMenuItem.Click += new System.EventHandler(this.addFolderContentToolStripMenuItem_Click);
             // 
             // addVirtualFolderToolStripMenuItem
             // 
             this.addVirtualFolderToolStripMenuItem.Name = "addVirtualFolderToolStripMenuItem";
-            this.addVirtualFolderToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.addVirtualFolderToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.addVirtualFolderToolStripMenuItem.Text = "Add virtual folder";
             this.addVirtualFolderToolStripMenuItem.Click += new System.EventHandler(this.addVirtualFolderToolStripMenuItem_Click);
             // 
@@ -1222,8 +1214,8 @@
             this.infoButton.Image = ((System.Drawing.Image)(resources.GetObject("infoButton.Image")));
             this.infoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.infoButton.Name = "infoButton";
-            this.infoButton.Size = new System.Drawing.Size(48, 22);
-            this.infoButton.Text = "Info";
+            this.infoButton.Size = new System.Drawing.Size(90, 22);
+            this.infoButton.Text = "Information";
             this.infoButton.Click += new System.EventHandler(this.infoButton_Click);
             // 
             // filesList
@@ -1405,7 +1397,7 @@
         private System.Windows.Forms.Label mustBeInstalledInfoLabel;
         private System.Windows.Forms.CheckBox mustUpdateCheckBox;
         private Controls.Line line3;
-        private Controls.ExtendedListView operationsListView;
+        private Controls.ExplorerListView operationsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader Description;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -1418,8 +1410,6 @@
         private System.Windows.Forms.TabPage availabilityTabPage;
         private System.Windows.Forms.TabPage operationsTabPage;
         private System.Windows.Forms.TabPage replaceFilesTabPage;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Label includeIntoStatisticsInfoLabel;
         private System.Windows.Forms.CheckBox includeIntoStatisticsCheckBox;
         private Controls.Line line2;
@@ -1456,6 +1446,7 @@
         private System.Windows.Forms.ToolStripMenuItem addVirtualFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripButton infoButton;
+        private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
 
     }
 }

@@ -25,12 +25,14 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
     /// <summary>
     /// Provides data for the OpenAsyncCompleted event.
     /// </summary>
+    [ComVisible(false)]
     public class FxpCopyAsyncCompletedEventArgs : AsyncCompletedEventArgs
     {
         /// <summary>
