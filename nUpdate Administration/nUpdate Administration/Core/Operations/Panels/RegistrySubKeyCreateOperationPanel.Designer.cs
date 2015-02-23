@@ -53,11 +53,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
             // 
             // keyNameTextBox
             // 
-            this.keyNameTextBox.Cue = "SubKey1\\SubKey2";
+            this.keyNameTextBox.Cue = "SubKey";
             this.keyNameTextBox.Location = new System.Drawing.Point(106, 43);
             this.keyNameTextBox.Name = "keyNameTextBox";
             this.keyNameTextBox.Size = new System.Drawing.Size(267, 22);
             this.keyNameTextBox.TabIndex = 22;
+            this.keyNameTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             this.keyNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyNameTextBox_KeyDown);
             // 
             // label1
@@ -70,11 +71,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
             // 
             // subKeyTextBox
             // 
-            this.subKeyTextBox.Cue = "MyApp";
+            this.subKeyTextBox.Cue = "MyApp\\SubKey";
             this.subKeyTextBox.Location = new System.Drawing.Point(261, 13);
             this.subKeyTextBox.Name = "subKeyTextBox";
             this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
             this.subKeyTextBox.TabIndex = 20;
+            this.subKeyTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             // 
             // pathLabel
             // 

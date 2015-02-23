@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Dialogs;
 
 namespace nUpdate.Administration.Core.Win32
@@ -57,22 +58,17 @@ namespace nUpdate.Administration.Core.Win32
         public static extern bool DwmIsCompositionEnabled();
 
         [DllImport("dwmapi.dll")]
-        public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref DirectorySearchDialog.Margins margins);
+        public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam,
-            ref TvItem item);
+            ref ExplorerTreeNode item);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, string lp);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, bool wParam, IntPtr lParam);
-
-        // Not portable (bool)
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
 
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
@@ -87,7 +83,7 @@ namespace nUpdate.Administration.Core.Win32
         public static extern bool InternetGetConnectedState(out int connDescription, int reservedValue);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref LvGroup lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref ExplorerListViewGroup lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);

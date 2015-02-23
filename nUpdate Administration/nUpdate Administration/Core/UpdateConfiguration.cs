@@ -24,9 +24,9 @@ namespace nUpdate.Administration.Core
         public bool UseStatistics { get; set; }
 
         /// <summary>
-        ///     The url of the PHP-file which redirects to the package download and does the statistic entries.
+        ///     The URI of the PHP-file which redirects to the package download and does the statistic entries.
         /// </summary>
-        public Uri UpdatePhpFileUrl { get; set; }
+        public Uri UpdatePhpFileUri { get; set; }
 
         /// <summary>
         ///     The version ID of this package to use in the statistics, if used.
@@ -34,9 +34,9 @@ namespace nUpdate.Administration.Core
         public int VersionId { get; set; }
 
         /// <summary>
-        ///     The url of the update package.
+        ///     The URI of the update package.
         /// </summary>
-        public Uri UpdatePackageUrl { get; set; }
+        public Uri UpdatePackageUri { get; set; }
 
         /// <summary>
         ///     The whole changelog of the update package.
@@ -96,7 +96,7 @@ namespace nUpdate.Administration.Core
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUrl);
                 if (!String.IsNullOrEmpty(source))
-                    return Serializer.Deserialize<List<UpdateConfiguration>>(source);
+                    return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
 
             return null;
@@ -108,7 +108,7 @@ namespace nUpdate.Administration.Core
         /// <param name="filePath">The path of the file.</param>
         public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
-            return Serializer.Deserialize<List<UpdateConfiguration>>(File.ReadAllText(filePath));
+            return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(File.ReadAllText(filePath));
         }
     }
 }

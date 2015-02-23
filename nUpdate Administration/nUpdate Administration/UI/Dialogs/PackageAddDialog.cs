@@ -23,8 +23,10 @@ using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Core.Operations;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using System.Threading.Tasks;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -49,17 +51,17 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString FtpPassword = new SecureString();
+        public SecureString FtpPassword { get; set; }
 
         /// <summary>
         ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString ProxyPassword = new SecureString();
+        public SecureString ProxyPassword { get; set; }
 
         /// <summary>
         ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString SqlPassword = new SecureString();
+        public SecureString SqlPassword { get; set; }
 
         private readonly UpdateConfiguration _configuration = new UpdateConfiguration();
 
@@ -159,9 +161,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (_packageInitialized)
             {
                 if (Project.Packages != null)
-                {
                     Project.Packages.Remove(_package); // Remove the saved package again
-                }
 
                 _package.IsReleased = false;
 
@@ -188,6 +188,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageAddDialog_Load(object sender, EventArgs e)
         {
+            Text = String.Format(Text, Project.Name);
+
             try
             {
                 _ftp.Host = Project.FtpHost;
@@ -197,6 +199,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
                 _ftp.Directory = Project.FtpDirectory;
+                _ftp.Proxy = Project.Proxy;
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
             }
@@ -278,7 +281,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     (int) developmentBuildNumericUpDown.Value);
             }
 
-            if (_packageVersion.BasicVersion == "0.0.0.0")
+            if (_packageVersion.BasicVersion.ToString() == "0.0.0.0")
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                     "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
@@ -449,7 +452,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var packageFile = String.Format("{0}.zip", Project.Guid);
             _zip.Save(Path.Combine(_packageFolder, packageFile));
 
-            _updateLog.Write(LogEntry.Create, _packageVersion.ToString());
+            _updateLog.Write(LogEntry.Create, _packageVersion.FullText);
             Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
 
             string[] unsupportedVersionLiterals = null;
@@ -512,28 +515,29 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             _configuration.UnsupportedVersions = unsupportedVersionLiterals;
-            _configuration.UpdatePhpFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
-            _configuration.UpdatePackageUrl = UriConnector.ConnectUri(Project.UpdateUrl,
+            _configuration.UpdatePhpFileUri = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
+            _configuration.UpdatePackageUri = UriConnector.ConnectUri(Project.UpdateUrl,
                 String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
             _configuration.LiteralVersion = _packageVersion.ToString();
             _configuration.UseStatistics = _includeIntoStatistics;
 
             if (Project.UseStatistics)
             {
-                Project.VersionId += 1;
-                _configuration.VersionId = Project.VersionId;
+                Settings.Default.VersionID += 1;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                _configuration.VersionId = Settings.Default.VersionID;
             }
                 
             Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
 
-            var configurationList = new List<UpdateConfiguration>();
+            List<UpdateConfiguration> configurationList;
 
             // Load the configuration
             try
             {
                 var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                if (configurationEnumerable != null)
-                    configurationList = configurationEnumerable.ToList();
+                configurationList = configurationEnumerable != null ? configurationEnumerable.ToList() : Enumerable.Empty<UpdateConfiguration>().ToList();
             }
             catch (Exception ex)
             {
@@ -623,8 +627,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var command = _insertConnection.CreateCommand();
                     command.CommandText =
-                        String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                            _packageVersion, Project.ApplicationId);
+                        String.Format("INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
+                            Settings.Default.VersionID, _packageVersion, Project.ApplicationId);
                     // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
 
                     try
@@ -732,10 +736,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         return;
                     }
                 }
-            }
 
-            if (_publishUpdate)
-            {
                 Project.NewestPackage = _packageVersion.FullText;
                 Project.ReleasedPackages += 1;
             }
@@ -765,7 +766,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            String.Format("Uploading package... {0}% | {1}KiB/s", e.Percentage,
+                            String.Format("Uploading package... {0}% | {1}KB/s", Math.Round(e.Percentage, 1),
                                 e.BytesPerSecond/1024)));
             if (_uploadCancelled)
             {
@@ -803,16 +804,25 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Lists the directory content recursively.
         /// </summary>
-        private void ListDirectoryContent(string path)
+        private void ListDirectoryContent(string path, bool onlyContent)
         {
-            var rootDirectoryInfo = new DirectoryInfo(path);
             Invoke(new Action(() =>
             {
-                var directoryNode = CreateDirectoryNode(rootDirectoryInfo);
-                if (directoryNode == null)
-                    return;
+                if (!onlyContent)
+                {
+                    var folderNode = new TreeNode(new DirectoryInfo(path).Name, 0, 0);
+                    filesDataTreeView.SelectedNode.Nodes.Add(folderNode);
+                    filesDataTreeView.SelectedNode = folderNode;
+                }
 
-                filesDataTreeView.SelectedNode.Nodes.Add(directoryNode);
+                var rootDirectoryInfo = new DirectoryInfo(path);
+                foreach (
+                    var node in
+                        rootDirectoryInfo.GetDirectories().Select(CreateDirectoryNode).Where(node => node != null))
+                {
+                    filesDataTreeView.SelectedNode.Nodes.Add(node);
+                }
+
                 if (!filesDataTreeView.SelectedNode.IsExpanded)
                     filesDataTreeView.SelectedNode.Toggle();
             }));
@@ -848,28 +858,33 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
 
                     TreeNode fileNode;
-                    if (filesImageList.Images.ContainsKey(file.Extension))
-                    {
-                        var index = filesImageList.Images.IndexOfKey(file.Extension);
-                        fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
-                    }
+                    if (String.IsNullOrWhiteSpace(file.Extension))
+                        fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
                     else
                     {
-                        var icon = IconReader.GetFileIcon(file.Extension);
-                        if (icon != null)
+                        if (filesImageList.Images.ContainsKey(file.Extension))
                         {
-                            var index = 0;
-                            var file1 = file;
-                            Invoke(new Action(() =>
-                            {
-                                filesImageList.Images.Add(file1.Extension, icon.ToBitmap());
-                                index = filesImageList.Images.IndexOfKey(file1.Extension);
-                            }));
+                            var index = filesImageList.Images.IndexOfKey(file.Extension);
                             fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
                         }
                         else
                         {
-                            fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
+                            var icon = IconReader.GetFileIcon(file.Extension);
+                            if (icon != null)
+                            {
+                                var index = 0;
+                                var file1 = file;
+                                Invoke(new Action(() =>
+                                {
+                                    filesImageList.Images.Add(file1.Extension, icon.ToBitmap());
+                                    index = filesImageList.Images.IndexOfKey(file1.Extension);
+                                }));
+                                fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
+                            }
+                            else
+                            {
+                                fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
+                            }
                         }
                     }
 
@@ -893,6 +908,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addFolderButton_Click(object sender, EventArgs e)
         {
+            InitializeDirectoryListing(false);
+        }
+
+        private async void InitializeDirectoryListing(bool onlyContent)
+        {
             if (filesDataTreeView.SelectedNode == null)
                 return;
 
@@ -903,7 +923,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (filesDataTreeView.SelectedNode == null)
                     return;
 
-                ThreadPool.QueueUserWorkItem(arg => ListDirectoryContent(folderDialog.SelectedPath));
+                await Task.Factory.StartNew(() =>
+                    ListDirectoryContent(folderDialog.SelectedPath, onlyContent));
             }
         }
 
@@ -1089,6 +1110,18 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (categoryTreeView.SelectedNode == null)
                 return;
+
+            if (e.Control && e.KeyCode == Keys.Up)
+            {
+                if (categoryTreeView.SelectedNode.Text != "Replace file/folder" && categoryTreeView.SelectedNode.Index != 1)
+                    categoryTreeView.SelectedNode.MoveUp();
+            }
+            else if (e.Control && e.KeyCode == Keys.Down)
+            {
+                if (categoryTreeView.SelectedNode.Text != "Replace file/folder")
+                    categoryTreeView.SelectedNode.MoveDown();
+            }
+
             if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null ||
                 categoryTreeView.SelectedNode.Text == "Replace file/folder")
                 return;
@@ -1102,7 +1135,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
             if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
                 return;
-
+            
             var data = e.Data.GetData(typeof (string));
             if (data == null)
                 return;
@@ -1209,12 +1242,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             e.Effect = DragDropEffects.Move;
         }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            Popup.ShowPopup(this, SystemIcons.Error, "", "Not implemented.", PopupButtons.Ok);
-        }
-
         private void cancelLabel_Click(object sender, EventArgs e)
         {
             _uploadCancelled = true;
@@ -1384,11 +1411,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
         }
 
-        private void addExistingFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            addFolderButton_Click(sender, e);
-        }
-
         private void addVirtualFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (filesDataTreeView.SelectedNode == null)
@@ -1400,6 +1422,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 filesDataTreeView.SelectedNode.Toggle();
 
             folderNode.BeginEdit();
+        }
+
+        private void addFolderContentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeDirectoryListing(true);
         }
 
         private void filesDataTreeView_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)

@@ -1,7 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -10,6 +9,7 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.UI.Popups;
+using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.UI.Dialogs
 {
@@ -87,28 +87,32 @@ namespace nUpdate.UI.Dialogs
             }
         }
 
-        public void DownloadFinishedEventHandler(object sender, AsyncCompletedEventArgs e)
+        public void DownloadFinishedEventHandler(object sender, EventArgs e)
         {
-            if (e.Cancelled)
-            {
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
-            if (e.Error != null)
-            {
-                Invoke(new Action(() =>
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error,
-                        "Error while downloading the update package.",
-                        e.Error.InnerException ?? e.Error, PopupButtons.Ok);
-                }));
-
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
             DialogResult = DialogResult.OK;
+        }
+
+        public void DownloadFailedEventHandler(object sender, FailedEventArgs e)
+        {
+            var ex = e.Exception;
+            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
+                "Error while downloading the update package.",
+                ex, PopupButtons.Ok)));
+
+            DialogResult = DialogResult.Cancel;
+        }
+
+        public void StatisticsEntryFailedEventHandler(object sender, FailedEventArgs e)
+        {
+            Invoke(new Action(() =>
+                    Popup.ShowPopup(this, SystemIcons.Warning,
+                        "Error while adding a new statistics entry.",
+                        e.Exception, PopupButtons.Ok)));
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
         }
     }
 }

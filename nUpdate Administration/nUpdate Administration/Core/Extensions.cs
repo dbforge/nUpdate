@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.Core
 {
@@ -17,10 +18,6 @@ namespace nUpdate.Administration.Core
         private const int TV_FIRST = 0x1100;
         private const int TVM_SETITEM = TV_FIRST + 63;
 
-        /// <summary>
-        ///     Sets the possibility to apply double buffering on a control.
-        /// </summary>
-        /// <param name="control">The control to apply the double buffering on.</param>
         public static void DoubleBuffer(this Control control)
         {
             if (SystemInformation.TerminalServerSession)
@@ -30,12 +27,9 @@ namespace nUpdate.Administration.Core
             dbProp.SetValue(control, true, null);
         }
 
-        /// <summary>
-        ///     Hides the checkbox for the specified node on a TreeView control.
-        /// </summary>
         public static void HideCheckBox(this TreeNode node)
         {
-            var tvi = new TvItem {hItem = node.Handle, mask = TVIF_STATE, stateMask = TVIS_STATEIMAGEMASK, state = 0};
+            var tvi = new ExplorerTreeNode {HItem = node.Handle, Mask = TVIF_STATE, StateMask = TVIS_STATEIMAGEMASK, State = 0};
             NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
 
@@ -83,6 +77,50 @@ namespace nUpdate.Administration.Core
             finally
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        public static void MoveUp(this TreeNode node)
+        {
+            TreeNode parent = node.Parent;
+            TreeView view = node.TreeView;
+            if (parent != null)
+            {
+                int index = node.Index;
+                if (index <= 0) 
+                    return;
+                parent.Nodes.RemoveAt(index);
+                parent.Nodes.Insert(index - 1, node);
+            }
+            else if (node.TreeView.Nodes.Contains(node))
+            {
+                int index = view.Nodes.IndexOf(node);
+                if (index <= 0) 
+                    return;
+                view.Nodes.RemoveAt(index);
+                view.Nodes.Insert(index - 1, node);
+            }
+        }
+
+        public static void MoveDown(this TreeNode node)
+        {
+            TreeNode parent = node.Parent;
+            TreeView view = node.TreeView;
+            if (parent != null)
+            {
+                int index = node.Index;
+                if (index >= parent.Nodes.Count - 1) 
+                    return;
+                parent.Nodes.RemoveAt(index);
+                parent.Nodes.Insert(index + 1, node);
+            }
+            else if (view != null && view.Nodes.Contains(node))
+            {
+                int index = view.Nodes.IndexOf(node);
+                if (index >= view.Nodes.Count - 1) 
+                    return;
+                view.Nodes.RemoveAt(index);
+                view.Nodes.Insert(index + 1, node);
             }
         }
     }

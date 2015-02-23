@@ -344,7 +344,11 @@ namespace nUpdate.Administration.UI.Dialogs
             resources.GetString("ftpProtocolComboBox.Items1"),
             resources.GetString("ftpProtocolComboBox.Items2"),
             resources.GetString("ftpProtocolComboBox.Items3"),
-            resources.GetString("ftpProtocolComboBox.Items4")});
+            resources.GetString("ftpProtocolComboBox.Items4"),
+            resources.GetString("ftpProtocolComboBox.Items5"),
+            resources.GetString("ftpProtocolComboBox.Items6"),
+            resources.GetString("ftpProtocolComboBox.Items7"),
+            resources.GetString("ftpProtocolComboBox.Items8")});
             resources.ApplyResources(this.ftpProtocolComboBox, "ftpProtocolComboBox");
             this.ftpProtocolComboBox.Name = "ftpProtocolComboBox";
             // 
@@ -598,6 +602,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // loadingLabel
             // 
+            this.loadingLabel.AutoEllipsis = true;
             resources.ApplyResources(this.loadingLabel, "loadingLabel");
             this.loadingLabel.Name = "loadingLabel";
             // 
@@ -646,7 +651,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.proxyPanel.ResumeLayout(false);
             this.proxyPanel.PerformLayout();
             this.loadingPanel.ResumeLayout(false);
-            this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 

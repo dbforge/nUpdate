@@ -52,9 +52,9 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         private void pathTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (pathTextBox.Text.Last() != '/')
+            if (!pathTextBox.Text.Contains("/"))
                 return;
-            pathTextBox.Text = pathTextBox.Text.Replace(pathTextBox.Text.Last(), '\\');
+            pathTextBox.Text = pathTextBox.Text.Replace('/', '\\');
             pathTextBox.SelectionStart = pathTextBox.Text.Length;
             pathTextBox.SelectionLength = 0;
         }

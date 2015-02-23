@@ -61,23 +61,8 @@ namespace nUpdate.Administration.Core
         /// <param name="build">The build version.</param>
         /// <param name="revision">The revision version.</param>
         public UpdateVersion(int major, int minor, int build, int revision)
+            : this(major, minor, build, revision, DevelopmentalStage.Release, 0)
         {
-            if (major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
-
-            if (minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
-
-            if (build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
-
-            if (revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
-
-            Major = major;
-            Minor = minor;
-            Build = build;
-            Revision = revision;
         }
 
         /// <summary>
@@ -143,7 +128,7 @@ namespace nUpdate.Administration.Core
         public int DevelopmentBuild { get; set; }
 
         /// <summary>
-        ///     Returns the full description text for the update version.
+        ///     Returns the full description text for the current <see cref="UpdateVersion"/>.
         /// </summary>
         public string FullText
         {
@@ -156,7 +141,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Returns the current version without the developmental stage and development build.
+        ///     Returns the current <see cref="UpdateVersion"/> without the developmental stage and development build.
         /// </summary>
         public string BasicVersion
         {
@@ -376,12 +361,8 @@ namespace nUpdate.Administration.Core
         /// </returns>
         public static bool operator ==(UpdateVersion left, UpdateVersion right)
         {
-            if (ReferenceEquals(left, null))
-                throw new ArgumentNullException("left");
-
-            if (ReferenceEquals(right, null))
-                throw new ArgumentNullException("right");
-
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return ReferenceEquals(left, right);
             return left.ToString() == right.ToString();
         }
 
@@ -395,12 +376,8 @@ namespace nUpdate.Administration.Core
         /// </returns>
         public static bool operator !=(UpdateVersion left, UpdateVersion right)
         {
-            if (ReferenceEquals(left, null))
-                throw new ArgumentNullException("left");
-
-            if (ReferenceEquals(right, null))
-                throw new ArgumentNullException("right");
-
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return !ReferenceEquals(left, right);
             return left.ToString() != right.ToString();
         }
 
@@ -419,6 +396,42 @@ namespace nUpdate.Administration.Core
             }
 
             return newestVersion;
+        }
+
+        /// <summary>
+        ///     Returns a new <see cref="UpdateVersion"/> from the given full text.
+        /// </summary>
+        /// <param name="fullText">The full text containing the version information.</param>
+        /// <returns>Returns a new <see cref="UpdateVersion"/> from the given full text.</returns>
+        /// <exception cref="System.ArgumentException">fullText</exception>
+        public static UpdateVersion FromFullText(string fullText)
+        {
+            var versionSections = fullText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            if (versionSections.Length != 1 && versionSections.Length != 3)
+                throw new ArgumentException("fullText");
+
+            var versionParts = versionSections[0].Split('.');
+            int major = int.Parse(versionParts[0]);
+            int minor = int.Parse(versionParts[1]);
+            int build = int.Parse(versionParts[2]);
+            int revision = int.Parse(versionParts[3]);
+
+            if (versionSections.Length == 1)
+                return new UpdateVersion(major, minor, build, revision);
+
+            DevelopmentalStage devStage = DevelopmentalStage.Release;
+            switch (versionSections[1])
+            {
+                case "Alpha":
+                    devStage = DevelopmentalStage.Alpha;
+                    break;
+                case "Beta:":
+                    devStage = DevelopmentalStage.Beta;
+                    break;
+            }
+
+            int developmentBuild = int.Parse(versionSections[2]);
+            return new UpdateVersion(major, minor, build, revision, devStage, developmentBuild);
         }
 
         /// <summary>

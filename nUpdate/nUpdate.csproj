@@ -64,18 +64,16 @@
     <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Internal\Exceptions\PackageDeleteException.cs" />
-    <Compile Include="Internal\Exceptions\SizeCalculationException.cs" />
-    <Compile Include="Internal\Exceptions\StatisticsException.cs" />
-    <Compile Include="Internal\Exceptions\StatisticsScriptException.cs" />
-    <Compile Include="Internal\UpdateEventArgs\FailedEventArgs.cs" />
-    <Compile Include="Internal\UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
-    <Compile Include="Internal\Exceptions\InvalidJsonFileException.cs" />
-    <Compile Include="Internal\Exceptions\NetworkException.cs" />
-    <Compile Include="Internal\UpdateConfiguration.cs" />
-    <Compile Include="Internal\UpdaterUi.cs" />
-    <Compile Include="Internal\UpdateResult.cs" />
-    <Compile Include="Internal\UpdateVersion.cs" />
+    <Compile Include="Exceptions\PackageDeleteException.cs" />
+    <Compile Include="Exceptions\SizeCalculationException.cs" />
+    <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
+    <Compile Include="UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
+    <Compile Include="Exceptions\InvalidJsonFileException.cs" />
+    <Compile Include="Exceptions\NetworkException.cs" />
+    <Compile Include="Updating\UpdateConfiguration.cs" />
+    <Compile Include="Updating\UpdaterUi.cs" />
+    <Compile Include="Updating\UpdateResult.cs" />
+    <Compile Include="Updating\UpdateVersion.cs" />
     <Compile Include="UI\Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -115,7 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Internal\UpdateManager.cs" />
+    <Compile Include="Updating\UpdateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\UriConnector.cs" />
     <Compile Include="UI\Popups\Popup.cs" />
@@ -155,16 +153,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\de.json" />
-    <None Include="UpdateVersion.cd" />
+    <EmbeddedResource Include="Core\Localization\de-DE.json" />
     <None Include="UpdaterUi.cd" />
+    <None Include="UpdateVersion.cd" />
     <None Include="UpdateManager.cd" />
+    <None Include="Core\Localization\de-AT.json" />
+    <None Include="Core\Localization\de-CH.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\en.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\en.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ionic.Zip.dll" />
@@ -174,6 +171,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Newtonsoft.Json.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nUpdate UpdateInstaller.pdb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate UpdateInstaller.exe" />

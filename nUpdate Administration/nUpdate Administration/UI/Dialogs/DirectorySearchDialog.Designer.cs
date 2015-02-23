@@ -36,7 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.directoryTextBox = new System.Windows.Forms.TextBox();
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
             this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.serverDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
@@ -156,9 +156,9 @@ namespace nUpdate.Administration.UI.Dialogs
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(14, 18);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(21, 21);
+            this.pictureBox1.Size = new System.Drawing.Size(16, 16);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
@@ -211,7 +211,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private System.Windows.Forms.TextBox directoryTextBox;
         private System.Windows.Forms.Label directoryLabel;
-        private nUpdate.UI.Controls.ControlPanel controlPanel1;
+        private nUpdate.Administration.UI.Controls.ControlPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;

@@ -1,7 +1,7 @@
 /*
  *  Authors:  Benton Stark
  * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
+ *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,32 +25,34 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
     /// <summary>
-    /// Provides data for the GetDirAsyncCompleted event.
+    ///     Provides data for the GetDirAsyncCompleted event.
     /// </summary>
+    [ComVisible(false)]
     public class GetDirListDeepAsyncCompletedEventArgs : AsyncCompletedEventArgs
     {
-        private nUpdate.Administration.Core.Ftp.FtpItemCollection _directoryListing;
+        private readonly FtpItemCollection _directoryListing;
 
         /// <summary>
-        ///  Initializes a new instance of the GetDirAsyncCompletedEventArgs class.
+        ///     Initializes a new instance of the GetDirAsyncCompletedEventArgs class.
         /// </summary>
         /// <param name="error">Any error that occurred during the asynchronous operation.</param>
         /// <param name="canceled">A value indicating whether the asynchronous operation was canceled.</param>
         /// <param name="directoryListing">A FtpItemCollection containing the directory listing.</param>
-        public GetDirListDeepAsyncCompletedEventArgs(Exception error, bool canceled, nUpdate.Administration.Core.Ftp.FtpItemCollection directoryListing)
+        public GetDirListDeepAsyncCompletedEventArgs(Exception error, bool canceled, FtpItemCollection directoryListing)
             : base(error, canceled, null)
         {
             _directoryListing = directoryListing;
         }
 
         /// <summary>
-        /// Directory listing collection.
+        ///     Directory listing collection.
         /// </summary>
-        public nUpdate.Administration.Core.Ftp.FtpItemCollection DirectoryListingResult
+        public FtpItemCollection DirectoryListingResult
         {
             get
             {
@@ -59,5 +61,4 @@ namespace nUpdate.Administration.Core.Ftp.EventArgs
             }
         }
     }
-
 }

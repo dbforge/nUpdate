@@ -37,7 +37,7 @@
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.sectionsListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
+            this.sectionsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.itemDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.line1 = new nUpdate.Administration.UI.Controls.Line();
@@ -97,8 +97,7 @@
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items5"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items6"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items7"))),
-            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items8"))),
-            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items9")))});
+            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items8")))});
             this.sectionsListView.LargeImageList = this.imageList1;
             resources.ApplyResources(this.sectionsListView, "sectionsListView");
             this.sectionsListView.MultiSelect = false;
@@ -143,7 +142,7 @@
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.Label infoLabel;
         private UI.Controls.Line line1;
-        private UI.Controls.ExtendedListView sectionsListView;
+        private UI.Controls.ExplorerListView sectionsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader itemDescription;
 

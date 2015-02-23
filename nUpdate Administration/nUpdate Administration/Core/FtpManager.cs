@@ -2,12 +2,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Threading;
+using System.Windows;
 using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.EventArgs;
+using nUpdate.Administration.Core.Proxy;
 
 namespace nUpdate.Administration.Core
 {
@@ -62,6 +66,11 @@ namespace nUpdate.Administration.Core
         ///     The password.
         /// </summary>
         public SecureString Password { get; set; }
+
+        /// <summary>
+        ///     The proxy to use, if wished.
+        /// </summary>
+        public WebProxy Proxy { get; set; }
 
         /// <summary>
         ///     Gets or sets the exception appearing during a file-upload.
@@ -125,11 +134,20 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
+
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -142,13 +160,22 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
+
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.DeleteFile(fileName);
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -162,13 +189,22 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
+
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
                 ftp.DeleteFile(fileName);
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -181,11 +217,13 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol);
+            try
             {
                 var items = ListDirectoriesAndFiles(directoryPath, true);
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
+                ftp.Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 foreach (var item in items)
                 {
@@ -201,6 +239,10 @@ namespace nUpdate.Administration.Core
                 }
                 ftp.DeleteDirectory(directoryPath);
             }
+            finally
+            {
+                ftp.Close();
+            }
         }
 
         /// <summary>
@@ -208,11 +250,15 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public IEnumerable<FtpItem> ListDirectoriesAndFiles(string path, bool recursive)
         {
-            var ftp = new FtpClient(Host, Port, Protocol);
+            var ftp = new FtpClient(Host, Port, Protocol)
+            {
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
+
             try
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 var items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
                 return items;
@@ -228,14 +274,22 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
 
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.Rename(oldName, newName);
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -248,32 +302,30 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
-            {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
-
-                ftp.Open(Username, Password.ConvertToUnsecureString());
-                InternalMoveContent(Directory, aimPath);
-            }
+            InternalMoveContent(Directory, aimPath);
         }
 
         private void InternalMoveContent(string directory, string aimPath)
         {
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
 
+            try
+            {
+                ftp.Open(Username, Password.ConvertToUnsecureString());
                 foreach (var item in ListDirectoriesAndFiles(directory, false)
-                    .Where(item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
+                    .Where(
+                        item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
                 {
                     Guid guid; // Just for the out-reference of TryParse
                     if (item.ItemType == FtpItemType.Directory && UpdateVersion.IsValid(item.Name))
                     {
                         ftp.ChangeDirectoryMultiPath(aimPath);
-                        if (!IsExisting(aimPath, item.Name))
+                        if (!IsExisting(item.Name))
                             ftp.MakeDirectory(item.Name);
                         ftp.ChangeDirectoryMultiPath(item.Name);
                         InternalMoveContent(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
@@ -281,21 +333,27 @@ namespace nUpdate.Administration.Core
                     }
                     else if (item.ItemType == FtpItemType.File &&
                              (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
-                    // Second condition determines whether the item is a package-file or not
+                        // Second condition determines whether the item is a package-file or not
+
                     {
-                        if (!IsExisting(item.Name))
+                        if (!IsExisting(aimPath, item.Name))
                         {
                             // "MoveFile"-method damages the files, so we do it manually with a work-around
                             //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
-
+         
                             var localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
                             ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                            ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name), FileAction.Create);
+                            ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name),
+                                FileAction.Create);
                             File.Delete(localFilePath);
                         }
-                        ftp.DeleteFile(item.FullPath);
+                        DeleteFile(item.ParentPath, item.Name);
                     }
                 }
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -309,11 +367,15 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
 
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 string nameList = null;
@@ -328,6 +390,10 @@ namespace nUpdate.Administration.Core
                 }
                 return !string.IsNullOrEmpty(nameList);
             }
+            finally
+            {
+                ftp.Close();
+            }
         }
 
         /// <summary>
@@ -341,11 +407,15 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
 
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
                 string nameList;
@@ -361,6 +431,10 @@ namespace nUpdate.Administration.Core
                 }
                 return !string.IsNullOrEmpty(nameList);
             }
+            finally
+            {
+                ftp.Close();
+            }
         }
 
         /// <summary>
@@ -372,14 +446,22 @@ namespace nUpdate.Administration.Core
             if (!_hasAlreadyFixedStrings)
                 FixProperties();
 
-            using (var ftp = new FtpClient(Host, Port, Protocol))
+            var ftp = new FtpClient(Host, Port, Protocol)
             {
-                ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
-                ftp.FileTransferType = TransferType.Binary;
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
 
+            try
+            {
                 ftp.Open(Username, Password.ConvertToUnsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.PutFile(filePath, FileAction.Create);
+            }
+            finally
+            {
+                ftp.Close();
             }
         }
 
@@ -397,18 +479,26 @@ namespace nUpdate.Administration.Core
             _packageFtpClient = new FtpClient(Host, Port, Protocol)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
             };
-            _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
-            _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;
-            _packageFtpClient.Open(Username, Password.ConvertToUnsecureString());
-            _packageFtpClient.ChangeDirectoryMultiPath(Directory);
-            _packageFtpClient.MakeDirectory(packageVersion);
-            _packageFtpClient.ChangeDirectory(packageVersion);
-            _packageFtpClient.PutFileAsync(packagePath, FileAction.Create);
-            _uploadPackageResetEvent.WaitOne();
-            _packageFtpClient.Close();
-            _uploadPackageResetEvent.Reset();
+
+            try
+            {
+                _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
+                _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;
+                _packageFtpClient.Open(Username, Password.ConvertToUnsecureString());
+                _packageFtpClient.ChangeDirectoryMultiPath(Directory);
+                _packageFtpClient.MakeDirectory(packageVersion);
+                _packageFtpClient.ChangeDirectory(packageVersion);
+                _packageFtpClient.PutFileAsync(packagePath, FileAction.Create);
+                _uploadPackageResetEvent.WaitOne();
+            }
+            finally
+            {
+                _packageFtpClient.Close();
+                _uploadPackageResetEvent.Reset();
+            }
         }
 
         private void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)

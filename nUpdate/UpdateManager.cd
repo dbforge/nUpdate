@@ -1,37 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="nUpdate.Internal.UpdateManager">
+  <Class Name="nUpdate.Updating.UpdateManager">
     <Position X="0.5" Y="0.5" Width="2.75" />
     <Members>
       <Field Name="_applicationUpdateDirectory" Hidden="true" />
+      <Field Name="_disposed" Hidden="true" />
       <Field Name="_downloadCancellationTokenSource" Hidden="true" />
       <Field Name="_downloadResetEvent" Hidden="true" />
       <Field Name="_hasDownloadCancelled" Hidden="true" />
       <Field Name="_hasDownloadFailed" Hidden="true" />
+      <Field Name="_includeCurrentPcIntoStatistics" Hidden="true" />
+      <Field Name="_lp" Hidden="true" />
       <Field Name="_packageDownloader" Hidden="true" />
       <Field Name="_searchCancellationTokenSource" Hidden="true" />
       <Field Name="_searchWebClient" Hidden="true" />
       <Field Name="_updateConfiguration" Hidden="true" />
       <Field Name="_updateFilePath" Hidden="true" />
-      <Method Name="CheckArguments" Hidden="true" />
       <Method Name="DownloadExceptionHandler" Hidden="true" />
       <Method Name="DownloadFileCompleted" Hidden="true" />
       <Method Name="DownloadTaskCompleted" Hidden="true" />
       <Method Name="GetUpdatePackageSize" Hidden="true" />
-      <Method Name="InitializeWorkingArea" Hidden="true" />
-      <Method Name="OnPackageDownloadFailed" Hidden="true" />
-      <Method Name="OnPackageDownloadStarted" Hidden="true" />
-      <Method Name="OnUpdateSearchFailed" Hidden="true" />
-      <Method Name="OnUpdateSearchFinished" Hidden="true" />
-      <Method Name="OnUpdateSearchStarted" Hidden="true" />
-      <Field Name="OperationAreas" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
       <Method Name="RefreshCancellationTokens" Hidden="true" />
       <Method Name="SearchExceptionHandler" Hidden="true" />
       <Method Name="SearchTaskCompleted" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>iACAEiWIKCgUAIAAIQABIQyAEhgQMxhBABWIIAIwFsk=</HashCode>
-      <FileName>Internal\UpdateManager.cs</FileName>
+      <HashCode>qACAAiXKKGgVAYAAIQABIQyAEhgAEhhDADWIIgIgNsk=</HashCode>
+      <FileName>Updating\UpdateManager.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

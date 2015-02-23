@@ -1,7 +1,7 @@
 /*
  *  Authors:  Benton Stark
  * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
+ *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,18 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
     /// <summary>
-    /// Provides data for the PutFileAsyncCompleted event.
+    ///     Provides data for the PutFileAsyncCompleted event.
     /// </summary>
+    [ComVisible(false)]
     public class PutFileAsyncCompletedEventArgs : AsyncCompletedEventArgs
     {
         /// <summary>
-        ///  Initializes a new instance of the PutFileAsyncCompletedEventArgs class.
+        ///     Initializes a new instance of the PutFileAsyncCompletedEventArgs class.
         /// </summary>
         /// <param name="error">Any error that occurred during the asynchronous operation.</param>
         /// <param name="canceled">A value indicating whether the asynchronous operation was canceled.</param>
@@ -43,5 +45,4 @@ namespace nUpdate.Administration.Core.Ftp.EventArgs
         {
         }
     }
-
-} 
+}

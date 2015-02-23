@@ -37,7 +37,6 @@ namespace nUpdate.Core.Localization
             InstallerCopyingText = "\"Copying {0}...\"";
             InstallerInitializingErrorCaption = "\"Error while iniaitializing the data.\"";
             InstallerUpdatingErrorCaption = "\"Error while updating the application\"";
-            InstallerUpdatingErrorText = "\"{0}. Should the updating be cancelled?\"";
             FileDeletingOperationText = "\"Deleting file \"{0}\"...\"";
             FileRenamingOperationText = "\"Renaming file \"{0}\" to \"{1}\"...\"";
             RegistrySubKeyCreateOperationText = "\"Creating registry subkey \"{0}\"...\"";
@@ -54,8 +53,8 @@ namespace nUpdate.Core.Localization
             PackageNotFoundErrorText = "The package file couldn't be found.";
             InvalidSignatureErrorCaption = "Invalid signature data found.";
             SignatureNotMatchingErrorText =
-                "The package's signature does not match the application's integrated one and could be dangerous. In order to avoid any security risks, nUpdate will not allow to install the package and delete it unrecoverably.";
-            InvalidSignatureErrorText = "The signature of the package is not a valid RSA-signature.";
+                "nUpdate will cancel the installation of the package and delete it unrecoverably.";
+            InvalidSignatureErrorText = "The signature of the update package is not a valid RSA-signature.";
 
             SearchProcessRunningExceptionText = "There is already a search process running.";
             DownloadingProcessRunningExceptionText = "There is already a download process running.";
@@ -97,7 +96,6 @@ namespace nUpdate.Core.Localization
         public string InstallerCopyingText { get; set; }
         public string InstallerInitializingErrorCaption { get; set; }
         public string InstallerUpdatingErrorCaption { get; set; }
-        public string InstallerUpdatingErrorText { get; set; }
         public string FileRenamingOperationText { get; set; }
         public string FileDeletingOperationText { get; set; }
         public string RegistrySubKeyCreateOperationText { get; set; }

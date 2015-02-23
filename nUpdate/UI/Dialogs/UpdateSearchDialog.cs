@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
-using nUpdate.Internal.UpdateEventArgs;
 using nUpdate.UI.Popups;
+using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.UI.Dialogs
 {

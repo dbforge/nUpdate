@@ -1072,16 +1072,28 @@ Please be patient.</value>
     <value>FTP (not recommended)</value>
   </data>
   <data name="ftpProtocolComboBox.Items1" xml:space="preserve">
-    <value>FTPS (TLS1)</value>
+    <value>FTPS (TLS1 explicit)</value>
   </data>
   <data name="ftpProtocolComboBox.Items2" xml:space="preserve">
-    <value>FTPS (TLS1 or SSL3)</value>
+    <value>FTPS (TLS1 or SSL3 expl.)</value>
   </data>
   <data name="ftpProtocolComboBox.Items3" xml:space="preserve">
-    <value>FTPS (SSL3)</value>
+    <value>FTPS (SSL3 explicit)</value>
   </data>
   <data name="ftpProtocolComboBox.Items4" xml:space="preserve">
-    <value>FTPS (SSL2)</value>
+    <value>FTPS (SSL2 explicit)</value>
+  </data>
+  <data name="ftpProtocolComboBox.Items5" xml:space="preserve">
+    <value>FTPS (TLS1 implicit)</value>
+  </data>
+  <data name="ftpProtocolComboBox.Items6" xml:space="preserve">
+    <value>FTPS (TLS1 or SSL3 impl.)</value>
+  </data>
+  <data name="ftpProtocolComboBox.Items7" xml:space="preserve">
+    <value>FTPS (SSL3 implicit)</value>
+  </data>
+  <data name="ftpProtocolComboBox.Items8" xml:space="preserve">
+    <value>FTPS (SSL2 implicit)</value>
   </data>
   <data name="ftpProtocolComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>305, 108</value>
@@ -2159,7 +2171,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>False</value>
   </data>
   <data name="proxyPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 108</value>
+    <value>15, 113</value>
   </data>
   <data name="proxyPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>457, 60</value>
@@ -2227,9 +2239,6 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
   <data name="&gt;&gt;informationCategoriesTabControl.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="loadingLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="loadingLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -2237,7 +2246,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>34, 17</value>
   </data>
   <data name="loadingLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 13</value>
+    <value>161, 17</value>
   </data>
   <data name="loadingLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -2598,10 +2607,10 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>NoControl</value>
   </data>
   <data name="pictureBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 15</value>
+    <value>17, 16</value>
   </data>
   <data name="pictureBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>19, 19</value>
+    <value>16, 16</value>
   </data>
   <data name="pictureBox2.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
     <value>StretchImage</value>

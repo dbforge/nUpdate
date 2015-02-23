@@ -13,6 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
@@ -20,6 +21,8 @@ using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.EventArgs;
 using nUpdate.Administration.Core.History;
+using nUpdate.Administration.Properties;
+using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -31,145 +34,190 @@ namespace nUpdate.Administration.UI.Dialogs
         private const float GB = 1073741824;
         private bool _allowCancel = true;
         private Uri _configurationFileUrl;
-        private IEnumerable<UpdateConfiguration> _uploadBackupConfiguration;
+        private IEnumerable<UpdateConfiguration> _backupConfiguration;
         private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
         private MySqlConnection _queryConnection;
-        private MySqlConnection _insertConnection;
-        private MySqlConnection _deleteConnection;
-        private ResetActionSender _resetActionSender;
+        private readonly FtpManager _ftp = new FtpManager();
+        private readonly ManualResetEvent _loadConfigurationResetEvent = new ManualResetEvent(false);
+        private readonly Log _updateLog = new Log();
+        private readonly Dictionary<UpdateVersion, StatisticsChart> _dataGridViewRowTags = new Dictionary<UpdateVersion, StatisticsChart>();
         private bool _isSetByUser;
-        private bool _packageExisting;
+
+        /* This variables relate to the upload */
         private bool _commandsExecuted;
+        private bool _packageExisting;
+        private bool _configurationUploaded;
         private bool _uploadCancelled;
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString FtpPassword = new SecureString();
+        public SecureString FtpPassword { get; set; }
 
         /// <summary>
         ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString ProxyPassword = new SecureString();
+        public SecureString ProxyPassword { get; set; }
 
         /// <summary>
         ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString SqlPassword = new SecureString();
-
-        private readonly FtpManager _ftp = new FtpManager();
-        private readonly ManualResetEvent _loadConfigurationResetEvent = new ManualResetEvent(false);
-        private readonly Log _updateLog = new Log();
+        public SecureString SqlPassword { get; set; }
 
         public ProjectDialog()
         {
             InitializeComponent();
         }
 
-        private enum ResetActionSender
-        {
-            Delete,
-            Upload
-        }
-
+        /* The Reset-method is only used for the upload */
         public void Reset()
         {
-            switch (_resetActionSender)
+            UpdateVersion packageVersion = null;
+            Invoke(
+                new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
+
+            if (_commandsExecuted)
             {
-                case ResetActionSender.Delete:
-                    break;
-                case ResetActionSender.Upload:
-                    if (_commandsExecuted)
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
+
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
+
+                var deleteConnection = new MySqlConnection(connectionString);
+                try
+                {
+                    deleteConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "An MySQL-exception occured when trying to undo the SQL-insertions...",
+                                    ex, PopupButtons.Ok)));
+                    deleteConnection.Close();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while connecting to the database when trying to undo the SQL-insertions...",
+                                    ex, PopupButtons.Ok)));
+                    deleteConnection.Close();
+                    SetUiState(true);
+                    return;
+                }
+
+                var command = deleteConnection.CreateCommand();
+                command.CommandText =
+                    String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    _commandsExecuted = false;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while executing the commands when trying to undo the SQL-insertions...",
+                                    ex, PopupButtons.Ok)));
+                    deleteConnection.Close();
+                }
+            }
+
+            if (_packageExisting)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Undoing package upload..."));
+                try
+                {
+                    _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
+                    _packageExisting = false;
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("No such file or directory"))
                     {
-                        UpdateVersion packageVersion = null;
-                        Invoke(new Action(() =>
-                        {
-                            packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag;
-                            loadingLabel.Text = "Undoing SQL-command execution...";
-                        }));
-
-                        try
-                        {
-                            var connectionString = String.Format("SERVER={0};" +
-                                                                 "DATABASE={1};" +
-                                                                 "UID={2};" +
-                                                                 "PASSWORD={3};",
-                                Project.SqlWebUrl, Project.SqlDatabaseName,
-                                Project.SqlUsername,
-                                SqlPassword.ConvertToUnsecureString());
-
-                            _insertConnection = new MySqlConnection(connectionString);
-                            _insertConnection.Open();
-                        }
-                        catch (MySqlException ex)
-                        {
-                            Invoke(
-                                new Action(
-                                    () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                            ex, PopupButtons.Ok)));
-                            _insertConnection.Close();
-                            SetUiState(true);
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            Invoke(
-                                new Action(
-                                    () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                            ex, PopupButtons.Ok)));
-                            _insertConnection.Close();
-                            SetUiState(true);
-                            return;
-                        }
-
-                        var command = _insertConnection.CreateCommand();
-                        command.CommandText = String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
-
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                            _commandsExecuted = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            Invoke(
-                                new Action(
-                                    () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                            ex, PopupButtons.Ok)));
-                            _insertConnection.Close();
-                            SetUiState(true);
-                            return;
-                        }
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error,
+                                        "Error while undoing the package upload.",
+                                        ex,
+                                        PopupButtons.Ok)));
+                        SetUiState(true);
+                        return;
                     }
+                    _packageExisting = false;
+                }
+            }
 
-                    if (_packageExisting)
-                    {
-                        try
-                        {
-                            UpdateVersion packageVersion = null;
-                            Invoke(new Action(() => packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
+            if (_configurationUploaded)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Uploading old configuration..."));
 
-                            Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                            _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
-                        }
-                        catch (Exception ex)
-                        {
-                            if (!ex.Message.Contains("No such file or directory"))
-                            {
-                                Invoke(
-                                    new Action(
-                                        () =>
-                                            Popup.ShowPopup(this, SystemIcons.Error,
-                                                "Error while undoing the package upload.",
-                                                ex,
-                                                PopupButtons.Ok)));
-                            }
-                        }
-                    }
-                    break;
+                string updateConfigurationFilePath = Path.Combine(Program.Path, "updates.json");
+                try
+                {
+                    File.WriteAllText(updateConfigurationFilePath, Serializer.Serialize(_backupConfiguration));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the old configuration.", ex,
+                                    PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+
+                try
+                {
+                    _ftp.UploadFile(updateConfigurationFilePath);
+                    _configurationUploaded = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.", ex,
+                                    PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+
+                try
+                {
+                    File.WriteAllText(updateConfigurationFilePath, String.Empty);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the local configuration.", ex,
+                                    PopupButtons.Ok)));
+                }
             }
 
             SetUiState(true);
@@ -181,7 +229,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <param name="enabled">Sets the activation state.</param>
         public void SetUiState(bool enabled)
         {
-            BeginInvoke(new Action(() =>
+            Invoke(new Action(() =>
             {
                 foreach (var c in from Control c in Controls where c.Visible select c)
                 {
@@ -269,7 +317,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     ftpDirectoryTextBox.Text = Project.FtpDirectory;
                     amountLabel.Text = Project.ReleasedPackages.ToString(CultureInfo.InvariantCulture);
                 }));
-
+                
                 if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
                 {
                     Invoke(new Action(() =>
@@ -362,7 +410,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void ProjectDialog_Load(object sender, EventArgs e)
+        private void ProjectDialog_Shown(object sender, EventArgs e)
         {
             if (!InitializeProjectData())
             {
@@ -376,9 +424,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Port = Project.FtpPort;
                 _ftp.Username = Project.FtpUsername;
                 _ftp.Password = FtpPassword;
-                _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
+                _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
                 _ftp.UsePassiveMode = Project.FtpUsePassiveMode;
                 _ftp.Directory = Project.FtpDirectory;
+                _ftp.Proxy = Project.Proxy;
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
             }
@@ -396,18 +445,19 @@ namespace nUpdate.Administration.UI.Dialogs
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
 
             Text = String.Format(Text, Project.Name);
-            programmingLanguageComboBox.DataSource = Enum.GetValues(typeof (ProgrammingLanguage));
+            programmingLanguageComboBox.DataSource = Enum.GetValues(typeof(ProgrammingLanguage));
             programmingLanguageComboBox.SelectedIndex = 0;
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
             updateStatisticsButtonToolTip.SetToolTip(updateStatisticsButton, "Update the statistics.");
 
-            var values = Enum.GetValues(typeof (DevelopmentalStage));
+            var values = Enum.GetValues(typeof(DevelopmentalStage));
             Array.Reverse(values);
             developmentalStageComboBox.DataSource = values;
             developmentalStageComboBox.SelectedIndex = 2;
 
             packagesList.DoubleBuffer();
             projectDataPartsTabControl.DoubleBuffer();
+            packagesList.MakeCollapsable();
             statisticsDataGridView.RowHeadersVisible = false;
 
             if (!ConnectionChecker.IsConnectionAvailable())
@@ -415,11 +465,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 checkUpdateConfigurationLinkLabel.Enabled = false;
                 addButton.Enabled = false;
                 deleteButton.Enabled = false;
-                label5.Text = "Statistics couldn't be loaded.\nNo network connection available.";
+                noStatisticsLabel.Text = "Statistics couldn't be loaded.\nNo network connection available.";
 
                 foreach (
                     var c in
-                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
                 {
                     c.Visible = false;
                 }
@@ -431,27 +481,23 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            StartCheckingUpdateConfiguration();
+            BeginUpdateConfigurationCheck();
             if (Project.UseStatistics)
             {
-                InitializeStatisticsData();
+                ThreadPool.QueueUserWorkItem(arg => InitializeStatisticsData());
             }
             else
             {
                 foreach (
                     var c in
-                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
                 {
                     c.Visible = false;
                 }
-            }
 
-            _isSetByUser = true;
-        }
-
-        private void ProjectDialog_Shown(object sender, EventArgs e)
-        {
-            packagesList.MakeCollapsable();
+                noStatisticsPanel.Visible = true;
+                _isSetByUser = true;
+            } 
         }
 
         private void ProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -462,65 +508,212 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void InitializeStatisticsData()
         {
+            if (_dataGridViewRowTags.Count > 0)
+                _dataGridViewRowTags.Clear();
+
+            Invoke(
+                    new Action(
+                        () =>
+                        {
+                            statisticsDataGridView.Visible = false;
+                            gatheringStatisticsPictureBox.Visible = true;
+                            statisticsStatusLabel.Visible = true;
+                            statisticsStatusLabel.Text = "Gathering statistics...";
+                        }));
+
+            var connectionString = String.Format("SERVER={0};" +
+                                                 "DATABASE={1};" +
+                                                 "UID={2};" +
+                                                 "PASSWORD={3};",
+                Project.SqlWebUrl, Project.SqlDatabaseName,
+                Project.SqlUsername,
+                SqlPassword.ConvertToUnsecureString());
+
+            _queryConnection = new MySqlConnection(connectionString);
             try
             {
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
-
-                _queryConnection = new MySqlConnection(connectionString);
                 _queryConnection.Open();
             }
             catch (MySqlException ex)
             {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                ex, PopupButtons.Ok)));
+                Invoke(new Action(() =>
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                        ex, PopupButtons.Ok);
+                    statisticsStatusLabel.Visible = true;
+                    statisticsStatusLabel.Text = "No downloads.";
+                    gatheringStatisticsPictureBox.Visible = false;
+                }));
                 _queryConnection.Close();
                 return;
             }
             catch (Exception ex)
             {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                ex, PopupButtons.Ok)));
+                Invoke(new Action(() =>
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                        ex, PopupButtons.Ok); 
+                    statisticsStatusLabel.Visible = true;
+                    statisticsStatusLabel.Text = "No downloads.";
+                    gatheringStatisticsPictureBox.Visible = false;
+                }));
                 _queryConnection.Close();
                 return;
             }
 
-            var dataAdapter =
+            var dataSet = new DataSet();
+            using (var dataAdapter =
                 new MySqlDataAdapter(
                     String.Format(
                         "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {0} GROUP BY Version_ID;",
                         Project.ApplicationId),
-                    _queryConnection);
-            var dataSet = new DataSet();
-            dataAdapter.Fill(dataSet); // TODO: Try Catch
+                    _queryConnection))
+            {
+                try
+                {
+                    dataAdapter.Fill(dataSet);
+                    foreach (DataRow row in dataSet.Tables[0].Rows)
+                    {
+                        row[0] = new UpdateVersion(row.ItemArray[0].ToString()).FullText;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while gathering the table entries of the database.", ex, PopupButtons.Ok);
+                        statisticsStatusLabel.Visible = true;
+                        statisticsStatusLabel.Text = "No downloads.";
+                        gatheringStatisticsPictureBox.Visible = false;
+                    }));
+                    _queryConnection.Close();
+                    return;
+                }
+            }
 
+            IEnumerable<UpdateConfiguration> updateConfiguration;
+            try
+            {
+                 updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ?? Enumerable.Empty<UpdateConfiguration>();
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error,
+                        "Error while downloading the configuration.", ex, PopupButtons.Ok);
+                    statisticsStatusLabel.Visible = true;
+                    statisticsStatusLabel.Text = "No downloads.";
+                    gatheringStatisticsPictureBox.Visible = false;
+                }));
+                _queryConnection.Close();
+                return;
+            }
 
-            statisticsDataGridView.DataSource = dataSet.Tables[0];
+            string[] operatingSystemStrings = {"Windows Vista", "Windows 7", "Windows 8", "Windows 8.1", "Windows 10"};
+            const string commandString = "SELECT ((SELECT COUNT(OperatingSystem) FROM Download WHERE `Version_ID` = {0} AND `OperatingSystem` = \"{1}\") / (SELECT COUNT(OperatingSystem) FROM Download WHERE `Version_ID` = {0})*100)";
+            
+            var updateConfigurationArray = updateConfiguration as UpdateConfiguration[] ?? updateConfiguration.ToArray();
+            foreach (var configuration in updateConfigurationArray)
+            {
+                var version = configuration.LiteralVersion;
+                var statisticsChart = new StatisticsChart {Version = new UpdateVersion(configuration.LiteralVersion)};
+                foreach (var operatingSystemString in operatingSystemStrings)
+                {
+                    string adjustedCommandString = String.Format(commandString, updateConfigurationArray.First(item => item.LiteralVersion == version.ToString()).VersionId, operatingSystemString);
+                    var command = _queryConnection.CreateCommand();
+                    command.CommandText = adjustedCommandString;
+
+                    MySqlDataReader reader = null;
+                    try
+                    {
+                        reader = command.ExecuteReader();
+                        if (!reader.Read())
+                            continue;
+                        var value = reader.GetValue(0);
+                        if (Convert.IsDBNull(value))
+                            continue;
+                        var percentage = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+
+                        switch (operatingSystemString)
+                        {
+                            case "Windows Vista":
+                                statisticsChart.WindowsVistaPercentage = percentage;
+                                break;
+                            case "Windows 7":
+                                statisticsChart.WindowsSevenPercentage = percentage;
+                                break;
+                            case "Windows 8":
+                                statisticsChart.WindowsEightPercentage = percentage;
+                                break;
+                            case "Windows 8.1":
+                                statisticsChart.WindowsEightPointOnePercentage = percentage;
+                                break;
+                            case "Windows 10":
+                                statisticsChart.WindowsTenPercentage = percentage;
+                                break;
+                        }
+                    }
+                    catch (MySqlException
+                        ex)
+                    {
+                        Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.", ex, PopupButtons.Ok)));
+                        _queryConnection.Close();
+                        return;
+                    }
+                    catch (Exception
+                        ex)
+                    {
+                        Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the SQL-data.", ex, PopupButtons.Ok)));
+                        _queryConnection.Close();
+                        return;
+                    }
+                    finally
+                    {
+                        if (reader != null)
+                            reader.Close();
+                    }
+                }
+
+                try
+                {
+                    _dataGridViewRowTags.Add(new UpdateVersion(version), statisticsChart);
+                }
+                catch (InvalidOperationException)
+                {
+                    // "continue"-statement would be unnecessary
+                }
+            }
+
+            Invoke(new Action(() =>
+            {
+                statisticsDataGridView.DataSource = dataSet.Tables[0];
+                statisticsDataGridView.Columns[0].Width = 278;
+                statisticsDataGridView.Columns[1].Width = 278; 
+                lastUpdatedLabel.Text = String.Format("Last updated: {0}", DateTime.Now);
+                gatheringStatisticsPictureBox.Visible = false;
+                statisticsDataGridView.Visible = true;
+
+                if (statisticsDataGridView.Rows.Count == 0)
+                {
+                    statisticsStatusLabel.Visible = true;
+                    statisticsStatusLabel.Text = "No downloads.";
+                }
+                else
+                    statisticsStatusLabel.Visible = false;
+            }));
+
             _queryConnection.Close();
-
-            statisticsDataGridView.Columns[0].Width = 278;
-            statisticsDataGridView.Columns[1].Width = 278;
-            noDownloadsLabel.Visible = statisticsDataGridView.Rows.Count <= 0;
-            lastUpdatedLabel.Text = String.Format("Last updated: {0}", DateTime.Now);
+            _isSetByUser = true;
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
                 return;
-            var matchingItem = packagesList.FindItemWithText(searchTextBox.Text, true, 0);
 
+            var matchingItem = packagesList.FindItemWithText(searchTextBox.Text, true, 0);
             if (matchingItem != null)
                 packagesList.Items[matchingItem.Index].Selected = true;
             else
@@ -562,10 +755,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            InitializeEditing();
+        }
+
+        private async void InitializeEditing()
+        {
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
-            var packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag;
+            var packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag;
             UpdatePackage correspondingPackage;
 
             try
@@ -598,12 +796,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (correspondingPackage.IsReleased)
             {
-                bool loadingSuccessful = false;
-                ThreadPool.QueueUserWorkItem(arg =>
-                    loadingSuccessful = LoadConfiguration());
-                _loadConfigurationResetEvent.WaitOne();
-                _loadConfigurationResetEvent.Reset();
-
+                bool loadingSuccessful = await Task.Factory.StartNew(() => LoadConfiguration());
                 if (loadingSuccessful)
                 {
                     packageEditDialog.IsReleased = true;
@@ -617,7 +810,7 @@ namespace nUpdate.Administration.UI.Dialogs
             else
             {
                 packageEditDialog.IsReleased = false;
-                
+
                 try
                 {
                     packageEditDialog.UpdateConfiguration =
@@ -634,8 +827,10 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             packageEditDialog.ConfigurationFileUrl = _configurationFileUrl;
-            if (packageEditDialog.ShowDialog() == DialogResult.OK)
-                InitializePackageItems();
+            if (packageEditDialog.ShowDialog() != DialogResult.OK)
+                return;
+            ThreadPool.QueueUserWorkItem(arg => InitializeStatisticsData());
+            InitializePackageItems();
         }
 
         /// <summary>
@@ -645,32 +840,29 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool LoadConfiguration()
         {
             SetUiState(false);
-            BeginInvoke(
+            Invoke(
                 new Action(
                     () =>
                         loadingLabel.Text = "Initializing..."));
 
             try
             {
-                BeginInvoke(
+                Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = "Downloading update configuration..."));
-                _editingUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, null);
+                            loadingLabel.Text = "Getting current configuration..."));
+                _editingUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                SetUiState(true);
                 return true;
             }
             catch (Exception ex)
             {
-                BeginInvoke(
+                Invoke(
                     new Action(
                         () => Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the configuration.", ex,
                             PopupButtons.Ok)));
-                return false;
-            }
-            finally
-            {
                 SetUiState(true);
-                _loadConfigurationResetEvent.Set();
+                return false;
             }
         }
 
@@ -791,7 +983,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void updateStatisticsButton_Click(object sender, EventArgs e)
         {
-            InitializeStatisticsData();
+            ThreadPool.QueueUserWorkItem(arg => InitializeStatisticsData());
         }
 
         private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -838,71 +1030,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #region "Upload"
 
-        /// <summary>
-        ///     Undoes the MySQL-insertion.
-        /// </summary>
-        private void UndoSqlInsertion(UpdateVersion packageVersion)
-        {
-            Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
-            var connectionString = String.Format("SERVER={0};" +
-                                                 "DATABASE={1};" +
-                                                 "UID={2};" +
-                                                 "PASSWORD={3};",
-                Project.SqlWebUrl, Project.SqlDatabaseName,
-                Project.SqlUsername,
-                SqlPassword.ConvertToUnsecureString());
-
-            _deleteConnection = new MySqlConnection(connectionString);
-            try
-            {
-                _deleteConnection.Open();
-            }
-            catch (MySqlException ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "An MySQL-exception occured when trying to undo the SQL-insertions...",
-                                ex, PopupButtons.Ok)));
-                _deleteConnection.Close();
-                return;
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while connecting to the database when trying to undo the SQL-insertions...",
-                                ex, PopupButtons.Ok)));
-                _deleteConnection.Close();
-                return;
-            }
-
-            var command = _deleteConnection.CreateCommand();
-            command.CommandText =
-                String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
-
-            try
-            {
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while executing the commands when trying to undo the SQL-insertions...",
-                                ex, PopupButtons.Ok)));
-                _deleteConnection.Close();
-            }
-        }
-
         private void uploadButton_Click(object sender, EventArgs e)
         {
-            _resetActionSender = ResetActionSender.Upload;
+            if (packagesList.SelectedItems.Count == 0)
+                return;
 
             var version = (UpdateVersion) packagesList.SelectedItems[0].Tag;
             ThreadPool.QueueUserWorkItem(arg => UploadPackage(version));
@@ -913,13 +1044,15 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         private void UploadPackage(UpdateVersion packageVersion)
         {
+            var updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
+                   packageVersion.ToString(), "updates.json");
+
             SetUiState(false);
             Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
             try
             {
-                var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                if (rawUpdateConfiguration != null)
-                    _uploadBackupConfiguration = rawUpdateConfiguration.ToList();
+                var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ?? Enumerable.Empty<UpdateConfiguration>();
+                _backupConfiguration = updateConfiguration.ToList();
             }
             catch (Exception ex)
             {
@@ -933,20 +1066,39 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (Project.UseStatistics)
             {
-                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-
+                int versionId;
                 try
                 {
-                    var connectionString = String.Format("SERVER={0};" +
-                                                         "DATABASE={1};" +
-                                                         "UID={2};" +
-                                                         "PASSWORD={3};",
-                        Project.SqlWebUrl, Project.SqlDatabaseName,
-                        Project.SqlUsername,
-                        SqlPassword.ConvertToUnsecureString());
+                    versionId =
+                        UpdateConfiguration.FromFile(updateConfigurationFilePath)
+                            .First(item => new UpdateVersion(item.LiteralVersion) == packageVersion)
+                            .VersionId;
+                }
+                catch (InvalidOperationException)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while preparing the SQL-connection.",
+                                    "The update configuration of package \"{0}\" doesn't contain any entries for that version.", PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
 
-                    _insertConnection = new MySqlConnection(connectionString);
-                    _insertConnection.Open();
+                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
+
+                var insertConnection = new MySqlConnection(connectionString);
+                try
+                {
+                    insertConnection.Open();
                 }
                 catch (MySqlException ex)
                 {
@@ -955,7 +1107,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
-                    _insertConnection.Close();
+                    insertConnection.Close();
                     SetUiState(true);
                     return;
                 }
@@ -966,17 +1118,17 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
-                    _insertConnection.Close();
+                    insertConnection.Close();
                     SetUiState(true);
                     return;
                 }
 
                 Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
 
-                var command = _insertConnection.CreateCommand();
+                var command = insertConnection.CreateCommand();
                 command.CommandText =
-                    String.Format("INSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                        packageVersion, Project.ApplicationId);
+                    String.Format("INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
+                        versionId, packageVersion, Project.ApplicationId);
 
                 try
                 {
@@ -990,9 +1142,13 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                     ex, PopupButtons.Ok)));
-                    _insertConnection.Close();
                     SetUiState(true);
                     return;
+                }
+                finally
+                {
+                    insertConnection.Close();
+                    command.Dispose();
                 }
             }
 
@@ -1002,13 +1158,20 @@ namespace nUpdate.Administration.UI.Dialogs
                 cancelLabel.Visible = true;
             }));
 
-            var updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
-                packageVersion.ToString(), "updates.json");
-            var packagePath = Project.Packages.First(x => x.Version == packageVersion).LocalPackagePath;
             try
             {
+                var packagePath = Project.Packages.First(x => x.Version == packageVersion).LocalPackagePath;
                 _ftp.UploadPackage(packagePath, packageVersion.ToString());
-                _packageExisting = true;
+            }
+            catch (InvalidOperationException)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
+                                "The project's package data doesn't contain any entries for version \"{0}\".", PopupButtons.Ok)));
+                Reset();
+                return;
             }
             catch (Exception ex) // Errors that were thrown directly relate to the directory
             {
@@ -1029,14 +1192,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 var ex = _ftp.PackageUploadException.InnerException ?? _ftp.PackageUploadException;
                 Invoke(
                     new Action(
-                        () => Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
+                        () => Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.", ex,
                             PopupButtons.Ok)));
 
-                SetUiState(true);
+                Reset();
                 return;
             }
-
-            _packageExisting = true;
 
             Invoke(new Action(() =>
             {
@@ -1047,19 +1208,20 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 _ftp.UploadFile(updateConfigurationFilePath);
+                _configurationUploaded = true;
             }
             catch (Exception ex)
             {
                 Invoke(
                     new Action(
                         () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating new config file.", ex,
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.", ex,
                                 PopupButtons.Ok)));
                 Reset();
                 return;
             }
 
-            _updateLog.Write(LogEntry.Upload, packageVersion.ToString());
+            _updateLog.Write(LogEntry.Upload, packageVersion.FullText);
 
             try
             {
@@ -1091,7 +1253,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     () =>
                         loadingLabel.Text =
                             String.Format("Uploading... {0}",
-                                String.Format("{0}% | {1}KiB/s", e.Percentage, e.BytesPerSecond/1024))));
+                                String.Format("{0}% | {1}KB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
 
             if (_uploadCancelled)
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -1100,7 +1262,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void cancelLabel_Click(object sender, EventArgs e)
         {
             _uploadCancelled = true;
-
+            
             Invoke(new Action(() =>
             {
                 loadingLabel.Text = "Cancelling upload...";
@@ -1131,6 +1293,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             Reset();
+            _uploadCancelled = false;
         }
 
         #endregion
@@ -1141,22 +1304,19 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _foundWithUrl;
         private bool _hasFinishedCheck;
 
-        /// <summary>
-        ///     Starts checking if the update configuration exists.
-        /// </summary>
-        private void StartCheckingUpdateConfiguration()
+        private async void BeginUpdateConfigurationCheck()
         {
             Invoke(new Action(() =>
             {
                 checkingUrlPictureBox.Visible = true;
                 checkUpdateConfigurationLinkLabel.Enabled = false;
             }));
-            ThreadPool.QueueUserWorkItem(arg => CheckUpdateConfigurationStatus(_configurationFileUrl));
+            await Task.Factory.StartNew(() => CheckUpdateConfigurationStatus(_configurationFileUrl));
         }
 
         private void checkUpdateConfigurationLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            StartCheckingUpdateConfiguration();
+            BeginUpdateConfigurationCheck();
         }
 
         private void CheckUpdateConfigurationStatus(Uri configFileUrl)
@@ -1175,7 +1335,6 @@ namespace nUpdate.Administration.UI.Dialogs
                             checkingUrlPictureBox.Visible = false;
                             checkUpdateConfigurationLinkLabel.Enabled = true;
                         }));
-
                 return;
             }
 
@@ -1231,7 +1390,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
-                                "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). Please check if the update url is correct.",
+                                "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). Please check if the update url is correct and if your server is reachable.",
                                 PopupButtons.Ok);
 
                             checkingUrlPictureBox.Visible = false;
@@ -1346,7 +1505,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 _hasFinishedCheck = true;
-                StartCheckingUpdateConfiguration();
+                BeginUpdateConfigurationCheck();
             }
         }
 
@@ -1360,8 +1519,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (packagesList.SelectedItems.Count == 0)
                 return;
-
-            _resetActionSender = ResetActionSender.Delete;
 
             var answer = Popup.ShowPopup(this, SystemIcons.Question,
                 "Delete the selected update packages?", "Are you sure that you want to delete this/these package(s)?",
@@ -1380,11 +1537,13 @@ namespace nUpdate.Administration.UI.Dialogs
             SetUiState(false);
             Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
 
-            var updateConfig = new List<UpdateConfiguration>();
+            List<UpdateConfiguration> updateConfig;
             try
             {
                 var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                _uploadBackupConfiguration = rawUpdateConfiguration != null ? rawUpdateConfiguration.ToList() : Enumerable.Empty<UpdateConfiguration>();
+                updateConfig = rawUpdateConfiguration != null
+                    ? rawUpdateConfiguration.ToList()
+                    : Enumerable.Empty<UpdateConfiguration>().ToList();
             }
             catch (Exception ex)
             {
@@ -1400,6 +1559,75 @@ namespace nUpdate.Administration.UI.Dialogs
             Invoke(
                 new Action(
                     () => { enumerator = packagesList.SelectedItems.GetEnumerator(); }));
+
+            if (updateConfig.Count != 0)
+            {
+                while (enumerator.MoveNext())
+                {
+                    try
+                    {
+                        updateConfig.Remove(
+                            updateConfig.First(item => new UpdateVersion(item.LiteralVersion) ==
+                                                       (UpdateVersion) ((ListViewItem) enumerator.Current).Tag));
+                    }
+                    catch
+                    {
+                        // Ignored
+                    }
+                }
+                enumerator.Reset();
+
+                var configurationFilePath = Path.Combine(Program.Path, "updates.json");
+
+                try
+                {
+                    File.WriteAllText(configurationFilePath, Serializer.Serialize(updateConfig));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while writing to local configuration file.", ex,
+                                    PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+
+                try
+                {
+                    _ftp.UploadFile(configurationFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while uploading the new configuration file.", ex, PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+
+                try
+                {
+                    File.WriteAllText(configurationFilePath, String.Empty);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error,
+                                    "Error while writing to local configuration file.", ex,
+                                    PopupButtons.Ok)));
+                    SetUiState(true);
+                    return;
+                }
+            }
 
             while (enumerator.MoveNext())
             {
@@ -1441,17 +1669,6 @@ namespace nUpdate.Administration.UI.Dialogs
                             return;
                         }
                     }
-
-                    if (updateConfig.Count != 0)
-                    {
-                        if (updateConfig.Any(item => new UpdateVersion(item.LiteralVersion) ==
-                                                     (UpdateVersion) selectedItem.Tag))
-                        {
-                            updateConfig.Remove(
-                                updateConfig.First(item => new UpdateVersion(item.LiteralVersion) ==
-                                                           (UpdateVersion) selectedItem.Tag));
-                        }
-                    }
                 }
 
                 Invoke(
@@ -1478,10 +1695,14 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
+                Invoke(
+                        new Action(
+                            () => loadingLabel.Text = "Editing and saving project-data..."));
+
                 try
                 {
                     // Remove current package entry and save the edited project
-                    Project.Packages.RemoveAll(x => x.Version == (UpdateVersion) selectedItem.Tag);
+                    Project.Packages.RemoveAll(x => x.Version == (UpdateVersion)selectedItem.Tag);
                     if (Project.ReleasedPackages != 0) // To prevent that the number becomes negative
                         Project.ReleasedPackages -= 1;
 
@@ -1490,6 +1711,14 @@ namespace nUpdate.Administration.UI.Dialogs
                         Project.NewestPackage = Project.Packages.Last().Version.FullText;
                     else
                         Project.NewestPackage = null;
+
+                    // The version-id must be adjusted, too
+                    if (Project.UseStatistics)
+                    {
+                        Settings.Default.VersionID -= 1;
+                        Settings.Default.Save();
+                        Settings.Default.Reload();
+                    }
 
                     UpdateProject.SaveProject(Project.Path, Project);
                 }
@@ -1504,65 +1733,146 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                _updateLog.Write(LogEntry.Delete, selectedItem.Tag.ToString());
-            }
+                if (Project.UseStatistics)
+                {
+                    Invoke(
+                        new Action(
+                            () => loadingLabel.Text = "Connecting to SQL-server..."));
 
-            var configurationFilePath = Path.Combine(Program.Path, "updates.json");
+                    var connectionString = String.Format("SERVER={0};" +
+                                                         "DATABASE={1};" +
+                                                         "UID={2};" +
+                                                         "PASSWORD={3};",
+                        Project.SqlWebUrl, Project.SqlDatabaseName,
+                        Project.SqlUsername,
+                        SqlPassword.ConvertToUnsecureString());
 
-            try
-            {
-                File.WriteAllText(configurationFilePath, Serializer.Serialize(updateConfig));
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while writing to local configuration file.", ex,
-                                PopupButtons.Ok)));
-                SetUiState(true);
-                return;
-            }
+                    var deleteConnection = new MySqlConnection(connectionString);
 
-            Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+                    try
+                    {
+                        deleteConnection.Open();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                        ex, PopupButtons.Ok)));
+                        deleteConnection.Close();
+                        SetUiState(true);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                        ex, PopupButtons.Ok)));
+                        deleteConnection.Close();
+                        SetUiState(true);
+                        return;
+                    }
 
-            try
-            {
-                _ftp.UploadFile(configurationFilePath);
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while uploading new configuration file.", ex, PopupButtons.Ok)));
-                SetUiState(true);
-                return;
-            }
+                    Invoke(
+                        new Action(
+                            () => loadingLabel.Text = "Executing SQL-commands..."));
 
-            try
-            {
-                File.WriteAllText(configurationFilePath, String.Empty);
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error,
-                                "Error while writing to local configuration file.", ex,
-                                PopupButtons.Ok)));
-                SetUiState(true);
-                return;
+                    var queryCommand = deleteConnection.CreateCommand();
+                    queryCommand.CommandText = String.Format("SELECT `ID` FROM `Version` WHERE `Version` = \"{0}\"",
+                        selectedItem.Tag);
+
+                    int versionId;
+                    MySqlDataReader dataReader = null;
+                    try
+                    {
+                        dataReader = queryCommand.ExecuteReader();
+                        dataReader.Read();
+                        versionId = (int) dataReader.GetValue(0);
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        deleteConnection.Close();
+                        SetUiState(true);
+                        return;
+                    }
+                    finally
+                    {
+                        dataReader.Close();
+                    }
+
+                    var deleteCommand = deleteConnection.CreateCommand();
+                    deleteCommand.CommandText = String.Format(@"DELETE FROM Download WHERE `Version_ID`= {0};
+DELETE FROM Version WHERE `ID` = {0};", versionId);
+
+                    try
+                    {
+                        deleteCommand.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        SetUiState(true);
+                        return;
+                    }
+                    finally
+                    {
+                        deleteConnection.Close();
+                        deleteCommand.Dispose();
+                    }
+                }
+
+                _updateLog.Write(LogEntry.Delete, ((UpdateVersion)selectedItem.Tag).FullText);
             }
 
             SetUiState(true);
+            ThreadPool.QueueUserWorkItem(arg => InitializeStatisticsData());
             InitializePackageItems();
             InitializeProjectData();
         }
 
         #endregion
+
+        private void statisticsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+
+            updateStatisticsButton.Enabled = false;
+            chartPanel.Visible = true;
+            var chart = _dataGridViewRowTags.First(item => item.Key == UpdateVersion.FromFullText((string)statisticsDataGridView.Rows[e.RowIndex].Cells[0].Value)).Value;
+            chart.TotalDownloadCount = Convert.ToInt32(statisticsDataGridView.Rows[e.RowIndex].Cells[1].Value);
+            chart.StatisticsChartClosed += CurrentChartClosed;
+            chart.Dock = DockStyle.Fill;
+            chartPanel.Controls.Add(chart);
+            chart.BringToFront();
+        }
+
+        private void CurrentChartClosed(object sender, EventArgs e)
+        {
+            chartPanel.Controls.Remove((StatisticsChart)sender);
+            chartPanel.Visible = false;
+            updateStatisticsButton.Enabled = true;
+        }
+
+        private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control || (e.KeyCode != Keys.A)) 
+                return;
+            if (sender != null)
+                ((TextBox)sender).SelectAll();
+            e.Handled = true;
+        }
     }
 }

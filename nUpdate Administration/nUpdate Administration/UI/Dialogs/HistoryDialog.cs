@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -117,8 +119,16 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void clearLog_Click(object sender, EventArgs e)
         {
-            Project.Log.Clear();
-            UpdateProject.SaveProject(Project.Path, Project); // TODO: Try-Catch
+            try
+            {
+                Project.Log.Clear();
+                UpdateProject.SaveProject(Project.Path, Project);
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while sclearing the log.", ex, PopupButtons.Ok)));
+            }
             Close();
         }
 

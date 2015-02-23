@@ -121,7 +121,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAKkAAABgCAYAAABmMlJTAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vwAADr8BOAVTJAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
+        vgAADr4B6kKxwAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
         LmRlIC0gKEMpIG5pa2VlZSBTb2Z0d2FyZSAtIDIwMTQREBEQERAREBEQERARxXx6WCPMSIzwIwAAB9tJ
         REFUeF7tnS1zIzkQhvN37i8YHjx48OhVmSw8uPTgAoOFSxcGJiw00DAkVaGGhoaz3frwtDQtzWRHPat4
         36dKtzOjluRYjzXjKvX5bgCgcyAp6B5TSc+nl+H08rCocCwAGqaSsnzDhcv9TPGiAqCxgaQk4fl7vVAM
@@ -181,7 +181,7 @@ virtual folder which is called "myfolder".</value>
         9/////f3///3+fv9/P3+////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoiHTUQAAAAlwSFlzAAAO
-        wAAADsABataJCQAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
+        vwAADr8BOAVTJAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
         LmRlIC0gKEMpIG5pa2VlZSBTb2Z0d2FyZSAtIDIwMTT//////8zMzP/MzMz/znx6WCPMlFlQgQAAABZ0
         RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMDvo9WkAAAnsSURBVHhe7Z2JfxTVHcAnarVIqy2G1gYvKC09
         aGmFtIKgRvwQbNNjrSKfmrZIbYEYsLT0A2IDijeQNCqCRgz2Qg7ZLG0NJbYbArhQKvM3+bvem9nZN2F2
@@ -230,13 +230,12 @@ virtual folder which is called "myfolder".</value>
 </value>
   </data>
   <data name="label11.Text" xml:space="preserve">
-    <value>This configuration will replace the files "nUpdate-Tester.exe" 
-and "/data/test.txt"with the ones, we added here.
-If for example the file "/data/test2.text"didn't exist, it would 
-be created by the UpdateInstaller when copying the data.
+    <value>This configuration will copy the files "nUpdate-Tester.exe", 
+"data/test2.txt" and "/data/test2.txt" into the aim path.
+If any of the files would already exist, it would be overwritten.
 
 The added directory "data" won't replace the whole existing 
-directory, it will just replace the files in the directory.
+directory, it will just replace the files inside the directory.
 This process works recursively which means that this is done
 for every subdirectory.
 

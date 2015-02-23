@@ -41,8 +41,9 @@ using System.Text;
 using System.Threading;
 using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Core.Ftp.Hashing;
-//using Starksoft.Net.Proxy;
+using nUpdate.Administration.Core.Proxy;
 using nUpdate.Administration.Core.Ftp.EventArgs;
+using nUpdate.Administration.Core.Proxy.Exceptions;
 
 namespace nUpdate.Administration.Core.Ftp
 {
@@ -555,7 +556,7 @@ namespace nUpdate.Administration.Core.Ftp
 
         private Thread _responseMonitor;
 
-        //private IProxyClient _proxy;
+        private IProxyClient _proxy;
         private int _maxUploadSpeed;
         private int _maxDownloadSpeed;
 
@@ -696,7 +697,7 @@ namespace nUpdate.Administration.Core.Ftp
                 throw new ArgumentOutOfRangeException("startPosition",
                     "must contain a value less than or equal to endPosition");
 
-            FtpCmd command = FtpCmd.Unknown;
+            var command = FtpCmd.Unknown;
 
             switch (hash)
             {
@@ -1185,23 +1186,22 @@ namespace nUpdate.Administration.Core.Ftp
             }
         }
 
-        ///// <summary>
-        /////     Gets or sets the the proxy object to use when establishing a connection to the remote FTP server.
-        ///// </summary>
-        ///// <remarks>Create a proxy object when traversing a firewall.</remarks>
-        ///// <code>
-        /////  FtpClient ftp = new FtpClient();
-        ///// 
-        /////  // create an instance of the client proxy factory for the an ftp client
-        /////  ftp.Proxy = (new ProxyClientFactory()).CreateProxyClient(ProxyType.Http, "localhost", 6588);
-        /////         
-        /////  </code>
-        ///// <seealso cref="Starksoft.Net.Proxy.ProxyClientFactory" />
-        //public IProxyClient Proxy
-        //{
-        //    get { return _proxy; }
-        //    set { _proxy = value; }
-        //}
+        /// <summary>
+        ///     Gets or sets the the proxy object to use when establishing a connection to the remote FTP server.
+        /// </summary>
+        /// <remarks>Create a proxy object when traversing a firewall.</remarks>
+        /// <code>
+        ///  FtpClient ftp = new FtpClient();
+        /// 
+        ///  // create an instance of the client proxy factory for the an ftp client
+        ///  ftp.Proxy = (new ProxyClientFactory()).CreateProxyClient(ProxyType.Http, "localhost", 6588);
+        ///         
+        ///  </code>
+        public IProxyClient Proxy
+        {
+            get { return _proxy; }
+            set { _proxy = value; }
+        }
 
         /// <summary>
         ///     Gets the connection status to the FTP server.
@@ -1354,7 +1354,6 @@ namespace nUpdate.Administration.Core.Ftp
             try
             {
                 CloseDataConn();
-                CloseProxyConn();
                 CloseCommandConn();
             }
             catch (FtpException)
@@ -1620,28 +1619,20 @@ namespace nUpdate.Administration.Core.Ftp
             {
                 //  test to see if we should use the user supplied proxy object
                 //  to create the connection
-                //if (_proxy != null)
-                //{
-                //    _commandConn = _proxy.CreateConnection(_host, _port);
-                //}
-                //else
-                //{
-                    _commandConn = new TcpClient();
-                    _commandConn.Connect(_host, _port);
-                //}
+                _commandConn = _proxy != null ? _proxy.CreateConnection(_host, _port) : new TcpClient(_host, _port);
 
                 // give the server a little time to catch up
-                //Thread.Sleep(300);
+                Thread.Sleep(300);
             }
-            //catch (ProxyException pex)
-            //{
-            //    if (_commandConn != null)
-            //        _commandConn.Close();
+            catch (ProxyException pex)
+            {
+                if (_commandConn != null)
+                    _commandConn.Close();
 
-            //    throw new FtpException(String.Format(CultureInfo.InvariantCulture,
-            //        "A proxy error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
-            //        _port.ToString(CultureInfo.InvariantCulture), pex.Message));
-            //}
+                throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                    "A proxy error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
+                    _port.ToString(CultureInfo.InvariantCulture), pex.Message));
+            }
             catch (Exception ex)
             {
                 if (_commandConn != null)
@@ -1695,14 +1686,6 @@ namespace nUpdate.Administration.Core.Ftp
             dataStream = deflateStream;
 
             return dataStream;
-        }
-
-        private void CloseProxyConn()
-        {
-            //if (_proxy == null)
-            //    return;
-
-            //_proxy.Close();
         }
 
         private void CloseCommandConn()
@@ -2044,14 +2027,13 @@ namespace nUpdate.Administration.Core.Ftp
 
             try
             {
-                ////  create a new tcp client object and use proxy if supplied
-                //if (_proxy != null)
-                //{
-                //    // TODO: add support to the proxy class for buffersize, timeout, etc.<
-                //    _dataConn = _proxy.CreateConnection(passiveHost, passivePort);
-                //}
-                //else
-                //{
+                //  create a new tcp client object and use proxy if supplied
+                if (_proxy != null)
+                {
+                    _dataConn = _proxy.CreateConnection(passiveHost, passivePort);
+                }
+                else
+                {
                     _dataConn = new TcpClient
                     {
                         ReceiveBufferSize = _tcpBufferSize,
@@ -2060,9 +2042,7 @@ namespace nUpdate.Administration.Core.Ftp
                         SendTimeout = _tcpTimeout
                     };
                     _dataConn.Connect(passiveHost, passivePort);
-
-                    //IAsyncResult result = _dataConn.BeginConnect(passiveHost, passivePort, null, null);
-                //}
+                }
             }
             catch (Exception ex)
             {
@@ -2284,17 +2264,27 @@ namespace nUpdate.Administration.Core.Ftp
                 if (_activeListener != null)
                     _activeListener.Stop();
 
-                if (_dataConn != null && _dataConn.Connected)
-                    _dataConn.Close();
+                try
+                {
+                    if (_asyncWorker != null)
+                        _asyncWorker.Dispose();
 
-                if (_commandConn != null && _commandConn.Connected)
-                    _commandConn.Close();
+                    if (_dataConn != null && _dataConn.Connected)
+                        _dataConn.Close();
 
+                    if (_commandConn != null && _commandConn.Connected)
+                        _commandConn.Close();
+
+                    if (_responseMonitor != null && _responseMonitor.IsAlive)
+                        _responseMonitor.Abort();
+                }
+                catch (NullReferenceException)
+                {
+                    // Ignored
+                }
+                
                 if (_activeSignal != null)
                     _activeSignal.Close();
-
-                if (_responseMonitor != null && _responseMonitor.IsAlive)
-                    _responseMonitor.Abort();
             }
         }
 
