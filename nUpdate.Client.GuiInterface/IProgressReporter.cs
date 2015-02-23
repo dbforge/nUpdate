@@ -7,7 +7,7 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
     public interface IProgressReporter
     {
         /// <summary>
-        ///     The initializing-method that loads the necessary resources.
+        ///     Initializes the user interface and loads the necessary resources.
         /// </summary>
         void Initialize();
 
@@ -15,25 +15,24 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
         ///     Reports the progress of the updating process.
         /// </summary>
         /// <param name="progress">The current progress percentage.</param>
-        /// <param name="currentFile">The current file that is being copied to the computer.</param>
+        /// <param name="currentFile">The current file that is being copied to the destination.</param>
         void ReportUnpackingProgress(float progress, string currentFile);
 
         /// <summary>
-        ///     Reports the progress of the updating process when the operations are executed.
+        ///     Reports the progress of the updating process when operations are executed.
         /// </summary>
         /// <param name="progress">The current progress percentage.</param>
-        /// <param name="currentOperation">The current file that is being copied to the computer.</param>
+        /// <param name="currentOperation">The current operation that is being executed.</param>
         void ReportOperationProgress(float progress, string currentOperation);
 
         /// <summary>
         ///     Reports exceptions that occur during the updating process.
         /// </summary>
         /// <param name="ex">The current exception that occured.</param>
-        /// <returns>Returns 'true' if the updating process should be cancelled, otherwise 'false'.</returns>
-        bool Fail(Exception ex);
+        void Fail(Exception ex);
 
         /// <summary>
-        ///     Reports exceptions that occur during the data initializing process before any updates are performed.
+        ///     Reports exceptions that occur during the data initialization process before any actions are performed.
         /// </summary>
         /// <param name="ex">The current exception that occured.</param>
         void InitializingFail(Exception ex);

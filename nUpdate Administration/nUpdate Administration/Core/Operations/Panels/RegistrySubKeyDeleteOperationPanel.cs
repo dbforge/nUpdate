@@ -25,7 +25,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
         {
             get
             {
-                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedIndex),
+                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem),
                     subKeyTextBox.Text);
             }
             set
@@ -79,6 +79,16 @@ namespace nUpdate.Administration.Core.Operations.Panels
         private void removeButton_Click(object sender, EventArgs e)
         {
             _itemList.RemoveAt(subKeysToDeleteListBox.SelectedIndex);
+        }
+
+        private void InputChanged(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            if (!textBox.Text.Contains("/"))
+                return;
+            textBox.Text = textBox.Text.Replace('/', '\\');
+            textBox.SelectionStart = textBox.Text.Length;
+            textBox.SelectionLength = 0;
         }
     }
 }

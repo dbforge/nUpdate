@@ -1,7 +1,7 @@
 /*
  *  Authors:  Benton Stark
  * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
+ *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,23 +25,24 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
     /// <summary>
-    /// Provides data for the GetFileAsyncCompleted event.
+    ///     Provides data for the GetFileAsyncCompleted event.
     /// </summary>
+    [ComVisible(false)]
     public class GetFileAsyncCompletedEventArgs : AsyncCompletedEventArgs
-	{
+    {
         /// <summary>
-        ///  Initializes a new instance of the GetFileAsyncCompletedEventArgs class.
+        ///     Initializes a new instance of the GetFileAsyncCompletedEventArgs class.
         /// </summary>
         /// <param name="error">Any error that occurred during the asynchronous operation.</param>
         /// <param name="canceled">A value indicating whether the asynchronous operation was canceled.</param>
         public GetFileAsyncCompletedEventArgs(Exception error, bool canceled)
             : base(error, canceled, null)
-		{
-		}
+        {
+        }
     }
-
-} 
+}

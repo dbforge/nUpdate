@@ -14,17 +14,17 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
-using FtpAuthenticationException = nUpdate.Administration.Core.Ftp.Exceptions.FtpAuthenticationException;
-using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
         private bool _allowCancel;
+        private bool _mustClose;
         private bool _generalTabPassed;
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
@@ -91,9 +91,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public void Reset()
         {
-            Invoke(new Action(
-                () =>
-                    loadingLabel.Text = "Resetting data..."));
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = "Resetting data..."));
 
             if (_projectFileCreated)
             {
@@ -177,9 +178,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            Settings.Default.ApplicationID -= 1;
-            Settings.Default.Save();
-            Settings.Default.Reload();
+            bool useStatistics = false;
+            Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
+            if (useStatistics)
+            {
+                Settings.Default.ApplicationID -= 1;
+                Settings.Default.Save();
+            }
+
+            SetUiState(true);
+            if (_mustClose) 
+                Invoke(new Action(Close));
         }
 
         ///// <summary>
@@ -365,7 +374,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidatePanel(statisticsServerTabPage))
+                    if (SqlDatabaseName == null || String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -472,9 +481,21 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (IOException ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Failed to save project file.", ex, PopupButtons.Ok);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project file.", ex, PopupButtons.Ok);
+                    _mustClose = true;
                     Reset();
-                    Close();
+                }
+
+                try
+                {
+                    var projectDirectoryPath = Path.Combine(Program.Path, "Projects", nameTextBox.Text);
+                    Directory.CreateDirectory(projectDirectoryPath);
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the project'S directory.", ex, PopupButtons.Ok);
+                    _mustClose = true;
+                    Reset();
                 }
 
                 try
@@ -489,8 +510,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         "Error while editing the project confiuration file. Please choose another name for the project.",
                         ex,
                         PopupButtons.Ok);
+                    _mustClose = true;
                     Reset();
-                    Close();
                 }
 
                 if (useStatisticsServerRadioButton.Checked)
@@ -512,8 +533,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Failed to initialize the project-files.", ex,
                             PopupButtons.Ok);
+                        _mustClose = true;
                         Reset();
-                        Close();
                     }
                 }
 
@@ -545,7 +566,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
                                 ex.InnerException ?? ex, PopupButtons.Ok)));
-                SetUiState(true);
                 Reset();
                 return;
             }
@@ -556,7 +576,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                             Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
                                 ex.InnerException ?? ex, PopupButtons.Ok)));
-                SetUiState(true);
                 Reset();
                 return;
             }
@@ -566,7 +585,7 @@ namespace nUpdate.Administration.UI.Dialogs
              */
 
             var useStatistics = false;
-            BeginInvoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
+            Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
 
             string name = null;
             if (useStatistics)
@@ -590,7 +609,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
 
@@ -609,13 +627,13 @@ namespace nUpdate.Administration.UI.Dialogs
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
-  `ID` INT NOT NULL AUTO_INCREMENT,
+  `ID` INT NOT NULL,
   `Name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
-  `ID` INT NOT NULL AUTO_INCREMENT,
+  `ID` INT NOT NULL,
   `Version` VARCHAR(40) NOT NULL,
   `Application_ID` INT NOT NULL,
   PRIMARY KEY (`ID`),
@@ -678,7 +696,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
-                    SetUiState(true);
                     Reset();
                     return;
                 }
@@ -689,7 +706,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
-                    SetUiState(true);
                     Reset();
                     return;
                 }
@@ -714,7 +730,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                     ex, PopupButtons.Ok)));
                     Reset();
-                    SetUiState(true);
                     return;
                 }
             }
@@ -800,7 +815,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
-                "All your passwords will be encrypted with AES 256. The key and initializing vector is your FTP-username and password, so you have to enter them each time you open a project.",
+                "All your passwords will be encrypted with AES 256. The key and initializing vector are your FTP-username and password, so you have to enter them each time you open the project.",
                 PopupButtons.Ok);
         }
 

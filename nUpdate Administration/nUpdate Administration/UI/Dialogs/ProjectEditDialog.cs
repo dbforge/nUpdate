@@ -14,36 +14,36 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.Ftp;
+using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using Starksoft.Net.Ftp;
-using FtpAuthenticationException = nUpdate.Administration.Core.Ftp.Exceptions.FtpAuthenticationException;
-using FtpSecurityProtocol = nUpdate.Administration.Core.Ftp.FtpSecurityProtocol;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private bool _allowCancel = true;
-        private bool _isSetByUser = true;
-        private bool _commandsExecuted;
-        private bool _ftpDirectoryChanged;
-        private bool _generalTabPassed;
         private string _localPath;
         //private LocalizationProperties _lp = new LocalizationProperties();
         private string _name;
         private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
         private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
-        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
+        private IEnumerable<UpdateVersion> _packageVersionsToAffect; 
+        private List<ProjectConfiguration> _projectConfiguration;
+        private readonly FtpManager _ftp = new FtpManager();
+        private TabPage _sender;
+        private WebProxy _proxy;
+        private bool _allowCancel = true;
+        private bool _isSetByUser; 
+        private bool _ftpDirectoryChanged;
+        private bool _generalTabPassed;
         private bool _phpFileCreated;
         private bool _phpFileDeleted;
         private bool _phpFileOnlineDeleted;
         private bool _phpFileUploaded;
-        private List<ProjectConfiguration> _projectConfiguration;
         private bool _projectConfigurationEdited;
         private bool _projectDirectoryMoved;
         private bool _projectFileMoved;
-        private TabPage _sender;
         private bool _sqlDataDeleted;
         private bool _sqlDataInitialized;
         private bool _updateConfigurationSaved;
@@ -54,19 +54,17 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString FtpPassword = new SecureString();
+        public SecureString FtpPassword { get; set; }
 
         /// <summary>
         ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString ProxyPassword = new SecureString();
+        public SecureString ProxyPassword { get; set; }
 
         /// <summary>
         ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
-        public SecureString SqlPassword = new SecureString();
-
-        private readonly FtpManager _ftp = new FtpManager();
+        public SecureString SqlPassword { get; set; }
 
         public ProjectEditDialog()
         {
@@ -111,7 +109,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     _allowCancel = false;
                     loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(144, 72);
+                    loadingPanel.Location = new Point(120, 72);
                     loadingPanel.BringToFront();
                 }
                 else
@@ -122,6 +120,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }));
         }
 
+        /// <summary>
+        /// Resets this instance.
+        /// </summary>
         public void Reset()
         {
             Invoke(
@@ -259,7 +260,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                 loadingLabel.Text = "Uploading old configuration..."));
                     _ftp.UploadFile(localConfigurationPath);
 
-
                     File.WriteAllText(localConfigurationPath, String.Empty);
                     _updateUrlChanged = false;
                 }
@@ -331,6 +331,11 @@ namespace nUpdate.Administration.UI.Dialogs
             var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
             if (_phpFileDeleted)
             {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Re-creating the file \"statistics.php\" on the server..."));
+
                 try
                 {
                     if (!File.Exists(phpFilePath))
@@ -368,6 +373,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (_phpFileOnlineDeleted)
             {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Re-uploading the file \"statistics.php\" on the server..."));
+
                 try
                 {
                     _ftp.UploadFile(phpFilePath);
@@ -411,6 +421,259 @@ namespace nUpdate.Administration.UI.Dialogs
                             }));
                 }
             }
+
+            if (_sqlDataInitialized)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Undoing the SQL-setup..."));
+
+                #region "Setup-String"
+
+                var setupString = @"USE _DBNAME;
+DELETE FROM Application WHERE `ID` = _APPID;";
+                #endregion
+
+                setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                setupString = setupString.Replace("_APPID",
+                    Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
+
+                if (_newUpdateConfiguration != null)
+                {
+                    foreach (
+                        var updateConfig in
+                            _newUpdateConfiguration.Where(
+                                updateConfig =>
+                                    _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion))
+                        )
+                    {
+                        updateConfig.UseStatistics = true;
+                        setupString +=
+                            String.Format(
+                                "\nDELETE FROM Version WHERE `ID` = {0};", updateConfig.VersionId);
+                    }
+                }
+
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Connecting to SQL-server..."));
+
+                MySqlConnection myConnection = null;
+                try
+                {
+                    string myConnectionString = null;
+                    Invoke(new Action(() =>
+                    {
+                        myConnectionString = String.Format("SERVER={0};" +
+                                                           "DATABASE={1};" +
+                                                           "UID={2};" +
+                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                            SqlUsername, sqlPasswordTextBox.Text);
+                    }));
+
+                    myConnection = new MySqlConnection(myConnectionString);
+                    myConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Executing setup commands..."));
+
+                var command = myConnection.CreateCommand();
+                command.CommandText = setupString;
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    _sqlDataInitialized = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    Invoke(new Action(Close));
+                    return;
+                }
+                finally
+                {
+                    myConnection.Close();
+                }
+            }
+
+            if (_sqlDataDeleted)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Undoing the SQL-setup..."));
+
+                #region "Setup-String"
+
+                var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+USE _DBNAME;
+
+CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
+  `ID` INT NOT NULL,
+  `Name` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
+  `ID` INT NOT NULL,
+  `Version` VARCHAR(40) NOT NULL,
+  `Application_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`),
+  INDEX `fk_Version_Application_idx` (`Application_ID` ASC),
+  CONSTRAINT `fk_Version_Application`
+    FOREIGN KEY (`Application_ID`)
+    REFERENCES `_DBNAME`.`Application` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `_DBNAME`.`Download` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `Version_ID` INT NOT NULL,
+  `DownloadDate` DATETIME NOT NULL,
+  `OperatingSystem` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`ID`),
+  INDEX `fk_Download_Version1_idx` (`Version_ID` ASC),
+  CONSTRAINT `fk_Download_Version1`
+    FOREIGN KEY (`Version_ID`)
+    REFERENCES `_DBNAME`.`Version` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
+
+                #endregion
+
+                setupString = setupString.Replace("_DBNAME", Project.SqlDatabaseName);
+                setupString = setupString.Replace("_APPNAME", Project.Name);
+                setupString = setupString.Replace("_APPID",
+                    Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
+
+                if (_newUpdateConfiguration != null)
+                {
+                    foreach (
+                        var updateConfig in
+                            _newUpdateConfiguration.Where(
+                                updateConfig =>
+                                    _packageVersionsToAffect.Any(item => item.ToString() == updateConfig.LiteralVersion))
+                        )
+                    {
+                        updateConfig.UseStatistics = true;
+                        setupString +=
+                            String.Format(
+                                "\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
+                                updateConfig.VersionId, updateConfig.LiteralVersion, Project.ApplicationId);
+                    }
+                }
+
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Connecting to SQL-server..."));
+
+                MySqlConnection myConnection = null;
+                try
+                {
+                    string myConnectionString = null;
+                    Invoke(new Action(() =>
+                    {
+                        myConnectionString = String.Format("SERVER={0};" +
+                                                           "DATABASE={1};" +
+                                                           "UID={2};" +
+                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                            SqlUsername, sqlPasswordTextBox.Text);
+                    }));
+
+                    myConnection = new MySqlConnection(myConnectionString);
+                    myConnection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                    ex, PopupButtons.Ok)));
+                    myConnection.Close();
+                    Invoke(new Action(Close));
+                    return;
+                }
+
+                Invoke(
+                    new Action(
+                        () =>
+                            loadingLabel.Text = "Executing setup commands..."));
+
+                var command = myConnection.CreateCommand();
+                command.CommandText = setupString;
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    _sqlDataInitialized = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                    ex, PopupButtons.Ok)));
+                    Invoke(new Action(Close));
+                    return;
+                }
+                finally
+                {
+                    myConnection.Close();
+                    command.Dispose();
+                }
+            }
+
+            SetUiState(true);
         }
 
         ///// <summary>
@@ -461,6 +724,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
+            Text = String.Format(Text, Project.Name);
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
@@ -485,8 +749,16 @@ namespace nUpdate.Administration.UI.Dialogs
                 sqlPasswordTextBox.Text = SqlPassword.ConvertToUnsecureString();
             }
 
+            if (Project.Proxy != null)
+            {
+                useProxyRadioButton.Checked = true;
+                proxyHostTextBox.Text = Project.Proxy.Address.ToString();
+                proxyUserTextBox.Text = Project.ProxyUsername;
+                proxyPasswordTextBox.Text = ProxyPassword.ConvertToUnsecureString();
+            }
+
             _sender = generalTabPage;
-            _isSetByUser = false;
+            _isSetByUser = true;
             //SetLanguage();
         }
 
@@ -614,7 +886,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidatePanel(statisticsServerTabPage))
+                    if ((Project.SqlDatabaseName == null && SqlDatabaseName == null) ||
+                        String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -679,8 +952,22 @@ namespace nUpdate.Administration.UI.Dialogs
                 SetUiState(true);
                 return;
             }
+            Invoke(new Action(() =>
+            {
+                if (useProxyRadioButton.Checked)
+                {
 
-            // TODO: Proxy first
+                    _proxy = new WebProxy(proxyHostTextBox.Text);
+                    if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                        _proxy.Credentials = new NetworkCredential(proxyUserTextBox.Text, proxyPasswordTextBox.Text);
+                    else
+                        _proxy.UseDefaultCredentials = true;
+
+                }
+            }));
+
+            _ftp.Proxy = _proxy;
+
             Invoke(new Action(() =>
             {
                 _name = nameTextBox.Text;
@@ -773,7 +1060,8 @@ namespace nUpdate.Administration.UI.Dialogs
             string ftpDirectory = null;
             Invoke(new Action(() => ftpDirectory = ftpDirectoryTextBox.Text));
             if (Project.FtpDirectory != ftpDirectory &&
-                Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1) && Project.FtpDirectory.Substring(1) != ftpDirectory)
+                Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1) &&
+                Project.FtpDirectory.Substring(1) != ftpDirectory)
             {
                 Invoke(
                     new Action(
@@ -816,9 +1104,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     _newUpdateConfiguration.ForEach(
                         item =>
                         {
-                            item.UpdatePackageUrl =
+                            item.UpdatePackageUri =
                                 UriConnector.ConnectUri(_updateUrl, String.Format("{0}.zip", Project.Guid));
-                            item.UpdatePhpFileUrl = UriConnector.ConnectUri(_updateUrl, "statistics.php");
+                            item.UpdatePhpFileUri = UriConnector.ConnectUri(_updateUrl, "statistics.php");
                         });
                     _updateUrlChanged = true;
                 }
@@ -920,7 +1208,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 /*
-                *  Setup the SQL-server and database.
+                *  Setup the SQL-data.
                 */
 
                 #region "Setup-String"
@@ -929,13 +1217,13 @@ namespace nUpdate.Administration.UI.Dialogs
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
-  `ID` INT NOT NULL AUTO_INCREMENT,
+  `ID` INT NOT NULL,
   `Name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Version` (
-  `ID` INT NOT NULL AUTO_INCREMENT,
+  `ID` INT NOT NULL,
   `Version` VARCHAR(40) NOT NULL,
   `Application_ID` INT NOT NULL,
   PRIMARY KEY (`ID`),
@@ -982,8 +1270,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         updateConfig.UseStatistics = true;
                         setupString +=
                             String.Format(
-                                "\nINSERT INTO `Version` (`Version`, `Application_ID`) VALUES (\"{0}\", {1});",
-                                updateConfig.LiteralVersion, Project.ApplicationId);
+                                "\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
+                                updateConfig.VersionId, updateConfig.LiteralVersion, Project.ApplicationId);
                     }
 
                     Invoke(
@@ -1016,7 +1304,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         () =>
                             loadingLabel.Text = "Connecting to SQL-server..."));
 
-                MySqlConnection myConnection;
+                MySqlConnection myConnection = null;
                 try
                 {
                     string myConnectionString = null;
@@ -1039,6 +1327,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
+                    myConnection.Close();
                     Reset();
                     return;
                 }
@@ -1049,6 +1338,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
+                    myConnection.Close();
                     Reset();
                     return;
                 }
@@ -1075,6 +1365,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                     ex, PopupButtons.Ok)));
                     Reset();
                     return;
+                }
+                finally
+                {
+                    myConnection.Close();
+                    command.Dispose();
                 }
             }
             else if (Project.UseStatistics && !_useStatistics)
@@ -1115,7 +1410,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 try
                 {
-                    _ftp.DeleteFile("statistics.php");
+                    if (_ftp.IsExisting("statistics.php"))
+                        _ftp.DeleteFile("statistics.php");
                     _phpFileOnlineDeleted = true;
                 }
                 catch (Exception ex)
@@ -1125,6 +1421,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
                                     ex, PopupButtons.Ok)));
+                    Reset();
                     return;
                 }
 
@@ -1143,12 +1440,12 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     setupString = _newUpdateConfiguration.Aggregate(setupString,
                         (current, configuration) =>
                             current +
-                            String.Format("\nDELETE FROM `Download` WHERE `Version_ID` = {0}",
+                            String.Format("DELETE FROM Download WHERE `Version_ID` = {0};",
                                 configuration.VersionId));
 
-                    setupString += @"\nDELETE FROM `Version` WHERE `Application_ID` = _APPID;
-DELETE FROM `Application` WHERE `ID` = _APPID;";
-                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                    setupString += @"DELETE FROM Version WHERE `Application_ID` = _APPID;
+DELETE FROM Application WHERE `ID` = _APPID;";
+                    setupString = setupString.Replace("_DBNAME", Project.SqlDatabaseName);
                     setupString = setupString.Replace("_APPID",
                         Project.ApplicationId.ToString(CultureInfo.InvariantCulture));
 
@@ -1181,7 +1478,7 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                             () =>
                                 loadingLabel.Text = "Connecting to SQL-server..."));
 
-                    MySqlConnection myConnection;
+                    MySqlConnection myConnection = null;
                     try
                     {
                         string myConnectionString = null;
@@ -1190,8 +1487,9 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                             myConnectionString = String.Format("SERVER={0};" +
                                                                "DATABASE={1};" +
                                                                "UID={2};" +
-                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                                SqlUsername, sqlPasswordTextBox.Text);
+                                                               "PASSWORD={3};", Project.SqlWebUrl,
+                                Project.SqlDatabaseName,
+                                Project.SqlUsername, SqlPassword.ConvertToUnsecureString());
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);
@@ -1204,8 +1502,9 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
+                        if (myConnection != null) 
+                            myConnection.Close();
                         Reset();
-                        SetUiState(true);
                         return;
                     }
                     catch (Exception ex)
@@ -1216,6 +1515,8 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                                     Popup.ShowPopup(this, SystemIcons.Error,
                                         "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
+                        if (myConnection != null) 
+                            myConnection.Close();
                         Reset();
                         return;
                     }
@@ -1242,6 +1543,11 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                                         ex, PopupButtons.Ok)));
                         Reset();
                         return;
+                    }
+                    finally
+                    {
+                        myConnection.Close();
+                        command.Dispose();
                     }
                 }
             }
@@ -1276,13 +1582,19 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                         Project.ProxyPassword = null;
                     }
                 }
+                else
+                {
+                    Project.Proxy = null;
+                    Project.ProxyUsername = null;
+                    Project.ProxyPassword = null;
+                }
 
                 if (useStatisticsServerRadioButton.Checked)
                 {
                     Project.UseStatistics = true;
-                    Project.SqlDatabaseName = SqlDatabaseName;
-                    Project.SqlWebUrl = SqlWebUrl;
-                    Project.SqlUsername = SqlUsername;
+                    Project.SqlDatabaseName = SqlDatabaseName ?? Project.SqlDatabaseName;
+                    Project.SqlWebUrl = SqlWebUrl ?? Project.SqlWebUrl;
+                    Project.SqlUsername = SqlUsername ?? Project.SqlUsername;
                     Project.SqlPassword =
                         Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, ftpPasswordTextBox.Text,
                             ftpUserTextBox.Text));
@@ -1326,7 +1638,7 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
             try
             {
                 _oldUpdateConfiguration =
-                    UpdateConfiguration.Download(UriConnector.ConnectUri(_updateUrl, "updates.json"), null);
+                    UpdateConfiguration.Download(UriConnector.ConnectUri(_updateUrl, "updates.json"), Project.Proxy);
                 if (_oldUpdateConfiguration != null)
                     _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
                 else
@@ -1336,7 +1648,6 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
                 }
 
                 return true;
-                // TODO: Proxy
             }
             catch (Exception ex)
             {
@@ -1426,13 +1737,13 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
-                "All your passwords will be encrypted with AES 256. The key and initializing vector is your FTP-username and password, so you have to enter them each time you open a project.",
+                "All your passwords will be encrypted with AES 256. The key and initializing vector are your FTP-username and password, so you have to enter them each time you open the project.",
                 PopupButtons.Ok);
         }
 
         private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (!_isSetByUser)
+            if (_isSetByUser)
             {
                 var packagesToAffectDialog = new PackagesToAffectDialog();
                 if (!_useStatistics && useStatisticsServerRadioButton.Checked &&
@@ -1497,7 +1808,7 @@ DELETE FROM `Application` WHERE `ID` = _APPID;";
 
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
+            proxyPanel.Enabled = !doNotUseProxyRadioButton.Checked;
         }
     }
 }

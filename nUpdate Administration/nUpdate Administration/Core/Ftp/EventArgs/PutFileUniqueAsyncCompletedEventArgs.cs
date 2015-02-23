@@ -7,12 +7,12 @@
 
 using System;
 
-namespace Starksoft.Net.Ftp
+namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
-    public class PutFileUniqueAsyncCompletedEventArgs : EventArgs
+    public class PutFileUniqueAsyncCompletedEventArgs : System.EventArgs
     {
-        private Exception _error;
-        private bool _cancelled;
+        private readonly Exception _error;
+        private readonly bool _cancelled;
 
         public PutFileUniqueAsyncCompletedEventArgs(Exception error, bool cancelled)
         {

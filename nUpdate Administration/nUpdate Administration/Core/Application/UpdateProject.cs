@@ -150,11 +150,6 @@ namespace nUpdate.Administration.Core.Application
         public string SqlPassword { get; set; }
 
         /// <summary>
-        ///     The current version ID to increment each time a project is added.
-        /// </summary>
-        public int VersionId { get; set; }
-
-        /// <summary>
         ///     Loads an update project.
         /// </summary>
         /// <param name="path">The path of the project file.</param>

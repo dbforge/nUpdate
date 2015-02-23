@@ -2,6 +2,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Security;
 using System.Security.Cryptography;
@@ -287,10 +288,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     statisticsServerDialog.ShowDialog();
                     break;
                 case 8:
-                    var helpDialog = new HelpDialog();
-                    helpDialog.ShowDialog();
-                    break;
-                case 9:
                     Popup.ShowPopup(this, SystemIcons.Information, "Feature not implemented yet.",
                         "This is the first version of nUpdate Administration. The conversion will be available in coming versions as soon as changes to the configuration schemata are made.",
                         PopupButtons.Ok);

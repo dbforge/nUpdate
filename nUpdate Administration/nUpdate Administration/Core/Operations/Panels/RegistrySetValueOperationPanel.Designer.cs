@@ -42,7 +42,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
             this.addButton = new System.Windows.Forms.Button();
-            this.nameValuePairListView = new nUpdate.Administration.UI.Controls.ExtendedListView();
+            this.nameValuePairListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -97,6 +97,7 @@
             this.subKeyTextBox.Name = "subKeyTextBox";
             this.subKeyTextBox.Size = new System.Drawing.Size(192, 22);
             this.subKeyTextBox.TabIndex = 31;
+            this.subKeyTextBox.TextChanged += new System.EventHandler(this.subKeyTextBox_TextChanged);
             // 
             // pathLabel
             // 
@@ -255,7 +256,7 @@
             this.Controls.Add(this.pathLabel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "RegistrySetValueOperationPanel";
-            this.Size = new System.Drawing.Size(454, 208);
+            this.Size = new System.Drawing.Size(474, 230);
             this.Load += new System.EventHandler(this.RegistryEntrySetValueOperationPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -278,7 +279,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button addButton;
-        private UI.Controls.ExtendedListView nameValuePairListView;
+        private UI.Controls.ExplorerListView nameValuePairListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;

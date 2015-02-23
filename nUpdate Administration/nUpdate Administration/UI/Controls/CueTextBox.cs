@@ -9,7 +9,7 @@ namespace nUpdate.Administration.UI.Controls
 {
     public class CueTextBox : TextBox
     {
-        private string _mCue;
+        private string _cue;
 
         public CueTextBox()
         {
@@ -20,18 +20,18 @@ namespace nUpdate.Administration.UI.Controls
         [Localizable(true)]
         public string Cue
         {
-            get { return _mCue; }
+            get { return _cue; }
             set
             {
-                _mCue = value;
+                _cue = value;
                 UpdateCue();
             }
         }
 
         private void UpdateCue()
         {
-            if (IsHandleCreated && _mCue != null)
-                NativeMethods.SendMessage(Handle, 0x1501, (IntPtr) 1, _mCue);
+            if (IsHandleCreated && _cue != null)
+                NativeMethods.SendMessage(Handle, 0x1501, new IntPtr(1), _cue);
         }
 
         protected override void OnHandleCreated(EventArgs e)

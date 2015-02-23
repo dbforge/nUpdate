@@ -77,6 +77,7 @@
             this.subKeyTextBox.Name = "subKeyTextBox";
             this.subKeyTextBox.Size = new System.Drawing.Size(150, 22);
             this.subKeyTextBox.TabIndex = 45;
+            this.subKeyTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             // 
             // pathLabel
             // 
@@ -113,6 +114,7 @@
             this.valueNameTextBox.Name = "valueNameTextBox";
             this.valueNameTextBox.Size = new System.Drawing.Size(267, 22);
             this.valueNameTextBox.TabIndex = 56;
+            this.valueNameTextBox.TextChanged += new System.EventHandler(this.InputChanged);
             this.valueNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.valueNameTextBox_KeyDown);
             // 
             // nameValuePairsToDeleteListBox

@@ -37,23 +37,23 @@
             // 
             // headerLabel
             // 
-            this.headerLabel.AutoSize = true;
             this.headerLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.headerLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
-            this.headerLabel.Location = new System.Drawing.Point(38, 12);
+            this.headerLabel.Location = new System.Drawing.Point(12, 12);
             this.headerLabel.Name = "headerLabel";
-            this.headerLabel.Size = new System.Drawing.Size(257, 21);
+            this.headerLabel.Size = new System.Drawing.Size(312, 21);
             this.headerLabel.TabIndex = 2;
             this.headerLabel.Text = "There are no new updates available.";
+            this.headerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // infoLabel
             // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(55, 34);
+            this.infoLabel.Location = new System.Drawing.Point(16, 34);
             this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(207, 13);
+            this.infoLabel.Size = new System.Drawing.Size(295, 15);
             this.infoLabel.TabIndex = 3;
             this.infoLabel.Text = "The application is currently up-to-date.";
+            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // controlPanel1
             // 
@@ -94,7 +94,6 @@
             this.Load += new System.EventHandler(this.NoUpdateFoundDialog_Load);
             this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

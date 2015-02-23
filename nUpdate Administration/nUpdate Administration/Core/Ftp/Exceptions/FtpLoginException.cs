@@ -26,7 +26,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using Starksoft.Net.Ftp;
 
 namespace nUpdate.Administration.Core.Ftp.Exceptions
 {

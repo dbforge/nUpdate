@@ -37,6 +37,7 @@
             this.changelogTextBox.Location = new System.Drawing.Point(0, 1);
             this.changelogTextBox.Multiline = true;
             this.changelogTextBox.Name = "changelogTextBox";
+            this.changelogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.changelogTextBox.Size = new System.Drawing.Size(453, 190);
             this.changelogTextBox.TabIndex = 1;
             this.changelogTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.changelogTextBox_KeyDown);
