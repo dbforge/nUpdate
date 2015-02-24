@@ -846,7 +846,7 @@
             this.MaximizeBox = false;
             this.Name = "ProjectEditDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Edit project - {0} - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Edit project - {0} - nUpdate Administration 0.1.0.0 Alpha 2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectEditDialog_FormClosing);
             this.Load += new System.EventHandler(this.ProjectEditDialog_Load);
             this.loadingPanel.ResumeLayout(false);

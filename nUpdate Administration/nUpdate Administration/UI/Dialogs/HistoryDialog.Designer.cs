@@ -135,7 +135,7 @@
             this.MinimizeBox = false;
             this.Name = "HistoryDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "History - {0} - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "History - {0} - nUpdate Administration 0.1.0.0 Alpha 2";
             this.Load += new System.EventHandler(this.HistoryDialog_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
