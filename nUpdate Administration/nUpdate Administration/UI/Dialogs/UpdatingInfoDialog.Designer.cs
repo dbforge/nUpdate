@@ -52,9 +52,9 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(308, 144);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(197, 13);
+            this.label10.Size = new System.Drawing.Size(213, 13);
             this.label10.TabIndex = 17;
-            this.label10.Text = "System\'s Desktop directory (%temp%)";
+            this.label10.Text = "System\'s Desktop directory (%desktop%)";
             // 
             // label9
             // 
@@ -99,7 +99,7 @@
             this.label5.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(198, 120);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 13);
+            this.label5.Size = new System.Drawing.Size(87, 13);
             this.label5.TabIndex = 12;
             this.label5.Text = "Temp directory:";
             // 
@@ -131,9 +131,9 @@
             this.overviewHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.overviewHeader.Location = new System.Drawing.Point(12, 9);
             this.overviewHeader.Name = "overviewHeader";
-            this.overviewHeader.Size = new System.Drawing.Size(208, 20);
+            this.overviewHeader.Size = new System.Drawing.Size(249, 20);
             this.overviewHeader.TabIndex = 9;
-            this.overviewHeader.Text = "How does the updating work?";
+            this.overviewHeader.Text = "How does the update process work?";
             // 
             // label2
             // 
@@ -188,7 +188,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoScrollMargin = new System.Drawing.Size(0, 20);
-            this.ClientSize = new System.Drawing.Size(572, 388);
+            this.ClientSize = new System.Drawing.Size(589, 388);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.label10);
@@ -210,7 +210,7 @@
             this.Name = "UpdatingInfoDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Update process info - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Update process info - nUpdate Administration 0.1.0.0 Alpha 2";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

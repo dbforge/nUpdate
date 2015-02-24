@@ -37,8 +37,8 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
             this.overviewTabPage = new System.Windows.Forms.TabPage();
@@ -754,13 +754,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader3,
             this.columnHeader4});
             this.packagesList.FullRowSelect = true;
-            listViewGroup3.Header = "Released";
-            listViewGroup3.Name = "listViewGroup1";
-            listViewGroup4.Header = "Not released";
-            listViewGroup4.Name = "listViewGroup2";
+            listViewGroup1.Header = "Released";
+            listViewGroup1.Name = "listViewGroup1";
+            listViewGroup2.Header = "Not released";
+            listViewGroup2.Name = "listViewGroup2";
             this.packagesList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.packagesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.packagesList.Location = new System.Drawing.Point(4, 31);
             this.packagesList.Name = "packagesList";
@@ -1095,7 +1095,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MaximizeBox = false;
             this.Name = "ProjectDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "{0} - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "{0} - nUpdate Administration 0.1.0.0 Alpha 2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectDialog_FormClosing);
             this.Shown += new System.EventHandler(this.ProjectDialog_Shown);
             this.projectDataPartsTabControl.ResumeLayout(false);

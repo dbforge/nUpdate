@@ -198,7 +198,7 @@
             this.MaximizeBox = false;
             this.Name = "StatisticsServerEditDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Edit a statistics server - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Edit a statistics server - nUpdate Administration 0.1.0.0 Alpha 2";
             this.Load += new System.EventHandler(this.StatisticsServerEditDialog_Load);
             this.controlPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

@@ -429,7 +429,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>controlPanel1</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
-    <value>nUpdate.UI.Controls.ControlPanel, nUpdate, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.ControlPanel, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1083,7 +1083,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>CenterScreen</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Preferences - nUpdate Administration 0.1.0.0 Alpha 1</value>
+    <value>Preferences - nUpdate Administration 0.1.0.0 Alpha 2</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>PreferencesDialog</value>

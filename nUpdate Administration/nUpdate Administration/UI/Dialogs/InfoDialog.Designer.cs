@@ -100,7 +100,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(83, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "0.1.0.0 Alpha 1";
+            this.label13.Text = "0.1.0.0 Alpha 2";
             // 
             // controlPanel1
             // 
@@ -392,7 +392,7 @@
             this.Name = "InfoDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Information - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Information - nUpdate Administration 0.1.0.0 Alpha 2";
             this.Load += new System.EventHandler(this.InfoForm_Load);
             this.Shown += new System.EventHandler(this.InfoForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.donatePictureBox)).EndInit();

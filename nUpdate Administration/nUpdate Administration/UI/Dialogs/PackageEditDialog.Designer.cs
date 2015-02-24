@@ -1059,7 +1059,7 @@
             this.MinimizeBox = false;
             this.Name = "PackageEditDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Edit update package - {0} - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Edit update package - {0} - nUpdate Administration 0.1.0.0 Alpha 2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackageEditDialog_FormClosing);
             this.Load += new System.EventHandler(this.PackageEditDialog_Load);
             this.loadingPanel.ResumeLayout(false);
