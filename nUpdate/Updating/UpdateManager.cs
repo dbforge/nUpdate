@@ -531,7 +531,7 @@ namespace nUpdate.Updating
             var jsonNetPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.dll");
             var jsonNetPdbPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.pdb");
             var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
-            var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
+            //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
 
             if (!Directory.Exists(unpackerDirectory))
                 Directory.CreateDirectory(unpackerDirectory);

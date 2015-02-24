@@ -200,7 +200,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MaximizeBox = false;
             this.Name = "StatisticsServerAddDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add a statistics server - nUpdate Administration 0.1.0.0 Alpha 1";
+            this.Text = "Add a statistics server - nUpdate Administration 0.1.0.0 Alpha 2";
             this.controlPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

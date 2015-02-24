@@ -3192,7 +3192,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>New project - nUpdate Administration 0.1.0.0 Alpha 1</value>
+    <value>New project - nUpdate Administration 0.1.0.0 Alpha 2</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NewProjectDialog</value>
