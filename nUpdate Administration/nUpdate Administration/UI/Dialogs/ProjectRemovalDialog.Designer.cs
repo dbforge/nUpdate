@@ -105,7 +105,7 @@
             this.Name = "ProjectRemovalDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Project removal... - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Project removal... - {0}";
             this.Load += new System.EventHandler(this.ProjectRemovalDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

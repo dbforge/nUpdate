@@ -42,6 +42,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
             this.overviewTabPage = new System.Windows.Forms.TabPage();
+            this.assemblyPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.majorNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -50,8 +51,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.minorNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.browseAssemblyButton = new System.Windows.Forms.Button();
-            this.assemblyPathTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.line5 = new nUpdate.Administration.UI.Controls.Line();
             this.label3 = new System.Windows.Forms.Label();
@@ -109,11 +108,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
+            this.updateStatisticsButton = new System.Windows.Forms.Button();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.lastUpdatedLabel = new System.Windows.Forms.Label();
             this.chartPanel = new System.Windows.Forms.Panel();
             this.gatheringStatisticsPictureBox = new System.Windows.Forms.PictureBox();
-            this.updateStatisticsButton = new System.Windows.Forms.Button();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lastUpdatedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statisticsStatusLabel = new System.Windows.Forms.Label();
             this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.noStatisticsPanel = new System.Windows.Forms.Panel();
@@ -138,8 +137,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.packagesTabPage.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statisticsTabPage.SuspendLayout();
+            this.controlPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).BeginInit();
-            this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.noStatisticsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -174,6 +173,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.overviewTabPage.AutoScroll = true;
             this.overviewTabPage.AutoScrollMargin = new System.Drawing.Size(1, 20);
             this.overviewTabPage.AutoScrollMinSize = new System.Drawing.Size(540, 600);
+            this.overviewTabPage.Controls.Add(this.assemblyPathTextBox);
             this.overviewTabPage.Controls.Add(this.developmentBuildNumericUpDown);
             this.overviewTabPage.Controls.Add(this.buildNumericUpDown);
             this.overviewTabPage.Controls.Add(this.majorNumericUpDown);
@@ -182,8 +182,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.overviewTabPage.Controls.Add(this.minorNumericUpDown);
             this.overviewTabPage.Controls.Add(this.label1);
             this.overviewTabPage.Controls.Add(this.label8);
-            this.overviewTabPage.Controls.Add(this.browseAssemblyButton);
-            this.overviewTabPage.Controls.Add(this.assemblyPathTextBox);
             this.overviewTabPage.Controls.Add(this.label2);
             this.overviewTabPage.Controls.Add(this.line5);
             this.overviewTabPage.Controls.Add(this.label3);
@@ -229,6 +227,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.overviewTabPage.TabIndex = 1;
             this.overviewTabPage.Text = "Overview";
             this.overviewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // assemblyPathTextBox
+            // 
+            this.assemblyPathTextBox.ButtonText = "...";
+            this.assemblyPathTextBox.Enabled = false;
+            this.assemblyPathTextBox.Location = new System.Drawing.Point(93, 492);
+            this.assemblyPathTextBox.Name = "assemblyPathTextBox";
+            this.assemblyPathTextBox.Size = new System.Drawing.Size(425, 22);
+            this.assemblyPathTextBox.TabIndex = 73;
             // 
             // developmentBuildNumericUpDown
             // 
@@ -328,27 +335,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label8.Size = new System.Drawing.Size(33, 13);
             this.label8.TabIndex = 61;
             this.label8.Text = "Path:";
-            // 
-            // browseAssemblyButton
-            // 
-            this.browseAssemblyButton.Enabled = false;
-            this.browseAssemblyButton.Location = new System.Drawing.Point(489, 489);
-            this.browseAssemblyButton.Name = "browseAssemblyButton";
-            this.browseAssemblyButton.Size = new System.Drawing.Size(31, 24);
-            this.browseAssemblyButton.TabIndex = 50;
-            this.browseAssemblyButton.Text = "...";
-            this.browseAssemblyButton.UseVisualStyleBackColor = true;
-            this.browseAssemblyButton.Click += new System.EventHandler(this.browseAssemblyButton_Click);
-            // 
-            // assemblyPathTextBox
-            // 
-            this.assemblyPathTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.assemblyPathTextBox.Enabled = false;
-            this.assemblyPathTextBox.Location = new System.Drawing.Point(95, 490);
-            this.assemblyPathTextBox.Name = "assemblyPathTextBox";
-            this.assemblyPathTextBox.ReadOnly = true;
-            this.assemblyPathTextBox.Size = new System.Drawing.Size(389, 22);
-            this.assemblyPathTextBox.TabIndex = 47;
             // 
             // label2
             // 
@@ -910,10 +896,10 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // statisticsTabPage
             // 
+            this.statisticsTabPage.Controls.Add(this.updateStatisticsButton);
+            this.statisticsTabPage.Controls.Add(this.controlPanel1);
             this.statisticsTabPage.Controls.Add(this.chartPanel);
             this.statisticsTabPage.Controls.Add(this.gatheringStatisticsPictureBox);
-            this.statisticsTabPage.Controls.Add(this.updateStatisticsButton);
-            this.statisticsTabPage.Controls.Add(this.statusStrip1);
             this.statisticsTabPage.Controls.Add(this.statisticsStatusLabel);
             this.statisticsTabPage.Controls.Add(this.statisticsDataGridView);
             this.statisticsTabPage.Controls.Add(this.noStatisticsPanel);
@@ -925,6 +911,34 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsTabPage.TabIndex = 2;
             this.statisticsTabPage.Text = "Statistics";
             this.statisticsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // updateStatisticsButton
+            // 
+            this.updateStatisticsButton.Image = ((System.Drawing.Image)(resources.GetObject("updateStatisticsButton.Image")));
+            this.updateStatisticsButton.Location = new System.Drawing.Point(535, 358);
+            this.updateStatisticsButton.Name = "updateStatisticsButton";
+            this.updateStatisticsButton.Size = new System.Drawing.Size(25, 22);
+            this.updateStatisticsButton.TabIndex = 92;
+            this.updateStatisticsButton.UseVisualStyleBackColor = true;
+            this.updateStatisticsButton.Click += new System.EventHandler(this.updateStatisticsButton_Click);
+            // 
+            // controlPanel1
+            // 
+            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
+            this.controlPanel1.Controls.Add(this.lastUpdatedLabel);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 353);
+            this.controlPanel1.Name = "controlPanel1";
+            this.controlPanel1.Size = new System.Drawing.Size(566, 33);
+            this.controlPanel1.TabIndex = 93;
+            // 
+            // lastUpdatedLabel
+            // 
+            this.lastUpdatedLabel.AutoSize = true;
+            this.lastUpdatedLabel.Location = new System.Drawing.Point(6, 10);
+            this.lastUpdatedLabel.Name = "lastUpdatedLabel";
+            this.lastUpdatedLabel.Size = new System.Drawing.Size(77, 13);
+            this.lastUpdatedLabel.TabIndex = 0;
+            this.lastUpdatedLabel.Text = "Last updated:";
             // 
             // chartPanel
             // 
@@ -944,34 +958,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.gatheringStatisticsPictureBox.TabIndex = 95;
             this.gatheringStatisticsPictureBox.TabStop = false;
             this.gatheringStatisticsPictureBox.Visible = false;
-            // 
-            // updateStatisticsButton
-            // 
-            this.updateStatisticsButton.Image = ((System.Drawing.Image)(resources.GetObject("updateStatisticsButton.Image")));
-            this.updateStatisticsButton.Location = new System.Drawing.Point(534, 359);
-            this.updateStatisticsButton.Name = "updateStatisticsButton";
-            this.updateStatisticsButton.Size = new System.Drawing.Size(25, 22);
-            this.updateStatisticsButton.TabIndex = 92;
-            this.updateStatisticsButton.UseVisualStyleBackColor = true;
-            this.updateStatisticsButton.Click += new System.EventHandler(this.updateStatisticsButton_Click);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.AutoSize = false;
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lastUpdatedLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(3, 357);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(560, 26);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 94;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lastUpdatedLabel
-            // 
-            this.lastUpdatedLabel.Name = "lastUpdatedLabel";
-            this.lastUpdatedLabel.Size = new System.Drawing.Size(78, 21);
-            this.lastUpdatedLabel.Text = "Last updated:";
             // 
             // statisticsStatusLabel
             // 
@@ -1095,7 +1081,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MaximizeBox = false;
             this.Name = "ProjectDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "{0} - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "{0} - {1}";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectDialog_FormClosing);
             this.Shown += new System.EventHandler(this.ProjectDialog_Shown);
             this.projectDataPartsTabControl.ResumeLayout(false);
@@ -1116,9 +1102,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStrip1.PerformLayout();
             this.statisticsTabPage.ResumeLayout(false);
             this.statisticsTabPage.PerformLayout();
+            this.controlPanel1.ResumeLayout(false);
+            this.controlPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.noStatisticsPanel.ResumeLayout(false);
             this.noStatisticsPanel.PerformLayout();
@@ -1185,8 +1171,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Button browseAssemblyButton;
-        private System.Windows.Forms.TextBox assemblyPathTextBox;
         private System.Windows.Forms.Label label2;
         private Controls.Line line5;
         private System.Windows.Forms.Label label3;
@@ -1213,10 +1197,11 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ComboBox developmentalStageComboBox;
         private System.Windows.Forms.NumericUpDown minorNumericUpDown;
         private System.Windows.Forms.ToolTip cancelToolTip;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel lastUpdatedLabel;
         private System.Windows.Forms.ToolTip updateStatisticsButtonToolTip;
         private System.Windows.Forms.PictureBox gatheringStatisticsPictureBox;
         private System.Windows.Forms.Panel chartPanel;
+        private ControlPanel controlPanel1;
+        private System.Windows.Forms.Label lastUpdatedLabel;
+        private ButtonTextBox assemblyPathTextBox;
     }
 }

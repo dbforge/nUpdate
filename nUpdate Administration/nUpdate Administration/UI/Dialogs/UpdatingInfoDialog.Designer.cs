@@ -210,7 +210,8 @@
             this.Name = "UpdatingInfoDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Update process info - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Update process info - {0}";
+            this.Load += new System.EventHandler(this.UpdatingInfoDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

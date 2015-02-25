@@ -77,5 +77,10 @@ namespace nUpdate.Administration
         ///     The path of the statistic server file.
         /// </summary>
         public static string StatisticServersFilePath = System.IO.Path.Combine(Path, "statservers.json");
+
+        /// <summary>
+        ///     The version string shown in all dialog titles.
+        /// </summary>
+        public static string VersionString = "nUpdate Administration 0.1.0.0 Alpha 3";
     }
 }

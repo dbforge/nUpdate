@@ -1306,7 +1306,7 @@
             this.MinimizeBox = false;
             this.Name = "PackageAddDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add new package - {0} - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Add new package - {0} - {1}";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackageAddDialog_FormClosing);
             this.Load += new System.EventHandler(this.PackageAddDialog_Load);
             this.loadingPanel.ResumeLayout(false);

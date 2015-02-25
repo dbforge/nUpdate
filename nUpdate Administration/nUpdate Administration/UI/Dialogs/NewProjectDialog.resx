@@ -849,49 +849,22 @@ Please be patient.</value>
     <value>118, 110</value>
   </data>
   <data name="localPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 22</value>
+    <value>323, 22</value>
   </data>
   <data name="localPathTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>29</value>
+    <value>38</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.Name" xml:space="preserve">
     <value>localPathTextBox</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.Parent" xml:space="preserve">
     <value>generalPanel</value>
   </data>
   <data name="&gt;&gt;localPathTextBox.ZOrder" xml:space="preserve">
     <value>8</value>
-  </data>
-  <data name="searchPathButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="searchPathButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>400, 109</value>
-  </data>
-  <data name="searchPathButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 22</value>
-  </data>
-  <data name="searchPathButton.TabIndex" type="System.Int32, mscorlib">
-    <value>30</value>
-  </data>
-  <data name="searchPathButton.Text" xml:space="preserve">
-    <value>...</value>
-  </data>
-  <data name="&gt;&gt;searchPathButton.Name" xml:space="preserve">
-    <value>searchPathButton</value>
-  </data>
-  <data name="&gt;&gt;searchPathButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;searchPathButton.Parent" xml:space="preserve">
-    <value>generalPanel</value>
-  </data>
-  <data name="&gt;&gt;searchPathButton.ZOrder" xml:space="preserve">
-    <value>9</value>
   </data>
   <data name="generalPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -3192,7 +3165,7 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
     <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>New project - nUpdate Administration 0.1.0.0 Alpha 2</value>
+    <value>New project - {0}</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NewProjectDialog</value>
