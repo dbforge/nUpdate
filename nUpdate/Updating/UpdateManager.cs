@@ -654,15 +654,7 @@ namespace nUpdate.Updating
                 }
             }
 
-            string languageFilePath;
-            try
-            {
-                languageFilePath = CultureFilePaths.First(item => item.Key.Equals(LanguageCulture)).Value;
-            }
-            catch (InvalidOperationException)
-            {
-                languageFilePath = null;
-            }
+            var languageFilePath = CultureFilePaths.Any(item => item.Key.Equals(LanguageCulture)) ? CultureFilePaths.First(item => item.Key.Equals(LanguageCulture)).Value : null;
 
             if (!String.IsNullOrEmpty(languageFilePath))
             {
