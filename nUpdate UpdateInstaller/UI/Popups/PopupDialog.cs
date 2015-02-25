@@ -50,6 +50,9 @@ namespace nUpdate.UpdateInstaller.UI.Popups
             headerLabel.Text = Title;
             messageLabel.Text = InfoMessage;
 
+            if (headerLabel.Height > 20)
+                headerLabel.Location = new Point(headerLabel.Location.X, headerLabel.Location.Y - 7);
+
             if (messageLabel.Height > 41)
             {
                 int difference = messageLabel.Height - 41;
