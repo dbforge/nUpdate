@@ -132,7 +132,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Name = "FeedbackDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Feedback - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Feedback - {0}";
+            this.Load += new System.EventHandler(this.FeedbackDialog_Load);
             this.cpnl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

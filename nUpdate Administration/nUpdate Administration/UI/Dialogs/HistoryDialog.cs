@@ -111,7 +111,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void HistoryDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Project.Name);
+            Text = String.Format(Text, Project.Name, Program.VersionString);
             orderComboBox.SelectedIndex = 0;
             InitializeLog();
             SetActivationState();

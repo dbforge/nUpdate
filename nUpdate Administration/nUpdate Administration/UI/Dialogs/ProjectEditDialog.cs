@@ -724,14 +724,17 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 return;
             }
 
-            Text = String.Format(Text, Project.Name);
+            Text = String.Format(Text, Project.Name, Program.VersionString);
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
 
             nameTextBox.Text = Project.Name;
             updateUrlTextBox.Text = Project.UpdateUrl;
+
+            localPathTextBox.ButtonClicked += BrowsePathButtonClick;
             localPathTextBox.Text = Project.Path;
+            localPathTextBox.Initialize();
 
             ftpHostTextBox.Text = Project.FtpHost;
             ftpPortTextBox.Text = Project.FtpPort.ToString(CultureInfo.InvariantCulture);
@@ -1304,20 +1307,20 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         () =>
                             loadingLabel.Text = "Connecting to SQL-server..."));
 
-                MySqlConnection myConnection = null;
+                MySqlConnection myConnection;
+                string myConnectionString = null;
+                Invoke(new Action(() =>
+                {
+                    myConnectionString = String.Format("SERVER={0};" +
+                                                       "DATABASE={1};" +
+                                                       "UID={2};" +
+                                                       "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                        SqlUsername, sqlPasswordTextBox.Text);
+                }));
+
+                myConnection = new MySqlConnection(myConnectionString);
                 try
                 {
-                    string myConnectionString = null;
-                    Invoke(new Action(() =>
-                    {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
-                    }));
-
-                    myConnection = new MySqlConnection(myConnectionString);
                     myConnection.Open();
                 }
                 catch (MySqlException ex)
@@ -1723,7 +1726,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
             searchDialog.Close();
         }
 
-        private void searchPathButton_Click(object sender, EventArgs e)
+        private void BrowsePathButtonClick(object sender, EventArgs e)
         {
             var fileDialog = new SaveFileDialog
             {

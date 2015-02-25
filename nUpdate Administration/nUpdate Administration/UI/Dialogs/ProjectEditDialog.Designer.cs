@@ -51,8 +51,6 @@
             this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.generalHeaderLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
-            this.localPathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.searchPathButton = new System.Windows.Forms.Button();
             this.ftpTabPage = new System.Windows.Forms.TabPage();
             this.ftpPanel = new System.Windows.Forms.Panel();
             this.ftpImportButton = new System.Windows.Forms.Button();
@@ -98,6 +96,7 @@
             this.proxyPasswordLabel = new System.Windows.Forms.Label();
             this.proxyPasswordTextBox = new System.Windows.Forms.TextBox();
             this.proxyHostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.localPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -215,6 +214,7 @@
             // 
             // generalPanel
             // 
+            this.generalPanel.Controls.Add(this.localPathTextBox);
             this.generalPanel.Controls.Add(this.label4);
             this.generalPanel.Controls.Add(this.pictureBox1);
             this.generalPanel.Controls.Add(this.localPathLabel);
@@ -223,8 +223,6 @@
             this.generalPanel.Controls.Add(this.nameTextBox);
             this.generalPanel.Controls.Add(this.generalHeaderLabel);
             this.generalPanel.Controls.Add(this.nameLabel);
-            this.generalPanel.Controls.Add(this.localPathTextBox);
-            this.generalPanel.Controls.Add(this.searchPathButton);
             this.generalPanel.Location = new System.Drawing.Point(0, 0);
             this.generalPanel.Name = "generalPanel";
             this.generalPanel.Size = new System.Drawing.Size(495, 197);
@@ -264,7 +262,7 @@
             // updateUrlTextBox
             // 
             this.updateUrlTextBox.Cue = "http(s)://www.yourserver.com/updatedirectory";
-            this.updateUrlTextBox.Location = new System.Drawing.Point(118, 79);
+            this.updateUrlTextBox.Location = new System.Drawing.Point(118, 80);
             this.updateUrlTextBox.Name = "updateUrlTextBox";
             this.updateUrlTextBox.Size = new System.Drawing.Size(323, 22);
             this.updateUrlTextBox.TabIndex = 27;
@@ -273,7 +271,7 @@
             // 
             this.updateUrlLabel.AutoSize = true;
             this.updateUrlLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.updateUrlLabel.Location = new System.Drawing.Point(18, 82);
+            this.updateUrlLabel.Location = new System.Drawing.Point(18, 83);
             this.updateUrlLabel.Name = "updateUrlLabel";
             this.updateUrlLabel.Size = new System.Drawing.Size(72, 13);
             this.updateUrlLabel.TabIndex = 26;
@@ -309,25 +307,6 @@
             this.nameLabel.Size = new System.Drawing.Size(39, 13);
             this.nameLabel.TabIndex = 17;
             this.nameLabel.Text = "Name:";
-            // 
-            // localPathTextBox
-            // 
-            this.localPathTextBox.Cue = "The path to the local project file";
-            this.localPathTextBox.Location = new System.Drawing.Point(118, 110);
-            this.localPathTextBox.Name = "localPathTextBox";
-            this.localPathTextBox.Size = new System.Drawing.Size(276, 22);
-            this.localPathTextBox.TabIndex = 29;
-            // 
-            // searchPathButton
-            // 
-            this.searchPathButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.searchPathButton.Location = new System.Drawing.Point(400, 109);
-            this.searchPathButton.Name = "searchPathButton";
-            this.searchPathButton.Size = new System.Drawing.Size(41, 22);
-            this.searchPathButton.TabIndex = 30;
-            this.searchPathButton.Text = "...";
-            this.searchPathButton.UseVisualStyleBackColor = true;
-            this.searchPathButton.Click += new System.EventHandler(this.searchPathButton_Click);
             // 
             // ftpTabPage
             // 
@@ -830,6 +809,15 @@
             this.proxyHostTextBox.Size = new System.Drawing.Size(348, 22);
             this.proxyHostTextBox.TabIndex = 47;
             // 
+            // localPathTextBox
+            // 
+            this.localPathTextBox.ButtonText = "...";
+            this.localPathTextBox.Cue = "The path to the local file";
+            this.localPathTextBox.Location = new System.Drawing.Point(118, 110);
+            this.localPathTextBox.Name = "localPathTextBox";
+            this.localPathTextBox.Size = new System.Drawing.Size(323, 22);
+            this.localPathTextBox.TabIndex = 38;
+            // 
             // ProjectEditDialog
             // 
             this.AcceptButton = this.continueButton;
@@ -846,7 +834,7 @@
             this.MaximizeBox = false;
             this.Name = "ProjectEditDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Edit project - {0} - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Edit project - {0} - {1}";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProjectEditDialog_FormClosing);
             this.Load += new System.EventHandler(this.ProjectEditDialog_Load);
             this.loadingPanel.ResumeLayout(false);
@@ -927,8 +915,6 @@
         private Controls.CueTextBox nameTextBox;
         private System.Windows.Forms.Label generalHeaderLabel;
         private System.Windows.Forms.Label nameLabel;
-        private Controls.CueTextBox localPathTextBox;
-        private System.Windows.Forms.Button searchPathButton;
         private System.Windows.Forms.TabPage ftpTabPage;
         private System.Windows.Forms.Panel ftpPanel;
         private Controls.CueTextBox ftpUserTextBox;
@@ -939,5 +925,6 @@
         private System.Windows.Forms.Label ftpUserLabel;
         private System.Windows.Forms.Label ftpHostLabel;
         private System.Windows.Forms.Label ftpHeaderLabel;
+        private Controls.ButtonTextBox localPathTextBox;
     }
 }

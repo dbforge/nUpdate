@@ -34,5 +34,10 @@ namespace nUpdate.Administration.UI.Dialogs
             Username = usernameTextBox.Text;
             DialogResult = DialogResult.OK;
         }
+
+        private void StatisticsServerAddDialog_Load(object sender, EventArgs e)
+        {
+            Text = String.Format(Text, Program.VersionString);
+        }
     }
 }

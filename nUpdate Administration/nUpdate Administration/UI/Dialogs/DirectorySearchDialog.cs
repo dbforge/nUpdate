@@ -120,7 +120,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
-            Text = String.Format(Text, ProjectName);
+            Text = String.Format(Text, ProjectName, Program.VersionString);
             if (NativeMethods.DwmIsCompositionEnabled())
             {
                 _margins = new Margins {Top = 38};

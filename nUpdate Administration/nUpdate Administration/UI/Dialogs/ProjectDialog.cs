@@ -444,11 +444,13 @@ namespace nUpdate.Administration.UI.Dialogs
             _updateLog.Project = Project;
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
 
-            Text = String.Format(Text, Project.Name);
+            Text = String.Format(Text, Project.Name, Program.VersionString);
             programmingLanguageComboBox.DataSource = Enum.GetValues(typeof(ProgrammingLanguage));
             programmingLanguageComboBox.SelectedIndex = 0;
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
             updateStatisticsButtonToolTip.SetToolTip(updateStatisticsButton, "Update the statistics.");
+            assemblyPathTextBox.ButtonClicked += BrowseAssemblyButtonClicked;
+            assemblyPathTextBox.Initialize();
 
             var values = Enum.GetValues(typeof(DevelopmentalStage));
             Array.Reverse(values);
@@ -937,7 +939,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void browseAssemblyButton_Click(object sender, EventArgs e)
+        private void BrowseAssemblyButtonClicked(object sender, EventArgs e)
         {
             using (var fileDialog = new OpenFileDialog())
             {
@@ -992,7 +994,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
 
             assemblyPathTextBox.Enabled = true;
-            browseAssemblyButton.Enabled = true;
         }
 
         private void enterVersionManuallyRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1000,7 +1001,6 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!enterVersionManuallyRadioButton.Checked)
                 return;
             assemblyPathTextBox.Enabled = false;
-            browseAssemblyButton.Enabled = false;
 
             if (!_isSetByUser)
                 return;

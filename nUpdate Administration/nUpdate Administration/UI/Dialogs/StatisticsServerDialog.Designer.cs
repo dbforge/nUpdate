@@ -138,7 +138,7 @@
             this.MaximizeBox = false;
             this.Name = "StatisticsServerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Statistic servers - nUpdate Administration 0.1.0.0 Alpha 2";
+            this.Text = "Statistic servers - {0}";
             this.Load += new System.EventHandler(this.StatisticsServerDialog_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatisticsServerDialog_KeyDown);
             this.toolStrip1.ResumeLayout(false);

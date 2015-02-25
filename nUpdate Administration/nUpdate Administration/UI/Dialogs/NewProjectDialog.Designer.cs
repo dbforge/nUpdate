@@ -53,8 +53,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.generalHeaderLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
-            this.localPathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.searchPathButton = new System.Windows.Forms.Button();
             this.ftpTabPage = new System.Windows.Forms.TabPage();
             this.ftpPanel = new System.Windows.Forms.Panel();
             this.ftpImportButton = new System.Windows.Forms.Button();
@@ -103,6 +101,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.localPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.controlPanel1.SuspendLayout();
             this.informationCategoriesTabControl.SuspendLayout();
             this.keyPairTabPage.SuspendLayout();
@@ -218,7 +217,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalPanel.Controls.Add(this.generalHeaderLabel);
             this.generalPanel.Controls.Add(this.nameLabel);
             this.generalPanel.Controls.Add(this.localPathTextBox);
-            this.generalPanel.Controls.Add(this.searchPathButton);
             resources.ApplyResources(this.generalPanel, "generalPanel");
             this.generalPanel.Name = "generalPanel";
             // 
@@ -263,18 +261,6 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             resources.ApplyResources(this.nameLabel, "nameLabel");
             this.nameLabel.Name = "nameLabel";
-            // 
-            // localPathTextBox
-            // 
-            resources.ApplyResources(this.localPathTextBox, "localPathTextBox");
-            this.localPathTextBox.Name = "localPathTextBox";
-            // 
-            // searchPathButton
-            // 
-            resources.ApplyResources(this.searchPathButton, "searchPathButton");
-            this.searchPathButton.Name = "searchPathButton";
-            this.searchPathButton.UseVisualStyleBackColor = true;
-            this.searchPathButton.Click += new System.EventHandler(this.searchPathButton_Click);
             // 
             // ftpTabPage
             // 
@@ -612,6 +598,12 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.TabStop = false;
             // 
+            // localPathTextBox
+            // 
+            this.localPathTextBox.ButtonText = "...";
+            resources.ApplyResources(this.localPathTextBox, "localPathTextBox");
+            this.localPathTextBox.Name = "localPathTextBox";
+            // 
             // NewProjectDialog
             // 
             this.AcceptButton = this.continueButton;
@@ -688,8 +680,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label ftpProtocolLabel;
         private System.Windows.Forms.Button searchOnServerButton;
         private Controls.Line line1;
-        private System.Windows.Forms.Button searchPathButton;
-        private CueTextBox localPathTextBox;
         private System.Windows.Forms.Label localPathLabel;
         private System.Windows.Forms.Button securityInfoButton;
         private Controls.TablessTabControl informationCategoriesTabControl;
@@ -729,5 +719,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Panel proxyPanel;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private ButtonTextBox localPathTextBox;
     }
 }

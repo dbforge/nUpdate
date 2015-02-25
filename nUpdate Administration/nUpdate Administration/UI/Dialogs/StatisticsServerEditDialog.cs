@@ -29,6 +29,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerEditDialog_Load(object sender, EventArgs e)
         {
+            Text = String.Format(Text, Program.VersionString);
             hostTextBox.Text = WebUrl;
             databaseTextBox.Text = DatabaseName;
             usernameTextBox.Text = Username;

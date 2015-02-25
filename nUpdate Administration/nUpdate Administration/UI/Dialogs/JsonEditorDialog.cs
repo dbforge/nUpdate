@@ -37,6 +37,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void JSONEditorDialog_Load(object sender, EventArgs e)
         {
+            Text = String.Format(Text, Program.VersionString);
             var bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
             codeTextBox.Text = Encoding.UTF8.GetString(bytes);
         }
