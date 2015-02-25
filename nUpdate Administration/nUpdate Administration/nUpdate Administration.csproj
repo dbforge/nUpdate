@@ -249,6 +249,9 @@
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="Core\Win32\IconReader.cs" />
     <Compile Include="Core\Win32\Margins.cs" />
+    <Compile Include="UI\Controls\ButtonTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\ExplorerListViewGroup.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Core\IDeepCopy.cs" />
