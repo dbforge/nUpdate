@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.messageLabel = new System.Windows.Forms.Label();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyEntireMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.headerLabel = new System.Windows.Forms.Label();
             this.controlPanel1 = new nUpdate.UpdateInstaller.UI.Controls.ControlPanel();
@@ -70,12 +71,14 @@
             // 
             // headerLabel
             // 
+            this.headerLabel.AutoSize = true;
             this.headerLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F);
             this.headerLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.headerLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.headerLabel.Location = new System.Drawing.Point(61, 21);
+            this.headerLabel.MaximumSize = new System.Drawing.Size(276, 47);
             this.headerLabel.Name = "headerLabel";
-            this.headerLabel.Size = new System.Drawing.Size(276, 47);
+            this.headerLabel.Size = new System.Drawing.Size(38, 20);
             this.headerLabel.TabIndex = 7;
             this.headerLabel.Text = "Title";
             // 
