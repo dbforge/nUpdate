@@ -11,7 +11,7 @@ nUpdate is a modern update system providing high security and an easy-to-use int
 - Interfaces and event system provide the possibility to use own Graphic User Interfaces that can be shown to the client
 
 ### Version
-0.1.0.0 Alpha Build 2 (Could contain bugs)
+0.1.0.0 Alpha Build 3 (Could contain bugs)
 
 ### Notes
 Help and tips are appreciated. Current Alpha-version could contain some problems and bugs which will be fixed.
