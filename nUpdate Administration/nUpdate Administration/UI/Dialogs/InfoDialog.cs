@@ -15,6 +15,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
+            Text = String.Format(Text, Program.VersionString);
             copyrightLabel.Text += DateTime.Now.Year.ToString();
         }
 

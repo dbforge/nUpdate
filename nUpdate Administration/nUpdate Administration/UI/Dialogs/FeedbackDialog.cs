@@ -77,5 +77,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.", ex, PopupButtons.Ok);
             }
         }
+
+        private void FeedbackDialog_Load(object sender, EventArgs e)
+        {
+            Text = String.Format(Text, Program.VersionString);
+        }
     }
 }

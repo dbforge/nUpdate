@@ -248,7 +248,9 @@ namespace nUpdate.Administration.UI.Dialogs
             ftpProtocolComboBox.SelectedIndex = 0;
 
             //SetLanguage();
-
+            Text = String.Format(Text, Program.VersionString);
+            localPathTextBox.ButtonClicked += BrowsePathButtonClick;
+            localPathTextBox.Initialize();
             controlPanel1.Visible = false;
             ThreadPool.QueueUserWorkItem(arg => GenerateKeyPair());
         }
@@ -801,7 +803,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             searchDialog.Close();
         }
 
-        private void searchPathButton_Click(object sender, EventArgs e)
+        private void BrowsePathButtonClick(object sender, EventArgs e)
         {
             var fileDialog = new SaveFileDialog
             {

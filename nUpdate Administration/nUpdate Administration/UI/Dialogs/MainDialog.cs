@@ -129,6 +129,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             //SetLanguage();
             sectionsListView.DoubleBuffer();
+            Text = String.Format(Text, Program.VersionString);
+            headerLabel.Text = String.Format(Text, Program.VersionString);
         }
 
         public UpdateProject OpenProject(string projectPath)

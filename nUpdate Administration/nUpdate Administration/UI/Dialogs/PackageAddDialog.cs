@@ -188,7 +188,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageAddDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Project.Name);
+            Text = String.Format(Text, Project.Name, Program.VersionString);
 
             try
             {

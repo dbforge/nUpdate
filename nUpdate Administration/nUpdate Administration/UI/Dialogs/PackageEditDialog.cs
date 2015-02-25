@@ -238,7 +238,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageEditDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, PackageVersion.FullText);
+            Text = String.Format(Text, PackageVersion.FullText, Program.VersionString);
 
             _ftp.Host = Project.FtpHost;
             _ftp.Port = Project.FtpPort;
