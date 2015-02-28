@@ -71,7 +71,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void dotNetZipLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://dotnetzip.codeplex.com/");
+            Process.Start("https://dotnetzip.codeplex.com/");
         }
 
         private void jsonNetLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -81,12 +81,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void fastColoredTextBoxLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.codeproject.com/Articles/161871/Fast-Colored-TextBox-for-syntax-highlighting");
+            Process.Start("https://www.codeproject.com/Articles/161871/Fast-Colored-TextBox-for-syntax-highlighting");
         }
 
         private void bikoLibraryLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://biko.codeplex.com/");
+        }
+
+        private void iconLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://www.github.com/stefan-baumann");
         }
     }
 }
