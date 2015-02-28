@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.downloadProgressBar = new System.Windows.Forms.ProgressBar();
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
@@ -114,7 +114,7 @@
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.ProgressBar downloadProgressBar;
-        private Controls.ControlPanel controlPanel1;
+        private Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
     }
 }

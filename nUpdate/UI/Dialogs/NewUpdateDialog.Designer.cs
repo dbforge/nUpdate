@@ -36,7 +36,7 @@
             this.updateSizeLabel = new System.Windows.Forms.Label();
             this.changelogLabel = new System.Windows.Forms.Label();
             this.iconPictureBox = new System.Windows.Forms.PictureBox();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.installButton = new System.Windows.Forms.Button();
             this.accessLabel = new System.Windows.Forms.Label();
@@ -216,7 +216,7 @@
         private System.Windows.Forms.Label currentVersionLabel;
         private System.Windows.Forms.Label updateSizeLabel;
         private System.Windows.Forms.Label changelogLabel;
-        private UI.Controls.ControlPanel controlPanel1;
+        private UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button installButton;
         private System.Windows.Forms.Label accessLabel;
