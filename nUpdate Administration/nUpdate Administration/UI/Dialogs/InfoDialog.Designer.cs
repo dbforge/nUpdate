@@ -56,6 +56,8 @@
             this.jsonNetLinkLabel = new System.Windows.Forms.LinkLabel();
             this.fastColoredTextBoxLinkLabel = new System.Windows.Forms.LinkLabel();
             this.bikoLibraryLinklabel = new System.Windows.Forms.LinkLabel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.iconLinkLabel = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.donatePictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -75,7 +77,7 @@
             // 
             this.donatePictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
             this.donatePictureBox.Image = ((System.Drawing.Image)(resources.GetObject("donatePictureBox.Image")));
-            this.donatePictureBox.Location = new System.Drawing.Point(140, 230);
+            this.donatePictureBox.Location = new System.Drawing.Point(140, 255);
             this.donatePictureBox.Name = "donatePictureBox";
             this.donatePictureBox.Size = new System.Drawing.Size(147, 47);
             this.donatePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -86,7 +88,7 @@
             // line1
             // 
             this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
-            this.line1.Location = new System.Drawing.Point(17, 132);
+            this.line1.Location = new System.Drawing.Point(17, 157);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 14);
             this.line1.TabIndex = 21;
@@ -100,13 +102,13 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(83, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "0.1.0.0 Alpha 3";
+            this.label13.Text = "0.1.0.0 Alpha 4";
             // 
             // controlPanel1
             // 
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.controlPanel1.Controls.Add(this.closeButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 288);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 313);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(434, 40);
             this.controlPanel1.TabIndex = 18;
@@ -116,7 +118,7 @@
             this.websiteLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.websiteLinkLabel.AutoSize = true;
             this.websiteLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.websiteLinkLabel.Location = new System.Drawing.Point(266, 195);
+            this.websiteLinkLabel.Location = new System.Drawing.Point(266, 220);
             this.websiteLinkLabel.Name = "websiteLinkLabel";
             this.websiteLinkLabel.Size = new System.Drawing.Size(71, 13);
             this.websiteLinkLabel.TabIndex = 17;
@@ -127,7 +129,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(174, 195);
+            this.label12.Location = new System.Drawing.Point(174, 220);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(93, 13);
             this.label12.TabIndex = 16;
@@ -138,7 +140,7 @@
             this.ll_github.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.ll_github.AutoSize = true;
             this.ll_github.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.ll_github.Location = new System.Drawing.Point(136, 195);
+            this.ll_github.Location = new System.Drawing.Point(136, 220);
             this.ll_github.Name = "ll_github";
             this.ll_github.Size = new System.Drawing.Size(43, 13);
             this.ll_github.TabIndex = 15;
@@ -149,7 +151,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(19, 195);
+            this.label11.Location = new System.Drawing.Point(19, 220);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(123, 13);
             this.label11.TabIndex = 14;
@@ -158,7 +160,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(65, 163);
+            this.label10.Location = new System.Drawing.Point(65, 188);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(306, 13);
             this.label10.TabIndex = 13;
@@ -169,7 +171,7 @@
             this.artentusLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.artentusLinkLabel.AutoSize = true;
             this.artentusLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.artentusLinkLabel.Location = new System.Drawing.Point(18, 163);
+            this.artentusLinkLabel.Location = new System.Drawing.Point(18, 188);
             this.artentusLinkLabel.Name = "artentusLinkLabel";
             this.artentusLinkLabel.Size = new System.Drawing.Size(51, 13);
             this.artentusLinkLabel.TabIndex = 12;
@@ -180,7 +182,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(173, 147);
+            this.label8.Location = new System.Drawing.Point(173, 172);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(245, 13);
             this.label8.TabIndex = 10;
@@ -191,7 +193,7 @@
             this.timSchieweLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.timSchieweLinkLabel.AutoSize = true;
             this.timSchieweLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.timSchieweLinkLabel.Location = new System.Drawing.Point(108, 147);
+            this.timSchieweLinkLabel.Location = new System.Drawing.Point(108, 172);
             this.timSchieweLinkLabel.Name = "timSchieweLinkLabel";
             this.timSchieweLinkLabel.Size = new System.Drawing.Size(69, 13);
             this.timSchieweLinkLabel.TabIndex = 9;
@@ -202,7 +204,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(18, 147);
+            this.label7.Location = new System.Drawing.Point(18, 172);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(98, 13);
             this.label7.TabIndex = 8;
@@ -283,7 +285,7 @@
             // line2
             // 
             this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
-            this.line2.Location = new System.Drawing.Point(21, 214);
+            this.line2.Location = new System.Drawing.Point(21, 239);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(397, 10);
             this.line2.TabIndex = 24;
@@ -293,7 +295,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(17, 116);
+            this.label1.Location = new System.Drawing.Point(17, 141);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(80, 13);
             this.label1.TabIndex = 25;
@@ -304,7 +306,7 @@
             this.dotNetZipLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.dotNetZipLinkLabel.AutoSize = true;
             this.dotNetZipLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.dotNetZipLinkLabel.Location = new System.Drawing.Point(99, 116);
+            this.dotNetZipLinkLabel.Location = new System.Drawing.Point(99, 141);
             this.dotNetZipLinkLabel.Name = "dotNetZipLinkLabel";
             this.dotNetZipLinkLabel.Size = new System.Drawing.Size(60, 13);
             this.dotNetZipLinkLabel.TabIndex = 26;
@@ -317,7 +319,7 @@
             this.jsonNetLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.jsonNetLinkLabel.AutoSize = true;
             this.jsonNetLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.jsonNetLinkLabel.Location = new System.Drawing.Point(165, 116);
+            this.jsonNetLinkLabel.Location = new System.Drawing.Point(165, 141);
             this.jsonNetLinkLabel.Name = "jsonNetLinkLabel";
             this.jsonNetLinkLabel.Size = new System.Drawing.Size(56, 13);
             this.jsonNetLinkLabel.TabIndex = 27;
@@ -330,7 +332,7 @@
             this.fastColoredTextBoxLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.fastColoredTextBoxLinkLabel.AutoSize = true;
             this.fastColoredTextBoxLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.fastColoredTextBoxLinkLabel.Location = new System.Drawing.Point(227, 116);
+            this.fastColoredTextBoxLinkLabel.Location = new System.Drawing.Point(227, 141);
             this.fastColoredTextBoxLinkLabel.Name = "fastColoredTextBoxLinkLabel";
             this.fastColoredTextBoxLinkLabel.Size = new System.Drawing.Size(108, 13);
             this.fastColoredTextBoxLinkLabel.TabIndex = 28;
@@ -343,7 +345,7 @@
             this.bikoLibraryLinklabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.bikoLibraryLinklabel.AutoSize = true;
             this.bikoLibraryLinklabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.bikoLibraryLinklabel.Location = new System.Drawing.Point(341, 116);
+            this.bikoLibraryLinklabel.Location = new System.Drawing.Point(341, 141);
             this.bikoLibraryLinklabel.Name = "bikoLibraryLinklabel";
             this.bikoLibraryLinklabel.Size = new System.Drawing.Size(67, 13);
             this.bikoLibraryLinklabel.TabIndex = 29;
@@ -351,13 +353,37 @@
             this.bikoLibraryLinklabel.Text = "Biko Library";
             this.bikoLibraryLinklabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.bikoLibraryLinkLabel_LinkClicked);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(55, 117);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(123, 13);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "nUpdate Icon made by";
+            // 
+            // iconLinkLabel
+            // 
+            this.iconLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.iconLinkLabel.AutoSize = true;
+            this.iconLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
+            this.iconLinkLabel.Location = new System.Drawing.Point(177, 117);
+            this.iconLinkLabel.Name = "iconLinkLabel";
+            this.iconLinkLabel.Size = new System.Drawing.Size(92, 13);
+            this.iconLinkLabel.TabIndex = 30;
+            this.iconLinkLabel.TabStop = true;
+            this.iconLinkLabel.Text = "Stefan Baumann";
+            this.iconLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.iconLinkLabel_LinkClicked);
+            // 
             // InfoDialog
             // 
             this.AcceptButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(434, 328);
+            this.ClientSize = new System.Drawing.Size(434, 353);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.iconLinkLabel);
             this.Controls.Add(this.bikoLibraryLinklabel);
             this.Controls.Add(this.fastColoredTextBoxLinkLabel);
             this.Controls.Add(this.jsonNetLinkLabel);
@@ -432,5 +458,7 @@
         private System.Windows.Forms.LinkLabel jsonNetLinkLabel;
         private System.Windows.Forms.LinkLabel fastColoredTextBoxLinkLabel;
         private System.Windows.Forms.LinkLabel bikoLibraryLinklabel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.LinkLabel iconLinkLabel;
     }
 }
