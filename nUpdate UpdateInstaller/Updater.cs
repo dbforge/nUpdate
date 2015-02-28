@@ -92,6 +92,7 @@ namespace nUpdate.UpdateInstaller
             {
                 using (var zf = ZipFile.Read(Program.PackageFile))
                 {
+                    zf.ParallelDeflateThreshold = -1;
                     try
                     {
                         foreach (var entry in zf)
