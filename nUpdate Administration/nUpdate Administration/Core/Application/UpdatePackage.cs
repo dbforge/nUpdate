@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.Core.Application
 {

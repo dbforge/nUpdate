@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
 using MySql.Data.MySqlClient;
@@ -20,13 +21,14 @@ using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.EventArgs;
 using nUpdate.Administration.Core.History;
-using nUpdate.Administration.Core.Operations;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using System.Threading.Tasks;
+using nUpdate.Core;
+using nUpdate.Core.Operations;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -46,23 +48,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private UpdateVersion _packageVersion;
         private bool _publishUpdate;
         private string _updateConfigFile;
+        //private string _hashFile;
+
         private bool _uploadCancelled;
-
-        /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword { get; set; }
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword { get; set; }
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword { get; set; }
-
         private readonly UpdateConfiguration _configuration = new UpdateConfiguration();
 
         private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry sub key", 14, 14)
@@ -105,6 +93,21 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString FtpPassword { get; set; }
+
+        /// <summary>
+        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString ProxyPassword { get; set; }
+
+        /// <summary>
+        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
+        /// </summary>
+        public SecureString SqlPassword { get; set; }
 
         /// <summary>
         ///     The existing package versions.
@@ -210,6 +213,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
+            _zip.ParallelDeflateThreshold = -1;
             _updateLog.Project = Project;
             //SetLanguage();
 
@@ -281,7 +285,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     (int) developmentBuildNumericUpDown.Value);
             }
 
-            if (_packageVersion.BasicVersion.ToString() == "0.0.0.0")
+            if (_packageVersion.BasicVersion == "0.0.0.0")
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                     "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
@@ -371,6 +375,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _zip.AddDirectoryByName(tmpDir);
+                        //var packageItem = new PackageItem(new byte[] { }, Path.GetFileName(node.Text), // Directories won't be checked, so we don't need to specify a hash
+                        //    true);
+                        //packageSubItem.Children.Add(packageItem);
                         InitializeArchiveContents(node, tmpDir);
                     }
                     catch (ArgumentException)
@@ -390,6 +397,13 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _zip.AddFile(node.Tag.ToString(), currentDirectory);
+                        //using (FileStream stream = File.OpenRead(node.Tag.ToString()))
+                        //{
+                        //    SHA256Managed sha = new SHA256Managed();
+                        //    byte[] hash = sha.ComputeHash(stream);
+                        //    packageSubItem.Children.Add(new PackageItem(hash, Path.GetFileName(node.Tag.ToString()),
+                        //        false));
+                        //}
                     }
                     catch (ArgumentException)
                     {
@@ -418,6 +432,8 @@ namespace nUpdate.Administration.UI.Dialogs
             _packageFolder = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString());
             _updateConfigFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
                 "updates.json");
+            //_hashFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
+            //    "hashes.json");
 
             Invoke(new Action(() => loadingLabel.Text = "Initializing archive..."));
 
@@ -448,6 +464,23 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeArchiveContents(filesDataTreeView.Nodes[1], "AppData");
             InitializeArchiveContents(filesDataTreeView.Nodes[2], "Temp");
             InitializeArchiveContents(filesDataTreeView.Nodes[3], "Desktop");
+
+            //Invoke(new Action(() => loadingLabel.Text = "Initializing hash file..."));
+
+            //try
+            //{
+            //    File.WriteAllText(_hashFile, Serializer.Serialize(_rootPackageItem));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Invoke(
+            //        new Action(
+            //            () =>
+            //                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the file for the hashes.", ex,
+            //                    PopupButtons.Ok)));
+            //    Reset();
+            //    return;
+            //}
 
             var packageFile = String.Format("{0}.zip", Project.Guid);
             _zip.Save(Path.Combine(_packageFolder, packageFile));

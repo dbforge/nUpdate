@@ -174,6 +174,8 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
+            this.differentialUpdateCheckBox = new System.Windows.Forms.CheckBox();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -1076,6 +1078,7 @@
             // 
             // filesPanel
             // 
+            this.filesPanel.Controls.Add(this.differentialUpdateCheckBox);
             this.filesPanel.Controls.Add(this.filesDataTreeView);
             this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
             this.filesPanel.Controls.Add(this.filesList);
@@ -1134,7 +1137,8 @@
             this.toolStripSeparator4,
             this.removeEntryButton,
             this.toolStripSeparator9,
-            this.infoButton});
+            this.infoButton,
+            this.toolStripSeparator2});
             this.replaceFilesToolStrip.Location = new System.Drawing.Point(3, 2);
             this.replaceFilesToolStrip.Name = "replaceFilesToolStrip";
             this.replaceFilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -1287,6 +1291,21 @@
             this.categoryTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragEnter);
             this.categoryTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.categoryTreeView_KeyDown);
             // 
+            // differentialUpdateCheckBox
+            // 
+            this.differentialUpdateCheckBox.AutoSize = true;
+            this.differentialUpdateCheckBox.Location = new System.Drawing.Point(388, 7);
+            this.differentialUpdateCheckBox.Name = "differentialUpdateCheckBox";
+            this.differentialUpdateCheckBox.Size = new System.Drawing.Size(84, 17);
+            this.differentialUpdateCheckBox.TabIndex = 6;
+            this.differentialUpdateCheckBox.Text = "Differential";
+            this.differentialUpdateCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
             // PackageAddDialog
             // 
             this.AcceptButton = this.createButton;
@@ -1342,6 +1361,7 @@
             this.operationsPanel.ResumeLayout(false);
             this.replaceFilesTabPage.ResumeLayout(false);
             this.filesPanel.ResumeLayout(false);
+            this.filesPanel.PerformLayout();
             this.replaceFilesToolStrip.ResumeLayout(false);
             this.replaceFilesToolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -1447,6 +1467,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
+        private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 
     }
 }
