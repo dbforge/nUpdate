@@ -107,7 +107,7 @@ namespace nUpdate.UI.Dialogs
             headerLabel.Text = _lp.NewUpdateDialogHeader;
             infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
             newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogNewestVersionText, NewestVersion.FullText);
-            currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion);
+            currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
