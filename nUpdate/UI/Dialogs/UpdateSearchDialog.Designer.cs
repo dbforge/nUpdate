@@ -30,7 +30,7 @@
         {
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -101,7 +101,7 @@
 
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label headerLabel;
-        private Controls.ControlPanel controlPanel1;
+        private Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
     }
 }
