@@ -533,8 +533,9 @@ namespace nUpdate.Updating
             var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
             //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
 
-            if (!Directory.Exists(unpackerDirectory))
-                Directory.CreateDirectory(unpackerDirectory);
+            if (Directory.Exists(unpackerDirectory))
+                Directory.Delete(unpackerDirectory);
+            Directory.CreateDirectory(unpackerDirectory);
 
             if (!File.Exists(unpackerZipPath))
                 File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
