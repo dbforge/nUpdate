@@ -6,7 +6,7 @@ using System.Net.NetworkInformation;
 
 namespace nUpdate.Core
 {
-    public class SystemInformation
+    internal class SystemInformation
     {
         /// <summary>
         ///     Gets the Mac-Address of the current computer for the statistics.
