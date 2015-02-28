@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using nUpdate.Administration.Core.History;
+using nUpdate.Core;
 
 namespace nUpdate.Administration.Core.Application
 {

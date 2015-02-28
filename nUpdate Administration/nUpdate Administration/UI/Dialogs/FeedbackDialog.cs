@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Net.Mail;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

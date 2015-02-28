@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
+using nUpdate.Core;
 using nUpdate.Updating;
 using UpdateVersion = nUpdate.Updating.UpdateVersion;
 
@@ -35,7 +35,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             Text = String.Format(Text, Program.VersionString);
-            versionLabel.Text += " 0.1.0.0 Alpha 3";
+            versionLabel.Text += " 0.1.0.0 Alpha 4";
             includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
             includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;
             languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);
@@ -97,9 +97,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new CultureInfo(
                     languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim()).Name;
 
-            var jsonEditorDialog = new JsonEditorDialog();
-            jsonEditorDialog.LanguageContent = Serializer.Serialize(lp);
-            jsonEditorDialog.CultureName = name;
+            var jsonEditorDialog = new JsonEditorDialog {LanguageContent = Serializer.Serialize(lp), CultureName = name};
             jsonEditorDialog.ShowDialog(this);
         }
     }

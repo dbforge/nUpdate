@@ -36,11 +36,11 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.sectionsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.itemDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,6 +58,7 @@
             this.imageList1.Images.SetKeyName(7, "application-sidebar-list.png");
             this.imageList1.Images.SetKeyName(8, "user-business.png");
             this.imageList1.Images.SetKeyName(9, "bin.png");
+            this.imageList1.Images.SetKeyName(10, "arrow-join.png");
             // 
             // headerLabel
             // 
@@ -69,12 +70,6 @@
             // 
             resources.ApplyResources(this.infoLabel, "infoLabel");
             this.infoLabel.Name = "infoLabel";
-            // 
-            // pictureBox1
-            // 
-            resources.ApplyResources(this.pictureBox1, "pictureBox1");
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.TabStop = false;
             // 
             // sectionsListView
             // 
@@ -97,7 +92,8 @@
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items5"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items6"))),
             ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items7"))),
-            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items8")))});
+            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items8"))),
+            ((System.Windows.Forms.ListViewItem)(resources.GetObject("sectionsListView.Items9")))});
             this.sectionsListView.LargeImageList = this.imageList1;
             resources.ApplyResources(this.sectionsListView, "sectionsListView");
             this.sectionsListView.MultiSelect = false;
@@ -113,6 +109,12 @@
             this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             resources.ApplyResources(this.line1, "line1");
             this.line1.Name = "line1";
+            // 
+            // pictureBox1
+            // 
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.TabStop = false;
             // 
             // MainDialog
             // 

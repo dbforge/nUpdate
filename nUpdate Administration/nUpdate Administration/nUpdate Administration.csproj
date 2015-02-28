@@ -51,8 +51,9 @@
     <Reference Include="FastColoredTextBox">
       <HintPath>..\..\packages\FCTB.2.16.1.1\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
+    <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\DotNetZip.1.9\lib\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks">
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
@@ -105,7 +106,6 @@
     <Compile Include="Core\Application\Extension\RegistryException.cs" />
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
-    <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
     <Compile Include="Core\Ftp\EventArgs\FtpRequestEventArgs.cs" />
     <Compile Include="Core\Ftp\EventArgs\FtpResponseEventArgs.cs" />
@@ -167,15 +167,11 @@
     <Compile Include="Core\Application\UpdatePackage.cs" />
     <Compile Include="Core\Application\UpdateProject.cs" />
     <Compile Include="Core\History\Log.cs" />
-    <Compile Include="Core\ConnectionChecker.cs" />
     <Compile Include="Core\Extensions.cs" />
-    <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\JsonHelper.cs" />
     <Compile Include="Core\Navigator.cs" />
     <Compile Include="Core\FtpManager.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
-    <Compile Include="Core\RsaManager.cs" />
-    <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\Operations\Panels\FileDeleteOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -207,9 +203,6 @@
     <Compile Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.Designer.cs">
       <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Operations\Operation.cs" />
-    <Compile Include="Core\Operations\OperationArea.cs" />
-    <Compile Include="Core\Operations\OperationMethod.cs" />
     <Compile Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -240,12 +233,6 @@
     <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.Designer.cs">
       <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\UpdateConfiguration.cs" />
-    <Compile Include="Core\UpdateVersion.cs" />
-    <Compile Include="Core\WebClientWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Core\UriConnector.cs" />
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="Core\Win32\IconReader.cs" />
     <Compile Include="Core\Win32\Margins.cs" />
@@ -254,7 +241,6 @@
     </Compile>
     <Compile Include="UI\Controls\ExplorerListViewGroup.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
-    <Compile Include="Core\IDeepCopy.cs" />
     <Compile Include="Core\Win32\PaintStruct.cs" />
     <Compile Include="UI\Controls\ExplorerTreeNode.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -409,6 +395,12 @@
     <Compile Include="UI\Dialogs\ProjectEditDialog.Designer.cs">
       <DependentUpon>ProjectEditDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Dialogs\ProjectImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectImportDialog.Designer.cs">
+      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Dialogs\ProjectRemovalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -539,6 +531,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\ProjectEditDialog.resx">
       <DependentUpon>ProjectEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ProjectImportDialog.resx">
+      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\ProjectRemovalDialog.resx">
       <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>

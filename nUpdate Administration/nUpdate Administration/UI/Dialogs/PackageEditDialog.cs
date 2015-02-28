@@ -16,10 +16,12 @@ using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Ftp;
-using nUpdate.Administration.Core.Operations;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core;
+using nUpdate.Core.Operations;
+using nUpdate.Updating;
 using Newtonsoft.Json.Linq;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
@@ -534,7 +536,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     Enum.Parse(typeof (DevelopmentalStage),
                         developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
                 (int) developmentBuildNumericUpDown.Value);
-            if (_newVersion.BasicVersion.ToString() == "0.0.0.0")
+            if (_newVersion.BasicVersion == "0.0.0.0")
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                     "Version \"0.0.0.0\" is not a valid version.", PopupButtons.Ok);
