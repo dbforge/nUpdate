@@ -24,6 +24,8 @@ using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -1856,7 +1858,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
             chart.StatisticsChartClosed += CurrentChartClosed;
             chart.Dock = DockStyle.Fill;
             chartPanel.Controls.Add(chart);
-            chart.BringToFront();
+            statisticsDataGridView.Visible = false;
         }
 
         private void CurrentChartClosed(object sender, EventArgs e)
@@ -1864,6 +1866,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
             chartPanel.Controls.Remove((StatisticsChart)sender);
             chartPanel.Visible = false;
             updateStatisticsButton.Enabled = true;
+            statisticsDataGridView.Visible = true;
         }
 
         private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
