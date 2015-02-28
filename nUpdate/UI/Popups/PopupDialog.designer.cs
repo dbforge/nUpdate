@@ -33,7 +33,7 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyEntireMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.noButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.yesButton = new System.Windows.Forms.Button();
@@ -166,7 +166,7 @@
         private System.Windows.Forms.PictureBox iconPictureBox;
         private System.Windows.Forms.Label messageLabel;
         private System.Windows.Forms.Label headerLabel;
-        private Controls.ControlPanel controlPanel1;
+        private Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem copyEntireMessageToolStripMenuItem;

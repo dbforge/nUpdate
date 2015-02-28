@@ -30,7 +30,7 @@
         {
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.closeButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -101,7 +101,7 @@
 
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.Label infoLabel;
-        private UI.Controls.ControlPanel controlPanel1;
+        private UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
     }
 }

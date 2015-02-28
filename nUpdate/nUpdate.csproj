@@ -81,7 +81,7 @@
     <Compile Include="UI\Dialogs\BaseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ControlPanel.cs">
+    <Compile Include="UI\Controls\BottomPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\ConnectionChecker.cs" />
