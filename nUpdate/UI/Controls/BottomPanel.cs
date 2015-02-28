@@ -50,19 +50,13 @@ namespace nUpdate.UI.Controls
         }
 
         /// <summary>
-        /// Paints the button with visual styles.
+        /// Paints the panel with visual styles.
         /// </summary>
         /// <param name="g">The targeted graphics.</param>
         protected virtual void PaintWithVisualStyles(Graphics g)
         {
-            //Draw button
+            //Draw panel
             new VisualStyleRenderer("TaskDialog", 8, 0).DrawBackground(g, this.DisplayRectangle);
-
-            //Draw Focus Rectangle
-            if (this.Focused && this.ShowFocusCues)
-            {
-                ControlPaint.DrawFocusRectangle(g, this.DisplayRectangle);
-            }
         }
 
         /// <summary>
