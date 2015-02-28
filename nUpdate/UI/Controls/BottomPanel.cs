@@ -1,5 +1,4 @@
-﻿// (Author: Dominic Beger (Trade/ProgTrade))
-// Author: Stefan Baumann (functionality taken from AeroSuite library)
+﻿// Author: Stefan Baumann (from AeroSuite library: https://github.com/stefan-baumann/AeroSuite)
 
 using System.ComponentModel;
 using System.Drawing;
@@ -38,7 +37,7 @@ namespace nUpdate.UI.Controls
         /// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (Application.RenderWithVisualStyles && VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement("TaskDialog", 8, 0))) //This seems to be the right check according to the MSDN: https://msdn.microsoft.com/en-us/library/vstudio/ms171735(v=vs.100).aspx
+            if (Application.RenderWithVisualStyles && VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement("TaskDialog", 8, 0)))
             {
                 this.PaintWithVisualStyles(e.Graphics);
             }
