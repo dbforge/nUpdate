@@ -4,7 +4,7 @@ namespace nUpdate.Core.Localization
 {
     public class LocalizationProperties
     {
-        public LocalizationProperties()
+        internal LocalizationProperties()
         {
             CancelButtonText = "Cancel";
             ContinueButtonText = "Continue";
