@@ -1,6 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-namespace nUpdate.Administration.Core
+namespace nUpdate.Core
 {
     /// <summary>
     ///     Offers methods for cloning/copying class instances.

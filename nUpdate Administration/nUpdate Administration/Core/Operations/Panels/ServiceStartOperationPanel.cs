@@ -2,6 +2,7 @@
 
 using System;
 using System.Windows.Forms;
+using nUpdate.Core.Operations;
 
 namespace nUpdate.Administration.Core.Operations.Panels
 {

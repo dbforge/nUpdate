@@ -5,7 +5,7 @@ using System.Net;
 
 namespace nUpdate.Core
 {
-    internal class WebClientWrapper : WebClient
+    public class WebClientWrapper : WebClient
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="WebClientWrapper" />-class.

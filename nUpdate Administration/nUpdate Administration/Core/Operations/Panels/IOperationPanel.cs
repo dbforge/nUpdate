@@ -1,5 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
+using nUpdate.Core.Operations;
+
 namespace nUpdate.Administration.Core.Operations.Panels
 {
     public interface IOperationPanel

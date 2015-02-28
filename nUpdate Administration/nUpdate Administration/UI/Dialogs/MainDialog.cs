@@ -2,7 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Security;
 using System.Security.Cryptography;
@@ -12,6 +11,7 @@ using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -271,25 +271,30 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     break;
 
-                case 4:
+                //case 4:
+                //    var projectImportDialog = new ProjectImportDialog();
+                //    projectImportDialog.ShowDialog();
+                //    break;
+
+                case 5:
                     var feedbackDialog = new FeedbackDialog();
                     feedbackDialog.ShowDialog();
                     break;
 
-                case 5:
+                case 6:
                     var preferencesDialog = new PreferencesDialog();
                     preferencesDialog.ShowDialog();
                     break;
 
-                case 6:
+                case 7:
                     var infoDialog = new InfoDialog();
                     infoDialog.ShowDialog();
                     break;
-                case 7:
+                case 8:
                     var statisticsServerDialog = new StatisticsServerDialog {ReactsOnKeyDown = false};
                     statisticsServerDialog.ShowDialog();
                     break;
-                case 8:
+                case 9:
                     Popup.ShowPopup(this, SystemIcons.Information, "Feature not implemented yet.",
                         "This is the first version of nUpdate Administration. The conversion will be available in coming versions as soon as changes to the configuration schemata are made.",
                         PopupButtons.Ok);

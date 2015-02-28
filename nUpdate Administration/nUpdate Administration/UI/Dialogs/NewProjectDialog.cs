@@ -18,6 +18,7 @@ using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

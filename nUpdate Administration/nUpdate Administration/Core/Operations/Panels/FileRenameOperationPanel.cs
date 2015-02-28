@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Core.Operations;
 
 namespace nUpdate.Administration.Core.Operations.Panels
 {

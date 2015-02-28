@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using nUpdate.Administration.Core;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Controls
 {

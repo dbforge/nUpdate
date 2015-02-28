@@ -10,10 +10,10 @@ namespace nUpdate.Test
     [TestClass]
     public class RsaSignatureTest
     {
-        private static byte[] data;
-        private static string desktopPath;
-        private static string keyFile;
-        private static string signatureFile;
+        private static byte[] _data;
+        private static string _desktopPath;
+        private static string _keyFile;
+        private static string _signatureFile;
 
         /// <summary>
         ///     Initializes the members.
@@ -21,17 +21,17 @@ namespace nUpdate.Test
         [TestInitialize]
         public void Initialize()
         {
-            data = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-            desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            _data = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+            _desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            keyFile = Path.Combine(desktopPath, "keys.txt");
-            signatureFile = Path.Combine(desktopPath, "Signature.txt");
+            _keyFile = Path.Combine(_desktopPath, "keys.txt");
+            _signatureFile = Path.Combine(_desktopPath, "Signature.txt");
 
-            FileStream keyStream = File.Create(keyFile);
+            FileStream keyStream = File.Create(_keyFile);
             keyStream.Flush();
             keyStream.Close();
 
-            FileStream signatureStream = File.Create(signatureFile);
+            FileStream signatureStream = File.Create(_signatureFile);
             signatureStream.Flush();
             signatureStream.Close();
         }
@@ -39,8 +39,8 @@ namespace nUpdate.Test
         [ClassCleanup]
         public static void CleanUp()
         {
-            File.Delete(keyFile);
-            File.Delete(signatureFile);
+            File.Delete(_keyFile);
+            File.Delete(_signatureFile);
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace nUpdate.Test
         public void CanSignAndValidateData()
         {
             var rsa = new RsaManager();
-            byte[] signature = rsa.SignData(data);
+            byte[] signature = rsa.SignData(_data);
 
-            Assert.IsTrue(rsa.VerifyData(data, signature));
+            Assert.IsTrue(rsa.VerifyData(_data, signature));
         }
 
         /// <summary>
@@ -62,15 +62,15 @@ namespace nUpdate.Test
         public void CanSignAndValidateDataWithSaving()
         {
             var rsa = new RsaManager();
-            byte[] signature = rsa.SignData(data);
+            byte[] signature = rsa.SignData(_data);
 
-            File.WriteAllBytes(signatureFile, signature);
-            File.WriteAllText(keyFile, rsa.PublicKey);
+            File.WriteAllBytes(_signatureFile, signature);
+            File.WriteAllText(_keyFile, rsa.PublicKey);
 
-            var givenRsa = new RsaManager(File.ReadAllText(keyFile));
-            byte[] givenSignature = File.ReadAllBytes(signatureFile);
+            var givenRsa = new RsaManager(File.ReadAllText(_keyFile));
+            byte[] givenSignature = File.ReadAllBytes(_signatureFile);
 
-            Assert.IsTrue(givenRsa.VerifyData(data, givenSignature));
+            Assert.IsTrue(givenRsa.VerifyData(_data, givenSignature));
         }
     }
 }

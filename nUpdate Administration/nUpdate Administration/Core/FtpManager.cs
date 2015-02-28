@@ -10,6 +10,7 @@ using System.Threading;
 using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.EventArgs;
 using nUpdate.Administration.Core.Proxy;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.Core
 {
