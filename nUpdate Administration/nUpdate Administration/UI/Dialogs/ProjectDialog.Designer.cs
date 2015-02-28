@@ -108,13 +108,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
+            this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.updateStatisticsButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
             this.lastUpdatedLabel = new System.Windows.Forms.Label();
             this.chartPanel = new System.Windows.Forms.Panel();
             this.gatheringStatisticsPictureBox = new System.Windows.Forms.PictureBox();
             this.statisticsStatusLabel = new System.Windows.Forms.Label();
-            this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.noStatisticsPanel = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.noStatisticsLabel = new System.Windows.Forms.Label();
@@ -137,9 +137,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.packagesTabPage.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statisticsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.controlPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.noStatisticsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.loadingPanel.SuspendLayout();
@@ -231,6 +231,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // assemblyPathTextBox
             // 
             this.assemblyPathTextBox.ButtonText = "...";
+            this.assemblyPathTextBox.Cue = null;
             this.assemblyPathTextBox.Enabled = false;
             this.assemblyPathTextBox.Location = new System.Drawing.Point(93, 492);
             this.assemblyPathTextBox.Name = "assemblyPathTextBox";
@@ -901,8 +902,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsTabPage.Controls.Add(this.chartPanel);
             this.statisticsTabPage.Controls.Add(this.gatheringStatisticsPictureBox);
             this.statisticsTabPage.Controls.Add(this.statisticsStatusLabel);
-            this.statisticsTabPage.Controls.Add(this.statisticsDataGridView);
             this.statisticsTabPage.Controls.Add(this.noStatisticsPanel);
+            this.statisticsTabPage.Controls.Add(this.statisticsDataGridView);
             this.statisticsTabPage.ImageIndex = 3;
             this.statisticsTabPage.Location = new System.Drawing.Point(4, 23);
             this.statisticsTabPage.Name = "statisticsTabPage";
@@ -911,6 +912,24 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsTabPage.TabIndex = 2;
             this.statisticsTabPage.Text = "Statistics";
             this.statisticsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // statisticsDataGridView
+            // 
+            this.statisticsDataGridView.AllowUserToAddRows = false;
+            this.statisticsDataGridView.AllowUserToDeleteRows = false;
+            this.statisticsDataGridView.AllowUserToOrderColumns = true;
+            this.statisticsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.statisticsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.statisticsDataGridView.Location = new System.Drawing.Point(2, 6);
+            this.statisticsDataGridView.Name = "statisticsDataGridView";
+            this.statisticsDataGridView.ReadOnly = true;
+            this.statisticsDataGridView.RowHeadersWidth = 100;
+            this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.statisticsDataGridView.ShowEditingIcon = false;
+            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 348);
+            this.statisticsDataGridView.TabIndex = 88;
+            this.statisticsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.statisticsDataGridView_CellDoubleClick);
             // 
             // updateStatisticsButton
             // 
@@ -967,24 +986,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsStatusLabel.Size = new System.Drawing.Size(86, 13);
             this.statisticsStatusLabel.TabIndex = 93;
             this.statisticsStatusLabel.Text = "No downloads.";
-            // 
-            // statisticsDataGridView
-            // 
-            this.statisticsDataGridView.AllowUserToAddRows = false;
-            this.statisticsDataGridView.AllowUserToDeleteRows = false;
-            this.statisticsDataGridView.AllowUserToOrderColumns = true;
-            this.statisticsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.statisticsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.statisticsDataGridView.Location = new System.Drawing.Point(2, 6);
-            this.statisticsDataGridView.Name = "statisticsDataGridView";
-            this.statisticsDataGridView.ReadOnly = true;
-            this.statisticsDataGridView.RowHeadersWidth = 100;
-            this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.statisticsDataGridView.ShowEditingIcon = false;
-            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 348);
-            this.statisticsDataGridView.TabIndex = 88;
-            this.statisticsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.statisticsDataGridView_CellDoubleClick);
             // 
             // noStatisticsPanel
             // 
@@ -1102,10 +1103,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStrip1.PerformLayout();
             this.statisticsTabPage.ResumeLayout(false);
             this.statisticsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.controlPanel1.ResumeLayout(false);
             this.controlPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.noStatisticsPanel.ResumeLayout(false);
             this.noStatisticsPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
