@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Security;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Ftp;
@@ -137,7 +137,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Protocol = (FtpSecurityProtocol) Protocol
             };
 
-            ThreadPool.QueueUserWorkItem(arg => LoadListAsync());
+            LoadListAsync();
         }
 
         private void DirectorySearchForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -177,46 +177,49 @@ namespace nUpdate.Administration.UI.Dialogs
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
-        private void LoadListAsync()
+        private async void LoadListAsync()
         {
-            SetUiState(false);
-            BeginInvoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text = "Loading server directories..."));
-
-            try
+            await Task.Factory.StartNew(() =>
             {
-                _listedFtpItems = _ftp.ListDirectoriesAndFiles("/", true).ToList();
-            }
-            catch (Exception ex)
-            {
+                SetUiState(false);
                 Invoke(
                     new Action(
                         () =>
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
-                                PopupButtons.Ok);
-                            SetUiState(true);
-                        }));
+                            loadingLabel.Text = "Loading server directories..."));
 
-                DialogResult = DialogResult.OK;
-            }
-
-            if (_listedFtpItems != null)
-            {
-                var root = ConvertToListingItem(_listedFtpItems, "/");
-                var rootNode = new TreeNode("Server", 0, 0);
-                BeginInvoke(new Action(() =>
+                try
                 {
-                    RecursiveAdd(root, rootNode);
-                    serverDataTreeView.Nodes.Add(rootNode);
-                    serverDataTreeView.Nodes[0].Expand();
-                    serverDataTreeView.SelectedNode = rootNode;
-                }));
-            }
+                    _listedFtpItems = _ftp.ListDirectoriesAndFiles("/", true).ToList();
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                            {
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
+                                    PopupButtons.Ok);
+                                SetUiState(true);
+                            }));
 
-            SetUiState(true);
+                    DialogResult = DialogResult.OK;
+                }
+
+                if (_listedFtpItems != null)
+                {
+                    var root = ConvertToListingItem(_listedFtpItems, "/");
+                    var rootNode = new TreeNode("Server", 0, 0);
+                    Invoke(new Action(() =>
+                    {
+                        RecursiveAdd(root, rootNode);
+                        serverDataTreeView.Nodes.Add(rootNode);
+                        serverDataTreeView.Nodes[0].Expand();
+                        serverDataTreeView.SelectedNode = rootNode;
+                    }));
+                }
+
+                SetUiState(true);
+            });
         }
 
         private void RecursiveAdd(ListingItem item, TreeNode target)

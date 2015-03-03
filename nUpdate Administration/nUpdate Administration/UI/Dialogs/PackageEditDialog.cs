@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
@@ -673,134 +673,138 @@ namespace nUpdate.Administration.UI.Dialogs
             loadingPanel.BringToFront();
 
             if (IsReleased)
-                ThreadPool.QueueUserWorkItem(arg => InitializePackage());
+                InitializePackage();
             else
                 DialogResult = DialogResult.OK;
         }
 
-        private void InitializePackage()
+        private async void InitializePackage()
         {
-            SetUiState(false);
-
-            if (Project.UseStatistics)
+            await Task.Factory.StartNew(() =>
             {
-                Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+                SetUiState(false);
 
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
+                if (Project.UseStatistics)
+                {
+                    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                var myConnection = new MySqlConnection(connectionString);
+                    var connectionString = String.Format("SERVER={0};" +
+                                                         "DATABASE={1};" +
+                                                         "UID={2};" +
+                                                         "PASSWORD={3};",
+                        Project.SqlWebUrl, Project.SqlDatabaseName,
+                        Project.SqlUsername,
+                        SqlPassword.ConvertToUnsecureString());
+
+                    var myConnection = new MySqlConnection(connectionString);
+                    try
+                    {
+                        myConnection.Open();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                        ex, PopupButtons.Ok)));
+                        myConnection.Close();
+                        Reset();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                        ex, PopupButtons.Ok)));
+                        myConnection.Close();
+                        Reset();
+                        return;
+                    }
+
+                    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
+                    var command = myConnection.CreateCommand();
+                    command.CommandText =
+                        String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
+                            _newVersion, _packageConfiguration.VersionId);
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        _commandsExecuted = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+                    finally
+                    {
+                        myConnection.Close();
+                        command.Dispose();
+                    }
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+
                 try
                 {
-                    myConnection.Open();
-                }
-                catch (MySqlException ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                    ex, PopupButtons.Ok)));
-                    myConnection.Close();
-                    Reset();
-                    return;
+                    _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
+                    if (_newVersion != new UpdateVersion(_existingVersionString))
+                        _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
+                    _configurationUploaded = true;
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
                     Reset();
                     return;
                 }
 
-                Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
-
-                var command = myConnection.CreateCommand();
-                command.CommandText =
-                    String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
-                        _newVersion, _packageConfiguration.VersionId);
-
                 try
                 {
-                    command.ExecuteNonQuery();
-                    _commandsExecuted = false;
+                    string description = null;
+                    Invoke(new Action(() => description = descriptionTextBox.Text));
+                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).
+                        Description = description;
+                    if (_newVersion != new UpdateVersion(_existingVersionString))
+                    {
+                        Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
+                            .LocalPackagePath
+                            = String.Format("{0}\\{1}.zip", _newPackageDirectory, Project.Guid);
+                        Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
+                            .Version =
+                            new UpdateVersion(_packageConfiguration.LiteralVersion);
+                    }
+
+                    UpdateProject.SaveProject(Project.Path, Project);
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project.",
                                     ex, PopupButtons.Ok)));
                     Reset();
                     return;
                 }
-                finally
-                {
-                    myConnection.Close();
-                    command.Dispose();
-                }
-            }
 
-            Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
-
-            try
-            {
-                _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
-                if (_newVersion != new UpdateVersion(_existingVersionString))
-                    _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
-                _configurationUploaded = true;
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration.",
-                                ex, PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-
-            try
-            {
-                string description = null;
-                Invoke(new Action(() => description = descriptionTextBox.Text));
-                Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).
-                    Description = description;
-                if (_newVersion != new UpdateVersion(_existingVersionString))
-                {
-                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
-                        .LocalPackagePath
-                        = String.Format("{0}\\{1}.zip", _newPackageDirectory, Project.Guid);
-                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).Version =
-                        new UpdateVersion(_packageConfiguration.LiteralVersion);
-                }
-
-                UpdateProject.SaveProject(Project.Path, Project);
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project.",
-                                ex, PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-
-            SetUiState(true);
-            DialogResult = DialogResult.OK;
+                SetUiState(true);
+                DialogResult = DialogResult.OK;
+            });
         }
 
         private void categoryTreeView_DragDrop(object sender, DragEventArgs e)

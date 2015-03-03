@@ -11,7 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
@@ -345,14 +344,9 @@ namespace nUpdate.Administration.UI.Dialogs
             loadingPanel.BringToFront();
             loadingPanel.Visible = true;
 
-            ThreadPool.QueueUserWorkItem(delegate { InitializePackage(); }, null);
+            InitializePackage();
         }
 
-        /// <summary>
-        ///     Initializes the contents for the archive.
-        /// </summary>
-        /// <param name="treeNode">The current node to use.</param>
-        /// <param name="currentDirectory">The current directory in the archive to paste the entries.</param>
         private void InitializeArchiveContents(TreeNode treeNode, string currentDirectory)
         {
             foreach (TreeNode node in treeNode.Nodes)
@@ -375,9 +369,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _zip.AddDirectoryByName(tmpDir);
-                        //var packageItem = new PackageItem(new byte[] { }, Path.GetFileName(node.Text), // Directories won't be checked, so we don't need to specify a hash
-                        //    true);
-                        //packageSubItem.Children.Add(packageItem);
                         InitializeArchiveContents(node, tmpDir);
                     }
                     catch (ArgumentException)
@@ -397,13 +388,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _zip.AddFile(node.Tag.ToString(), currentDirectory);
-                        //using (FileStream stream = File.OpenRead(node.Tag.ToString()))
-                        //{
-                        //    SHA256Managed sha = new SHA256Managed();
-                        //    byte[] hash = sha.ComputeHash(stream);
-                        //    packageSubItem.Children.Add(new PackageItem(hash, Path.GetFileName(node.Tag.ToString()),
-                        //        false));
-                        //}
                     }
                     catch (ArgumentException)
                     {
@@ -420,374 +404,383 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        /// <summary>
-        ///     Initializes the update package and uploads it, if set.
-        /// </summary>
-        private void InitializePackage()
+        private async void InitializePackage()
         {
-            if (!Project.UpdateUrl.EndsWith("/"))
-                Project.UpdateUrl += "/";
-
-            _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
-            _packageFolder = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString());
-            _updateConfigFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
-                "updates.json");
-            //_hashFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
-            //    "hashes.json");
-
-            Invoke(new Action(() => loadingLabel.Text = "Initializing archive..."));
-
-            try
+            await (Task.Factory.StartNew(() =>
             {
-                Directory.CreateDirectory(_packageFolder); // Create the content folder
-                using (File.Create(_updateConfigFile))
-                {
-                }
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating local package data.", ex,
-                                PopupButtons.Ok)));
-                Reset();
-                return;
-            }
+                if (!Project.UpdateUrl.EndsWith("/"))
+                    Project.UpdateUrl += "/";
 
-            _zip.AddDirectoryByName("Program");
-            _zip.AddDirectoryByName("AppData");
-            _zip.AddDirectoryByName("Temp");
-            _zip.AddDirectoryByName("Desktop");
+                _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
+                _packageFolder = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString());
+                _updateConfigFile = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
+                    "updates.json");
 
-            InitializeArchiveContents(filesDataTreeView.Nodes[0], "Program");
-            InitializeArchiveContents(filesDataTreeView.Nodes[1], "AppData");
-            InitializeArchiveContents(filesDataTreeView.Nodes[2], "Temp");
-            InitializeArchiveContents(filesDataTreeView.Nodes[3], "Desktop");
-
-            //Invoke(new Action(() => loadingLabel.Text = "Initializing hash file..."));
-
-            //try
-            //{
-            //    File.WriteAllText(_hashFile, Serializer.Serialize(_rootPackageItem));
-            //}
-            //catch (Exception ex)
-            //{
-            //    Invoke(
-            //        new Action(
-            //            () =>
-            //                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the file for the hashes.", ex,
-            //                    PopupButtons.Ok)));
-            //    Reset();
-            //    return;
-            //}
-
-            var packageFile = String.Format("{0}.zip", Project.Guid);
-            _zip.Save(Path.Combine(_packageFolder, packageFile));
-
-            _updateLog.Write(LogEntry.Create, _packageVersion.FullText);
-            Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
-
-            string[] unsupportedVersionLiterals = null;
-
-            if (unsupportedVersionsListBox.Items.Count == 0)
-                allVersionsRadioButton.Checked = true;
-            else if (unsupportedVersionsListBox.Items.Count > 0 && someVersionsRadioButton.Checked)
-            {
-                unsupportedVersionLiterals = _unsupportedVersionLiteralsBindingList.ToArray();
-            }
-
-            var changelog = new Dictionary<CultureInfo, string> {{new CultureInfo("en"), englishChangelogTextBox.Text}};
-            foreach (
-                var tabPage in
-                    changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
-            {
-                var panel = (ChangelogPanel) tabPage.Controls[0];
-                if (String.IsNullOrEmpty(panel.Changelog)) continue;
-                changelog.Add((CultureInfo) tabPage.Tag, panel.Changelog);
-            }
-
-            // Create a new package configuration
-            _configuration.Changelog = changelog;
-            _configuration.MustUpdate = _mustUpdate;
-            _configuration.Architecture = (Architecture) _architectureIndex;
-
-            _configuration.Operations = new List<Operation>();
-            Invoke(new Action(() =>
-            {
-                foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
-                    where node.Index != 0
-                    select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
-                {
-                    _configuration.Operations.Add(operationPanel.Operation);
-                }
-            }));
-
-            Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
-
-            try
-            {
-                byte[] data;
-                using (var reader =
-                    new BinaryReader(File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
-                        FileMode.Open)))
-                {
-                    data = reader.ReadBytes((int) reader.BaseStream.Length);
-                }
-                _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(data));
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while signing the package.", ex,
-                                PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-
-            _configuration.UnsupportedVersions = unsupportedVersionLiterals;
-            _configuration.UpdatePhpFileUri = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
-            _configuration.UpdatePackageUri = UriConnector.ConnectUri(Project.UpdateUrl,
-                String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
-            _configuration.LiteralVersion = _packageVersion.ToString();
-            _configuration.UseStatistics = _includeIntoStatistics;
-
-            if (Project.UseStatistics)
-            {
-                Settings.Default.VersionID += 1;
-                Settings.Default.Save();
-                Settings.Default.Reload();
-                _configuration.VersionId = Settings.Default.VersionID;
-            }
-                
-            Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
-
-            List<UpdateConfiguration> configurationList;
-
-            // Load the configuration
-            try
-            {
-                var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                configurationList = configurationEnumerable != null ? configurationEnumerable.ToList() : Enumerable.Empty<UpdateConfiguration>().ToList();
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the old configuration.", ex,
-                                PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-
-            configurationList.Add(_configuration);
-
-            try
-            {
-                File.WriteAllText(_updateConfigFile, Serializer.Serialize(configurationList));
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
-                                PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-
-            Invoke(
-                new Action(
-                    () => 
-                        _package.Description = descriptionTextBox.Text));
-
-            _package.IsReleased = _publishUpdate;
-            _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
-                String.Format("{0}.zip", Project.Guid));
-            _package.Version = _packageVersion;
-            _packageInitialized = true;
-
-            if (Project.Packages == null)
-                Project.Packages = new List<UpdatePackage>();
-            Project.Packages.Add(_package);
-
-            if (_publishUpdate)
-            {
-                if (Project.UseStatistics)
-                {
-                    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-                    try
-                    {
-                        var connectionString = String.Format("SERVER={0};" +
-                                                             "DATABASE={1};" +
-                                                             "UID={2};" +
-                                                             "PASSWORD={3};",
-                            Project.SqlWebUrl, Project.SqlDatabaseName,
-                            Project.SqlUsername,
-                            SqlPassword.ConvertToUnsecureString());
-
-                        _insertConnection = new MySqlConnection(connectionString);
-                        _insertConnection.Open();
-                    }
-                    catch (MySqlException ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        Reset();
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        Reset();
-                        return;
-                    }
-
-                    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
-
-                    var command = _insertConnection.CreateCommand();
-                    command.CommandText =
-                        String.Format("INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
-                            Settings.Default.VersionID, _packageVersion, Project.ApplicationId);
-                    // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
-
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                        ex, PopupButtons.Ok)));
-                        _insertConnection.Close();
-                        Reset();
-                        return;
-                    }
-                }
-
-                /* -------------- Package upload -----------------*/
-                Invoke(new Action(() =>
-                {
-                    loadingLabel.Text = String.Format("Uploading package... {0}", "0%");
-                    cancelLabel.Visible = true;
-                }));
+                Invoke(new Action(() => loadingLabel.Text = "Initializing archive..."));
 
                 try
                 {
-                    _ftp.UploadPackage(
-                        Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
-                            String.Format("{0}.zip", Project.Guid)), _packageVersion.ToString());
+                    Directory.CreateDirectory(_packageFolder); // Create the content folder
+                    using (File.Create(_updateConfigFile))
+                    {
+                    }
                 }
-                catch (Exception ex) // Upload-method is async, it's true, but directory creation can fail.
+                catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the package directory.",
-                                    ex, PopupButtons.Ok)));
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating local package data.", ex,
+                                    PopupButtons.Ok)));
                     Reset();
                     return;
                 }
 
-                if (_uploadCancelled)
-                    return;
+                _zip.AddDirectoryByName("Program");
+                _zip.AddDirectoryByName("AppData");
+                _zip.AddDirectoryByName("Temp");
+                _zip.AddDirectoryByName("Desktop");
 
-                _packageUploaded = true;
+                InitializeArchiveContents(filesDataTreeView.Nodes[0], "Program");
+                InitializeArchiveContents(filesDataTreeView.Nodes[1], "AppData");
+                InitializeArchiveContents(filesDataTreeView.Nodes[2], "Temp");
+                InitializeArchiveContents(filesDataTreeView.Nodes[3], "Desktop");
 
-                if (_ftp.PackageUploadException != null)
+                //Invoke(new Action(() => loadingLabel.Text = "Initializing hash file..."));
+
+                //try
+                //{
+                //    File.WriteAllText(_hashFile, Serializer.Serialize(_rootPackageItem));
+                //}
+                //catch (Exception ex)
+                //{
+                //    Invoke(
+                //        new Action(
+                //            () =>
+                //                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the file for the hashes.", ex,
+                //                    PopupButtons.Ok)));
+                //    Reset();
+                //    return;
+                //}
+
+                var packageFile = String.Format("{0}.zip", Project.Guid);
+                _zip.Save(Path.Combine(_packageFolder, packageFile));
+
+                _updateLog.Write(LogEntry.Create, _packageVersion.FullText);
+                Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
+
+                string[] unsupportedVersionLiterals = null;
+
+                if (unsupportedVersionsListBox.Items.Count == 0)
+                    allVersionsRadioButton.Checked = true;
+                else if (unsupportedVersionsListBox.Items.Count > 0 && someVersionsRadioButton.Checked)
                 {
-                    if (_ftp.PackageUploadException.InnerException != null)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
-                                        _ftp.PackageUploadException.InnerException, PopupButtons.Ok)));
-                    }
-                    else
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
-                                        _ftp.PackageUploadException, PopupButtons.Ok)));
-                    }
-
-                    Reset();
-                    return;
+                    unsupportedVersionLiterals = _unsupportedVersionLiteralsBindingList.ToArray();
                 }
 
+                var changelog = new Dictionary<CultureInfo, string>
+                {
+                    {new CultureInfo("en"), englishChangelogTextBox.Text}
+                };
+                foreach (
+                    var tabPage in
+                        changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
+                {
+                    var panel = (ChangelogPanel) tabPage.Controls[0];
+                    if (String.IsNullOrEmpty(panel.Changelog)) continue;
+                    changelog.Add((CultureInfo) tabPage.Tag, panel.Changelog);
+                }
+
+                // Create a new package configuration
+                _configuration.Changelog = changelog;
+                _configuration.MustUpdate = _mustUpdate;
+                _configuration.Architecture = (Architecture) _architectureIndex;
+
+                _configuration.Operations = new List<Operation>();
                 Invoke(new Action(() =>
                 {
-                    loadingLabel.Text = "Uploading configuration...";
-                    cancelLabel.Visible = false;
+                    foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
+                        where node.Index != 0
+                        select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
+                    {
+                        _configuration.Operations.Add(operationPanel.Operation);
+                    }
                 }));
+
+                Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
 
                 try
                 {
-                    _ftp.UploadFile(_updateConfigFile);
-                    _updateLog.Write(LogEntry.Upload, _packageVersion.ToString());
+                    byte[] data;
+                    using (var reader =
+                        new BinaryReader(File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
+                            FileMode.Open)))
+                    {
+                        data = reader.ReadBytes((int) reader.BaseStream.Length);
+                    }
+                    _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(data));
                 }
                 catch (Exception ex)
                 {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while signing the package.", ex,
+                                    PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
+                _configuration.UnsupportedVersions = unsupportedVersionLiterals;
+                _configuration.UpdatePhpFileUri = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
+                _configuration.UpdatePackageUri = UriConnector.ConnectUri(Project.UpdateUrl,
+                    String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
+                _configuration.LiteralVersion = _packageVersion.ToString();
+                _configuration.UseStatistics = _includeIntoStatistics;
+
+                if (Project.UseStatistics)
+                {
+                    Settings.Default.VersionID += 1;
+                    Settings.Default.Save();
+                    Settings.Default.Reload();
+                    _configuration.VersionId = Settings.Default.VersionID;
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
+
+                List<UpdateConfiguration> configurationList;
+
+                // Load the configuration
+                try
+                {
+                    var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                    configurationList = configurationEnumerable != null
+                        ? configurationEnumerable.ToList()
+                        : Enumerable.Empty<UpdateConfiguration>().ToList();
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the old configuration.",
+                                    ex,
+                                    PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
+                configurationList.Add(_configuration);
+
+                try
+                {
+                    File.WriteAllText(_updateConfigFile, Serializer.Serialize(configurationList));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
+                                    PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
+                Invoke(
+                    new Action(
+                        () =>
+                            _package.Description = descriptionTextBox.Text));
+
+                _package.IsReleased = _publishUpdate;
+                _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name,
+                    _packageVersion.ToString(),
+                    String.Format("{0}.zip", Project.Guid));
+                _package.Version = _packageVersion;
+                _packageInitialized = true;
+
+                if (Project.Packages == null)
+                    Project.Packages = new List<UpdatePackage>();
+                Project.Packages.Add(_package);
+
+                if (_publishUpdate)
+                {
+                    if (Project.UseStatistics)
+                    {
+                        Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+                        try
+                        {
+                            var connectionString = String.Format("SERVER={0};" +
+                                                                 "DATABASE={1};" +
+                                                                 "UID={2};" +
+                                                                 "PASSWORD={3};",
+                                Project.SqlWebUrl, Project.SqlDatabaseName,
+                                Project.SqlUsername,
+                                SqlPassword.ConvertToUnsecureString());
+
+                            _insertConnection = new MySqlConnection(connectionString);
+                            _insertConnection.Open();
+                        }
+                        catch (MySqlException ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            Reset();
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error,
+                                            "Error while connecting to the database.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            Reset();
+                            return;
+                        }
+
+                        Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
+                        var command = _insertConnection.CreateCommand();
+                        command.CommandText =
+                            String.Format(
+                                "INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
+                                Settings.Default.VersionID, _packageVersion, Project.ApplicationId);
+                        // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
+
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                            ex, PopupButtons.Ok)));
+                            _insertConnection.Close();
+                            Reset();
+                            return;
+                        }
+                    }
+
+                    /* -------------- Package upload -----------------*/
                     Invoke(new Action(() =>
                     {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.", ex,
-                            PopupButtons.Ok);
-                        loadingLabel.Text = "Undoing changes...";
+                        loadingLabel.Text = String.Format("Uploading package... {0}", "0%");
+                        cancelLabel.Visible = true;
                     }));
 
                     try
                     {
-                        _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, _packageVersion));
-                        _updateLog.Write(LogEntry.Delete, _packageVersion.ToString());
+                        _ftp.UploadPackage(
+                            Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
+                                String.Format("{0}.zip", Project.Guid)), _packageVersion.ToString());
                     }
-                    catch (Exception deletingEx)
+                    catch (Exception ex) // Upload-method is async, it's true, but directory creation can fail.
                     {
                         Invoke(
                             new Action(
                                 () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while undoing the package upload.",
-                                        deletingEx, PopupButtons.Ok)));
+                                    Popup.ShowPopup(this, SystemIcons.Error,
+                                        "Error while creating the package directory.",
+                                        ex, PopupButtons.Ok)));
                         Reset();
                         return;
                     }
+
+                    if (_uploadCancelled)
+                        return;
+
+                    _packageUploaded = true;
+
+                    if (_ftp.PackageUploadException != null)
+                    {
+                        if (_ftp.PackageUploadException.InnerException != null)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
+                                            _ftp.PackageUploadException.InnerException, PopupButtons.Ok)));
+                        }
+                        else
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the package.",
+                                            _ftp.PackageUploadException, PopupButtons.Ok)));
+                        }
+
+                        Reset();
+                        return;
+                    }
+
+                    Invoke(new Action(() =>
+                    {
+                        loadingLabel.Text = "Uploading configuration...";
+                        cancelLabel.Visible = false;
+                    }));
+
+                    try
+                    {
+                        _ftp.UploadFile(_updateConfigFile);
+                        _updateLog.Write(LogEntry.Upload, _packageVersion.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.", ex,
+                                PopupButtons.Ok);
+                            loadingLabel.Text = "Undoing changes...";
+                        }));
+
+                        try
+                        {
+                            _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, _packageVersion));
+                            _updateLog.Write(LogEntry.Delete, _packageVersion.ToString());
+                        }
+                        catch (Exception deletingEx)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error,
+                                            "Error while undoing the package upload.",
+                                            deletingEx, PopupButtons.Ok)));
+                            Reset();
+                            return;
+                        }
+                    }
+
+                    Project.NewestPackage = _packageVersion.FullText;
+                    Project.ReleasedPackages += 1;
                 }
 
-                Project.NewestPackage = _packageVersion.FullText;
-                Project.ReleasedPackages += 1;
-            }
+                SetUiState(true);
 
-            SetUiState(true);
+                try
+                {
+                    UpdateProject.SaveProject(Project.Path, Project);
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex, PopupButtons.Ok);
+                    Reset();
+                    return;
+                }
 
-            try
-            {
-                UpdateProject.SaveProject(Project.Path, Project);
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving project data.", ex, PopupButtons.Ok);
-                Reset();
-                return;
-            }
-
-            DialogResult = DialogResult.OK;
+                DialogResult = DialogResult.OK;
+            }));
         }
 
         /// <summary>
