@@ -35,7 +35,7 @@
             this.ftpPasswordLabel = new System.Windows.Forms.Label();
             this.proxyPasswordLabel = new System.Windows.Forms.Label();
             this.continueButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -148,7 +148,7 @@
 
         #endregion
 
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.TextBox usernameTextBox;

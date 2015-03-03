@@ -52,7 +52,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.line5 = new nUpdate.Administration.UI.Controls.Line();
+            this.line5 = new nUpdate.UI.Controls.Line();
             this.label3 = new System.Windows.Forms.Label();
             this.stepTwoLabel = new System.Windows.Forms.Label();
             this.programmingLanguageComboBox = new System.Windows.Forms.ComboBox();
@@ -62,7 +62,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.assumeHeader = new System.Windows.Forms.Label();
             this.checkingUrlPictureBox = new System.Windows.Forms.PictureBox();
             this.tickPictureBox = new System.Windows.Forms.PictureBox();
-            this.line3 = new nUpdate.Administration.UI.Controls.Line();
+            this.line3 = new nUpdate.UI.Controls.Line();
             this.newestPackageLabel = new System.Windows.Forms.Label();
             this.amountLabel = new System.Windows.Forms.Label();
             this.checkUpdateConfigurationLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -77,15 +77,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.projectIdLabel = new System.Windows.Forms.Label();
             this.publicKeyTextBox = new System.Windows.Forms.TextBox();
             this.publicKeyLabel = new System.Windows.Forms.Label();
-            this.line2 = new nUpdate.Administration.UI.Controls.Line();
+            this.line2 = new nUpdate.UI.Controls.Line();
             this.projectDataHeader = new System.Windows.Forms.Label();
-            this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.line1 = new nUpdate.UI.Controls.Line();
             this.ftpDirectoryLabel = new System.Windows.Forms.Label();
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.overviewHeader = new System.Windows.Forms.Label();
             this.newestPackageReleasedLabel = new System.Windows.Forms.Label();
             this.releasedPackagesAmountLabel = new System.Windows.Forms.Label();
-            this.line4 = new nUpdate.Administration.UI.Controls.Line();
+            this.line4 = new nUpdate.UI.Controls.Line();
             this.panel2 = new System.Windows.Forms.Panel();
             this.loadFromAssemblyRadioButton = new System.Windows.Forms.RadioButton();
             this.enterVersionManuallyRadioButton = new System.Windows.Forms.RadioButton();
@@ -108,9 +108,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
-            this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.updateStatisticsButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.lastUpdatedLabel = new System.Windows.Forms.Label();
             this.chartPanel = new System.Windows.Forms.Panel();
             this.gatheringStatisticsPictureBox = new System.Windows.Forms.PictureBox();
@@ -118,6 +117,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.noStatisticsPanel = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.noStatisticsLabel = new System.Windows.Forms.Label();
+            this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -137,11 +137,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.packagesTabPage.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statisticsTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.controlPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).BeginInit();
             this.noStatisticsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -350,7 +350,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line5
             // 
             this.line5.BackColor = System.Drawing.Color.White;
-            this.line5.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line5.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line5.Location = new System.Drawing.Point(132, 364);
             this.line5.Name = "line5";
             this.line5.Size = new System.Drawing.Size(398, 13);
@@ -453,7 +453,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.Color.White;
-            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(25, 167);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(505, 10);
@@ -599,7 +599,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.Color.White;
-            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(110, 270);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(420, 13);
@@ -621,7 +621,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.Color.White;
-            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(144, 24);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(386, 13);
@@ -679,7 +679,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line4
             // 
             this.line4.BackColor = System.Drawing.Color.White;
-            this.line4.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line4.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line4.Location = new System.Drawing.Point(101, 528);
             this.line4.Name = "line4";
             this.line4.Size = new System.Drawing.Size(432, 10);
@@ -913,24 +913,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.statisticsTabPage.Text = "Statistics";
             this.statisticsTabPage.UseVisualStyleBackColor = true;
             // 
-            // statisticsDataGridView
-            // 
-            this.statisticsDataGridView.AllowUserToAddRows = false;
-            this.statisticsDataGridView.AllowUserToDeleteRows = false;
-            this.statisticsDataGridView.AllowUserToOrderColumns = true;
-            this.statisticsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.statisticsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.statisticsDataGridView.Location = new System.Drawing.Point(2, 6);
-            this.statisticsDataGridView.Name = "statisticsDataGridView";
-            this.statisticsDataGridView.ReadOnly = true;
-            this.statisticsDataGridView.RowHeadersWidth = 100;
-            this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.statisticsDataGridView.ShowEditingIcon = false;
-            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 348);
-            this.statisticsDataGridView.TabIndex = 88;
-            this.statisticsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.statisticsDataGridView_CellDoubleClick);
-            // 
             // updateStatisticsButton
             // 
             this.updateStatisticsButton.Image = ((System.Drawing.Image)(resources.GetObject("updateStatisticsButton.Image")));
@@ -1015,6 +997,25 @@ namespace nUpdate.Administration.UI.Dialogs
             this.noStatisticsLabel.Size = new System.Drawing.Size(148, 26);
             this.noStatisticsLabel.TabIndex = 0;
             this.noStatisticsLabel.Text = "This project was not linked \r\nwith a statistics server.";
+            this.noStatisticsLabel.Visible = false;
+            // 
+            // statisticsDataGridView
+            // 
+            this.statisticsDataGridView.AllowUserToAddRows = false;
+            this.statisticsDataGridView.AllowUserToDeleteRows = false;
+            this.statisticsDataGridView.AllowUserToOrderColumns = true;
+            this.statisticsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.statisticsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.statisticsDataGridView.Location = new System.Drawing.Point(2, 6);
+            this.statisticsDataGridView.Name = "statisticsDataGridView";
+            this.statisticsDataGridView.ReadOnly = true;
+            this.statisticsDataGridView.RowHeadersWidth = 100;
+            this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.statisticsDataGridView.ShowEditingIcon = false;
+            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 348);
+            this.statisticsDataGridView.TabIndex = 88;
+            this.statisticsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.statisticsDataGridView_CellDoubleClick);
             // 
             // loadingPanel
             // 
@@ -1103,13 +1104,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStrip1.PerformLayout();
             this.statisticsTabPage.ResumeLayout(false);
             this.statisticsTabPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.controlPanel1.ResumeLayout(false);
             this.controlPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).EndInit();
             this.noStatisticsPanel.ResumeLayout(false);
             this.noStatisticsPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -1143,9 +1144,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label projectIdLabel;
         private System.Windows.Forms.TextBox publicKeyTextBox;
         private System.Windows.Forms.Label publicKeyLabel;
-        private Controls.Line line2;
+        private nUpdate.UI.Controls.Line line2;
         private System.Windows.Forms.Label projectDataHeader;
-        private Controls.Line line1;
+        private nUpdate.UI.Controls.Line line1;
         private System.Windows.Forms.Label ftpDirectoryLabel;
         private System.Windows.Forms.Label ftpHostLabel;
         private System.Windows.Forms.Label overviewHeader;
@@ -1157,11 +1158,11 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label newestPackageLabel;
         private System.Windows.Forms.Label amountLabel;
         private System.Windows.Forms.LinkLabel checkUpdateConfigurationLinkLabel;
-        private Controls.Line line3;
+        private nUpdate.UI.Controls.Line line3;
         private System.Windows.Forms.PictureBox tickPictureBox;
         private System.Windows.Forms.PictureBox checkingUrlPictureBox;
         private System.Windows.Forms.Label assumeHeader;
-        private Controls.Line line4;
+        private nUpdate.UI.Controls.Line line4;
         private System.Windows.Forms.Button copySourceButton;
         private System.Windows.Forms.Label stepTwoLabel;
         private System.Windows.Forms.ComboBox programmingLanguageComboBox;
@@ -1173,7 +1174,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Label label2;
-        private Controls.Line line5;
+        private nUpdate.UI.Controls.Line line5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TabPage statisticsTabPage;
         private System.Windows.Forms.PictureBox pictureBox2;
@@ -1201,7 +1202,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolTip updateStatisticsButtonToolTip;
         private System.Windows.Forms.PictureBox gatheringStatisticsPictureBox;
         private System.Windows.Forms.Panel chartPanel;
-        private ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Label lastUpdatedLabel;
         private ButtonTextBox assemblyPathTextBox;
     }

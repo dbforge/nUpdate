@@ -38,7 +38,7 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.backButton = new System.Windows.Forms.Button();
             this.tablessTabControl1 = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
@@ -56,7 +56,7 @@
             this.ftpImportButton = new System.Windows.Forms.Button();
             this.securityInfoButton = new System.Windows.Forms.Button();
             this.searchOnServerButton = new System.Windows.Forms.Button();
-            this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.line1 = new nUpdate.UI.Controls.Line();
             this.ftpProtocolComboBox = new System.Windows.Forms.ComboBox();
             this.ftpProtocolLabel = new System.Windows.Forms.Label();
             this.ftpModeComboBox = new System.Windows.Forms.ComboBox();
@@ -73,7 +73,7 @@
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.ftpHeaderLabel = new System.Windows.Forms.Label();
             this.statisticsServerTabPage = new System.Windows.Forms.TabPage();
-            this.line2 = new nUpdate.Administration.UI.Controls.Line();
+            this.line2 = new nUpdate.UI.Controls.Line();
             this.selectServerButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.doNotUseStatisticsServerButton = new System.Windows.Forms.RadioButton();
@@ -381,7 +381,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(14, 136);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(419, 10);
@@ -563,7 +563,7 @@
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(5, 117);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(481, 10);
@@ -862,7 +862,7 @@
 
         #endregion
 
-        private Controls.Line line2;
+        private nUpdate.UI.Controls.Line line2;
         private System.Windows.Forms.Button selectServerButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RadioButton doNotUseStatisticsServerButton;
@@ -876,7 +876,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button securityInfoButton;
         private System.Windows.Forms.Button searchOnServerButton;
-        private Controls.Line line1;
+        private nUpdate.UI.Controls.Line line1;
         private System.Windows.Forms.ComboBox ftpProtocolComboBox;
         private System.Windows.Forms.Label ftpProtocolLabel;
         private System.Windows.Forms.ComboBox ftpModeComboBox;
@@ -902,7 +902,7 @@
         private Controls.CueTextBox ftpPortTextBox;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button backButton;
         private Controls.TablessTabControl tablessTabControl1;
         private System.Windows.Forms.TabPage generalTabPage;

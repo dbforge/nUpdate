@@ -34,7 +34,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JsonEditorDialog));
             this.codeTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.saveLanguageButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.codeTextBox)).BeginInit();
@@ -138,7 +138,7 @@
         #endregion
 
         private FastColoredTextBoxNS.FastColoredTextBox codeTextBox;
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button saveLanguageButton;
         private System.Windows.Forms.Button cancelButton;
 

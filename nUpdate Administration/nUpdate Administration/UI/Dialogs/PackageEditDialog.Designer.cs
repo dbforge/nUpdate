@@ -81,18 +81,18 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new nUpdate.Administration.UI.Controls.Line();
+            this.line2 = new nUpdate.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.mustBeInstalledInfoLabel = new System.Windows.Forms.Label();
             this.mustUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new nUpdate.Administration.UI.Controls.Line();
-            this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.line3 = new nUpdate.UI.Controls.Line();
+            this.line1 = new nUpdate.UI.Controls.Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -397,7 +397,7 @@
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 262);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -446,7 +446,7 @@
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 170);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -456,7 +456,7 @@
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 92);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -1128,13 +1128,13 @@
         private Controls.ExplorerTreeView categoryTreeView;
         private System.Windows.Forms.Label includeIntoStatisticsInfoLabel;
         private System.Windows.Forms.CheckBox includeIntoStatisticsCheckBox;
-        private Controls.Line line2;
+        private nUpdate.UI.Controls.Line line2;
         private System.Windows.Forms.Panel generalPanel;
         private System.Windows.Forms.NumericUpDown developmentBuildNumericUpDown;
         private System.Windows.Forms.Label mustBeInstalledInfoLabel;
         private System.Windows.Forms.CheckBox mustUpdateCheckBox;
-        private Controls.Line line3;
-        private Controls.Line line1;
+        private nUpdate.UI.Controls.Line line3;
+        private nUpdate.UI.Controls.Line line1;
         private System.Windows.Forms.Label architectureInfoLabel;
         private System.Windows.Forms.NumericUpDown buildNumericUpDown;
         private System.Windows.Forms.Label descriptionLabel;
@@ -1148,7 +1148,7 @@
         private System.Windows.Forms.Label devStageLabel;
         private System.Windows.Forms.NumericUpDown minorNumericUpDown;
         private System.Windows.Forms.TabPage generalTabPage;
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button cancelButton;
         private Controls.TablessTabControl categoryTabControl;
