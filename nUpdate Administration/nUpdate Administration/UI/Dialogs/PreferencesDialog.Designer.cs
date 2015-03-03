@@ -39,7 +39,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.languagesComboBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -179,7 +179,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button searchUpdatesButton;
-        private nUpdate.Administration.UI.Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox includeBetaCheckBox;

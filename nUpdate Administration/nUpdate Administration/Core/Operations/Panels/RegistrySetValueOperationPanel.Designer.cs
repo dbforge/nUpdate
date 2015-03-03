@@ -48,7 +48,7 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label4 = new System.Windows.Forms.Label();
             this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.line1 = new nUpdate.Administration.UI.Controls.Line();
+            this.line1 = new nUpdate.UI.Controls.Line();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -224,7 +224,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(2, 41);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(455, 13);
@@ -285,6 +285,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.Label label4;
         private UI.Controls.CueTextBox nameTextBox;
-        private UI.Controls.Line line1;
+        private nUpdate.UI.Controls.Line line1;
     }
 }
