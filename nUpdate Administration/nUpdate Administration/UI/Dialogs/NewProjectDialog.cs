@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
@@ -253,7 +253,7 @@ namespace nUpdate.Administration.UI.Dialogs
             localPathTextBox.ButtonClicked += BrowsePathButtonClick;
             localPathTextBox.Initialize();
             controlPanel1.Visible = false;
-            ThreadPool.QueueUserWorkItem(arg => GenerateKeyPair());
+            GenerateKeyPair();
         }
 
         private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -262,23 +262,23 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Cancel = true;
         }
 
-        /// <summary>
-        ///     Provides a new thread that generates a new RSA-key pair.
-        /// </summary>
-        private void GenerateKeyPair()
+        private async void GenerateKeyPair()
         {
-            var rsa = new RsaManager();
-            PrivateKey = rsa.PrivateKey;
-            PublicKey = rsa.PublicKey;
-
-            Invoke(new Action(() =>
+            await Task.Factory.StartNew(() =>
             {
-                controlPanel1.Visible = true;
-                informationCategoriesTabControl.SelectedTab = generalTabPage;
-                _sender = generalTabPage;
-            }));
+                var rsa = new RsaManager();
+                PrivateKey = rsa.PrivateKey;
+                PublicKey = rsa.PublicKey;
 
-            _allowCancel = true;
+                Invoke(new Action(() =>
+                {
+                    controlPanel1.Visible = true;
+                    informationCategoriesTabControl.SelectedTab = generalTabPage;
+                    _sender = generalTabPage;
+                }));
+
+                _allowCancel = true;
+            });
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -542,7 +542,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 _generalTabPassed = true;
-                ThreadPool.QueueUserWorkItem(arg => InitializeProject());
+                InitializeProject();
             }
         }
 
@@ -550,83 +550,85 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     Provides a new thread that sets up the project data.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
-        private void InitializeProject()
+        private async void InitializeProject()
         {
-            SetUiState(false);
-            Invoke(
-                new Action(
-                    () =>
-                        loadingLabel.Text = "Testing connection to the FTP-server..."));
-
-            try
+            await Task.Factory.StartNew(() =>
             {
-                _ftp.TestConnection();
-            }
-            catch (FtpAuthenticationException ex)
-            {
+                SetUiState(false);
                 Invoke(
                     new Action(
                         () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
-                                ex.InnerException ?? ex, PopupButtons.Ok)));
-                Reset();
-                return;
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
-                                ex.InnerException ?? ex, PopupButtons.Ok)));
-                Reset();
-                return;
-            }
+                            loadingLabel.Text = "Testing connection to the FTP-server..."));
 
-            /*
-             *  Setup the "statistics.php" if necessary.
-             */
-
-            var useStatistics = false;
-            Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
-
-            string name = null;
-            if (useStatistics)
-            {
                 try
+                {
+                    _ftp.TestConnection();
+                }
+                catch (FtpAuthenticationException ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                name = nameTextBox.Text));
-
-                    var phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
-                    _ftp.UploadFile(phpFilePath);
-                    _phpFileUploaded = true;
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
+                                    ex.InnerException ?? ex, PopupButtons.Ok)));
+                    Reset();
+                    return;
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
-                                    ex, PopupButtons.Ok)));
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
+                                    ex.InnerException ?? ex, PopupButtons.Ok)));
                     Reset();
                     return;
                 }
 
                 /*
+             *  Setup the "statistics.php" if necessary.
+             */
+
+                var useStatistics = false;
+                Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
+
+                string name = null;
+                if (useStatistics)
+                {
+                    try
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    name = nameTextBox.Text));
+
+                        var phpFilePath = Path.Combine(Program.Path, "Projects", name, "statistics.php");
+                        _ftp.UploadFile(phpFilePath);
+                        _phpFileUploaded = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the PHP-file.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+
+                    /*
              *  Setup the SQL-server and database.
              */
 
-                Invoke(
-                    new Action(
-                        () =>
-                            name = nameTextBox.Text));
+                    Invoke(
+                        new Action(
+                            () =>
+                                name = nameTextBox.Text));
 
-                #region "Setup-String"
+                    #region "Setup-String"
 
-                var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
+                    var setupString = @"CREATE DATABASE IF NOT EXISTS _DBNAME;
 USE _DBNAME;
 
 CREATE TABLE IF NOT EXISTS `_DBNAME`.`Application` (
@@ -664,82 +666,83 @@ ENGINE = InnoDB;
 
 INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
-                #endregion
+                    #endregion
 
-                setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
-                setupString = setupString.Replace("_APPNAME", name);
-                setupString = setupString.Replace("_APPID",
-                    Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
+                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                    setupString = setupString.Replace("_APPNAME", name);
+                    setupString = setupString.Replace("_APPID",
+                        Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
 
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Connecting to SQL-server..."));
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text = "Connecting to SQL-server..."));
 
-                MySqlConnection myConnection;
-                try
-                {
-                    string myConnectionString = null;
-                    Invoke(new Action(() =>
+                    MySqlConnection myConnection;
+                    try
                     {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
-                    }));
+                        string myConnectionString = null;
+                        Invoke(new Action(() =>
+                        {
+                            myConnectionString = String.Format("SERVER={0};" +
+                                                               "DATABASE={1};" +
+                                                               "UID={2};" +
+                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
+                                SqlUsername, sqlPasswordTextBox.Text);
+                        }));
 
-                    myConnection = new MySqlConnection(myConnectionString);
-                    myConnection.Open();
-                }
-                catch (MySqlException ex)
-                {
+                        myConnection = new MySqlConnection(myConnectionString);
+                        myConnection.Open();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    return;
+                                loadingLabel.Text = "Executing setup commands..."));
+
+                    var command = myConnection.CreateCommand();
+                    command.CommandText = setupString;
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
                 }
 
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Executing setup commands..."));
-
-                var command = myConnection.CreateCommand();
-                command.CommandText = setupString;
-
-                try
-                {
-                    command.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    return;
-                }
-            }
-
-            SetUiState(true);
-            Invoke(new Action(
-                Close));
+                SetUiState(true);
+                Invoke(new Action(
+                    Close));
+            });
         }
 
         private void backButton_Click(object sender, EventArgs e)
