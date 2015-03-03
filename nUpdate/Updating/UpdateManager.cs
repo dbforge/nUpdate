@@ -534,7 +534,7 @@ namespace nUpdate.Updating
             //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
 
             if (Directory.Exists(unpackerDirectory))
-                Directory.Delete(unpackerDirectory);
+                Directory.Delete(unpackerDirectory, true);
             Directory.CreateDirectory(unpackerDirectory);
 
             if (!File.Exists(unpackerZipPath))
