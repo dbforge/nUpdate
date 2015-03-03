@@ -259,9 +259,6 @@
     <Compile Include="UI\Controls\CommandLink.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ControlPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\Controls\ExplorerNavigationButton\AeroTemplate.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -283,9 +280,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\ExplorerListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\ServerList.cs">

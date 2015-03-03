@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackagesToAffectDialog));
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.continueButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -132,7 +132,7 @@
         #endregion
 
         private System.Windows.Forms.CheckedListBox checkedListBox1;
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label4;

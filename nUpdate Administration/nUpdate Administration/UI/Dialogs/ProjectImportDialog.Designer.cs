@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectImportDialog));
-            this.controlPanel1 = new nUpdate.Administration.UI.Controls.ControlPanel();
+            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.backButton = new System.Windows.Forms.Button();
             this.continueButton = new System.Windows.Forms.Button();
             this.headerLabel = new System.Windows.Forms.Label();
@@ -295,7 +295,7 @@
 
         #endregion
 
-        private Controls.ControlPanel controlPanel1;
+        private nUpdate.UI.Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button backButton;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.Label headerLabel;
