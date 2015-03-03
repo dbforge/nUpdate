@@ -65,9 +65,14 @@ namespace nUpdate.Updating
         public List<Operation> Operations { get; set; }
 
         /// <summary>
-        ///     Sets if this update must be installed.
+        ///     Gets or sets a value indicating whether the update package must be installed, or not.
         /// </summary>
         public bool MustUpdate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have a higher <see cref="UpdateVersion"/>.
+        /// </summary>
+        /// public bool NecessaryUpdate { get; set; }
 
         /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
