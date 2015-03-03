@@ -27,8 +27,8 @@ namespace nUpdate.UI.Controls
         /// </summary>
         public BottomPanel()
         {
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
-            this.UpdateStyles();
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+            UpdateStyles();
         }
 
         /// <summary>
@@ -39,11 +39,11 @@ namespace nUpdate.UI.Controls
         {
             if (Application.RenderWithVisualStyles && VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement("TaskDialog", 8, 0)))
             {
-                this.PaintWithVisualStyles(e.Graphics);
+                PaintWithVisualStyles(e.Graphics);
             }
             else
             {
-                this.PaintManually(e.Graphics);
+                PaintManually(e.Graphics);
             }
 
             base.OnPaint(e);
@@ -56,7 +56,7 @@ namespace nUpdate.UI.Controls
         protected virtual void PaintWithVisualStyles(Graphics g)
         {
             //Draw panel
-            new VisualStyleRenderer("TaskDialog", 8, 0).DrawBackground(g, this.DisplayRectangle);
+            new VisualStyleRenderer("TaskDialog", 8, 0).DrawBackground(g, DisplayRectangle);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace nUpdate.UI.Controls
         protected virtual void PaintManually(Graphics g)
         {
             g.Clear(SystemColors.Control);
-            g.DrawLine(SystemPens.ControlDark, new Point(0, 0), new Point(this.Width, 0));
+            g.DrawLine(SystemPens.ControlDark, new Point(0, 0), new Point(Width, 0));
         }
     }
 }
