@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace nUpdate.UI.Controls
 {
-    internal class Line : Control
+    public class Line : Control
     {
         public enum Alignment
         {
