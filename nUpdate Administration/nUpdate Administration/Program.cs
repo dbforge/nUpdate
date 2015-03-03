@@ -81,6 +81,6 @@ namespace nUpdate.Administration
         /// <summary>
         ///     The version string shown in all dialog titles.
         /// </summary>
-        public static string VersionString = "nUpdate Administration 0.1.0.0 Alpha 4";
+        public static string VersionString = "nUpdate Administration 0.1.0.0 Alpha 5";
     }
 }
