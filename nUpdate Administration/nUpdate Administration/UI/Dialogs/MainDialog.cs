@@ -94,7 +94,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             catch (UnauthorizedAccessException)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Missing rights.", "You don't own the rights to create the extension's registry entry.",
+                Popup.ShowPopup(this, SystemIcons.Warning, "Missing rights.", "The registry entry for the extension (.nupdproj) couldn't be created. Without that file extension nUpdate Administration won't work correctly. Please make sure to start the administration with admin privileges the first time.",
                     PopupButtons.Ok);
             }
 
