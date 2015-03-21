@@ -250,8 +250,17 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
             {
                 var projectAssembly = Assembly.LoadFile(Project.AssemblyVersionPath);
-                var info = FileVersionInfo.GetVersionInfo(projectAssembly.Location);
-                var assemblyVersion = new UpdateVersion(info.FileVersion);
+                string info;
+                var nUpateVersion = projectAssembly.GetCustomAttributes(false).OfType<nUpateVersion>().SingleOrDefault();
+                if (nUpateVersion != null)
+                {
+                    info = nUpateVersion.VersionString;
+                }
+                else
+                {
+                    info = FileVersionInfo.GetVersionInfo(projectAssembly.Location).FileVersion;
+                }
+                var assemblyVersion = new UpdateVersion(info);
 
                 majorNumericUpDown.Value = assemblyVersion.Major;
                 minorNumericUpDown.Value = assemblyVersion.Minor;
