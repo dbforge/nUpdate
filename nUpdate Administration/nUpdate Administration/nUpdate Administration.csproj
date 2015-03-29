@@ -1,0 +1,653 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{804F7359-BD07-4C8D-A126-A863CD27AA4D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>nUpdate.Administration</RootNamespace>
+    <AssemblyName>nUpdate Administration</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Trade-Updater-Logo-v3.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FastColoredTextBox">
+      <HintPath>..\..\packages\FCTB.2.16.1.1\lib\FastColoredTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\DotNetZip.1.9\lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\MySql.Data.6.9.5\lib\net40\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\AesManager.cs" />
+    <Compile Include="Core\Application\Extension\AssociationManager.cs" />
+    <Compile Include="Core\Application\Extension\FileAssociationInfo.cs" />
+    <Compile Include="Core\Application\Extension\ProgramAssociationInfo.cs" />
+    <Compile Include="Core\Application\Extension\ProgramIcon.cs" />
+    <Compile Include="Core\Application\Extension\ProgramVerb.cs" />
+    <Compile Include="Core\Application\Extension\RegistryException.cs" />
+    <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
+    <Compile Include="Core\Application\Extension\ShellNotification.cs" />
+    <Compile Include="Core\Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpRequestEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpResponseEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FtpTransferEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\FxpCopyAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetDirListAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetDirListDeepAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\GetFileAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\OpenAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\PutFileAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\PutFileUniqueAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\TransferCompleteEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\TransferProgressEventArgs.cs" />
+    <Compile Include="Core\Ftp\EventArgs\ValidateServerCertificateEventArgs.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpAsynchronousOperationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpAuthenticationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpCertificateValidationException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpCommandResponseTimeoutException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionBrokenException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionClosedException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpConnectionOpenException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataCompressionException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionTimeoutException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpDataTransferException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpFileIntegrityException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpLoginException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpProxyException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpResponseException.cs" />
+    <Compile Include="Core\Ftp\Exceptions\FtpSecureConnectionException.cs" />
+    <Compile Include="Core\Ftp\FtpBase.cs" />
+    <Compile Include="Core\Ftp\FtpClient.cs" />
+    <Compile Include="Core\Ftp\FtpGenericParser.cs" />
+    <Compile Include="Core\Ftp\FtpItem.cs" />
+    <Compile Include="Core\Ftp\FtpItemCollection.cs" />
+    <Compile Include="Core\Ftp\FtpRequest.cs" />
+    <Compile Include="Core\Ftp\FtpResponse.cs" />
+    <Compile Include="Core\Ftp\FtpResponseCollection.cs" />
+    <Compile Include="Core\Ftp\FtpResponseQueue.cs" />
+    <Compile Include="Core\Ftp\Hashing\Crc32.cs" />
+    <Compile Include="Core\Ftp\IFtpItemParser.cs" />
+    <Compile Include="Core\IAsyncSupportable.cs" />
+    <Compile Include="Core\IResettable.cs" />
+    <Compile Include="Core\ListingItem.cs" />
+    <Compile Include="Core\ProgrammingLanguage.cs" />
+    <Compile Include="Core\ProjectConfiguration.cs" />
+    <Compile Include="Core\Proxy\EventArgs\CreateConnectionAsyncCompletedEventArgs.cs" />
+    <Compile Include="Core\Proxy\Exceptions\ProxyException.cs" />
+    <Compile Include="Core\Proxy\HttpProxyClient.cs" />
+    <Compile Include="Core\Proxy\IProxyClient.cs" />
+    <Compile Include="Core\Proxy\ProxyClientFactory.cs" />
+    <Compile Include="Core\Proxy\Socks4aProxyClient.cs" />
+    <Compile Include="Core\Proxy\Socks4ProxyClient.cs" />
+    <Compile Include="Core\Proxy\Socks5ProxyClient.cs" />
+    <Compile Include="Core\Proxy\Utils.cs" />
+    <Compile Include="Core\StatisticsServer.cs" />
+    <Compile Include="Core\History\LogEntry.cs" />
+    <Compile Include="Core\Application\UpdatePackage.cs" />
+    <Compile Include="Core\Application\UpdateProject.cs" />
+    <Compile Include="Core\History\Log.cs" />
+    <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Core\JsonHelper.cs" />
+    <Compile Include="Core\Navigator.cs" />
+    <Compile Include="Core\FtpManager.cs" />
+    <Compile Include="Core\Localization\LocalizationProperties.cs" />
+    <Compile Include="Core\Operations\Panels\FileDeleteOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\FileDeleteOperationPanel.Designer.cs">
+      <DependentUpon>FileDeleteOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\FileRenameOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\FileRenameOperationPanel.Designer.cs">
+      <DependentUpon>FileRenameOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\IOperationPanel.cs" />
+    <Compile Include="Core\Operations\Panels\ProcessStartOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ProcessStartOperationPanel.Designer.cs">
+      <DependentUpon>ProcessStartOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ProcessStopOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ProcessStopOperationPanel.Designer.cs">
+      <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.Designer.cs">
+      <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySetValueOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\RegistrySetValueOperationPanel.Designer.cs">
+      <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ServiceStartOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ServiceStartOperationPanel.Designer.cs">
+      <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.Designer.cs">
+      <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\ValidationManager.cs" />
+    <Compile Include="Core\Win32\IconReader.cs" />
+    <Compile Include="Core\Win32\Margins.cs" />
+    <Compile Include="UI\Controls\ButtonTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerListViewGroup.cs" />
+    <Compile Include="Core\Win32\NativeMethods.cs" />
+    <Compile Include="Core\Win32\PaintStruct.cs" />
+    <Compile Include="UI\Controls\ExplorerTreeNode.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="UI\Controls\ActionList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ActionList.Designer.cs">
+      <DependentUpon>ActionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ChangelogPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ChangelogPanel.Designer.cs">
+      <DependentUpon>ChangelogPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\CommandLink.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerNavigationButton\AeroTemplate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerNavigationButton\ArrowDirection.cs" />
+    <Compile Include="UI\Controls\ExplorerNavigationButton\ButtonState.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerNavigationButton\ButtonTheme.cs" />
+    <Compile Include="UI\Controls\ExplorerNavigationButton\ExplorerNavigationButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerNavigationButton\MetroTemplate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerNavigationButton\Template.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ExplorerListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ServerList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ServerList.Designer.cs">
+      <DependentUpon>ServerList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\StatisticsChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\StatisticsChart.Designer.cs">
+      <DependentUpon>StatisticsChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TablessTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\BaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\CredentialsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\CredentialsDialog.Designer.cs">
+      <DependentUpon>CredentialsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\DirectorySearchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\DirectorySearchDialog.Designer.cs">
+      <DependentUpon>DirectorySearchDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\FeedbackDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\FeedbackDialog.Designer.cs">
+      <DependentUpon>FeedbackDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\HistoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\HistoryDialog.Designer.cs">
+      <DependentUpon>HistoryDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\JsonEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\JsonEditorDialog.Designer.cs">
+      <DependentUpon>JsonEditorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\MainDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\MainDialog.Designer.cs">
+      <DependentUpon>MainDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackagesToAffectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackagesToAffectDialog.Designer.cs">
+      <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\PreferencesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\PreferencesDialog.Designer.cs">
+      <DependentUpon>PreferencesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackageAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackageAddDialog.Designer.cs">
+      <DependentUpon>PackageAddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackageEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\PackageEditDialog.Designer.cs">
+      <DependentUpon>PackageEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectDialog.Designer.cs">
+      <DependentUpon>ProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Controls\CueTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\InfoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\InfoDialog.Designer.cs">
+      <DependentUpon>InfoDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\NewProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\NewProjectDialog.Designer.cs">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectEditDialog.Designer.cs">
+      <DependentUpon>ProjectEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectImportDialog.Designer.cs">
+      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectRemovalDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ProjectRemovalDialog.Designer.cs">
+      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerAddDialog.Designer.cs">
+      <DependentUpon>StatisticsServerAddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerDialog.Designer.cs">
+      <DependentUpon>StatisticsServerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\StatisticsServerEditDialog.Designer.cs">
+      <DependentUpon>StatisticsServerEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdatingInfoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdatingInfoDialog.Designer.cs">
+      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\Popup.cs" />
+    <Compile Include="UI\Popups\PopupButtons.cs" />
+    <Compile Include="UI\Popups\PopupDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\PopupDialog.Designer.cs">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Core\Operations\Panels\FileDeleteOperationPanel.resx">
+      <DependentUpon>FileDeleteOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\FileRenameOperationPanel.resx">
+      <DependentUpon>FileRenameOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\ProcessStartOperationPanel.resx">
+      <DependentUpon>ProcessStartOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\ProcessStopOperationPanel.resx">
+      <DependentUpon>ProcessStopOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySubKeyCreateOperationPanel.resx">
+      <DependentUpon>RegistrySubKeyCreateOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySubKeyDeleteOperationPanel.resx">
+      <DependentUpon>RegistrySubKeyDeleteOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\RegistryDeleteValueOperationPanel.resx">
+      <DependentUpon>RegistryDeleteValueOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\RegistrySetValueOperationPanel.resx">
+      <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\ServiceStartOperationPanel.resx">
+      <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\ServiceStopOperationPanel.resx">
+      <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\ChangelogPanel.resx">
+      <DependentUpon>ChangelogPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\StatisticsChart.resx">
+      <DependentUpon>StatisticsChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\BaseDialog.resx">
+      <DependentUpon>BaseDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\CredentialsDialog.resx">
+      <DependentUpon>CredentialsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\DirectorySearchDialog.resx">
+      <DependentUpon>DirectorySearchDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\FeedbackDialog.resx">
+      <DependentUpon>FeedbackDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\HistoryDialog.resx">
+      <DependentUpon>HistoryDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\JsonEditorDialog.resx">
+      <DependentUpon>JsonEditorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\MainDialog.resx">
+      <DependentUpon>MainDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\PackagesToAffectDialog.resx">
+      <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\PreferencesDialog.resx">
+      <DependentUpon>PreferencesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\PackageAddDialog.resx">
+      <DependentUpon>PackageAddDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\PackageEditDialog.resx">
+      <DependentUpon>PackageEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ProjectDialog.resx">
+      <DependentUpon>ProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI\Dialogs\InfoDialog.resx">
+      <DependentUpon>InfoDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\NewProjectDialog.resx">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ProjectEditDialog.resx">
+      <DependentUpon>ProjectEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ProjectImportDialog.resx">
+      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ProjectRemovalDialog.resx">
+      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\StatisticsServerAddDialog.resx">
+      <DependentUpon>StatisticsServerAddDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\StatisticsServerDialog.resx">
+      <DependentUpon>StatisticsServerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\StatisticsServerEditDialog.resx">
+      <DependentUpon>StatisticsServerEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdatingInfoDialog.resx">
+      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Accept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\en.json" />
+    <None Include="Resources\Error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\statistics.php" />
+    <None Include="Resources\table_key.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Expander.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\document--pencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\thumb-small-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sticky-notes-stack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow-switch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue-documents-stack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\server-property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application-import.png" />
+    <None Include="Resources\arrow-045.png" />
+    <None Include="Resources\new-text.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\box--arrow.png" />
+    <None Include="Resources\box--minus.png" />
+    <None Include="Resources\box--plus.png" />
+    <None Include="Resources\box--pencil.png" />
+    <None Include="Resources\brick_delete.png" />
+    <None Include="Resources\brick_edit.png" />
+    <None Include="Resources\brick_add.png" />
+    <None Include="Resources\folder--arrow.png" />
+    <None Include="Resources\folder--minus.png" />
+    <None Include="Resources\folder--pencil.png" />
+    <None Include="Resources\folder-rename.png" />
+    <None Include="Resources\Left_Disabled.png" />
+    <None Include="Resources\Left_Normal.png" />
+    <None Include="Resources\Right_Disabled.png" />
+    <None Include="Resources\Right_Normal.png" />
+    <None Include="Resources\question-frame.png" />
+    <Content Include="Trade-Updater-Logo-v3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\nUpdate\nUpdate.csproj">
+      <Project>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</Project>
+      <Name>nUpdate</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
