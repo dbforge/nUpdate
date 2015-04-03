@@ -3,7 +3,6 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
@@ -24,14 +23,54 @@ namespace nUpdate.UI.Dialogs
         }
 
         /// <summary>
-        ///     Sets the name of the _lpuage file in the resources to use, if no own file is used.
+        ///     Gets or sets the name of the language file in the resources to use, if no own file is used.
         /// </summary>
         public string LanguageName { get; set; }
 
         /// <summary>
-        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        ///     Gets or sets the path of the file which contains the specific language content a user added on its own.
         /// </summary>
         public string LanguageFilePath { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the packages amount.
+        /// </summary>
+        public int PackagesCount { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the progress percentage.
+        /// </summary>
+        public int ProgressPercentage
+        {
+            get { return downloadProgressBar.Value; }
+            set
+            {
+                try
+                {
+                    Invoke(new Action(() =>
+                    {
+                        downloadProgressBar.Value = value;
+                        infoLabel.Text = String.Format(
+                            _lp.UpdateDownloadDialogLoadingInfo, value);
+                    }));
+                }
+                catch (InvalidOperationException)
+                {
+                    // Prevent race conditions
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Occurs when the cancel button is clicked.
+        /// </summary>
+        public event EventHandler<EventArgs> CancelButtonClicked;
+
+        protected virtual void OnCancelButtonClicked()
+        {
+            if (CancelButtonClicked != null)
+                CancelButtonClicked(this, EventArgs.Empty);
+        }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
@@ -68,50 +107,34 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
-        public void ProgressChangedEventHandler(object sender, DownloadProgressChangedEventArgs e)
+        public void ShowModalDialog(object state)
         {
-            // Race condition, that's why there is a catch that suppresses the error.
-
-            try
-            {
-                Invoke(new Action(() =>
-                {
-                    downloadProgressBar.Value = e.ProgressPercentage;
-                    infoLabel.Text = String.Format(
-                        _lp.UpdateDownloadDialogLoadingInfo, e.ProgressPercentage);
-                }));
-            }
-            catch (InvalidOperationException)
-            {
-                // Suppress it
-            }
+            ShowDialog();
         }
 
-        public void DownloadFinishedEventHandler(object sender, EventArgs e)
+        public void CloseDialog(object state)
         {
-            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        public void DownloadFailedEventHandler(object sender, FailedEventArgs e)
+        public void Fail(Exception ex)
         {
-            var ex = e.Exception;
             Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
                 "Error while downloading the update package.",
-                ex, PopupButtons.Ok)));
-
-            DialogResult = DialogResult.Cancel;
+                ex.InnerException ?? ex, PopupButtons.Ok)));
         }
 
-        public void StatisticsEntryFailedEventHandler(object sender, FailedEventArgs e)
+        public void StatisticsEntryFail(Exception ex)
         {
             Invoke(new Action(() =>
                     Popup.ShowPopup(this, SystemIcons.Warning,
                         "Error while adding a new statistics entry.",
-                        e.Exception, PopupButtons.Ok)));
+                        ex, PopupButtons.Ok)));
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
+            OnCancelButtonClicked();
             DialogResult = DialogResult.Cancel;
         }
     }
