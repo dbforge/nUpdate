@@ -13,11 +13,12 @@ namespace nUpdate.Core.Localization
 
             UpdateSearchDialogHeader = "Searching for updates...";
 
-            NewUpdateDialogHeader = "New updates available.";
+            NewUpdateDialogMultipleUpdatesHeader = "{0} new updates available.";
+            NewUpdateDialogSingleUpdateHeader = "{0} new update available.";
             NewUpdateDialogInfoText = "New updates can be downloaded for {0}.";
-            NewUpdateDialogNewestVersionText = "Newest version: {0}";
+            NewUpdateDialogAvailableVersionsText = "Available versions: {0}";
             NewUpdateDialogCurrentVersionText = "Current version: {0}";
-            NewUpdateDialogSizeText = "Package size: {0}";
+            NewUpdateDialogSizeText = "Total package size: {0}";
             NewUpdateDialogChangelogText = "Changelog:";
             NewUpdateDialogAccessText = "Accesses:";
             NewUpdateDialogFilesAccessText = "File system";
@@ -63,7 +64,7 @@ namespace nUpdate.Core.Localization
                 "The package size couldn't be calculated because an unknown error appeared. Possibly the package file does not exist.";
             StatisticsScriptExceptionText =
                 "An error occured while trying to transfer data for the statistics. Please report this problem to the developer of the program in order to make him capable of fixing it. Response from the PHP-script: {0}";
-            PackageFileNotFoundExceptionText = "The update package to check could not be found.";
+            PackageFileNotFoundExceptionText = "The update package of version \"{0}\" could not be found.";
             MainFolderCreationExceptionText = "The application's main folder could not be created. {0}";
         }
 
@@ -74,9 +75,10 @@ namespace nUpdate.Core.Localization
 
         public string UpdateSearchDialogHeader { get; set; }
 
-        public string NewUpdateDialogHeader { get; set; }
+        public string NewUpdateDialogMultipleUpdatesHeader { get; set; }
+        public string NewUpdateDialogSingleUpdateHeader { get; set; }
         public string NewUpdateDialogInfoText { get; set; }
-        public string NewUpdateDialogNewestVersionText { get; set; }
+        public string NewUpdateDialogAvailableVersionsText { get; set; }
         public string NewUpdateDialogCurrentVersionText { get; set; }
         public string NewUpdateDialogSizeText { get; set; }
         public string NewUpdateDialogChangelogText { get; set; }
