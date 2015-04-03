@@ -39,13 +39,33 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.Threading.Tasks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -53,6 +73,7 @@
     <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\IDeepCopy.cs" />
+    <Compile Include="Core\ImplementationPattern.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
     <Compile Include="Core\nUpdateVersionAttribute.cs" />
@@ -68,11 +89,14 @@
     </Compile>
     <Compile Include="Exceptions\PackageDeleteException.cs" />
     <Compile Include="Exceptions\SizeCalculationException.cs" />
+    <Compile Include="Exceptions\StatisticsException.cs" />
+    <Compile Include="UI\Dialogs\DialogResultReference.cs" />
     <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
+    <Compile Include="UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
-    <Compile Include="Exceptions\InvalidJsonFileException.cs" />
-    <Compile Include="Exceptions\NetworkException.cs" />
     <Compile Include="Updating\UpdateConfiguration.cs" />
+    <Compile Include="Updating\UpdateArgument.cs" />
+    <Compile Include="Updating\UpdateArgumentExecutionOptions.cs" />
     <Compile Include="Updating\UpdaterUi.cs" />
     <Compile Include="Updating\UpdateResult.cs" />
     <Compile Include="Updating\UpdateVersion.cs" />
@@ -156,9 +180,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Core\Localization\de-DE.json" />
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="UpdaterUi.cd" />
     <None Include="UpdateVersion.cd" />
-    <None Include="UpdateManager.cd" />
+    <None Include="Updating\UpdateManager.cd" />
     <None Include="Core\Localization\de-AT.json" />
     <None Include="Core\Localization\de-CH.json" />
   </ItemGroup>
@@ -190,6 +216,11 @@
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
