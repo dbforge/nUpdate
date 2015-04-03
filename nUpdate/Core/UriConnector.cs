@@ -11,6 +11,8 @@ namespace nUpdate.Core
             if (!Uri.IsWellFormedUriString(start, UriKind.RelativeOrAbsolute))
                 return null;
 
+            if (!start.EndsWith("/"))
+                start += "/";
             var baseUri = new Uri(start);
             return new Uri(baseUri, end);
         }
