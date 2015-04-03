@@ -24,11 +24,14 @@ namespace nUpdate.Updating
                 var is64Bit = Environment.Is64BitOperatingSystem;
                 foreach (
                     var config in
-                        packageConfigurations.Where(item => new UpdateVersion(item.LiteralVersion) > currentVersion)
+                        packageConfigurations.Where(
+                            item => new UpdateVersion(item.LiteralVersion) > currentVersion || item.NecessaryUpdate)
                             .Where(
                                 config =>
                                     new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
                                     DevelopmentalStage.Release ||
+                                    new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
+                                    DevelopmentalStage.ReleaseCandidate ||
                                     ((isAlphaWished &&
                                       new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
                                       DevelopmentalStage.Alpha) ||
@@ -41,7 +44,8 @@ namespace nUpdate.Updating
                     {
                         if (
                             config.UnsupportedVersions.Any(
-                                unsupportedVersion => new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
+                                unsupportedVersion =>
+                                    new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
                             continue;
                     }
 
@@ -51,13 +55,19 @@ namespace nUpdate.Updating
 
                     _newUpdateConfigurations.Add(config);
                 }
+
+                var highestVersion =
+                    UpdateVersion.GetHighestUpdateVersion(
+                        _newUpdateConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)));
+                _newUpdateConfigurations.RemoveAll(
+                    item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
             }
 
             _updatesFound = _newUpdateConfigurations.Count != 0;
         }
 
         /// <summary>
-        ///     Gets a value indicating whether updates were found or not.
+        ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
         public bool UpdatesFound
         {
@@ -67,24 +77,9 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Returns all new configurations.
         /// </summary>
-        internal IEnumerable<UpdateConfiguration> NewestConfigurations
+        public IEnumerable<UpdateConfiguration> NewestConfigurations
         {
             get { return _newUpdateConfigurations; }
-        }
-
-        /// <summary>
-        ///     Returns the newest update configuration.
-        /// </summary>
-        public UpdateConfiguration NewestConfiguration
-        {
-            get
-            {
-                var allVersions =
-                    NewestConfigurations.Select(config => new UpdateVersion(config.LiteralVersion)).ToList();
-                return
-                    NewestConfigurations.First(
-                        item => item.LiteralVersion == UpdateVersion.GetHighestUpdateVersion(allVersions).ToString());
-            }
         }
     }
 }
