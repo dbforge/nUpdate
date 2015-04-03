@@ -65,14 +65,9 @@ namespace nUpdate.Updating
         public List<Operation> Operations { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the update package must be installed, or not.
-        /// </summary>
-        public bool MustUpdate { get; set; }
-
-        /// <summary>
         ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have a higher <see cref="UpdateVersion"/>.
         /// </summary>
-        /// public bool NecessaryUpdate { get; set; }
+        public bool NecessaryUpdate { get; set; }
 
         /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
@@ -86,13 +81,13 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Downloads the update configurations from the server.
         /// </summary>
-        /// <param name="configFileUrl">The url of the configuration file.</param>
+        /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
         /// <returns>
         ///     Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
         ///     configurations.
         /// </returns>
-        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUrl, WebProxy proxy)
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy)
         {
             using (var wc = new WebClientWrapper(10000))
             {
@@ -103,7 +98,7 @@ namespace nUpdate.Updating
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                var source = wc.DownloadString(configFileUrl);
+                var source = wc.DownloadString(configFileUri);
                 if (!String.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
