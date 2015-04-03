@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using nUpdate.Core;
 
 namespace nUpdate.Updating
 {
-    public class UpdateVersion
+    public class UpdateVersion : IComparable<UpdateVersion>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateVersion" />-class.
@@ -23,35 +25,24 @@ namespace nUpdate.Updating
         /// <param name="version">The update version.</param>
         public UpdateVersion(string version)
         {
-            if (!IsValid(version))
+            Match match = Regex.Match(version, @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$");
+            if (!match.Success || !match.Groups["Version"].Success)
                 throw new ArgumentException("The specified version is not valid.");
 
-            var versionParts = version.Split('.');
-
-            Major = int.Parse(versionParts[0]);
-            Minor = int.Parse(versionParts[1]);
-            Build = int.Parse(versionParts[2]);
-
-            string[] parts;
-            if (versionParts[3].Contains("a"))
-            {
-                DevelopmentalStage = DevelopmentalStage.Alpha;
-                parts = versionParts[3].Split('a');
-                Revision = int.Parse(parts[0]);
-                DevelopmentBuild = int.Parse(parts[1]);
-            }
-            else if (versionParts[3].Contains("b"))
-            {
-                DevelopmentalStage = DevelopmentalStage.Beta;
-                parts = versionParts[3].Split('b');
-                Revision = int.Parse(parts[0]);
-                DevelopmentBuild = int.Parse(parts[1]);
-            }
+            Major = int.Parse(match.Groups["VersionNumber"].Captures[0].Value);
+            if (match.Groups["VersionNumber"].Captures.Count > 1)
+                Minor = int.Parse(match.Groups["VersionNumber"].Captures[1].Value);
             else
-            {
-                DevelopmentalStage = DevelopmentalStage.Release;
-                Revision = int.Parse(versionParts[3]);
-            }
+                Build = 0;
+            Build = match.Groups["VersionNumber"].Captures.Count > 2 ? int.Parse(match.Groups["VersionNumber"].Captures[2].Value) : 0;
+            Revision = match.Groups["VersionNumber"].Captures.Count > 3 ? int.Parse(match.Groups["VersionNumber"].Captures[3].Value) : 0;
+
+            if (!match.Groups["DevStage"].Success) 
+                return;
+            var devStage = match.Groups["Type"].Value;
+            DevelopmentalStage = devStage == "a" ? DevelopmentalStage.Alpha : devStage == "b" ? DevelopmentalStage.Beta : DevelopmentalStage.ReleaseCandidate;
+
+            DevelopmentBuild = match.Groups["DevBuild"].Success ? int.Parse(match.Groups["DevBuild"].Value) : 0;
         }
 
         /// <summary>
@@ -129,24 +120,41 @@ namespace nUpdate.Updating
         public int DevelopmentBuild { get; set; }
 
         /// <summary>
-        ///     Returns the full description text for the current <see cref="UpdateVersion"/>.
+        ///     Gets the full description text for the current <see cref="UpdateVersion"/>.
         /// </summary>
         public string FullText
         {
             get
             {
                 return DevelopmentalStage != DevelopmentalStage.Release
-                    ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild)
+                    ? DevelopmentBuild != 0 ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage,  DevelopmentBuild.ToString(CultureInfo.InvariantCulture)) : String.Format("{0} {1}", BasicVersion, DevelopmentalStage)
                     : BasicVersion;
             }
         }
 
         /// <summary>
-        ///     Returns the current <see cref="UpdateVersion"/> without the developmental stage and development build.
+        ///     Gets the current <see cref="UpdateVersion"/> without the developmental stage and development build.
         /// </summary>
         public string BasicVersion
         {
             get { return String.Format("{0}.{1}.{2}.{3}", Major, Minor, Build, Revision); }
+        }
+
+        /// <summary>
+        ///     Gets the semantic version string of the current <see cref="UpdateVersion"/>.
+        /// </summary>
+        public string SemanticVersion
+        {
+            get
+            {
+                if (DevelopmentalStage != DevelopmentalStage.Release)
+                {
+                    return
+                        String.Format("{0}.{1}.{2}.{3}-{4}.{5}", Major, Minor, Build, Revision, DevelopmentalStage.ToString().Substring(0, 1).ToLower(),
+                            DevelopmentBuild).Replace(".0", String.Empty);
+                }
+                return BasicVersion;
+            }
         }
 
         // Overwritten Instance Methods
@@ -158,8 +166,21 @@ namespace nUpdate.Updating
         {
             if (DevelopmentalStage != DevelopmentalStage.Release)
             {
-                return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision,
-                    DevelopmentalStage.ToString().Substring(0, 1).ToLower(), DevelopmentBuild);
+                string devStageShortcut = null;
+                switch (DevelopmentalStage)
+                {
+                    case DevelopmentalStage.Alpha:
+                        devStageShortcut = "a";
+                        break;
+                    case DevelopmentalStage.Beta:
+                        devStageShortcut = "b";
+                        break;
+                    case DevelopmentalStage.ReleaseCandidate:
+                        devStageShortcut = "rc";
+                        break;
+                }
+                return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision, devStageShortcut
+                    , DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : String.Empty);
             }
             return BasicVersion;
         }
@@ -393,10 +414,32 @@ namespace nUpdate.Updating
             foreach (var i in updateVersions)
             {
                 if (i > newestVersion)
+                {
                     newestVersion = i;
+                }
             }
 
             return newestVersion;
+        }
+
+        /// <summary>
+        ///     Retuns the lowest version in the given collection.
+        /// </summary>
+        /// <param name="updateVersions">The collection of versions to check.</param>
+        /// <returns>Returns the lowest version found.</returns>
+        public static UpdateVersion GetLowestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
+        {
+            var enumerable = updateVersions as UpdateVersion[] ?? updateVersions.ToArray();
+            var lowestVersion = GetHighestUpdateVersion(enumerable);
+            foreach (var i in enumerable)
+            {
+                if (i < lowestVersion)
+                {
+                    lowestVersion = i;
+                }
+            }
+
+            return lowestVersion;
         }
 
         /// <summary>
@@ -408,7 +451,7 @@ namespace nUpdate.Updating
         public static UpdateVersion FromFullText(string fullText)
         {
             var versionSections = fullText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (versionSections.Length != 1 && versionSections.Length != 3)
+            if (versionSections.Length > 3)
                 throw new ArgumentException("fullText");
 
             var versionParts = versionSections[0].Split('.');
@@ -420,16 +463,22 @@ namespace nUpdate.Updating
             if (versionSections.Length == 1)
                 return new UpdateVersion(major, minor, build, revision);
 
-            DevelopmentalStage devStage = DevelopmentalStage.Release;
+            var devStage = DevelopmentalStage.Release;
             switch (versionSections[1])
             {
                 case "Alpha":
                     devStage = DevelopmentalStage.Alpha;
                     break;
-                case "Beta:":
+                case "Beta":
                     devStage = DevelopmentalStage.Beta;
                     break;
+                case "ReleaseCandidate":
+                    devStage = DevelopmentalStage.ReleaseCandidate;
+                    break;
             }
+
+            if (versionSections.Length == 2)
+                return new UpdateVersion(major, minor, build, revision, devStage, 0);
 
             int developmentBuild = int.Parse(versionSections[2]);
             return new UpdateVersion(major, minor, build, revision, devStage, developmentBuild);
@@ -450,8 +499,15 @@ namespace nUpdate.Updating
         /// <param name="versionString">The version string to check.</param>
         public static bool IsValid(string versionString)
         {
-            var regex = new Regex(@"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+([a-b][0-9]+|)", RegexOptions.IgnoreCase);
+            var regex = new Regex(@"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$", RegexOptions.IgnoreCase);
             return regex.IsMatch(versionString);
+        }
+
+        public int CompareTo(UpdateVersion version)
+        {
+            if (this > version)
+                return -1;
+            return this == version ? 0 : 1;
         }
     }
 }
