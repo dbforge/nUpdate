@@ -24,24 +24,25 @@ using SystemInformation = nUpdate.Core.SystemInformation;
 namespace nUpdate.Updating
 {
     /// <summary>
-    ///     Offers functions to update .NET-applications.
+    ///     Provides functionality to update .NET-applications.
     /// </summary>
     public class UpdateManager : IDisposable
     {
+        private bool _closeHostApplication = true;
         private bool _includeCurrentPcIntoStatistics = true;
         private bool _disposed;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
         private CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
         private bool _hasDownloadCancelled;
         private bool _hasDownloadFailed;
-        private UpdateConfiguration _updateConfiguration = new UpdateConfiguration();
-        private string _updateFilePath;
+        private IEnumerable<UpdateConfiguration> _updateConfigurations;
+        private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
+
+        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
+            new Dictionary<UpdateVersion, IEnumerable<Operation>>();
+
         private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
             Application.ProductName);
-
-        private readonly ManualResetEvent _downloadResetEvent = new ManualResetEvent(false);
-        private readonly WebClientWrapper _packageDownloader = new WebClientWrapper();
-        private readonly WebClientWrapper _searchWebClient = new WebClientWrapper();
         private LocalizationProperties _lp;
 
         /// <summary>
@@ -49,19 +50,25 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="updateConfigurationFileUri">The URI of the update configuration file.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
-        /// <param name="currentVersion">The current version of the application.</param>
         /// <param name="languageCulture">The language culture to use for the localization of the integrated UpdaterUI.</param>
         /// <remarks>The public key can be found in the overview of your project when you're opening it in nUpdate Administration. If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the steps of the category "Copy data" which will automatically generate the necessray code for you.</remarks>
-        public UpdateManager(Uri updateConfigurationFileUri, string publicKey, UpdateVersion currentVersion,
+        public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
             CultureInfo languageCulture)
         {
             UpdateConfigurationFileUri = updateConfigurationFileUri;
             PublicKey = publicKey;
-            CurrentVersion = currentVersion;
             LanguageCulture = languageCulture;
             if (CultureFilePaths == null)
                 CultureFilePaths = new Dictionary<CultureInfo, string>();
+            if (Arguments == null)
+                Arguments = new List<UpdateArgument>();
 
+            var projectAssembly = Assembly.GetCallingAssembly();
+            var nUpateVersionAttribute = projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
+            if (nUpateVersionAttribute == null)
+                throw new ArgumentException("The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
+
+            CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             CheckArguments();
             Initialize();
         }
@@ -72,14 +79,6 @@ namespace nUpdate.Updating
         ~UpdateManager()
         {
             Dispose(true);
-        }
-
-        /// <summary>
-        ///     Gets a value indicating whether a download is currently active or not.
-        /// </summary>
-        public bool IsDownloading
-        {
-            get { return _packageDownloader.IsBusy; }
         }
 
         /// <summary>
@@ -135,14 +134,13 @@ namespace nUpdate.Updating
         public bool IncludeBeta { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a hidden search should be provided in order to search in the background without informing the user, or not.
+        ///     Gets the configurations for the update packages that should be downloaded and installed.
         /// </summary>
-        public bool UseHiddenSearch { get; set; }
-
-        /// <summary>
-        ///     Gets a value indicating whether the found update must be installed, or not.
-        /// </summary>
-        public bool MustUpdate { get; private set; }
+        public IEnumerable<UpdateConfiguration> PackageConfigurations
+        {
+            get { return _updateConfigurations; }
+            internal set { _updateConfigurations = value; }
+        }
 
         /// <summary>
         ///     Gets or sets if the current PC should be involved in entries made on the statistics server, if one is available.
@@ -154,34 +152,28 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Gets the version of the newest update package.
+        ///     Gets or sets a value indicating whether the host application should be closed when the update installer begins, or not.
         /// </summary>
-        public UpdateVersion NewestVersion { get; private set; }
+        public bool CloseHostApplication
+        {
+            get { return _closeHostApplication; }
+            set { _closeHostApplication = value; }
+        }
 
         /// <summary>
-        ///     Gets the changelog of the update package.
+        ///     Gets the total size of all update packages.
         /// </summary>
-        public string Changelog { get; private set; }
-
-        /// <summary>
-        ///     Gets the size of the update package.
-        /// </summary>
-        public double PackageSize { get; private set; }
-
-        /// <summary>
-        ///     Gets the signature of the update package.
-        /// </summary>
-        public byte[] Signature { get; private set; }
-
-        /// <summary>
-        ///     Gets the operations of the update package.
-        /// </summary>
-        public IEnumerable<Operation> Operations { get; private set; }
+        public double TotalSize { get; private set; }
 
         /// <summary>
         ///     Gets or sets the proxy to use, if wished.
         /// </summary>
         public WebProxy Proxy { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the arguments that should be handled over to the application.
+        /// </summary>
+        public List<UpdateArgument> Arguments { get; set; } 
 
         /// <summary>
         ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager"/>-instance.
@@ -201,19 +193,16 @@ namespace nUpdate.Updating
             if (!disposing || _disposed)
                 return;
 
-            _searchWebClient.Dispose();
-            _packageDownloader.Dispose();
             _searchCancellationTokenSource.Dispose();
             _downloadCancellationTokenSource.Dispose();
-            _downloadResetEvent.Dispose();
             _disposed = true;
         }
 
-        private double? GetUpdatePackageSize(Uri packageUrl)
+        private double? GetUpdatePackageSize(Uri packageUri)
         {
             try
             {
-                var req = WebRequest.Create(packageUrl);
+                var req = WebRequest.Create(packageUri);
                 req.Method = "HEAD";
                 using (var resp = req.GetResponse())
                 {
@@ -230,12 +219,11 @@ namespace nUpdate.Updating
             return null;
         }
 
-        private void RefreshCancellationTokens()
+        private void ResetTokens()
         {
             if (_searchCancellationTokenSource != null)
                 _searchCancellationTokenSource.Dispose();
             _searchCancellationTokenSource = new CancellationTokenSource();
-
             if (_downloadCancellationTokenSource != null)
                 _downloadCancellationTokenSource.Dispose();
             _downloadCancellationTokenSource = new CancellationTokenSource();
@@ -244,251 +232,339 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Searches for updates.
         /// </summary>
-        /// <exception cref="InvalidOperationException">There is already a search process running.</exception>
-        /// <exception cref="NetworkException">There is no network connection available.</exception>
-        /// <seealso cref="SearchForUpdatesAsync"/>
-        public void SearchForUpdates()
+        /// <returns>Returns <c>true</c> if updates were found; otherwise, <c>false</c>.</returns>
+        /// <exception cref="SizeCalculationException">The calculation of the size of the available updates has failed.</exception>
+        /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
+        public bool SearchForUpdates()
         {
-            if (_searchWebClient.IsBusy)
-                throw new InvalidOperationException(_lp.SearchProcessRunningExceptionText);
-
+            ResetTokens();
+            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
             if (!ConnectionChecker.IsConnectionAvailable())
-                throw new NetworkException(_lp.NetworkConnectionExceptionText);
+                return false;
+
+            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-
             var configurations = UpdateConfiguration.Download(UpdateConfigurationFileUri, Proxy);
+            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
             var result = new UpdateResult(configurations, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
 
             if (!result.UpdatesFound)
-            {
-                OnUpdateSearchFinished(false);
-            }
-            else
-            {
-                _updateConfiguration = result.NewestConfiguration;
-                NewestVersion = new UpdateVersion(_updateConfiguration.LiteralVersion);
-                Changelog = _updateConfiguration.Changelog.ContainsKey(LanguageCulture)
-                    ? _updateConfiguration.Changelog.First(item => item.Key.Name == LanguageCulture.Name).Value
-                    : _updateConfiguration.Changelog.First(item => item.Key.Name == new CultureInfo("en").Name).Value;
-                Signature = Convert.FromBase64String(_updateConfiguration.Signature);
-                MustUpdate = _updateConfiguration.MustUpdate;
-                Operations = _updateConfiguration.Operations;
+                return false;
 
-                var updatePackageSize = GetUpdatePackageSize(_updateConfiguration.UpdatePackageUri);
-                if (updatePackageSize == null)
+            _updateConfigurations = result.NewestConfigurations;
+            double updatePackageSize = 0;
+            foreach (var updateConfiguration in _updateConfigurations)
+            {
+                var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
+                if (newPackageSize == null)
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
-                PackageSize = updatePackageSize.Value;
-                OnUpdateSearchFinished(true);
+                updatePackageSize += newPackageSize.Value;
+                _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                    updateConfiguration.Operations);
             }
+
+            TotalSize = updatePackageSize;
+            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            return true;
         }
 
         /// <summary>
-        ///     Searches for updates. This method does not block the calling thread.
+        ///     Searches for updates, asynchronously.
         /// </summary>
-        /// <exception cref="InvalidOperationException">There is already a search process running.</exception>
-        /// <exception cref="NetworkException">There is no network connection available.</exception>
-        /// <seealso cref="SearchForUpdates"/>
-        /// <seealso cref="CancelSearchAsync"/>
         public void SearchForUpdatesAsync()
         {
-            RefreshCancellationTokens();
-
-            Task.Factory.StartNew(SearchForUpdates).ContinueWith(SearchExceptionHandler,
-                _searchCancellationTokenSource.Token,
-                TaskContinuationOptions.OnlyOnFaulted,
-                TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => SearchTaskCompleted(),
+            TaskEx.Run(() => SearchForUpdates()).ContinueWith(SearchTaskCompleted,
                     _searchCancellationTokenSource.Token,
-                    TaskContinuationOptions.NotOnFaulted,
+                    TaskContinuationOptions.None,
                     TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void SearchExceptionHandler(Task task)
+        private void SearchTaskCompleted(Task<bool> task)
         {
             if (_searchCancellationTokenSource.IsCancellationRequested)
                 return;
 
             var exception = task.Exception;
-            if (exception != null && exception.InnerExceptions.Count > 0)
-                OnUpdateSearchFailed(exception.InnerException);
-        }
-
-        private void SearchTaskCompleted()
-        {
+            if (exception != null)
+                OnUpdateSearchFailed(exception.InnerException ?? exception);
+            OnUpdateSearchFinished(task.Result);
         }
 
         /// <summary>
-        ///     Cancels the current asynchronous search task.
+        ///     Provides a task that searches for updates and can be wrapped asynchronously.
+        /// </summary>
+        /// <returns>Returns <c>true</c> if updates are available; otherwise, <c>false</c>.</returns>
+        /// <exception cref="SizeCalculationException">The calculation of total size of the packages has failed.</exception>
+        /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
+        public async Task<bool> SearchForUpdatesTask()
+        {
+            return SearchForUpdates();
+        }
+
+        /// <summary>
+        ///     Cancels the active update search.
         /// </summary>
         /// <remarks>If there is no search task running, nothing will happen.</remarks>
-        public void CancelSearchAsync()
+        public void CancelSearch()
         {
             _searchCancellationTokenSource.Cancel();
         }
 
         /// <summary>
-        ///     Downloads the update package from the server.
+        ///     Downloads the available update packages from the server.
         /// </summary>
-        /// <exception cref="NetworkException">There is no network connection available.</exception>
         /// <exception cref="WebException">The download process has failed because of an <see cref="WebException"/>.</exception>
         /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
-        /// <seealso cref="DownloadPackageAsync"/>
-        public void DownloadPackage()
+        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        /// <seealso cref="DownloadPackagesAsync"/>
+        /// <seealso cref="DownloadPackagesTask"/>
+        public void DownloadPackages()
         {
-            if (_packageDownloader.IsBusy)
-                throw new InvalidOperationException(_lp.DownloadingProcessRunningExceptionText);
+            InternalDownloadPackage(ImplementationPattern.Synchronous, null);
+        }
 
-            if (!ConnectionChecker.IsConnectionAvailable())
-                throw new NetworkException(_lp.NetworkConnectionExceptionText);
+        /// <summary>
+        ///     Downloads the available update packages from the server, asynchronously.
+        /// </summary>
+        /// <seealso cref="DownloadPackagesTask"/>
+        /// <seealso cref="DownloadPackages"/>
+        public void DownloadPackagesAsync()
+        {
+            TaskEx.Run(() => InternalDownloadPackage(ImplementationPattern.EventBasedAsynchronous, null)).ContinueWith(DownloadTaskCompleted,
+                    _searchCancellationTokenSource.Token,
+                    TaskContinuationOptions.None,
+                    TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
-            if (_updateConfiguration.UpdatePackageUri == null)
-                throw new ArgumentException("UpdatePackageUri");
+        private void DownloadTaskCompleted(Task task)
+        {
+            if (_downloadCancellationTokenSource.IsCancellationRequested)
+                return;
+
+            var exception = task.Exception;
+            if (exception != null)
+                OnUpdateDownloadFailed(exception.InnerException ?? exception);
+            OnUpdateDownloadFinished(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        ///     Provides a task that downloads the available update packages from the server and can be wrapped asynchronously.
+        /// </summary>
+        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException"/>.</exception>
+        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
+        /// /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        /// <seealso cref="DownloadPackagesAsync"/>
+        /// <seealso cref="DownloadPackages"/>
+        public async Task DownloadPackagesTask(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
+        {
+            await InternalDownloadPackage(ImplementationPattern.TaskBasedAsynchronous, progress);
+        }
+
+        private async Task InternalDownloadPackage(ImplementationPattern pattern,
+            IProgress<UpdateDownloadProgressChangedEventArgs> progress)
+        {
+            ResetTokens();
+            int received = 0;
+            double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri)).Where(updatePackageSize => updatePackageSize != null).Sum(updatePackageSize => updatePackageSize.Value);
 
             if (!Directory.Exists(_applicationUpdateDirectory))
                 Directory.CreateDirectory(_applicationUpdateDirectory);
 
-            _updateFilePath = Path.Combine(_applicationUpdateDirectory, "update.zip");
-            OnPackageDownloadStarted(this, EventArgs.Empty);
-            _packageDownloader.Proxy = Proxy;
-            _packageDownloader.DownloadFileCompleted += DownloadFileCompleted;
-            _packageDownloader.DownloadFileAsync(_updateConfiguration.UpdatePackageUri,
-                _updateFilePath);
-            _downloadResetEvent.WaitOne();
-
-            if (_hasDownloadCancelled)
+            foreach (var updateConfiguration in _updateConfigurations)
             {
-                if (MustUpdate)
-                    Application.Exit();
-                return;
-            }
-
-            if (_hasDownloadFailed)
-                return;
-
-            if (_updateConfiguration.UseStatistics && _includeCurrentPcIntoStatistics)
-            {
+                WebResponse webResponse = null;
                 try
                 {
-                    string response = new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
-                        _updateConfiguration.UpdatePhpFileUri, _updateConfiguration.VersionId,
-                        SystemInformation.GetOperatingSystemName())); // Only for calling it
-                    if (!String.IsNullOrEmpty(response))
+                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                     {
-                        OnStatisticsEntryFailed(new Exception(
-                            String.Format(
-                                _lp.StatisticsScriptExceptionText, response)));
+                        DeletePackages();
+                        throw new OperationCanceledException();
+                    }
+
+                    var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    switch (pattern)
+                    {
+                        case ImplementationPattern.TaskBasedAsynchronous:
+                            webResponse = await webRequest.GetResponseAsync();
+                            break;
+                        default:
+                            webResponse = webRequest.GetResponse();
+                            break;
+                    }
+
+                    var buffer = new byte[1024];
+                    _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        Path.Combine(_applicationUpdateDirectory,
+                            String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
+                    using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                        String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
+                    {
+                        using (Stream input = webResponse.GetResponseStream())
+                        {
+                            if (input == null)
+                                throw new Exception("The response stream couldn't be read.");
+
+                            if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                            {
+                                DeletePackages();
+                                throw new OperationCanceledException();
+                            }
+                            int size;
+                            switch (pattern)
+                            {
+                                case ImplementationPattern.TaskBasedAsynchronous:
+                                    size = await input.ReadAsync(buffer, 0, buffer.Length);
+                                    break;
+                                default:
+                                    size = input.Read(buffer, 0, buffer.Length);
+                                    break;
+                            }
+
+                            while (size > 0)
+                            {
+                                if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                                {
+                                    DeletePackages();
+                                    throw new OperationCanceledException();
+                                }
+
+                                switch (pattern)
+                                {
+                                    case ImplementationPattern.TaskBasedAsynchronous:
+                                        await fileStream.WriteAsync(buffer, 0, size);
+                                        received += size;
+                                        progress.Report(new UpdateDownloadProgressChangedEventArgs(received,
+                                            (long)total,
+                                            (float)(received / total) * 100));
+                                        size = await input.ReadAsync(buffer, 0, buffer.Length);
+                                        break;
+                                    default:
+                                        fileStream.Write(buffer, 0, size);
+                                        received += size;
+                                        if (pattern == ImplementationPattern.EventBasedAsynchronous)
+                                            OnUpdateDownloadProgressChanged(received,
+                                                (long) total,
+                                                (float) (received/total)*100);
+                                        size = input.Read(buffer, 0, buffer.Length);
+                                        break;
+                                }
+                            }
+
+                            if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
+                                continue;
+
+                            try
+                            {
+                                string response =
+                                    new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
+                                        updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
+                                        SystemInformation.OperatingSystemName)); // Only for calling it
+                                if (!String.IsNullOrEmpty(response))
+                                {
+                                    switch (pattern)
+                                    {
+                                        case ImplementationPattern.TaskBasedAsynchronous:
+                                            throw new StatisticsException(String.Format(
+                                                _lp.StatisticsScriptExceptionText, response));
+                                        default:
+                                            OnStatisticsEntryFailed(new Exception(String.Format(
+                                                _lp.StatisticsScriptExceptionText, response)));
+                                            break;
+                                    }
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                switch (pattern)
+                                {
+                                    case ImplementationPattern.TaskBasedAsynchronous:
+                                        throw new StatisticsException(ex.Message);
+                                    default:
+                                        OnStatisticsEntryFailed(ex);
+                                        break;
+                                }
+                            }
+                        }
                     }
                 }
-                catch (Exception ex)
+                finally
                 {
-                    OnStatisticsEntryFailed(ex);
+                    if (webResponse != null) 
+                        webResponse.Close();
                 }
-            }
-
-            OnPackageDownloadFinished(this, EventArgs.Empty);
-        }
-
-        private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            try
-            {
-                if (e.Error != null && !e.Cancelled)
-                {
-                    _hasDownloadFailed = true;
-                    DeletePackage();
-                    OnPackageDownloadFailed(e.Error.InnerException ?? e.Error);
-                }
-
-                if (e.Cancelled)
-                    DeletePackage();
-                
-            }
-            finally
-            {
-                _downloadResetEvent.Set();
             }
         }
 
         /// <summary>
-        ///     Downloads the update package from the server. This method does not block the calling thread.
-        /// </summary>
-        /// <exception cref="NetworkException">There is no network connection available.</exception>
-        /// <exception cref="WebException">The download process has failed because of a <see cref="WebException"/>.</exception>
-        /// <seealso cref="DownloadPackage"/>
-        /// <seealso cref="CancelDownloadAsync"/>
-        public void DownloadPackageAsync()
-        {
-            RefreshCancellationTokens();
-
-            Task.Factory.StartNew(DownloadPackage).ContinueWith(DownloadExceptionHandler,
-                _downloadCancellationTokenSource.Token,
-                TaskContinuationOptions.OnlyOnFaulted,
-                TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(o => DownloadTaskCompleted(),
-                    _downloadCancellationTokenSource.Token,
-                    TaskContinuationOptions.NotOnFaulted,
-                    TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private void DownloadExceptionHandler(Task task)
-        {
-            var exception = task.Exception;
-            if (exception != null && exception.InnerExceptions.Count > 0)
-                OnPackageDownloadFailed(exception.InnerException);
-        }
-
-        private void DownloadTaskCompleted()
-        {
-        }
-
-        /// <summary>
-        ///     Cancels the current asynchronous download task.
+        ///     Cancels the active download.
         /// </summary>
         /// <remarks>If there is no download task running, nothing will happen.</remarks>
-        public void CancelDownloadAsync()
+        public void CancelDownload()
         {
-            if (!IsDownloading)
-                return;
-
-            _hasDownloadCancelled = true;
-            _packageDownloader.CancelAsync();
+            _downloadCancellationTokenSource.Cancel();
         }
 
         /// <summary>
         ///     Returns a value indicating whether the package is valid or not. If it contains an invalid signature, it will be deleted directly.
         /// </summary>
-        /// <returns>Returns 'true' if the package is valid, otherwise 'false'.</returns>
+        /// <returns>Returns <c>true</c>' if the package is valid; otherwise <c>false</c>.</returns>
         /// <exception cref="FileNotFoundException">The update package to check could not be found.</exception>
         /// <exception cref="ArgumentException">The signature of the update package is null or empty.</exception>
         public bool CheckPackageValidity()
         {
-            if (!File.Exists(_updateFilePath))
-                throw new FileNotFoundException(_lp.PackageFileNotFoundExceptionText);
-
-            if (Signature == null || Signature.Length <= 0)
-                throw new ArgumentException("Signature");
-
-            byte[] data;
-            using (var reader =
-                new BinaryReader(File.Open(_updateFilePath,
-                    FileMode.Open)))
+            foreach (var filePathItem in _packageFilePaths)
             {
-                data = reader.ReadBytes((int)reader.BaseStream.Length);
-            }
+                if (!File.Exists(filePathItem.Value))
+                    throw new FileNotFoundException(String.Format(_lp.PackageFileNotFoundExceptionText, filePathItem.Key.FullText));
 
-            RsaManager rsa;
+                var configuration = _updateConfigurations.First(config => config.LiteralVersion == filePathItem.Key.ToString());
+                if (configuration.Signature == null || configuration.Signature.Length <= 0)
+                    throw new ArgumentException(String.Format("Signature of version \"{0}\" is null or empty.", configuration));
 
-            try
-            {
-                rsa = new RsaManager(PublicKey);
-            }
-            catch
-            {
+                byte[] data;
+                using (var reader =
+                    new BinaryReader(File.Open(filePathItem.Value,
+                        FileMode.Open)))
+                {
+                    data = reader.ReadBytes((int) reader.BaseStream.Length);
+                }
+
+                RsaManager rsa;
+
                 try
                 {
-                    DeletePackage();
+                    rsa = new RsaManager(PublicKey);
+                }
+                catch
+                {
+                    try
+                    {
+                        DeletePackages();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new PackageDeleteException(ex.Message);
+                    }
+                    return false;
+                }
+
+                if (rsa.VerifyData(data, Convert.FromBase64String(configuration.Signature))) 
+                    continue;
+
+                try
+                {
+                    DeletePackages();
                 }
                 catch (Exception ex)
                 {
@@ -497,24 +573,13 @@ namespace nUpdate.Updating
                 return false;
             }
 
-            if (rsa.VerifyData(data, Signature))
-                return true;
-
-            try
-            {
-                DeletePackage();
-            }
-            catch (Exception ex)
-            {
-                throw new PackageDeleteException(ex.Message);
-            }
-            return false;
+            return true;
         }
 
         /// <summary>
         ///     Terminates the application.
         /// </summary>
-        /// <remarks>If your apllication doesn't terminate correctly or if you want to perform custom actions before termiating, then override this method and implement your own code.</remarks>
+        /// <remarks>If your apllication doesn't terminate correctly or if you want to perform custom actions before terminating, then override this method and implement your own code.</remarks>
         public virtual void TerminateApplication()
         {
             Application.Exit();
@@ -556,15 +621,14 @@ namespace nUpdate.Updating
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
 
             var installerUiAssemblyPath = UseCustomInstallerUserInterface
-                ? String.Format("\"{0}\"", CustomInstallerUiAssemblyPath)
-                : String.Empty;
+                ? String.Format("\"{0}\"", CustomInstallerUiAssemblyPath) : String.Empty;
             string[] args =
             {
-                String.Format("\"{0}\"", _updateFilePath), String.Format("\"{0}\"", Application.StartupPath),
+                String.Format("\"{0}\"", String.Join("%", _packageFilePaths.Select(item => item.Value))), String.Format("\"{0}\"", Application.StartupPath),
                 String.Format("\"{0}\"", Application.ExecutablePath),
                 String.Format("\"{0}\"", Application.ProductName),
                 String.Format("\"{0}\"",
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Operations)))), 
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))), 
                     String.Format("\"{0}\"", installerUiAssemblyPath),
                     _lp.InstallerExtractingFilesText,
                     _lp.InstallerCopyingText,
@@ -579,7 +643,10 @@ namespace nUpdate.Updating
                     _lp.ServiceStartOperationText,
                     _lp.ServiceStopOperationText,
                     _lp.InstallerUpdatingErrorCaption, 
-                    _lp.InstallerInitializingErrorCaption
+                    _lp.InstallerInitializingErrorCaption,
+                    String.Format("\"{0}\"",
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
+                    String.Format("\"{0}\"", _closeHostApplication)
             };
 
             var startInfo = new ProcessStartInfo
@@ -593,23 +660,27 @@ namespace nUpdate.Updating
             {
                 Process.Start(startInfo);
             }
-            catch (Win32Exception)
+            catch (Win32Exception ex)
             {
-                DeletePackage();
-                if (!MustUpdate)
-                    return;
+                if (ex.NativeErrorCode != 1223)
+                    throw;
+                DeletePackages();
+                return;
             }
 
-            TerminateApplication();
+            if (_closeHostApplication)
+                TerminateApplication();
         }
 
         /// <summary>
-        ///     Deletes the update package locally.
+        ///     Deletes the downloaded update packages locally.
         /// </summary>
-        public void DeletePackage()
+        public void DeletePackages()
         {
-            if (File.Exists(_updateFilePath))
-                File.Delete(_updateFilePath);
+            foreach (var filePathItem in _packageFilePaths.Where(item => File.Exists(item.Value)))
+            {
+                File.Delete(filePathItem.Value);
+            }
         }
 
         private void CheckArguments()
@@ -618,7 +689,7 @@ namespace nUpdate.Updating
                 throw new ArgumentException("The property \"UpdateInfoFileUrl\" is not initialized.");
 
             if (!UpdateConfigurationFileUri.ToString().EndsWith(".json"))
-                throw new InvalidJsonFileException("The update configuration file is not a valid JSON-file.");
+                throw new StatisticsException("The update configuration file is not a valid JSON-file.");
 
             if (String.IsNullOrEmpty(PublicKey))
                 throw new ArgumentException("The property \"PublicKey\" is not initialized.");
@@ -698,28 +769,24 @@ namespace nUpdate.Updating
         public event EventHandler<FailedEventArgs> UpdateSearchFailed;
 
         /// <summary>
-        ///     Occurs when the download of the package begins.
+        ///     Occurs when the download of the packages begins.
         /// </summary>
-        public event EventHandler<EventArgs> PackageDownloadStarted;
+        public event EventHandler<EventArgs> PackagesDownloadStarted;
 
         /// <summary>
         ///     Occurs when the download of the package fails.
         /// </summary>
-        public event EventHandler<FailedEventArgs> PackageDownloadFailed;
+        public event EventHandler<FailedEventArgs> PackagesDownloadFailed;
 
         /// <summary>
-        ///     Occurs when the package download progress has changed.
+        ///     Occurs when the packages download progress has changed.
         /// </summary>
-        public event DownloadProgressChangedEventHandler PackageDownloadProgressChanged
-        {
-            add { _packageDownloader.DownloadProgressChanged += value; }
-            remove { _packageDownloader.DownloadProgressChanged -= value; }
-        }
+        public event EventHandler<UpdateDownloadProgressChangedEventArgs> PackagesDownloadProgressChanged;
 
         /// <summary>
-        ///     Occurs when the package download is finished.
+        ///     Occurs when the packages download is finished.
         /// </summary>
-        public event EventHandler<EventArgs> PackageDownloadFinished;
+        public event EventHandler<EventArgs> PackagesDownloadFinished;
 
         /// <summary>
         ///     Occurs when the statistics entry failed.
@@ -728,7 +795,7 @@ namespace nUpdate.Updating
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed; 
 
         /// <summary>
-        /// Called when the update search is started.
+        ///     Called when the update search is started.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -759,35 +826,47 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Called when the package download is started.
+        ///     Called when the download of the updates is started.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnPackageDownloadStarted(Object sender, EventArgs e)
+        protected virtual void OnUpdateDownloadStarted(Object sender, EventArgs e)
         {
-            if (PackageDownloadStarted != null)
-                PackageDownloadStarted(sender, e);
+            if (PackagesDownloadStarted != null)
+                PackagesDownloadStarted(sender, e);
         }
 
         /// <summary>
-        ///     Called when the package download is finished.
+        ///     Called when the update download progress has changed.
+        /// </summary>
+        /// <param name="bytesReceived">The amount of bytes received.</param>
+        /// <param name="totalBytesToReceive">The total bytes to receive.</param>
+        /// <param name="percentage">The progress percentage.</param>
+        protected virtual void OnUpdateDownloadProgressChanged(long bytesReceived, long totalBytesToReceive, float percentage)
+        {
+            if (PackagesDownloadProgressChanged != null)
+                PackagesDownloadProgressChanged(this, new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
+        }
+
+        /// <summary>
+        ///     Called when the download of the updates is finished.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnPackageDownloadFinished(Object sender, EventArgs e)
+        protected virtual void OnUpdateDownloadFinished(Object sender, EventArgs e)
         {
-            if (PackageDownloadFinished != null)
-                PackageDownloadFinished(sender, e);
+            if (PackagesDownloadFinished != null)
+                PackagesDownloadFinished(sender, e);
         }
 
         /// <summary>
-        ///     Called when the package download failed.
+        ///     Called when the download of the updates has failed.
         /// </summary>
         /// <param name="exception">The exception that occured.</param>
-        protected virtual void OnPackageDownloadFailed(Exception exception)
+        protected virtual void OnUpdateDownloadFailed(Exception exception)
         {
-            if (PackageDownloadFailed != null)
-                PackageDownloadFailed(this, new FailedEventArgs(exception));
+            if (PackagesDownloadFailed != null)
+                PackagesDownloadFailed(this, new FailedEventArgs(exception));
         }
 
         /// <summary>
