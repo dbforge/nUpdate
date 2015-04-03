@@ -65,9 +65,9 @@
             this.headerLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.headerLabel.Location = new System.Drawing.Point(61, 12);
             this.headerLabel.Name = "headerLabel";
-            this.headerLabel.Size = new System.Drawing.Size(169, 21);
+            this.headerLabel.Size = new System.Drawing.Size(189, 21);
             this.headerLabel.TabIndex = 2;
-            this.headerLabel.Text = "New updates available.";
+            this.headerLabel.Text = "{0} new updates available.";
             // 
             // infoLabel
             // 
@@ -83,9 +83,9 @@
             this.newestVersionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newestVersionLabel.Location = new System.Drawing.Point(9, 82);
             this.newestVersionLabel.Name = "newestVersionLabel";
-            this.newestVersionLabel.Size = new System.Drawing.Size(107, 13);
+            this.newestVersionLabel.Size = new System.Drawing.Size(121, 13);
             this.newestVersionLabel.TabIndex = 12;
-            this.newestVersionLabel.Text = "Newest version: {0}";
+            this.newestVersionLabel.Text = "Available versions: {0}";
             // 
             // currentVersionLabel
             // 
@@ -101,9 +101,9 @@
             this.updateSizeLabel.AutoSize = true;
             this.updateSizeLabel.Location = new System.Drawing.Point(9, 117);
             this.updateSizeLabel.Name = "updateSizeLabel";
-            this.updateSizeLabel.Size = new System.Drawing.Size(89, 13);
+            this.updateSizeLabel.Size = new System.Drawing.Size(118, 13);
             this.updateSizeLabel.TabIndex = 14;
-            this.updateSizeLabel.Text = "Package size: {0}";
+            this.updateSizeLabel.Text = "Total package size: {0}";
             // 
             // changelogLabel
             // 
