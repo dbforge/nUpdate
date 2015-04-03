@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,9 +42,9 @@ namespace nUpdate.UI.Dialogs
         public string LanguageFilePath { get; set; }
 
         /// <summary>
-        ///     Gets or sets the newest version.
+        ///     Gets or sets the package configurations.
         /// </summary>
-        public UpdateVersion NewestVersion { get; set; }
+        public IEnumerable<UpdateConfiguration> PackageConfigurations { get; set; }
 
         /// <summary>
         ///     Sets the current version.
@@ -51,19 +52,9 @@ namespace nUpdate.UI.Dialogs
         public UpdateVersion CurrentVersion { get; set; }
 
         /// <summary>
-        ///     Sets the size of the package.
+        ///     Gets or sets the size of all packages.
         /// </summary>
         public double PackageSize { get; set; }
-
-        /// <summary>
-        ///     Sets the changelog.
-        /// </summary>
-        public string Changelog { get; set; }
-
-        /// <summary>
-        ///     Sets if this update must be installed.
-        /// </summary>
-        public bool MustUpdate { get; set; }
 
         /// <summary>
         ///     Sets a list of areas for this update's operations.
@@ -104,9 +95,10 @@ namespace nUpdate.UI.Dialogs
                 _lp = new LocalizationProperties();
             }
 
-            headerLabel.Text = _lp.NewUpdateDialogHeader;
+            headerLabel.Text = String.Format(PackageConfigurations.Count() > 1 ? _lp.NewUpdateDialogMultipleUpdatesHeader : _lp.NewUpdateDialogSingleUpdateHeader, PackageConfigurations.Count());
             infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
-            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogNewestVersionText, NewestVersion.FullText);
+            var availableVersions = PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
+            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogAvailableVersionsText, PackageConfigurations.Count() <= 2 ? String.Join(", ", availableVersions.Select(item => item.FullText)) : String.Format("{0} - {1}", UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText, UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText));
             currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
@@ -141,23 +133,39 @@ namespace nUpdate.UI.Dialogs
             iconPictureBox.Image = _appIcon.ToBitmap();
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
-            changelogTextBox.Text = Changelog;
-            AddShieldToButton(installButton);
+            foreach (var updateConfiguration in PackageConfigurations)
+            {
+                var versionText = new UpdateVersion(updateConfiguration.LiteralVersion).FullText;
+                var changelogText = updateConfiguration.Changelog.ContainsKey(new CultureInfo(LanguageName)) ? updateConfiguration.Changelog.First(item => item.Key.Name == LanguageName).Value :
+                updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
 
-            if (MustUpdate)
-                cancelButton.Enabled = false;
-            else
-                _allowCancel = true;
+                changelogTextBox.Text +=
+                    String.Format(String.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
+                        versionText, changelogText);
+            }
+            AddShieldToButton(installButton);
 
             if (OperationAreas == null || OperationAreas.Count == 0)
             {
                 accessLabel.Text = String.Format("{0} -", _lp.NewUpdateDialogAccessText);
+                _allowCancel = true;
                 return;
             }
 
             accessLabel.Text = String.Format("{0} {1}", _lp.NewUpdateDialogAccessText,
                 String.Join(", ",
                     LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray())));
+            _allowCancel = true;
+        }
+
+        public void ShowModalDialog(object dialogResultReference)
+        {
+            ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
+        }
+
+        public void CloseDialog(object state)
+        {
+            Close();
         }
 
         private void installButton_Click(object sender, EventArgs e)

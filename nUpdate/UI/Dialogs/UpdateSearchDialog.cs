@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.UI.Popups;
-using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.UI.Dialogs
 {
@@ -28,9 +27,20 @@ namespace nUpdate.UI.Dialogs
         public string LanguageName { get; set; }
 
         /// <summary>
-        ///     Sets the path of the file which contains the specific _lpuage content a user added on its own.
+        ///     Sets the path of the file which contains the specific language content a user added on its own.
         /// </summary>
         public string LanguageFilePath { get; set; }
+
+        /// <summary>
+        ///     Occurs when the cancel button is clicked.
+        /// </summary>
+        public event EventHandler<EventArgs> CancelButtonClicked;
+
+        protected virtual void OnCancelButtonClicked()
+        {
+            if (CancelButtonClicked != null)
+                CancelButtonClicked(this, EventArgs.Empty);
+        }
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
@@ -65,23 +75,25 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
-        public void SearchFailedEventHandler(object sender, FailedEventArgs e)
+        public void Fail(Exception ex)
         {
-            Invoke(new Action(() =>
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, e.Exception,
-                    PopupButtons.Ok);
-                DialogResult = DialogResult.Cancel;
-            }));
+            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
+                PopupButtons.Ok)));
         }
 
-        public void SearchFinishedEventHandler(object sender, UpdateSearchFinishedEventArgs e)
+        public void ShowModalDialog(object state)
         {
-            DialogResult = DialogResult.OK;
+            ShowDialog();
+        }
+
+        public void CloseDialog(object state)
+        {
+            Close();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
+            OnCancelButtonClicked();
             DialogResult = DialogResult.Cancel;
         }
     }

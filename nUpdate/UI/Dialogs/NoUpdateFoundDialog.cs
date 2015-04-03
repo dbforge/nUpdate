@@ -64,6 +64,16 @@ namespace nUpdate.UI.Dialogs
             Text = Application.ProductName;
         }
 
+        public void ShowModalDialog(object dialogResultReference)
+        {
+            ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
+        }
+
+        public void CloseDialog(object state)
+        {
+            Close();
+        }
+
         private void closeButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;

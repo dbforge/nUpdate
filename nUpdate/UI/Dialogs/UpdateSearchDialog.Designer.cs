@@ -89,6 +89,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "UpdateSearchDialog";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Load += new System.EventHandler(this.SearchDialog_Load);
             this.controlPanel1.ResumeLayout(false);
