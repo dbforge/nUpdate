@@ -18,10 +18,8 @@ namespace nUpdate.UI.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (LineAlignment == Alignment.Horizontal)
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(500, 5));
-            else
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5), new Point(5, 500));
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5),
+                LineAlignment == Alignment.Horizontal ? new Point(500, 5) : new Point(5, 500));
         }
     }
 }
