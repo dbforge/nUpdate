@@ -960,7 +960,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         editButton.Enabled = true;
                         deleteButton.Enabled = true;
 
-                        editToolStripMenuItem.Enabled = false;
+                        editToolStripMenuItem.Enabled = true;
                         deleteToolStripMenuItem.Enabled = true;
                         if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
                         {

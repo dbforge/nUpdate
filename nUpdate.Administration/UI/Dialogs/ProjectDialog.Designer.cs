@@ -696,6 +696,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // editToolStripMenuItem
             // 
+            this.editToolStripMenuItem.Enabled = false;
             this.editToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("editToolStripMenuItem.Image")));
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
@@ -704,6 +705,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // deleteToolStripMenuItem
             // 
+            this.deleteToolStripMenuItem.Enabled = false;
             this.deleteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripMenuItem.Image")));
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
@@ -712,6 +714,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // uploadToolStripMenuItem
             // 
+            this.uploadToolStripMenuItem.Enabled = false;
             this.uploadToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uploadToolStripMenuItem.Image")));
             this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
             this.uploadToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
