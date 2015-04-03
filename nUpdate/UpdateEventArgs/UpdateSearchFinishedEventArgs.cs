@@ -12,13 +12,13 @@ namespace nUpdate.UpdateEventArgs
         ///     Initializes a new instance of the <see cref="UpdateSearchFinishedEventArgs" />-class.
         /// </summary>
         /// <param name="updateAvailable">A value which indicates whether a new update is available or not.</param>
-        public UpdateSearchFinishedEventArgs(bool updateAvailable)
+        internal UpdateSearchFinishedEventArgs(bool updateAvailable)
         {
             UpdateAvailable = updateAvailable;
         }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a new update is available or not.
+        ///     Gets a value indicating whether a new update is available or not.
         /// </summary>
         public bool UpdateAvailable { get; private set; }
     }

@@ -13,7 +13,7 @@ namespace nUpdate.UpdateEventArgs
         ///     Initializes a new instance of the <see cref="FailedEventArgs" />-class.
         /// </summary>
         /// <param name="exception"></param>
-        public FailedEventArgs(Exception exception)
+        internal FailedEventArgs(Exception exception)
         {
             Exception = exception;
         }
