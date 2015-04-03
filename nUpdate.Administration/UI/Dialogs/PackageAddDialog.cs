@@ -164,12 +164,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (Project.Packages != null)
                     Project.Packages.Remove(_package); // Remove the saved package again
 
-                _package.IsReleased = false;
-
-                if (Project.Packages == null)
-                    Project.Packages = new List<UpdatePackage>();
-                Project.Packages.Add(_package);
-
                 try
                 {
                     UpdateProject.SaveProject(Project.Path, Project);
@@ -604,6 +598,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (Project.Packages == null)
                     Project.Packages = new List<UpdatePackage>();
                 Project.Packages.Add(_package);
+                Project.NewestPackage = _package.Version.FullText;
 
                 if (_publishUpdate)
                 {
