@@ -3,9 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using nUpdate.Administration.Core.History;
 using nUpdate.Core;
+using Newtonsoft.Json.Linq;
 
 namespace nUpdate.Administration.Core.Application
 {
@@ -51,9 +53,17 @@ namespace nUpdate.Administration.Core.Application
         public string PublicKey { get; set; }
 
         /// <summary>
-        ///     The path of the file containing an assembly for loading the version from.
+        ///     The path of the file containing an assembly for loading the version.
         /// </summary>
         public string AssemblyVersionPath { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the credentials should be saved or not.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [save credentials]; otherwise, <c>false</c>.
+        /// </value>
+        public bool SaveCredentials { get; set; }
 
         /// <summary>
         ///     The proxy to use, if wished.
@@ -69,6 +79,11 @@ namespace nUpdate.Administration.Core.Application
         ///     The password for the proxy to use, if necessary. (Base64-encoded).
         /// </summary>
         public string ProxyPassword { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the path of the file containing an assembly that implements custom transfer handlers for FTP.
+        /// </summary>
+        public string FtpTransferAssemblyFilePath { get; set; }
 
         /// <summary>
         ///     The FTP-host of the project.
@@ -109,11 +124,6 @@ namespace nUpdate.Administration.Core.Application
         ///     The log of the project.
         /// </summary>
         public List<Log> Log { get; set; }
-
-        /// <summary>
-        ///     The amount of released packages.
-        /// </summary>
-        public int ReleasedPackages { get; set; }
 
         /// <summary>
         ///     The literal version of the newest package released.
@@ -157,7 +167,15 @@ namespace nUpdate.Administration.Core.Application
         /// <returns>Returns the read update project.</returns>
         public static UpdateProject LoadProject(string path)
         {
-            return Serializer.Deserialize<UpdateProject>(File.ReadAllText(path));
+            string jsonString = File.ReadAllText(path);
+            JObject jObject = JObject.Parse(jsonString);
+            JToken value;
+            if (typeof (UpdateProject).GetProperties().All(property => jObject.TryGetValue(property.Name, out value)))
+                return Serializer.Deserialize<UpdateProject>(jsonString);
+
+            var project = Serializer.Deserialize<UpdateProject>(jsonString);
+            SaveProject(project.Path, project);
+            return project;
         }
 
         /// <summary>
