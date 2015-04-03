@@ -15,6 +15,7 @@ namespace nUpdate.Test
             byte[] encrypted = AesManager.Encrypt(password, "testKey", "testIV");
             var decrypted = AesManager.Decrypt(encrypted, "testKey", "testIV");
             Assert.IsTrue(decrypted.ConvertToUnsecureString() == password);
+            Assert.IsFalse(decrypted.ConvertToUnsecureString() == "NotThePassword");
         }
     }
 }

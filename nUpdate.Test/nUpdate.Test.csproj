@@ -81,9 +81,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate Administration\nUpdate Administration\nUpdate Administration.csproj">
+    <ProjectReference Include="..\nUpdate.Administration\nUpdate.Administration.csproj">
       <Project>{804f7359-bd07-4c8d-a126-a863cd27aa4d}</Project>
-      <Name>nUpdate Administration</Name>
+      <Name>nUpdate.Administration</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
       <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
