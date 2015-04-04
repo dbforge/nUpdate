@@ -186,7 +186,7 @@ namespace nUpdate.Updating
                 }
                 else if (!_updateAvailable && UseHiddenSearch)
                     return;
-                else if (!_updateAvailable && UseHiddenSearch)
+                else if (!_updateAvailable && !UseHiddenSearch)
                 {
                     var noUpdateDialogResultReference = new DialogResultReference();
                     if (!UseHiddenSearch)
