@@ -1,7 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using nUpdate.Updating;
 
 namespace nUpdate.Administration.Core.Application
 {
@@ -12,9 +11,9 @@ namespace nUpdate.Administration.Core.Application
     public class UpdatePackage
     {
         /// <summary>
-        ///     The version of the package.
+        ///     The literal version of the package.
         /// </summary>
-        public UpdateVersion Version { get; set; }
+        public string Version { get; set; }
 
         /// <summary>
         ///     The description of the package.

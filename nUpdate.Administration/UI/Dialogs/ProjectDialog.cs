@@ -334,7 +334,15 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Invoke(new Action(() =>
                 {
-                    newestPackageLabel.Text = Project.NewestPackage ?? "-";
+                    if (Project.Packages != null && Project.Packages.Count != 0)
+                    {
+                        newestPackageLabel.Text = UpdateVersion.GetHighestUpdateVersion(
+                                Project.Packages.Select(item => new UpdateVersion(item.Version))).FullText;
+                    }
+                    else
+                    {
+                        newestPackageLabel.Text = "-";
+                    }
 
                     projectIdTextBox.Text = Project.Guid;
                     publicKeyTextBox.Text = Project.PublicKey;
@@ -371,7 +379,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 try
                 {
-                    var packageListViewItem = new ListViewItem(package.Version.FullText);
+                    var packageListViewItem = new ListViewItem(new UpdateVersion(package.Version).FullText);
                     var packageDirectoryInfo = new DirectoryInfo(package.LocalPackagePath);
                     var packageFileInfo = new FileInfo(package.LocalPackagePath);
 
@@ -790,12 +798,12 @@ namespace nUpdate.Administration.UI.Dialogs
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
-            var packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag;
+            var packageVersion = new UpdateVersion((string)packagesList.SelectedItems[0].Tag);
             UpdatePackage correspondingPackage;
 
             try
             {
-                correspondingPackage = Project.Packages.First(item => item.Version == packageVersion);
+                correspondingPackage = Project.Packages.First(item => new UpdateVersion(item.Version) == packageVersion);
             }
             catch (Exception ex)
             {
@@ -842,7 +850,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     packageEditDialog.UpdateConfiguration =
                         UpdateConfiguration.FromFile(Path.Combine(Directory.GetParent(
-                            Project.Packages.First(item => item.Version == packageVersion).LocalPackagePath).FullName,
+                            Project.Packages.First(item => new UpdateVersion(item.Version) == packageVersion).LocalPackagePath).FullName,
                             "updates.json")).ToList();
                 }
                 catch (Exception ex)
@@ -856,6 +864,7 @@ namespace nUpdate.Administration.UI.Dialogs
             packageEditDialog.ConfigurationFileUrl = _configurationFileUrl;
             if (packageEditDialog.ShowDialog() != DialogResult.OK)
                 return;
+            InitializeProjectData();
             InitializePackageItems();
             if (Project.UseStatistics)
                 await InitializeStatisticsData();
@@ -901,11 +910,11 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             var vbSource =
                 String.Format(
-                    "Dim manager As New UpdateManager(New Uri(\"{0}\"), \"{1}\" New CultureInfo(\"en\"))",
+                    "Dim manager As New UpdateManager(New Uri(\"{0}\"), \"{1}\", New CultureInfo(\"en\"))",
                     UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
             var cSharpSource =
                 String.Format(
-                    "UpdateManager manager = new UpdateManager(new Uri(\"{0}\"), \"{1}\" new CultureInfo(\"en\"));",
+                    "UpdateManager manager = new UpdateManager(new Uri(\"{0}\"), \"{1}\", new CultureInfo(\"en\"));",
                     UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
 
             try
@@ -1196,7 +1205,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    var packagePath = Project.Packages.First(x => x.Version == packageVersion).LocalPackagePath;
+                    var packagePath = Project.Packages.First(x => new UpdateVersion(x.Version) == packageVersion).LocalPackagePath;
                     _ftp.UploadPackage(packagePath, packageVersion.ToString());
                 }
                 catch (InvalidOperationException)
@@ -1262,8 +1271,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    Project.Packages.First(x => x.Version == packageVersion).IsReleased = true;
-                    Project.NewestPackage = packageVersion.FullText;
+                    Project.Packages.First(x => new UpdateVersion(x.Version) == packageVersion).IsReleased = true;
                     UpdateProject.SaveProject(Project.Path, Project);
                 }
                 catch (Exception ex)
@@ -1727,14 +1735,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        // Remove current package entry and save the edited project
-                        Project.Packages.RemoveAll(x => x.Version == (UpdateVersion) selectedItem.Tag);
-                        // The newest package
-                        if (Project.Packages != null && Project.Packages.Count != 0)
-                            Project.NewestPackage = Project.Packages.Last().Version.FullText;
-                        else
-                            Project.NewestPackage = null;
-
                         // The version-id must be adjusted, too
                         if (Project.UseStatistics)
                         {
@@ -1829,7 +1829,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         }
                         finally
                         {
-                            dataReader.Close();
+                            if (dataReader != null) 
+                                dataReader.Close();
                         }
 
                         var deleteCommand = deleteConnection.CreateCommand();
@@ -1857,7 +1858,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
                         }
                     }
 
-                    _updateLog.Write(LogEntry.Delete, ((UpdateVersion) selectedItem.Tag).FullText);
+                    _updateLog.Write(LogEntry.Delete, new UpdateVersion((string) selectedItem.Tag).FullText);
                 }
 
                 SetUiState(true);

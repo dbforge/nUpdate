@@ -592,13 +592,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name,
                     _packageVersion.ToString(),
                     String.Format("{0}.zip", Project.Guid));
-                _package.Version = _packageVersion;
+                _package.Version = _packageVersion.ToString();
                 _packageInitialized = true;
 
                 if (Project.Packages == null)
                     Project.Packages = new List<UpdatePackage>();
                 Project.Packages.Add(_package);
-                Project.NewestPackage = _package.Version.FullText;
 
                 if (_publishUpdate)
                 {
@@ -730,7 +729,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _ftp.UploadFile(_updateConfigFile);
-                        _updateLog.Write(LogEntry.Upload, _packageVersion.ToString());
+                        _updateLog.Write(LogEntry.Upload, _packageVersion.FullText);
                     }
                     catch (Exception ex)
                     {
