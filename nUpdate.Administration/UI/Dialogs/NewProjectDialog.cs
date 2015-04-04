@@ -472,7 +472,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     Guid = Guid.NewGuid().ToString(),
                     ApplicationId = Settings.Default.ApplicationID,
                     UpdateUrl = updateUrlTextBox.Text,
-                    NewestPackage = null,
                     Packages = null,
                     SaveCredentials = saveCredentialsCheckBox.Checked,
                     FtpHost = ftpHostTextBox.Text,
