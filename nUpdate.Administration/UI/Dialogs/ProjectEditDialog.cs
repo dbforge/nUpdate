@@ -1789,7 +1789,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                 {
                     foreach (var existingPackage in Project.Packages)
                     {
-                        packagesToAffectDialog.AvailablePackageVersions.Add(existingPackage.Version);
+                        packagesToAffectDialog.AvailablePackageVersions.Add(new UpdateVersion(existingPackage.Version));
                     }
 
                     if (packagesToAffectDialog.ShowDialog() != DialogResult.OK)
