@@ -308,8 +308,9 @@ namespace nUpdate.Administration.UI.Dialogs
             developmentBuildNumericUpDown.Enabled = (packageVersion.DevelopmentalStage != DevelopmentalStage.Release);
             architectureComboBox.SelectedIndex = (int) _packageConfiguration.Architecture;
             necessaryUpdateCheckBox.Checked = _packageConfiguration.NecessaryUpdate;
+            includeIntoStatisticsCheckBox.Enabled = Project.UseStatistics;
             includeIntoStatisticsCheckBox.Checked = _packageConfiguration.UseStatistics;
-            foreach (var package in Project.Packages.Where(package => package.Version == packageVersion))
+            foreach (var package in Project.Packages.Where(package => new UpdateVersion(package.Version) == packageVersion))
             {
                 descriptionTextBox.Text = package.Description;
             }
@@ -561,7 +562,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (Project.Packages != null && Project.Packages.Count != 0)
             {
-                if (PackageVersion != _newVersion && Project.Packages.Any(item => item.Version == _newVersion))
+                if (PackageVersion != _newVersion && Project.Packages.Any(item => new UpdateVersion(item.Version) == _newVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                         String.Format(
@@ -790,16 +791,15 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     string description = null;
                     Invoke(new Action(() => description = descriptionTextBox.Text));
-                    Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString)).
+                    Project.Packages.First(item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString)).
                         Description = description;
                     if (_newVersion != new UpdateVersion(_existingVersionString))
                     {
-                        Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
+                        Project.Packages.First(item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString))
                             .LocalPackagePath
                             = String.Format("{0}\\{1}.zip", _newPackageDirectory, Project.Guid);
-                        Project.Packages.First(item => item.Version == new UpdateVersion(_existingVersionString))
-                            .Version =
-                            new UpdateVersion(_packageConfiguration.LiteralVersion);
+                        Project.Packages.First(item => item.Version == _existingVersionString)
+                            .Version = _packageConfiguration.LiteralVersion;
                     }
 
                     UpdateProject.SaveProject(Project.Path, Project);
