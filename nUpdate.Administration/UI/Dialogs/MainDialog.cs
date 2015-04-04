@@ -3,18 +3,16 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using Exceptionless;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
+using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
