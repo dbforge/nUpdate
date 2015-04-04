@@ -16,6 +16,8 @@ namespace nUpdate.Administration
 {
     public static class Program
     {
+        private static Mutex _mutex;
+
         /// <summary>
         ///     The path of the languages directory.
         /// </summary>
@@ -28,18 +30,19 @@ namespace nUpdate.Administration
         private static void Main(string[] args)
         {
             bool firstInstance;
-            new Mutex(true, "MainForm", out firstInstance);
+            _mutex = new Mutex(true, "MainForm", out firstInstance);
 
             if (!firstInstance)
                 return;
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += UnhandledException;
-            Application.ThreadException += UnhandledThreadException;
+            //currentDomain.UnhandledException += UnhandledException;
+            //Application.ThreadException += UnhandledThreadException;
+            Application.ApplicationExit += Exit;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            ExceptionlessClient.Current.Register();
+            ExceptionlessClient.Default.Register();
 
             var dialog = new MainDialog();
             if (args.Length == 1)
@@ -52,41 +55,39 @@ namespace nUpdate.Administration
             Application.Run(dialog);
         }
 
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void Exit(object sender, EventArgs e)
         {
-            Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
-                ((Exception)e.ExceptionObject), PopupButtons.Ok);
-            var eventBuilder = ((Exception) e.ExceptionObject).ToExceptionless();
-            var nUpdateVersion = Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(false)
-                .OfType<nUpdateVersionAttribute>()
-                .SingleOrDefault();
-            if (nUpdateVersion != null)
-                eventBuilder.SetVersion(
-                    nUpdateVersion
-                        .VersionString);
-            eventBuilder.MarkAsCritical().Submit();
-            ExceptionlessClient.Default.ProcessQueue();
-            Application.Exit();
+            if (_mutex != null)
+                _mutex.Dispose();
         }
 
-        private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
-                e.Exception, PopupButtons.Ok);
-            var eventBuilder = e.Exception.ToExceptionless();
-            var nUpdateVersion = Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(false)
-                .OfType<nUpdateVersionAttribute>()
-                .SingleOrDefault();
-            if (nUpdateVersion != null)
-                eventBuilder.SetVersion(
-                    nUpdateVersion
-                        .VersionString);
-            eventBuilder.MarkAsCritical().Submit();
-            ExceptionlessClient.Default.ProcessQueue();
-            Application.Exit();
-        }
+        //private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        //{
+        //    HandleException((Exception)e.ExceptionObject);
+        //}
+
+        //private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
+        //{
+        //    HandleException(e.Exception);
+        //}
+
+        //private static void HandleException(Exception ex)
+        //{
+        //    Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
+        //        (ex), PopupButtons.Ok);
+        //    var eventBuilder = (ex).ToExceptionless();
+        //    var nUpdateVersion = Assembly.GetExecutingAssembly()
+        //        .GetCustomAttributes(false)
+        //        .OfType<nUpdateVersionAttribute>()
+        //        .SingleOrDefault();
+        //    if (nUpdateVersion != null)
+        //        eventBuilder.SetVersion(
+        //            nUpdateVersion
+        //                .VersionString);
+        //    eventBuilder.MarkAsCritical().Submit();
+        //    ExceptionlessClient.Default.ProcessQueue();
+        //    Application.Exit();
+        //}
 
         /// <summary>
         ///     The root path.
@@ -121,7 +122,7 @@ namespace nUpdate.Administration
         /// </summary>
         public static string VersionString
         {
-            get { return "nUpdate Administration 1.0.0.0 Beta 1"; }
+            get { return "nUpdate Administration 1.0.0.0 Beta 2"; }
         }
 
         public static string AesKeyPassword
