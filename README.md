@@ -25,7 +25,7 @@ Help and tips are appreciated. Current Beta-version could contain some problems 
 
 ### Installation
 
-There is currently no real installation, just download the whole solution and build it. Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
+Download the whole solution and build it. If you are using .NET 4.0 you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5 you won't have to install anything. Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
 A documentation on how to use nUpdate's components and how to customize it will follow soon.
 
 ### Development
