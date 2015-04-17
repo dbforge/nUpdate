@@ -992,7 +992,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         if (packagesList.SelectedItems[0].Group == packagesList.Groups[1])
                         {
                             uploadButton.Enabled = true;
-                            uploadToolStripMenuItem.Enabled = false;
+                            uploadToolStripMenuItem.Enabled = true;
                         }
                         break;
                 }
