@@ -200,9 +200,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Core\Localization\de-DE.json" />
     <None Include="app.config" />
+    <None Include="Updating\UpdaterUI.cd" />
     <None Include="packages.config" />
-    <None Include="UpdaterUi.cd" />
-    <None Include="UpdateVersion.cd" />
+    <None Include="Updating\UpdateVersion.cd" />
     <None Include="Updating\UpdateManager.cd" />
     <None Include="Core\Localization\de-AT.json" />
     <None Include="Core\Localization\de-CH.json" />
