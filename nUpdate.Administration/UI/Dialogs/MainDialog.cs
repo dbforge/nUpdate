@@ -10,6 +10,7 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Application.Extension;
 using nUpdate.Administration.Core.Localization;
+using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
@@ -99,6 +100,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     PopupButtons.Ok);
             }
 
+            if (String.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
+                Settings.Default.ProgramPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "nUpdate Administration");
             Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
             if (!Directory.Exists(Program.LanguagesDirectory))
             {
