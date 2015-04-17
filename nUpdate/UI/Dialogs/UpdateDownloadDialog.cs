@@ -107,9 +107,11 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
-        public void ShowModalDialog(object state)
+        #region TAP
+
+        public void ShowModalDialog(object dialogResultReference)
         {
-            ShowDialog();
+            ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
         }
 
         public void CloseDialog(object state)
@@ -131,6 +133,34 @@ namespace nUpdate.UI.Dialogs
                         "Error while adding a new statistics entry.",
                         ex, PopupButtons.Ok)));
         }
+
+        #endregion
+
+        #region EAP
+
+        public void ProgressChanged(object sender, UpdateDownloadProgressChangedEventArgs e)
+        {
+            try
+            {
+                Invoke(new Action(() =>
+                {
+                    downloadProgressBar.Value = (int)e.Percentage;
+                    infoLabel.Text = String.Format(
+                        _lp.UpdateDownloadDialogLoadingInfo, (int)e.Percentage);
+                }));
+            }
+            catch (InvalidOperationException)
+            {
+                // Prevent race conditions
+            }
+        }
+
+        public void Finished(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
+        #endregion
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
