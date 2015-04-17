@@ -302,10 +302,6 @@ namespace nUpdate.Administration.UI.Dialogs
         //    searchTextBox.Cue = ls.ProjectDialogSearchText;
         //}
 
-        /// <summary>
-        ///     Initializes the dialog with the data of the project.
-        /// </summary>
-        /// <returns>Returns whether the operation was successful or not.</returns>
         private bool InitializeProjectData()
         {
             try
@@ -361,9 +357,6 @@ namespace nUpdate.Administration.UI.Dialogs
             return true;
         }
 
-        /// <summary>
-        ///     Adds the package items to the dialog's package listview.
-        /// </summary>
         private void InitializePackageItems()
         {
             Invoke(new Action(() =>
@@ -380,23 +373,39 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     var packageListViewItem = new ListViewItem(new UpdateVersion(package.Version).FullText);
-                    var packageDirectoryInfo = new DirectoryInfo(package.LocalPackagePath);
                     var packageFileInfo = new FileInfo(package.LocalPackagePath);
+                    if (packageFileInfo.Exists)
+                    {
+                        packageListViewItem.SubItems.Add(packageFileInfo.CreationTime.ToString());
+                        var sizeInBytes = packageFileInfo.Length;
+                        string sizeText = null;
 
-                    packageListViewItem.SubItems.Add(packageDirectoryInfo.CreationTime.ToString());
-                    var sizeInBytes = packageFileInfo.Length;
-                    string sizeText = null;
+                        if (sizeInBytes >= 107374182.4) // 0,1 GB
+                            sizeText = String.Format("{0} GB", (float) Math.Round(sizeInBytes/GB, 1));
+                        else if (sizeInBytes >= 104857.6) // 0,1 MB
+                            sizeText = String.Format("{0} MB", (float) Math.Round(sizeInBytes/MB, 1));
+                        else if (sizeInBytes >= 102.4) // 0,1 KB
+                            sizeText = String.Format("{0} KB", (float) Math.Round(sizeInBytes/KB, 1));
+                        else if (sizeInBytes >= 1) // 1 B
+                            sizeText = String.Format("{0} B", sizeInBytes);
 
-                    if (sizeInBytes >= 107374182.4) // 0,1 GB
-                        sizeText = String.Format("{0} GB", (float) Math.Round(sizeInBytes/GB, 1));
-                    else if (sizeInBytes >= 104857.6) // 0,1 MB
-                        sizeText = String.Format("{0} MB", (float) Math.Round(sizeInBytes/MB, 1));
-                    else if (sizeInBytes >= 102.4) // 0,1 KB
-                        sizeText = String.Format("{0} KB", (float) Math.Round(sizeInBytes/KB, 1));
-                    else if (sizeInBytes >= 1) // 1 B
-                        sizeText = String.Format("{0} B", sizeInBytes);
+                        packageListViewItem.SubItems.Add(sizeText);
+                    }
+                    else
+                    {
+                        UpdatePackage package1 = package;
+                        Invoke(new Action(() =>
+                        {
+                            Popup.ShowPopup(this, SystemIcons.Information, "Missing package file.",
+                                String.Format(
+                                    "The package of version \"{0}\" could not be found on your computer. Specific actions and information won't be available.",
+                                    new UpdateVersion(package1.Version).FullText),
+                                PopupButtons.Ok);
+                            packageListViewItem.SubItems.Add("-");
+                            packageListViewItem.SubItems.Add("-");
+                        }));
+                    }
 
-                    packageListViewItem.SubItems.Add(sizeText);
                     packageListViewItem.SubItems.Add(package.Description);
                     packageListViewItem.Group = package.IsReleased ? packagesList.Groups[0] : packagesList.Groups[1];
                     packageListViewItem.Tag = package.Version;
@@ -844,6 +853,15 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else
             {
+                if (!File.Exists(
+                        Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
+                {
+                    Invoke(
+                        new Action(
+                            () => Popup.ShowPopup(this, SystemIcons.Error,
+                                "Edit operation cancelled", "The package file doesn't exist locally and can't be edited locally.", PopupButtons.Ok)));
+                    return;
+                }
                 packageEditDialog.IsReleased = false;
 
                 try
@@ -1073,19 +1091,26 @@ namespace nUpdate.Administration.UI.Dialogs
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
-            var version = (UpdateVersion) packagesList.SelectedItems[0].Tag;
+            var version = new UpdateVersion((string) packagesList.SelectedItems[0].Tag);
 #pragma warning disable 4014
             UploadPackage(version);
 #pragma warning restore 4014
         }
 
-        /// <summary>
-        ///     Provides a new thread that uploads the package.
-        /// </summary>
         private async void UploadPackage(UpdateVersion packageVersion)
         {
-            await Task.Factory.StartNew(() =>
+            await TaskEx.Run(() =>
             {
+                if (!File.Exists(
+                        Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
+                {
+                    Invoke(
+                        new Action(
+                            () => Popup.ShowPopup(this, SystemIcons.Error,
+                                "Upload operation cancelled", "The package file doesn't exist locally and can't be uploaded to the server.", PopupButtons.Ok)));
+                    return;
+                }
+
                 var updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
                     packageVersion.ToString(), "updates.json");
 
@@ -1093,8 +1118,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
                 try
                 {
-                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ??
-                                              Enumerable.Empty<UpdateConfiguration>();
+                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ?? Enumerable.Empty<UpdateConfiguration>();
                     _backupConfiguration = updateConfiguration.ToList();
                 }
                 catch (Exception ex)
@@ -1743,6 +1767,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             Settings.Default.Reload();
                         }
 
+                        Project.Packages.Remove(Project.Packages.First(item => item.Version == (string)((ListViewItem) enumerator.Current).Tag));
                         UpdateProject.SaveProject(Project.Path, Project);
                     }
                     catch (Exception ex)
@@ -1905,6 +1930,11 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
             if (sender != null)
                 ((TextBox)sender).SelectAll();
             e.Handled = true;
+        }
+
+        private void overviewHeader_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
