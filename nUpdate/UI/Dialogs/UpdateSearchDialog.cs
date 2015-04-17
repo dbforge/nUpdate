@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.UI.Popups;
+using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.UI.Dialogs
 {
@@ -75,6 +76,8 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
+        #region TAP
+
         public void Fail(Exception ex)
         {
             Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
@@ -90,6 +93,24 @@ namespace nUpdate.UI.Dialogs
         {
             Close();
         }
+
+        #endregion
+
+        #region EAP
+
+        public void Failed(object sender, FailedEventArgs e)
+        {
+            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, e.Exception.InnerException ?? e.Exception,
+                PopupButtons.Ok)));
+            DialogResult = DialogResult.Cancel;
+        }
+
+        public void Finished(object sender, UpdateSearchFinishedEventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
+        #endregion
 
         private void cancelButton_Click(object sender, EventArgs e)
         {

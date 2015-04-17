@@ -66,7 +66,7 @@ namespace nUpdate.UI.Dialogs
 
         public void ShowModalDialog(object dialogResultReference)
         {
-            ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
+            ShowDialog();
         }
 
         public void CloseDialog(object state)
