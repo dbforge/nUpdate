@@ -39,9 +39,9 @@ using nUpdate.Core;
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersion("v1.0.0.0 Beta 2")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyInformationalVersion("v2.0.0.0 Beta 1")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: NeutralResourcesLanguage("")]
-[assembly: nUpdateVersion("1.0b2")]
+[assembly: nUpdateVersion("2.0b1")]
 [assembly: Exceptionless.Configuration.Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]
