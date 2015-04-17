@@ -102,9 +102,9 @@
             this.label13.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.Location = new System.Drawing.Point(134, 39);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(83, 13);
+            this.label13.Size = new System.Drawing.Size(75, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "1.0.0.0 Beta 2";
+            this.label13.Text = "2.0.0.0 Beta 1";
             // 
             // controlPanel1
             // 
