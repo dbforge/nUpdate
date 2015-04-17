@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using nUpdate.Core;
 
 namespace nUpdate.Administration.Core
@@ -22,7 +23,7 @@ namespace nUpdate.Administration.Core
         public string Name { get; set; }
 
         /// <summary>
-        ///     The path o´f the project-file.
+        ///     The path of the project-file.
         /// </summary>
         public string Path { get; set; }
 
@@ -32,9 +33,9 @@ namespace nUpdate.Administration.Core
         /// <returns></returns>
         public static IEnumerable<ProjectConfiguration> Load()
         {
-            return
-                Serializer.Deserialize<IEnumerable<ProjectConfiguration>>(
-                    File.ReadAllText(Program.ProjectsConfigFilePath));
+            string content = File.ReadAllText(Program.ProjectsConfigFilePath);
+            return !String.IsNullOrEmpty(content) ? 
+                Serializer.Deserialize<IEnumerable<ProjectConfiguration>>(content) : Enumerable.Empty<ProjectConfiguration>();
         }
     }
 }
