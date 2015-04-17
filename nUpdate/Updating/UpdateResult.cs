@@ -53,6 +53,9 @@ namespace nUpdate.Updating
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
 
+                    if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
+                        continue;
+
                     _newUpdateConfigurations.Add(config);
                 }
 
