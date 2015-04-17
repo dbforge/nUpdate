@@ -14,7 +14,7 @@ nUpdate is a modern update system providing high security and an easy-to-use int
 - Well designed integrated user interfaces
 
 ### Version
-1.0.0.0 Beta Build 2 (Could contain bugs)
+2.0.0.0 Beta Build 1 (Could contain bugs)
 
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
@@ -25,7 +25,7 @@ Help and tips are appreciated. Current Beta-version could contain some problems 
 
 ### Installation
 
-Download the whole solution and build it. If you are using .NET 4.0 you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5 you won't have to install anything. Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
+Download the whole solution and build it. If you are using .NET 4.0 and use the binaries located in "Provide TAP" you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5 you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
 A documentation on how to use nUpdate's components and how to customize it will follow soon.
 
 ### Development
