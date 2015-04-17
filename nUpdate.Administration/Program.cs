@@ -35,7 +35,7 @@ namespace nUpdate.Administration
             if (!firstInstance)
                 return;
 
-            AppDomain currentDomain = AppDomain.CurrentDomain;
+            //AppDomain currentDomain = AppDomain.CurrentDomain;
             //currentDomain.UnhandledException += UnhandledException;
             //Application.ThreadException += UnhandledThreadException;
             Application.ApplicationExit += Exit;
@@ -90,19 +90,15 @@ namespace nUpdate.Administration
         //}
 
         /// <summary>
-        ///     The root path.
+        ///     The root path of the locally stored data.
         /// </summary>
         public static string Path
         {
-            get
-            {
-                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "nUpdate Administration");
-            }
+            get { return Properties.Settings.Default.ProgramPath; }
         }
 
         /// <summary>
-        ///     The path of the config file for all projects.
+        ///     The path of the configuration file for all projects.
         /// </summary>
         public static string ProjectsConfigFilePath
         {
