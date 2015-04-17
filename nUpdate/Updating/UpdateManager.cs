@@ -81,6 +81,8 @@ namespace nUpdate.Updating
             Dispose(true);
         }
 
+        public SynchronizationContext Context { get; set; }
+
         /// <summary>
         ///     Gets or sets the URI of the configuration file.
         /// </summary>
@@ -238,16 +240,12 @@ namespace nUpdate.Updating
         public bool SearchForUpdates()
         {
             ResetTokens();
-            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
             if (!ConnectionChecker.IsConnectionAvailable())
                 return false;
-
-            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
             var configurations = UpdateConfiguration.Download(UpdateConfigurationFileUri, Proxy);
-            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             var result = new UpdateResult(configurations, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -269,7 +267,8 @@ namespace nUpdate.Updating
             }
 
             TotalSize = updatePackageSize;
-            _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            if (_searchCancellationTokenSource.Token.IsCancellationRequested)
+                throw new OperationCanceledException();
 
             return true;
         }
@@ -279,10 +278,9 @@ namespace nUpdate.Updating
         /// </summary>
         public void SearchForUpdatesAsync()
         {
-            TaskEx.Run(() => SearchForUpdates()).ContinueWith(SearchTaskCompleted,
+            Task.Factory.StartNew(() => SearchForUpdates()).ContinueWith(SearchTaskCompleted,
                     _searchCancellationTokenSource.Token,
-                    TaskContinuationOptions.None,
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskContinuationOptions.None, TaskScheduler.Default);
         }
 
         private void SearchTaskCompleted(Task<bool> task)
@@ -296,16 +294,22 @@ namespace nUpdate.Updating
             OnUpdateSearchFinished(task.Result);
         }
 
+#if PROVIDE_TAP
+
         /// <summary>
         ///     Provides a task that searches for updates and can be wrapped asynchronously.
         /// </summary>
         /// <returns>Returns <c>true</c> if updates are available; otherwise, <c>false</c>.</returns>
         /// <exception cref="SizeCalculationException">The calculation of total size of the packages has failed.</exception>
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
+#pragma warning disable 1998
         public async Task<bool> SearchForUpdatesTask()
+#pragma warning restore 1998
         {
             return SearchForUpdates();
         }
+
+#endif
 
         /// <summary>
         ///     Cancels the active update search.
@@ -328,54 +332,11 @@ namespace nUpdate.Updating
         /// <seealso cref="DownloadPackagesTask"/>
         public void DownloadPackages()
         {
-            InternalDownloadPackage(ImplementationPattern.Synchronous, null);
-        }
-
-        /// <summary>
-        ///     Downloads the available update packages from the server, asynchronously.
-        /// </summary>
-        /// <seealso cref="DownloadPackagesTask"/>
-        /// <seealso cref="DownloadPackages"/>
-        public void DownloadPackagesAsync()
-        {
-            TaskEx.Run(() => InternalDownloadPackage(ImplementationPattern.EventBasedAsynchronous, null)).ContinueWith(DownloadTaskCompleted,
-                    _searchCancellationTokenSource.Token,
-                    TaskContinuationOptions.None,
-                    TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private void DownloadTaskCompleted(Task task)
-        {
-            if (_downloadCancellationTokenSource.IsCancellationRequested)
-                return;
-
-            var exception = task.Exception;
-            if (exception != null)
-                OnUpdateDownloadFailed(exception.InnerException ?? exception);
-            OnUpdateDownloadFinished(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        ///     Provides a task that downloads the available update packages from the server and can be wrapped asynchronously.
-        /// </summary>
-        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException"/>.</exception>
-        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
-        /// /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
-        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
-        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
-        /// <seealso cref="DownloadPackagesAsync"/>
-        /// <seealso cref="DownloadPackages"/>
-        public async Task DownloadPackagesTask(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
-        {
-            await InternalDownloadPackage(ImplementationPattern.TaskBasedAsynchronous, progress);
-        }
-
-        private async Task InternalDownloadPackage(ImplementationPattern pattern,
-            IProgress<UpdateDownloadProgressChangedEventArgs> progress)
-        {
             ResetTokens();
             int received = 0;
-            double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri)).Where(updatePackageSize => updatePackageSize != null).Sum(updatePackageSize => updatePackageSize.Value);
+            double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+                    .Where(updatePackageSize => updatePackageSize != null)
+                    .Sum(updatePackageSize => updatePackageSize.Value);
 
             if (!Directory.Exists(_applicationUpdateDirectory))
                 Directory.CreateDirectory(_applicationUpdateDirectory);
@@ -392,15 +353,7 @@ namespace nUpdate.Updating
                     }
 
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
-                    switch (pattern)
-                    {
-                        case ImplementationPattern.TaskBasedAsynchronous:
-                            webResponse = await webRequest.GetResponseAsync();
-                            break;
-                        default:
-                            webResponse = webRequest.GetResponse();
-                            break;
-                    }
+                    webResponse = webRequest.GetResponse();
 
                     var buffer = new byte[1024];
                     _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
@@ -419,45 +372,23 @@ namespace nUpdate.Updating
                                 DeletePackages();
                                 throw new OperationCanceledException();
                             }
-                            int size;
-                            switch (pattern)
-                            {
-                                case ImplementationPattern.TaskBasedAsynchronous:
-                                    size = await input.ReadAsync(buffer, 0, buffer.Length);
-                                    break;
-                                default:
-                                    size = input.Read(buffer, 0, buffer.Length);
-                                    break;
-                            }
 
+                            int size = input.Read(buffer, 0, buffer.Length);
                             while (size > 0)
                             {
                                 if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                                 {
+                                    fileStream.Flush();
+                                    fileStream.Close();
                                     DeletePackages();
                                     throw new OperationCanceledException();
                                 }
 
-                                switch (pattern)
-                                {
-                                    case ImplementationPattern.TaskBasedAsynchronous:
-                                        await fileStream.WriteAsync(buffer, 0, size);
-                                        received += size;
-                                        progress.Report(new UpdateDownloadProgressChangedEventArgs(received,
-                                            (long)total,
-                                            (float)(received / total) * 100));
-                                        size = await input.ReadAsync(buffer, 0, buffer.Length);
-                                        break;
-                                    default:
-                                        fileStream.Write(buffer, 0, size);
-                                        received += size;
-                                        if (pattern == ImplementationPattern.EventBasedAsynchronous)
-                                            OnUpdateDownloadProgressChanged(received,
-                                                (long) total,
-                                                (float) (received/total)*100);
-                                        size = input.Read(buffer, 0, buffer.Length);
-                                        break;
-                                }
+                                fileStream.Write(buffer, 0, size);
+                                received += size;
+                                OnUpdateDownloadProgressChanged(received,
+                                    (long)total, (float)(received / total) * 100);
+                                size = input.Read(buffer, 0, buffer.Length);
                             }
 
                             if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
@@ -471,40 +402,152 @@ namespace nUpdate.Updating
                                         SystemInformation.OperatingSystemName)); // Only for calling it
                                 if (!String.IsNullOrEmpty(response))
                                 {
-                                    switch (pattern)
-                                    {
-                                        case ImplementationPattern.TaskBasedAsynchronous:
-                                            throw new StatisticsException(String.Format(
-                                                _lp.StatisticsScriptExceptionText, response));
-                                        default:
-                                            OnStatisticsEntryFailed(new Exception(String.Format(
-                                                _lp.StatisticsScriptExceptionText, response)));
-                                            break;
-                                    }
-
+                                    throw new StatisticsException(String.Format(
+                                        _lp.StatisticsScriptExceptionText, response));
                                 }
                             }
                             catch (Exception ex)
                             {
-                                switch (pattern)
-                                {
-                                    case ImplementationPattern.TaskBasedAsynchronous:
-                                        throw new StatisticsException(ex.Message);
-                                    default:
-                                        OnStatisticsEntryFailed(ex);
-                                        break;
-                                }
+                                throw new StatisticsException(ex.Message);
                             }
                         }
                     }
                 }
-                finally
+                catch (Exception)
                 {
-                    if (webResponse != null) 
+                    if (webResponse != null)
                         webResponse.Close();
                 }
             }
         }
+
+        /// <summary>
+        ///     Downloads the available update packages from the server, asynchronously.
+        /// </summary>
+        /// <seealso cref="DownloadPackagesTask"/>
+        /// <seealso cref="DownloadPackages"/>
+        public void DownloadPackagesAsync()
+        {
+            Task.Factory.StartNew(DownloadPackages).ContinueWith(DownloadTaskCompleted,
+                    _downloadCancellationTokenSource.Token,
+                    TaskContinuationOptions.None,
+                    TaskScheduler.Default);
+        }
+
+        private void DownloadTaskCompleted(Task task)
+        {
+            if (_downloadCancellationTokenSource.IsCancellationRequested)
+                return;
+
+            var exception = task.Exception;
+            if (exception != null)
+                OnUpdateDownloadFailed(exception.InnerException ?? exception);
+            OnUpdateDownloadFinished(this, EventArgs.Empty);
+        }
+
+#if PROVIDE_TAP
+
+        /// <summary>
+        ///     Provides a task that downloads the available update packages from the server and can be wrapped asynchronously.
+        /// </summary>
+        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException"/>.</exception>
+        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
+        /// /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        /// <seealso cref="DownloadPackagesAsync"/>
+        /// <seealso cref="DownloadPackages"/>
+        public async Task DownloadPackagesTask(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
+        {
+            ResetTokens();
+            int received = 0;
+            double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+                    .Where(updatePackageSize => updatePackageSize != null)
+                    .Sum(updatePackageSize => updatePackageSize.Value);
+
+            if (!Directory.Exists(_applicationUpdateDirectory))
+                Directory.CreateDirectory(_applicationUpdateDirectory);
+
+            foreach (var updateConfiguration in _updateConfigurations)
+            {
+                WebResponse webResponse = null;
+                try
+                {
+                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                    {
+                        DeletePackages();
+                        throw new OperationCanceledException();
+                    }
+
+                    var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    webResponse = await webRequest.GetResponseAsync();
+
+                    var buffer = new byte[1024];
+                    _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        Path.Combine(_applicationUpdateDirectory,
+                            String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
+                    using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                        String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
+                    {
+                        using (Stream input = webResponse.GetResponseStream())
+                        {
+                            if (input == null)
+                                throw new Exception("The response stream couldn't be read.");
+
+                            if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                            {
+                                DeletePackages();
+                                throw new OperationCanceledException();
+                            }
+
+                            int size = await input.ReadAsync(buffer, 0, buffer.Length);
+                            while (size > 0)
+                            {
+                                if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                                {
+                                    fileStream.Flush();
+                                    fileStream.Close();
+                                    DeletePackages();
+                                    throw new OperationCanceledException();
+                                }
+
+                                await fileStream.WriteAsync(buffer, 0, size);
+                                received += size;
+                                progress.Report(new UpdateDownloadProgressChangedEventArgs(received,
+                                    (long) total, (float) (received/total)*100));
+                                size = await input.ReadAsync(buffer, 0, buffer.Length);
+                            }
+
+                            if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
+                                continue;
+
+                            try
+                            {
+                                string response =
+                                    new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
+                                        updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
+                                        SystemInformation.OperatingSystemName)); // Only for calling it
+                                if (!String.IsNullOrEmpty(response))
+                                {
+                                    throw new StatisticsException(String.Format(
+                                        _lp.StatisticsScriptExceptionText, response));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new StatisticsException(ex.Message);
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    if (webResponse != null)
+                        webResponse.Close();
+                }
+            }
+        }
+#endif
 
         /// <summary>
         ///     Cancels the active download.
@@ -516,12 +559,12 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Returns a value indicating whether the package is valid or not. If it contains an invalid signature, it will be deleted directly.
+        ///     Returns a value indicating whether the signature of each package is valid, or not. If a package contains an invalid signature, it will be deleted directly.
         /// </summary>
-        /// <returns>Returns <c>true</c>' if the package is valid; otherwise <c>false</c>.</returns>
+        /// <returns>Returns <c>true</c> if the package is valid; otherwise <c>false</c>.</returns>
         /// <exception cref="FileNotFoundException">The update package to check could not be found.</exception>
         /// <exception cref="ArgumentException">The signature of the update package is null or empty.</exception>
-        public bool CheckPackageValidity()
+        public bool ValidatePackages()
         {
             foreach (var filePathItem in _packageFilePaths)
             {
