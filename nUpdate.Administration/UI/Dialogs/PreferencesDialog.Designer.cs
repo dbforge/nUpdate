@@ -45,6 +45,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.editLanguageButton = new System.Windows.Forms.Button();
             this.openLanguagesPathButton = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.programPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,6 +145,18 @@
             this.openLanguagesPathButton.Name = "openLanguagesPathButton";
             this.openLanguagesPathButton.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
+            // 
+            // programPathTextBox
+            // 
+            this.programPathTextBox.ButtonText = "...";
+            resources.ApplyResources(this.programPathTextBox, "programPathTextBox");
+            this.programPathTextBox.Name = "programPathTextBox";
+            this.programPathTextBox.ButtonClicked += new System.EventHandler<System.EventArgs>(this.programPathTextBox_ButtonClicked);
+            // 
             // PreferencesDialog
             // 
             this.AcceptButton = this.saveButton;
@@ -150,6 +164,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
+            this.Controls.Add(this.programPathTextBox);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.openLanguagesPathButton);
             this.Controls.Add(this.editLanguageButton);
             this.Controls.Add(this.label7);
@@ -191,5 +207,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button editLanguageButton;
         private System.Windows.Forms.Button openLanguagesPathButton;
+        private System.Windows.Forms.Label label5;
+        private Controls.ButtonTextBox programPathTextBox;
     }
 }

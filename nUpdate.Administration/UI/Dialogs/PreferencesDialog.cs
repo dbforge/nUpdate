@@ -2,10 +2,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
+using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
+using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
 
@@ -38,11 +45,13 @@ namespace nUpdate.Administration.UI.Dialogs
             includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
             includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;
             languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);
+            programPathTextBox.Text = Settings.Default.ProgramPath;
+            programPathTextBox.Initialize();
         }
 
         private void searchUpdatesButton_Click(object sender, EventArgs e)
         {
-            var updaterUi = new UpdaterUi(_manager, SynchronizationContext.Current);
+            var updaterUi = new UpdaterUI(_manager, SynchronizationContext.Current);
             updaterUi.ShowUserInterface();
         }
 
@@ -80,12 +89,51 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            if (!Path.IsPathRooted(programPathTextBox.Text))
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Invalid path set.",
+                    "The current path for the program data is not valid.", PopupButtons.Ok);
+                return;
+            }
+
+            if (programPathTextBox.Text != Settings.Default.ProgramPath)
+            {
+                try
+                {
+                    var projectConfiguration = ProjectConfiguration.Load();
+                    if (projectConfiguration != null)
+                    {
+                        foreach (var project in projectConfiguration.Select(config => UpdateProject.LoadProject(config.Path)).Where(project => project.Packages != null))
+                        {
+                            foreach (var package in project.Packages)
+                            {
+                                package.LocalPackagePath = Path.Combine(programPathTextBox.Text, "Projects",
+                                    project.Name,
+                                    Directory.GetParent(package.LocalPackagePath).Name,
+                                    Path.GetFileName(package.LocalPackagePath));
+                            }
+
+                            UpdateProject.SaveProject(project.Path, project);
+                        }
+
+                        CopyFilesRecursively(Settings.Default.ProgramPath, programPathTextBox.Text);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the program data.", ex, PopupButtons.Ok);
+                    return;
+                }
+            }
+
             Settings.Default.Language =
                 new CultureInfo(
                     languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim());
             Settings.Default.IncludeAlpha = includeAlphaCheckBox.Checked;
             Settings.Default.IncludeBeta = includeBetaCheckBox.Checked;
+            Settings.Default.ProgramPath = programPathTextBox.Text;
             Settings.Default.Save();
+            Settings.Default.Reload();
             Close();
         }
 
@@ -98,6 +146,31 @@ namespace nUpdate.Administration.UI.Dialogs
 
             var jsonEditorDialog = new JsonEditorDialog {LanguageContent = Serializer.Serialize(lp), CultureName = name};
             jsonEditorDialog.ShowDialog(this);
+        }
+
+        private void CopyFilesRecursively(string sourcePath, string destinationPath)
+        {
+            foreach (var directory in new DirectoryInfo(sourcePath).GetDirectories())
+            {
+                string destination = Path.Combine(destinationPath, directory.Name);
+                Directory.CreateDirectory(destination);
+                CopyFilesRecursively(directory.FullName, destination);
+                Directory.Delete(directory.FullName, true);
+            }
+
+            foreach (var file in new DirectoryInfo(sourcePath).GetFiles())
+            {
+                File.Move(file.FullName, Path.Combine(destinationPath, file.Name));
+            }
+        }
+
+        private void programPathTextBox_ButtonClicked(object sender, EventArgs e)
+        {
+            using (var browserDialog = new FolderBrowserDialog())
+            {
+                if (browserDialog.ShowDialog() == DialogResult.OK)
+                    programPathTextBox.Text = browserDialog.SelectedPath;
+            }
         }
     }
 }
