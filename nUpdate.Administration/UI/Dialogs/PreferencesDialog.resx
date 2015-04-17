@@ -151,13 +151,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>14</value>
   </data>
   <data name="searchUpdatesButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="searchUpdatesButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>292, 215</value>
+    <value>292, 289</value>
   </data>
   <data name="searchUpdatesButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>134, 23</value>
@@ -178,7 +178,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;searchUpdatesButton.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>13</value>
   </data>
   <data name="versionLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -187,7 +187,7 @@
     <value>NoControl</value>
   </data>
   <data name="versionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>29, 221</value>
+    <value>29, 295</value>
   </data>
   <data name="versionLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 13</value>
@@ -208,7 +208,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;versionLabel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -217,7 +217,7 @@
     <value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>29, 167</value>
+    <value>29, 241</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>396, 39</value>
@@ -240,7 +240,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="includeBetaCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -249,7 +249,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>NoControl</value>
   </data>
   <data name="includeBetaCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 147</value>
+    <value>193, 221</value>
   </data>
   <data name="includeBetaCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>150, 17</value>
@@ -270,7 +270,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;includeBetaCheckBox.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <data name="includeAlphaCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -279,7 +279,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>NoControl</value>
   </data>
   <data name="includeAlphaCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 147</value>
+    <value>30, 221</value>
   </data>
   <data name="includeAlphaCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>157, 17</value>
@@ -300,7 +300,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;includeAlphaCheckBox.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -333,7 +333,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -342,7 +342,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 126</value>
+    <value>13, 200</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
     <value>53, 13</value>
@@ -363,7 +363,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="saveButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -417,7 +417,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>0</value>
   </data>
   <data name="controlPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 250</value>
+    <value>0, 329</value>
   </data>
   <data name="controlPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>447, 34</value>
@@ -429,13 +429,13 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>controlPanel1</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.ControlPanel, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;controlPanel1.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="languagesComboBox.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -459,7 +459,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;languagesComboBox.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="label7.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -489,7 +489,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="editLanguageButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -516,7 +516,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;editLanguageButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="openLanguagesPathButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -543,6 +543,60 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;openLanguagesPathButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="label5.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 128</value>
+  </data>
+  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>86, 13</value>
+  </data>
+  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Path of all files:</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+    <value>label5</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="programPathTextBox.Cue" xml:space="preserve">
+    <value>The path where all files (update packages, settings etc.) are stored</value>
+  </data>
+  <data name="programPathTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>32, 153</value>
+  </data>
+  <data name="programPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>393, 22</value>
+  </data>
+  <data name="programPathTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="&gt;&gt;programPathTextBox.Name" xml:space="preserve">
+    <value>programPathTextBox</value>
+  </data>
+  <data name="&gt;&gt;programPathTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;programPathTextBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;programPathTextBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -552,7 +606,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>447, 284</value>
+    <value>447, 363</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
@@ -1089,6 +1143,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>PreferencesDialog</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>
