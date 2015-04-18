@@ -84,9 +84,9 @@ namespace nUpdate.UI.Dialogs
                 PopupButtons.Ok)));
         }
 
-        public void ShowModalDialog(object state)
+        public void ShowModalDialog(object dialogResultReference)
         {
-            ShowDialog();
+            ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
         }
 
         public void CloseDialog(object state)
