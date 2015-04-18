@@ -120,6 +120,7 @@ namespace nUpdate.Updating
             if (_isTaskRunning)
                 return;
 
+            _isTaskRunning = true;
             var searchDialog = new UpdateSearchDialog {LanguageName = _updateManager.LanguageCulture.Name};
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
@@ -140,10 +141,10 @@ namespace nUpdate.Updating
 
 #if PROVIDE_TAP
 
+
             // TAP
             TaskEx.Run(async delegate
             {
-                _isTaskRunning = true;
                 if (!UseHiddenSearch)
                     _context.Post(searchDialog.ShowModalDialog, null);
 
@@ -248,6 +249,7 @@ namespace nUpdate.Updating
                 _isTaskRunning = false;
             });
 
+
 #else
             //EAP
             _updateManager.UpdateSearchFinished += SearchFinished;
@@ -255,6 +257,7 @@ namespace nUpdate.Updating
             _updateManager.UpdateSearchFailed += searchDialog.Failed;
             _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
             _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
+            _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
 
             Task.Factory.StartNew(() =>
             {
@@ -263,8 +266,9 @@ namespace nUpdate.Updating
                 {
                     var searchDialogResultReference = new DialogResultReference();
                     _context.Send(searchDialog.ShowModalDialog, searchDialogResultReference);
-                    if (searchDialogResultReference.DialogResult == DialogResult.OK)
-                        _context.Send(searchDialog.CloseDialog, null);
+                    _context.Send(searchDialog.CloseDialog, null);
+                    if (searchDialogResultReference.DialogResult == DialogResult.Cancel)
+                        return;
                 }
                 else
                 {
@@ -326,6 +330,7 @@ namespace nUpdate.Updating
                         PopupButtons.Ok), null);
                 else
                     _updateManager.InstallPackage();
+                _isTaskRunning = false;
             });
 #endif
         }

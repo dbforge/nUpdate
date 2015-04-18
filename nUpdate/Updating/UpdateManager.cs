@@ -413,7 +413,7 @@ namespace nUpdate.Updating
                         }
                     }
                 }
-                catch (Exception)
+                finally
                 {
                     if (webResponse != null)
                         webResponse.Close();
@@ -442,7 +442,8 @@ namespace nUpdate.Updating
             var exception = task.Exception;
             if (exception != null)
                 OnUpdateDownloadFailed(exception.InnerException ?? exception);
-            OnUpdateDownloadFinished(this, EventArgs.Empty);
+            else
+                OnUpdateDownloadFinished(this, EventArgs.Empty);
         }
 
 #if PROVIDE_TAP

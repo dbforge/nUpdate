@@ -107,8 +107,6 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
-        #region TAP
-
         public void ShowModalDialog(object dialogResultReference)
         {
             ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
@@ -118,6 +116,8 @@ namespace nUpdate.UI.Dialogs
         {
             Close();
         }
+
+        #region TAP
 
         public void Fail(Exception ex)
         {
@@ -153,6 +153,14 @@ namespace nUpdate.UI.Dialogs
             {
                 // Prevent race conditions
             }
+        }
+
+        public void Failed(object sender, FailedEventArgs e)
+        {
+            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
+                "Error while downloading the update package.",
+                e.Exception.InnerException ?? e.Exception, PopupButtons.Ok)));
+            DialogResult = DialogResult.Cancel;
         }
 
         public void Finished(object sender, EventArgs e)
