@@ -881,7 +881,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftp.Password = ftpPassword;
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
-                _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
+                _ftp.Protocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enable it again
                     backButton.Enabled = true;

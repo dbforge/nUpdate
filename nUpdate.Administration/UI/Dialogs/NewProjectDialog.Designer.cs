@@ -45,6 +45,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.keyPairLoadingPictureBox = new System.Windows.Forms.PictureBox();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
             this.saveCredentialsCheckBox = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -103,7 +104,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.controlPanel1.SuspendLayout();
             this.informationCategoriesTabControl.SuspendLayout();
             this.keyPairTabPage.SuspendLayout();
@@ -223,6 +223,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalPanel.Controls.Add(this.localPathTextBox);
             resources.ApplyResources(this.generalPanel, "generalPanel");
             this.generalPanel.Name = "generalPanel";
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
             // 
             // saveCredentialsCheckBox
             // 
@@ -354,6 +359,7 @@ namespace nUpdate.Administration.UI.Dialogs
             resources.GetString("ftpProtocolComboBox.Items9")});
             resources.ApplyResources(this.ftpProtocolComboBox, "ftpProtocolComboBox");
             this.ftpProtocolComboBox.Name = "ftpProtocolComboBox";
+            this.ftpProtocolComboBox.SelectedIndexChanged += new System.EventHandler(this.ftpProtocolComboBox_SelectedIndexChanged);
             // 
             // ftpProtocolLabel
             // 
@@ -614,11 +620,6 @@ namespace nUpdate.Administration.UI.Dialogs
             resources.ApplyResources(this.pictureBox2, "pictureBox2");
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.TabStop = false;
-            // 
-            // label5
-            // 
-            resources.ApplyResources(this.label5, "label5");
-            this.label5.Name = "label5";
             // 
             // NewProjectDialog
             // 
