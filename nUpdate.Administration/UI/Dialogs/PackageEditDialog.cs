@@ -60,7 +60,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
         private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
-
         private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry subkey", 12, 12)
         {
             Tag = "DeleteRegistrySubKey"
@@ -73,7 +72,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private FtpManager _ftp;
         private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
-
         private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry value", 13, 13)
         {
             Tag = "SetRegistryValue"
@@ -82,9 +80,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
-
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
         {Tag = "StopProcess"};
+        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 15, 15) { Tag = "ExecuteScript" };
 
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
 
@@ -496,6 +494,17 @@ namespace nUpdate.Administration.UI.Dialogs
                             ServiceName = operation.Value
                         });
                         categoryTabControl.TabPages.Add(stopServicePage);
+                        break;
+
+                    case "ExecuteScript":
+                        categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_executeScriptNode.Clone());
+
+                        var executeScriptPage = new TabPage("Execute script") { BackColor = SystemColors.Window };
+                        executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel
+                        {
+                            Code = operation.Value
+                        });
+                        categoryTabControl.TabPages.Add(executeScriptPage);
                         break;
                 }
             }
@@ -911,6 +920,13 @@ namespace nUpdate.Administration.UI.Dialogs
                     var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                     stopServicePage.Controls.Add(new ServiceStopOperationPanel());
                     categoryTabControl.TabPages.Add(stopServicePage);
+                    break;
+                case "ExecuteScript":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
+
+                    var executeScriptPage = new TabPage("Execute script") {BackColor = SystemColors.Window};
+                    executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
+                    categoryTabControl.TabPages.Add(executeScriptPage);
                     break;
             }
 

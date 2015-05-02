@@ -12,6 +12,7 @@ namespace nUpdate.Core.Operations
         [Description("NewUpdateDialogFilesAccessText")] Files,
         [Description("NewUpdateDialogRegistryAccessText")] Registry,
         [Description("NewUpdateDialogProcessesAccessText")] Processes,
-        [Description("NewUpdateDialogServicesAccessText")] Services
+        [Description("NewUpdateDialogServicesAccessText")] Services,
+        [Description("NewUpdateDialogCodeExecutionAccessText")] Scripts,
     }
 }
