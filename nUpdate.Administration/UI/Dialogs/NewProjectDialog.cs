@@ -27,6 +27,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _allowCancel;
         private bool _mustClose;
         private bool _generalTabPassed;
+        private bool _isSetByUser = true;
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
@@ -34,6 +35,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
         private TabPage _sender;
+        private int _lastSelectedIndex;
+        private string _ftpAssemblyPath;
         private readonly FtpManager _ftp = new FtpManager();
 
         public NewProjectDialog()
@@ -254,6 +257,8 @@ namespace nUpdate.Administration.UI.Dialogs
             localPathTextBox.Initialize();
             controlPanel1.Visible = false;
             GenerateKeyPair();
+
+            _isSetByUser = true;
         }
 
         private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -481,6 +486,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     FtpDirectory = ftpDirectoryTextBox.Text,
                     FtpProtocol = ftpProtocolComboBox.SelectedIndex,
                     FtpUsePassiveMode = usePassive,
+                    FtpTransferAssemblyFilePath = _ftpAssemblyPath,
                     Proxy = proxy,
                     ProxyUsername = proxyUsername,
                     ProxyPassword = proxyPassword,
@@ -892,6 +898,19 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
+        }
+
+        private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_isSetByUser || (ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1))
+                return;
+            var ftpAssemblyInputDialog = new FtpAssemblyInputDialog();
+            if (ftpAssemblyInputDialog.ShowDialog() == DialogResult.Cancel)
+                ftpProtocolComboBox.SelectedIndex = _lastSelectedIndex;
+            else
+                _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
+
+            _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
         }
     }
 }
