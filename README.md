@@ -11,10 +11,10 @@ nUpdate is a modern update system providing high security and an easy-to-use int
 - Interfaces and event system provide the possibility to use own Graphic User Interfaces that can be shown to the client
 
 ### Version
-2.0.0.0 Beta Build 1 (Could contain bugs)
+2.0.0.0 Beta Build 3 (Could contain bugs)
 
 ### Notes
-Help and tips are appreciated. Current Alpha-version could contain some problems and bugs which will be fixed.
+Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
 
 ### Website
 * [nUpdate] - The official website of the nUpdate-project.
@@ -22,11 +22,7 @@ Help and tips are appreciated. Current Alpha-version could contain some problems
 
 ### Installation
 
-<<<<<<< HEAD
-There is currently no real installation, just download the whole solution and build it. Make sure to start the Administration with admin privileges the first time, so the registry key for the extension can be created.
-=======
-Download the whole solution and build it. If you are using .NET 4.0 and use the binaries located in "Provide TAP" you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5 you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
->>>>>>> origin/master
+There is currently no real installation, just download the whole solution and build it. If you are using .NET 4.0 and use the binaries located in "Provide TAP" you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5 you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start the Administration with admin privileges the first time, so that the registry key for the extension can be created.
 A documentation on how to use nUpdate's components and how to customize it will follow soon.
 
 ### Development
