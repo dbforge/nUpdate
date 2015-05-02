@@ -83,6 +83,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7) {Tag = "StopProcess"};
+        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 16, 16) {Tag = "ExecuteScript"};
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
         private readonly Log _updateLog = new Log();
         private readonly ZipFile _zip = new ZipFile();
@@ -1228,6 +1229,13 @@ namespace nUpdate.Administration.UI.Dialogs
                     var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                     stopServicePage.Controls.Add(new ServiceStopOperationPanel());
                     categoryTabControl.TabPages.Add(stopServicePage);
+                    break;
+                case "ExecuteScript":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
+
+                    var executeScriptPage = new TabPage("Stop service") {BackColor = SystemColors.Window};
+                    executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
+                    categoryTabControl.TabPages.Add(executeScriptPage);
                     break;
             }
         }

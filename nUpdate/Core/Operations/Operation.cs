@@ -65,6 +65,8 @@ namespace nUpdate.Core.Operations
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Start);
                 case "StopService":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Stop);
+                case "ExecuteScript":
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
             }
             return null;
         }
@@ -116,6 +118,13 @@ namespace nUpdate.Core.Operations
                             return "StartService";
                         case OperationMethod.Stop:
                             return "StopService";
+                    }
+                    break;
+                case OperationArea.Scripts:
+                    switch (operation.Method)
+                    {
+                        case OperationMethod.Execute:
+                            return "ExecuteScript";
                     }
                     break;
             }
