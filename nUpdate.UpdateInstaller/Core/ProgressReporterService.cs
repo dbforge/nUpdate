@@ -2,7 +2,7 @@
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.UI.Dialogs;
 
-namespace nUpdate.UpdateInstaller
+namespace nUpdate.UpdateInstaller.Core
 {
     public class ProgressReporterService : IProgressReporter
     {
