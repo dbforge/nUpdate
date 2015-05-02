@@ -10,6 +10,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         Files,
         Registry,
         Processes,
-        Services
+        Services,
+        Scripts
     }
 }

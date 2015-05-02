@@ -56,7 +56,8 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                 case "SetRegistryValue":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.SetValue);
                 case "DeleteRegistryValue":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.DeleteValue);
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry,
+                        OperationMethod.DeleteValue);
                 case "StartProcess":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Start);
                 case "TerminateProcess":
@@ -65,6 +66,8 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Start);
                 case "StopService":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Stop);
+                case "ExecuteScript":
+                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
             }
             return null;
         }
@@ -116,6 +119,13 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                             return "StartService";
                         case OperationMethod.Stop:
                             return "StopService";
+                    }
+                    break;
+                case OperationArea.Scripts:
+                    switch (operation.Method)
+                    {
+                        case OperationMethod.Execute:
+                            return "ExecuteScript";
                     }
                     break;
             }

@@ -13,6 +13,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         SetValue,
         DeleteValue,
         Start,
-        Stop
+        Stop,
+        Execute,
     }
 }

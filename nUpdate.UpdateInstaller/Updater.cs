@@ -14,6 +14,7 @@ using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
 using Newtonsoft.Json.Linq;
+using nUpdate.UpdateInstaller.Exceptions;
 using nUpdate.UpdateInstaller.UI.Popups;
 using System.ComponentModel;
 
@@ -398,6 +399,15 @@ namespace nUpdate.UpdateInstaller
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
                                             String.Format(Program.ServiceStopOperationText, operation.Value));
+                                        break;
+                                }
+                                break;
+                            case OperationArea.Scripts:
+                                switch (operation.Method)
+                                {
+                                    case OperationMethod.Execute:
+                                        var helper = new CodeDomHelper();
+                                        helper.ExecuteScript(operation.Value);
                                         break;
                                 }
                                 break;
