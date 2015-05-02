@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using nUpdate.UpdateInstaller;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
+using nUpdate.UpdateInstaller.Core;
 
 [assembly: ServiceProvider(typeof(InstallerServiceProvider))]
-namespace nUpdate.UpdateInstaller
+namespace nUpdate.UpdateInstaller.Core
 {
     public class InstallerServiceProvider : IServiceProvider
     {

@@ -120,6 +120,7 @@
     <Compile Include="Core\Application\Extension\RegistryException.cs" />
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
+    <Compile Include="Core\CodeDomHelper.cs" />
     <Compile Include="Core\Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
     <Compile Include="Core\Ftp\EventArgs\FtpRequestEventArgs.cs" />
     <Compile Include="Core\Ftp\EventArgs\FtpResponseEventArgs.cs" />
@@ -163,6 +164,12 @@
     <Compile Include="Core\IAsyncSupportable.cs" />
     <Compile Include="Core\IResettable.cs" />
     <Compile Include="Core\ListingItem.cs" />
+    <Compile Include="Core\Operations\Panels\ScriptExecuteOperationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Operations\Panels\ScriptExecuteOperationPanel.Designer.cs">
+      <DependentUpon>ScriptExecuteOperationPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\ProjectConfiguration.cs" />
     <Compile Include="Core\Proxy\EventArgs\CreateConnectionAsyncCompletedEventArgs.cs" />
     <Compile Include="Core\Proxy\Exceptions\ProxyException.cs" />
@@ -477,6 +484,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Core\Operations\Panels\RegistrySetValueOperationPanel.resx">
       <DependentUpon>RegistrySetValueOperationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Operations\Panels\ScriptExecuteOperationPanel.resx">
+      <DependentUpon>ScriptExecuteOperationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Core\Operations\Panels\ServiceStartOperationPanel.resx">
       <DependentUpon>ServiceStartOperationPanel.cs</DependentUpon>
