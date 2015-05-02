@@ -2,7 +2,7 @@
 using System.Linq;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 
-namespace nUpdate.UpdateInstaller
+namespace nUpdate.UpdateInstaller.Core
 {
     internal class ServiceProviderHelper
     {
