@@ -30,8 +30,11 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+// ReSharper disable once InconsistentNaming
         private const float KB = 1024;
+        // ReSharper disable once InconsistentNaming
         private const float MB = 1048576;
+        // ReSharper disable once InconsistentNaming
         private const float GB = 1073741824;
         private bool _allowCancel = true;
         private Uri _configurationFileUrl;
@@ -1624,8 +1627,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         try
                         {
                             updateConfig.Remove(
-                                updateConfig.First(item => new UpdateVersion(item.LiteralVersion) ==
-                                                           (UpdateVersion) ((ListViewItem) enumerator.Current).Tag));
+                                updateConfig.First(item => item.LiteralVersion == (string)((ListViewItem) enumerator.Current).Tag));
                         }
                         catch
                         {
@@ -1635,7 +1637,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     enumerator.Reset();
 
                     var configurationFilePath = Path.Combine(Program.Path, "updates.json");
-
                     try
                     {
                         File.WriteAllText(configurationFilePath, Serializer.Serialize(updateConfig));
