@@ -104,7 +104,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "2.0.0.0 Beta 3";
+            this.label13.Text = "2.0.0.0 Beta 4";
             // 
             // controlPanel1
             // 
