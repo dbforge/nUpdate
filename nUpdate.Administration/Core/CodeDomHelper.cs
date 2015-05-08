@@ -23,7 +23,7 @@ namespace nUpdate.Administration.Core
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    // Ignored, will be catched as syntax error
+                    // Ignored, will be caught as syntax error
                 }
             }
 
