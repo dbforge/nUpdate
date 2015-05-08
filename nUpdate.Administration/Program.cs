@@ -118,7 +118,7 @@ namespace nUpdate.Administration
         /// </summary>
         public static string VersionString
         {
-            get { return "nUpdate Administration 2.0.0.0 Beta 3"; }
+            get { return "nUpdate Administration 2.0.0.0 Beta 4"; }
         }
 
         public static string AesKeyPassword
