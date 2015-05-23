@@ -1,6 +1,13 @@
 # nUpdate - The easy update-solution
 
-nUpdate is a modern update system providing high security and an easy-to-use interface.
+nUpdate is a modern update system for .NET applications.
+Providing high security and an easy-to-use user interface, nUpdate is the perfect solution for your software.
+
+nUpdate is in a very advanced state. Its development began in autumn 2013 and the project has grown up until now. It contains a lot of features and provides you with everything you'll need to manage your updates.
+
+Also nUpdate is designed to fit in with all operating systems since Windows Vista and its components can be used in a very flexible way. It even allows you to use a custom UI in the client. This is the result of the usage of interfaces, service providers and event-based or task-based aynchronous patterns. nUpdate will also take care of your clients and use intelligent, logical processes that will prevent your users from being stressed out by having to do a lot of things manually and repeatedly. The best example for such a case would be installing every single update on its own. Instead, nUpdate connects all updates, installs them in one go and does still take care of the version order to avoid any conflicts between versions and make sure that the data is installed in exactly the way you wanted.
+
+A small overview over some of the most important features of nUpdate:
 
 - Easy management of update packages
 - Easy usable library
@@ -8,8 +15,9 @@ nUpdate is a modern update system providing high security and an easy-to-use int
 - Many configuration settings which let you control your updates easily
 - Secured update packages by signing with SHA512 and 8912 Bit RSA-keys
 - Smart error handling with automated resetting data if an operation failed
-- Interfaces and event system provide the possibility to use own Graphic User Interfaces that can be shown to the client
-
+- Interfaces, service providers and event-based/task-based asynchronous patterns provide the possibility to use own Graphical - User Interfaces that can be shown to the client
+- Smart statistics about the downloads of your updates
+ 
 ### Version
 2.0.0.0 Beta Build 4 (Could contain bugs)
 
