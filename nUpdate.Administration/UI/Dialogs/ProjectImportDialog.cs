@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Ionic.Zip;
 using nUpdate.Administration.Core;
+using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
@@ -112,6 +113,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     string projectFilePath = Path.Combine(folderPath,
                         String.Format("{0}.nupdproj", projectNameTextBox.Text));
                     File.Move(projectFilePath, projectFilePathTextBox.Text);
+
+                    var updateProject = UpdateProject.LoadProject(projectFilePathTextBox.Text);
+                    updateProject.Path = projectFilePathTextBox.Text;
+                    UpdateProject.SaveProject(updateProject.Path, updateProject);
 
                     foreach (var versionDirectory in new DirectoryInfo(folderPath).GetDirectories())
                     {
