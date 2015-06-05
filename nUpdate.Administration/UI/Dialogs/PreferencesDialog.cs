@@ -41,7 +41,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             Text = String.Format(Text, Program.VersionString);
-            versionLabel.Text += " 2.0.0.0 Beta 4";
+            versionLabel.Text += " 3.0.0.0 Beta 1";
             includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
             includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;
             languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);

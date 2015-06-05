@@ -19,7 +19,7 @@ A small overview over some of the most important features of nUpdate:
 - Smart statistics about the downloads of your updates
  
 ### Version
-2.0.0.0 Beta Build 4 (Could contain bugs)
+3.0.0.0 Beta Build 1 (Could contain bugs)
 
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
