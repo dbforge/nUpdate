@@ -788,7 +788,7 @@ namespace nUpdate.Updating
             }
             else if (String.IsNullOrEmpty(languageFilePath) && _languageCulture.Name != "en")
             {
-                string resourceName = String.Format("nUpdate.Localization.{0}.json", _languageCulture.Name);
+                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", _languageCulture.Name);
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
