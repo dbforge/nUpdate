@@ -141,197 +141,208 @@ namespace nUpdate.Updating
 
 #if PROVIDE_TAP
 
-
-            // TAP
-            TaskEx.Run(async delegate
+            try
             {
-                if (!UseHiddenSearch)
-                    _context.Post(searchDialog.ShowModalDialog, null);
-
-                try
+                // TAP
+                TaskEx.Run(async delegate
                 {
-                    _updatesAvailable = await _updateManager.SearchForUpdatesTask();
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    if (UseHiddenSearch)
-                        _context.Send(
-                            o =>
-                                Popup.ShowPopup(SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
-                                    PopupButtons.Ok), null);
-                    else
-                    {
-                        searchDialog.Fail(ex);
-                        _context.Post(searchDialog.CloseDialog, null);
-                    }
-                    return;
-                }
-
-                if (!UseHiddenSearch)
-                {
-                    _context.Post(searchDialog.CloseDialog, null);
-                    await TaskEx.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
-                }
-
-                if (_updatesAvailable)
-                {
-                    newUpdateDialog.PackageSize = _updateManager.TotalSize;
-                    newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
-                    var newUpdateDialogReference = new DialogResultReference();
-                    _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
-                    if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
-                        return;
-                }
-                else if (!_updatesAvailable && UseHiddenSearch)
-                    return;
-                else if (!_updatesAvailable && !UseHiddenSearch)
-                {
-                    var noUpdateDialogResultReference = new DialogResultReference();
                     if (!UseHiddenSearch)
-                        _context.Send(noUpdateDialog.ShowModalDialog, noUpdateDialogResultReference);
-                }
+                        _context.Post(searchDialog.ShowModalDialog, null);
 
-                downloadDialog.PackagesCount = _updateManager.PackageConfigurations.Count();
-                _context.Post(downloadDialog.ShowModalDialog, null);
+                    try
+                    {
+                        _updatesAvailable = await _updateManager.SearchForUpdatesTask();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (UseHiddenSearch)
+                            _context.Send(
+                                o =>
+                                    Popup.ShowPopup(SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
+                                        PopupButtons.Ok), null);
+                        else
+                        {
+                            searchDialog.Fail(ex);
+                            _context.Post(searchDialog.CloseDialog, null);
+                        }
+                        return;
+                    }
 
-                try
-                {
-                    progressIndicator.ProgressChanged += (sender, args) =>
-                        downloadDialog.ProgressPercentage = (int) args.Percentage;
-                    await _updateManager.DownloadPackagesTask(progressIndicator);
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    downloadDialog.Fail(ex);
+                    if (!UseHiddenSearch)
+                    {
+                        _context.Post(searchDialog.CloseDialog, null);
+                        await TaskEx.Delay(100);
+                            // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
+                    }
+
+                    if (_updatesAvailable)
+                    {
+                        newUpdateDialog.PackageSize = _updateManager.TotalSize;
+                        newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
+                        var newUpdateDialogReference = new DialogResultReference();
+                        _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
+                        if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
+                            return;
+                    }
+                    else if (!_updatesAvailable && UseHiddenSearch)
+                        return;
+                    else if (!_updatesAvailable && !UseHiddenSearch)
+                    {
+                        var noUpdateDialogResultReference = new DialogResultReference();
+                        if (!UseHiddenSearch)
+                            _context.Send(noUpdateDialog.ShowModalDialog, noUpdateDialogResultReference);
+                        return;
+                    }
+
+                    downloadDialog.PackagesCount = _updateManager.PackageConfigurations.Count();
+                    _context.Post(downloadDialog.ShowModalDialog, null);
+
+                    try
+                    {
+                        progressIndicator.ProgressChanged += (sender, args) =>
+                            downloadDialog.ProgressPercentage = (int) args.Percentage;
+                        await _updateManager.DownloadPackagesTask(progressIndicator);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        downloadDialog.Fail(ex);
+                        _context.Send(downloadDialog.CloseDialog, null);
+                        return;
+                    }
+
                     _context.Send(downloadDialog.CloseDialog, null);
-                    return;
-                }
 
-                _context.Send(downloadDialog.CloseDialog, null);
+                    bool isValid = false;
+                    try
+                    {
+                        isValid = _updateManager.ValidatePackages();
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            _lp.PackageNotFoundErrorText,
+                            PopupButtons.Ok), null);
+                    }
+                    catch (ArgumentException)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
+                    }
+                    catch (Exception ex)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            ex, PopupButtons.Ok), null);
+                    }
 
-                bool isValid = false;
-                try
-                {
-                    isValid = _updateManager.ValidatePackages();
-                }
-                catch (FileNotFoundException)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        _lp.PackageNotFoundErrorText,
-                        PopupButtons.Ok), null);
-                }
-                catch (ArgumentException)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
-                }
-                catch (Exception ex)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        ex, PopupButtons.Ok), null);
-                }
-
-                if (!isValid)
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
-                        _lp.SignatureNotMatchingErrorText,
-                        PopupButtons.Ok), null);
-                else
-                    _updateManager.InstallPackage();
-
+                    if (!isValid)
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
+                            _lp.SignatureNotMatchingErrorText,
+                            PopupButtons.Ok), null);
+                    else
+                        _updateManager.InstallPackage();
+                });
+            }
+            finally
+            {
                 _isTaskRunning = false;
-            });
-
+            }
 
 #else
-            //EAP
-            _updateManager.UpdateSearchFinished += SearchFinished;
-            _updateManager.UpdateSearchFinished += searchDialog.Finished;
-            _updateManager.UpdateSearchFailed += searchDialog.Failed;
-            _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
-            _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
-            _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
-
-            Task.Factory.StartNew(() =>
+            try
             {
-                _updateManager.SearchForUpdatesAsync();
-                if (!UseHiddenSearch)
+                //EAP
+                _updateManager.UpdateSearchFinished += SearchFinished;
+                _updateManager.UpdateSearchFinished += searchDialog.Finished;
+                _updateManager.UpdateSearchFailed += searchDialog.Failed;
+                _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
+                _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
+                _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
+
+                Task.Factory.StartNew(() =>
                 {
-                    var searchDialogResultReference = new DialogResultReference();
-                    _context.Send(searchDialog.ShowModalDialog, searchDialogResultReference);
-                    _context.Send(searchDialog.CloseDialog, null);
-                    if (searchDialogResultReference.DialogResult == DialogResult.Cancel)
+                    _updateManager.SearchForUpdatesAsync();
+                    if (!UseHiddenSearch)
+                    {
+                        var searchDialogResultReference = new DialogResultReference();
+                        _context.Send(searchDialog.ShowModalDialog, searchDialogResultReference);
+                        _context.Send(searchDialog.CloseDialog, null);
+                        if (searchDialogResultReference.DialogResult == DialogResult.Cancel)
+                            return;
+                    }
+                    else
+                    {
+                        _searchResetEvent.WaitOne();
+                    }
+
+                    if (_updatesAvailable)
+                    {
+                        newUpdateDialog.PackageSize = _updateManager.TotalSize;
+                        newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
+
+                        var newUpdateDialogResultReference = new DialogResultReference();
+                        _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
+                        if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)
+                            return;
+                    }
+                    else if (!_updatesAvailable && UseHiddenSearch)
                         return;
-                }
-                else
-                {
-                    _searchResetEvent.WaitOne();
-                }
-
-                if (_updatesAvailable)
-                {
-                    newUpdateDialog.PackageSize = _updateManager.TotalSize;
-                    newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
-
-                    var newUpdateDialogResultReference = new DialogResultReference();
-                    _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
-                    if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)
+                    else if (!_updatesAvailable && !UseHiddenSearch)
+                    {
+                        _context.Send(noUpdateDialog.ShowModalDialog, null);
+                        _context.Send(noUpdateDialog.CloseDialog, null);
                         return;
-                }
-                else if (!_updatesAvailable && UseHiddenSearch)
-                    return;
-                else if (!_updatesAvailable && !UseHiddenSearch)
-                {
-                    _context.Send(noUpdateDialog.ShowModalDialog, null);
-                    _context.Send(noUpdateDialog.CloseDialog, null);
-                    return;
-                }
+                    }
 
-                _updateManager.DownloadPackagesAsync();
+                    _updateManager.DownloadPackagesAsync();
 
-                var downloadDialogResultReference = new DialogResultReference();
-                _context.Send(downloadDialog.ShowModalDialog, downloadDialogResultReference);
-                _context.Send(downloadDialog.CloseDialog, null);
-                if (downloadDialogResultReference.DialogResult == DialogResult.Cancel)
-                    return;
+                    var downloadDialogResultReference = new DialogResultReference();
+                    _context.Send(downloadDialog.ShowModalDialog, downloadDialogResultReference);
+                    _context.Send(downloadDialog.CloseDialog, null);
+                    if (downloadDialogResultReference.DialogResult == DialogResult.Cancel)
+                        return;
 
-                bool isValid = false;
-                try
-                {
-                    isValid = _updateManager.ValidatePackages();
-                }
-                catch (FileNotFoundException)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        _lp.PackageNotFoundErrorText,
-                        PopupButtons.Ok), null);
-                }
-                catch (ArgumentException)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
-                }
-                catch (Exception ex)
-                {
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                        ex, PopupButtons.Ok), null);
-                }
+                    bool isValid = false;
+                    try
+                    {
+                        isValid = _updateManager.ValidatePackages();
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            _lp.PackageNotFoundErrorText,
+                            PopupButtons.Ok), null);
+                    }
+                    catch (ArgumentException)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
+                    }
+                    catch (Exception ex)
+                    {
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
+                            ex, PopupButtons.Ok), null);
+                    }
 
-                if (!isValid)
-                    _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
-                        _lp.SignatureNotMatchingErrorText,
-                        PopupButtons.Ok), null);
-                else
-                    _updateManager.InstallPackage();
+                    if (!isValid)
+                        _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
+                            _lp.SignatureNotMatchingErrorText,
+                            PopupButtons.Ok), null);
+                    else
+                        _updateManager.InstallPackage();
+                });
+            }
+            finally
+            {
                 _isTaskRunning = false;
-            });
+            }
 #endif
         }
 
