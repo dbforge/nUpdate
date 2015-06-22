@@ -17,9 +17,10 @@ A small overview over some of the most important features of nUpdate:
 - Smart error handling with automated resetting data if an operation failed
 - Interfaces, service providers and event-based/task-based asynchronous patterns provide the possibility to use own Graphical - User Interfaces that can be shown to the client
 - Smart statistics about the downloads of your updates
+- Supports large update packages
  
 ### Version
-3.0.0.0 Beta Build 1 (Could contain bugs)
+3.0.0.0 Beta Build 2 (Could contain bugs)
 
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
