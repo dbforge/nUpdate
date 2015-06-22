@@ -743,7 +743,8 @@ namespace nUpdate.Updating
                 _lp.InstallerInitializingErrorCaption,
                 String.Format("\"{0}\"",
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
-                String.Format("\"{0}\"", _closeHostApplication)
+                String.Format("\"{0}\"", _closeHostApplication), 
+                String.Format("\"{0}\"", _lp.InstallerFileInUseError),
             };
 
             var startInfo = new ProcessStartInfo
