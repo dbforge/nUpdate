@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace nUpdate.Core
@@ -75,6 +76,16 @@ namespace nUpdate.Core
         }
 
         /// <summary>
+        ///     Calculates the signature for the given data.
+        /// </summary>
+        /// <param name="stream">The stream containing the data.</param>
+        /// <returns>The calculated signature.</returns>
+        public byte[] SignData(Stream stream)
+        {
+            return _rsa.SignData(stream, typeof(SHA512));
+        }
+
+        /// <summary>
         ///     Checks if the signature for the given data is valid.
         /// </summary>
         /// <param name="data">The data to check.</param>
@@ -83,6 +94,25 @@ namespace nUpdate.Core
         public bool VerifyData(byte[] data, byte[] signature)
         {
             return _rsa.VerifyData(data, typeof (SHA512), signature);
+        }
+
+        /// <summary>
+        ///     Checks if the signature for the given data is valid.
+        /// </summary>
+        /// <param name="data">The data to check.</param>
+        /// <param name="signature">The stream containing the data.</param>
+        /// <returns>Returns "true" if the signature is correct, otherwise "false".</returns>
+        public bool VerifyData(Stream stream, byte[] signature)
+        {
+            return VerifyDataInternal(stream, "SHA512", signature); // TODO: typeof(SHA512)
+        }
+
+        private bool VerifyDataInternal(Stream stream, Object halg, byte[] signature)
+        {
+            HashAlgorithm hash = (HashAlgorithm)CryptoConfig.CreateFromName((string)halg);
+            //HashAlgorithm hash = (HashAlgorithm)halg;
+            byte[] hashVal = hash.ComputeHash(stream);
+            return _rsa.VerifyHash(hashVal, (string)halg, signature);
         }
 
         protected virtual void Dispose(bool disposing)

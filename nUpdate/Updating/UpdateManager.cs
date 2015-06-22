@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,6 +19,7 @@ using nUpdate.Core.Operations;
 using nUpdate.Properties;
 using nUpdate.UpdateEventArgs;
 using SystemInformation = nUpdate.Core.SystemInformation;
+using System.Diagnostics;
 
 namespace nUpdate.Updating
 {
@@ -300,7 +300,11 @@ namespace nUpdate.Updating
 
             TotalSize = updatePackageSize;
             if (_searchCancellationTokenSource.Token.IsCancellationRequested)
+            {
+                _packageOperations.Clear();
+                _packageFilePaths.Clear();
                 throw new OperationCanceledException();
+            }
 
             return true;
         }
@@ -362,7 +366,7 @@ namespace nUpdate.Updating
                 _downloadCancellationTokenSource.Dispose();
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
-            int received = 0;
+            long received = 0;
             double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                 .Where(updatePackageSize => updatePackageSize != null)
                 .Sum(updatePackageSize => updatePackageSize.Value);
@@ -378,66 +382,73 @@ namespace nUpdate.Updating
                     if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                     {
                         DeletePackages();
+                        _packageOperations.Clear();
+                        _packageFilePaths.Clear();
                         throw new OperationCanceledException();
                     }
 
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
-                    webResponse = webRequest.GetResponse();
-
-                    var buffer = new byte[1024];
-                    _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                        Path.Combine(_applicationUpdateDirectory,
-                            String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
-                    using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
-                        String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
+                    using (webResponse = webRequest.GetResponse())
                     {
-                        using (Stream input = webResponse.GetResponseStream())
+                        var buffer = new byte[1024];
+                        _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                            Path.Combine(_applicationUpdateDirectory,
+                                String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
+                        using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                            String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
                         {
-                            if (input == null)
-                                throw new Exception("The response stream couldn't be read.");
-
-                            if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                            using (Stream input = webResponse.GetResponseStream())
                             {
-                                DeletePackages();
-                                throw new OperationCanceledException();
-                            }
+                                if (input == null)
+                                    throw new Exception("The response stream couldn't be read.");
 
-                            int size = input.Read(buffer, 0, buffer.Length);
-                            while (size > 0)
-                            {
                                 if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                                 {
-                                    fileStream.Flush();
-                                    fileStream.Close();
                                     DeletePackages();
+                                    _packageOperations.Clear();
+                                    _packageFilePaths.Clear();
                                     throw new OperationCanceledException();
                                 }
 
-                                fileStream.Write(buffer, 0, size);
-                                received += size;
-                                OnUpdateDownloadProgressChanged(received,
-                                    (long)total, (float)(received / total) * 100);
-                                size = input.Read(buffer, 0, buffer.Length);
-                            }
-
-                            if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
-                                continue;
-
-                            try
-                            {
-                                string response =
-                                    new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
-                                        updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
-                                        SystemInformation.OperatingSystemName)); // Only for calling it
-                                if (!String.IsNullOrEmpty(response))
+                                int size = input.Read(buffer, 0, buffer.Length);
+                                while (size > 0)
                                 {
-                                    throw new StatisticsException(String.Format(
-                                        _lp.StatisticsScriptExceptionText, response));
+                                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                                    {
+                                        fileStream.Flush();
+                                        fileStream.Close();
+                                        DeletePackages();
+                                        _packageOperations.Clear();
+                                        _packageFilePaths.Clear();
+                                        throw new OperationCanceledException();
+                                    }
+
+                                    fileStream.Write(buffer, 0, size);
+                                    received += size;
+                                    OnUpdateDownloadProgressChanged(received,
+                                        (long)total, (float)(received / total) * 100);
+                                    size = input.Read(buffer, 0, buffer.Length);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new StatisticsException(ex.Message);
+
+                                if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
+                                    continue;
+
+                                try
+                                {
+                                    string response =
+                                        new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
+                                            updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
+                                            SystemInformation.OperatingSystemName)); // Only for calling it
+                                    if (!String.IsNullOrEmpty(response))
+                                    {
+                                        throw new StatisticsException(String.Format(
+                                            _lp.StatisticsScriptExceptionText, response));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new StatisticsException(ex.Message);
+                                }
                             }
                         }
                     }
@@ -450,21 +461,27 @@ namespace nUpdate.Updating
             }
         }
 
+        public void DownloadPackagesAsync()
+        {
+            Task.Factory.StartNew(DownloadPackages).ContinueWith(DownloadTaskCompleted,
+                _downloadCancellationTokenSource.Token,
+                TaskContinuationOptions.None,
+                TaskScheduler.Default);
+        }
+
+#if PROVIDE_TAP
+
         /// <summary>
         ///     Downloads the available update packages from the server, asynchronously.
         /// </summary>
         /// <seealso cref="DownloadPackages" />
-        public
-#if PROVIDE_TAP
-        async Task
-#else
-        void
-#endif
-        DownloadPackagesAsync()
+        public async Task DownloadPackagesAsync(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
         {
-#if PROVIDE_TAP
-            ResetTokens();
-            int received = 0;
+            if (_downloadCancellationTokenSource != null)
+                _downloadCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource = new CancellationTokenSource();
+
+            long received = 0;
             double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                     .Where(updatePackageSize => updatePackageSize != null)
                     .Sum(updatePackageSize => updatePackageSize.Value);
@@ -480,6 +497,8 @@ namespace nUpdate.Updating
                     if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                     {
                         DeletePackages();
+                        _packageOperations.Clear();
+                        _packageFilePaths.Clear();
                         throw new OperationCanceledException();
                     }
 
@@ -501,6 +520,8 @@ namespace nUpdate.Updating
                             if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                             {
                                 DeletePackages();
+                                _packageOperations.Clear();
+                                _packageFilePaths.Clear();
                                 throw new OperationCanceledException();
                             }
 
@@ -512,6 +533,8 @@ namespace nUpdate.Updating
                                     fileStream.Flush();
                                     fileStream.Close();
                                     DeletePackages();
+                                    _packageOperations.Clear();
+                                    _packageFilePaths.Clear();
                                     throw new OperationCanceledException();
                                 }
 
@@ -544,19 +567,16 @@ namespace nUpdate.Updating
                         }
                     }
                 }
-                catch (Exception)
+                finally
                 {
                     if (webResponse != null)
                         webResponse.Close();
                 }
             }
-#else
-            Task.Factory.StartNew(DownloadPackages).ContinueWith(DownloadTaskCompleted,
-                _downloadCancellationTokenSource.Token,
-                TaskContinuationOptions.None,
-                TaskScheduler.Default);
-#endif
         }
+
+    
+#endif
 
         private void DownloadTaskCompleted(Task task)
         {
@@ -600,22 +620,33 @@ namespace nUpdate.Updating
                     throw new ArgumentException(String.Format("Signature of version \"{0}\" is null or empty.",
                         configuration));
 
-                byte[] data;
-                using (var reader =
-                    new BinaryReader(File.Open(filePathItem.Value,
-                        FileMode.Open)))
-                {
-                    data = reader.ReadBytes((int)reader.BaseStream.Length);
-                }
-
-                RsaManager rsa;
-
+                FileStream stream = File.Open(filePathItem.Value, FileMode.Open);
                 try
                 {
-                    rsa = new RsaManager(_publicKey);
-                }
-                catch
-                {
+                    RsaManager rsa;
+
+                    try
+                    {
+                        rsa = new RsaManager(_publicKey);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            DeletePackages();
+                            _packageFilePaths.Clear();
+                            _packageOperations.Clear();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new PackageDeleteException(ex.Message);
+                        }
+                        return false;
+                    }
+
+                    if (rsa.VerifyData(stream, Convert.FromBase64String(configuration.Signature)))
+                        continue;
+
                     try
                     {
                         DeletePackages();
@@ -624,23 +655,16 @@ namespace nUpdate.Updating
                     {
                         throw new PackageDeleteException(ex.Message);
                     }
+
+                    _packageFilePaths.Clear();
+                    _packageOperations.Clear();
                     return false;
                 }
-
-                if (rsa.VerifyData(data, Convert.FromBase64String(configuration.Signature)))
-                    continue;
-
-                try
+                finally
                 {
-                    DeletePackages();
+                    stream.Close();
                 }
-                catch (Exception ex)
-                {
-                    throw new PackageDeleteException(ex.Message);
-                }
-                return false;
             }
-
             return true;
         }
 
@@ -726,6 +750,7 @@ namespace nUpdate.Updating
             {
                 FileName = unpackerAppPath,
                 Arguments = String.Join("|", args),
+                UseShellExecute = true,
                 Verb = "runas"
             };
 
@@ -738,6 +763,8 @@ namespace nUpdate.Updating
                 if (ex.NativeErrorCode != 1223)
                     throw;
                 DeletePackages();
+                _packageFilePaths.Clear();
+                _packageOperations.Clear();
                 return;
             }
 
