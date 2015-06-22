@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security;
 using System.Threading;
@@ -456,7 +455,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             InitializePackageItems();
-            //SetLanguage();
 
             _updateLog.Project = Project;
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
@@ -1374,6 +1372,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private bool _foundWithFtp;
         private bool _foundWithUrl;
+        private Exception _urlCheckException;
         private bool _hasFinishedCheck;
 
         private async Task BeginUpdateConfigurationCheck()
@@ -1393,7 +1392,7 @@ namespace nUpdate.Administration.UI.Dialogs
 #pragma warning restore 4014
         }
 
-        private void CheckUpdateConfigurationStatus(Uri configFileUrl)
+        private void CheckUpdateConfigurationStatus(Uri configFileUri)
         {
             if (!ConnectionChecker.IsConnectionAvailable())
             {
@@ -1412,24 +1411,129 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            using (var client = new WebClientWrapper(5000))
+            IEnumerable<UpdateConfiguration> configurations = null;
+            try
             {
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
+                configurations = UpdateConfiguration.Download(configFileUri, Project.Proxy) ??
+                                 Enumerable.Empty<UpdateConfiguration>();
+                _foundWithUrl = true;
+            }
+            catch (Exception ex)
+            {
+                _urlCheckException = ex;
+                _foundWithUrl = false;
+            }
+
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var updateConfigurations = configurations as UpdateConfiguration[] ?? configurations.ToArray();
+            if (_foundWithUrl && updateConfigurations.Any(item => item.VersionId == 0))
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Invalid Version-IDs detected.",
+                                "nUpdate Administration has encountered a problem with your configuration due to a bug in previous versions. nUpdate Administration will now fix the problem automatically.",
+                                PopupButtons.Ok)));
+
+                SetUiState(false);
+                Invoke(new Action(() =>
+                {
+                    loadingLabel.Text = "Editing configuration file...";
+
+                    checkUpdateConfigurationLinkLabel.Enabled = false;
+                    checkingUrlPictureBox.Visible = false;
+                    tickPictureBox.Visible = false;
+                }));
+
+                var newestId = Settings.Default.VersionID;
+                foreach (var configEntry in updateConfigurations.Where(item => item.VersionId == 0))
+                {
+                    newestId++;
+                    configEntry.VersionId = newestId;
+                }
+
+                Settings.Default.VersionID = newestId;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+
+                Invoke(new Action(() => loadingLabel.Text = "Saving new configuration..."));
+
+                var updateConfigFile = Path.Combine(Program.Path, "updates.json");
                 try
                 {
-                    var stream = client.OpenRead(configFileUrl);
-                    if (stream == null)
+                    File.WriteAllText(updateConfigFile, Serializer.Serialize(configurations));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
+                                    PopupButtons.Ok)));
+                    return;
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+
+                try
+                {
+                    _ftp.UploadFile(updateConfigFile);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.",
+                                    ex, PopupButtons.Ok)));
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Editing local configurations..."));
+                foreach (
+                    var directoryInfo in
+                        new DirectoryInfo(Path.Combine(Program.Path, "Projects", Project.Name)).GetDirectories())
+                {
+                    string packageConfigurationPath = Path.Combine(directoryInfo.FullName, "updates.json");
+                    var packageConfiguration = UpdateConfiguration.FromFile(packageConfigurationPath);
+                    foreach (var entry in packageConfiguration)
                     {
-                        _foundWithUrl = false;
+                        if (updateConfigurations.Any(item => item.LiteralVersion == entry.LiteralVersion))
+                            entry.VersionId =
+                                updateConfigurations.First(item => item.LiteralVersion == entry.LiteralVersion).VersionId;
+                        else // Local package
+                        {
+                            Settings.Default.VersionID += 1;
+                            Settings.Default.Save();
+                            Settings.Default.Reload();
+                            entry.VersionId = Settings.Default.VersionID;
+                        }
+                    }
+
+                    try
+                    {
+                        File.WriteAllText(packageConfigurationPath, Serializer.Serialize(packageConfiguration));
+                    }
+                    catch (Exception ex)
+                    {
+                        var info = directoryInfo;
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error,
+                                        String.Format(
+                                            "Error while saving the edited local configuration of package \"{0}\".",
+                                            new UpdateVersion(info.Name).FullText), ex,
+                                        PopupButtons.Ok)));
                         return;
                     }
-                    _foundWithUrl = true;
-                }
-                catch (Exception)
-                {
-                    _foundWithUrl = false;
                 }
             }
+            Invoke(
+                new Action(
+                    () =>
+                        checkUpdateConfigurationLinkLabel.Enabled = true));
+            SetUiState(true);
+
 
             try
             {
@@ -1464,7 +1568,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
-                                "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). Please check if the update url is correct and if your server is reachable.",
+                                String.Format(
+                                    "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). {0}",
+                                    _urlCheckException != null ? _urlCheckException.Message : String.Empty),
                                 PopupButtons.Ok);
 
                             checkingUrlPictureBox.Visible = false;
