@@ -508,7 +508,7 @@ namespace nUpdate.UpdateInstaller
                         {
                             if (FileHelper.IsFileLocked(ex))
                             {
-                                _progressReporter.Fail(new Exception(String.Format("The installer cannot overwrite the file '{0}' because it is being used by another process. Terminate all applications that block the access and try again by pressing \"OK\".", aimPath)));
+                                _progressReporter.Fail(new Exception(String.Format(Program.FileInUseError, aimPath)));
                             }
                         }
                     }
