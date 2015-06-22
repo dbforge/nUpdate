@@ -124,7 +124,12 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public static bool IsHostApplicationClosed { get; set; }
 
-            /// <summary>
+        /// <summary>
+        ///     The text of the error that a file is currently being used by another program.
+        /// </summary>
+        public static string FileInUseError { get; set; }
+
+        /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
@@ -171,6 +176,7 @@ namespace nUpdate.UpdateInstaller
                 Arguments = Serializer.Deserialize<List<UpdateArgument>>(
                         Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20]))); // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
                 IsHostApplicationClosed = Convert.ToBoolean(appArguments[21]);
+                FileInUseError = appArguments[22];
             }
             catch (Exception ex)
             {
