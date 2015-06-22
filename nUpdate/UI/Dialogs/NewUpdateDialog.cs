@@ -14,14 +14,13 @@ using nUpdate.Core.Localization;
 using nUpdate.Core.Operations;
 using nUpdate.Core.Win32;
 using nUpdate.Updating;
+using nUpdate.UI.Popups;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class NewUpdateDialog : BaseDialog
     {
         private const float GB = 1073741824;
-        private const int MB = 1048576;
-        private const int KB = 1024;
         private bool _allowCancel;
         private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
@@ -104,29 +103,9 @@ namespace nUpdate.UI.Dialogs
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            if (PackageSize >= 107374182.4)
-            {
-                double packageSizeInMb = Math.Round((PackageSize/GB), 1);
-                updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "GB");
-            }
-            else if (PackageSize >= 104857.6)
-            {
-                double packageSizeInMb = Math.Round((PackageSize/MB), 1);
-                updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb), "MB");
-            }
-            else if (PackageSize >= 102.4)
-            {
-                double packageSizeInKb = Math.Round((PackageSize/KB), 1);
-                updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb), "KB");
-            }
-            else if (PackageSize >= 1)
-            {
-                updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(_lp.NewUpdateDialogSizeText, PackageSize), "B");
-            }
+            var size = SizeHelper.ConvertSize(PackageSize);
+            updateSizeLabel.Text = String.Format("{0} {1}",
+                    String.Format(_lp.NewUpdateDialogSizeText, size.Item1), size.Item2);
 
             Icon = _appIcon;
             Text = Application.ProductName;
@@ -138,6 +117,9 @@ namespace nUpdate.UI.Dialogs
                 var versionText = new UpdateVersion(updateConfiguration.LiteralVersion).FullText;
                 var changelogText = updateConfiguration.Changelog.ContainsKey(new CultureInfo(LanguageName)) ? updateConfiguration.Changelog.First(item => item.Key.Name == LanguageName).Value :
                 updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
+
+                if (PackageSize > GB)
+                    changelogTextBox.Text += _lp.NewUpdateDialogBigPackageWarning;
 
                 changelogTextBox.Text +=
                     String.Format(String.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
@@ -173,6 +155,15 @@ namespace nUpdate.UI.Dialogs
 
         private void installButton_Click(object sender, EventArgs e)
         {
+            double necessarySpaceToFree;
+            if (!SizeHelper.HasEnoughSpace(PackageSize, out necessarySpaceToFree))
+            {
+                var packageSizeData = SizeHelper.ConvertSize(PackageSize);
+                var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
+                Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.", String.Format("You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({0} {1}). Please free a minimum of {2} {3} to make sure the updates can be downloaded and installed without any problems.", packageSizeData.Item1, packageSizeData.Item2, spaceToFreeData.Item1, spaceToFreeData.Item2), PopupButtons.Ok);
+                return;
+            }
+
             _allowCancel = true;
             DialogResult = DialogResult.OK;
             Close();

@@ -11,6 +11,7 @@
    "NewUpdateDialogCurrentVersionText":"Aktuelle Version: {0}",
    "NewUpdateDialogSizeText":"Gesamtpaketgröße: {0}",
    "NewUpdateDialogChangelogText":"Changelog:",
+   "NewUpdateDialogBigPackageWarning":"Das Herunterladen und/oder Vorbereiten der Installation kann auf Grund der Größe der verfügbaren Updates einige Zeit in Anspruch nehmen.",
    "NewUpdateDialogAccessText":"Zugriff auf:",
    "NewUpdateDialogRegistryAccessText":"Registry",
    "NewUpdateDialogFilesAccessText":"Dateisystem",
