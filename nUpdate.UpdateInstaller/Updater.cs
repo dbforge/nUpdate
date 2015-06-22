@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,10 +14,8 @@ using Microsoft.Win32;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
-using Newtonsoft.Json.Linq;
-using nUpdate.UpdateInstaller.Exceptions;
 using nUpdate.UpdateInstaller.UI.Popups;
-using System.ComponentModel;
+using Newtonsoft.Json.Linq;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -496,8 +495,23 @@ namespace nUpdate.UpdateInstaller
                 var files = dir.GetFiles();
                 foreach (var file in files)
                 {
+                    bool continueCopyLoop = true;
                     var aimPath = Path.Combine(destDirName, file.Name);
-                    file.CopyTo(aimPath, true);
+                    while (continueCopyLoop)
+                    {
+                        try
+                        {
+                            file.CopyTo(aimPath, true);
+                            continueCopyLoop = false;
+                        }
+                        catch (IOException ex)
+                        {
+                            if (FileHelper.IsFileLocked(ex))
+                            {
+                                _progressReporter.Fail(new Exception(String.Format("The installer cannot overwrite the file '{0}' because it is being used by another process. Terminate all applications that block the access and try again by pressing \"OK\".", aimPath)));
+                            }
+                        }
+                    }
 
                     _doneTaskAmount += 1;
                     var percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
