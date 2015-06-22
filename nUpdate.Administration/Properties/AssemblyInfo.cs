@@ -40,8 +40,8 @@ using nUpdate.Core;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 1")]
+[assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 2")]
 [assembly: AssemblyFileVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguage("")]
-[assembly: nUpdateVersion("3.0b1")]
+[assembly: nUpdateVersion("3b2")]
 [assembly: Exceptionless.Configuration.Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]
