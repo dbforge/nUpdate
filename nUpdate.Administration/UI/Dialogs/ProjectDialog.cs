@@ -77,7 +77,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             UpdateVersion packageVersion = null;
             Invoke(
-                new Action(() => packageVersion = (UpdateVersion)packagesList.SelectedItems[0].Tag));
+                new Action(() => packageVersion = new UpdateVersion(packagesList.SelectedItems[0].Tag.ToString())));
 
             if (_commandsExecuted)
             {
