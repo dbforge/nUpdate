@@ -39,6 +39,8 @@ namespace nUpdate.Core.Localization
             InstallerCopyingText = "\"Copying {0}...\"";
             InstallerInitializingErrorCaption = "\"Error while iniaitializing the data.\"";
             InstallerUpdatingErrorCaption = "\"Error while updating the application\"";
+            InstallerFileInUseError =
+                "The installer cannot overwrite the file '{0}' because it is being used by another process. Terminate all applications that block the access and try again by pressing \"OK\".";
             FileDeletingOperationText = "\"Deleting file \"{0}\"...\"";
             FileRenamingOperationText = "\"Renaming file \"{0}\" to \"{1}\"...\"";
             RegistrySubKeyCreateOperationText = "\"Creating registry subkey \"{0}\"...\"";
@@ -100,6 +102,7 @@ namespace nUpdate.Core.Localization
         public string InstallerCopyingText { get; set; }
         public string InstallerInitializingErrorCaption { get; set; }
         public string InstallerUpdatingErrorCaption { get; set; }
+        public string InstallerFileInUseError { get; set; }
         public string FileRenamingOperationText { get; set; }
         public string FileDeletingOperationText { get; set; }
         public string RegistrySubKeyCreateOperationText { get; set; }
