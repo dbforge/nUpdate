@@ -2,6 +2,7 @@
 
 using System;
 using System.Drawing;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -151,7 +152,7 @@ namespace nUpdate.Updating
 
                     try
                     {
-                        _updatesAvailable = await _updateManager.SearchForUpdatesTask();
+                        _updatesAvailable = await _updateManager.SearchForUpdatesAsync();
                     }
                     catch (OperationCanceledException)
                     {
@@ -205,7 +206,8 @@ namespace nUpdate.Updating
                     {
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
-                        await _updateManager.DownloadPackagesTask(progressIndicator);
+                        
+                        await _updateManager.DownloadPackagesAsync(progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
@@ -217,7 +219,6 @@ namespace nUpdate.Updating
                         _context.Send(downloadDialog.CloseDialog, null);
                         return;
                     }
-
                     _context.Send(downloadDialog.CloseDialog, null);
 
                     bool isValid = false;
