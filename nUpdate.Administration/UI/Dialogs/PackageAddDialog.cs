@@ -119,18 +119,23 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <param name="enabled">Sets the activation state.</param>
         public void SetUiState(bool enabled)
         {
-            if (enabled)
-                _allowCancel = true;
-
-            Invoke(new Action(() =>
+            _allowCancel = enabled;
+            try
             {
-                foreach (var c in from Control c in Controls where c.Visible select c)
+                Invoke(new Action(() =>
                 {
-                    c.Enabled = enabled;
-                }
+                    foreach (var c in from Control c in Controls where c.Visible select c)
+                    {
+                        c.Enabled = enabled;
+                    }
 
-                loadingPanel.Visible = !enabled;
-            }));
+                    loadingPanel.Visible = !enabled;
+                }));
+            }
+            catch (InvalidOperationException)
+            {
+                // Doesn't interest us anymore as the dialog has been closed
+            }
         }
 
         /// <summary>
@@ -159,11 +164,49 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
+            Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
+            var connectionString = String.Format("SERVER={0};" +
+                                                                 "DATABASE={1};" +
+                                                                 "UID={2};" +
+                                                                 "PASSWORD={3};",
+                                Project.SqlWebUrl, Project.SqlDatabaseName,
+                                Project.SqlUsername,
+                                SqlPassword.ConvertToUnsecureString());
+            var deleteConnection = new MySqlConnection(connectionString);
+            deleteConnection.Open();
+            var command = deleteConnection.CreateCommand();
+            command.CommandText =
+                String.Format(
+                    "DELETE FROM `Version` WHERE `ID` = {0};",
+                    Settings.Default.VersionID);
+            // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
+
+            try
+            {
+                command.ExecuteNonQuery();
+                deleteConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                Invoke(
+                    new Action(
+                        () =>
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                ex, PopupButtons.Ok)));
+                deleteConnection.Close();
+                Reset();
+                return;
+            }
+
+            Settings.Default.VersionID -= 1;
+            Settings.Default.Save();
+            Settings.Default.Reload();
+
             SetUiState(true);
             if (_packageInitialized)
             {
                 if (Project.Packages != null)
-                    Project.Packages.Remove(_package); // Remove the saved package again
+                    Project.Packages.First(item => item == _package).IsReleased = false;
 
                 try
                 {
@@ -207,9 +250,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             _zip.ParallelDeflateThreshold = -1;
-            _updateLog.Project = Project;
-            //SetLanguage();
+            _zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 
+            _updateLog.Project = Project;
             categoryTreeView.Nodes[3].Nodes.Add(_replaceNode);
             categoryTreeView.Nodes[3].Toggle();
 
@@ -461,7 +504,21 @@ namespace nUpdate.Administration.UI.Dialogs
                 //}
 
                 var packageFile = String.Format("{0}.zip", Project.Guid);
-                _zip.Save(Path.Combine(_packageFolder, packageFile));
+
+                try
+                {
+                    _zip.Save(Path.Combine(_packageFolder, packageFile));
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the package archive.", ex,
+                                    PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
 
                 _updateLog.Write(LogEntry.Create, _packageVersion.FullText);
                 Invoke(new Action(() => loadingLabel.Text = "Preparing update..."));
@@ -483,22 +540,22 @@ namespace nUpdate.Administration.UI.Dialogs
                     var tabPage in
                         changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
                 {
-                    var panel = (ChangelogPanel) tabPage.Controls[0];
+                    var panel = (ChangelogPanel)tabPage.Controls[0];
                     if (String.IsNullOrEmpty(panel.Changelog)) continue;
-                    changelog.Add((CultureInfo) tabPage.Tag, panel.Changelog);
+                    changelog.Add((CultureInfo)tabPage.Tag, panel.Changelog);
                 }
 
                 // Create a new package configuration
                 _configuration.Changelog = changelog;
                 _configuration.NecessaryUpdate = _necessaryUpdate;
-                _configuration.Architecture = (Architecture) _architectureIndex;
+                _configuration.Architecture = (Architecture)_architectureIndex;
 
                 _configuration.Operations = new List<Operation>();
                 Invoke(new Action(() =>
                 {
                     foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
-                        where node.Index != 0
-                        select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
+                                                   where node.Index != 0
+                                                   select (IOperationPanel)categoryTabControl.TabPages[4 + node.Index].Controls[0])
                     {
                         _configuration.Operations.Add(operationPanel.Operation);
                     }
@@ -508,14 +565,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    byte[] data;
-                    using (var reader =
-                        new BinaryReader(File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
-                            FileMode.Open)))
+                    using (var stream = File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
+                            FileMode.Open))
                     {
-                        data = reader.ReadBytes((int) reader.BaseStream.Length);
+                        _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(stream));
                     }
-                    _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(data));
                 }
                 catch (Exception ex)
                 {
@@ -535,13 +589,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.LiteralVersion = _packageVersion.ToString();
                 _configuration.UseStatistics = _includeIntoStatistics;
 
-                if (Project.UseStatistics)
-                {
-                    Settings.Default.VersionID += 1;
-                    Settings.Default.Save();
-                    Settings.Default.Reload();
-                    _configuration.VersionId = Settings.Default.VersionID;
-                }
+                Settings.Default.VersionID += 1;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                _configuration.VersionId = Settings.Default.VersionID;
 
                 Invoke(new Action(() => loadingLabel.Text = "Initializing configuration..."));
 
@@ -694,7 +745,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
 
                     if (_uploadCancelled)
+                    {
+                        Reset();
                         return;
+                    }
 
                     _packageUploaded = true;
 
