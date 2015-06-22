@@ -20,6 +20,7 @@ namespace nUpdate.Core.Localization
             NewUpdateDialogCurrentVersionText = "Current version: {0}";
             NewUpdateDialogSizeText = "Total package size: {0}";
             NewUpdateDialogChangelogText = "Changelog:";
+            NewUpdateDialogBigPackageWarning = "The download and/or the beginning of the installation of the available updates may take some time due to their size.";
             NewUpdateDialogAccessText = "Accesses:";
             NewUpdateDialogFilesAccessText = "File system";
             NewUpdateDialogRegistryAccessText = "Registry";
@@ -82,6 +83,7 @@ namespace nUpdate.Core.Localization
         public string NewUpdateDialogCurrentVersionText { get; set; }
         public string NewUpdateDialogSizeText { get; set; }
         public string NewUpdateDialogChangelogText { get; set; }
+        public string NewUpdateDialogBigPackageWarning { get; set; }
         public string NewUpdateDialogAccessText { get; set; }
         public string NewUpdateDialogRegistryAccessText { get; set; }
         public string NewUpdateDialogFilesAccessText { get; set; }
