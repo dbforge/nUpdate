@@ -1411,11 +1411,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            IEnumerable<UpdateConfiguration> configurations = null;
+            var configurations = new List<UpdateConfiguration>();
             try
             {
-                configurations = UpdateConfiguration.Download(configFileUri, Project.Proxy) ??
-                                 Enumerable.Empty<UpdateConfiguration>();
+                configurations = UpdateConfiguration.Download(configFileUri, Project.Proxy).ToList();
                 _foundWithUrl = true;
             }
             catch (Exception ex)
@@ -1424,9 +1423,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _foundWithUrl = false;
             }
 
-            // ReSharper disable once AssignNullToNotNullAttribute
-            var updateConfigurations = configurations as UpdateConfiguration[] ?? configurations.ToArray();
-            if (_foundWithUrl && updateConfigurations.Any(item => item.VersionId == 0))
+            if (_foundWithUrl && configurations.Any(item => item.VersionId == 0))
             {
                 Invoke(
                     new Action(
@@ -1446,7 +1443,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }));
 
                 var newestId = Settings.Default.VersionID;
-                foreach (var configEntry in updateConfigurations.Where(item => item.VersionId == 0))
+                foreach (var configEntry in configurations.Where(item => item.VersionId == 0))
                 {
                     newestId++;
                     configEntry.VersionId = newestId;
@@ -1497,9 +1494,11 @@ namespace nUpdate.Administration.UI.Dialogs
                     var packageConfiguration = UpdateConfiguration.FromFile(packageConfigurationPath);
                     foreach (var entry in packageConfiguration)
                     {
-                        if (updateConfigurations.Any(item => item.LiteralVersion == entry.LiteralVersion))
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        if (configurations.Any(item => item.LiteralVersion == entry.LiteralVersion))
                             entry.VersionId =
-                                updateConfigurations.First(item => item.LiteralVersion == entry.LiteralVersion).VersionId;
+                                // ReSharper disable once PossibleMultipleEnumeration
+                                configurations.First(item => item.LiteralVersion == entry.LiteralVersion).VersionId;
                         else // Local package
                         {
                             Settings.Default.VersionID += 1;

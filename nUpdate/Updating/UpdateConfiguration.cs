@@ -101,10 +101,10 @@ namespace nUpdate.Updating
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUri);
                 if (!String.IsNullOrEmpty(source))
-                    return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source) ?? Enumerable.Empty<UpdateConfiguration>();
+                    return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
 
-            return null;
+            return Enumerable.Empty<UpdateConfiguration>();
         }
 
         /// <summary>
