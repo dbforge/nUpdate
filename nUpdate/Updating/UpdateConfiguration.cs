@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using nUpdate.Core;
@@ -100,7 +101,7 @@ namespace nUpdate.Updating
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUri);
                 if (!String.IsNullOrEmpty(source))
-                    return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
+                    return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source) ?? Enumerable.Empty<UpdateConfiguration>();
             }
 
             return null;
@@ -112,7 +113,7 @@ namespace nUpdate.Updating
         /// <param name="filePath">The path of the file.</param>
         public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
-            return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(File.ReadAllText(filePath));
+            return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(File.ReadAllText(filePath)) ?? Enumerable.Empty<UpdateConfiguration>();
         }
     }
 }
