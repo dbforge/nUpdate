@@ -50,14 +50,11 @@ I'm not happy with everything, yet. It's possible that you find some small thing
 - Lots of new langues
 
 ###License
-![SugarCRM](https://tldrlegal.com/license/sugarcrm-public-license-v1.1.3-(sugarcrm-1.1.3))
+SugarCRM
 
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
 
 ###Screenshots
 
-![](http://www.trade-programming.de/pixelkram/obcwjhfild.png)
 ![](http://www.trade-programming.de/pixelkram/uocdslqkfj.png)
-
-The first picture shows that German has been used as culture. By default, it's English, of course.
