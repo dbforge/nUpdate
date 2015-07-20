@@ -1,4 +1,4 @@
-# nUpdate - The easy update-solution
+![](http://www.nupdate.net/titlelogo.png)
 
 nUpdate is a modern update system for .NET applications.
 Providing high security and an easy-to-use user interface, nUpdate is the perfect solution for your software.
@@ -10,17 +10,17 @@ Also nUpdate is designed to fit in with all operating systems since Windows Vist
 A small overview over some of the most important features of nUpdate:
 
 - Easy management of update packages
-- Easy usable library
+- Easy to use
 - Automated updating for all clients
 - Many configuration settings which let you control your updates easily
 - Secured update packages by signing with SHA512 and 8912 Bit RSA-keys
-- Smart error handling with automated resetting data if an operation failed
-- Interfaces, service providers and event-based/task-based asynchronous patterns provide the possibility to use own Graphical - User Interfaces that can be shown to the client
+- Smart error handling with automatically resetting data if an operation failed
+- Interfaces, service providers and event-based/task-based asynchronous patterns provide the possibility to use own Graphical User Interfaces that can be shown to the client
 - Smart statistics about the downloads of your updates
-- Supports large update packages
+- Supports very large update packages
  
 ### Version
-3.0.0.0 Beta Build 2 (Could contain bugs)
+3.0.0.0 Beta Build 2 (Could contain some bugs)
 
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
@@ -40,10 +40,24 @@ Want to contribute as said above? Great!
 Just use GitHub's functions for creating issues on problems so that I could have a look at them and decide what to do etc. If you already have an idea on what to do, make sure to fork nUpdate and create a PullRequest.
 
 ### Todo's
-There are still a lot of things to do till a really good and usable version will appear. I'm giving my best to hurry up a bit.
+I'm not happy with everything, yet. It's possible that you find some small things that need to be improved. Nevermind, everything is work!
+
+- Differential updates
+- Delta Patching
+- Faster updating
+- Fix remaining bugs
+- Multilanguage everywhere
+- Lots of new langues
 
 ###License
-SugarCRM
+![SugarCRM](https://tldrlegal.com/license/sugarcrm-public-license-v1.1.3-(sugarcrm-1.1.3))
 
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
+
+###Screenshots
+
+![](http://www.trade-programming.de/pixelkram/obcwjhfild.png)
+![](http://www.trade-programming.de/pixelkram/uocdslqkfj.png)
+
+The first picture shows that German has been used as culture. By default, it's English, of course.
