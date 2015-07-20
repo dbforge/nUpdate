@@ -40,14 +40,15 @@ Want to contribute as said above? Great!
 Just use GitHub's functions for creating issues on problems so that I could have a look at them and decide what to do etc. If you already have an idea on what to do, make sure to fork nUpdate and create a PullRequest.
 
 ### Todo's
-I'm not happy with everything, yet. It's possible that you find some small things that need to be improved. Nevermind, everything is work!
+I'm not happy with everything, yet. It's possible that you find some small things that need to be improved. Nevermind, everything is in work!
 
 - Differential updates
 - Delta Patching
 - Faster updating
 - Fix remaining bugs
 - Multilanguage everywhere
-- Lots of new langues
+- Lots of new languages
+- Code Signing Certificate
 
 ###License
 SugarCRM
