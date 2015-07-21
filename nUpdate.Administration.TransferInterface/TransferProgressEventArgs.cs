@@ -105,7 +105,7 @@ namespace nUpdate.Administration.TransferInterface
         /// </summary>
         public float Percentage
         {
-            get { return (_totalBytesTransferred / _totalBytes) * 100; }
+            get { return (float)_totalBytesTransferred / _totalBytes * 100; }
         }
 
         public TimeSpan EstimatedCompleteTime
