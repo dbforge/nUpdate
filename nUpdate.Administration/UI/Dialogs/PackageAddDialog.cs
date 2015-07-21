@@ -164,43 +164,61 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
-            var connectionString = String.Format("SERVER={0};" +
-                                                                 "DATABASE={1};" +
-                                                                 "UID={2};" +
-                                                                 "PASSWORD={3};",
-                                Project.SqlWebUrl, Project.SqlDatabaseName,
-                                Project.SqlUsername,
-                                SqlPassword.ConvertToUnsecureString());
-            var deleteConnection = new MySqlConnection(connectionString);
-            deleteConnection.Open();
-            var command = deleteConnection.CreateCommand();
-            command.CommandText =
-                String.Format(
-                    "DELETE FROM `Version` WHERE `ID` = {0};",
-                    Settings.Default.VersionID);
-            // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
-
-            try
+            if (Project.UseStatistics)
             {
-                command.ExecuteNonQuery();
-                deleteConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                ex, PopupButtons.Ok)));
-                deleteConnection.Close();
-                Reset();
-                return;
-            }
+                Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
+                var connectionString = String.Format("SERVER={0};" +
+                                                     "DATABASE={1};" +
+                                                     "UID={2};" +
+                                                     "PASSWORD={3};",
+                    Project.SqlWebUrl, Project.SqlDatabaseName,
+                    Project.SqlUsername,
+                    SqlPassword.ConvertToUnsecureString());
 
-            Settings.Default.VersionID -= 1;
-            Settings.Default.Save();
-            Settings.Default.Reload();
+                bool connectingFailed = false;
+                var deleteConnection = new MySqlConnection(connectionString);
+                try
+                {
+                    deleteConnection.Open();
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to MySQL-database.",
+                                    ex, PopupButtons.Ok)));
+                    connectingFailed = true;
+                }
+
+                if (!connectingFailed)
+                {
+                    var command = deleteConnection.CreateCommand();
+                    command.CommandText =
+                        String.Format(
+                            "DELETE FROM `Version` WHERE `ID` = {0};",
+                            Settings.Default.VersionID);
+                    // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                    }
+                }
+
+                deleteConnection.Close();
+                Settings.Default.VersionID -= 1;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+            }
 
             SetUiState(true);
             if (_packageInitialized)
