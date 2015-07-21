@@ -20,7 +20,7 @@ A small overview over some of the most important features of nUpdate:
 - Supports very large update packages
  
 ### Version
-3.0.0.0 Beta Build 2 (Could contain some bugs)
+3.0.0.0 Beta Build 3 (Could contain some bugs)
 
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
