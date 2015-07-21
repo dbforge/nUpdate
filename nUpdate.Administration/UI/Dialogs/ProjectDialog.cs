@@ -1350,7 +1350,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            packageVersion = (UpdateVersion) packagesList.SelectedItems[0].Tag));
+                            packageVersion = new UpdateVersion((string)packagesList.SelectedItems[0].Tag)));
                 _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
             }
             catch (Exception deletingEx)
