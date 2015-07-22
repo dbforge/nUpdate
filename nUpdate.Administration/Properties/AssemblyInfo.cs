@@ -43,5 +43,5 @@ using nUpdate.Core;
 [assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 3")]
 [assembly: AssemblyFileVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguage("")]
-[assembly: nUpdateVersion("3b2")]
+[assembly: nUpdateVersion("3b3")]
 [assembly: Exceptionless.Configuration.Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]
