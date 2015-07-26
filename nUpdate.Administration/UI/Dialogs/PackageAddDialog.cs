@@ -46,6 +46,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private UpdateVersion _packageVersion;
         private bool _publishUpdate;
         private string _updateConfigFile;
+        private List<UpdateRequirement> _updateRequirements;
+        private Dictionary<string, Version> _osVersions;
         //private string _hashFile;
 
         private bool _uploadCancelled;
@@ -57,7 +59,7 @@ namespace nUpdate.Administration.UI.Dialogs
         };
 
         private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
-        private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
+        private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) { Tag = "DeleteFile" };
 
         private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry sub key", 12, 12)
         {
@@ -71,19 +73,19 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private FtpManager _ftp;
         private readonly UpdatePackage _package = new UpdatePackage();
-        private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
-        private readonly TreeNode _replaceNode = new TreeNode("Replace file/folder", 11, 11) {Tag = "ReplaceFile"};
+        private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) { Tag = "RenameFile" };
+        private readonly TreeNode _replaceNode = new TreeNode("Replace file/folder", 11, 11) { Tag = "ReplaceFile" };
 
         private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry key value", 13, 13)
         {
             Tag = "SetRegistryValue"
         };
 
-        private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
-        private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
-        private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
-        private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7) {Tag = "StopProcess"};
-        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 16, 16) {Tag = "ExecuteScript"};
+        private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) { Tag = "StartProcess" };
+        private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) { Tag = "StartService" };
+        private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) { Tag = "StopService" };
+        private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7) { Tag = "StopProcess" };
+        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 16, 16) { Tag = "ExecuteScript" };
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
         private readonly Log _updateLog = new Log();
         private readonly ZipFile _zip = new ZipFile();
@@ -271,11 +273,13 @@ namespace nUpdate.Administration.UI.Dialogs
             _zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 
             _updateLog.Project = Project;
-            categoryTreeView.Nodes[3].Nodes.Add(_replaceNode);
-            categoryTreeView.Nodes[3].Toggle();
+            categoryTreeView.Nodes[4].Nodes.Add(_replaceNode);
+            categoryTreeView.Nodes[4].Toggle();
+
+            _updateRequirements = new List<UpdateRequirement>();
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
-            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
+            var devStages = Enum.GetValues(typeof(DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
@@ -310,7 +314,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (nUpateVersionAttribute == null)
                     return;
                 var assemblyVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-               
+
                 majorNumericUpDown.Value = assemblyVersion.Major;
                 minorNumericUpDown.Value = assemblyVersion.Minor;
                 buildNumericUpDown.Value = assemblyVersion.Build;
@@ -320,6 +324,19 @@ namespace nUpdate.Administration.UI.Dialogs
             generalTabPage.DoubleBuffer();
             changelogTabPage.DoubleBuffer();
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
+            requiredOSComboBox.SelectedIndex = 0;
+            requiredFrameworkComboBox.SelectedIndex = 0;
+            requirementsTypeComboBox.SelectedIndex = 0;
+
+            _osVersions = new Dictionary<string, Version>();
+            _osVersions.Add("Windows Vista", new Version("6.0.6000.0"));
+            _osVersions.Add("Windows Vista Service Pack 1", new Version("6.0.6001.0"));
+            _osVersions.Add("Windows Vista Service Pack 2", new Version("6.0.6002.0"));
+            _osVersions.Add("Windows 7", new Version("6.1.7600.0"));
+            _osVersions.Add("Windows 7 Service Pack 1", new Version("6.1.7601.0"));
+            _osVersions.Add("Windows 8", new Version("6.2.9200.0"));
+            _osVersions.Add("Windows 8.1", new Version("6.3.9600.0"));
+            _osVersions.Add("Windows 10", new Version("10.0.0.0"));
         }
 
         private void PackageAddDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -332,14 +349,14 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (_developmentalStage == DevelopmentalStage.Release)
             {
-                _packageVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
-                    (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value);
+                _packageVersion = new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value,
+                    (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value);
             }
             else
             {
-                _packageVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
-                    (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value, _developmentalStage,
-                    (int) developmentBuildNumericUpDown.Value);
+                _packageVersion = new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value,
+                    (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value, _developmentalStage,
+                    (int)developmentBuildNumericUpDown.Value);
             }
 
             if (_packageVersion.BasicVersion == "0.0.0.0")
@@ -375,24 +392,24 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (!filesDataTreeView.Nodes.Cast<TreeNode>().Any(node => node.Nodes.Count > 0) &&
-                categoryTreeView.Nodes[3].Nodes.Count <= 1)
+                categoryTreeView.Nodes[4].Nodes.Count <= 1)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No files and/or folders or operations set.",
                     "Please specify some files and/or folders that should be included or operations into the package.",
                     PopupButtons.Ok);
                 filesPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[3].Nodes[0];
+                categoryTreeView.SelectedNode = categoryTreeView.Nodes[4].Nodes[0];
                 return;
             }
-            
+
             foreach (var tabPage in from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 4) let operationPanel = tabPage.Controls[0] as IOperationPanel where operationPanel != null && !operationPanel.IsValid select tabPage)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
                     "Please make sure to fill out all required fields correctly.",
                     PopupButtons.Ok);
                 categoryTreeView.SelectedNode =
-                    categoryTreeView.Nodes[3].Nodes.Cast<TreeNode>()
-                        .First(item => item.Index == tabPage.TabIndex - 4);
+                    categoryTreeView.Nodes[5].Nodes.Cast<TreeNode>()
+                        .First(item => item.Index == tabPage.TabIndex - 5);
                 return;
             }
 
@@ -567,6 +584,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.Changelog = changelog;
                 _configuration.NecessaryUpdate = _necessaryUpdate;
                 _configuration.Architecture = (Architecture)_architectureIndex;
+                _configuration.UpdateRequirements = _updateRequirements;
 
                 _configuration.Operations = new List<Operation>();
                 Invoke(new Action(() =>
@@ -845,7 +863,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     () =>
                         loadingLabel.Text =
                             String.Format("Uploading package... {0}% | {1}KB/s", Math.Round(e.Percentage, 1),
-                                e.BytesPerSecond/1024)));
+                                e.BytesPerSecond / 1024)));
             if (_uploadCancelled)
             {
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -870,12 +888,12 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
             {
-                ((TextBox) changelogContentTabControl.SelectedTab.Controls[0]).Clear();
+                ((TextBox)changelogContentTabControl.SelectedTab.Controls[0]).Clear();
             }
             else
             {
-                var currentChangelogPanel = (ChangelogPanel) changelogContentTabControl.SelectedTab.Controls[0];
-                ((TextBox) currentChangelogPanel.Controls[0]).Clear();
+                var currentChangelogPanel = (ChangelogPanel)changelogContentTabControl.SelectedTab.Controls[0];
+                ((TextBox)currentChangelogPanel.Controls[0]).Clear();
             }
         }
 
@@ -906,7 +924,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
-            var directoryNode = new TreeNode(directoryInfo.Name, 0, 0) {Tag = directoryInfo.FullName};
+            var directoryNode = new TreeNode(directoryInfo.Name, 0, 0) { Tag = directoryInfo.FullName };
             try
             {
                 foreach (var directory in directoryInfo.GetDirectories())
@@ -1025,7 +1043,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     if (filesImageList.Images.ContainsKey(fileInfo.Extension))
                     {
                         var index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
-                        fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
+                        fileNode = new TreeNode(fileInfo.Name, index, index) { Tag = fileInfo.FullName };
                     }
                     else
                     {
@@ -1034,11 +1052,11 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             filesImageList.Images.Add(fileInfo.Extension, icon.ToBitmap());
                             var index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
-                            fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};
+                            fileNode = new TreeNode(fileInfo.Name, index, index) { Tag = fileInfo.FullName };
                         }
                         else
                         {
-                            fileNode = new TreeNode(fileInfo.Name, 1, 1) {Tag = fileInfo.FullName};
+                            fileNode = new TreeNode(fileInfo.Name, 1, 1) { Tag = fileInfo.FullName };
                         }
                     }
 
@@ -1077,9 +1095,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            var version = new UpdateVersion((int) unsupportedMajorNumericUpDown.Value,
-                (int) unsupportedMinorNumericUpDown.Value, (int) unsupportedBuildNumericUpDown.Value,
-                (int) unsupportedRevisionNumericUpDown.Value);
+            var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
+                (int)unsupportedMinorNumericUpDown.Value, (int)unsupportedBuildNumericUpDown.Value,
+                (int)unsupportedRevisionNumericUpDown.Value);
             _unsupportedVersionLiteralsBindingList.Add(version.ToString());
         }
 
@@ -1092,7 +1110,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             _developmentalStage =
                 (DevelopmentalStage)
-                    Enum.Parse(typeof (DevelopmentalStage),
+                    Enum.Parse(typeof(DevelopmentalStage),
                         developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem));
             if (_developmentalStage == DevelopmentalStage.Alpha || _developmentalStage == DevelopmentalStage.Beta || _developmentalStage == DevelopmentalStage.ReleaseCandidate)
                 developmentBuildNumericUpDown.Enabled = true;
@@ -1165,6 +1183,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTabControl.SelectedTab = availabilityTabPage;
                         break;
                     case 3:
+                        categoryTabControl.SelectedTab = requirementsTabPage;
+                        break;
+                    case 4:
                         categoryTabControl.SelectedTab = operationsTabPage;
                         break;
                 }
@@ -1178,7 +1199,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     default:
                         categoryTabControl.SelectedTab =
-                            categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index];
+                            categoryTabControl.TabPages[5 + categoryTreeView.SelectedNode.Index];
                         break;
                 }
             }
@@ -1204,40 +1225,40 @@ namespace nUpdate.Administration.UI.Dialogs
                 categoryTreeView.SelectedNode.Text == "Replace file/folder")
                 return;
             categoryTabControl.TabPages.Remove(
-                categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
+                categoryTabControl.TabPages[5 + categoryTreeView.SelectedNode.Index]);
             categoryTreeView.SelectedNode.Remove();
         }
 
         private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
         {
             var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
-            if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
+            if (nodeToDropIn == null || nodeToDropIn.Index != 4) // Operations-node
                 return;
-            
-            var data = e.Data.GetData(typeof (string));
+
+            var data = e.Data.GetData(typeof(string));
             if (data == null)
                 return;
 
             switch (data.ToString())
             {
                 case "DeleteFile":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_deleteNode.Clone());
 
-                    var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
+                    var deletePage = new TabPage("Delete file") { BackColor = SystemColors.Window };
                     deletePage.Controls.Add(new FileDeleteOperationPanel());
                     categoryTabControl.TabPages.Add(deletePage);
                     break;
 
                 case "RenameFile":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _renameNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_renameNode.Clone());
 
-                    var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
+                    var renamePage = new TabPage("Rename file") { BackColor = SystemColors.Window };
                     renamePage.Controls.Add(new FileRenameOperationPanel());
                     categoryTabControl.TabPages.Add(renamePage);
                     break;
 
                 case "CreateRegistrySubKey":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _createRegistrySubKeyNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_createRegistrySubKeyNode.Clone());
 
                     var createRegistrySubKeyPage = new TabPage("Create registry subkey")
                     {
@@ -1248,7 +1269,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case "DeleteRegistrySubKey":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistrySubKeyNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_deleteRegistrySubKeyNode.Clone());
 
                     var deleteRegistrySubKeyPage = new TabPage("Delete registry subkey")
                     {
@@ -1259,53 +1280,53 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case "SetRegistryValue":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _setRegistryValueNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_setRegistryValueNode.Clone());
 
-                    var setRegistryValuePage = new TabPage("Set registry value") {BackColor = SystemColors.Window};
+                    var setRegistryValuePage = new TabPage("Set registry value") { BackColor = SystemColors.Window };
                     setRegistryValuePage.Controls.Add(new RegistrySetValueOperationPanel());
                     categoryTabControl.TabPages.Add(setRegistryValuePage);
                     break;
 
                 case "DeleteRegistryValue":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistryValueNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_deleteRegistryValueNode.Clone());
 
-                    var deleteRegistryValuePage = new TabPage("Delete registry value") {BackColor = SystemColors.Window};
+                    var deleteRegistryValuePage = new TabPage("Delete registry value") { BackColor = SystemColors.Window };
                     deleteRegistryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel());
                     categoryTabControl.TabPages.Add(deleteRegistryValuePage);
                     break;
 
                 case "StartProcess":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startProcessNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_startProcessNode.Clone());
 
-                    var startProcessPage = new TabPage("Start process") {BackColor = SystemColors.Window};
+                    var startProcessPage = new TabPage("Start process") { BackColor = SystemColors.Window };
                     startProcessPage.Controls.Add(new ProcessStartOperationPanel());
                     categoryTabControl.TabPages.Add(startProcessPage);
                     break;
                 case "TerminateProcess":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _terminateProcessNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_terminateProcessNode.Clone());
 
-                    var terminateProcessPage = new TabPage("Terminate process") {BackColor = SystemColors.Window};
+                    var terminateProcessPage = new TabPage("Terminate process") { BackColor = SystemColors.Window };
                     terminateProcessPage.Controls.Add(new ProcessStopOperationPanel());
                     categoryTabControl.TabPages.Add(terminateProcessPage);
                     break;
                 case "StartService":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startServiceNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_startServiceNode.Clone());
 
-                    var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
+                    var startServicePage = new TabPage("Start service") { BackColor = SystemColors.Window };
                     startServicePage.Controls.Add(new ServiceStartOperationPanel());
                     categoryTabControl.TabPages.Add(startServicePage);
                     break;
                 case "StopService":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _stopServiceNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_stopServiceNode.Clone());
 
-                    var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
+                    var stopServicePage = new TabPage("Stop service") { BackColor = SystemColors.Window };
                     stopServicePage.Controls.Add(new ServiceStopOperationPanel());
                     categoryTabControl.TabPages.Add(stopServicePage);
                     break;
                 case "ExecuteScript":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
+                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode)_executeScriptNode.Clone());
 
-                    var executeScriptPage = new TabPage("Stop service") {BackColor = SystemColors.Window};
+                    var executeScriptPage = new TabPage("Stop service") { BackColor = SystemColors.Window };
                     executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
                     categoryTabControl.TabPages.Add(executeScriptPage);
                     break;
@@ -1353,7 +1374,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("•");
             }
             else
@@ -1367,7 +1388,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("» «");
             }
             else
@@ -1381,7 +1402,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("„ “");
             }
             else
@@ -1395,7 +1416,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("« »");
             }
             else
@@ -1409,7 +1430,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("'");
             }
             else
@@ -1423,7 +1444,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("©");
             }
             else
@@ -1437,7 +1458,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("®");
             }
             else
@@ -1451,7 +1472,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("℗");
             }
             else
@@ -1465,7 +1486,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("™");
             }
             else
@@ -1479,7 +1500,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
-                var panel = (ChangelogPanel) page.Controls[0];
+                var panel = (ChangelogPanel)page.Controls[0];
                 panel.Paste("℠");
             }
             else
@@ -1526,6 +1547,41 @@ namespace nUpdate.Administration.UI.Dialogs
             updatingInfoDialog.ShowDialog();
         }
 
+        private void requirementsTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            requirementsTypeTabControl.SelectedIndex = requirementsTypeComboBox.SelectedIndex;
+        }
+
+        private void addRequirementButton_Click(object sender, EventArgs e)
+        {
+            UpdateRequirement _updateRequirement = null;
+            switch (requirementsTypeComboBox.SelectedIndex)
+            {
+                case 0:
+                    _updateRequirement = new UpdateRequirement(
+                        UpdateRequirement.RequirementType.OSVersion,
+                        null,
+                        _osVersions[requiredOSComboBox.Text],
+                        null);
+                    break;
+
+                case 1:
+                    _updateRequirement = new UpdateRequirement(
+                            UpdateRequirement.RequirementType.DotNetFramework,
+                            null,
+                            Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", "")),
+                            null);
+                    break;
+                default:
+                    _updateRequirement = null;
+                    break;
+            }
+            if (_updateRequirement != null)
+            {
+                _updateRequirements.Add(_updateRequirement);
+                requirementsListBox.Items.Add(_updateRequirement);
+            }
+        }
         #region "Localization"
 
         //private string configDownloadErrorCaption;
