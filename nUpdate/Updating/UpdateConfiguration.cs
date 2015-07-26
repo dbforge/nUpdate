@@ -71,6 +71,11 @@ namespace nUpdate.Updating
         public bool NecessaryUpdate { get; set; }
 
         /// <summary>
+        ///     Gets or sets the requirements to install the update package
+        /// </summary>
+        public List<UpdateRequirement> UpdateRequirements { get; set; }
+
+        /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
         /// </summary>
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>

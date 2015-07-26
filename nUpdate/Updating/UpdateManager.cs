@@ -282,6 +282,10 @@ namespace nUpdate.Updating
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
+
+            if (result.Requirements.Count != 0)
+                OnMissingRequirement(new MissingRequirementsEventArgs(result.Requirements));
+
             if (!result.UpdatesFound)
                 return false;
 
@@ -743,7 +747,7 @@ namespace nUpdate.Updating
                 _lp.InstallerInitializingErrorCaption,
                 String.Format("\"{0}\"",
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
-                String.Format("\"{0}\"", _closeHostApplication), 
+                String.Format("\"{0}\"", _closeHostApplication),
                 String.Format("\"{0}\"", _lp.InstallerFileInUseError),
             };
 
@@ -872,6 +876,12 @@ namespace nUpdate.Updating
         /// </remarks>
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
 
+
+        /// <summary>
+        ///     Occurs when some requirements are missing
+        /// </summary>
+        public event EventHandler<MissingRequirementsEventArgs> MissingRequirement;
+
         /// <summary>
         ///     Called when the update search is started.
         /// </summary>
@@ -957,6 +967,16 @@ namespace nUpdate.Updating
         {
             if (StatisticsEntryFailed != null)
                 StatisticsEntryFailed(this, new FailedEventArgs(exception));
+        }
+
+        /// <summary>
+        ///     Called when some requirements are missing
+        /// </summary>
+        /// <param name="exception">The exception that occured.</param>
+        protected virtual void OnMissingRequirement(MissingRequirementsEventArgs requirements)
+        {
+            if (MissingRequirement != null)
+                MissingRequirement(this, new MissingRequirementsEventArgs(requirements.Requirements));
         }
     }
 }

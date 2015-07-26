@@ -30,6 +30,9 @@ namespace nUpdate.Core.Localization
             NoUpdateDialogHeader = "There are no new updates available.";
             NoUpdateDialogInfoText = "The application is currently up-to-date.";
 
+            MissingRequirementDialogHeader = "Requirements missing.";
+            MissingRequirementDialogInfoText = "Some requirement are missing on your computer.";
+
             UpdateDownloadDialogLoadingHeader = "Downloading updates...";
             UpdateDownloadDialogLoadingInfo = "Please wait while the available updates are\ndownloaded...  ({0}%)";
 
@@ -94,6 +97,9 @@ namespace nUpdate.Core.Localization
 
         public string NoUpdateDialogHeader { get; set; }
         public string NoUpdateDialogInfoText { get; set; }
+
+        public string MissingRequirementDialogHeader { get; set; }
+        public string MissingRequirementDialogInfoText { get; set; }
 
         public string UpdateDownloadDialogLoadingHeader { get; set; }
         public string UpdateDownloadDialogLoadingInfo { get; set; }
