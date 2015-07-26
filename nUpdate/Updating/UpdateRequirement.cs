@@ -8,12 +8,16 @@ namespace nUpdate.Updating
     {
         public enum RequirementType
         {
-            netFramework,
-            registry,
-            assembly,
-            osVersion,
+            DotNetFramework,
+            Registry,
+            Assembly,
+            OSVersion,
         }
 
+        /// <summary>
+        ///     Contains the error message, if the requirement is missing
+        /// </summary>
+        public string ErrorMessage { get; private set; }
 
         /// <summary>
         ///     The type of the Requirement, like Framework, assembly and registry
@@ -77,7 +81,7 @@ namespace nUpdate.Updating
             bool meetRequirement = true;
             switch (Type)
             {
-                case RequirementType.assembly:
+                case RequirementType.Assembly:
                     string rootDirectory = Path.Split(new char[] { System.IO.Path.DirectorySeparatorChar })[0];
 
                     Path = Path.Replace(rootDirectory, "");
@@ -109,7 +113,7 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.netFramework:
+                case RequirementType.DotNetFramework:
                     bool frameworkOK = true;
                     switch (Version.ToString(3))
                     {
@@ -170,7 +174,7 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.registry:
+                case RequirementType.Registry:
                     string[] pathPieces = Path.Split(new string[] { "\\" },StringSplitOptions.RemoveEmptyEntries );
                     string keyPath = "";
                     for (int i = 1; i < pathPieces.Length - 1; i++)
@@ -200,14 +204,15 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.osVersion:
+                case RequirementType.OSVersion:
                     if (Environment.OSVersion.Version < Version)
                     {
                         meetRequirement = false;
-                        message += "The OS Version" + Version.ToString(3) + " is required. " + Environment.NewLine;
+                        message += "The OS Version " + Version.ToString(3) + " is required. " + Environment.NewLine;
                     }  
                     break;
             }
+            ErrorMessage = message;
             return new Tuple<bool, string>(meetRequirement, message);
         }
 
@@ -215,19 +220,19 @@ namespace nUpdate.Updating
         {
             switch (Type)
             {
-                case RequirementType.osVersion:
+                case RequirementType.OSVersion:
                     return "OS Version >= " + Version.ToString(2);
-                case RequirementType.assembly:
+                case RequirementType.Assembly:
                     string[] pieces = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                     string fileName = pieces[pieces.Length - 1];          
                     return "Assembly: " + fileName;
-                case RequirementType.netFramework:
+                case RequirementType.DotNetFramework:
                     return "Framework Version >= " + Version.ToString(3);
-                case RequirementType.registry:
+                case RequirementType.Registry:
                     string[] regPath = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                     string registryKey = regPath[regPath.Length - 1];
                    
-                    return "Registry Key: " + registryKey + " Value: " + RegistryValue; // TODO: show name
+                    return "Registry Key: " + registryKey + " Value: " + RegistryValue;
                 default:
                     return null;
             }

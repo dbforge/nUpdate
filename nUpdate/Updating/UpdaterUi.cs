@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core;
@@ -26,7 +27,7 @@ namespace nUpdate.Updating
         private UpdateManager _updateManager;
         private bool _updatesAvailable;
         private bool _requirementMiss;
-        private string requirementMissMessage;
+        private Dictionary<UpdateVersion, List<UpdateRequirement>> _missingRequirements;
         private bool _isTaskRunning;
 
         /// <summary>
@@ -194,6 +195,21 @@ namespace nUpdate.Updating
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
                             return;
                     }
+                    else if (!_updatesAvailable && _requirementMiss)
+                    {
+                        string message = "";
+                        foreach (var version in _missingRequirements)
+                        {
+                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
+                            foreach (var requirement in version.Value)
+                            {
+                                message += requirement.ErrorMessage + Environment.NewLine;
+                            }
+                        }
+                        missingRequirementDialog.requirementsTextBox.Text = message;
+                        _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
+                        return;
+                    }
                     else if (!_updatesAvailable && UseHiddenSearch)
                         return;
                     else if (!_updatesAvailable && !UseHiddenSearch)
@@ -271,7 +287,7 @@ namespace nUpdate.Updating
                 _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
                 _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
                 _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
-                _updateManager.MissingRequirements += MissingRequirements;
+                _updateManager.MissingRequirement += MissingRequirements;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -301,7 +317,16 @@ namespace nUpdate.Updating
                     }
                     else if (!_updatesAvailable && _requirementMiss)
                     {
-                        missingRequirementDialog.requirementsTextBox.Text = requirementMissMessage;
+                        string message = "";
+                        foreach (var version in _missingRequirements)
+                        {
+                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
+                            foreach (var requirement in version.Value)
+                            {
+                                message += requirement.ErrorMessage + Environment.NewLine;
+                            }
+                        }
+                        missingRequirementDialog.requirementsTextBox.Text = message;
                         _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
                         return;
                     }
@@ -359,10 +384,10 @@ namespace nUpdate.Updating
 #endif
         }
 
-        void MissingRequirements(object sender, FailedEventArgs e)
+        void MissingRequirements(object sender, MissingRequirementsEventArgs e)
         {
             _requirementMiss = true;
-            requirementMissMessage = e.Exception.Message;
+            _missingRequirements = e.Requirements;
         }
 
         private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)

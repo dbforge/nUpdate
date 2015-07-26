@@ -47,6 +47,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _publishUpdate;
         private string _updateConfigFile;
         private List<UpdateRequirement> _updateRequirements;
+        private Dictionary<string, Version> _osVersions;
         //private string _hashFile;
 
         private bool _uploadCancelled;
@@ -309,6 +310,16 @@ namespace nUpdate.Administration.UI.Dialogs
             requiredFrameworkComboBox.SelectedIndex = 0;
             requirementsTypeComboBox.SelectedIndex = 0;
             requiredAssemblyRootPathComboBox.SelectedIndex = 0;
+
+            _osVersions = new Dictionary<string, Version>();
+            _osVersions.Add("Windows Vista", new Version("6.0.6000.0"));
+            _osVersions.Add("Windows Vista Service Pack 1", new Version("6.0.6001.0"));
+            _osVersions.Add("Windows Vista Service Pack 2", new Version("6.0.6002.0"));
+            _osVersions.Add("Windows 7", new Version("6.1.7600.0"));
+            _osVersions.Add("Windows 7 Service Pack 1", new Version("6.1.7601.0"));
+            _osVersions.Add("Windows 8", new Version("6.2.9200.0"));
+            _osVersions.Add("Windows 8.1", new Version("6.3.9600.0"));
+            _osVersions.Add("Windows 10", new Version("10.0.0.0"));
         }
 
         private void PackageAddDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -1531,15 +1542,15 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 case 0:
                     _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.osVersion,
+                        UpdateRequirement.RequirementType.OSVersion,
                         null, 
-                        osVersion(requiredOSComboBox.Text),
+                        _osVersions[requiredOSComboBox.Text],
                         null);
                     break;
 
                 case 1:
                     _updateRequirement = new UpdateRequirement(
-                            UpdateRequirement.RequirementType.netFramework,
+                            UpdateRequirement.RequirementType.DotNetFramework,
                             null,
                             Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", "")),
                             null);
@@ -1553,7 +1564,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     else
                     {
                         _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.assembly,
+                        UpdateRequirement.RequirementType.Assembly,
                         requiredAssemblyRootPathComboBox.Text + Char.ConvertFromUtf32(92) + requiredAssemblyPathTextBox.Text,
                         new Version((int)requiredAssemblyMajorNumericUpDown.Value, (int)requiredAssemblyMinorNumericUpDown.Value, (int)requiredAssemblyBuildNumericUpDown.Value, (int)requiredAssemblyRevisionNumericUpDown.Value),
                         null);
@@ -1570,7 +1581,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     else
                     {
                         _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.registry,
+                        UpdateRequirement.RequirementType.Registry,
                         "HKEY_" + requiredRegistryRootPathComboBox.Text + "\\" + requiredRegistryKeyPathTextBox.Text,
                         null,
                         requiredRegistryKeyValueTextBox.Text);
@@ -1587,43 +1598,18 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private Version osVersion(string osVersion)
-        {
-            osVersion = osVersion.Replace("Windows ", "");
-            switch (osVersion)
-            {
-                case "Vista":
-                    return new Version("6.0.6000.0");
-                case "Vista Service Pack 1":
-                    return new Version("6.0.6001.0");
-                case "Vista Service Pack 2":
-                    return new Version("6.0.6002.0");
-                case "7":
-                    return new Version("6.1.7600.0");
-                case "7 Service Pack 1":
-                    return new Version("6.1.7601.0");
-                case "8":
-                    return new Version("6.2.9200.0");
-                case "8.1":
-                    return new Version("6.3.9600.0");
-                case "10":
-                    return new Version("10.0.0.0");
-                default:
-                    return null;
-            }
-        }
-
         private void requiredAssemblyPathButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Title = "Select a assembly";
             dialog.Multiselect = false;
-            dialog.Filter = "executable files (*.exe)|*.exe|dynamic link libraries (*.dll)|*.dll|All files (*.*)|*.*";
+            dialog.Filter = "Executable Files (*.exe)|*.exe|Dynamic Link Libraries (*.dll)|*.dll";
             dialog.FilterIndex = 1;
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 requiredAssemblyPathTextBox.Text = dialog.FileName;
             }
+            dialog.Dispose();
         }
 
         #region "Localization"
