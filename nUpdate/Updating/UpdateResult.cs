@@ -61,15 +61,20 @@ namespace nUpdate.Updating
                     bool requirementMatch = true;
                     string message = "";
                     Tuple<bool, string> requirementResult;
-                    foreach (var updateRequirement in config.UpdateRequirements)
+                    
+                    if(config.UpdateRequirements != null)
                     {
-                        requirementResult = updateRequirement.CheckRequirement();
-                        if (!requirementResult.Item1)
-                        {
-                            requirementMatch = false;
-                            _requirements.Add(new UpdateVersion(config.LiteralVersion), config.UpdateRequirements);
+                        foreach(var updateRequirement in config.UpdateRequirements)
+                    {
+                            requirementResult = updateRequirement.CheckRequirement();
+                            if (!requirementResult.Item1)
+                            {
+                                requirementMatch = false;
+                                _requirements.Add(new UpdateVersion(config.LiteralVersion), config.UpdateRequirements);
+                            }
                         }
                     }
+
                     if (requirementMatch)
                         _newUpdateConfigurations.Add(config);
 
