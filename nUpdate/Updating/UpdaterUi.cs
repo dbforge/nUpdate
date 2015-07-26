@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core;
@@ -26,7 +27,7 @@ namespace nUpdate.Updating
         private UpdateManager _updateManager;
         private bool _updatesAvailable;
         private bool _requirementMiss;
-        private string requirementMissMessage;
+        private Dictionary<UpdateVersion, List<UpdateRequirement>> _missingRequirements;
         private bool _isTaskRunning;
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace nUpdate.Updating
             _isTaskRunning = true;
             _requirementMiss = false;
 
-            var searchDialog = new UpdateSearchDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var searchDialog = new UpdateSearchDialog { LanguageName = _updateManager.LanguageCulture.Name };
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
             var newUpdateDialog = new NewUpdateDialog
@@ -135,7 +136,7 @@ namespace nUpdate.Updating
                 CurrentVersion = _updateManager.CurrentVersion,
             };
 
-            var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = _updateManager.LanguageCulture.Name };
             var missingRequirementDialog = new MissingRequirementDialog { LanguageName = _updateManager.LanguageCulture.Name };
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
@@ -193,6 +194,21 @@ namespace nUpdate.Updating
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
                             return;
+                    }
+                    else if (!_updatesAvailable && _requirementMiss)
+                    {
+                        string message = "";
+                        foreach (var version in _missingRequirements)
+                        {
+                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
+                            foreach (var requirement in version.Value)
+                            {
+                                message += requirement.ErrorMessage + Environment.NewLine;
+                            }
+                        }
+                        missingRequirementDialog.requirementsTextBox.Text = message;
+                        _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
+                        return;
                     }
                     else if (!_updatesAvailable && UseHiddenSearch)
                         return;
@@ -271,7 +287,7 @@ namespace nUpdate.Updating
                 _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
                 _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
                 _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
-                _updateManager.MissingRequirements += MissingRequirements;
+                _updateManager.MissingRequirement += MissingRequirements;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -301,7 +317,16 @@ namespace nUpdate.Updating
                     }
                     else if (!_updatesAvailable && _requirementMiss)
                     {
-                        missingRequirementDialog.requirementsTextBox.Text = requirementMissMessage;
+                        string message = "";
+                        foreach (var version in _missingRequirements)
+                        {
+                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
+                            foreach (var requirement in version.Value)
+                            {
+                                message += requirement.ErrorMessage + Environment.NewLine;
+                            }
+                        }
+                        missingRequirementDialog.requirementsTextBox.Text = message;
                         _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
                         return;
                     }
@@ -359,10 +384,10 @@ namespace nUpdate.Updating
 #endif
         }
 
-        void MissingRequirements(object sender, FailedEventArgs e)
+        void MissingRequirements(object sender, MissingRequirementsEventArgs e)
         {
             _requirementMiss = true;
-            requirementMissMessage = e.Exception.Message;
+            _missingRequirements = e.Requirements;
         }
 
         private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)

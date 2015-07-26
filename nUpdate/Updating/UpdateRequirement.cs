@@ -8,12 +8,16 @@ namespace nUpdate.Updating
     {
         public enum RequirementType
         {
-            netFramework,
-            registry,
-            assembly,
-            osVersion,
+            DotNetFramework,
+            Registry,
+            Assembly,
+            OSVersion,
         }
 
+        /// <summary>
+        ///     Contains the error message, if the requirement is missing
+        /// </summary>
+        public string ErrorMessage { get; private set; }
 
         /// <summary>
         ///     The type of the Requirement, like Framework, assembly and registry
@@ -29,7 +33,8 @@ namespace nUpdate.Updating
         /// <summary>
         ///     The version of the assembly or Framework, the target machine has to have
         /// </summary>
-        public Version Version {
+        public Version Version
+        {
             set
             {
                 _version = value;
@@ -37,7 +42,7 @@ namespace nUpdate.Updating
                     return;
                 if (_version.Build == -1 && _version.Revision == -1)
                 {
-                    _version = new Version(_version.Major, _version.Minor, 0, 0); 
+                    _version = new Version(_version.Major, _version.Minor, 0, 0);
                 }
                 if (_version.Build == -1)
                     _version = new Version(_version.Major, _version.Minor, 0, _version.Revision);
@@ -48,13 +53,13 @@ namespace nUpdate.Updating
             {
                 return _version;
             }
-            }
+        }
 
         /// <summary>
         ///     The object the registry Value must have
         /// </summary>
         public Object RegistryValue { get; set; }
- 
+
 
         /// <summary>
         ///     Instanciate a new Type of UpdateRequirement
@@ -77,7 +82,7 @@ namespace nUpdate.Updating
             bool meetRequirement = true;
             switch (Type)
             {
-                case RequirementType.assembly:
+                case RequirementType.Assembly:
                     string rootDirectory = Path.Split(new char[] { System.IO.Path.DirectorySeparatorChar })[0];
 
                     Path = Path.Replace(rootDirectory, "");
@@ -91,7 +96,7 @@ namespace nUpdate.Updating
                         case "full path":
                             Path = Path.Remove(0, 1);
                             break;
-                            
+
                     }
                     if (!System.IO.File.Exists(Path))
                     {
@@ -109,12 +114,12 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.netFramework:
+                case RequirementType.DotNetFramework:
                     bool frameworkOK = true;
                     switch (Version.ToString(3))
                     {
                         case "2.0.0":
-                            if(Registry.LocalMachine.OpenSubKey("SOFTWARE\"Microsoft\"NET Framework Setup\"NDP\v2.0.50727") != null && Registry.LocalMachine.OpenSubKey("SOFTWARE\"Microsoft\"NET Framework Setup\"NDP\v2.0.50727").GetValue("Version") != "2.0.50727.4927")
+                            if (Registry.LocalMachine.OpenSubKey("SOFTWARE\"Microsoft\"NET Framework Setup\"NDP\v2.0.50727") != null && Registry.LocalMachine.OpenSubKey("SOFTWARE\"Microsoft\"NET Framework Setup\"NDP\v2.0.50727").GetValue("Version") != "2.0.50727.4927")
                             {
                                 frameworkOK = false;
                             }
@@ -162,7 +167,7 @@ namespace nUpdate.Updating
                             }
                             break;
                     }
-                   
+
                     if (!frameworkOK)
                     {
                         meetRequirement = false;
@@ -170,8 +175,8 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.registry:
-                    string[] pathPieces = Path.Split(new string[] { "\\" },StringSplitOptions.RemoveEmptyEntries );
+                case RequirementType.Registry:
+                    string[] pathPieces = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                     string keyPath = "";
                     for (int i = 1; i < pathPieces.Length - 1; i++)
                     {
@@ -182,7 +187,7 @@ namespace nUpdate.Updating
 
                     if (pathPieces[0] == "HKEY_CLASSES_ROOT")
                     {
-                       value = Registry.ClassesRoot.OpenSubKey(keyPath).GetValue(pathPieces[pathPieces.Length - 1]);
+                        value = Registry.ClassesRoot.OpenSubKey(keyPath).GetValue(pathPieces[pathPieces.Length - 1]);
                     }
                     else if (pathPieces[0] == "HKEY_CURRENT_USER")
                     {
@@ -200,14 +205,15 @@ namespace nUpdate.Updating
                     }
                     break;
 
-                case RequirementType.osVersion:
+                case RequirementType.OSVersion:
                     if (Environment.OSVersion.Version < Version)
                     {
                         meetRequirement = false;
-                        message += "The OS Version" + Version.ToString(3) + " is required. " + Environment.NewLine;
-                    }  
+                        message += "The OS Version " + Version.ToString(3) + " is required. " + Environment.NewLine;
+                    }
                     break;
             }
+            ErrorMessage = message;
             return new Tuple<bool, string>(meetRequirement, message);
         }
 
@@ -215,19 +221,19 @@ namespace nUpdate.Updating
         {
             switch (Type)
             {
-                case RequirementType.osVersion:
+                case RequirementType.OSVersion:
                     return "OS Version >= " + Version.ToString(2);
-                case RequirementType.assembly:
+                case RequirementType.Assembly:
                     string[] pieces = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                    string fileName = pieces[pieces.Length - 1];          
+                    string fileName = pieces[pieces.Length - 1];
                     return "Assembly: " + fileName;
-                case RequirementType.netFramework:
+                case RequirementType.DotNetFramework:
                     return "Framework Version >= " + Version.ToString(3);
-                case RequirementType.registry:
+                case RequirementType.Registry:
                     string[] regPath = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                     string registryKey = regPath[regPath.Length - 1];
-                   
-                    return "Registry Key: " + registryKey + " Value: " + RegistryValue; // TODO: show name
+
+                    return "Registry Key: " + registryKey + " Value: " + RegistryValue;
                 default:
                     return null;
             }

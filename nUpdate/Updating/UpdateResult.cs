@@ -13,16 +13,13 @@ namespace nUpdate.Updating
         private UpdateConfiguration _newestConfiguration;
         private List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
         private bool _updatesFound;
+        private Dictionary<UpdateVersion, List<UpdateRequirement>> _requirements = new Dictionary<UpdateVersion, List<UpdateRequirement>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
-        public UpdateResult()
-        {
-        }
-
-        public void Init(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
-            bool isAlphaWished, bool isBetaWished)
+        public UpdateResult(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
+             bool isAlphaWished, bool isBetaWished)
         {
             if (packageConfigurations != null)
             {
@@ -70,17 +67,13 @@ namespace nUpdate.Updating
                         if (!requirementResult.Item1)
                         {
                             requirementMatch = false;
-                            message += requirementResult.Item2;
+                            _requirements.Add(new UpdateVersion(config.LiteralVersion), config.UpdateRequirements);
                         }
                     }
+                    if (requirementMatch)
+                        _newUpdateConfigurations.Add(config);
 
-                    if (!requirementMatch)
-                    {
-                        MissingRequirements(this, new FailedEventArgs(new Exception("The following requirements to install the update are missing: " + message)));
-                        continue;
-                    }
 
-                    _newUpdateConfigurations.Add(config);
                 }
 
                 var highestVersion =
@@ -101,6 +94,10 @@ namespace nUpdate.Updating
             get { return _updatesFound; }
         }
 
+        public Dictionary<UpdateVersion, List<UpdateRequirement>> Requirements
+        {
+            get { return _requirements; }
+        }
         /// <summary>
         ///     Returns all new configurations.
         /// </summary>
@@ -108,7 +105,5 @@ namespace nUpdate.Updating
         {
             get { return _newUpdateConfigurations; }
         }
-
-        public event EventHandler<FailedEventArgs> MissingRequirements;
     }
 }
