@@ -118,7 +118,6 @@
       <DependentUpon>MissingRequirementDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
-    <Compile Include="UpdateEventArgs\MissingRequirementsEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
     <Compile Include="Updating\UpdateConfiguration.cs" />

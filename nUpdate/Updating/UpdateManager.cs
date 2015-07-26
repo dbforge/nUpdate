@@ -280,11 +280,10 @@ namespace nUpdate.Updating
             ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
             var configuration = UpdateConfiguration.Download(_updateConfigurationFileUri, Proxy);
            
-            var result = new UpdateResult(configuration, CurrentVersion,
+            var result = new UpdateResult();
+            result.MissingRequirements += result_MissingRequirements;
+            result.Init(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
-
-            if (result.Requirements.Count != 0)
-                OnMissingRequirement(new MissingRequirementsEventArgs(result.Requirements));
 
             if (!result.UpdatesFound)
                 return false;
@@ -311,6 +310,11 @@ namespace nUpdate.Updating
             }
 
             return true;
+        }
+
+        void result_MissingRequirements(object sender, FailedEventArgs e)
+        {
+            OnMissingRequirement(e.Exception);
         }
 
         /// <summary>
@@ -880,7 +884,7 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Occurs when some requirements are missing
         /// </summary>
-        public event EventHandler<MissingRequirementsEventArgs> MissingRequirement; 
+        public event EventHandler<FailedEventArgs> MissingRequirements; 
 
         /// <summary>
         ///     Called when the update search is started.
@@ -973,10 +977,10 @@ namespace nUpdate.Updating
         ///     Called when some requirements are missing
         /// </summary>
         /// <param name="exception">The exception that occured.</param>
-        protected virtual void OnMissingRequirement(MissingRequirementsEventArgs requirements)
+        protected virtual void OnMissingRequirement(Exception exception)
         {
-            if (MissingRequirement != null)
-                MissingRequirement(this, new MissingRequirementsEventArgs(requirements.Requirements));
+            if (MissingRequirements != null)
+                MissingRequirements(this, new FailedEventArgs(exception));
         } 
     }
 }
