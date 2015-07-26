@@ -25,6 +25,8 @@ namespace nUpdate.Updating
         private SynchronizationContext _context;
         private UpdateManager _updateManager;
         private bool _updatesAvailable;
+        private bool _requirementMiss;
+        private string requirementMissMessage;
         private bool _isTaskRunning;
 
         /// <summary>
@@ -122,6 +124,8 @@ namespace nUpdate.Updating
                 return;
 
             _isTaskRunning = true;
+            _requirementMiss = false;
+
             var searchDialog = new UpdateSearchDialog {LanguageName = _updateManager.LanguageCulture.Name};
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
@@ -132,6 +136,7 @@ namespace nUpdate.Updating
             };
 
             var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var missingRequirementDialog = new MissingRequirementDialog { LanguageName = _updateManager.LanguageCulture.Name };
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
             var downloadDialog = new UpdateDownloadDialog
@@ -266,6 +271,7 @@ namespace nUpdate.Updating
                 _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
                 _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
                 _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
+                _updateManager.MissingRequirements += MissingRequirements;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -292,6 +298,12 @@ namespace nUpdate.Updating
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
                         if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)
                             return;
+                    }
+                    else if (!_updatesAvailable && _requirementMiss)
+                    {
+                        missingRequirementDialog.requirementsTextBox.Text = requirementMissMessage;
+                        _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
+                        return;
                     }
                     else if (!_updatesAvailable && UseHiddenSearch)
                         return;
@@ -345,6 +357,12 @@ namespace nUpdate.Updating
                 _isTaskRunning = false;
             }
 #endif
+        }
+
+        void MissingRequirements(object sender, FailedEventArgs e)
+        {
+            _requirementMiss = true;
+            requirementMissMessage = e.Exception.Message;
         }
 
         private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)

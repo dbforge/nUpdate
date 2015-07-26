@@ -4,19 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using nUpdate.Core;
+using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.Updating
 {
     internal class UpdateResult
     {
         private UpdateConfiguration _newestConfiguration;
-        private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
-        private readonly bool _updatesFound;
+        private List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
+        private bool _updatesFound;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
-        public UpdateResult(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
+        public UpdateResult()
+        {
+        }
+
+        public void Init(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
             bool isAlphaWished, bool isBetaWished)
         {
             if (packageConfigurations != null)
@@ -56,6 +61,25 @@ namespace nUpdate.Updating
                     if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
                         continue;
 
+                    bool requirementMatch = true;
+                    string message = "";
+                    Tuple<bool, string> requirementResult;
+                    foreach (var updateRequirement in config.UpdateRequirements)
+                    {
+                        requirementResult = updateRequirement.CheckRequirement();
+                        if (!requirementResult.Item1)
+                        {
+                            requirementMatch = false;
+                            message += requirementResult.Item2;
+                        }
+                    }
+
+                    if (!requirementMatch)
+                    {
+                        MissingRequirements(this, new FailedEventArgs(new Exception("The following requirements to install the update are missing: " + message)));
+                        continue;
+                    }
+
                     _newUpdateConfigurations.Add(config);
                 }
 
@@ -84,5 +108,7 @@ namespace nUpdate.Updating
         {
             get { return _newUpdateConfigurations; }
         }
+
+        public event EventHandler<FailedEventArgs> MissingRequirements;
     }
 }

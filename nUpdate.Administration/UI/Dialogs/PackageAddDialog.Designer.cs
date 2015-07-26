@@ -80,16 +80,17 @@
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Requirements");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.createButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
-            this.createButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
@@ -155,6 +156,35 @@
             this.allVersionsRadioButton = new System.Windows.Forms.RadioButton();
             this.allVersionsInfoLabel = new System.Windows.Forms.Label();
             this.someVersionsRadioButton = new System.Windows.Forms.RadioButton();
+            this.requirementsTabPage = new System.Windows.Forms.TabPage();
+            this.requirementTypeLabel = new System.Windows.Forms.Label();
+            this.addRequirementButton = new System.Windows.Forms.Button();
+            this.requirementsTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.requirementsTypeTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.osRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumOSVersionLabel = new System.Windows.Forms.Label();
+            this.requiredOSComboBox = new System.Windows.Forms.ComboBox();
+            this.netRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumFrameworkVersionLabel = new System.Windows.Forms.Label();
+            this.requiredFrameworkComboBox = new System.Windows.Forms.ComboBox();
+            this.assemblyRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.requiredAssemblyPathLabel = new System.Windows.Forms.Label();
+            this.requiredAssemblyRootPathComboBox = new System.Windows.Forms.ComboBox();
+            this.requiredAssemblyBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.requiredAssemblyMajorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.requiredAssemblyRevisionNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.requiredAssemblyVersionLabel = new System.Windows.Forms.Label();
+            this.requiredAssemblyMinorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.requiredAssemblyPathTextBox = new System.Windows.Forms.TextBox();
+            this.requiredAssemblyPathButton = new System.Windows.Forms.Button();
+            this.registryRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.requiredRegistryPathLabel = new System.Windows.Forms.Label();
+            this.requiredRegistryKeyValueTextBox = new System.Windows.Forms.TextBox();
+            this.requiredRegistryRootPathComboBox = new System.Windows.Forms.ComboBox();
+            this.requiredRegistryKeyValueLabel = new System.Windows.Forms.Label();
+            this.requiredRegistryKeyPathTextBox = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.requirementsListBox = new System.Windows.Forms.ListBox();
             this.operationsTabPage = new System.Windows.Forms.TabPage();
             this.operationsPanel = new System.Windows.Forms.Panel();
             this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
@@ -203,6 +233,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
+            this.requirementsTabPage.SuspendLayout();
+            this.requirementsTypeTabControl.SuspendLayout();
+            this.osRequirementsTabPage.SuspendLayout();
+            this.netRequirementsTabPage.SuspendLayout();
+            this.assemblyRequirementsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyBuildNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyMajorNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyRevisionNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyMinorNumericUpDown)).BeginInit();
+            this.registryRequirementsTabPage.SuspendLayout();
             this.operationsTabPage.SuspendLayout();
             this.operationsPanel.SuspendLayout();
             this.replaceFilesTabPage.SuspendLayout();
@@ -244,6 +284,26 @@
             this.cancelToolTip.IsBalloon = true;
             this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
+            // 
+            // createButton
+            // 
+            this.createButton.Location = new System.Drawing.Point(417, 9);
+            this.createButton.Name = "createButton";
+            this.createButton.Size = new System.Drawing.Size(121, 23);
+            this.createButton.TabIndex = 0;
+            this.createButton.Text = "Create package";
+            this.createButton.UseVisualStyleBackColor = true;
+            this.createButton.Click += new System.EventHandler(this.createPackageButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(544, 9);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
             // 
             // loadingPanel
             // 
@@ -291,26 +351,6 @@
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
             // 
-            // createButton
-            // 
-            this.createButton.Location = new System.Drawing.Point(417, 9);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(121, 23);
-            this.createButton.TabIndex = 0;
-            this.createButton.Text = "Create package";
-            this.createButton.UseVisualStyleBackColor = true;
-            this.createButton.Click += new System.EventHandler(this.createPackageButton_Click);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(544, 9);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            // 
             // controlPanel1
             // 
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
@@ -326,6 +366,7 @@
             this.categoryTabControl.Controls.Add(this.generalTabPage);
             this.categoryTabControl.Controls.Add(this.changelogTabPage);
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
+            this.categoryTabControl.Controls.Add(this.requirementsTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
             this.categoryTabControl.Controls.Add(this.replaceFilesTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
@@ -965,6 +1006,340 @@
             this.someVersionsRadioButton.UseVisualStyleBackColor = true;
             this.someVersionsRadioButton.CheckedChanged += new System.EventHandler(this.someVersionsRadioButton_CheckedChanged);
             // 
+            // requirementsTabPage
+            // 
+            this.requirementsTabPage.Controls.Add(this.requirementTypeLabel);
+            this.requirementsTabPage.Controls.Add(this.addRequirementButton);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeComboBox);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeTabControl);
+            this.requirementsTabPage.Controls.Add(this.requirementsListBox);
+            this.requirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.requirementsTabPage.Name = "requirementsTabPage";
+            this.requirementsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.requirementsTabPage.TabIndex = 5;
+            this.requirementsTabPage.Text = "Requirements";
+            this.requirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // requirementTypeLabel
+            // 
+            this.requirementTypeLabel.AutoSize = true;
+            this.requirementTypeLabel.Location = new System.Drawing.Point(5, 6);
+            this.requirementTypeLabel.Name = "requirementTypeLabel";
+            this.requirementTypeLabel.Size = new System.Drawing.Size(136, 13);
+            this.requirementTypeLabel.TabIndex = 3;
+            this.requirementTypeLabel.Text = "Type of the Requirement:";
+            // 
+            // addRequirementButton
+            // 
+            this.addRequirementButton.Location = new System.Drawing.Point(167, 114);
+            this.addRequirementButton.Name = "addRequirementButton";
+            this.addRequirementButton.Size = new System.Drawing.Size(121, 25);
+            this.addRequirementButton.TabIndex = 2;
+            this.addRequirementButton.Text = "Add requirement";
+            this.addRequirementButton.UseVisualStyleBackColor = true;
+            this.addRequirementButton.Click += new System.EventHandler(this.addRequirementButton_Click);
+            // 
+            // requirementsTypeComboBox
+            // 
+            this.requirementsTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requirementsTypeComboBox.FormattingEnabled = true;
+            this.requirementsTypeComboBox.Items.AddRange(new object[] {
+            "OS Version",
+            ".NET Framework",
+            "Assembly",
+            "Registry key"});
+            this.requirementsTypeComboBox.Location = new System.Drawing.Point(167, 3);
+            this.requirementsTypeComboBox.Name = "requirementsTypeComboBox";
+            this.requirementsTypeComboBox.Size = new System.Drawing.Size(154, 21);
+            this.requirementsTypeComboBox.TabIndex = 2;
+            this.requirementsTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.requirementsTypeComboBox_SelectedIndexChanged);
+            // 
+            // requirementsTypeTabControl
+            // 
+            this.requirementsTypeTabControl.Controls.Add(this.osRequirementsTabPage);
+            this.requirementsTypeTabControl.Controls.Add(this.netRequirementsTabPage);
+            this.requirementsTypeTabControl.Controls.Add(this.assemblyRequirementsTabPage);
+            this.requirementsTypeTabControl.Controls.Add(this.registryRequirementsTabPage);
+            this.requirementsTypeTabControl.Location = new System.Drawing.Point(0, 25);
+            this.requirementsTypeTabControl.Name = "requirementsTypeTabControl";
+            this.requirementsTypeTabControl.SelectedIndex = 0;
+            this.requirementsTypeTabControl.Size = new System.Drawing.Size(459, 109);
+            this.requirementsTypeTabControl.TabIndex = 1;
+            // 
+            // osRequirementsTabPage
+            // 
+            this.osRequirementsTabPage.Controls.Add(this.minimumOSVersionLabel);
+            this.osRequirementsTabPage.Controls.Add(this.requiredOSComboBox);
+            this.osRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.osRequirementsTabPage.Name = "osRequirementsTabPage";
+            this.osRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.osRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.osRequirementsTabPage.TabIndex = 0;
+            this.osRequirementsTabPage.Text = "OS";
+            this.osRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumOSVersionLabel
+            // 
+            this.minimumOSVersionLabel.AutoSize = true;
+            this.minimumOSVersionLabel.Location = new System.Drawing.Point(6, 9);
+            this.minimumOSVersionLabel.Name = "minimumOSVersionLabel";
+            this.minimumOSVersionLabel.Size = new System.Drawing.Size(118, 13);
+            this.minimumOSVersionLabel.TabIndex = 4;
+            this.minimumOSVersionLabel.Text = "Minimum OS Version:";
+            // 
+            // requiredOSComboBox
+            // 
+            this.requiredOSComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredOSComboBox.FormattingEnabled = true;
+            this.requiredOSComboBox.Items.AddRange(new object[] {
+            "Windows Vista",
+            "Windows Vista Service Pack 1",
+            "Windows Vista Service Pack 2",
+            "Windows 7",
+            "Windows 7 Service Pack 1",
+            "Windows 8",
+            "Windows 8.1",
+            "Windows 10"});
+            this.requiredOSComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredOSComboBox.Name = "requiredOSComboBox";
+            this.requiredOSComboBox.Size = new System.Drawing.Size(174, 21);
+            this.requiredOSComboBox.TabIndex = 3;
+            // 
+            // netRequirementsTabPage
+            // 
+            this.netRequirementsTabPage.Controls.Add(this.minimumFrameworkVersionLabel);
+            this.netRequirementsTabPage.Controls.Add(this.requiredFrameworkComboBox);
+            this.netRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.netRequirementsTabPage.Name = "netRequirementsTabPage";
+            this.netRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.netRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.netRequirementsTabPage.TabIndex = 1;
+            this.netRequirementsTabPage.Text = ".NET";
+            this.netRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumFrameworkVersionLabel
+            // 
+            this.minimumFrameworkVersionLabel.AutoSize = true;
+            this.minimumFrameworkVersionLabel.Location = new System.Drawing.Point(3, 4);
+            this.minimumFrameworkVersionLabel.Name = "minimumFrameworkVersionLabel";
+            this.minimumFrameworkVersionLabel.Size = new System.Drawing.Size(143, 26);
+            this.minimumFrameworkVersionLabel.TabIndex = 5;
+            this.minimumFrameworkVersionLabel.Text = "Minimum .NET Framework \r\nVersion: ";
+            // 
+            // requiredFrameworkComboBox
+            // 
+            this.requiredFrameworkComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredFrameworkComboBox.FormattingEnabled = true;
+            this.requiredFrameworkComboBox.Items.AddRange(new object[] {
+            ".NET Framework 1.0",
+            ".NET Framework 2.0",
+            ".NET Framework 3.0",
+            ".NET Framework 3.5",
+            ".NET Framework 4.0",
+            ".NET Framework 4.5",
+            ".NET Framework 4.5.1",
+            ".NET Framework 4.5.2"});
+            this.requiredFrameworkComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredFrameworkComboBox.Name = "requiredFrameworkComboBox";
+            this.requiredFrameworkComboBox.Size = new System.Drawing.Size(176, 21);
+            this.requiredFrameworkComboBox.TabIndex = 4;
+            // 
+            // assemblyRequirementsTabPage
+            // 
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyPathLabel);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyRootPathComboBox);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyBuildNumericUpDown);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyMajorNumericUpDown);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyRevisionNumericUpDown);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyVersionLabel);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyMinorNumericUpDown);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyPathTextBox);
+            this.assemblyRequirementsTabPage.Controls.Add(this.requiredAssemblyPathButton);
+            this.assemblyRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.assemblyRequirementsTabPage.Name = "assemblyRequirementsTabPage";
+            this.assemblyRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.assemblyRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.assemblyRequirementsTabPage.TabIndex = 2;
+            this.assemblyRequirementsTabPage.Text = "Assembly";
+            this.assemblyRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // requiredAssemblyPathLabel
+            // 
+            this.requiredAssemblyPathLabel.AutoSize = true;
+            this.requiredAssemblyPathLabel.Location = new System.Drawing.Point(3, 3);
+            this.requiredAssemblyPathLabel.Name = "requiredAssemblyPathLabel";
+            this.requiredAssemblyPathLabel.Size = new System.Drawing.Size(101, 26);
+            this.requiredAssemblyPathLabel.TabIndex = 12;
+            this.requiredAssemblyPathLabel.Text = "Assembly path on \r\ntarget computer:";
+            // 
+            // requiredAssemblyRootPathComboBox
+            // 
+            this.requiredAssemblyRootPathComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredAssemblyRootPathComboBox.FormattingEnabled = true;
+            this.requiredAssemblyRootPathComboBox.Items.AddRange(new object[] {
+            "%appdata%",
+            "full path",
+            "executable directory"});
+            this.requiredAssemblyRootPathComboBox.Location = new System.Drawing.Point(107, 6);
+            this.requiredAssemblyRootPathComboBox.Name = "requiredAssemblyRootPathComboBox";
+            this.requiredAssemblyRootPathComboBox.Size = new System.Drawing.Size(88, 21);
+            this.requiredAssemblyRootPathComboBox.TabIndex = 3;
+            // 
+            // requiredAssemblyBuildNumericUpDown
+            // 
+            this.requiredAssemblyBuildNumericUpDown.Location = new System.Drawing.Point(330, 37);
+            this.requiredAssemblyBuildNumericUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.requiredAssemblyBuildNumericUpDown.Name = "requiredAssemblyBuildNumericUpDown";
+            this.requiredAssemblyBuildNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.requiredAssemblyBuildNumericUpDown.TabIndex = 10;
+            this.requiredAssemblyBuildNumericUpDown.ThousandsSeparator = true;
+            // 
+            // requiredAssemblyMajorNumericUpDown
+            // 
+            this.requiredAssemblyMajorNumericUpDown.Location = new System.Drawing.Point(206, 37);
+            this.requiredAssemblyMajorNumericUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.requiredAssemblyMajorNumericUpDown.Name = "requiredAssemblyMajorNumericUpDown";
+            this.requiredAssemblyMajorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.requiredAssemblyMajorNumericUpDown.TabIndex = 8;
+            this.requiredAssemblyMajorNumericUpDown.ThousandsSeparator = true;
+            // 
+            // requiredAssemblyRevisionNumericUpDown
+            // 
+            this.requiredAssemblyRevisionNumericUpDown.Location = new System.Drawing.Point(390, 37);
+            this.requiredAssemblyRevisionNumericUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.requiredAssemblyRevisionNumericUpDown.Name = "requiredAssemblyRevisionNumericUpDown";
+            this.requiredAssemblyRevisionNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.requiredAssemblyRevisionNumericUpDown.TabIndex = 11;
+            this.requiredAssemblyRevisionNumericUpDown.ThousandsSeparator = true;
+            // 
+            // requiredAssemblyVersionLabel
+            // 
+            this.requiredAssemblyVersionLabel.AutoSize = true;
+            this.requiredAssemblyVersionLabel.Location = new System.Drawing.Point(3, 39);
+            this.requiredAssemblyVersionLabel.Name = "requiredAssemblyVersionLabel";
+            this.requiredAssemblyVersionLabel.Size = new System.Drawing.Size(49, 13);
+            this.requiredAssemblyVersionLabel.TabIndex = 7;
+            this.requiredAssemblyVersionLabel.Text = "Version:";
+            // 
+            // requiredAssemblyMinorNumericUpDown
+            // 
+            this.requiredAssemblyMinorNumericUpDown.Location = new System.Drawing.Point(268, 37);
+            this.requiredAssemblyMinorNumericUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.requiredAssemblyMinorNumericUpDown.Name = "requiredAssemblyMinorNumericUpDown";
+            this.requiredAssemblyMinorNumericUpDown.Size = new System.Drawing.Size(56, 22);
+            this.requiredAssemblyMinorNumericUpDown.TabIndex = 9;
+            this.requiredAssemblyMinorNumericUpDown.ThousandsSeparator = true;
+            // 
+            // requiredAssemblyPathTextBox
+            // 
+            this.requiredAssemblyPathTextBox.Location = new System.Drawing.Point(201, 6);
+            this.requiredAssemblyPathTextBox.Name = "requiredAssemblyPathTextBox";
+            this.requiredAssemblyPathTextBox.Size = new System.Drawing.Size(196, 22);
+            this.requiredAssemblyPathTextBox.TabIndex = 1;
+            // 
+            // requiredAssemblyPathButton
+            // 
+            this.requiredAssemblyPathButton.Location = new System.Drawing.Point(403, 4);
+            this.requiredAssemblyPathButton.Name = "requiredAssemblyPathButton";
+            this.requiredAssemblyPathButton.Size = new System.Drawing.Size(42, 23);
+            this.requiredAssemblyPathButton.TabIndex = 0;
+            this.requiredAssemblyPathButton.Text = "...";
+            this.requiredAssemblyPathButton.UseVisualStyleBackColor = true;
+            this.requiredAssemblyPathButton.Click += new System.EventHandler(this.requiredAssemblyPathButton_Click);
+            // 
+            // registryRequirementsTabPage
+            // 
+            this.registryRequirementsTabPage.Controls.Add(this.requiredRegistryPathLabel);
+            this.registryRequirementsTabPage.Controls.Add(this.requiredRegistryKeyValueTextBox);
+            this.registryRequirementsTabPage.Controls.Add(this.requiredRegistryRootPathComboBox);
+            this.registryRequirementsTabPage.Controls.Add(this.requiredRegistryKeyValueLabel);
+            this.registryRequirementsTabPage.Controls.Add(this.requiredRegistryKeyPathTextBox);
+            this.registryRequirementsTabPage.Controls.Add(this.button1);
+            this.registryRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.registryRequirementsTabPage.Name = "registryRequirementsTabPage";
+            this.registryRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.registryRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.registryRequirementsTabPage.TabIndex = 3;
+            this.registryRequirementsTabPage.Text = "Registry";
+            this.registryRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // requiredRegistryPathLabel
+            // 
+            this.requiredRegistryPathLabel.AutoSize = true;
+            this.requiredRegistryPathLabel.Location = new System.Drawing.Point(6, 3);
+            this.requiredRegistryPathLabel.Name = "requiredRegistryPathLabel";
+            this.requiredRegistryPathLabel.Size = new System.Drawing.Size(95, 26);
+            this.requiredRegistryPathLabel.TabIndex = 17;
+            this.requiredRegistryPathLabel.Text = "Registry path on \r\ntarget computer:";
+            // 
+            // requiredRegistryKeyValueTextBox
+            // 
+            this.requiredRegistryKeyValueTextBox.Location = new System.Drawing.Point(100, 38);
+            this.requiredRegistryKeyValueTextBox.Name = "requiredRegistryKeyValueTextBox";
+            this.requiredRegistryKeyValueTextBox.Size = new System.Drawing.Size(297, 22);
+            this.requiredRegistryKeyValueTextBox.TabIndex = 16;
+            // 
+            // requiredRegistryRootPathComboBox
+            // 
+            this.requiredRegistryRootPathComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredRegistryRootPathComboBox.FormattingEnabled = true;
+            this.requiredRegistryRootPathComboBox.Items.AddRange(new object[] {
+            "CLASSES_ROOT",
+            "CURRENT_USER",
+            "LOCAL_MACHINE"});
+            this.requiredRegistryRootPathComboBox.Location = new System.Drawing.Point(107, 6);
+            this.requiredRegistryRootPathComboBox.Name = "requiredRegistryRootPathComboBox";
+            this.requiredRegistryRootPathComboBox.Size = new System.Drawing.Size(106, 21);
+            this.requiredRegistryRootPathComboBox.TabIndex = 14;
+            // 
+            // requiredRegistryKeyValueLabel
+            // 
+            this.requiredRegistryKeyValueLabel.Location = new System.Drawing.Point(7, 41);
+            this.requiredRegistryKeyValueLabel.Name = "requiredRegistryKeyValueLabel";
+            this.requiredRegistryKeyValueLabel.Size = new System.Drawing.Size(49, 13);
+            this.requiredRegistryKeyValueLabel.TabIndex = 15;
+            this.requiredRegistryKeyValueLabel.Text = "Value:";
+            // 
+            // requiredRegistryKeyPathTextBox
+            // 
+            this.requiredRegistryKeyPathTextBox.Location = new System.Drawing.Point(219, 6);
+            this.requiredRegistryKeyPathTextBox.Name = "requiredRegistryKeyPathTextBox";
+            this.requiredRegistryKeyPathTextBox.Size = new System.Drawing.Size(178, 22);
+            this.requiredRegistryKeyPathTextBox.TabIndex = 13;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(403, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(42, 23);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // requirementsListBox
+            // 
+            this.requirementsListBox.FormattingEnabled = true;
+            this.requirementsListBox.Location = new System.Drawing.Point(5, 140);
+            this.requirementsListBox.Name = "requirementsListBox";
+            this.requirementsListBox.Size = new System.Drawing.Size(460, 82);
+            this.requirementsListBox.TabIndex = 0;
+            // 
             // operationsTabPage
             // 
             this.operationsTabPage.Controls.Add(this.operationsPanel);
@@ -1291,15 +1666,18 @@
             treeNode7.Name = "availabilityNode";
             treeNode7.SelectedImageIndex = 0;
             treeNode7.Text = "Availability";
-            treeNode8.ImageIndex = 4;
-            treeNode8.Name = "operationsNode";
-            treeNode8.SelectedImageIndex = 4;
-            treeNode8.Text = "Operations";
+            treeNode8.Name = "requirementsNode";
+            treeNode8.Text = "Requirements";
+            treeNode9.ImageIndex = 4;
+            treeNode9.Name = "operationsNode";
+            treeNode9.SelectedImageIndex = 4;
+            treeNode9.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode5,
             treeNode6,
             treeNode7,
-            treeNode8});
+            treeNode8,
+            treeNode9});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1360,6 +1738,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedRevisionNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedMinorNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
+            this.requirementsTabPage.ResumeLayout(false);
+            this.requirementsTabPage.PerformLayout();
+            this.requirementsTypeTabControl.ResumeLayout(false);
+            this.osRequirementsTabPage.ResumeLayout(false);
+            this.osRequirementsTabPage.PerformLayout();
+            this.netRequirementsTabPage.ResumeLayout(false);
+            this.netRequirementsTabPage.PerformLayout();
+            this.assemblyRequirementsTabPage.ResumeLayout(false);
+            this.assemblyRequirementsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyBuildNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyMajorNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyRevisionNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.requiredAssemblyMinorNumericUpDown)).EndInit();
+            this.registryRequirementsTabPage.ResumeLayout(false);
+            this.registryRequirementsTabPage.PerformLayout();
             this.operationsTabPage.ResumeLayout(false);
             this.operationsPanel.ResumeLayout(false);
             this.replaceFilesTabPage.ResumeLayout(false);
@@ -1472,6 +1865,34 @@
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
         private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-
+        private System.Windows.Forms.TabPage requirementsTabPage;
+        private System.Windows.Forms.ComboBox requirementsTypeComboBox;
+        private Controls.TablessTabControl requirementsTypeTabControl;
+        private System.Windows.Forms.TabPage osRequirementsTabPage;
+        private System.Windows.Forms.TabPage netRequirementsTabPage;
+        private System.Windows.Forms.TabPage assemblyRequirementsTabPage;
+        private System.Windows.Forms.TabPage registryRequirementsTabPage;
+        private System.Windows.Forms.ListBox requirementsListBox;
+        private System.Windows.Forms.Button addRequirementButton;
+        private System.Windows.Forms.ComboBox requiredOSComboBox;
+        private System.Windows.Forms.ComboBox requiredFrameworkComboBox;
+        private System.Windows.Forms.NumericUpDown requiredAssemblyBuildNumericUpDown;
+        private System.Windows.Forms.NumericUpDown requiredAssemblyMajorNumericUpDown;
+        private System.Windows.Forms.NumericUpDown requiredAssemblyRevisionNumericUpDown;
+        private System.Windows.Forms.Label requiredAssemblyVersionLabel;
+        private System.Windows.Forms.NumericUpDown requiredAssemblyMinorNumericUpDown;
+        private System.Windows.Forms.TextBox requiredAssemblyPathTextBox;
+        private System.Windows.Forms.Button requiredAssemblyPathButton;
+        private System.Windows.Forms.ComboBox requiredAssemblyRootPathComboBox;
+        private System.Windows.Forms.TextBox requiredRegistryKeyValueTextBox;
+        private System.Windows.Forms.ComboBox requiredRegistryRootPathComboBox;
+        private System.Windows.Forms.Label requiredRegistryKeyValueLabel;
+        private System.Windows.Forms.TextBox requiredRegistryKeyPathTextBox;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label requirementTypeLabel;
+        private System.Windows.Forms.Label minimumOSVersionLabel;
+        private System.Windows.Forms.Label minimumFrameworkVersionLabel;
+        private System.Windows.Forms.Label requiredAssemblyPathLabel;
+        private System.Windows.Forms.Label requiredRegistryPathLabel;
     }
 }

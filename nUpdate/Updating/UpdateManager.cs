@@ -279,9 +279,12 @@ namespace nUpdate.Updating
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
             var configuration = UpdateConfiguration.Download(_updateConfigurationFileUri, Proxy);
-
-            var result = new UpdateResult(configuration, CurrentVersion,
+           
+            var result = new UpdateResult();
+            result.MissingRequirements += result_MissingRequirements;
+            result.Init(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
+
             if (!result.UpdatesFound)
                 return false;
 
@@ -307,6 +310,11 @@ namespace nUpdate.Updating
             }
 
             return true;
+        }
+
+        void result_MissingRequirements(object sender, FailedEventArgs e)
+        {
+            OnMissingRequirement(e.Exception);
         }
 
         /// <summary>
@@ -872,6 +880,12 @@ namespace nUpdate.Updating
         /// </remarks>
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
 
+
+        /// <summary>
+        ///     Occurs when some requirements are missing
+        /// </summary>
+        public event EventHandler<FailedEventArgs> MissingRequirements; 
+
         /// <summary>
         ///     Called when the update search is started.
         /// </summary>
@@ -958,5 +972,15 @@ namespace nUpdate.Updating
             if (StatisticsEntryFailed != null)
                 StatisticsEntryFailed(this, new FailedEventArgs(exception));
         }
+
+        /// <summary>
+        ///     Called when some requirements are missing
+        /// </summary>
+        /// <param name="exception">The exception that occured.</param>
+        protected virtual void OnMissingRequirement(Exception exception)
+        {
+            if (MissingRequirements != null)
+                MissingRequirements(this, new FailedEventArgs(exception));
+        } 
     }
 }
