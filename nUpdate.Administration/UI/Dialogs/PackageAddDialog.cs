@@ -309,7 +309,6 @@ namespace nUpdate.Administration.UI.Dialogs
             requiredOSComboBox.SelectedIndex = 0;
             requiredFrameworkComboBox.SelectedIndex = 0;
             requirementsTypeComboBox.SelectedIndex = 0;
-            requiredAssemblyRootPathComboBox.SelectedIndex = 0;
 
             _osVersions = new Dictionary<string, Version>();
             _osVersions.Add("Windows Vista", new Version("6.0.6000.0"));
@@ -1555,39 +1554,6 @@ namespace nUpdate.Administration.UI.Dialogs
                             Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", "")),
                             null);
                     break;
-
-                case 2:
-                    if (String.IsNullOrWhiteSpace(requiredAssemblyPathTextBox.Text))
-                    {
-                        Popup.ShowPopup(SystemIcons.Exclamation, "No assembly path set", new Exception("The assembly path is not valid!"), PopupButtons.Ok);
-                    }
-                    else
-                    {
-                        _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.Assembly,
-                        requiredAssemblyRootPathComboBox.Text + Char.ConvertFromUtf32(92) + requiredAssemblyPathTextBox.Text,
-                        new Version((int)requiredAssemblyMajorNumericUpDown.Value, (int)requiredAssemblyMinorNumericUpDown.Value, (int)requiredAssemblyBuildNumericUpDown.Value, (int)requiredAssemblyRevisionNumericUpDown.Value),
-                        null);
-                    }
-                    break;
-                case 3:
-                    if (String.IsNullOrWhiteSpace(requiredRegistryKeyPathTextBox.Text))
-                    {
-                        Popup.ShowPopup(SystemIcons.Exclamation, "No registry path set", new Exception("The registry key path is not valid!"), PopupButtons.Ok);
-                    }
-                    else if (String.IsNullOrWhiteSpace(requiredRegistryKeyValueTextBox.Text))
-                    {
-                        Popup.ShowPopup(SystemIcons.Exclamation, "No registry value set", new Exception("The registry value is not valid!"), PopupButtons.Ok);
-                    }
-                    else
-                    {
-                        _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.Registry,
-                        "HKEY_" + requiredRegistryRootPathComboBox.Text + "\\" + requiredRegistryKeyPathTextBox.Text,
-                        null,
-                        requiredRegistryKeyValueTextBox.Text);
-                    }
-                    break;
                 default:
                     _updateRequirement = null;
                     break;
@@ -1598,21 +1564,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 requirementsListBox.Items.Add(_updateRequirement);
             }
         }
-
-        private void requiredAssemblyPathButton_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = "Select a assembly";
-            dialog.Multiselect = false;
-            dialog.Filter = "Executable Files (*.exe)|*.exe|Dynamic Link Libraries (*.dll)|*.dll";
-            dialog.FilterIndex = 1;
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                requiredAssemblyPathTextBox.Text = dialog.FileName;
-            }
-            dialog.Dispose();
-        }
-
         #region "Localization"
 
         //private string configDownloadErrorCaption;

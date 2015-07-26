@@ -9,8 +9,6 @@ namespace nUpdate.Updating
         public enum RequirementType
         {
             DotNetFramework,
-            Registry,
-            Assembly,
             OSVersion,
         }
 
@@ -82,38 +80,6 @@ namespace nUpdate.Updating
             bool meetRequirement = true;
             switch (Type)
             {
-                case RequirementType.Assembly:
-                    string rootDirectory = Path.Split(new char[] { System.IO.Path.DirectorySeparatorChar })[0];
-
-                    Path = Path.Replace(rootDirectory, "");
-
-                    switch (rootDirectory)
-                    {
-                        case "%appdata%":
-                            Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path;
-                            break;
-                        case "executable directory":
-                        case "full path":
-                            Path = Path.Remove(0, 1);
-                            break;
-
-                    }
-                    if (!System.IO.File.Exists(Path))
-                    {
-                        meetRequirement = false;
-                        message += " The assembly" + Path + " is missing." + Environment.NewLine;
-                        break;
-                    }
-
-                    System.Diagnostics.FileVersionInfo fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(Path);
-                    Version fileVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
-                    if (fileVersion < Version)
-                    {
-                        meetRequirement = false;
-                        message += " The assembly" + Path + " is version is lower than" + Version.ToString(4) + ". " + Environment.NewLine;
-                    }
-                    break;
-
                 case RequirementType.DotNetFramework:
                     bool frameworkOK = true;
                     switch (Version.ToString(3))
@@ -174,37 +140,6 @@ namespace nUpdate.Updating
                         message += "The .NET Framework version" + Version.ToString(3) + " is required. " + Environment.NewLine;
                     }
                     break;
-
-                case RequirementType.Registry:
-                    string[] pathPieces = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                    string keyPath = "";
-                    for (int i = 1; i < pathPieces.Length - 1; i++)
-                    {
-                        keyPath += pathPieces[i] + "\\";
-                    }
-
-                    Object value = null;
-
-                    if (pathPieces[0] == "HKEY_CLASSES_ROOT")
-                    {
-                        value = Registry.ClassesRoot.OpenSubKey(keyPath).GetValue(pathPieces[pathPieces.Length - 1]);
-                    }
-                    else if (pathPieces[0] == "HKEY_CURRENT_USER")
-                    {
-                        value = Registry.CurrentUser.OpenSubKey(keyPath).GetValue(pathPieces[pathPieces.Length - 1]);
-                    }
-                    else if (pathPieces[0] == "HKEY_LOCAL_MACHINE")
-                    {
-                        value = Registry.LocalMachine.OpenSubKey(keyPath).GetValue(pathPieces[pathPieces.Length - 1]);
-                    }
-
-                    if (!RegistryValue.Equals(value))
-                    {
-                        meetRequirement = false;
-                        message += "The registry key " + Path + " has a wrong value or does not exist!" + Environment.NewLine;
-                    }
-                    break;
-
                 case RequirementType.OSVersion:
                     if (Environment.OSVersion.Version < Version)
                     {
@@ -223,17 +158,8 @@ namespace nUpdate.Updating
             {
                 case RequirementType.OSVersion:
                     return "OS Version >= " + Version.ToString(2);
-                case RequirementType.Assembly:
-                    string[] pieces = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                    string fileName = pieces[pieces.Length - 1];
-                    return "Assembly: " + fileName;
                 case RequirementType.DotNetFramework:
                     return "Framework Version >= " + Version.ToString(3);
-                case RequirementType.Registry:
-                    string[] regPath = Path.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                    string registryKey = regPath[regPath.Length - 1];
-
-                    return "Registry Key: " + registryKey + " Value: " + RegistryValue;
                 default:
                     return null;
             }
