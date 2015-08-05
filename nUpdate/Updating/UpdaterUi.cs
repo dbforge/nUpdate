@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
 using System.Drawing;
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core;
@@ -26,8 +25,6 @@ namespace nUpdate.Updating
         private SynchronizationContext _context;
         private UpdateManager _updateManager;
         private bool _updatesAvailable;
-        private bool _requirementMiss;
-        private Dictionary<UpdateVersion, List<UpdateRequirement>> _missingRequirements;
         private bool _isTaskRunning;
 
         /// <summary>
@@ -124,25 +121,30 @@ namespace nUpdate.Updating
             if (_isTaskRunning)
                 return;
 
-            _isTaskRunning = true;
-            _requirementMiss = false;
+            string languageFilePath = null;
+            if (_updateManager.CultureFilePaths.ContainsKey(_updateManager.LanguageCulture))
+            {
+                _updateManager.CultureFilePaths.TryGetValue(_updateManager.LanguageCulture, out languageFilePath);
+            }
 
-            var searchDialog = new UpdateSearchDialog { LanguageName = _updateManager.LanguageCulture.Name };
+            _isTaskRunning = true;
+            var searchDialog = new UpdateSearchDialog { LanguageName = _updateManager.LanguageCulture.Name, LanguageFilePath = languageFilePath };
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
             var newUpdateDialog = new NewUpdateDialog
             {
                 LanguageName = _updateManager.LanguageCulture.Name,
+                LanguageFilePath = languageFilePath,
                 CurrentVersion = _updateManager.CurrentVersion,
             };
 
-            var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = _updateManager.LanguageCulture.Name };
-            var missingRequirementDialog = new MissingRequirementDialog { LanguageName = _updateManager.LanguageCulture.Name };
+            var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = _updateManager.LanguageCulture.Name, LanguageFilePath = languageFilePath };
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
             var downloadDialog = new UpdateDownloadDialog
             {
-                LanguageName = _updateManager.LanguageCulture.Name
+                LanguageName = _updateManager.LanguageCulture.Name,
+                LanguageFilePath = languageFilePath,
             };
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
@@ -194,21 +196,6 @@ namespace nUpdate.Updating
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
                             return;
-                    }
-                    else if (!_updatesAvailable && _requirementMiss)
-                    {
-                        string message = "";
-                        foreach (var version in _missingRequirements)
-                        {
-                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
-                            foreach (var requirement in version.Value)
-                            {
-                                message += requirement.ErrorMessage + Environment.NewLine;
-                            }
-                        }
-                        missingRequirementDialog.requirementsTextBox.Text = message;
-                        _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
-                        return;
                     }
                     else if (!_updatesAvailable && UseHiddenSearch)
                         return;
@@ -287,7 +274,6 @@ namespace nUpdate.Updating
                 _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
                 _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
                 _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
-                _updateManager.MissingRequirement += MissingRequirements;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -314,21 +300,6 @@ namespace nUpdate.Updating
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
                         if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)
                             return;
-                    }
-                    else if (!_updatesAvailable && _requirementMiss)
-                    {
-                        string message = "";
-                        foreach (var version in _missingRequirements)
-                        {
-                            message += "The following requirements are missing to install version " + version.Key.ToString() + Environment.NewLine;
-                            foreach (var requirement in version.Value)
-                            {
-                                message += requirement.ErrorMessage + Environment.NewLine;
-                            }
-                        }
-                        missingRequirementDialog.requirementsTextBox.Text = message;
-                        _context.Send(missingRequirementDialog.ShowModalDialog, new DialogResultReference());
-                        return;
                     }
                     else if (!_updatesAvailable && UseHiddenSearch)
                         return;
@@ -382,12 +353,6 @@ namespace nUpdate.Updating
                 _isTaskRunning = false;
             }
 #endif
-        }
-
-        void MissingRequirements(object sender, MissingRequirementsEventArgs e)
-        {
-            _requirementMiss = true;
-            _missingRequirements = e.Requirements;
         }
 
         private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)
