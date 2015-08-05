@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace nUpdate.Updating
         private bool _includeCurrentPcIntoStatistics = true;
         private readonly string _publicKey;
         private readonly Uri _updateConfigurationFileUri;
-        private readonly CultureInfo _languageCulture;
+        private  CultureInfo _languageCulture = new CultureInfo("en");
         private bool _disposed;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
         private CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
@@ -60,8 +60,7 @@ namespace nUpdate.Updating
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
         ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
         /// </remarks>
-        public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture)
+        public UpdateManager(Uri updateConfigurationFileUri, string publicKey)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException("updateConfigurationFileUri");
@@ -70,10 +69,6 @@ namespace nUpdate.Updating
             if (String.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException("publicKey");
             _publicKey = publicKey;
-
-            if (languageCulture == null)
-                throw new ArgumentNullException("languageCulture");
-            _languageCulture = languageCulture;
 
             CultureFilePaths = new Dictionary<CultureInfo, string>();
             Arguments = new List<UpdateArgument>();
@@ -86,12 +81,6 @@ namespace nUpdate.Updating
                     "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
             CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-            var existingCultureInfos = new[] { new CultureInfo("en"), new CultureInfo("de-DE"), new CultureInfo("de-AT"), new CultureInfo("de-CH") };
-            if (!existingCultureInfos.Any(item => item.Equals(_languageCulture)) &&
-                !CultureFilePaths.ContainsKey(_languageCulture))
-                throw new ArgumentException(
-                    "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
-
             if (UseCustomInstallerUserInterface && String.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
@@ -143,6 +132,15 @@ namespace nUpdate.Updating
         public CultureInfo LanguageCulture
         {
             get { return _languageCulture; }
+            set 
+            {
+                var existingCultureInfos = new[] { new CultureInfo("en"), new CultureInfo("de-DE"), new CultureInfo("de-AT"), new CultureInfo("de-CH") };
+                if (!existingCultureInfos.Any(item => item.Equals(_languageCulture)) &&
+                    !CultureFilePaths.ContainsKey(_languageCulture))
+                    throw new ArgumentException(
+                        "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
+                _languageCulture = value; 
+            }
         }
 
         /// <summary>
@@ -282,10 +280,6 @@ namespace nUpdate.Updating
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
-
-            if (result.Requirements.Count != 0)
-                OnMissingRequirement(new MissingRequirementsEventArgs(result.Requirements));
-
             if (!result.UpdatesFound)
                 return false;
 
@@ -747,7 +741,7 @@ namespace nUpdate.Updating
                 _lp.InstallerInitializingErrorCaption,
                 String.Format("\"{0}\"",
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
-                String.Format("\"{0}\"", _closeHostApplication),
+                String.Format("\"{0}\"", _closeHostApplication), 
                 String.Format("\"{0}\"", _lp.InstallerFileInUseError),
             };
 
@@ -876,12 +870,6 @@ namespace nUpdate.Updating
         /// </remarks>
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
 
-
-        /// <summary>
-        ///     Occurs when some requirements are missing
-        /// </summary>
-        public event EventHandler<MissingRequirementsEventArgs> MissingRequirement;
-
         /// <summary>
         ///     Called when the update search is started.
         /// </summary>
@@ -967,16 +955,6 @@ namespace nUpdate.Updating
         {
             if (StatisticsEntryFailed != null)
                 StatisticsEntryFailed(this, new FailedEventArgs(exception));
-        }
-
-        /// <summary>
-        ///     Called when some requirements are missing
-        /// </summary>
-        /// <param name="exception">The exception that occured.</param>
-        protected virtual void OnMissingRequirement(MissingRequirementsEventArgs requirements)
-        {
-            if (MissingRequirement != null)
-                MissingRequirement(this, new MissingRequirementsEventArgs(requirements.Requirements));
         }
     }
 }
