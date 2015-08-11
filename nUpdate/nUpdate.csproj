@@ -212,12 +212,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Core\Localization\de-DE.json" />
     <None Include="app.config" />
+    <EmbeddedResource Include="Core\Localization\de-AT.json" />
+    <EmbeddedResource Include="Core\Localization\de-CH.json" />
+    <None Include="Core\Localization\fr-FR.json" />
     <None Include="Updating\UpdaterUI.cd" />
     <None Include="packages.config" />
     <None Include="Updating\UpdateVersion.cd" />
     <None Include="Updating\UpdateManager.cd" />
-    <EmbeddedResource Include="Core\Localization\de-AT.json" />
-    <EmbeddedResource Include="Core\Localization\de-CH.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\en.xml" />

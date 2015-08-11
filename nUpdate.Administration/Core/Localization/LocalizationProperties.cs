@@ -8,7 +8,7 @@ namespace nUpdate.Administration.Core.Localization
     {
         public LocalizationProperties()
         {
-            ProductTitle = "nUpdate Administration 1.1.0.0";
+            ProductTitle = "nUpdate Administration 4.0.0.0";
             CancelButtonText = "Cancel";
             ContinueButtonText = "Continue";
             SaveButtonText = "Save";
@@ -27,7 +27,7 @@ namespace nUpdate.Administration.Core.Localization
             CredentialsDialogTitle = "Enter your credentials";
             CredentialsDialogHeaderText = "Credentials";
             CredentialsDialogUsernameLabelText = "Username:";
-            CredentialsDialogPasswordLabelext = "Password:";
+            CredentialsDialogPasswordLabelText = "Password:";
 
             /*
              * DirectorySearchDialog
@@ -42,9 +42,9 @@ namespace nUpdate.Administration.Core.Localization
              * */
             FeedbackDialogTitle = "Feedback - {0}";
             FeedbackDialogHeaderLabelText = "Feedback";
-            FeedbackDialogEmailAdressWatermarkText = "Your e-mail address";
+            FeedbackDialogEmailAddressWatermarkText = "Your e-mail address";
             FeedbackDialogNameWatermarkText = "Name";
-            FeedBackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
+            FeedbackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
 
             /*
              * HistoryDialog
@@ -288,7 +288,7 @@ namespace nUpdate.Administration.Core.Localization
         public string CredentialsDialogUsernameLabelText { get; set; }
 
         // The text of the password-label
-        public string CredentialsDialogPasswordLabelext { get; set; }
+        public string CredentialsDialogPasswordLabelText { get; set; }
 
         #endregion
 
@@ -317,13 +317,13 @@ namespace nUpdate.Administration.Core.Localization
         public string FeedbackDialogHeaderLabelText { get; set; }
 
         // The watermark of the email-address-textbox
-        public string FeedbackDialogEmailAdressWatermarkText { get; set; }
+        public string FeedbackDialogEmailAddressWatermarkText { get; set; }
 
         // The watermark of the name-textbox
         public string FeedbackDialogNameWatermarkText { get; set; }
 
         // The text of the privacy-terms-linklabel
-        public string FeedBackDialogPrivacyTermsLinkLabelText { get; set; }
+        public string FeedbackDialogPrivacyTermsLinkLabelText { get; set; }
 
         #endregion
 

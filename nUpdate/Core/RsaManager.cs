@@ -99,20 +99,16 @@ namespace nUpdate.Core
         /// <summary>
         ///     Checks if the signature for the given data is valid.
         /// </summary>
-        /// <param name="data">The data to check.</param>
+        /// <param name="stream">The data to check.</param>
         /// <param name="signature">The stream containing the data.</param>
         /// <returns>Returns "true" if the signature is correct, otherwise "false".</returns>
         public bool VerifyData(Stream stream, byte[] signature)
         {
-            return VerifyDataInternal(stream, "SHA512", signature); // TODO: typeof(SHA512)
-        }
-
-        private bool VerifyDataInternal(Stream stream, Object halg, byte[] signature)
-        {
-            HashAlgorithm hash = (HashAlgorithm)CryptoConfig.CreateFromName((string)halg);
-            //HashAlgorithm hash = (HashAlgorithm)halg;
-            byte[] hashVal = hash.ComputeHash(stream);
-            return _rsa.VerifyHash(hashVal, (string)halg, signature);
+            MemoryStream ms = new MemoryStream();
+            stream.CopyTo(ms);
+            byte[] data = ms.ToArray();
+            ms.Dispose();
+            return _rsa.VerifyData(data, typeof(SHA512), signature);
         }
 
         protected virtual void Dispose(bool disposing)
