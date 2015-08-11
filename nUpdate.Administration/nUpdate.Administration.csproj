@@ -581,6 +581,7 @@
     <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Core\Localization\de-DE.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
