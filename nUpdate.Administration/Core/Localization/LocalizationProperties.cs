@@ -27,7 +27,7 @@ namespace nUpdate.Administration.Core.Localization
             CredentialsDialogTitle = "Enter your credentials";
             CredentialsDialogHeaderText = "Credentials";
             CredentialsDialogUsernameLabelText = "Username:";
-            CredentialsDialogPasswordLabelText = "Password:";
+            CredentialsDialogPasswordLabelext = "Password:";
 
             /*
              * DirectorySearchDialog
@@ -42,9 +42,9 @@ namespace nUpdate.Administration.Core.Localization
              * */
             FeedbackDialogTitle = "Feedback - {0}";
             FeedbackDialogHeaderLabelText = "Feedback";
-            FeedbackDialogEmailAddressWatermarkText = "Your e-mail address";
+            FeedbackDialogEmailAdressWatermarkText = "Your e-mail address";
             FeedbackDialogNameWatermarkText = "Name";
-            FeedbackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
+            FeedBackDialogPrivacyTermsLinkLabelText = "How will my data be used?";
 
             /*
              * HistoryDialog
@@ -288,7 +288,7 @@ namespace nUpdate.Administration.Core.Localization
         public string CredentialsDialogUsernameLabelText { get; set; }
 
         // The text of the password-label
-        public string CredentialsDialogPasswordLabelText { get; set; }
+        public string CredentialsDialogPasswordLabelext { get; set; }
 
         #endregion
 
@@ -317,13 +317,13 @@ namespace nUpdate.Administration.Core.Localization
         public string FeedbackDialogHeaderLabelText { get; set; }
 
         // The watermark of the email-address-textbox
-        public string FeedbackDialogEmailAddressWatermarkText { get; set; }
+        public string FeedbackDialogEmailAdressWatermarkText { get; set; }
 
         // The watermark of the name-textbox
         public string FeedbackDialogNameWatermarkText { get; set; }
 
         // The text of the privacy-terms-linklabel
-        public string FeedbackDialogPrivacyTermsLinkLabelText { get; set; }
+        public string FeedBackDialogPrivacyTermsLinkLabelText { get; set; }
 
         #endregion
 

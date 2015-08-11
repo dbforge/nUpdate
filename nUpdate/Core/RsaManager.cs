@@ -39,6 +39,7 @@ namespace nUpdate.Core
         public RsaManager()
         {
             _rsa = new RSACryptoServiceProvider(DEFAULT_KEY_SIZE);
+            _rsa.ToXmlString(true);
             _rsa.PersistKeyInCsp = false;
         }
 
@@ -98,25 +99,21 @@ namespace nUpdate.Core
         /// <summary>
         ///     Checks if the signature for the given data is valid.
         /// </summary>
-        /// <param name="stream">The data to check.</param>
+        /// <param name="data">The data to check.</param>
         /// <param name="signature">The stream containing the data.</param>
         /// <returns>Returns "true" if the signature is correct, otherwise "false".</returns>
         public bool VerifyData(Stream stream, byte[] signature)
         {
-            MemoryStream ms = new MemoryStream();
-            stream.CopyTo(ms);
-            byte[] data = ms.ToArray();
-            return _rsa.VerifyData(data, typeof(SHA512), signature);
-            //return VerifyDataInternal(stream, "SHA512", signature); // TODO: typeof(SHA512)
+            return VerifyDataInternal(stream, "SHA512", signature); // TODO: typeof(SHA512)
         }
 
-        //private bool VerifyDataInternal(Stream stream, Object halg, byte[] signature)
-        //{
-        //    HashAlgorithm hash = (HashAlgorithm)CryptoConfig.CreateFromName((string)halg);
-        //    //HashAlgorithm hash = (HashAlgorithm)halg;
-        //    byte[] hashVal = hash.ComputeHash(stream);
-        //    return _rsa.VerifyHash(hashVal, (string)halg, signature);
-        //}
+        private bool VerifyDataInternal(Stream stream, Object halg, byte[] signature)
+        {
+            HashAlgorithm hash = (HashAlgorithm)CryptoConfig.CreateFromName((string)halg);
+            //HashAlgorithm hash = (HashAlgorithm)halg;
+            byte[] hashVal = hash.ComputeHash(stream);
+            return _rsa.VerifyHash(hashVal, (string)halg, signature);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
