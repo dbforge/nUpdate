@@ -2,7 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
+using nUpdate.Localization;
 using nUpdate.UI.Dialogs;
 using nUpdate.UI.Popups;
 using nUpdate.UpdateEventArgs;
@@ -121,22 +119,31 @@ namespace nUpdate.Updating
             if (_isTaskRunning)
                 return;
 
+            string languageFilePath = null;
+            if (_updateManager.CultureFilePaths.ContainsKey(_updateManager.LanguageCulture))
+            {
+                _updateManager.CultureFilePaths.TryGetValue(_updateManager.LanguageCulture, out languageFilePath);
+            }
+
             _isTaskRunning = true;
-            var searchDialog = new UpdateSearchDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var searchDialog = new UpdateSearchDialog { LanguageName = _updateManager.LanguageCulture.Name, LanguageFilePath = languageFilePath };
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
             var newUpdateDialog = new NewUpdateDialog
             {
                 LanguageName = _updateManager.LanguageCulture.Name,
+                LanguageFilePath = languageFilePath,
                 CurrentVersion = _updateManager.CurrentVersion,
             };
 
-            var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = _updateManager.LanguageCulture.Name, LanguageFilePath = languageFilePath };
 
+            // ReSharper disable once UnusedVariable
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
             var downloadDialog = new UpdateDownloadDialog
             {
-                LanguageName = _updateManager.LanguageCulture.Name
+                LanguageName = _updateManager.LanguageCulture.Name,
+                LanguageFilePath = languageFilePath,
             };
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
