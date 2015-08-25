@@ -3,15 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using nUpdate.Core;
 
 namespace nUpdate.Updating
 {
     internal class UpdateResult
     {
-        private UpdateConfiguration _newestConfiguration;
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
         private readonly bool _updatesFound;
+        private UpdateConfiguration _newestConfiguration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -72,17 +71,11 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
-        public bool UpdatesFound
-        {
-            get { return _updatesFound; }
-        }
+        public bool UpdatesFound => _updatesFound;
 
         /// <summary>
         ///     Returns all new configurations.
         /// </summary>
-        public IEnumerable<UpdateConfiguration> NewestConfigurations
-        {
-            get { return _newUpdateConfigurations; }
-        }
+        public IEnumerable<UpdateConfiguration> NewestConfigurations => _newUpdateConfigurations;
     }
 }
