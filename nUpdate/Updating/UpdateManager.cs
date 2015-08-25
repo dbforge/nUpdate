@@ -12,14 +12,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate.Core;
 using nUpdate.Exceptions;
-using nUpdate.Core.Localization;
-using nUpdate.Core.Operations;
 using nUpdate.Properties;
 using nUpdate.UpdateEventArgs;
-using SystemInformation = nUpdate.Core.SystemInformation;
 using System.Diagnostics;
+using nUpdate.Localization;
+using nUpdate.Operations;
 
 namespace nUpdate.Updating
 {
@@ -32,7 +30,7 @@ namespace nUpdate.Updating
         private bool _includeCurrentPcIntoStatistics = true;
         private readonly string _publicKey;
         private readonly Uri _updateConfigurationFileUri;
-        private readonly CultureInfo _languageCulture;
+        private CultureInfo _languageCulture = new CultureInfo("en");
         private bool _disposed;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
         private CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
@@ -60,8 +58,7 @@ namespace nUpdate.Updating
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
         ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
         /// </remarks>
-        public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture)
+        public UpdateManager(Uri updateConfigurationFileUri, string publicKey)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException("updateConfigurationFileUri");
@@ -70,10 +67,6 @@ namespace nUpdate.Updating
             if (String.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException("publicKey");
             _publicKey = publicKey;
-
-            if (languageCulture == null)
-                throw new ArgumentNullException("languageCulture");
-            _languageCulture = languageCulture;
 
             CultureFilePaths = new Dictionary<CultureInfo, string>();
             Arguments = new List<UpdateArgument>();
@@ -86,12 +79,6 @@ namespace nUpdate.Updating
                     "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
             CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-            var existingCultureInfos = new[] { new CultureInfo("en"), new CultureInfo("de-DE"), new CultureInfo("de-AT"), new CultureInfo("de-CH") };
-            if (!existingCultureInfos.Any(item => item.Equals(_languageCulture)) &&
-                !CultureFilePaths.ContainsKey(_languageCulture))
-                throw new ArgumentException(
-                    "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
-
             if (UseCustomInstallerUserInterface && String.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
@@ -111,18 +98,12 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Gets or sets the URI of the update configuration file.
         /// </summary>
-        public Uri UpdateConfigurationFileUri
-        {
-            get { return _updateConfigurationFileUri; }
-        }
+        public Uri UpdateConfigurationFileUri => _updateConfigurationFileUri;
 
         /// <summary>
         ///     Gets or sets the public key for checking the validity of the signature.
         /// </summary>
-        public string PublicKey
-        {
-            get { return _publicKey; }
-        }
+        public string PublicKey => _publicKey;
 
         /// <summary>
         ///     Gets or sets the version of the current application.
@@ -143,6 +124,15 @@ namespace nUpdate.Updating
         public CultureInfo LanguageCulture
         {
             get { return _languageCulture; }
+            set
+            {
+                var existingCultureInfos = new[] { new CultureInfo("en"), new CultureInfo("de-DE"), new CultureInfo("de-AT"), new CultureInfo("de-CH") };
+                if (!existingCultureInfos.Any(item => item.Equals(_languageCulture)) &&
+                    !CultureFilePaths.ContainsKey(_languageCulture))
+                    throw new ArgumentException(
+                        "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
+                _languageCulture = value;
+            }
         }
 
         /// <summary>
@@ -269,11 +259,10 @@ namespace nUpdate.Updating
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public bool SearchForUpdates()
         {
-            if (_searchCancellationTokenSource != null)
-                _searchCancellationTokenSource.Dispose();
+            _searchCancellationTokenSource?.Dispose();
             _searchCancellationTokenSource = new CancellationTokenSource();
 
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!WebConnection.IsAvailable())
                 return false;
 
             // Check for SSL and ignore it
@@ -362,8 +351,7 @@ namespace nUpdate.Updating
         /// <seealso cref="DownloadPackagesTask" />
         public void DownloadPackages()
         {
-            if (_downloadCancellationTokenSource != null)
-                _downloadCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource?.Dispose();
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
             long received = 0;
@@ -455,8 +443,7 @@ namespace nUpdate.Updating
                 }
                 finally
                 {
-                    if (webResponse != null)
-                        webResponse.Close();
+                    webResponse?.Close();
                 }
             }
         }
@@ -743,7 +730,7 @@ namespace nUpdate.Updating
                 _lp.InstallerInitializingErrorCaption,
                 String.Format("\"{0}\"",
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
-                String.Format("\"{0}\"", _closeHostApplication), 
+                String.Format("\"{0}\"", _closeHostApplication),
                 String.Format("\"{0}\"", _lp.InstallerFileInUseError),
             };
 
@@ -879,8 +866,7 @@ namespace nUpdate.Updating
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected virtual void OnUpdateSearchStarted(Object sender, EventArgs e)
         {
-            if (UpdateSearchStarted != null)
-                UpdateSearchStarted(sender, e);
+            UpdateSearchStarted?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -889,8 +875,7 @@ namespace nUpdate.Updating
         /// <param name="updateAvailable">if set to <c>true</c> updates are available.</param>
         protected virtual void OnUpdateSearchFinished(bool updateAvailable)
         {
-            if (UpdateSearchFinished != null)
-                UpdateSearchFinished(this, new UpdateSearchFinishedEventArgs(updateAvailable));
+            UpdateSearchFinished?.Invoke(this, new UpdateSearchFinishedEventArgs(updateAvailable));
         }
 
         /// <summary>
@@ -899,8 +884,7 @@ namespace nUpdate.Updating
         /// <param name="exception">The exception that occured.</param>
         protected virtual void OnUpdateSearchFailed(Exception exception)
         {
-            if (UpdateSearchFailed != null)
-                UpdateSearchFailed(this, new FailedEventArgs(exception));
+            UpdateSearchFailed?.Invoke(this, new FailedEventArgs(exception));
         }
 
         /// <summary>
@@ -908,10 +892,9 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected virtual void OnUpdateDownloadStarted(Object sender, EventArgs e)
+        protected virtual void OnUpdateDownloadStarted(object sender, EventArgs e)
         {
-            if (PackagesDownloadStarted != null)
-                PackagesDownloadStarted(sender, e);
+            PackagesDownloadStarted?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -923,9 +906,8 @@ namespace nUpdate.Updating
         protected virtual void OnUpdateDownloadProgressChanged(long bytesReceived, long totalBytesToReceive,
             float percentage)
         {
-            if (PackagesDownloadProgressChanged != null)
-                PackagesDownloadProgressChanged(this,
-                    new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
+            PackagesDownloadProgressChanged?.Invoke(this,
+                new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
         }
 
         /// <summary>
@@ -935,8 +917,7 @@ namespace nUpdate.Updating
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected virtual void OnUpdateDownloadFinished(Object sender, EventArgs e)
         {
-            if (PackagesDownloadFinished != null)
-                PackagesDownloadFinished(sender, e);
+            PackagesDownloadFinished?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -945,8 +926,7 @@ namespace nUpdate.Updating
         /// <param name="exception">The exception that occured.</param>
         protected virtual void OnUpdateDownloadFailed(Exception exception)
         {
-            if (PackagesDownloadFailed != null)
-                PackagesDownloadFailed(this, new FailedEventArgs(exception));
+            PackagesDownloadFailed?.Invoke(this, new FailedEventArgs(exception));
         }
 
         /// <summary>
@@ -955,8 +935,7 @@ namespace nUpdate.Updating
         /// <param name="exception">The exception that occured.</param>
         protected virtual void OnStatisticsEntryFailed(Exception exception)
         {
-            if (StatisticsEntryFailed != null)
-                StatisticsEntryFailed(this, new FailedEventArgs(exception));
+            StatisticsEntryFailed?.Invoke(this, new FailedEventArgs(exception));
         }
     }
 }
