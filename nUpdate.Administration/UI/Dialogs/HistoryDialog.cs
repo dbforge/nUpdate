@@ -6,8 +6,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.History;
+using nUpdate.Administration.Application;
+using nUpdate.Administration.History;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
@@ -34,7 +34,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    ItemText = String.Format("{0} - {1}", logEntry.PackageVersion, logEntry.EntryTime)
+                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}"
                 };
 
                 switch (logEntry.Entry)
@@ -154,7 +154,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var logEntryList =
                     Project.Log.Select(
                         logEntry =>
-                            String.Format("{0}-{1}-{2}", logEntry.PackageVersion, logEntry.Entry, logEntry.EntryTime))
+                            $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}")
                         .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }

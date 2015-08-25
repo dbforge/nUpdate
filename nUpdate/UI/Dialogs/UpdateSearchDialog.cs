@@ -5,8 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
+using nUpdate.Localization;
 using nUpdate.UI.Popups;
 using nUpdate.UpdateEventArgs;
 
@@ -14,8 +13,8 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateSearchDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
 
         public UpdateSearchDialog()
         {
@@ -58,7 +57,7 @@ namespace nUpdate.UI.Dialogs
             }
             else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
@@ -76,6 +75,12 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancelButtonClicked();
+            DialogResult = DialogResult.Cancel;
+        }
+
         #region TAP
 
         public void Fail(Exception ex)
@@ -86,10 +91,7 @@ namespace nUpdate.UI.Dialogs
 
         public void ShowModalDialog(object dialogResultReference)
         {
-            if (dialogResultReference != null)
-                ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
+            ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
         }
 
         public void CloseDialog(object state)
@@ -103,8 +105,12 @@ namespace nUpdate.UI.Dialogs
 
         public void Failed(object sender, FailedEventArgs e)
         {
-            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, e.Exception.InnerException ?? e.Exception,
-                PopupButtons.Ok)));
+            Invoke(
+                new Action(
+                    () =>
+                        Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption,
+                            e.Exception.InnerException ?? e.Exception,
+                            PopupButtons.Ok)));
             DialogResult = DialogResult.Cancel;
         }
 
@@ -114,11 +120,5 @@ namespace nUpdate.UI.Dialogs
         }
 
         #endregion
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancelButtonClicked();
-            DialogResult = DialogResult.Cancel;
-        }
     }
 }

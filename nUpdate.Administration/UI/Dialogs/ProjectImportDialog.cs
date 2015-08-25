@@ -5,17 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ionic.Zip;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectImportDialog : BaseDialog
     {
-        private List<ProjectConfiguration> _projectConfigurations; 
+        private List<ProjectConfiguration> _projectConfigurations;
         private TabPage _sender;
 
         public ProjectImportDialog()
@@ -89,48 +86,15 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (_projectConfigurations.Any(item => item.Name == projectNameTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Project already existing.",
-                        String.Format("A project with the name \"{0}\" does already exist.", projectNameTextBox.Text), PopupButtons.Ok);
+                        $"A project with the name \"{projectNameTextBox.Text}\" does already exist.",
+                        PopupButtons.Ok);
                     return;
                 }
 
                 try
                 {
                     string folderPath = Path.Combine(Program.Path, "ImpProj");
-                    string statisticsFilePath = Path.Combine(folderPath, "statistics.php");
-                    string projectFilePath = Path.Combine(folderPath,
-                        String.Format("{0}.nupdproj", projectNameTextBox.Text));
                     Directory.CreateDirectory(folderPath);
-
-                    var updateProject = UpdateProject.LoadProject(projectFilePath);
-                    if (updateProject.UseStatistics)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Warning, "Incompatible project.", "This project cannot be imported because the support for projects using statistics is currently missing. It will be available in the next version(s) of nUpdate Administration.", PopupButtons.Ok);
-                        Directory.Delete(folderPath);
-                        return;
-                    }
-
-                    //if (updateProject.ConfigVersion != "3b2")
-                    //{
-                    //    Popup.ShowPopup(this, SystemIcons.Warning, "Incompatible project.", "This project is not compatible to this version of nUpdate Administration. Please download the newest version of nUpdate Administration and then export the project again.", PopupButtons.Ok);
-                    //    Directory.Delete(folderPath);
-                    //    return;
-                    //}
-
-                    updateProject.Path = projectFilePathTextBox.Text;
-                    //if (updateProject.UseStatistics)
-                    //{
-                    //    var statisticsServers = Serializer.Deserialize<List<StatisticsServer>>(Path.Combine(Program.Path, "statservers.json"));
-                    //    if (!statisticsServers.Any(item => item.WebUrl == updateProject.SqlWebUrl && item.DatabaseName == updateProject.SqlDatabaseName && item.Username == updateProject.SqlUsername))
-                    //    {
-                    //        if (Popup.ShowPopup(this, SystemIcons.Information, "New statistics server found.", "This project uses a statistics server that isn't currently available on this computer. Should nUpdate Administration add this server to your list?", PopupButtons.YesNo) == DialogResult.Yes)
-                    //        {
-                    //            statisticsServers.Add(new StatisticsServer(updateProject.SqlWebUrl, updateProject.SqlDatabaseName, updateProject.SqlUsername)); 
-                    //            File.WriteAllText(Path.Combine(Program.Path, "statservers.json"), Serializer.Serialize(statisticsServers));
-                    //        }
-                    //    }
-                    //}
-
-                    UpdateProject.SaveProject(updateProject.Path, updateProject);
 
                     string projectPath = Path.Combine(Program.Path, "Projects", projectNameTextBox.Text);
                     if (!Directory.Exists(projectPath))
@@ -141,8 +105,11 @@ namespace nUpdate.Administration.UI.Dialogs
                         zip.ExtractAll(folderPath);
                     }
 
+                    string statisticsFilePath = Path.Combine(folderPath, "statistics.php");
                     if (File.Exists(statisticsFilePath))
                         File.Move(statisticsFilePath, Path.Combine(projectPath, "statistics.php"));
+                    string projectFilePath = Path.Combine(folderPath,
+                        $"{projectNameTextBox.Text}.nupdproj");
                     File.Move(projectFilePath, projectFilePathTextBox.Text);
 
                     foreach (var versionDirectory in new DirectoryInfo(folderPath).GetDirectories())

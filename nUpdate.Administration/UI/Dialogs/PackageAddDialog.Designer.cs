@@ -35,61 +35,61 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackageAddDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
             "Rename file",
             "Renames a given file to the new name set."}, 10);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete file",
             "Deletes a given file."}, 9);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
             "Create sub key",
             "Creates a sub key in the registry."}, 14);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete sub key",
             "Deletes a sub key in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
             "Set value",
             "Creates or edits a name-value-pair in the registry."}, 13);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete name-value-pair",
             "Deletes a name-value-pair in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start process",
             "Starts a given process."}, 8);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
             "Terminate process",
             "Terminates a given process if possible."}, 7);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start service.",
             "Starts a windows service. If it is already running it will be restarted. "}, 5);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes C#-code."}, 16);
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.createButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
-            this.createButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
@@ -162,6 +162,7 @@
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
             this.filesPanel = new System.Windows.Forms.Panel();
+            this.deltaPatchingCheckBox = new System.Windows.Forms.CheckBox();
             this.differentialUpdateCheckBox = new System.Windows.Forms.CheckBox();
             this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
@@ -174,8 +175,6 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.removeEntryButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.infoButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.filesList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -245,6 +244,26 @@
             this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
             // 
+            // createButton
+            // 
+            this.createButton.Location = new System.Drawing.Point(417, 9);
+            this.createButton.Name = "createButton";
+            this.createButton.Size = new System.Drawing.Size(121, 23);
+            this.createButton.TabIndex = 0;
+            this.createButton.Text = "Create package";
+            this.createButton.UseVisualStyleBackColor = true;
+            this.createButton.Click += new System.EventHandler(this.createPackageButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(544, 9);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            // 
             // loadingPanel
             // 
             this.loadingPanel.BackColor = System.Drawing.Color.White;
@@ -290,26 +309,6 @@
             this.loadingLabel.Size = new System.Drawing.Size(206, 15);
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
-            // 
-            // createButton
-            // 
-            this.createButton.Location = new System.Drawing.Point(417, 9);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(121, 23);
-            this.createButton.TabIndex = 0;
-            this.createButton.Text = "Create package";
-            this.createButton.UseVisualStyleBackColor = true;
-            this.createButton.Click += new System.EventHandler(this.createPackageButton_Click);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(544, 9);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
             // 
             // controlPanel1
             // 
@@ -994,58 +993,58 @@
             this.itemName,
             this.Description});
             this.operationsListView.FullRowSelect = true;
-            listViewGroup1.Header = "Files";
-            listViewGroup1.Name = "filesGroup";
-            listViewGroup2.Header = "Registry";
-            listViewGroup2.Name = "registryGroup";
-            listViewGroup3.Header = "Processes";
-            listViewGroup3.Name = "processGroup";
-            listViewGroup4.Header = "Services";
-            listViewGroup4.Name = "serviceGroup";
-            listViewGroup5.Header = "Scripts";
-            listViewGroup5.Name = "scriptGroup";
+            listViewGroup6.Header = "Files";
+            listViewGroup6.Name = "filesGroup";
+            listViewGroup7.Header = "Registry";
+            listViewGroup7.Name = "registryGroup";
+            listViewGroup8.Header = "Processes";
+            listViewGroup8.Name = "processGroup";
+            listViewGroup9.Header = "Services";
+            listViewGroup9.Name = "serviceGroup";
+            listViewGroup10.Header = "Scripts";
+            listViewGroup10.Name = "scriptGroup";
             this.operationsListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5});
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9,
+            listViewGroup10});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.operationsListView.HoverSelection = true;
-            listViewItem1.Group = listViewGroup1;
-            listViewItem1.Tag = "RenameFile";
-            listViewItem2.Group = listViewGroup1;
-            listViewItem2.Tag = "DeleteFile";
-            listViewItem3.Group = listViewGroup2;
-            listViewItem3.Tag = "CreateRegistrySubKey";
-            listViewItem4.Group = listViewGroup2;
-            listViewItem4.Tag = "DeleteRegistrySubKey";
-            listViewItem5.Group = listViewGroup2;
-            listViewItem5.Tag = "SetRegistryValue";
-            listViewItem6.Group = listViewGroup2;
-            listViewItem6.Tag = "DeleteRegistryValue";
-            listViewItem7.Group = listViewGroup3;
-            listViewItem7.Tag = "StartProcess";
-            listViewItem8.Group = listViewGroup3;
-            listViewItem8.Tag = "TerminateProcess";
-            listViewItem9.Group = listViewGroup4;
-            listViewItem9.Tag = "StartService";
-            listViewItem10.Group = listViewGroup4;
-            listViewItem10.Tag = "StopService";
-            listViewItem11.Group = listViewGroup5;
-            listViewItem11.Tag = "ExecuteScript";
+            listViewItem12.Group = listViewGroup6;
+            listViewItem12.Tag = "RenameFile";
+            listViewItem13.Group = listViewGroup6;
+            listViewItem13.Tag = "DeleteFile";
+            listViewItem14.Group = listViewGroup7;
+            listViewItem14.Tag = "CreateRegistrySubKey";
+            listViewItem15.Group = listViewGroup7;
+            listViewItem15.Tag = "DeleteRegistrySubKey";
+            listViewItem16.Group = listViewGroup7;
+            listViewItem16.Tag = "SetRegistryValue";
+            listViewItem17.Group = listViewGroup7;
+            listViewItem17.Tag = "DeleteRegistryValue";
+            listViewItem18.Group = listViewGroup8;
+            listViewItem18.Tag = "StartProcess";
+            listViewItem19.Group = listViewGroup8;
+            listViewItem19.Tag = "TerminateProcess";
+            listViewItem20.Group = listViewGroup9;
+            listViewItem20.Tag = "StartService";
+            listViewItem21.Group = listViewGroup9;
+            listViewItem21.Tag = "StopService";
+            listViewItem22.Group = listViewGroup10;
+            listViewItem22.Tag = "ExecuteScript";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11});
+            listViewItem12,
+            listViewItem13,
+            listViewItem14,
+            listViewItem15,
+            listViewItem16,
+            listViewItem17,
+            listViewItem18,
+            listViewItem19,
+            listViewItem20,
+            listViewItem21,
+            listViewItem22});
             this.operationsListView.LargeImageList = this.categoryImageList;
             this.operationsListView.Location = new System.Drawing.Point(0, 0);
             this.operationsListView.MultiSelect = false;
@@ -1080,6 +1079,7 @@
             // 
             // filesPanel
             // 
+            this.filesPanel.Controls.Add(this.deltaPatchingCheckBox);
             this.filesPanel.Controls.Add(this.differentialUpdateCheckBox);
             this.filesPanel.Controls.Add(this.filesDataTreeView);
             this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
@@ -1089,16 +1089,25 @@
             this.filesPanel.Size = new System.Drawing.Size(474, 235);
             this.filesPanel.TabIndex = 41;
             // 
+            // deltaPatchingCheckBox
+            // 
+            this.deltaPatchingCheckBox.AutoSize = true;
+            this.deltaPatchingCheckBox.Location = new System.Drawing.Point(381, 7);
+            this.deltaPatchingCheckBox.Name = "deltaPatchingCheckBox";
+            this.deltaPatchingCheckBox.Size = new System.Drawing.Size(84, 17);
+            this.deltaPatchingCheckBox.TabIndex = 7;
+            this.deltaPatchingCheckBox.Text = "Delta Patch";
+            this.deltaPatchingCheckBox.UseVisualStyleBackColor = true;
+            // 
             // differentialUpdateCheckBox
             // 
             this.differentialUpdateCheckBox.AutoSize = true;
-            this.differentialUpdateCheckBox.Location = new System.Drawing.Point(388, 7);
+            this.differentialUpdateCheckBox.Location = new System.Drawing.Point(293, 7);
             this.differentialUpdateCheckBox.Name = "differentialUpdateCheckBox";
             this.differentialUpdateCheckBox.Size = new System.Drawing.Size(84, 17);
             this.differentialUpdateCheckBox.TabIndex = 6;
             this.differentialUpdateCheckBox.Text = "Differential";
             this.differentialUpdateCheckBox.UseVisualStyleBackColor = true;
-            this.differentialUpdateCheckBox.Visible = false;
             // 
             // filesDataTreeView
             // 
@@ -1110,27 +1119,27 @@
             this.filesDataTreeView.LabelEdit = true;
             this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
             this.filesDataTreeView.Name = "filesDataTreeView";
-            treeNode1.ImageIndex = 0;
-            treeNode1.Name = "Knoten0";
-            treeNode1.SelectedImageIndex = 0;
-            treeNode1.Text = "Program directory";
-            treeNode2.ImageIndex = 0;
-            treeNode2.Name = "Knoten1";
-            treeNode2.SelectedImageIndex = 0;
-            treeNode2.Text = "AppData";
-            treeNode3.ImageIndex = 0;
-            treeNode3.Name = "Knoten2";
-            treeNode3.SelectedImageIndex = 0;
-            treeNode3.Text = "Temp directory";
-            treeNode4.ImageIndex = 0;
-            treeNode4.Name = "Knoten3";
-            treeNode4.SelectedImageIndex = 0;
-            treeNode4.Text = "Desktop";
+            treeNode9.ImageIndex = 0;
+            treeNode9.Name = "Knoten0";
+            treeNode9.SelectedImageIndex = 0;
+            treeNode9.Text = "Program directory";
+            treeNode10.ImageIndex = 0;
+            treeNode10.Name = "Knoten1";
+            treeNode10.SelectedImageIndex = 0;
+            treeNode10.Text = "AppData";
+            treeNode11.ImageIndex = 0;
+            treeNode11.Name = "Knoten2";
+            treeNode11.SelectedImageIndex = 0;
+            treeNode11.Text = "Temp directory";
+            treeNode12.ImageIndex = 0;
+            treeNode12.Name = "Knoten3";
+            treeNode12.SelectedImageIndex = 0;
+            treeNode12.Text = "Desktop";
             this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4});
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12});
             this.filesDataTreeView.SelectedImageIndex = 0;
             this.filesDataTreeView.ShowLines = false;
             this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
@@ -1149,9 +1158,7 @@
             this.addFilesButton,
             this.toolStripSeparator4,
             this.removeEntryButton,
-            this.toolStripSeparator9,
-            this.infoButton,
-            this.toolStripSeparator2});
+            this.toolStripSeparator9});
             this.replaceFilesToolStrip.Location = new System.Drawing.Point(3, 2);
             this.replaceFilesToolStrip.Name = "replaceFilesToolStrip";
             this.replaceFilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -1226,20 +1233,6 @@
             this.toolStripSeparator9.Name = "toolStripSeparator9";
             this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
             // 
-            // infoButton
-            // 
-            this.infoButton.Image = ((System.Drawing.Image)(resources.GetObject("infoButton.Image")));
-            this.infoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.infoButton.Name = "infoButton";
-            this.infoButton.Size = new System.Drawing.Size(90, 22);
-            this.infoButton.Text = "Information";
-            this.infoButton.Click += new System.EventHandler(this.infoButton_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
             // filesList
             // 
             this.filesList.BackColor = System.Drawing.SystemColors.Window;
@@ -1279,27 +1272,27 @@
             this.categoryTreeView.ItemHeight = 24;
             this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
             this.categoryTreeView.Name = "categoryTreeView";
-            treeNode5.ImageIndex = 2;
-            treeNode5.Name = "generalNode";
-            treeNode5.SelectedImageIndex = 2;
-            treeNode5.Text = "General";
-            treeNode6.ImageIndex = 3;
-            treeNode6.Name = "changelogNode";
-            treeNode6.SelectedImageIndex = 3;
-            treeNode6.Text = "Changelog";
-            treeNode7.ImageIndex = 0;
-            treeNode7.Name = "availabilityNode";
-            treeNode7.SelectedImageIndex = 0;
-            treeNode7.Text = "Availability";
-            treeNode8.ImageIndex = 4;
-            treeNode8.Name = "operationsNode";
-            treeNode8.SelectedImageIndex = 4;
-            treeNode8.Text = "Operations";
+            treeNode1.ImageIndex = 2;
+            treeNode1.Name = "generalNode";
+            treeNode1.SelectedImageIndex = 2;
+            treeNode1.Text = "General";
+            treeNode2.ImageIndex = 3;
+            treeNode2.Name = "changelogNode";
+            treeNode2.SelectedImageIndex = 3;
+            treeNode2.Text = "Changelog";
+            treeNode3.ImageIndex = 0;
+            treeNode3.Name = "availabilityNode";
+            treeNode3.SelectedImageIndex = 0;
+            treeNode3.Text = "Availability";
+            treeNode4.ImageIndex = 4;
+            treeNode4.Name = "operationsNode";
+            treeNode4.SelectedImageIndex = 4;
+            treeNode4.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1323,12 +1316,14 @@
             this.Controls.Add(this.categoryTreeView);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "PackageAddDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add new package - {0} - {1}";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PackageAddDialog_HelpButtonClicked);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackageAddDialog_FormClosing);
             this.Load += new System.EventHandler(this.PackageAddDialog_Load);
             this.loadingPanel.ResumeLayout(false);
@@ -1468,10 +1463,9 @@
         private System.Windows.Forms.ToolStripMenuItem addExistingFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addVirtualFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
-        private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
         private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.CheckBox deltaPatchingCheckBox;
 
     }
 }

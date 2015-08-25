@@ -1,7 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Administration.Core;
+using nUpdate.Administration;
 
 namespace nUpdate.Test
 {
@@ -12,8 +12,8 @@ namespace nUpdate.Test
         public void CanEncryptAndDecrypt()
         {
             const string password = "ILikeTrains";
-            byte[] encrypted = AesManager.Encrypt(password, "testKey", "testIV");
-            var decrypted = AesManager.Decrypt(encrypted, "testKey", "testIV");
+            byte[] encrypted = AESManager.Encrypt(password, "testKey", "testIV");
+            var decrypted = AESManager.Decrypt(encrypted, "testKey", "testIV");
             Assert.IsTrue(decrypted.ConvertToUnsecureString() == password);
             Assert.IsFalse(decrypted.ConvertToUnsecureString() == "NotThePassword");
         }

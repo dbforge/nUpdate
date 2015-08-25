@@ -395,6 +395,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             resources.ApplyResources(this.ftpPortTextBox, "ftpPortTextBox");
             this.ftpPortTextBox.Name = "ftpPortTextBox";
+            this.ftpPortTextBox.ShortcutsEnabled = false;
             this.ftpPortTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ftpPortTextBox_KeyPress);
             // 
             // ftpUserTextBox

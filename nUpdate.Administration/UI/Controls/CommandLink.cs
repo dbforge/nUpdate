@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.Win32;
 
 namespace nUpdate.Administration.UI.Controls
 {
@@ -24,10 +24,7 @@ namespace nUpdate.Administration.UI.Controls
             FlatStyle = FlatStyle.System;
         }
 
-        protected override Size DefaultSize
-        {
-            get { return new Size(180, 60); }
-        }
+        protected override Size DefaultSize => new Size(180, 60);
 
         protected override CreateParams CreateParams
         {

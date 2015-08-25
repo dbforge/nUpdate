@@ -10,26 +10,21 @@ namespace nUpdate.Administration.UI.Controls
     {
         public int CbSize;
         public ExplorerListViewGroupMask Mask;
-        [MarshalAs(UnmanagedType.LPWStr)] 
-        public string PszHeader;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszHeader;
         public int CchHeader;
-        [MarshalAs(UnmanagedType.LPWStr)] 
-        public string PszFooter;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszFooter;
         public int CchFooter;
         public int GroupId;
         public int StateMask;
         public ExplorerListViewGroupState State;
         public uint UAlign;
-        private IntPtr PszSubtitle;
+        private readonly IntPtr PszSubtitle;
         public uint CchSubtitle;
-        [MarshalAs(UnmanagedType.LPWStr)] 
-        public string PszTask;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszTask;
         public uint CchTask;
-        [MarshalAs(UnmanagedType.LPWStr)] 
-        public string PszDescriptionTop;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionTop;
         public uint CchDescriptionTop;
-        [MarshalAs(UnmanagedType.LPWStr)] 
-        public string PszDescriptionBottom;
+        [MarshalAs(UnmanagedType.LPWStr)] public string PszDescriptionBottom;
         public uint CchDescriptionBottom;
         public int TitleImage;
         public int ExtendedImage;

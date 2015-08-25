@@ -1,4 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
+
 using System;
 
 namespace nUpdate.UpdateEventArgs

@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Core;
 
 namespace nUpdate.Test
 {

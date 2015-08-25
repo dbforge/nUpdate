@@ -12,62 +12,40 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
-using nUpdate.Administration.Core.Ftp.Exceptions;
+using nUpdate.Administration.Application;
+using nUpdate.Administration.Ftp;
+using nUpdate.Administration.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+        private readonly FTPManager _ftp = new FTPManager();
         private bool _allowCancel;
-        private bool _mustClose;
+        private string _ftpAssemblyPath;
         private bool _generalTabPassed;
         private bool _isSetByUser = true;
-        //private LocalizationProperties _lp = new LocalizationProperties();
+        private int _lastSelectedIndex;
+        private bool _mustClose;
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
         private List<ProjectConfiguration> _projectConfiguration;
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
         private TabPage _sender;
-        private int _lastSelectedIndex;
-        private string _ftpAssemblyPath;
-        private readonly FtpManager _ftp = new FtpManager();
+        private string _sqlDatabaseName;
+        private string _sqlWebUrl;
+        private string _sqlUsername;
 
         public NewProjectDialog()
         {
             InitializeComponent();
         }
 
-        /// <summary>
-        ///     Returns the private key.
-        /// </summary>
         public string PrivateKey { get; set; }
-
-        /// <summary>
-        ///     Returns the public key.
-        /// </summary>
         public string PublicKey { get; set; }
-
-        /// <summary>
-        ///     The url of the SQL-connection.
-        /// </summary>
-        public string SqlWebUrl { get; set; }
-
-        /// <summary>
-        ///     The name of the SQL-database to use.
-        /// </summary>
-        public string SqlDatabaseName { get; set; }
-
-        /// <summary>
-        ///     The username for the SQL-login.
-        /// </summary>
-        public string SqlUsername { get; set; }
 
         public void SetUiState(bool enabled)
         {
@@ -191,71 +169,28 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             SetUiState(true);
-            if (_mustClose) 
+            if (_mustClose)
                 Invoke(new Action(Close));
         }
 
-        ///// <summary>
-        /////     Sets the language
-        ///// </summary>
-        //public void SetLanguage()
-        //{
-        //    string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-        //        String.Format("{0}.json", Settings.Default.Language.Name));
-        //    if (File.Exists(languageFilePath))
-        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-        //    else
-        //    {
-        //        string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-        //        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-        //        {
-        //            _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-        //        }
-        //    }
-
-        //    Text = _lp.NewProjectDialogTitle;
-        //    Text = String.Format(Text, _lp.ProductTitle);
-
-        //    cancelButton.Text = _lp.CancelButtonText;
-        //    continueButton.Text = _lp.ContinueButtonText;
-
-        //    keyPairHeaderLabel.Text = _lp.PanelSignatureHeader;
-        //    keyPairInfoLabel.Text = _lp.PanelSignatureInfoText;
-        //    keyPairGenerationLabel.Text = _lp.PanelSignatureWaitText;
-
-        //    generalHeaderLabel.Text = _lp.PanelGeneralHeader;
-        //    nameLabel.Text = _lp.PanelGeneralNameText;
-        //    nameTextBox.Cue = _lp.PanelGeneralNameWatermarkText;
-
-        //    ftpHeaderLabel.Text = _lp.PanelFtpHeader;
-        //    ftpHostLabel.Text = _lp.PanelFtpServerText;
-        //    ftpUserLabel.Text = _lp.PanelFtpUserText;
-        //    ftpUserTextBox.Cue = _lp.PanelFtpUserWatermarkText;
-        //    ftpPasswordLabel.Text = _lp.PanelFtpPasswordText;
-        //    ftpPortLabel.Text = _lp.PanelFtpPortText;
-        //    ftpPortTextBox.Cue = _lp.PanelFtpPortWatermarkText;
-        //}
-
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!WebConnection.IsAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
-                       "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
-                       PopupButtons.Ok);
+                    "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
+                    PopupButtons.Ok);
                 Close();
                 return;
             }
 
-            ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
-
-            //SetLanguage();
             Text = String.Format(Text, Program.VersionString);
             localPathTextBox.ButtonClicked += BrowsePathButtonClick;
             localPathTextBox.Initialize();
-            controlPanel1.Visible = false;
+
+            _projectConfiguration = ProjectConfiguration.Load().ToList();
             GenerateKeyPair();
 
             _isSetByUser = true;
@@ -297,30 +232,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                if (!_generalTabPassed)
-                {
-                    _projectConfiguration =
-                        ProjectConfiguration.Load().ToList();
-                    if (_projectConfiguration != null)
-                    {
-                        if (_projectConfiguration.Any(item => item.Name == nameTextBox.Text))
-                        {
-                            Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
-                                String.Format(
-                                    "The project \"{0}\" is already existing.",
-                                    nameTextBox.Text), PopupButtons.Ok);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        _projectConfiguration = new List<ProjectConfiguration>();
-                    }
-                }
-
                 if (!Uri.IsWellFormedUriString(updateUrlTextBox.Text, UriKind.Absolute))
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid adress.", "The given Update-URL is invalid.",
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid URL specified.", "The given Update-URL is invalid.",
                         PopupButtons.Ok);
                     return;
                 }
@@ -329,6 +243,20 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid path.",
                         "The given local path for the project is invalid.", PopupButtons.Ok);
+                    return;
+                }
+
+                if (Path.GetInvalidFileNameChars().Any(item => nameTextBox.Text.Contains(item))) // TODO: Check if this is necessary as the project name is no longer used for directories
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid project name.",
+                        "The given project name contains invalid chars.", PopupButtons.Ok);
+                    return;
+                }
+
+                if (Path.GetInvalidFileNameChars().Any(item => localPathTextBox.Text.Contains(item)))
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid project name.",
+                        "The given project file path contains invalid chars.", PopupButtons.Ok);
                     return;
                 }
 
@@ -381,7 +309,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if (SqlDatabaseName == null || String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
+                    if (_sqlDatabaseName == null || String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -431,12 +359,12 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         proxyUsername = proxyUserTextBox.Text;
                         if (!saveCredentialsCheckBox.Checked)
-                            proxyPassword = Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                            proxyPassword = Convert.ToBase64String(AESManager.Encrypt(proxyPasswordTextBox.Text,
                                 ftpPasswordTextBox.Text,
                                 ftpUserTextBox.Text));
                         else
                             proxyPassword =
-                                Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                                Convert.ToBase64String(AESManager.Encrypt(proxyPasswordTextBox.Text,
                                     Program.AesKeyPassword,
                                     Program.AesIvPassword));
                     }
@@ -446,12 +374,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (useStatisticsServerRadioButton.Checked)
                 {
                     if (!saveCredentialsCheckBox.Checked)
-                        sqlPassword = Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text,
+                        sqlPassword = Convert.ToBase64String(AESManager.Encrypt(sqlPasswordTextBox.Text,
                             ftpPasswordTextBox.Text,
                             ftpUserTextBox.Text));
                     else
                         sqlPassword =
-                            Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, Program.AesKeyPassword,
+                            Convert.ToBase64String(AESManager.Encrypt(sqlPasswordTextBox.Text, Program.AesKeyPassword,
                                 Program.AesIvPassword));
                 }
 
@@ -461,12 +389,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 string ftpPassword;
                 if (!saveCredentialsCheckBox.Checked)
-                    ftpPassword = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text,
+                    ftpPassword = Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text,
                         ftpPasswordTextBox.Text,
                         ftpUserTextBox.Text));
                 else
                     ftpPassword =
-                        Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword,
+                        Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword,
                             Program.AesIvPassword));
 
                 // Create a new package...
@@ -474,7 +402,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Path = localPathTextBox.Text,
                     Name = nameTextBox.Text,
-                    Guid = Guid.NewGuid().ToString(),
+                    Guid = Guid.NewGuid(),
                     ApplicationId = Settings.Default.ApplicationID,
                     UpdateUrl = updateUrlTextBox.Text,
                     Packages = null,
@@ -491,9 +419,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     ProxyUsername = proxyUsername,
                     ProxyPassword = proxyPassword,
                     UseStatistics = useStatisticsServerRadioButton.Checked,
-                    SqlDatabaseName = SqlDatabaseName,
-                    SqlWebUrl = SqlWebUrl,
-                    SqlUsername = SqlUsername,
+                    SqlDatabaseName = _sqlDatabaseName,
+                    SqlWebUrl = _sqlWebUrl,
+                    SqlUsername = _sqlUsername,
                     SqlPassword = sqlPassword,
                     PrivateKey = PrivateKey,
                     PublicKey = PublicKey,
@@ -548,9 +476,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         File.WriteAllBytes(phpFilePath, Resources.statistics);
 
                         var phpFileContent = File.ReadAllText(phpFilePath);
-                        phpFileContent = phpFileContent.Replace("_DBURL", SqlWebUrl);
-                        phpFileContent = phpFileContent.Replace("_DBUSER", SqlUsername);
-                        phpFileContent = phpFileContent.Replace("_DBNAME", SqlDatabaseName);
+                        phpFileContent = phpFileContent.Replace("_DBURL", _sqlWebUrl);
+                        phpFileContent = phpFileContent.Replace("_DBUSER", _sqlUsername);
+                        phpFileContent = phpFileContent.Replace("_DBNAME", _sqlDatabaseName);
                         phpFileContent = phpFileContent.Replace("_DBPASS", sqlPasswordTextBox.Text);
                         File.WriteAllText(phpFilePath, phpFileContent);
                         _phpFileCreated = true;
@@ -569,9 +497,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        /// <summary>
-        ///     Provides a new thread that sets up the project data.
-        /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2100:SQL-Abfragen auf Sicherheitsrisiken überprüfen")]
         private async void InitializeProject()
         {
@@ -609,8 +534,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 /*
-             *  Setup the "statistics.php" if necessary.
-             */
+                *  Setup the "statistics.php" if necessary.
+                */
 
                 var useStatistics = false;
                 Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
@@ -641,8 +566,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
 
                     /*
-             *  Setup the SQL-server and database.
-             */
+                    *  Setup the SQL-server and database.
+                    */
 
                     Invoke(
                         new Action(
@@ -691,7 +616,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                     #endregion
 
-                    setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
+                    setupString = setupString.Replace("_DBNAME", _sqlDatabaseName);
                     setupString = setupString.Replace("_APPNAME", name);
                     setupString = setupString.Replace("_APPID",
                         Settings.Default.ApplicationID.ToString(CultureInfo.InvariantCulture));
@@ -707,11 +632,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         string myConnectionString = null;
                         Invoke(new Action(() =>
                         {
-                            myConnectionString = String.Format("SERVER={0};" +
-                                                               "DATABASE={1};" +
-                                                               "UID={2};" +
-                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                                SqlUsername, sqlPasswordTextBox.Text);
+                            myConnectionString = $"SERVER={_sqlWebUrl};" + $"DATABASE={_sqlDatabaseName};" +
+                                                 $"UID={_sqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);
@@ -763,8 +685,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 }
 
                 SetUiState(true);
-                Invoke(new Action(
-                    Close));
+                Invoke(new Action(Close));
             });
         }
 
@@ -806,11 +727,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 return;
             }
 
-            var securePwd = new SecureString();
+            var securePassword = new SecureString();
             foreach (var sign in ftpPasswordTextBox.Text)
-            {
-                securePwd.AppendChar(sign);
-            }
+                securePassword.AppendChar(sign);
 
             var searchDialog = new DirectorySearchDialog
             {
@@ -819,14 +738,14 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 Port = int.Parse(ftpPortTextBox.Text),
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
-                Password = securePwd,
+                Password = securePassword,
                 Protocol = ftpProtocolComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)
                 ftpDirectoryTextBox.Text = searchDialog.SelectedDirectory;
 
-            securePwd.Dispose();
+            securePassword.Dispose();
             searchDialog.Close();
         }
 
@@ -844,7 +763,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
-                "All your passwords will be encrypted with AES 256. The key and initializing vector are your FTP-username and password, so you have to enter them each time you open the project.",
+                saveCredentialsCheckBox.Checked
+                    ? "All your passwords will be encrypted with AES 256 by using a hardcoded key and initialization vector."
+                    : "All your passwords will be encrypted with AES 256. The key and initialization vector are your FTP-username and password, so you have to enter them each time you open the project.",
                 PopupButtons.Ok);
         }
 
@@ -888,10 +809,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             if (statisticsServerDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            SqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
-            SqlWebUrl = statisticsServerDialog.SqlWebUrl;
-            SqlUsername = statisticsServerDialog.SqlUsername;
-            var sqlNameString = SqlDatabaseName;
+            _sqlDatabaseName = statisticsServerDialog.SqlDatabaseName;
+            _sqlWebUrl = statisticsServerDialog.SqlWebUrl;
+            _sqlUsername = statisticsServerDialog.SqlUsername;
+            var sqlNameString = _sqlDatabaseName;
             databaseNameLabel.Text = sqlNameString;
         }
 

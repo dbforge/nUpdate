@@ -6,10 +6,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -79,16 +77,14 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         ItemImage = imageList1.Images[0],
                         HeaderText = server.DatabaseName,
-                        ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
-                            server.WebUrl, server.DatabaseName)
+                        ItemText = $"Web-URL: \"{server.WebUrl}\" - Database: \"{server.DatabaseName}\""
                     };
 
                     serverList.Items.Add(listItem);
                 }
                 catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, String.Format("Error while loading \"{0}\"",
-                        server.DatabaseName), ex, PopupButtons.Ok);
+                    Popup.ShowPopup(this, SystemIcons.Error, $"Error while loading \"{server.DatabaseName}\"", ex, PopupButtons.Ok);
                     return false;
                 }
             }

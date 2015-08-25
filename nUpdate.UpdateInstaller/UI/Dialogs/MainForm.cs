@@ -39,7 +39,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
 
                 extractProgressBar.Value = (int) percentage;
                 copyingLabel.Text = String.Format(Program.CopyingText, currentFile);
-                percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
+                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
             }));
         }
 
@@ -48,8 +48,8 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(new Action(() =>
             {
                 extractProgressBar.Value = (int) percentage;
-                copyingLabel.Text = String.Format("{0}", currentOperation);
-                percentageLabel.Text = String.Format("{0}%", Math.Round(percentage, 1));
+                copyingLabel.Text = $"{currentOperation}";
+                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
             }));
         }
 
@@ -57,9 +57,9 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
         {
             Invoke(
                 new Action(
-                    () => 
+                    () =>
                         Popup.ShowPopup(this, SystemIcons.Error, Program.UpdatingErrorCaption,
-                        ex, PopupButtons.Ok)));
+                            ex, PopupButtons.Ok)));
         }
 
         public void InitializingFail(Exception ex)

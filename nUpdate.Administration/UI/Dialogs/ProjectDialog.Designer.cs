@@ -94,7 +94,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.addButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -122,6 +121,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel = new System.Windows.Forms.Label();
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.updateStatisticsButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.addButton = new System.Windows.Forms.ToolStripSplitButton();
+            this.addPackageToolStripButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTemplateToolStripButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.packageFromTemplateToolStripButton = new System.Windows.Forms.ToolStripMenuItem();
             this.projectDataPartsTabControl.SuspendLayout();
             this.overviewTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.checkingUrlPictureBox)).BeginInit();
@@ -745,18 +748,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // addButton
-            // 
-            this.addButton.AutoToolTip = false;
-            this.addButton.Image = ((System.Drawing.Image)(resources.GetObject("addButton.Image")));
-            this.addButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(52, 22);
-            this.addButton.Text = "Add ";
-            this.addButton.ToolTipText = "Add a new update package that contains updated files/folders and/or operations to" +
-    " perform.";
-            this.addButton.Click += new System.EventHandler(this.addButton_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -1014,6 +1005,38 @@ namespace nUpdate.Administration.UI.Dialogs
             this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
             // 
+            // addButton
+            // 
+            this.addButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addPackageToolStripButton,
+            this.packageFromTemplateToolStripButton,
+            this.addTemplateToolStripButton});
+            this.addButton.Image = ((System.Drawing.Image)(resources.GetObject("addButton.Image")));
+            this.addButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(61, 22);
+            this.addButton.Text = "Add";
+            this.addButton.ButtonClick += new System.EventHandler(this.addButton_Click);
+            // 
+            // addPackageToolStripButton
+            // 
+            this.addPackageToolStripButton.Name = "addPackageToolStripButton";
+            this.addPackageToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.addPackageToolStripButton.Text = "Add package";
+            this.addPackageToolStripButton.Click += new System.EventHandler(this.addButton_Click);
+            // 
+            // addTemplateToolStripButton
+            // 
+            this.addTemplateToolStripButton.Name = "addTemplateToolStripButton";
+            this.addTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.addTemplateToolStripButton.Text = "Add template";
+            // 
+            // packageFromTemplateToolStripButton
+            // 
+            this.packageFromTemplateToolStripButton.Name = "packageFromTemplateToolStripButton";
+            this.packageFromTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.packageFromTemplateToolStripButton.Text = "Add package from template";
+            // 
             // ProjectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1062,7 +1085,6 @@ namespace nUpdate.Administration.UI.Dialogs
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton addButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton editButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -1144,5 +1166,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uploadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSplitButton addButton;
+        private System.Windows.Forms.ToolStripMenuItem addPackageToolStripButton;
+        private System.Windows.Forms.ToolStripMenuItem packageFromTemplateToolStripButton;
+        private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripButton;
     }
 }

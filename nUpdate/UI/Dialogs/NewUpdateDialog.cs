@@ -9,21 +9,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
-using nUpdate.Core.Operations;
-using nUpdate.Core.Win32;
+using nUpdate.Localization;
+using nUpdate.Operations;
 using nUpdate.Updating;
-using nUpdate.UI.Popups;
+using nUpdate.Win32;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class NewUpdateDialog : BaseDialog
     {
         private const float GB = 1073741824;
+        private const int MB = 1048576;
+        private const int KB = 1024;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private bool _allowCancel;
         private LocalizationProperties _lp;
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public NewUpdateDialog()
         {
@@ -83,7 +83,7 @@ namespace nUpdate.UI.Dialogs
             }
             else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
@@ -94,18 +94,42 @@ namespace nUpdate.UI.Dialogs
                 _lp = new LocalizationProperties();
             }
 
-            headerLabel.Text = String.Format(PackageConfigurations.Count() > 1 ? _lp.NewUpdateDialogMultipleUpdatesHeader : _lp.NewUpdateDialogSingleUpdateHeader, PackageConfigurations.Count());
+            headerLabel.Text =
+                String.Format(
+                    PackageConfigurations.Count() > 1
+                        ? _lp.NewUpdateDialogMultipleUpdatesHeader
+                        : _lp.NewUpdateDialogSingleUpdateHeader, PackageConfigurations.Count());
             infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
-            var availableVersions = PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
-            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogAvailableVersionsText, PackageConfigurations.Count() <= 2 ? String.Join(", ", availableVersions.Select(item => item.FullText)) : String.Format("{0} - {1}", UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText, UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText));
+            var availableVersions =
+                PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
+            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogAvailableVersionsText,
+                PackageConfigurations.Count() <= 2
+                    ? String.Join(", ", availableVersions.Select(item => item.FullText))
+                    : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText}");
             currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            var size = SizeHelper.ConvertSize(PackageSize);
-            updateSizeLabel.Text = String.Format("{0} {1}",
-                    String.Format(_lp.NewUpdateDialogSizeText, size.Item1), size.Item2);
+            if (PackageSize >= 107374182.4)
+            {
+                double packageSizeInMb = Math.Round((PackageSize/GB), 1);
+                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"GB"}";
+            }
+            else if (PackageSize >= 104857.6)
+            {
+                double packageSizeInMb = Math.Round((PackageSize/MB), 1);
+                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"MB"}";
+            }
+            else if (PackageSize >= 102.4)
+            {
+                double packageSizeInKb = Math.Round((PackageSize/KB), 1);
+                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb)} {"KB"}";
+            }
+            else if (PackageSize >= 1)
+            {
+                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, PackageSize)} {"B"}";
+            }
 
             Icon = _appIcon;
             Text = Application.ProductName;
@@ -115,11 +139,9 @@ namespace nUpdate.UI.Dialogs
             foreach (var updateConfiguration in PackageConfigurations)
             {
                 var versionText = new UpdateVersion(updateConfiguration.LiteralVersion).FullText;
-                var changelogText = updateConfiguration.Changelog.ContainsKey(new CultureInfo(LanguageName)) ? updateConfiguration.Changelog.First(item => item.Key.Name == LanguageName).Value :
-                updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
-
-                if (PackageSize > GB)
-                    changelogTextBox.Text += _lp.NewUpdateDialogBigPackageWarning;
+                var changelogText = updateConfiguration.Changelog.ContainsKey(new CultureInfo(LanguageName))
+                    ? updateConfiguration.Changelog.First(item => item.Key.Name == LanguageName).Value
+                    : updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
 
                 changelogTextBox.Text +=
                     String.Format(String.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
@@ -129,23 +151,19 @@ namespace nUpdate.UI.Dialogs
 
             if (OperationAreas == null || OperationAreas.Count == 0)
             {
-                accessLabel.Text = String.Format("{0} -", _lp.NewUpdateDialogAccessText);
+                accessLabel.Text = $"{_lp.NewUpdateDialogAccessText} -";
                 _allowCancel = true;
                 return;
             }
 
-            accessLabel.Text = String.Format("{0} {1}", _lp.NewUpdateDialogAccessText,
-                String.Join(", ",
-                    LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray())));
+            accessLabel.Text =
+                $"{_lp.NewUpdateDialogAccessText} {String.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
             _allowCancel = true;
         }
 
         public void ShowModalDialog(object dialogResultReference)
         {
-            if (dialogResultReference != null)
-                ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
+            ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
         }
 
         public void CloseDialog(object state)
@@ -155,15 +173,6 @@ namespace nUpdate.UI.Dialogs
 
         private void installButton_Click(object sender, EventArgs e)
         {
-            double necessarySpaceToFree;
-            if (!SizeHelper.HasEnoughSpace(PackageSize, out necessarySpaceToFree))
-            {
-                var packageSizeData = SizeHelper.ConvertSize(PackageSize);
-                var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
-                Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.", String.Format("You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({0} {1}). Please free a minimum of {2} {3} to make sure the updates can be downloaded and installed without any problems.", packageSizeData.Item1, packageSizeData.Item2, spaceToFreeData.Item1, spaceToFreeData.Item2), PopupButtons.Ok);
-                return;
-            }
-
             _allowCancel = true;
             DialogResult = DialogResult.OK;
             Close();

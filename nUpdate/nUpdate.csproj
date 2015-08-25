@@ -75,6 +75,7 @@
       <HintPath>..\..\..\..\..\..\Downloads\Json60r4\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO">
       <HintPath>..\packages\Microsoft.Bcl.1.1.8\lib\net40\System.IO.dll</HintPath>
@@ -88,28 +89,26 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Architecture.cs" />
-    <Compile Include="Core\DevelopmentalStage.cs" />
-    <Compile Include="Core\SizeHelper.cs" />
-    <Compile Include="Core\IDeepCopy.cs" />
-    <Compile Include="Core\Localization\LocalizationHelper.cs" />
-    <Compile Include="Core\Localization\LocalizationProperties.cs" />
-    <Compile Include="Core\nUpdateVersionAttribute.cs" />
-    <Compile Include="Core\Win32\NativeMethods.cs" />
-    <Compile Include="Core\Operations\Operation.cs" />
-    <Compile Include="Core\Operations\OperationArea.cs" />
-    <Compile Include="Core\Operations\OperationMethod.cs" />
-    <Compile Include="Core\RsaManager.cs" />
-    <Compile Include="Core\Serializer.cs" />
-    <Compile Include="Core\SystemInformation.cs" />
-    <Compile Include="Core\WebClientWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Architecture.cs" />
+    <Compile Include="WebConnection.cs" />
+    <Compile Include="Localization\LocalizationHelper.cs" />
+    <Compile Include="Localization\LocalizationProperties.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Operations\Operation.cs" />
+    <Compile Include="Operations\OperationArea.cs" />
+    <Compile Include="Operations\OperationMethod.cs" />
+    <Compile Include="DevelopmentalStage.cs" />
     <Compile Include="Exceptions\PackageDeleteException.cs" />
     <Compile Include="Exceptions\SizeCalculationException.cs" />
     <Compile Include="Exceptions\StatisticsException.cs" />
+    <Compile Include="IDeepCopy.cs" />
+    <Compile Include="nUpdateVersionAttribute.cs" />
+    <Compile Include="RsaManager.cs" />
+    <Compile Include="Serializer.cs" />
+    <Compile Include="SystemInformation.cs" />
     <Compile Include="UI\Dialogs\DialogResultReference.cs" />
     <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
@@ -126,10 +125,7 @@
     <Compile Include="UI\Dialogs\BaseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Controls\BottomPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Core\ConnectionChecker.cs" />
+    <Compile Include="UI\Controls\BottomPanel.cs" />
     <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,7 +157,6 @@
     </Compile>
     <Compile Include="Updating\UpdateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\UriConnector.cs" />
     <Compile Include="UI\Popups\Popup.cs" />
     <Compile Include="UI\Popups\PopupButtons.cs" />
     <Compile Include="UI\Popups\PopupDialog.cs">
@@ -169,6 +164,10 @@
     </Compile>
     <Compile Include="UI\Popups\PopupDialog.designer.cs">
       <DependentUpon>PopupDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UriConnector.cs" />
+    <Compile Include="WebClientWrapper.cs">
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -200,14 +199,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Core\Localization\de-DE.json" />
+    <EmbeddedResource Include="Localization\de-DE.json" />
     <None Include="app.config" />
+    <None Include="Localization\fr-FR.json" />
     <None Include="Updating\UpdaterUI.cd" />
     <None Include="packages.config" />
     <None Include="Updating\UpdateVersion.cd" />
     <None Include="Updating\UpdateManager.cd" />
-    <EmbeddedResource Include="Core\Localization\de-AT.json" />
-    <EmbeddedResource Include="Core\Localization\de-CH.json" />
+    <EmbeddedResource Include="Localization\de-AT.json" />
+    <EmbeddedResource Include="Localization\de-CH.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\en.xml" />
@@ -229,9 +229,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate UpdateInstaller.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

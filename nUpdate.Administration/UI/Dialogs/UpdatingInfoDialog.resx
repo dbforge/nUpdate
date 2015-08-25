@@ -121,7 +121,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAKkAAABgCAYAAABmMlJTAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vgAADr4B6kKxwAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
+        vQAADr0BR/uQrQAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
         LmRlIC0gKEMpIG5pa2VlZSBTb2Z0d2FyZSAtIDIwMTQREBEQERAREBEQERARxXx6WCPMSIzwIwAAB9tJ
         REFUeF7tnS1zIzkQhvN37i8YHjx48OhVmSw8uPTgAoOFSxcGJiw00DAkVaGGhoaz3frwtDQtzWRHPat4
         36dKtzOjluRYjzXjKvX5bgCgcyAp6B5TSc+nl+H08rCocCwAGqaSsnzDhcv9TPGiAqCxgaQk4fl7vVAM
@@ -160,7 +160,7 @@
 </value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>No whole directories are replaced, only th files will be copied and replace old ones if necessary.
+    <value>No whole directories are replaced, only the files will be copied and replace old ones if necessary.
 If your data is stored in a folder that can be found in e. g. %appdata%, then make sure to add a 
 virtual folder with an equal name. For example "%appdata%\myfolder\test.exe" would require a
 virtual folder which is called "myfolder".</value>
@@ -181,7 +181,7 @@ virtual folder which is called "myfolder".</value>
         9/////f3///3+fv9/P3+////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoiHTUQAAAAlwSFlzAAAO
-        vwAADr8BOAVTJAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
+        vgAADr4B6kKxwAAAAF10RVh0U291cmNlAEhvbHpTaG90cyB2MC45LjguMTIgLSB3d3cuaG9senNob3Rz
         LmRlIC0gKEMpIG5pa2VlZSBTb2Z0d2FyZSAtIDIwMTT//////8zMzP/MzMz/znx6WCPMlFlQgQAAABZ0
         RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMDvo9WkAAAnsSURBVHhe7Z2JfxTVHcAnarVIqy2G1gYvKC09
         aGmFtIKgRvwQbNNjrSKfmrZIbYEYsLT0A2IDijeQNCqCRgz2Qg7ZLG0NJbYbArhQKvM3+bvem9nZN2F2

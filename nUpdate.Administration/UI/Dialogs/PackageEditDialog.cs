@@ -13,30 +13,55 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
-using nUpdate.Administration.Core.Operations.Panels;
+using Newtonsoft.Json.Linq;
+using nUpdate.Administration.Application;
+using nUpdate.Administration.Ftp;
+using nUpdate.Administration.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
-using nUpdate.Core.Operations;
+using nUpdate.Operations;
 using nUpdate.Updating;
-using Newtonsoft.Json.Linq;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PackageEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private bool _allowCancel = true;
-        private bool _commandsExecuted;
-        private bool _configurationUploaded;
-        private string _existingVersionString;
-        private string _newPackageDirectory;
-        private string _oldPackageDirectoryPath;
-        private UpdateConfiguration _packageConfiguration;
-        private UpdateVersion _newVersion;
+        private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry subkey", 14, 14)
+        {
+            Tag = "CreateRegistrySubKey"
+        };
+
+        private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
+        private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
+
+        private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry subkey", 12, 12)
+        {
+            Tag = "DeleteRegistrySubKey"
+        };
+
+        private readonly TreeNode _deleteRegistryValueNode = new TreeNode("Delete registry value", 12, 12)
+        {
+            Tag = "DeleteRegistryValue"
+        };
+
+        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 15, 15) {Tag = "ExecuteScript"};
+
+        private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
+
+        private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry value", 13, 13)
+        {
+            Tag = "SetRegistryValue"
+        };
+
+        private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
+        private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
+        private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
+
+        private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
+        {Tag = "StopProcess"};
+
+        private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -53,38 +78,15 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public SecureString SqlPassword = new SecureString();
 
-        private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry subkey", 14, 14)
-        {
-            Tag = "CreateRegistrySubKey"
-        };
-
-        private readonly List<CultureInfo> _cultures = new List<CultureInfo>();
-        private readonly TreeNode _deleteNode = new TreeNode("Delete file", 9, 9) {Tag = "DeleteFile"};
-        private readonly TreeNode _deleteRegistrySubKeyNode = new TreeNode("Delete registry subkey", 12, 12)
-        {
-            Tag = "DeleteRegistrySubKey"
-        };
-
-        private readonly TreeNode _deleteRegistryValueNode = new TreeNode("Delete registry value", 12, 12)
-        {
-            Tag = "DeleteRegistryValue"
-        };
-
-        private FtpManager _ftp;
-        private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
-        private readonly TreeNode _setRegistryValueNode = new TreeNode("Set registry value", 13, 13)
-        {
-            Tag = "SetRegistryValue"
-        };
-
-        private readonly TreeNode _startProcessNode = new TreeNode("Start process", 8, 8) {Tag = "StartProcess"};
-        private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
-        private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
-        private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
-        {Tag = "StopProcess"};
-        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 15, 15) { Tag = "ExecuteScript" };
-
-        private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
+        private bool _allowCancel = true;
+        private bool _commandsExecuted;
+        private bool _configurationUploaded;
+        private string _existingVersionString;
+        private FTPManager _ftp;
+        private string _newPackageDirectory;
+        private UpdateVersion _newVersion;
+        private string _oldPackageDirectoryPath;
+        private UpdateConfiguration _packageConfiguration;
 
         public PackageEditDialog()
         {
@@ -153,13 +155,9 @@ namespace nUpdate.Administration.UI.Dialogs
             if (_commandsExecuted)
             {
                 Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
+                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                       $"UID={Project.SqlUsername};" +
+                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                 var myConnection = new MySqlConnection(connectionString);
                 try
@@ -193,8 +191,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var command = myConnection.CreateCommand();
                 command.CommandText =
-                    String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
-                        PackageVersion, _packageConfiguration.VersionId);
+                    $"UPDATE Version SET `Version` = \"{PackageVersion}\" WHERE `ID` = {_packageConfiguration.VersionId};";
 
                 try
                 {
@@ -244,15 +241,16 @@ namespace nUpdate.Administration.UI.Dialogs
             Text = String.Format(Text, PackageVersion.FullText, Program.VersionString);
 
             try
-            { 
-            _ftp =
-                    new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
+            {
+                _ftp =
+                    new FTPManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                         FtpPassword,
-                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath, Project.FtpProtocol);
-            if (!String.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
-                _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
-            else
-                _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
+                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
+                        Project.FtpProtocol);
+                if (!String.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
+                    _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
+                else
+                    _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
             }
             catch (Exception ex)
             {
@@ -308,7 +306,8 @@ namespace nUpdate.Administration.UI.Dialogs
             necessaryUpdateCheckBox.Checked = _packageConfiguration.NecessaryUpdate;
             includeIntoStatisticsCheckBox.Enabled = Project.UseStatistics;
             includeIntoStatisticsCheckBox.Checked = _packageConfiguration.UseStatistics;
-            foreach (var package in Project.Packages.Where(package => new UpdateVersion(package.Version) == packageVersion))
+            foreach (
+                var package in Project.Packages.Where(package => new UpdateVersion(package.Version) == packageVersion))
             {
                 descriptionTextBox.Text = package.Description;
             }
@@ -317,7 +316,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
             foreach (var info in cultureInfos)
             {
-                changelogLanguageComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
+                changelogLanguageComboBox.Items.Add($"{info.EnglishName} - {info.Name}");
                 _cultures.Add(info);
             }
 
@@ -497,9 +496,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
 
                     case "ExecuteScript":
-                        categoryTreeView.Nodes[3].Nodes.Add((TreeNode)_executeScriptNode.Clone());
+                        categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
 
-                        var executeScriptPage = new TabPage("Execute script") { BackColor = SystemColors.Window };
+                        var executeScriptPage = new TabPage("Execute script") {BackColor = SystemColors.Window};
                         executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel
                         {
                             Code = operation.Value
@@ -571,12 +570,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (Project.Packages != null && Project.Packages.Count != 0)
             {
-                if (PackageVersion != _newVersion && Project.Packages.Any(item => new UpdateVersion(item.Version) == _newVersion))
+                if (PackageVersion != _newVersion &&
+                    Project.Packages.Any(item => new UpdateVersion(item.Version) == _newVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
-                        String.Format(
-                            "Version \"{0}\" is already existing.",
-                            _newVersion.FullText), PopupButtons.Ok);
+                        $"Version \"{_newVersion.FullText}\" is already existing.", PopupButtons.Ok);
                     generalPanel.BringToFront();
                     categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                     return;
@@ -654,8 +652,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _packageConfiguration.UnsupportedVersions = unsupportedVersionLiterals;
             _packageConfiguration.LiteralVersion = _newVersion.ToString();
-            _packageConfiguration.UpdatePackageUri = new Uri(String.Format("{0}/{1}.zip",
-                UriConnector.ConnectUri(Project.UpdateUrl, _packageConfiguration.LiteralVersion), Project.Guid));
+            _packageConfiguration.UpdatePackageUri = new Uri(
+                $"{UriConnector.ConnectUri(Project.UpdateUrl, _packageConfiguration.LiteralVersion)}/{Project.Guid}.zip");
 
             _newPackageDirectory = Path.Combine(Program.Path, "Projects", Project.Name,
                 _newVersion.ToString());
@@ -711,13 +709,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                    var connectionString = String.Format("SERVER={0};" +
-                                                         "DATABASE={1};" +
-                                                         "UID={2};" +
-                                                         "PASSWORD={3};",
-                        Project.SqlWebUrl, Project.SqlDatabaseName,
-                        Project.SqlUsername,
-                        SqlPassword.ConvertToUnsecureString());
+                    var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                           $"UID={Project.SqlUsername};" +
+                                           $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                     var myConnection = new MySqlConnection(connectionString);
                     try
@@ -751,8 +745,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var command = myConnection.CreateCommand();
                     command.CommandText =
-                        String.Format("UPDATE Version SET `Version` = \"{0}\" WHERE `ID` = {1};",
-                            _newVersion, _packageConfiguration.VersionId);
+                        $"UPDATE Version SET `Version` = \"{_newVersion}\" WHERE `ID` = {_packageConfiguration.VersionId};";
 
                     try
                     {
@@ -800,13 +793,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     string description = null;
                     Invoke(new Action(() => description = descriptionTextBox.Text));
-                    Project.Packages.First(item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString)).
+                    Project.Packages.First(
+                        item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString)).
                         Description = description;
                     if (_newVersion != new UpdateVersion(_existingVersionString))
                     {
-                        Project.Packages.First(item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString))
-                            .LocalPackagePath
-                            = String.Format("{0}\\{1}.zip", _newPackageDirectory, Project.Guid);
                         Project.Packages.First(item => item.Version == _existingVersionString)
                             .Version = _packageConfiguration.LiteralVersion;
                     }

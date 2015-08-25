@@ -2,7 +2,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -14,7 +14,7 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The update project in the current state.
+        ///     Gets or sets the <see cref="UpdateProject"/> in its current state.
         /// </summary>
         public UpdateProject Project { get; set; }
 

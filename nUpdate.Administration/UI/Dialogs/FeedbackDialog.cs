@@ -3,9 +3,7 @@
 using System;
 using System.Drawing;
 using System.Net.Mail;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -57,15 +55,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     responseString =
                         client.DownloadString(
-                            String.Format(
-                                "http://www.nupdate.net/mail.php?name={0}&sender={1}&content={2}",
-                                nameTextBox.Text, emailTextBox.Text, contentTextBox.Text));
+                            $"http://www.nupdate.net/mail.php?name={nameTextBox.Text}&sender={emailTextBox.Text}&content={contentTextBox.Text}");
                 }
 
                 if (!String.IsNullOrEmpty(responseString) && responseString != "\n")
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.",
-                        String.Format("Please report this message: {0}", responseString), PopupButtons.Ok);
+                        $"Please report this message: {responseString}", PopupButtons.Ok);
                     return;
                 }
 

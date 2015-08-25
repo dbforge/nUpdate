@@ -99,7 +99,7 @@
             this.label5.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(198, 120);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(87, 13);
+            this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 12;
             this.label5.Text = "Temp directory:";
             // 
@@ -159,7 +159,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 186);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(501, 52);
+            this.label1.Size = new System.Drawing.Size(503, 52);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             // 

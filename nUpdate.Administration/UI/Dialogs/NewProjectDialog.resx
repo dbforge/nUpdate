@@ -174,6 +174,42 @@
   <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="&gt;&gt;backButton.Name" xml:space="preserve">
+    <value>backButton</value>
+  </data>
+  <data name="&gt;&gt;backButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;backButton.Parent" xml:space="preserve">
+    <value>controlPanel1</value>
+  </data>
+  <data name="&gt;&gt;backButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="controlPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 217</value>
+  </data>
+  <data name="controlPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>502, 40</value>
+  </data>
+  <data name="controlPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="controlPanel1.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;controlPanel1.Name" xml:space="preserve">
+    <value>controlPanel1</value>
+  </data>
+  <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
+    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;controlPanel1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="backButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -204,26 +240,631 @@
   <data name="&gt;&gt;backButton.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="controlPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 217</value>
+  <data name="&gt;&gt;keyPairPanel.Name" xml:space="preserve">
+    <value>keyPairPanel</value>
   </data>
-  <data name="controlPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>502, 40</value>
+  <data name="&gt;&gt;keyPairPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="controlPanel1.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+  <data name="&gt;&gt;keyPairPanel.Parent" xml:space="preserve">
+    <value>keyPairTabPage</value>
   </data>
-  <data name="&gt;&gt;controlPanel1.Name" xml:space="preserve">
-    <value>controlPanel1</value>
+  <data name="&gt;&gt;keyPairPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
-    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="keyPairTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
   </data>
-  <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
+  <data name="keyPairTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="keyPairTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 195</value>
+  </data>
+  <data name="keyPairTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="keyPairTabPage.Text" xml:space="preserve">
+    <value>Key pair</value>
+  </data>
+  <data name="&gt;&gt;keyPairTabPage.Name" xml:space="preserve">
+    <value>keyPairTabPage</value>
+  </data>
+  <data name="&gt;&gt;keyPairTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairTabPage.Parent" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;keyPairTabPage.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Name" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Parent" xml:space="preserve">
+    <value>generalTabPage</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="generalTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="generalTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="generalTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 195</value>
+  </data>
+  <data name="generalTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="generalTabPage.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="&gt;&gt;generalTabPage.Name" xml:space="preserve">
+    <value>generalTabPage</value>
+  </data>
+  <data name="&gt;&gt;generalTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;generalTabPage.Parent" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;generalTabPage.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.Name" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.Parent" xml:space="preserve">
+    <value>ftpTabPage</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ftpTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="ftpTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ftpTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 195</value>
+  </data>
+  <data name="ftpTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="ftpTabPage.Text" xml:space="preserve">
+    <value>FTP</value>
+  </data>
+  <data name="&gt;&gt;ftpTabPage.Name" xml:space="preserve">
+    <value>ftpTabPage</value>
+  </data>
+  <data name="&gt;&gt;ftpTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpTabPage.Parent" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;ftpTabPage.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="line2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 128</value>
+  </data>
+  <data name="line2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>481, 10</value>
+  </data>
+  <data name="line2.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="line2.Text" xml:space="preserve">
+    <value>line2</value>
+  </data>
+  <data name="&gt;&gt;line2.Name" xml:space="preserve">
+    <value>line2</value>
+  </data>
+  <data name="&gt;&gt;line2.Type" xml:space="preserve">
+    <value>nUpdate.UI.Controls.Line, nUpdate, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;line2.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;line2.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="selectServerButton.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="selectServerButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="selectServerButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>358, 104</value>
+  </data>
+  <data name="selectServerButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 23</value>
+  </data>
+  <data name="selectServerButton.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="selectServerButton.Text" xml:space="preserve">
+    <value>Select server...</value>
+  </data>
+  <data name="&gt;&gt;selectServerButton.Name" xml:space="preserve">
+    <value>selectServerButton</value>
+  </data>
+  <data name="&gt;&gt;selectServerButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;selectServerButton.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;selectServerButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 38</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>476, 46</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>62</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>If you would like to receive stats about the downloads of your update packages, then you 
+can configurate a statistics server here. All you need is PHP and a MySQL-database with
+external access.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>26, 87</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 17</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.TabIndex" type="System.Int32, mscorlib">
+    <value>61</value>
+  </data>
+  <data name="doNotUseStatisticsServerButton.Text" xml:space="preserve">
+    <value>Don't use a statistics server</value>
+  </data>
+  <data name="&gt;&gt;doNotUseStatisticsServerButton.Name" xml:space="preserve">
+    <value>doNotUseStatisticsServerButton</value>
+  </data>
+  <data name="&gt;&gt;doNotUseStatisticsServerButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;doNotUseStatisticsServerButton.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;doNotUseStatisticsServerButton.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>26, 107</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 17</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.TabIndex" type="System.Int32, mscorlib">
+    <value>60</value>
+  </data>
+  <data name="useStatisticsServerRadioButton.Text" xml:space="preserve">
+    <value>Use a statistics server</value>
+  </data>
+  <data name="&gt;&gt;useStatisticsServerRadioButton.Name" xml:space="preserve">
+    <value>useStatisticsServerRadioButton</value>
+  </data>
+  <data name="&gt;&gt;useStatisticsServerRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;useStatisticsServerRadioButton.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;useStatisticsServerRadioButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label8.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 11.25pt</value>
+  </data>
+  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 9</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 20</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value>Statistics server</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+    <value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="databaseNameLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="databaseNameLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="databaseNameLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>118, 5</value>
+  </data>
+  <data name="databaseNameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>11, 13</value>
+  </data>
+  <data name="databaseNameLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="databaseNameLabel.Text" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="&gt;&gt;databaseNameLabel.Name" xml:space="preserve">
+    <value>databaseNameLabel</value>
+  </data>
+  <data name="&gt;&gt;databaseNameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;databaseNameLabel.Parent" xml:space="preserve">
+    <value>statisticsInfoPanel</value>
+  </data>
+  <data name="&gt;&gt;databaseNameLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="sqlPasswordTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>121, 30</value>
+  </data>
+  <data name="sqlPasswordTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>169, 22</value>
+  </data>
+  <data name="sqlPasswordTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;sqlPasswordTextBox.Name" xml:space="preserve">
+    <value>sqlPasswordTextBox</value>
+  </data>
+  <data name="&gt;&gt;sqlPasswordTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;sqlPasswordTextBox.Parent" xml:space="preserve">
+    <value>statisticsInfoPanel</value>
+  </data>
+  <data name="&gt;&gt;sqlPasswordTextBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 33</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 19</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>statisticsInfoPanel</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="statisticsServerLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="statisticsServerLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 5</value>
+  </data>
+  <data name="statisticsServerLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>78, 18</value>
+  </data>
+  <data name="statisticsServerLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="statisticsServerLabel.Text" xml:space="preserve">
+    <value>Database: </value>
+  </data>
+  <data name="&gt;&gt;statisticsServerLabel.Name" xml:space="preserve">
+    <value>statisticsServerLabel</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerLabel.Parent" xml:space="preserve">
+    <value>statisticsInfoPanel</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="statisticsInfoPanel.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="statisticsInfoPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>26, 146</value>
+  </data>
+  <data name="statisticsInfoPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>302, 60</value>
+  </data>
+  <data name="statisticsInfoPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>59</value>
+  </data>
+  <data name="&gt;&gt;statisticsInfoPanel.Name" xml:space="preserve">
+    <value>statisticsInfoPanel</value>
+  </data>
+  <data name="&gt;&gt;statisticsInfoPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statisticsInfoPanel.Parent" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;statisticsInfoPanel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="statisticsServerTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="statisticsServerTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="statisticsServerTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 195</value>
+  </data>
+  <data name="statisticsServerTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="statisticsServerTabPage.Text" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerTabPage.Name" xml:space="preserve">
+    <value>statisticsServerTabPage</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerTabPage.Parent" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;statisticsServerTabPage.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;doNotUseProxyRadioButton.Name" xml:space="preserve">
+    <value>doNotUseProxyRadioButton</value>
+  </data>
+  <data name="&gt;&gt;doNotUseProxyRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;doNotUseProxyRadioButton.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;doNotUseProxyRadioButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;useProxyRadioButton.Name" xml:space="preserve">
+    <value>useProxyRadioButton</value>
+  </data>
+  <data name="&gt;&gt;useProxyRadioButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;useProxyRadioButton.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;useProxyRadioButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;proxyHeaderLabel.Name" xml:space="preserve">
+    <value>proxyHeaderLabel</value>
+  </data>
+  <data name="&gt;&gt;proxyHeaderLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyHeaderLabel.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;proxyHeaderLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Name" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="proxyTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="proxyTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="proxyTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 195</value>
+  </data>
+  <data name="proxyTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="proxyTabPage.Text" xml:space="preserve">
+    <value>Proxy</value>
+  </data>
+  <data name="&gt;&gt;proxyTabPage.Name" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;proxyTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyTabPage.Parent" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;proxyTabPage.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="informationCategoriesTabControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="informationCategoriesTabControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>503, 221</value>
+  </data>
+  <data name="informationCategoriesTabControl.TabIndex" type="System.Int32, mscorlib">
+    <value>25</value>
+  </data>
+  <data name="&gt;&gt;informationCategoriesTabControl.Name" xml:space="preserve">
+    <value>informationCategoriesTabControl</value>
+  </data>
+  <data name="&gt;&gt;informationCategoriesTabControl.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.TablessTabControl, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;informationCategoriesTabControl.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;controlPanel1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;informationCategoriesTabControl.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;keyPairGenerationLabel.Name" xml:space="preserve">
+    <value>keyPairGenerationLabel</value>
+  </data>
+  <data name="&gt;&gt;keyPairGenerationLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairGenerationLabel.Parent" xml:space="preserve">
+    <value>keyPairPanel</value>
+  </data>
+  <data name="&gt;&gt;keyPairGenerationLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;keyPairHeaderLabel.Name" xml:space="preserve">
+    <value>keyPairHeaderLabel</value>
+  </data>
+  <data name="&gt;&gt;keyPairHeaderLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairHeaderLabel.Parent" xml:space="preserve">
+    <value>keyPairPanel</value>
+  </data>
+  <data name="&gt;&gt;keyPairHeaderLabel.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="&gt;&gt;keyPairInfoLabel.Name" xml:space="preserve">
+    <value>keyPairInfoLabel</value>
+  </data>
+  <data name="&gt;&gt;keyPairInfoLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairInfoLabel.Parent" xml:space="preserve">
+    <value>keyPairPanel</value>
+  </data>
+  <data name="&gt;&gt;keyPairInfoLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;keyPairLoadingPictureBox.Name" xml:space="preserve">
+    <value>keyPairLoadingPictureBox</value>
+  </data>
+  <data name="&gt;&gt;keyPairLoadingPictureBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairLoadingPictureBox.Parent" xml:space="preserve">
+    <value>keyPairPanel</value>
+  </data>
+  <data name="&gt;&gt;keyPairLoadingPictureBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="keyPairPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="keyPairPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 197</value>
+  </data>
+  <data name="keyPairPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;keyPairPanel.Name" xml:space="preserve">
+    <value>keyPairPanel</value>
+  </data>
+  <data name="&gt;&gt;keyPairPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;keyPairPanel.Parent" xml:space="preserve">
+    <value>keyPairTabPage</value>
+  </data>
+  <data name="&gt;&gt;keyPairPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="keyPairGenerationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -550,52 +1191,157 @@ Please be patient.</value>
   <data name="&gt;&gt;keyPairLoadingPictureBox.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="keyPairPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+    <value>label5</value>
   </data>
-  <data name="keyPairPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 197</value>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="keyPairPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>generalPanel</value>
   </data>
-  <data name="&gt;&gt;keyPairPanel.Name" xml:space="preserve">
-    <value>keyPairPanel</value>
-  </data>
-  <data name="&gt;&gt;keyPairPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;keyPairPanel.Parent" xml:space="preserve">
-    <value>keyPairTabPage</value>
-  </data>
-  <data name="&gt;&gt;keyPairPanel.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="keyPairTabPage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
+  <data name="&gt;&gt;saveCredentialsCheckBox.Name" xml:space="preserve">
+    <value>saveCredentialsCheckBox</value>
   </data>
-  <data name="keyPairTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+  <data name="&gt;&gt;saveCredentialsCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="keyPairTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 195</value>
+  <data name="&gt;&gt;saveCredentialsCheckBox.Parent" xml:space="preserve">
+    <value>generalPanel</value>
   </data>
-  <data name="keyPairTabPage.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;saveCredentialsCheckBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="keyPairTabPage.Text" xml:space="preserve">
-    <value>Key pair</value>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
   </data>
-  <data name="&gt;&gt;keyPairTabPage.Name" xml:space="preserve">
-    <value>keyPairTabPage</value>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;keyPairTabPage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>generalPanel</value>
   </data>
-  <data name="&gt;&gt;keyPairTabPage.Parent" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
-  <data name="&gt;&gt;keyPairTabPage.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;pictureBox1.Name" xml:space="preserve">
+    <value>pictureBox1</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;localPathLabel.Name" xml:space="preserve">
+    <value>localPathLabel</value>
+  </data>
+  <data name="&gt;&gt;localPathLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;localPathLabel.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;localPathLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;updateUrlTextBox.Name" xml:space="preserve">
+    <value>updateUrlTextBox</value>
+  </data>
+  <data name="&gt;&gt;updateUrlTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;updateUrlTextBox.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;updateUrlTextBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;updateUrlLabel.Name" xml:space="preserve">
+    <value>updateUrlLabel</value>
+  </data>
+  <data name="&gt;&gt;updateUrlLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updateUrlLabel.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;updateUrlLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;nameTextBox.Name" xml:space="preserve">
+    <value>nameTextBox</value>
+  </data>
+  <data name="&gt;&gt;nameTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;nameTextBox.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;nameTextBox.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;generalHeaderLabel.Name" xml:space="preserve">
+    <value>generalHeaderLabel</value>
+  </data>
+  <data name="&gt;&gt;generalHeaderLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;generalHeaderLabel.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;generalHeaderLabel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;nameLabel.Name" xml:space="preserve">
+    <value>nameLabel</value>
+  </data>
+  <data name="&gt;&gt;nameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;nameLabel.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;nameLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;localPathTextBox.Name" xml:space="preserve">
+    <value>localPathTextBox</value>
+  </data>
+  <data name="&gt;&gt;localPathTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;localPathTextBox.Parent" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;localPathTextBox.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="generalPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="generalPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 197</value>
+  </data>
+  <data name="generalPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Name" xml:space="preserve">
+    <value>generalPanel</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.Parent" xml:space="preserve">
+    <value>generalTabPage</value>
+  </data>
+  <data name="&gt;&gt;generalPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
@@ -920,53 +1666,254 @@ Please be patient.</value>
   <data name="&gt;&gt;localPathTextBox.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="generalPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="&gt;&gt;ftpImportButton.Name" xml:space="preserve">
+    <value>ftpImportButton</value>
   </data>
-  <data name="generalPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 197</value>
+  <data name="&gt;&gt;ftpImportButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="generalPanel.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;ftpImportButton.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpImportButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;securityInfoButton.Name" xml:space="preserve">
+    <value>securityInfoButton</value>
+  </data>
+  <data name="&gt;&gt;securityInfoButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;securityInfoButton.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;securityInfoButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;searchOnServerButton.Name" xml:space="preserve">
+    <value>searchOnServerButton</value>
+  </data>
+  <data name="&gt;&gt;searchOnServerButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;searchOnServerButton.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;searchOnServerButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;line1.Name" xml:space="preserve">
+    <value>line1</value>
+  </data>
+  <data name="&gt;&gt;line1.Type" xml:space="preserve">
+    <value>nUpdate.UI.Controls.Line, nUpdate, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;line1.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;line1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolComboBox.Name" xml:space="preserve">
+    <value>ftpProtocolComboBox</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolComboBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolComboBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolLabel.Name" xml:space="preserve">
+    <value>ftpProtocolLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpProtocolLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;ftpModeComboBox.Name" xml:space="preserve">
+    <value>ftpModeComboBox</value>
+  </data>
+  <data name="&gt;&gt;ftpModeComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpModeComboBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpModeComboBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;ftpModeLabel.Name" xml:space="preserve">
+    <value>ftpModeLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpModeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpModeLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpModeLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryLabel.Name" xml:space="preserve">
+    <value>ftpDirectoryLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryLabel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryTextBox.Name" xml:space="preserve">
+    <value>ftpDirectoryTextBox</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryTextBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpDirectoryTextBox.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <data name="&gt;&gt;generalPanel.Name" xml:space="preserve">
-    <value>generalPanel</value>
+  <data name="&gt;&gt;ftpPortTextBox.Name" xml:space="preserve">
+    <value>ftpPortTextBox</value>
   </data>
-  <data name="&gt;&gt;generalPanel.Type" xml:space="preserve">
+  <data name="&gt;&gt;ftpPortTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ftpPortTextBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPortTextBox.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;ftpUserTextBox.Name" xml:space="preserve">
+    <value>ftpUserTextBox</value>
+  </data>
+  <data name="&gt;&gt;ftpUserTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ftpUserTextBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpUserTextBox.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;ftpHostTextBox.Name" xml:space="preserve">
+    <value>ftpHostTextBox</value>
+  </data>
+  <data name="&gt;&gt;ftpHostTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ftpHostTextBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpHostTextBox.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordTextBox.Name" xml:space="preserve">
+    <value>ftpPasswordTextBox</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordTextBox.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordTextBox.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;ftpPortLabel.Name" xml:space="preserve">
+    <value>ftpPortLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpPortLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpPortLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPortLabel.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordLabel.Name" xml:space="preserve">
+    <value>ftpPasswordLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPasswordLabel.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;ftpUserLabel.Name" xml:space="preserve">
+    <value>ftpUserLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpUserLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpUserLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpUserLabel.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;ftpHostLabel.Name" xml:space="preserve">
+    <value>ftpHostLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpHostLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpHostLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpHostLabel.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;ftpHeaderLabel.Name" xml:space="preserve">
+    <value>ftpHeaderLabel</value>
+  </data>
+  <data name="&gt;&gt;ftpHeaderLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ftpHeaderLabel.Parent" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpHeaderLabel.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="ftpPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="ftpPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>495, 197</value>
+  </data>
+  <data name="ftpPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>24</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.Name" xml:space="preserve">
+    <value>ftpPanel</value>
+  </data>
+  <data name="&gt;&gt;ftpPanel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;generalPanel.Parent" xml:space="preserve">
-    <value>generalTabPage</value>
+  <data name="&gt;&gt;ftpPanel.Parent" xml:space="preserve">
+    <value>ftpTabPage</value>
   </data>
-  <data name="&gt;&gt;generalPanel.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;ftpPanel.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="generalTabPage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="generalTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="generalTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 195</value>
-  </data>
-  <data name="generalTabPage.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="generalTabPage.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="&gt;&gt;generalTabPage.Name" xml:space="preserve">
-    <value>generalTabPage</value>
-  </data>
-  <data name="&gt;&gt;generalTabPage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;generalTabPage.Parent" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
-  </data>
-  <data name="&gt;&gt;generalTabPage.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="ftpImportButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1536,385 +2483,6 @@ Please be patient.</value>
   <data name="&gt;&gt;ftpHeaderLabel.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
-  <data name="ftpPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="ftpPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 197</value>
-  </data>
-  <data name="ftpPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>24</value>
-  </data>
-  <data name="&gt;&gt;ftpPanel.Name" xml:space="preserve">
-    <value>ftpPanel</value>
-  </data>
-  <data name="&gt;&gt;ftpPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ftpPanel.Parent" xml:space="preserve">
-    <value>ftpTabPage</value>
-  </data>
-  <data name="&gt;&gt;ftpPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ftpTabPage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="ftpTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="ftpTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 195</value>
-  </data>
-  <data name="ftpTabPage.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="ftpTabPage.Text" xml:space="preserve">
-    <value>FTP</value>
-  </data>
-  <data name="&gt;&gt;ftpTabPage.Name" xml:space="preserve">
-    <value>ftpTabPage</value>
-  </data>
-  <data name="&gt;&gt;ftpTabPage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ftpTabPage.Parent" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
-  </data>
-  <data name="&gt;&gt;ftpTabPage.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="line2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 117</value>
-  </data>
-  <data name="line2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>481, 10</value>
-  </data>
-  <data name="line2.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="line2.Text" xml:space="preserve">
-    <value>line2</value>
-  </data>
-  <data name="&gt;&gt;line2.Name" xml:space="preserve">
-    <value>line2</value>
-  </data>
-  <data name="&gt;&gt;line2.Type" xml:space="preserve">
-    <value>nUpdate.UI.Controls.Line, nUpdate, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;line2.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;line2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="selectServerButton.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="selectServerButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="selectServerButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 93</value>
-  </data>
-  <data name="selectServerButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 23</value>
-  </data>
-  <data name="selectServerButton.TabIndex" type="System.Int32, mscorlib">
-    <value>63</value>
-  </data>
-  <data name="selectServerButton.Text" xml:space="preserve">
-    <value>Select server...</value>
-  </data>
-  <data name="&gt;&gt;selectServerButton.Name" xml:space="preserve">
-    <value>selectServerButton</value>
-  </data>
-  <data name="&gt;&gt;selectServerButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;selectServerButton.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;selectServerButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 38</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>476, 35</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>62</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>If you would like to receive stats about the downloads of your update packages, then you 
-can configurate a statistics server here. All you need for it is PHP and a MySQL-database.</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>26, 76</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 17</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.TabIndex" type="System.Int32, mscorlib">
-    <value>61</value>
-  </data>
-  <data name="doNotUseStatisticsServerButton.Text" xml:space="preserve">
-    <value>Don't use a statistics server</value>
-  </data>
-  <data name="&gt;&gt;doNotUseStatisticsServerButton.Name" xml:space="preserve">
-    <value>doNotUseStatisticsServerButton</value>
-  </data>
-  <data name="&gt;&gt;doNotUseStatisticsServerButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;doNotUseStatisticsServerButton.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;doNotUseStatisticsServerButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>26, 96</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 17</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.TabIndex" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <data name="useStatisticsServerRadioButton.Text" xml:space="preserve">
-    <value>Use a statistics server</value>
-  </data>
-  <data name="&gt;&gt;useStatisticsServerRadioButton.Name" xml:space="preserve">
-    <value>useStatisticsServerRadioButton</value>
-  </data>
-  <data name="&gt;&gt;useStatisticsServerRadioButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;useStatisticsServerRadioButton.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;useStatisticsServerRadioButton.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label8.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 11.25pt</value>
-  </data>
-  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 9</value>
-  </data>
-  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 20</value>
-  </data>
-  <data name="label8.TabIndex" type="System.Int32, mscorlib">
-    <value>40</value>
-  </data>
-  <data name="label8.Text" xml:space="preserve">
-    <value>Statistics server</value>
-  </data>
-  <data name="&gt;&gt;label8.Name" xml:space="preserve">
-    <value>label8</value>
-  </data>
-  <data name="&gt;&gt;label8.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="databaseNameLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="databaseNameLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="databaseNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>118, 5</value>
-  </data>
-  <data name="databaseNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>11, 13</value>
-  </data>
-  <data name="databaseNameLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="databaseNameLabel.Text" xml:space="preserve">
-    <value>-</value>
-  </data>
-  <data name="&gt;&gt;databaseNameLabel.Name" xml:space="preserve">
-    <value>databaseNameLabel</value>
-  </data>
-  <data name="&gt;&gt;databaseNameLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;databaseNameLabel.Parent" xml:space="preserve">
-    <value>statisticsInfoPanel</value>
-  </data>
-  <data name="&gt;&gt;databaseNameLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="sqlPasswordTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>121, 30</value>
-  </data>
-  <data name="sqlPasswordTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 22</value>
-  </data>
-  <data name="sqlPasswordTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;sqlPasswordTextBox.Name" xml:space="preserve">
-    <value>sqlPasswordTextBox</value>
-  </data>
-  <data name="&gt;&gt;sqlPasswordTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;sqlPasswordTextBox.Parent" xml:space="preserve">
-    <value>statisticsInfoPanel</value>
-  </data>
-  <data name="&gt;&gt;sqlPasswordTextBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 33</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>77, 19</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Password:</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>statisticsInfoPanel</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="statisticsServerLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="statisticsServerLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>18, 5</value>
-  </data>
-  <data name="statisticsServerLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 18</value>
-  </data>
-  <data name="statisticsServerLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="statisticsServerLabel.Text" xml:space="preserve">
-    <value>Database: </value>
-  </data>
-  <data name="&gt;&gt;statisticsServerLabel.Name" xml:space="preserve">
-    <value>statisticsServerLabel</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerLabel.Parent" xml:space="preserve">
-    <value>statisticsInfoPanel</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="statisticsInfoPanel.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="statisticsInfoPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>26, 135</value>
-  </data>
-  <data name="statisticsInfoPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>302, 60</value>
-  </data>
-  <data name="statisticsInfoPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>59</value>
-  </data>
-  <data name="&gt;&gt;statisticsInfoPanel.Name" xml:space="preserve">
-    <value>statisticsInfoPanel</value>
-  </data>
-  <data name="&gt;&gt;statisticsInfoPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;statisticsInfoPanel.Parent" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;statisticsInfoPanel.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="statisticsServerTabPage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="statisticsServerTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="statisticsServerTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 195</value>
-  </data>
-  <data name="statisticsServerTabPage.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="statisticsServerTabPage.Text" xml:space="preserve">
-    <value>Statistics</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerTabPage.Name" xml:space="preserve">
-    <value>statisticsServerTabPage</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerTabPage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerTabPage.Parent" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
-  </data>
-  <data name="&gt;&gt;statisticsServerTabPage.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="doNotUseProxyRadioButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2037,6 +2605,102 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
   </data>
   <data name="&gt;&gt;proxyHeaderLabel.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="&gt;&gt;proxyUserTextBox.Name" xml:space="preserve">
+    <value>proxyUserTextBox</value>
+  </data>
+  <data name="&gt;&gt;proxyUserTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;proxyUserTextBox.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyUserTextBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;proxyHostLabel.Name" xml:space="preserve">
+    <value>proxyHostLabel</value>
+  </data>
+  <data name="&gt;&gt;proxyHostLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyHostLabel.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyHostLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;proxyUserLabel.Name" xml:space="preserve">
+    <value>proxyUserLabel</value>
+  </data>
+  <data name="&gt;&gt;proxyUserLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyUserLabel.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyUserLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordLabel.Name" xml:space="preserve">
+    <value>proxyPasswordLabel</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordLabel.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordTextBox.Name" xml:space="preserve">
+    <value>proxyPasswordTextBox</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordTextBox.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyPasswordTextBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;proxyHostTextBox.Name" xml:space="preserve">
+    <value>proxyHostTextBox</value>
+  </data>
+  <data name="&gt;&gt;proxyHostTextBox.Type" xml:space="preserve">
+    <value>nUpdate.Administration.UI.Controls.CueTextBox, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;proxyHostTextBox.Parent" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyHostTextBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="proxyPanel.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="proxyPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 113</value>
+  </data>
+  <data name="proxyPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>457, 60</value>
+  </data>
+  <data name="proxyPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>92</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Name" xml:space="preserve">
+    <value>proxyPanel</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.Parent" xml:space="preserve">
+    <value>proxyTabPage</value>
+  </data>
+  <data name="&gt;&gt;proxyPanel.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="proxyUserTextBox.Cue" xml:space="preserve">
     <value>The username</value>
@@ -2197,77 +2861,53 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
   <data name="&gt;&gt;proxyHostTextBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="proxyPanel.Enabled" type="System.Boolean, mscorlib">
+  <data name="&gt;&gt;loadingLabel.Name" xml:space="preserve">
+    <value>loadingLabel</value>
+  </data>
+  <data name="&gt;&gt;loadingLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;loadingLabel.Parent" xml:space="preserve">
+    <value>loadingPanel</value>
+  </data>
+  <data name="&gt;&gt;loadingLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Name" xml:space="preserve">
+    <value>pictureBox2</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Parent" xml:space="preserve">
+    <value>loadingPanel</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="loadingPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>160, 284</value>
+  </data>
+  <data name="loadingPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>210, 47</value>
+  </data>
+  <data name="loadingPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>89</value>
+  </data>
+  <data name="loadingPanel.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="proxyPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 113</value>
+  <data name="&gt;&gt;loadingPanel.Name" xml:space="preserve">
+    <value>loadingPanel</value>
   </data>
-  <data name="proxyPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>457, 60</value>
-  </data>
-  <data name="proxyPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>92</value>
-  </data>
-  <data name="&gt;&gt;proxyPanel.Name" xml:space="preserve">
-    <value>proxyPanel</value>
-  </data>
-  <data name="&gt;&gt;proxyPanel.Type" xml:space="preserve">
+  <data name="&gt;&gt;loadingPanel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;proxyPanel.Parent" xml:space="preserve">
-    <value>proxyTabPage</value>
-  </data>
-  <data name="&gt;&gt;proxyPanel.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="proxyTabPage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="proxyTabPage.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="proxyTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 195</value>
-  </data>
-  <data name="proxyTabPage.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="proxyTabPage.Text" xml:space="preserve">
-    <value>Proxy</value>
-  </data>
-  <data name="&gt;&gt;proxyTabPage.Name" xml:space="preserve">
-    <value>proxyTabPage</value>
-  </data>
-  <data name="&gt;&gt;proxyTabPage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;proxyTabPage.Parent" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
-  </data>
-  <data name="&gt;&gt;proxyTabPage.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="informationCategoriesTabControl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 1</value>
-  </data>
-  <data name="informationCategoriesTabControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>503, 221</value>
-  </data>
-  <data name="informationCategoriesTabControl.TabIndex" type="System.Int32, mscorlib">
-    <value>25</value>
-  </data>
-  <data name="&gt;&gt;informationCategoriesTabControl.Name" xml:space="preserve">
-    <value>informationCategoriesTabControl</value>
-  </data>
-  <data name="&gt;&gt;informationCategoriesTabControl.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.TablessTabControl, nUpdate Administration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;informationCategoriesTabControl.Parent" xml:space="preserve">
+  <data name="&gt;&gt;loadingPanel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;informationCategoriesTabControl.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;loadingPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="loadingLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -2659,30 +3299,6 @@ can configurate a statistics server here. All you need for it is PHP and a MySQL
   </data>
   <data name="&gt;&gt;pictureBox2.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="loadingPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>160, 284</value>
-  </data>
-  <data name="loadingPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 47</value>
-  </data>
-  <data name="loadingPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>89</value>
-  </data>
-  <data name="loadingPanel.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;loadingPanel.Name" xml:space="preserve">
-    <value>loadingPanel</value>
-  </data>
-  <data name="&gt;&gt;loadingPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;loadingPanel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;loadingPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

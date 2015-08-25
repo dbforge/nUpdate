@@ -7,10 +7,9 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Popups;
+using nUpdate.Administration.Win32;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -18,12 +17,12 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HT_CAPTION = 0x2;
+        private readonly Navigator<TreeNode> _navigator = new Navigator<TreeNode>();
         private bool _allowCancel;
-        private FtpManager _ftp;
+        private FTPManager _ftp;
         private List<FtpItem> _listedFtpItems = new List<FtpItem>();
         private Margins _margins;
         private bool _nodeSelectedByUser = true;
-        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
 
         public DirectorySearchDialog()
         {
@@ -31,17 +30,17 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The directory selected.
+        ///     Gets or sets the selected directory.
         /// </summary>
         public string SelectedDirectory { get; set; }
 
         /// <summary>
-        ///     The name of the project.
+        ///     Gets or sets the name of the project.
         /// </summary>
         public string ProjectName { get; set; }
 
         /// <summary>
-        ///     The host of the FTP-server.
+        ///     Gets or sets the host of the FTP-server.
         /// </summary>
         public string Host { get; set; }
 
@@ -133,7 +132,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             _ftp =
-                new FtpManager(Host, Port, null, Username,
+                new FTPManager(Host, Port, null, Username,
                     Password, null, UsePassiveMode, FtpAssemblyPath, Protocol);
 
             LoadListAsync();
@@ -160,8 +159,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
 
             if (_nodeSelectedByUser)
-                _nav.Add(e.Node);
-            if (!backButton.Enabled && _nav.CanGoBack)
+                _navigator.Add(e.Node);
+            if (!backButton.Enabled && _navigator.CanGoBack)
                 backButton.Enabled = true;
 
             var directories = new Stack<string>();
@@ -172,7 +171,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 currentNode = currentNode.Parent;
             }
 
-            var directory = String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text);
+            var directory = $"/{String.Join("/", directories)}/{e.Node.Text}";
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
@@ -265,25 +264,25 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            _nav.GoBack();
+            _navigator.GoBack();
             _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _nav.Current;
+            serverDataTreeView.SelectedNode = _navigator.Current;
             _nodeSelectedByUser = true;
-            if (!_nav.CanGoBack)
+            if (!_navigator.CanGoBack)
                 backButton.Enabled = false;
-            if (_nav.CanGoForward)
+            if (_navigator.CanGoForward)
                 forwardButton.Enabled = true;
         }
 
         private void forwardButton_Click(object sender, EventArgs e)
         {
-            _nav.GoForward();
+            _navigator.GoForward();
             _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _nav.Current;
+            serverDataTreeView.SelectedNode = _navigator.Current;
             _nodeSelectedByUser = true;
-            if (!_nav.CanGoForward)
+            if (!_navigator.CanGoForward)
                 forwardButton.Enabled = false;
-            if (_nav.CanGoBack)
+            if (_navigator.CanGoBack)
                 backButton.Enabled = true;
         }
 
@@ -314,7 +313,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             serverDataTreeView.LabelEdit = false;
 #pragma warning disable 4014
-                    CreateDirectory(String.Format("{0}/{1}", directoryTextBox.Text, e.Label));
+            CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
 #pragma warning restore 4014
         }
 
@@ -325,8 +324,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 SetUiState(false);
                 Invoke(
                     new Action(
-                        () => 
-                            loadingLabel.Text = String.Format("Creating directory \"{0}\"...", path)));
+                        () =>
+                            loadingLabel.Text = $"Creating directory \"{path}\"..."));
                 try
                 {
                     _ftp.MakeDirectory(path);
@@ -334,9 +333,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 catch (Exception ex)
                 {
                     Invoke(
-                       new Action(
-                           () =>
-                               Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex, PopupButtons.Ok)));
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex,
+                                    PopupButtons.Ok)));
                 }
                 SetUiState(true);
             });
@@ -344,7 +344,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void removeDirectoryButton_Click(object sender, EventArgs e)
         {
-            if (serverDataTreeView.SelectedNode == null || serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
+            if (serverDataTreeView.SelectedNode == null ||
+                serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
                 return;
 
             RemoveDirectory(directoryTextBox.Text);
@@ -358,7 +359,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = String.Format("Deleting directory \"{0}\"...", path)));
+                            loadingLabel.Text = $"Deleting directory \"{path}\"..."));
                 try
                 {
                     _ftp.DeleteDirectory(path);
@@ -366,16 +367,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 catch (Exception ex)
                 {
                     Invoke(
-                       new Action(
-                           () =>
-                               Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex, PopupButtons.Ok)));
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex,
+                                    PopupButtons.Ok)));
                     SetUiState(true);
                     return;
                 }
 
                 Invoke(
                     new Action(
-                        () => 
+                        () =>
                             serverDataTreeView.SelectedNode.Remove()));
                 SetUiState(true);
             });

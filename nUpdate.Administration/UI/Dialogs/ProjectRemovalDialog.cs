@@ -5,20 +5,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectRemovalDialog : BaseDialog
     {
-        private const int COR_E_ENDOFSTREAM = unchecked((int) 0x80070026);
-        private const int COR_E_FILELOAD = unchecked((int) 0x80131621);
-        private const int COR_E_FILENOTFOUND = unchecked((int) 0x80070002);
-        private const int COR_E_DIRECTORYNOTFOUND = unchecked((int) 0x80070003);
         private List<ProjectConfiguration> _projectConfiguration;
 
         public ProjectRemovalDialog()
@@ -26,7 +19,7 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void CheckProjectsAreAvailable()
+        private void CheckProjectsAvailability()
         {
             if (projectsTreeView.Nodes[0].Nodes.Count != 0)
                 return;
@@ -40,12 +33,10 @@ namespace nUpdate.Administration.UI.Dialogs
             var mainNode = new TreeNode("nUpdate Administration (Projects)");
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();
-            _projectConfiguration =
-                Serializer.Deserialize<List<ProjectConfiguration>>(
-                    File.ReadAllText(Program.ProjectsConfigFilePath)) ?? new List<ProjectConfiguration>();
+            _projectConfiguration = ProjectConfiguration.Load().ToList();
 
             foreach (
-                var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true}))
+                var projectNode in _projectConfiguration.Select(project => new TreeNode(project.Name) {Checked = true, Tag = project.Guid}))
             {
                 projectsTreeView.Nodes[0].Nodes.Add(projectNode);
 
@@ -53,27 +44,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     projectsTreeView.Nodes[0].Toggle();
             }
 
-            CheckProjectsAreAvailable();
-        }
-
-        /// <summary>
-        ///     Returns the name/description of the current exception.
-        /// </summary>
-        private string GetNameOfExceptionType(Exception ex)
-        {
-            var hrEx = Marshal.GetHRForException(ex);
-            switch (hrEx)
-            {
-                case COR_E_DIRECTORYNOTFOUND:
-                    return "DirectoryNotFound";
-                case COR_E_ENDOFSTREAM:
-                    return "EndOfStream";
-                case COR_E_FILELOAD:
-                    return "FileLoadException";
-                case COR_E_FILENOTFOUND:
-                    return "FileNotFound";
-            }
-            return "Unknown Exception";
+            CheckProjectsAvailability();
         }
 
         private void projectsTreeView_AfterCheck(object sender, TreeViewEventArgs e)
@@ -81,11 +52,11 @@ namespace nUpdate.Administration.UI.Dialogs
             if (e.Node.Checked)
                 return;
 
-            var projectName = e.Node.Text;
-            var index = _projectConfiguration.FindIndex(item => item.Name == projectName);
+            var projectGuid = (Guid)e.Node.Tag;
+            var index = _projectConfiguration.FindIndex(item => item.Guid == projectGuid);
 
             if (
-                Popup.ShowPopup(this, SystemIcons.Question, String.Format("Delete project {0}?", projectName),
+                Popup.ShowPopup(this, SystemIcons.Question, $"Delete project {e.Node.Text}?",
                     "Are you sure you want to remove the selected project from nUpdate Administration?",
                     PopupButtons.YesNo) == DialogResult.No)
             {
@@ -95,14 +66,14 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                Directory.Delete(Path.Combine(Program.Path, "Projects", projectName), true);
+                Directory.Delete(Path.Combine(Program.Path, "Projects", e.Node.Text), true);
             }
             catch (Exception ex)
             {
-                if (GetNameOfExceptionType(ex) != "DirectoryNotFound")
+                if (ex.GetType() != typeof(DirectoryNotFoundException))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error,
-                        String.Format("Error while removing the project {0}.", projectName), ex, PopupButtons.Ok);
+                        $"Error while removing the project {e.Node.Text}.", ex, PopupButtons.Ok);
                     e.Node.Checked = true;
                     return;
                 }
@@ -114,7 +85,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             catch (Exception ex)
             {
-                if (GetNameOfExceptionType(ex) != "FileNotFound")
+                if (ex.GetType() != typeof(FileNotFoundException))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the project file.", ex,
                         PopupButtons.Ok);
@@ -137,7 +108,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             projectsTreeView.Nodes.Remove(e.Node);
-            CheckProjectsAreAvailable();
+            CheckProjectsAvailability();
         }
     }
 }

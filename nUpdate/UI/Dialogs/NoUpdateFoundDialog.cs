@@ -5,15 +5,14 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
+using nUpdate.Localization;
 
 namespace nUpdate.UI.Dialogs
 {
     public partial class NoUpdateFoundDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
 
         public NoUpdateFoundDialog()
         {
@@ -45,7 +44,7 @@ namespace nUpdate.UI.Dialogs
             }
             else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
@@ -66,10 +65,7 @@ namespace nUpdate.UI.Dialogs
 
         public void ShowModalDialog(object dialogResultReference)
         {
-            if (dialogResultReference != null)
-                ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
+            ShowDialog();
         }
 
         public void CloseDialog(object state)

@@ -1,13 +1,13 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using System.Reflection;
-using System.Resources;
-using System.Runtime.InteropServices;
-
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
-using nUpdate.Core;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using Exceptionless.Configuration;
+using nUpdate;
 
 [assembly: AssemblyTitle("nUpdate Administration")]
 [assembly: AssemblyDescription("The administration of the nUpdate library.")]
@@ -39,9 +39,9 @@ using nUpdate.Core;
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 3")]
-[assembly: AssemblyFileVersion("3.0.0.0")]
+[assembly: AssemblyVersion("4.0.0.0")]
+[assembly: AssemblyInformationalVersion("v4.0.0.0")]
+[assembly: AssemblyFileVersion("4.0.0.0")]
 [assembly: NeutralResourcesLanguage("")]
-[assembly: nUpdateVersion("3b3")]
-[assembly: Exceptionless.Configuration.Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]
+[assembly: nUpdateVersion("4")]
+[assembly: Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]

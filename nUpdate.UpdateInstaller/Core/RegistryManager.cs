@@ -39,7 +39,7 @@ namespace nUpdate.UpdateInstaller.Core
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.CreateSubKey(subKeyName);
                 }
@@ -60,14 +60,14 @@ namespace nUpdate.UpdateInstaller.Core
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.DeleteSubKeyTree(subKeyName, false);
                 }
             }
         }
 
-        /// <summary> 
+        /// <summary>
         ///     Sets the value of a name-value-pair. If the pair does not already exist, it will be created.
         /// </summary>
         /// <param name="keyPath">The path of the key to use.</param>
@@ -83,7 +83,7 @@ namespace nUpdate.UpdateInstaller.Core
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.SetValue(valueName, value, valueKind);
                 }
@@ -104,7 +104,7 @@ namespace nUpdate.UpdateInstaller.Core
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.DeleteValue(valueName, false);
                 }

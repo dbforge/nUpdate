@@ -6,10 +6,10 @@
     public class UpdateArgument
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateArgument"/> class.
+        ///     Initializes a new instance of the <see cref="UpdateArgument" /> class.
         /// </summary>
         /// <param name="argument">The argument.</param>
-        /// <param name="executionOptions">The execution options that should be used for the <see cref="UpdateArgument"/>.</param>
+        /// <param name="executionOptions">The execution options that should be used for the <see cref="UpdateArgument" />.</param>
         public UpdateArgument(string argument, UpdateArgumentExecutionOptions executionOptions)
         {
             Argument = argument;
@@ -17,12 +17,12 @@
         }
 
         /// <summary>
-        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument"/>.
+        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument" />.
         /// </summary>
         public UpdateArgumentExecutionOptions ExecutionOptions { get; set; }
 
         /// <summary>
-        ///     Gets or sets the argument of the current <see cref="UpdateArgument"/>.
+        ///     Gets or sets the argument of the current <see cref="UpdateArgument" />.
         /// </summary>
         public string Argument { get; set; }
     }

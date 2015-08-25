@@ -6,12 +6,7 @@ namespace nUpdate.Administration.TransferInterface
     public class ServiceProviderAttribute : Attribute
     {
         /// <summary>
-        ///     Gets the type of the services provider.
-        /// </summary>
-        public Type ServiceType { get; private set; }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ServiceProviderAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="ServiceProviderAttribute" /> class.
         /// </summary>
         /// <param name="serviceType">The type of the transfer services provider.</param>
         /// <exception cref="System.ArgumentNullException">srviceType is null.</exception>
@@ -20,9 +15,14 @@ namespace nUpdate.Administration.TransferInterface
         {
             if (serviceType == null)
                 throw new ArgumentNullException("serviceType");
-            if (!typeof(IServiceProvider).IsAssignableFrom(serviceType))
+            if (!typeof (IServiceProvider).IsAssignableFrom(serviceType))
                 throw new ArgumentException("Implementation of IServiceProvider is missing.", "serviceType");
             ServiceType = serviceType;
         }
+
+        /// <summary>
+        ///     Gets the type of the services provider.
+        /// </summary>
+        public Type ServiceType { get; private set; }
     }
 }

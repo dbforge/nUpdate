@@ -5,8 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
+using nUpdate.Localization;
 using nUpdate.UI.Popups;
 using nUpdate.UpdateEventArgs;
 
@@ -14,8 +13,8 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateDownloadDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
 
         public UpdateDownloadDialog()
         {
@@ -87,7 +86,7 @@ namespace nUpdate.UI.Dialogs
             }
             else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
@@ -100,7 +99,7 @@ namespace nUpdate.UI.Dialogs
 
             headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
             infoLabel.Text = String.Format(
-                        _lp.UpdateDownloadDialogLoadingInfo, "0");
+                _lp.UpdateDownloadDialogLoadingInfo, "0");
             cancelButton.Text = _lp.CancelButtonText;
 
             Text = Application.ProductName;
@@ -109,15 +108,18 @@ namespace nUpdate.UI.Dialogs
 
         public void ShowModalDialog(object dialogResultReference)
         {
-            if (dialogResultReference != null)
-                ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
+            ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
         }
 
         public void CloseDialog(object state)
         {
             Close();
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancelButtonClicked();
+            DialogResult = DialogResult.Cancel;
         }
 
         #region TAP
@@ -132,9 +134,9 @@ namespace nUpdate.UI.Dialogs
         public void StatisticsEntryFail(Exception ex)
         {
             Invoke(new Action(() =>
-                    Popup.ShowPopup(this, SystemIcons.Warning,
-                        "Error while adding a new statistics entry.",
-                        ex, PopupButtons.Ok)));
+                Popup.ShowPopup(this, SystemIcons.Warning,
+                    "Error while adding a new statistics entry.",
+                    ex, PopupButtons.Ok)));
         }
 
         #endregion
@@ -147,9 +149,9 @@ namespace nUpdate.UI.Dialogs
             {
                 Invoke(new Action(() =>
                 {
-                    downloadProgressBar.Value = (int)e.Percentage;
+                    downloadProgressBar.Value = (int) e.Percentage;
                     infoLabel.Text = String.Format(
-                        _lp.UpdateDownloadDialogLoadingInfo, (int)e.Percentage);
+                        _lp.UpdateDownloadDialogLoadingInfo, (int) e.Percentage);
                 }));
             }
             catch (InvalidOperationException)
@@ -172,11 +174,5 @@ namespace nUpdate.UI.Dialogs
         }
 
         #endregion
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancelButtonClicked();
-            DialogResult = DialogResult.Cancel;
-        }
     }
 }

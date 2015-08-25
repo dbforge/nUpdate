@@ -2,16 +2,11 @@
 
 namespace nUpdate.UpdateInstaller.Client.GuiInterface
 {
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple=false, Inherited=true)]
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = true)]
     public class ServiceProviderAttribute : Attribute
     {
         /// <summary>
-        ///     Gets the type of the progress services provider.
-        /// </summary>
-        public Type ServiceType { get; private set; }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ServiceProviderAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="ServiceProviderAttribute" /> class.
         /// </summary>
         /// <param name="serviceType">The type of the progress service provider.</param>
         /// <exception cref="System.ArgumentNullException">servicesType is null.</exception>
@@ -24,5 +19,10 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
                 throw new ArgumentException("Implementation of IServiceProvider is missing.", "serviceType");
             ServiceType = serviceType;
         }
+
+        /// <summary>
+        ///     Gets the type of the progress services provider.
+        /// </summary>
+        public Type ServiceType { get; private set; }
     }
 }

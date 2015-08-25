@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -16,7 +15,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public string AssemblyPath
         {
-            get { return assemblyFilePathTextBox.Text; } 
+            get { return assemblyFilePathTextBox.Text; }
             set { assemblyFilePathTextBox.Text = value; }
         }
 
@@ -35,7 +34,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (ServiceProviderHelper.CreateServiceProvider(assembly) == null)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while creating a service provider.",
-                    "The selected assembly doesn't contain any types that are marked with the TransferServiceProvider-attribute.", PopupButtons.Ok);
+                        "The selected assembly doesn't contain any types that are marked with the TransferServiceProvider-attribute.",
+                        PopupButtons.Ok);
                     return;
                 }
             }

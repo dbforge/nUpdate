@@ -1,19 +1,20 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Application.Extension;
-using nUpdate.Administration.Core.Localization;
+using System.Windows.Forms.VisualStyles;
+using Ionic.Zip;
+using nUpdate.Administration.Application;
+using nUpdate.Administration.Application.Extension;
+using nUpdate.Administration.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
-using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -22,7 +23,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private SecureString _ftpPassword = new SecureString();
         private SecureString _proxyPassword = new SecureString();
         private SecureString _sqlPassword = new SecureString();
-        //private readonly LocalizationProperties _lp = new LocalizationProperties();
 
         public MainDialog()
         {
@@ -30,42 +30,9 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The path of the project that is stored in a file that was opened.
+        ///     Gets or sets the path of the project that is stored in the file that was opened.
         /// </summary>
         public string ProjectPath { get; set; }
-
-        ///// <summary>
-        /////     Sets the language
-        ///// </summary>
-        //public void SetLanguage()
-        //{
-        //    string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-        //        String.Format("{0}.json", Settings.Default.Language.Name));
-        //    if (File.Exists(languageFilePath))
-        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-        //    else
-        //    {
-        //        File.WriteAllBytes(Path.Combine(Program.LanguagesDirectory, "en.json"), Resources.en);
-        //        Settings.Default.Language = new CultureInfo("en");
-        //        Settings.Default.Save();
-        //        Settings.Default.Reload();
-        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-        //    }
-
-        //    Text = _lp.ProductTitle;
-        //    headerLabel.Text = _lp.ProductTitle;
-        //    infoLabel.Text = _lp.MainDialogInfoText;
-
-        //    sectionsListView.Groups[0].Header = _lp.MainDialogProjectsGroupText;
-        //    sectionsListView.Groups[1].Header = _lp.MainDialogInformationGroupText;
-        //    sectionsListView.Groups[2].Header = _lp.MainDialogPreferencesGroupText;
-
-        //    sectionsListView.Items[0].Text = _lp.MainDialogNewProjectText;
-        //    sectionsListView.Items[1].Text = _lp.MainDialogOpenProjectText;
-        //    sectionsListView.Items[4].Text = _lp.MainDialogFeedbackText;
-        //    sectionsListView.Items[5].Text = _lp.MainDialogPreferencesText;
-        //    sectionsListView.Items[6].Text = _lp.MainDialogInformationText;
-        //}
 
         private void MainDialog_Load(object sender, EventArgs e)
         {
@@ -75,7 +42,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
-                    Application.Exit();
+                    System.Windows.Forms.Application.Exit();
             }
 
             try
@@ -89,20 +56,23 @@ namespace nUpdate.Administration.UI.Dialogs
                     if (!pai.Exists)
                     {
                         pai.Create("nUpdate Administration Project File",
-                            new ProgramVerb("Open", String.Format("\"{0} %1\"", Application.ExecutablePath)));
-                        pai.DefaultIcon = new ProgramIcon(Application.ExecutablePath);
+                            new ProgramVerb("Open",
+                                $"\"{System.Windows.Forms.Application.ExecutablePath} %1\""));
+                        pai.DefaultIcon = new ProgramIcon(System.Windows.Forms.Application.ExecutablePath);
                     }
                 }
             }
             catch (UnauthorizedAccessException)
             {
-                Popup.ShowPopup(this, SystemIcons.Warning, "Missing rights.", "The registry entry for the extension (.nupdproj) couldn't be created. Without that file extension nUpdate Administration won't work correctly. Please make sure to start the administration with admin privileges the first time.",
+                Popup.ShowPopup(this, SystemIcons.Warning, "Missing rights.",
+                    "The registry entry for the extension (.nupdproj) couldn't be created. Without that file extension nUpdate Administration won't work correctly. Please make sure to start the administration with admin privileges the first time.",
                     PopupButtons.Ok);
             }
 
             if (String.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
-                Settings.Default.ProgramPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "nUpdate Administration");
+                Settings.Default.ProgramPath =
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "nUpdate Administration");
             Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
             if (!Directory.Exists(Program.LanguagesDirectory))
             {
@@ -132,10 +102,40 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
-            //SetLanguage();
             sectionsListView.DoubleBuffer();
             Text = String.Format(Text, Program.VersionString);
             headerLabel.Text = String.Format(Text, Program.VersionString);
+
+            /* Since 3.0.0 */
+            var projectConfiguration = ProjectConfiguration.Load(); 
+            foreach (var configuration in projectConfiguration.Where(item => item.Guid == Guid.Empty))
+            {
+                var project = UpdateProject.LoadProject(configuration.Path);
+                configuration.Guid = project.Guid;
+
+                string oldPath = Path.Combine(Program.Path, "Projects", configuration.Name);
+                try
+                {
+                    Directory.Move(oldPath, Path.Combine(Program.Path, "Projects", configuration.Guid.ToString()));
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error,
+                        $"Error while updating the path for project {configuration.Name}.",
+                        ex, PopupButtons.Ok);
+                    break;
+                }
+            }
+
+            try
+            {
+                File.WriteAllText(Program.ProjectsConfigFilePath, Serializer.Serialize(projectConfiguration));
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new project configuration.",
+                       ex, PopupButtons.Ok);
+            }
         }
 
         public UpdateProject OpenProject(string projectPath)
@@ -160,17 +160,17 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _ftpPassword =
-                            AesManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
+                            AESManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
                                 credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
 
                         if (project.Proxy != null)
                             _proxyPassword =
-                                AesManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
+                                AESManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
                                     credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
 
                         if (project.UseStatistics)
                             _sqlPassword =
-                                AesManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
+                                AESManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
                                     credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
                     }
                     catch (CryptographicException)
@@ -202,17 +202,17 @@ namespace nUpdate.Administration.UI.Dialogs
             try
             {
                 _ftpPassword =
-                    AesManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
+                    AESManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
                         Program.AesKeyPassword, Program.AesIvPassword);
 
                 if (project.Proxy != null)
                     _proxyPassword =
-                        AesManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
+                        AESManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
                             Program.AesKeyPassword, Program.AesIvPassword);
 
                 if (project.UseStatistics)
                     _sqlPassword =
-                        AesManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
+                        AESManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
                             Program.AesKeyPassword, Program.AesIvPassword);
             }
             catch (Exception ex)
@@ -319,6 +319,22 @@ namespace nUpdate.Administration.UI.Dialogs
                     statisticsServerDialog.ShowDialog();
                     break;
             }
+        }
+
+        private PackageItem CreateHashesRecursively(PackageItem currentItem, DirectoryInfo currentDirectoryInfo)
+        {
+            foreach (var directoryInfo in currentDirectoryInfo.GetDirectories())
+            {
+                currentItem.Children.Add(new PackageItem(String.Empty, directoryInfo.Name, Guid.NewGuid(), true));
+                CreateHashesRecursively(currentItem, directoryInfo);
+            }
+
+            foreach (var fileInfo in currentDirectoryInfo.GetFiles())
+            {
+                currentItem.Children.Add(new PackageItem(SHAManager.HashFile(fileInfo.FullName), fileInfo.Name, Guid.NewGuid(), false));
+            }
+
+            return currentItem.IsRoot ? currentItem : null;
         }
 
         private void MainDialog_Shown(object sender, EventArgs e)

@@ -118,9 +118,9 @@
             this.noServersLabel.AutoSize = true;
             this.noServersLabel.Location = new System.Drawing.Point(159, 128);
             this.noServersLabel.Name = "noServersLabel";
-            this.noServersLabel.Size = new System.Drawing.Size(153, 13);
+            this.noServersLabel.Size = new System.Drawing.Size(158, 13);
             this.noServersLabel.TabIndex = 10;
-            this.noServersLabel.Text = "No statistic servers available.";
+            this.noServersLabel.Text = "No statistics servers available.";
             this.noServersLabel.Visible = false;
             // 
             // StatisticsServerDialog
@@ -138,7 +138,7 @@
             this.MaximizeBox = false;
             this.Name = "StatisticsServerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Statistic servers - {0}";
+            this.Text = "Statistics servers - {0}";
             this.Load += new System.EventHandler(this.StatisticsServerDialog_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StatisticsServerDialog_KeyDown);
             this.toolStrip1.ResumeLayout(false);

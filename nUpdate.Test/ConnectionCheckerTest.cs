@@ -1,7 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Core;
 
 namespace nUpdate.Test
 {
@@ -14,7 +13,7 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanReturnConnectionStatus()
         {
-            Assert.IsTrue(ConnectionChecker.IsConnectionAvailable());
+            Assert.IsTrue(WebConnection.IsAvailable());
         }
     }
 }

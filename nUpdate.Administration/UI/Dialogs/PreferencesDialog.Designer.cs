@@ -125,7 +125,6 @@
             resources.ApplyResources(this.languagesComboBox, "languagesComboBox");
             this.languagesComboBox.FormattingEnabled = true;
             this.languagesComboBox.Name = "languagesComboBox";
-            this.languagesComboBox.SelectedIndexChanged += new System.EventHandler(this.languagesComboBox_SelectedIndexChanged);
             // 
             // label7
             // 

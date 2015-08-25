@@ -11,11 +11,11 @@ using System.Reflection;
 using System.Threading;
 using Ionic.Zip;
 using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Core.Operations;
 using nUpdate.UpdateInstaller.UI.Popups;
-using Newtonsoft.Json.Linq;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -58,7 +58,7 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         /// <returns>
         ///     Returns a new instance of the given object that implements the
-        ///     <see cref="nUpdate.UpdateInstaller.Client.GuiInterface.IProgressReporter"/>-interface.
+        ///     <see cref="nUpdate.UpdateInstaller.Client.GuiInterface.IProgressReporter" />-interface.
         /// </returns>
         private IProgressReporter GetProgressReporter()
         {
@@ -112,7 +112,8 @@ namespace nUpdate.UpdateInstaller
                                         Program.Arguments.Where(
                                             item =>
                                                 item.ExecutionOptions ==
-                                                UpdateArgumentExecutionOptions.OnlyOnFaulted).Select(item => item.Argument))
+                                                UpdateArgumentExecutionOptions.OnlyOnFaulted)
+                                            .Select(item => item.Argument))
                             }
                         };
                         process.Start();
@@ -125,56 +126,56 @@ namespace nUpdate.UpdateInstaller
             }
 
             foreach (var operationEnumerable in Program.Operations.Select(item => item.Value))
-                    _totalTaskCount +=
-                        operationEnumerable.Count(
-                            item => item.Area != OperationArea.Registry && item.Method != OperationMethod.Delete);
+                _totalTaskCount +=
+                    operationEnumerable.Count(
+                        item => item.Area != OperationArea.Registry && item.Method != OperationMethod.Delete);
 
-                foreach (
-                    var array in
-                        Program.Operations.Select(entry => entry.Value)
-                            .Select(operationEnumerable => operationEnumerable.Where(
-                                item =>
-                                    item.Area == OperationArea.Registry && item.Method != OperationMethod.SetValue)
-                                .Select(registryOperation => registryOperation.Value2)
-                                .OfType<JArray>()).SelectMany(entries =>
-                                {
-                                    var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                    return entryEnumerable;
-                                }))
-                {
-                    _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
-                }
+            foreach (
+                var array in
+                    Program.Operations.Select(entry => entry.Value)
+                        .Select(operationEnumerable => operationEnumerable.Where(
+                            item =>
+                                item.Area == OperationArea.Registry && item.Method != OperationMethod.SetValue)
+                            .Select(registryOperation => registryOperation.Value2)
+                            .OfType<JArray>()).SelectMany(entries =>
+                            {
+                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
+                                return entryEnumerable;
+                            }))
+            {
+                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
+            }
 
-                foreach (
-                    var array in
-                        Program.Operations.Select(entry => entry.Value)
-                            .Select(operationEnumerable => operationEnumerable.Where(
-                                item => item.Area == OperationArea.Files && item.Method == OperationMethod.Delete)
-                                .Select(registryOperation => registryOperation.Value2)
-                                .OfType<JArray>()).SelectMany(entries =>
-                                {
-                                    var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                    return entryEnumerable;
-                                }))
-                {
-                    _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
-                }
+            foreach (
+                var array in
+                    Program.Operations.Select(entry => entry.Value)
+                        .Select(operationEnumerable => operationEnumerable.Where(
+                            item => item.Area == OperationArea.Files && item.Method == OperationMethod.Delete)
+                            .Select(registryOperation => registryOperation.Value2)
+                            .OfType<JArray>()).SelectMany(entries =>
+                            {
+                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
+                                return entryEnumerable;
+                            }))
+            {
+                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
+            }
 
-                foreach (
-                    var array in
-                        Program.Operations.Select(entry => entry.Value)
-                            .Select(operationEnumerable => operationEnumerable.Where(
-                                item =>
-                                    item.Area == OperationArea.Registry && item.Method == OperationMethod.SetValue)
-                                .Select(registryOperation => registryOperation.Value2)
-                                .OfType<JArray>()).SelectMany(entries =>
-                                {
-                                    var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                    return entryEnumerable;
-                                }))
-                {
-                    _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
-                }
+            foreach (
+                var array in
+                    Program.Operations.Select(entry => entry.Value)
+                        .Select(operationEnumerable => operationEnumerable.Where(
+                            item =>
+                                item.Area == OperationArea.Registry && item.Method == OperationMethod.SetValue)
+                            .Select(registryOperation => registryOperation.Value2)
+                            .OfType<JArray>()).SelectMany(entries =>
+                            {
+                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
+                                return entryEnumerable;
+                            }))
+            {
+                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
+            }
 
             foreach (
                 var packageFilePath in
@@ -495,26 +496,11 @@ namespace nUpdate.UpdateInstaller
                 var files = dir.GetFiles();
                 foreach (var file in files)
                 {
-                    bool continueCopyLoop = true;
                     var aimPath = Path.Combine(destDirName, file.Name);
-                    while (continueCopyLoop)
-                    {
-                        try
-                        {
-                            file.CopyTo(aimPath, true);
-                            continueCopyLoop = false;
-                        }
-                        catch (IOException ex)
-                        {
-                            if (FileHelper.IsFileLocked(ex))
-                            {
-                                _progressReporter.Fail(new Exception(String.Format(Program.FileInUseError, aimPath)));
-                            }
-                        }
-                    }
+                    file.CopyTo(aimPath, true);
 
                     _doneTaskAmount += 1;
-                    var percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                    var percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                     _progressReporter.ReportUnpackingProgress(percentage, file.Name);
                 }
 

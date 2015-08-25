@@ -9,6 +9,8 @@ namespace nUpdate.Administration.UI.Controls
 {
     public partial class StatisticsChart : UserControl
     {
+        public EventHandler<EventArgs> StatisticsChartClosed;
+
         public StatisticsChart()
         {
             InitializeComponent();
@@ -54,39 +56,40 @@ namespace nUpdate.Administration.UI.Controls
             operatingSystemChart.Titles[0].Text = String.Format(operatingSystemChart.Titles[0].Text, Version.FullText);
             operatingSystemChart.Series[0]["PieLabelStyle"] = "Outside";
 
-            double windowsVistaAmount = (TotalDownloadCount / 100d) * WindowsVistaPercentage;
-            double windowsSevenAmount = (TotalDownloadCount / 100d) * WindowsSevenPercentage;
-            double windowsEightAmount = (TotalDownloadCount / 100d) * WindowsEightPercentage;
-            double windowsEightPointOneAmount = (TotalDownloadCount / 100d) * WindowsEightPointOnePercentage;
-            double windowsTenAmount = (TotalDownloadCount / 100d) * WindowsTenPercentage;
+            double windowsVistaAmount = (TotalDownloadCount/100d)*WindowsVistaPercentage;
+            double windowsSevenAmount = (TotalDownloadCount/100d)*WindowsSevenPercentage;
+            double windowsEightAmount = (TotalDownloadCount/100d)*WindowsEightPercentage;
+            double windowsEightPointOneAmount = (TotalDownloadCount/100d)*WindowsEightPointOnePercentage;
+            double windowsTenAmount = (TotalDownloadCount/100d)*WindowsTenPercentage;
 
             operatingSystemChart.Series[0].Points.Add(new DataPoint
             {
-                Label = String.Format("Windows Vista ({0})", (int)windowsVistaAmount),
+                Label = $"Windows Vista ({(int) windowsVistaAmount})",
                 YValues = new[] {(double) WindowsVistaPercentage}
             });
             operatingSystemChart.Series[0].Points.Add(new DataPoint
             {
-                Label = String.Format("Windows 7 ({0})", (int)windowsSevenAmount),
+                Label = $"Windows 7 ({(int) windowsSevenAmount})",
                 YValues = new[] {(double) WindowsSevenPercentage},
             });
             operatingSystemChart.Series[0].Points.Add(new DataPoint
             {
-                Label = String.Format("Windows 8 ({0})", (int)windowsEightAmount),
+                Label = $"Windows 8 ({(int) windowsEightAmount})",
                 YValues = new[] {(double) WindowsEightPercentage}
             });
             operatingSystemChart.Series[0].Points.Add(new DataPoint
             {
-                Label = String.Format("Windows 8.1 ({0})", (int)windowsEightPointOneAmount),
+                Label = $"Windows 8.1 ({(int) windowsEightPointOneAmount})",
                 YValues = new[] {(double) WindowsEightPointOnePercentage}
             });
             operatingSystemChart.Series[0].Points.Add(new DataPoint
             {
-                Label = String.Format("Windows 10 ({0})", (int)windowsTenAmount),
+                Label = $"Windows 10 ({(int) windowsTenAmount})",
                 YValues = new[] {(double) WindowsTenPercentage}
             });
 
-            foreach (var point in operatingSystemChart.Series[0].Points.Where(item => Math.Abs(item.YValues.First()) < 0.1))
+            foreach (
+                var point in operatingSystemChart.Series[0].Points.Where(item => Math.Abs(item.YValues.First()) < 0.1))
             {
                 point.CustomProperties = "PieLabelStyle = Disabled";
             }
@@ -109,11 +112,9 @@ namespace nUpdate.Administration.UI.Controls
                 StatisticsChartClosed(this, EventArgs.Empty);
         }
 
-        public EventHandler<EventArgs> StatisticsChartClosed;
-
         private void closeLabel_MouseLeave(object sender, EventArgs e)
         {
-           closeLabel.ForeColor = Color.IndianRed;
+            closeLabel.ForeColor = Color.IndianRed;
         }
 
         private void closeLabel_MouseEnter(object sender, EventArgs e)
