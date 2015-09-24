@@ -43,8 +43,9 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // sendButton
             // 
+            this.sendButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.sendButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.sendButton.Location = new System.Drawing.Point(355, 7);
+            this.sendButton.Location = new System.Drawing.Point(269, 7);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(75, 23);
             this.sendButton.TabIndex = 24;
@@ -54,9 +55,10 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // cancelButton
             // 
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.cancelButton.Location = new System.Drawing.Point(274, 7);
+            this.cancelButton.Location = new System.Drawing.Point(188, 7);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 25;
@@ -66,9 +68,9 @@ namespace nUpdate.Administration.UI.Dialogs
             // nameTextBox
             // 
             this.nameTextBox.Cue = "Name";
-            this.nameTextBox.Location = new System.Drawing.Point(230, 43);
+            this.nameTextBox.Location = new System.Drawing.Point(169, 43);
             this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(198, 22);
+            this.nameTextBox.Size = new System.Drawing.Size(180, 22);
             this.nameTextBox.TabIndex = 18;
             // 
             // emailTextBox
@@ -76,29 +78,35 @@ namespace nUpdate.Administration.UI.Dialogs
             this.emailTextBox.Cue = "Your E-mail address";
             this.emailTextBox.Location = new System.Drawing.Point(12, 43);
             this.emailTextBox.Name = "emailTextBox";
-            this.emailTextBox.Size = new System.Drawing.Size(212, 22);
+            this.emailTextBox.Size = new System.Drawing.Size(151, 22);
             this.emailTextBox.TabIndex = 17;
             // 
             // contentTextBox
             // 
             this.contentTextBox.AcceptsReturn = true;
             this.contentTextBox.AcceptsTab = true;
+            this.contentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.contentTextBox.Cue = "";
             this.contentTextBox.Location = new System.Drawing.Point(12, 74);
+            this.contentTextBox.MinimumSize = new System.Drawing.Size(337, 114);
             this.contentTextBox.Multiline = true;
             this.contentTextBox.Name = "contentTextBox";
             this.contentTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.contentTextBox.Size = new System.Drawing.Size(416, 114);
+            this.contentTextBox.Size = new System.Drawing.Size(337, 114);
             this.contentTextBox.TabIndex = 16;
             // 
             // cpnl
             // 
+            this.cpnl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cpnl.BackColor = System.Drawing.SystemColors.Control;
             this.cpnl.Controls.Add(this.cancelButton);
             this.cpnl.Controls.Add(this.sendButton);
             this.cpnl.Location = new System.Drawing.Point(0, 201);
             this.cpnl.Name = "cpnl";
-            this.cpnl.Size = new System.Drawing.Size(442, 38);
+            this.cpnl.Size = new System.Drawing.Size(360, 38);
             this.cpnl.TabIndex = 9;
             // 
             // headerLabel
@@ -119,7 +127,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(442, 239);
+            this.ClientSize = new System.Drawing.Size(360, 239);
             this.Controls.Add(this.headerLabel);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.emailTextBox);
@@ -129,6 +137,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(376, 278);
             this.Name = "FeedbackDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -56,14 +56,14 @@
             // 
             this.usernameTextBox.Location = new System.Drawing.Point(16, 66);
             this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(335, 22);
+            this.usernameTextBox.Size = new System.Drawing.Size(298, 22);
             this.usernameTextBox.TabIndex = 17;
             // 
             // passwordTextBox
             // 
             this.passwordTextBox.Location = new System.Drawing.Point(18, 118);
             this.passwordTextBox.Name = "passwordTextBox";
-            this.passwordTextBox.Size = new System.Drawing.Size(335, 22);
+            this.passwordTextBox.Size = new System.Drawing.Size(296, 22);
             this.passwordTextBox.TabIndex = 18;
             this.passwordTextBox.UseSystemPasswordChar = true;
             // 
@@ -87,7 +87,7 @@
             // 
             // continueButton
             // 
-            this.continueButton.Location = new System.Drawing.Point(288, 9);
+            this.continueButton.Location = new System.Drawing.Point(242, 9);
             this.continueButton.Name = "continueButton";
             this.continueButton.Size = new System.Drawing.Size(75, 23);
             this.continueButton.TabIndex = 0;
@@ -102,13 +102,13 @@
             this.controlPanel1.Controls.Add(this.continueButton);
             this.controlPanel1.Location = new System.Drawing.Point(0, 159);
             this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(373, 40);
+            this.controlPanel1.Size = new System.Drawing.Size(326, 40);
             this.controlPanel1.TabIndex = 0;
             // 
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(207, 9);
+            this.cancelButton.Location = new System.Drawing.Point(161, 9);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 21;
@@ -123,7 +123,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(373, 199);
+            this.ClientSize = new System.Drawing.Size(326, 199);
             this.Controls.Add(this.proxyPasswordLabel);
             this.Controls.Add(this.ftpPasswordLabel);
             this.Controls.Add(this.passwordTextBox);

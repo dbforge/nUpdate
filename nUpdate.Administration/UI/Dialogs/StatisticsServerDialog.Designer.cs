@@ -44,7 +44,7 @@
             // 
             // serverList
             // 
-            this.serverList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.serverList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.serverList.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.serverList.FormattingEnabled = true;
             this.serverList.IntegralHeight = false;
