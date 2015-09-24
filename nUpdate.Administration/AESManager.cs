@@ -15,16 +15,16 @@ namespace nUpdate.Administration
         /// </summary>
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="keyPassword">The password which the key should be derived from.</param>
-        /// <param name="ivPassword">The password which the initializing vector should be drived from.</param>
+        /// <param name="ivPassword">The password which the initializing vector should be derived from.</param>
         /// <returns>Returns the encrypted string as a byte-array.</returns>
         public static byte[] Encrypt(string plainText, string keyPassword, string ivPassword)
         {
-            if (String.IsNullOrEmpty(plainText))
-                throw new ArgumentNullException("plainText");
+            if (string.IsNullOrEmpty(plainText))
+                throw new ArgumentNullException(nameof(plainText));
             if (keyPassword == null || keyPassword.Length <= 0)
-                throw new ArgumentNullException("keyPassword");
+                throw new ArgumentNullException(nameof(keyPassword));
             if (ivPassword == null || ivPassword.Length <= 0)
-                throw new ArgumentNullException("ivPassword");
+                throw new ArgumentNullException(nameof(ivPassword));
 
             var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
@@ -70,11 +70,11 @@ namespace nUpdate.Administration
         public static SecureString Decrypt(byte[] cipherText, string keyPassword, string ivPassword)
         {
             if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
+                throw new ArgumentNullException(nameof(cipherText));
             if (keyPassword == null || keyPassword.Length <= 0)
-                throw new ArgumentNullException("keyPassword");
+                throw new ArgumentNullException(nameof(keyPassword));
             if (ivPassword == null || ivPassword.Length <= 0)
-                throw new ArgumentNullException("ivPassword");
+                throw new ArgumentNullException(nameof(ivPassword));
 
             var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});

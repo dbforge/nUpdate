@@ -26,10 +26,10 @@ namespace nUpdate.Administration.Operations.Panels
         public IEnumerable<string> Arguments
         {
             get { return argumentTextBox.Text.Split(','); }
-            set { argumentTextBox.Text = String.Join(",", value); }
+            set { argumentTextBox.Text = string.Join(",", value); }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(pathTextBox.Text) && pathTextBox.Text.Contains("\\") &&
+        public bool IsValid => !string.IsNullOrEmpty(pathTextBox.Text) && pathTextBox.Text.Contains("\\") &&
                                pathTextBox.Text.Split(new[] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2;
 
         public Operation Operation => new Operation(OperationArea.Processes, OperationMethod.Start, pathTextBox.Text,

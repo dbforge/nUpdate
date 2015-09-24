@@ -78,7 +78,7 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
+        public void SetUIState(bool enabled)
         {
             BeginInvoke(new Action(() =>
             {
@@ -124,7 +124,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
-            Text = String.Format(Text, ProjectName, Program.VersionString);
+            Text = string.Format(Text, ProjectName, Program.VersionString);
             if (NativeMethods.DwmIsCompositionEnabled())
             {
                 _margins = new Margins {Top = 38};
@@ -171,7 +171,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 currentNode = currentNode.Parent;
             }
 
-            var directory = $"/{String.Join("/", directories)}/{e.Node.Text}";
+            var directory = $"/{string.Join("/", directories)}/{e.Node.Text}";
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
@@ -179,7 +179,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -197,7 +197,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             {
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
                                     PopupButtons.Ok);
-                                SetUiState(true);
+                                SetUIState(true);
                             }));
 
                     DialogResult = DialogResult.OK;
@@ -217,7 +217,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }));
                 }
 
-                SetUiState(true);
+                SetUIState(true);
             });
         }
 
@@ -303,7 +303,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(e.Label))
+            if (string.IsNullOrWhiteSpace(e.Label))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                     "Please enter a name for the directory to create.", PopupButtons.Ok);
@@ -321,7 +321,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -338,7 +338,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex,
                                     PopupButtons.Ok)));
                 }
-                SetUiState(true);
+                SetUIState(true);
             });
         }
 
@@ -355,7 +355,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -371,7 +371,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex,
                                     PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -379,7 +379,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new Action(
                         () =>
                             serverDataTreeView.SelectedNode.Remove()));
-                SetUiState(true);
+                SetUIState(true);
             });
         }
     }

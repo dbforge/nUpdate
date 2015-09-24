@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace nUpdate.Updating
 {
@@ -76,16 +77,16 @@ namespace nUpdate.Updating
             int developmentBuild)
         {
             if (major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(major), "Index must be 0 or higher");
 
             if (minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(minor), "Index must be 0 or higher");
 
             if (build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(build), "Index must be 0 or higher");
 
             if (revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(revision), "Index must be 0 or higher");
 
             Major = major;
             Minor = minor;
@@ -150,7 +151,7 @@ namespace nUpdate.Updating
                 {
                     return
                         $"{Major}.{Minor}.{Build}.{Revision}-{DevelopmentalStage.ToString().Substring(0, 1).ToLower()}.{DevelopmentBuild}"
-                            .Replace(".0", String.Empty);
+                            .Replace(".0", string.Empty);
                 }
                 return BasicVersion;
             }
@@ -186,7 +187,7 @@ namespace nUpdate.Updating
                         break;
                 }
                 return
-                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : String.Empty)}";
+                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
             }
             return BasicVersion;
         }
@@ -201,6 +202,7 @@ namespace nUpdate.Updating
         {
             var accumulator = 0;
 
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             accumulator |= (Major & 0x0000000F) << 28;
             accumulator |= (Minor & 0x000000FF) << 20;
             accumulator |= (Build & 0x000000FF) << 12;

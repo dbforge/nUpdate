@@ -62,7 +62,7 @@ namespace nUpdate.UI.Dialogs
 
         internal static void AddShieldToButton(Button btn)
         {
-            const Int32 bcmSetshield = 0x160C;
+            const int bcmSetshield = 0x160C;
 
             btn.FlatStyle = FlatStyle.System;
             NativeMethods.SendMessage(btn.Handle, bcmSetshield, new IntPtr(0), new IntPtr(1));
@@ -70,7 +70,7 @@ namespace nUpdate.UI.Dialogs
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(LanguageFilePath))
+            if (!string.IsNullOrEmpty(LanguageFilePath))
             {
                 try
                 {
@@ -81,7 +81,7 @@ namespace nUpdate.UI.Dialogs
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
@@ -89,24 +89,24 @@ namespace nUpdate.UI.Dialogs
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
             {
                 _lp = new LocalizationProperties();
             }
 
             headerLabel.Text =
-                String.Format(
+                string.Format(
                     PackageConfigurations.Count() > 1
                         ? _lp.NewUpdateDialogMultipleUpdatesHeader
                         : _lp.NewUpdateDialogSingleUpdateHeader, PackageConfigurations.Count());
-            infoLabel.Text = String.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
+            infoLabel.Text = string.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
             var availableVersions =
                 PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
-            newestVersionLabel.Text = String.Format(_lp.NewUpdateDialogAvailableVersionsText,
+            newestVersionLabel.Text = string.Format(_lp.NewUpdateDialogAvailableVersionsText,
                 PackageConfigurations.Count() <= 2
-                    ? String.Join(", ", availableVersions.Select(item => item.FullText))
+                    ? string.Join(", ", availableVersions.Select(item => item.FullText))
                     : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText}");
-            currentVersionLabel.Text = String.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
+            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
@@ -114,21 +114,21 @@ namespace nUpdate.UI.Dialogs
             if (PackageSize >= 107374182.4)
             {
                 double packageSizeInMb = Math.Round((PackageSize/GB), 1);
-                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"GB"}";
+                updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"GB"}";
             }
             else if (PackageSize >= 104857.6)
             {
                 double packageSizeInMb = Math.Round((PackageSize/MB), 1);
-                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"MB"}";
+                updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, packageSizeInMb)} {"MB"}";
             }
             else if (PackageSize >= 102.4)
             {
                 double packageSizeInKb = Math.Round((PackageSize/KB), 1);
-                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb)} {"KB"}";
+                updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, packageSizeInKb)} {"KB"}";
             }
             else if (PackageSize >= 1)
             {
-                updateSizeLabel.Text = $"{String.Format(_lp.NewUpdateDialogSizeText, PackageSize)} {"B"}";
+                updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, PackageSize)} {"B"}";
             }
 
             Icon = _appIcon;
@@ -144,7 +144,7 @@ namespace nUpdate.UI.Dialogs
                     : updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
 
                 changelogTextBox.Text +=
-                    String.Format(String.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
+                    string.Format(string.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
                         versionText, changelogText);
             }
             AddShieldToButton(installButton);
@@ -157,7 +157,7 @@ namespace nUpdate.UI.Dialogs
             }
 
             accessLabel.Text =
-                $"{_lp.NewUpdateDialogAccessText} {String.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
+                $"{_lp.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
             _allowCancel = true;
         }
 

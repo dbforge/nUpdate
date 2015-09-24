@@ -492,7 +492,11 @@ namespace nUpdate.Administration.Ftp
         ///     the security
         ///     protocol Ssl3, otherwise specify Tls1.
         /// </remarks>
-        Ssl2Implicit
+        Ssl2Implicit,
+        /// <summary>
+        ///     Specifies a custom protocol.
+        /// </summary>
+        Custom,
     }
 
     /// <summary>
@@ -548,9 +552,9 @@ namespace nUpdate.Administration.Ftp
         private FtpResponse _response = new FtpResponse();
         private readonly FtpResponseCollection _responseList = new FtpResponseCollection();
 
-        private readonly Object _reponseMonitorLock = new Object();
-        private readonly Object _createSslLock = new Object();
-        private readonly Object _cmdStreamWriteLock = new Object();
+        private readonly object _reponseMonitorLock = new object();
+        private readonly object _createSslLock = new object();
+        private readonly object _cmdStreamWriteLock = new object();
 
         private Thread _responseMonitor;
 
@@ -1583,8 +1587,8 @@ namespace nUpdate.Administration.Ftp
 
                     // can only sleep to a max of an Int32 so we need to check this since bytesTotal is a long value
                     // this should never be an issue but never say never
-                    if (millisecDelay > Int32.MaxValue)
-                        millisecDelay = Int32.MaxValue;
+                    if (millisecDelay > int.MaxValue)
+                        millisecDelay = int.MaxValue;
 
                     // go to sleep
                     Thread.Sleep((int) millisecDelay);
@@ -1612,7 +1616,7 @@ namespace nUpdate.Administration.Ftp
                 if (_commandConn != null)
                     _commandConn.Close();
 
-                throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                     "A proxy error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
                     _port.ToString(CultureInfo.InvariantCulture), pex.Message));
             }
@@ -1621,7 +1625,7 @@ namespace nUpdate.Administration.Ftp
                 if (_commandConn != null)
                     _commandConn.Close();
 
-                throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                     "An error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
                     _port.ToString(CultureInfo.InvariantCulture), ex.Message));
             }
@@ -1875,14 +1879,14 @@ namespace nUpdate.Administration.Ftp
                         _activeListener.Stop();
                     else
                         throw new FtpException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 "An error occurred while trying to create an active connection on host {0} port {1}. {2}",
                                 localHost, listenerPort.ToString(CultureInfo.InvariantCulture), socketError.Message));
                 }
             } while (!success);
 
             byte[] addrBytes = localAddr.GetAddressBytes();
-            string dataPortInfo = String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5}",
+            string dataPortInfo = string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5}",
                 addrBytes[0].ToString(CultureInfo.InvariantCulture), addrBytes[1].ToString(CultureInfo.InvariantCulture),
                 addrBytes[2].ToString(CultureInfo.InvariantCulture), addrBytes[3].ToString(CultureInfo.InvariantCulture),
                 listenerPort/256, listenerPort%256);
@@ -1962,7 +1966,7 @@ namespace nUpdate.Administration.Ftp
                     if (!_activeSignal.WaitOne(_transferTimeout, false))
                     {
                         if (_response.Code == FtpResponseCode.CannotOpenDataConnection)
-                            throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                            throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                                 "The ftp destination was unable to open a data connection to the ftp client on port {0}.",
                                 _activePort));
                         throw new FtpException(
@@ -2004,8 +2008,8 @@ namespace nUpdate.Administration.Ftp
             // build the data host name from the server response
             string passiveHost = data[0] + "." + data[1] + "." + data[2] + "." + data[3];
             // extract and convert the port number from the server response
-            int passivePort = Int32.Parse(data[4], CultureInfo.InvariantCulture)*256 +
-                              Int32.Parse(data[5], CultureInfo.InvariantCulture);
+            int passivePort = int.Parse(data[4], CultureInfo.InvariantCulture)*256 +
+                              int.Parse(data[5], CultureInfo.InvariantCulture);
 
             try
             {
@@ -2029,7 +2033,7 @@ namespace nUpdate.Administration.Ftp
             catch (Exception ex)
             {
                 throw new FtpException(
-                    String.Format(CultureInfo.InvariantCulture,
+                    string.Format(CultureInfo.InvariantCulture,
                         "An error occurred while opening passive data connection to destination '{0}' on port '{1}'. {2}",
                         passiveHost, passivePort, ex.Message));
             }
@@ -2205,7 +2209,7 @@ namespace nUpdate.Administration.Ftp
             string serverHash = GetChecksum(_hashAlgorithm, path, startPos, endPos);
 
             // string compare the dataHash to the server hash value and see if they are the same
-            if (String.Compare(streamHash, serverHash, StringComparison.InvariantCultureIgnoreCase) != 0)
+            if (string.Compare(streamHash, serverHash, StringComparison.InvariantCultureIgnoreCase) != 0)
                 throw new FtpFileIntegrityException(
                     $"File integrity check failed.  The destination integrity value '{serverHash}' for the file '{path}' did not match the data transfer integrity value '{streamHash}'.");
         }

@@ -50,26 +50,21 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
         /// </summary>
-        /// <param name="updateConfigurationFileUri">The URI of the update configuration file.</param>
+        /// <param name="updateConfigurationFileUri">The <see cref="Uri"/> of the update configuration.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
-        /// <param name="languageCulture">The language culture to use for the localization of the integrated UpdaterUI.</param>
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
-        ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
-        ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
+        ///     If you have problems inserting the data (or if you want to save time) you can scroll down and follow the steps of "Copy data" which will automatically generate the necessary code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey)
         {
             if (updateConfigurationFileUri == null)
-                throw new ArgumentNullException("updateConfigurationFileUri");
+                throw new ArgumentNullException(nameof(updateConfigurationFileUri));
             _updateConfigurationFileUri = updateConfigurationFileUri;
 
-            if (String.IsNullOrEmpty(publicKey))
-                throw new ArgumentNullException("publicKey");
+            if (string.IsNullOrEmpty(publicKey))
+                throw new ArgumentNullException(nameof(publicKey));
             _publicKey = publicKey;
-
-            CultureFilePaths = new Dictionary<CultureInfo, string>();
-            Arguments = new List<UpdateArgument>();
 
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
@@ -79,7 +74,7 @@ namespace nUpdate.Updating
                     "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
             CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-            if (UseCustomInstallerUserInterface && String.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
+            if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
             Initialize();
@@ -92,8 +87,6 @@ namespace nUpdate.Updating
         {
             Dispose(true);
         }
-
-        public SynchronizationContext Context { get; set; }
 
         /// <summary>
         ///     Gets or sets the URI of the update configuration file.
@@ -136,9 +129,9 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Gets or sets the paths for the file with the content relating to the cultures.
+        ///     Gets or sets the paths the language files of to the relating cultures.
         /// </summary>
-        public Dictionary<CultureInfo, string> CultureFilePaths { get; set; }
+        public Dictionary<CultureInfo, string> CultureFilePaths { get; set; } = new Dictionary<CultureInfo, string>();
 
         /// <summary>
         ///     Gets or sets a value indicating whether a custom user interface should be used for the update installer, or not.
@@ -202,7 +195,7 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Gets or sets the arguments that should be handled over to the application.
         /// </summary>
-        public List<UpdateArgument> Arguments { get; set; }
+        public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
 
         /// <summary>
         ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
@@ -381,9 +374,9 @@ namespace nUpdate.Updating
                         var buffer = new byte[1024];
                         _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                             Path.Combine(_applicationUpdateDirectory,
-                                String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
+                                $"{updateConfiguration.LiteralVersion}.zip"));
                         using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
-                            String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
+                            $"{updateConfiguration.LiteralVersion}.zip")))
                         {
                             using (Stream input = webResponse.GetResponseStream())
                             {
@@ -424,12 +417,11 @@ namespace nUpdate.Updating
                                 try
                                 {
                                     string response =
-                                        new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
-                                            updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
-                                            SystemInformation.OperatingSystemName)); // Only for calling it
-                                    if (!String.IsNullOrEmpty(response))
+                                        new WebClient().DownloadString(
+                                            $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
+                                    if (!string.IsNullOrEmpty(response))
                                     {
-                                        throw new StatisticsException(String.Format(
+                                        throw new StatisticsException(string.Format(
                                             _lp.StatisticsScriptExceptionText, response));
                                     }
                                 }
@@ -598,17 +590,15 @@ namespace nUpdate.Updating
             foreach (var filePathItem in _packageFilePaths)
             {
                 if (!File.Exists(filePathItem.Value))
-                    throw new FileNotFoundException(String.Format(_lp.PackageFileNotFoundExceptionText,
+                    throw new FileNotFoundException(string.Format(_lp.PackageFileNotFoundExceptionText,
                         filePathItem.Key.FullText));
 
                 var configuration =
                     _updateConfigurations.First(config => config.LiteralVersion == filePathItem.Key.ToString());
                 if (configuration.Signature == null || configuration.Signature.Length <= 0)
-                    throw new ArgumentException(String.Format("Signature of version \"{0}\" is null or empty.",
-                        configuration));
+                    throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty.");
 
-                FileStream stream = File.Open(filePathItem.Value, FileMode.Open);
-                try
+                using (var stream = File.Open(filePathItem.Value, FileMode.Open))
                 {
                     RsaManager rsa;
 
@@ -646,10 +636,6 @@ namespace nUpdate.Updating
                     _packageFilePaths.Clear();
                     _packageOperations.Clear();
                     return false;
-                }
-                finally
-                {
-                    stream.Close();
                 }
             }
             return true;
@@ -703,17 +689,16 @@ namespace nUpdate.Updating
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
 
             var installerUiAssemblyPath = UseCustomInstallerUserInterface
-                ? String.Format("\"{0}\"", CustomInstallerUiAssemblyPath)
-                : String.Empty;
+                ? $"\"{CustomInstallerUiAssemblyPath}\""
+                : string.Empty;
             string[] args =
             {
-                String.Format("\"{0}\"", String.Join("%", _packageFilePaths.Select(item => item.Value))),
-                String.Format("\"{0}\"", Application.StartupPath),
-                String.Format("\"{0}\"", Application.ExecutablePath),
-                String.Format("\"{0}\"", Application.ProductName),
-                String.Format("\"{0}\"",
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))),
-                String.Format("\"{0}\"", installerUiAssemblyPath),
+                $"\"{string.Join("%", _packageFilePaths.Select(item => item.Value))}\"",
+                $"\"{Application.StartupPath}\"",
+                $"\"{Application.ExecutablePath}\"",
+                $"\"{Application.ProductName}\"",
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))}\"",
+                $"\"{installerUiAssemblyPath}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,
                 _lp.FileDeletingOperationText,
@@ -728,16 +713,15 @@ namespace nUpdate.Updating
                 _lp.ServiceStopOperationText,
                 _lp.InstallerUpdatingErrorCaption,
                 _lp.InstallerInitializingErrorCaption,
-                String.Format("\"{0}\"",
-                    Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))),
-                String.Format("\"{0}\"", _closeHostApplication),
-                String.Format("\"{0}\"", _lp.InstallerFileInUseError),
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
+                $"\"{_closeHostApplication}\"",
+                $"\"{_lp.InstallerFileInUseError}\"",
             };
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = unpackerAppPath,
-                Arguments = String.Join("|", args),
+                Arguments = string.Join("|", args),
                 UseShellExecute = true,
                 Verb = "runas"
             };
@@ -781,7 +765,7 @@ namespace nUpdate.Updating
                 }
                 catch (Exception ex)
                 {
-                    throw new IOException(String.Format(_lp.MainFolderCreationExceptionText,
+                    throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
                         ex.Message));
                 }
             }
@@ -790,7 +774,7 @@ namespace nUpdate.Updating
                 ? CultureFilePaths.First(item => item.Key.Equals(_languageCulture)).Value
                 : null;
 
-            if (!String.IsNullOrEmpty(languageFilePath))
+            if (!string.IsNullOrEmpty(languageFilePath))
             {
                 try
                 {
@@ -801,15 +785,15 @@ namespace nUpdate.Updating
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(languageFilePath) && _languageCulture.Name != "en")
+            else if (string.IsNullOrEmpty(languageFilePath) && _languageCulture.Name != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", _languageCulture.Name);
+                string resourceName = $"nUpdate.Core.Localization.{_languageCulture.Name}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(languageFilePath) && _languageCulture.Name == "en")
+            else if (string.IsNullOrEmpty(languageFilePath) && _languageCulture.Name == "en")
             {
                 _lp = new LocalizationProperties();
             }
@@ -864,7 +848,7 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected virtual void OnUpdateSearchStarted(Object sender, EventArgs e)
+        protected virtual void OnUpdateSearchStarted(object sender, EventArgs e)
         {
             UpdateSearchStarted?.Invoke(sender, e);
         }
@@ -915,7 +899,7 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected virtual void OnUpdateDownloadFinished(Object sender, EventArgs e)
+        protected virtual void OnUpdateDownloadFinished(object sender, EventArgs e)
         {
             PackagesDownloadFinished?.Invoke(sender, e);
         }

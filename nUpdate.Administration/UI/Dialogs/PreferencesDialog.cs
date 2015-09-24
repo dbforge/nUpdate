@@ -38,7 +38,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _cultureNames.Add(info.Name);
             }
 
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             versionLabel.Text += " 4.0.0";
             includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
             includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;

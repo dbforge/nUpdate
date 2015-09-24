@@ -98,22 +98,22 @@ namespace nUpdate.UpdateInstaller.Core
         /// <summary>
         ///     The major of the version.
         /// </summary>
-        public int Major { get; set; }
+        public int Major { get; }
 
         /// <summary>
         ///     The minor of the version.
         /// </summary>
-        public int Minor { get; set; }
+        public int Minor { get; }
 
         /// <summary>
         ///     The build of the version.
         /// </summary>
-        public int Build { get; set; }
+        public int Build { get; }
 
         /// <summary>
         ///     The revision of the version.
         /// </summary>
-        public int Revision { get; set; }
+        public int Revision { get; }
 
         /// <summary>
         ///     The developmental stage of the version.
@@ -150,7 +150,7 @@ namespace nUpdate.UpdateInstaller.Core
                 {
                     return
                         $"{Major}.{Minor}.{Build}.{Revision}-{DevelopmentalStage.ToString().Substring(0, 1).ToLower()}.{DevelopmentBuild}"
-                            .Replace(".0", String.Empty);
+                            .Replace(".0", string.Empty);
                 }
                 return BasicVersion;
             }
@@ -186,7 +186,7 @@ namespace nUpdate.UpdateInstaller.Core
                         break;
                 }
                 return
-                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : String.Empty)}";
+                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
             }
             return BasicVersion;
         }

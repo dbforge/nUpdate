@@ -33,7 +33,7 @@ namespace nUpdate.Administration.Operations.Panels
         {
             get
             {
-                return !Controls.OfType<CueTextBox>().Any(item => String.IsNullOrEmpty(item.Text)) &&
+                return !Controls.OfType<CueTextBox>().Any(item => string.IsNullOrEmpty(item.Text)) &&
                        Path.Contains("\\") &&
                        Path.Split(new[] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2;
             }

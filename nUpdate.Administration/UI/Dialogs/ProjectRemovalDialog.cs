@@ -29,7 +29,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void ProjectRemovalDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             var mainNode = new TreeNode("nUpdate Administration (Projects)");
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();

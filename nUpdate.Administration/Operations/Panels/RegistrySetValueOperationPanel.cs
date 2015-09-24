@@ -62,7 +62,7 @@ namespace nUpdate.Administration.Operations.Panels
             }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(subKeyTextBox.Text) && nameValuePairListView.Items.Count > 0;
+        public bool IsValid => !string.IsNullOrEmpty(subKeyTextBox.Text) && nameValuePairListView.Items.Count > 0;
 
         public Operation Operation => new Operation(OperationArea.Registry, OperationMethod.SetValue, KeyPath, NameValuePairs);
 
@@ -75,7 +75,7 @@ namespace nUpdate.Administration.Operations.Panels
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(nameTextBox.Text) || String.IsNullOrEmpty(valueTextBox.Text))
+            if (string.IsNullOrEmpty(nameTextBox.Text) || string.IsNullOrEmpty(valueTextBox.Text))
                 return;
             var item = new ListViewItem(nameTextBox.Text);
             item.SubItems.Add(valueTextBox.Text);

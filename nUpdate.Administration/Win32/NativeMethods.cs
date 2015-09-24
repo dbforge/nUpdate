@@ -40,16 +40,16 @@ namespace nUpdate.Administration.Win32
         public static extern bool DestroyIcon(IntPtr hIcon);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(HandleRef hWnd, UInt32 msg, ref int wParam, StringBuilder lParam);
+        public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, ref int wParam, StringBuilder lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(HandleRef hWnd, UInt32 msg, IntPtr wParam, string lParam);
+        public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, IntPtr wParam, string lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(HandleRef hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SendMessage(HandleRef hWnd, UInt32 msg, IntPtr wParam, bool lParam);
+        public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, IntPtr wParam, bool lParam);
 
         // Not portable (bool)
 
@@ -91,7 +91,7 @@ namespace nUpdate.Administration.Win32
         public static extern bool ReleaseCapture();
 
         [DllImport("shell32.dll")]
-        public static extern void SHChangeNotify(UInt32 wEventId, UInt32 uFlags, IntPtr dwItem1, IntPtr dwItem2);
+        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct Shfileinfo

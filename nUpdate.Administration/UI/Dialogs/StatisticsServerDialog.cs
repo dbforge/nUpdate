@@ -94,7 +94,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             if (!InitializeServers())
             {
                 Close();

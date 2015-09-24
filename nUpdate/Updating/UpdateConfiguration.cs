@@ -99,7 +99,7 @@ namespace nUpdate.Updating
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUri);
-                if (!String.IsNullOrEmpty(source))
+                if (!string.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
 

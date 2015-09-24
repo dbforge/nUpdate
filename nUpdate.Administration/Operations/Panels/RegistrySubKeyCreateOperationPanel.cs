@@ -46,7 +46,7 @@ namespace nUpdate.Administration.Operations.Panels
             set { _itemList = value; }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(subKeyTextBox.Text) && ItemList.Any();
+        public bool IsValid => !string.IsNullOrEmpty(subKeyTextBox.Text) && ItemList.Any();
 
         public Operation Operation => new Operation(OperationArea.Registry, OperationMethod.Create, KeyPath, _itemList.ToList());
 
@@ -58,7 +58,7 @@ namespace nUpdate.Administration.Operations.Panels
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(keyNameTextBox.Text))
+            if (string.IsNullOrEmpty(keyNameTextBox.Text))
                 return;
             _itemList.Add(keyNameTextBox.Text);
             keyNameTextBox.Clear();

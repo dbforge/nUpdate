@@ -83,7 +83,7 @@ namespace nUpdate.Administration.Ftp.Service
                 ftp.DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active;
                 ftp.FileTransferType = TransferType.Binary;
                 ftp.Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null;
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 foreach (FtpItem item in items)
                 {
                     switch (item.ItemType)
@@ -118,7 +118,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
                 ftp.DeleteFile(fileName);
             }
@@ -142,7 +142,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.DeleteFile(fileName);
             }
@@ -166,7 +166,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
                 string nameList;
                 try
@@ -201,7 +201,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 string nameList = null;
                 try
@@ -232,7 +232,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 FtpItemCollection items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
                 return items;
             }
@@ -256,7 +256,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.MakeDirectory(name);
             }
             finally
@@ -289,7 +289,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.Rename(oldName, newName);
             }
@@ -313,7 +313,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
             }
             finally
             {
@@ -335,7 +335,7 @@ namespace nUpdate.Administration.Ftp.Service
 
             try
             {
-                ftp.Open(Username, Password.ConvertToUnsecureString());
+                ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.PutFile(filePath, FileAction.Create);
             }
@@ -362,7 +362,7 @@ namespace nUpdate.Administration.Ftp.Service
             {
                 _packageFtpClient.TransferProgress += TransferProgressChangedEventHandler;
                 _packageFtpClient.PutFileAsyncCompleted += UploadPackageFinished;
-                _packageFtpClient.Open(Username, Password.ConvertToUnsecureString());
+                _packageFtpClient.Open(Username, Password.ConvertToInsecureString());
                 _packageFtpClient.ChangeDirectoryMultiPath(Directory);
                 _packageFtpClient.MakeDirectory(packageVersion);
                 _packageFtpClient.ChangeDirectory(packageVersion);
@@ -416,7 +416,7 @@ namespace nUpdate.Administration.Ftp.Service
                         FileTransferType = TransferType.Binary,
                         Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
                     };
-                    ftp.Open(Username, Password.ConvertToUnsecureString());
+                    ftp.Open(Username, Password.ConvertToInsecureString());
 
                     Guid guid; // Just for the out-reference of TryParse
                     if (item.ItemType == FtpItemType.Directory && UpdateVersion.IsValid(item.Name))

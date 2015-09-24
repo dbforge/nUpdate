@@ -35,7 +35,7 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
@@ -56,7 +56,7 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
@@ -79,7 +79,7 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
@@ -100,7 +100,7 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)

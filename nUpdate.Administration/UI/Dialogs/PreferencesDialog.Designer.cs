@@ -122,8 +122,8 @@
             // languagesComboBox
             // 
             this.languagesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            resources.ApplyResources(this.languagesComboBox, "languagesComboBox");
             this.languagesComboBox.FormattingEnabled = true;
+            resources.ApplyResources(this.languagesComboBox, "languagesComboBox");
             this.languagesComboBox.Name = "languagesComboBox";
             // 
             // label7

@@ -42,7 +42,7 @@ namespace nUpdate.Administration.Operations.Panels
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(fileNameTextBox.Text))
+            if (string.IsNullOrEmpty(fileNameTextBox.Text))
                 return;
             _itemList.Add(fileNameTextBox.Text);
             fileNameTextBox.Clear();

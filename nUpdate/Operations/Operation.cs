@@ -1,11 +1,15 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using System;
-
 namespace nUpdate.Operations
 {
+    /// <summary>
+    ///     An update operation that is performed as soon as the updates are being installed.
+    /// </summary>
     public class Operation
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Operation"/> class.
+        /// </summary>
         public Operation(OperationArea area, OperationMethod method, string value, object value2 = null)
         {
             Area = area;
@@ -15,68 +19,31 @@ namespace nUpdate.Operations
         }
 
         /// <summary>
-        ///     The area of the current operation.
+        ///     Gets or sets <see cref="OperationArea"/> of the current operation.
         /// </summary>
         public OperationArea Area { get; set; }
 
         /// <summary>
-        ///     The method of the current oepration.
+        ///     Gets or sets the <see cref="OperationMethod"/> of the current operation.
         /// </summary>
         public OperationMethod Method { get; set; }
 
         /// <summary>
-        ///     The value of the current operation.
+        ///     Gets or sets the value of the current operation.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        ///     The second value of the current operation if it needs more than one argument.
+        ///     Gets or sets the second (optional) value of the current operation.
         /// </summary>
         public object Value2 { get; set; }
-
-        /// <summary>
-        ///     Gets the operation area and method from a given tag.
-        /// </summary>
-        /// <param name="areaTag">The tag to check.</param>
-        /// <returns>Returns a new Tuple with the area and method for the given tag.</returns>
-        public static Tuple<OperationArea, OperationMethod> GetOperation(object areaTag)
-        {
-            var areaTagString = areaTag.ToString();
-            switch (areaTagString)
-            {
-                case "DeleteFile":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Delete);
-                case "RenameFile":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Rename);
-                case "CreateRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Create);
-                case "DeleteRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Delete);
-                case "SetRegistryValue":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.SetValue);
-                case "DeleteRegistryValue":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry,
-                        OperationMethod.DeleteValue);
-                case "StartProcess":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Start);
-                case "TerminateProcess":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Stop);
-                case "StartService":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Start);
-                case "StopService":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Stop);
-                case "ExecuteScript":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
-            }
-            return null;
-        }
 
         /// <summary>
         ///     Gets the operation tag from a given operation.
         /// </summary>
         /// <param name="operation">The operation to get the tag from.</param>
         /// <returns>
-        ///     Returns the tag as a string.
+        ///     Returns the tag as a <see cref="string"/>.
         /// </returns>
         public static string GetOperationTag(Operation operation)
         {

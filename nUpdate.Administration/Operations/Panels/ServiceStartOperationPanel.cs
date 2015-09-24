@@ -22,10 +22,10 @@ namespace nUpdate.Administration.Operations.Panels
         public string[] Arguments
         {
             get { return argumentTextBox.Text.Split(','); }
-            set { argumentTextBox.Text = String.Join(",", value); }
+            set { argumentTextBox.Text = string.Join(",", value); }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(serviceNameTextBox.Text);
+        public bool IsValid => !string.IsNullOrEmpty(serviceNameTextBox.Text);
 
         public Operation Operation => new Operation(OperationArea.Services, OperationMethod.Start, ServiceName, Arguments);
     }

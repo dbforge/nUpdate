@@ -44,7 +44,7 @@ namespace nUpdate.UI.Dialogs
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(LanguageFilePath))
+            if (!string.IsNullOrEmpty(LanguageFilePath))
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace nUpdate.UI.Dialogs
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
@@ -63,7 +63,7 @@ namespace nUpdate.UI.Dialogs
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
             {
                 _lp = new LocalizationProperties();
             }

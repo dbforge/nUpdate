@@ -121,7 +121,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyUserId">Proxy user identification information.</param>
         public Socks4ProxyClient(string proxyHost, string proxyUserId)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyUserId == null)
@@ -140,7 +140,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyUserId">Proxy user identification information.</param>
         public Socks4ProxyClient(string proxyHost, int proxyPort, string proxyUserId)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyPort <= 0 || proxyPort > 65535)
@@ -160,7 +160,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyHost">Host name or IP address of the proxy server.</param>
         public Socks4ProxyClient(string proxyHost)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             _proxyHost = proxyHost;
@@ -174,7 +174,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPort">Port used to connect to proxy server.</param>
         public Socks4ProxyClient(string proxyHost, int proxyPort)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyPort <= 0 || proxyPort > 65535)
@@ -250,7 +250,7 @@ namespace nUpdate.Administration.Proxy
         /// </remarks>
         public TcpClient CreateConnection(string destinationHost, int destinationPort)
         {
-            if (String.IsNullOrEmpty(destinationHost))
+            if (string.IsNullOrEmpty(destinationHost))
                 throw new ArgumentNullException("destinationHost");
 
             if (destinationPort <= 0 || destinationPort > 65535)
@@ -262,7 +262,7 @@ namespace nUpdate.Administration.Proxy
                 // if we have no cached tcpip connection then create one
                 if (_tcpClientCached == null)
                 {
-                    if (String.IsNullOrEmpty(_proxyHost))
+                    if (string.IsNullOrEmpty(_proxyHost))
                         throw new ProxyException("ProxyHost property must contain a value.");
 
                     if (_proxyPort <= 0 || _proxyPort > 65535)
@@ -291,7 +291,7 @@ namespace nUpdate.Administration.Proxy
             catch (Exception ex)
             {
                 throw new ProxyException(
-                    String.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
+                    string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)), ex);
             }
         }
@@ -408,7 +408,7 @@ namespace nUpdate.Administration.Proxy
                 catch (Exception ex)
                 {
                     throw new ProxyException(
-                        String.Format(CultureInfo.InvariantCulture,
+                        string.Format(CultureInfo.InvariantCulture,
                             "A error occurred while attempting to DNS resolve the host name {0}.", destinationHost), ex);
                 }
             }
@@ -456,7 +456,7 @@ namespace nUpdate.Administration.Proxy
             var portBytes = new byte[2];
             portBytes[0] = response[3];
             portBytes[1] = response[2];
-            Int16 port = BitConverter.ToInt16(portBytes, 0);
+            short port = BitConverter.ToInt16(portBytes, 0);
 
             // translate the reply code error number to human readable text
             string proxyErrorText;
@@ -474,14 +474,14 @@ namespace nUpdate.Administration.Proxy
                         "connection request rejected because the client program and identd report different user-ids";
                     break;
                 default:
-                    proxyErrorText = String.Format(CultureInfo.InvariantCulture,
+                    proxyErrorText = string.Format(CultureInfo.InvariantCulture,
                         "proxy client received an unknown reply with the code value '{0}' from the proxy destination",
                         replyCode.ToString(CultureInfo.InvariantCulture));
                     break;
             }
 
             //  build the exeception message string
-            string exceptionMsg = String.Format(CultureInfo.InvariantCulture,
+            string exceptionMsg = string.Format(CultureInfo.InvariantCulture,
                 "The {0} concerning destination host {1} port number {2}.  The destination reported the host as {3} port {4}.",
                 proxyErrorText, destinationHost, destinationPort, ipAddr, port.ToString(CultureInfo.InvariantCulture));
 
@@ -580,7 +580,7 @@ namespace nUpdate.Administration.Proxy
                 _asyncWorker.WorkerSupportsCancellation = true;
                 _asyncWorker.DoWork += CreateConnectionAsync_DoWork;
                 _asyncWorker.RunWorkerCompleted += CreateConnectionAsync_RunWorkerCompleted;
-                var args = new Object[2];
+                var args = new object[2];
                 args[0] = destinationHost;
                 args[1] = destinationPort;
                 _asyncWorker.RunWorkerAsync(args);
@@ -613,7 +613,7 @@ namespace nUpdate.Administration.Proxy
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 e.Result = CreateConnection((string) args[0], (int) args[1]);
             }
             catch (Exception ex)

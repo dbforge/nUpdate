@@ -62,7 +62,7 @@ namespace nUpdate.UpdateInstaller
         /// </returns>
         private IProgressReporter GetProgressReporter()
         {
-            Assembly assembly = (String.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
+            Assembly assembly = (string.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
                                  !File.Exists(Program.ExternalGuiAssemblyPath)
                 ? Assembly.GetExecutingAssembly()
                 : Assembly.LoadFrom(Program.ExternalGuiAssemblyPath));
@@ -108,7 +108,7 @@ namespace nUpdate.UpdateInstaller
                                 UseShellExecute = true,
                                 FileName = Program.ApplicationExecutablePath,
                                 Arguments =
-                                    String.Join("|",
+                                    string.Join("|",
                                         Program.Arguments.Where(
                                             item =>
                                                 item.ExecutionOptions ==
@@ -224,7 +224,7 @@ namespace nUpdate.UpdateInstaller
                                         var deleteFilePathParts = operation.Value.Split('\\');
                                         var deleteFileFullPath = Path.Combine(
                                             Operation.GetDirectory(deleteFilePathParts[0]),
-                                            String.Join("\\",
+                                            string.Join("\\",
                                                 deleteFilePathParts.Where(item => item != deleteFilePathParts[0])));
                                         secondValueAsArray = operation.Value2 as JArray;
                                         if (secondValueAsArray != null)
@@ -238,7 +238,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    String.Format(Program.FileDeletingOperationText, fileToDelete));
+                                                    string.Format(Program.FileDeletingOperationText, fileToDelete));
                                             }
                                         break;
 
@@ -246,7 +246,7 @@ namespace nUpdate.UpdateInstaller
                                         var renameFilePathParts = operation.Value.Split('\\');
                                         var renameFileFullPath = Path.Combine(
                                             Operation.GetDirectory(renameFilePathParts[0]),
-                                            String.Join("\\",
+                                            string.Join("\\",
                                                 renameFilePathParts.Where(item => item != renameFilePathParts[0])));
                                         if (File.Exists(renameFileFullPath))
                                             File.Move(renameFileFullPath,
@@ -256,7 +256,7 @@ namespace nUpdate.UpdateInstaller
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
-                                            String.Format(Program.FileRenamingOperationText,
+                                            string.Format(Program.FileRenamingOperationText,
                                                 Path.GetFileName(operation.Value),
                                                 operation.Value2));
                                         break;
@@ -276,7 +276,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    String.Format(Program.RegistrySubKeyCreateOperationText, registryKey));
+                                                    string.Format(Program.RegistrySubKeyCreateOperationText, registryKey));
                                             }
                                         break;
 
@@ -291,7 +291,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    String.Format(Program.RegistrySubKeyDeleteOperationText, registryKey));
+                                                    string.Format(Program.RegistrySubKeyDeleteOperationText, registryKey));
                                             }
                                         break;
 
@@ -310,7 +310,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    String.Format(Program.RegistryNameValuePairSetValueOperationText,
+                                                    string.Format(Program.RegistryNameValuePairSetValueOperationText,
                                                         nameValuePair.Item1, nameValuePair.Item2));
                                             }
                                         break;
@@ -326,7 +326,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    String.Format(Program.RegistryNameValuePairSetValueOperationText,
+                                                    string.Format(Program.RegistryNameValuePairSetValueOperationText,
                                                         valueName));
                                             }
                                         break;
@@ -340,7 +340,7 @@ namespace nUpdate.UpdateInstaller
                                         var processFilePathParts = operation.Value.Split('\\');
                                         var processFileFullPath =
                                             Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
-                                                String.Join("\\",
+                                                string.Join("\\",
                                                     processFilePathParts.Where(item => item != processFilePathParts[0])));
 
                                         var process = new Process
@@ -364,7 +364,7 @@ namespace nUpdate.UpdateInstaller
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
-                                            String.Format(Program.ProcessStartOperationText, operation.Value));
+                                            string.Format(Program.ProcessStartOperationText, operation.Value));
                                         break;
 
                                     case OperationMethod.Stop:
@@ -375,7 +375,7 @@ namespace nUpdate.UpdateInstaller
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
-                                            String.Format(Program.ProcessStopOperationText, operation.Value));
+                                            string.Format(Program.ProcessStopOperationText, operation.Value));
                                         break;
                                 }
                                 break;
@@ -389,7 +389,7 @@ namespace nUpdate.UpdateInstaller
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
-                                            String.Format(Program.ServiceStartOperationText, operation.Value));
+                                            string.Format(Program.ServiceStartOperationText, operation.Value));
                                         break;
 
                                     case OperationMethod.Stop:
@@ -398,7 +398,7 @@ namespace nUpdate.UpdateInstaller
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                         _progressReporter.ReportOperationProgress(percentage,
-                                            String.Format(Program.ServiceStopOperationText, operation.Value));
+                                            string.Format(Program.ServiceStopOperationText, operation.Value));
                                         break;
                                 }
                                 break;
@@ -429,7 +429,7 @@ namespace nUpdate.UpdateInstaller
                             UseShellExecute = true,
                             FileName = Program.ApplicationExecutablePath,
                             Arguments =
-                                String.Join("|",
+                                string.Join("|",
                                     Program.Arguments.Where(
                                         item =>
                                             item.ExecutionOptions ==
@@ -451,7 +451,7 @@ namespace nUpdate.UpdateInstaller
                         UseShellExecute = true,
                         FileName = Program.ApplicationExecutablePath,
                         Arguments =
-                            String.Join("|",
+                            string.Join("|",
                                 Program.Arguments.Where(
                                     item =>
                                         item.ExecutionOptions == UpdateArgumentExecutionOptions.OnlyOnSucceeded)
@@ -525,7 +525,7 @@ namespace nUpdate.UpdateInstaller
                         UseShellExecute = true,
                         FileName = Program.ApplicationExecutablePath,
                         Arguments =
-                            String.Join("|",
+                            string.Join("|",
                                 Program.Arguments.Where(
                                     item =>
                                         item.ExecutionOptions ==

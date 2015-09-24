@@ -14,7 +14,7 @@ namespace nUpdate
         /// <summary>
         ///     The default key size in bits.
         /// </summary>
-        public const int DEFAULT_KEY_SIZE = 8192;
+        public const int DefaultKeySize = 8192;
 
         private bool _disposed;
         private readonly RSACryptoServiceProvider _rsa;
@@ -26,7 +26,7 @@ namespace nUpdate
         public RsaManager(string rsaKey)
         {
             if (string.IsNullOrEmpty(rsaKey))
-                throw new ArgumentNullException("rsaKey");
+                throw new ArgumentNullException(nameof(rsaKey));
 
             _rsa = new RSACryptoServiceProvider();
             _rsa.FromXmlString(rsaKey);
@@ -38,7 +38,7 @@ namespace nUpdate
         /// </summary>
         public RsaManager()
         {
-            _rsa = new RSACryptoServiceProvider(DEFAULT_KEY_SIZE);
+            _rsa = new RSACryptoServiceProvider(DefaultKeySize);
             _rsa.ToXmlString(true);
             _rsa.PersistKeyInCsp = false;
         }

@@ -98,7 +98,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyHost">Host name or IP address of the proxy server.</param>
         public Socks5ProxyClient(string proxyHost)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             _proxyHost = proxyHost;
@@ -112,7 +112,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPort">Port used to connect to proxy server.</param>
         public Socks5ProxyClient(string proxyHost, int proxyPort)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyPort <= 0 || proxyPort > 65535)
@@ -130,7 +130,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPassword">Proxy authentication password.</param>
         public Socks5ProxyClient(string proxyHost, string proxyUserName, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyUserName == null)
@@ -154,7 +154,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPassword">Proxy authentication password.</param>
         public Socks5ProxyClient(string proxyHost, int proxyPort, string proxyUserName, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyPort <= 0 || proxyPort > 65535)
@@ -246,7 +246,7 @@ namespace nUpdate.Administration.Proxy
         /// </remarks>
         public TcpClient CreateConnection(string destinationHost, int destinationPort)
         {
-            if (String.IsNullOrEmpty(destinationHost))
+            if (string.IsNullOrEmpty(destinationHost))
                 throw new ArgumentNullException("destinationHost");
 
             if (destinationPort <= 0 || destinationPort > 65535)
@@ -258,7 +258,7 @@ namespace nUpdate.Administration.Proxy
                 // if we have no cached tcpip connection then create one
                 if (_tcpClientCached == null)
                 {
-                    if (String.IsNullOrEmpty(_proxyHost))
+                    if (string.IsNullOrEmpty(_proxyHost))
                         throw new ProxyException("ProxyHost property must contain a value.");
 
                     if (_proxyPort <= 0 || _proxyPort > 65535)
@@ -293,7 +293,7 @@ namespace nUpdate.Administration.Proxy
             catch (Exception ex)
             {
                 throw new ProxyException(
-                    String.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
+                    string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)), ex);
             }
         }
@@ -451,7 +451,7 @@ namespace nUpdate.Administration.Proxy
                 case AddressFamily.InterNetworkV6:
                     return SOCKS5_ADDRTYPE_IPV6;
                 default:
-                    throw new ProxyException(String.Format(CultureInfo.InvariantCulture,
+                    throw new ProxyException(string.Format(CultureInfo.InvariantCulture,
                         "The host addess {0} of type '{1}' is not a supported address type.  The supported types are InterNetwork and InterNetworkV6.",
                         host, Enum.GetName(typeof (AddressFamily), ipAddr.AddressFamily)));
             }
@@ -567,7 +567,7 @@ namespace nUpdate.Administration.Proxy
             byte replyCode = response[1];
             byte addrType = response[3];
             string addr = "";
-            Int16 port = 0;
+            short port = 0;
 
             switch (addrType)
             {
@@ -636,12 +636,12 @@ namespace nUpdate.Administration.Proxy
                     proxyErrorText = "the address type specified is not supported";
                     break;
                 default:
-                    proxyErrorText = String.Format(CultureInfo.InvariantCulture,
+                    proxyErrorText = string.Format(CultureInfo.InvariantCulture,
                         "that an unknown reply with the code value '{0}' was received by the destination",
                         replyCode.ToString(CultureInfo.InvariantCulture));
                     break;
             }
-            string exceptionMsg = String.Format(CultureInfo.InvariantCulture,
+            string exceptionMsg = string.Format(CultureInfo.InvariantCulture,
                 "The {0} concerning destination host {1} port number {2}.  The destination reported the host as {3} port {4}.",
                 proxyErrorText, destinationHost, destinationPort, addr, port.ToString(CultureInfo.InvariantCulture));
 
@@ -727,7 +727,7 @@ namespace nUpdate.Administration.Proxy
                 _asyncWorker.DoWork += CreateConnectionAsync_DoWork;
                 _asyncWorker.RunWorkerCompleted +=
                     CreateConnectionAsync_RunWorkerCompleted;
-                var args = new Object[2];
+                var args = new object[2];
                 args[0] = destinationHost;
                 args[1] = destinationPort;
                 _asyncWorker.RunWorkerAsync(args);
@@ -760,7 +760,7 @@ namespace nUpdate.Administration.Proxy
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 e.Result = CreateConnection((string) args[0], (int) args[1]);
             }
             catch (Exception ex)

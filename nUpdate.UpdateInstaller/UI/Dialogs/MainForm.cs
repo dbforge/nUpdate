@@ -38,7 +38,7 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 }
 
                 extractProgressBar.Value = (int) percentage;
-                copyingLabel.Text = String.Format(Program.CopyingText, currentFile);
+                copyingLabel.Text = string.Format(Program.CopyingText, currentFile);
                 percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
             }));
         }
