@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -57,27 +56,12 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword { get; set; }
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword { get; set; }
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword { get; set; }
-
+        
         /// <summary>
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
+        public void SetUIState(bool enabled)
         {
             Invoke(new Action(() =>
             {
@@ -113,7 +97,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
 
                 var deleteConnection = new MySqlConnection(connectionString);
                 try
@@ -140,7 +124,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     "Error while connecting to the database when trying to undo the SQL-insertions...",
                                     ex, PopupButtons.Ok)));
                     deleteConnection.Close();
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -187,7 +171,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         "Error while undoing the package upload.",
                                         ex,
                                         PopupButtons.Ok)));
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
                     _packageExisting = false;
@@ -213,7 +197,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the old configuration.", ex,
                                     PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -229,7 +213,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the configuration.", ex,
                                     PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -248,7 +232,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            SetUiState(true);
+            SetUIState(true);
         }
 
         private bool InitializeProjectData()
@@ -261,7 +245,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     updateUrlTextBox.Text = Project.UpdateUrl;
                     ftpHostTextBox.Text = Project.FtpHost;
                     ftpDirectoryTextBox.Text = Project.FtpDirectory;
-                    amountLabel.Text = Project.Packages?.Count().ToString(CultureInfo.InvariantCulture) ?? "0";
+                    amountLabel.Text = Project.Packages?.Count.ToString(CultureInfo.InvariantCulture) ?? "0";
                 }));
 
                 if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
@@ -327,7 +311,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             $"{Project.Guid}.zip"));
                     if (packageFileInfo.Exists)
                     {
-                        packageListViewItem.SubItems.Add(packageFileInfo.CreationTime.ToString());
+                        packageListViewItem.SubItems.Add(packageFileInfo.CreationTime.ToString(CultureInfo.InvariantCulture));
                         var sizeInBytes = packageFileInfo.Length;
                         string sizeText = null;
 
@@ -389,7 +373,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 _ftp =
                     new FTPManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
-                        FtpPassword,
+                        Project.RuntimeFtpPassword,
                         Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
                         Project.FtpProtocol);
                 _ftp.ProgressChanged += ProgressChanged;
@@ -494,7 +478,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
 
                 _queryConnection = new MySqlConnection(connectionString);
                 try
@@ -720,15 +704,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             var packageAddDialog = new PackageAddDialog
             {
-                FtpPassword = FtpPassword.Copy(),
-                SqlPassword = SqlPassword.Copy(),
-                ProxyPassword = ProxyPassword.Copy()
+                Project = Project
             };
-
-            var existingUpdateVersions =
-                (from ListViewItem lvi in packagesList.Items select new UpdateVersion(lvi.Tag.ToString())).ToList();
-            packageAddDialog.ExistingVersions = existingUpdateVersions;
-            packageAddDialog.Project = Project;
 
             if (packageAddDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -774,9 +751,6 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 Project = Project,
                 PackageVersion = packageVersion,
-                FtpPassword = FtpPassword.Copy(),
-                SqlPassword = SqlPassword.Copy(),
-                ProxyPassword = ProxyPassword.Copy()
             };
 
             if (correspondingPackage.IsReleased)
@@ -819,8 +793,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
             }
-
-            packageEditDialog.ConfigurationFileUrl = _configurationFileUrl;
+            
             if (packageEditDialog.ShowDialog() != DialogResult.OK)
                 return;
             InitializeProjectData();
@@ -834,7 +807,7 @@ namespace nUpdate.Administration.UI.Dialogs
             bool successful = false;
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -847,7 +820,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 loadingLabel.Text = "Getting current configuration..."));
                     _editingUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                    SetUiState(true);
+                    SetUIState(true);
                     successful = true;
                 }
                 catch (Exception ex)
@@ -858,7 +831,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the configuration.",
                                     ex,
                                     PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     successful = false;
                 }
             });
@@ -1053,8 +1026,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!e.Control || (e.KeyCode != Keys.A))
                 return;
-            if (sender != null)
-                ((TextBox) sender).SelectAll();
+            ((TextBox) sender)?.SelectAll();
             e.Handled = true;
         }
 
@@ -1095,7 +1067,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var updateConfigurationFilePath = Path.Combine(Program.Path, "Projects", Project.Name,
                     packageVersion.ToString(), "updates.json");
 
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
                 try
                 {
@@ -1109,7 +1081,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         new Action(
                             () => Popup.ShowPopup(this, SystemIcons.Error,
                                 "Error while downloading the old configuration.", ex, PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -1139,7 +1111,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                            $"UID={Project.SqlUsername};" +
-                                           $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                           $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
 
                     var insertConnection = new MySqlConnection(connectionString);
                     try
@@ -1154,7 +1126,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
                         insertConnection.Close();
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
                     catch (Exception ex)
@@ -1165,7 +1137,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
                         insertConnection.Close();
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
 
@@ -1187,7 +1159,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
                                         ex, PopupButtons.Ok)));
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
                     finally
@@ -1286,7 +1258,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                SetUiState(true);
+                SetUIState(true);
                 InitializeProjectData();
                 InitializePackages();
             });
@@ -1462,7 +1434,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else if (!_foundWithFtp && !_foundWithUrl)
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(new Action(() =>
                 {
                     loadingLabel.Text = "Updating configuration file...";
@@ -1495,7 +1467,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 checkingUrlPictureBox.Visible = false;
                                 checkUpdateConfigurationLinkLabel.Enabled = true;
                             }));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -1516,7 +1488,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 checkingUrlPictureBox.Visible = false;
                                 checkUpdateConfigurationLinkLabel.Enabled = true;
                             }));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
 
@@ -1524,7 +1496,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new Action(
                         () =>
                             checkUpdateConfigurationLinkLabel.Enabled = true));
-                SetUiState(true);
+                SetUIState(true);
 
                 if (_hasFinishedCheck)
                 {
@@ -1569,7 +1541,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new Action(
                         () => { enumerator = packagesList.SelectedItems.GetEnumerator(); }));
 
-                SetUiState(false);
+                SetUIState(false);
                 bool hasReleasedPackages = false;
                 Invoke(new Action(() =>
                     hasReleasedPackages =
@@ -1589,7 +1561,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () => Popup.ShowPopup(this, SystemIcons.Error,
                                     "Error while downloading the old configuration.", ex, PopupButtons.Ok)));
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
 
@@ -1620,7 +1592,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while writing to the local configuration file.", ex,
                                             PopupButtons.Ok)));
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
 
@@ -1637,7 +1609,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     () =>
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while uploading the new configuration file.", ex, PopupButtons.Ok)));
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
 
@@ -1653,7 +1625,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while writing to the local configuration file.", ex,
                                             PopupButtons.Ok)));
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
                     }
@@ -1687,7 +1659,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                                 "Error while deleting the package directory.", ex,
                                                 PopupButtons.Ok)));
 
-                                SetUiState(true);
+                                SetUIState(true);
                                 return;
                             }
                         }
@@ -1713,7 +1685,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while deleting local package directory.",
                                             ex, PopupButtons.Ok)));
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
                     }
@@ -1745,7 +1717,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while saving new project info.",
                                         ex,
                                         PopupButtons.Ok)));
-                        SetUiState(true);
+                        SetUIState(true);
                         return;
                     }
 
@@ -1757,7 +1729,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                                $"UID={Project.SqlUsername};" +
-                                               $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                               $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
 
                         var deleteConnection = new MySqlConnection(connectionString);
 
@@ -1773,7 +1745,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                             ex, PopupButtons.Ok)));
                             deleteConnection.Close();
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
                         catch (Exception ex)
@@ -1785,7 +1757,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                             "Error while connecting to the database.",
                                             ex, PopupButtons.Ok)));
                             deleteConnection.Close();
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
 
@@ -1814,7 +1786,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                             "Error while executing the commands.",
                                             ex, PopupButtons.Ok)));
                             deleteConnection.Close();
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
                         finally
@@ -1838,7 +1810,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while executing the commands.",
                                             ex, PopupButtons.Ok)));
-                            SetUiState(true);
+                            SetUIState(true);
                             return;
                         }
                         finally
@@ -1851,7 +1823,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
                     _updateLog.Write(LogEntry.Delete, new UpdateVersion((string) selectedItem.Tag).FullText);
                 }
 
-                SetUiState(true);
+                SetUIState(true);
                 if (Project.UseStatistics)
                 {
 #pragma warning disable 4014
@@ -1864,5 +1836,10 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
         }
 
         #endregion
+
+        private void packageFromTemplateToolStripButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

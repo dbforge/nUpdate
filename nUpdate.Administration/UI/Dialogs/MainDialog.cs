@@ -1,29 +1,22 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using Ionic.Zip;
 using nUpdate.Administration.Application;
 using nUpdate.Administration.Application.Extension;
 using nUpdate.Administration.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
+using static System.String;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class MainDialog : BaseDialog
     {
-        private SecureString _ftpPassword = new SecureString();
-        private SecureString _proxyPassword = new SecureString();
-        private SecureString _sqlPassword = new SecureString();
-
         public MainDialog()
         {
             InitializeComponent();
@@ -38,7 +31,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                var dr = MessageBox.Show("Your operating system is not supported.", String.Empty,
+                var dr = MessageBox.Show("Your operating system is not supported.", Empty,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
@@ -69,11 +62,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     PopupButtons.Ok);
             }
 
-            if (String.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
+            if (IsNullOrWhiteSpace(Settings.Default.ProgramPath))
                 Settings.Default.ProgramPath =
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "nUpdate Administration");
-            Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
             if (!Directory.Exists(Program.LanguagesDirectory))
             {
                 Directory.CreateDirectory(Program.LanguagesDirectory); // Create the directory
@@ -85,28 +77,20 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (!File.Exists(Program.ProjectsConfigFilePath))
-            {
-                using (File.Create(Program.ProjectsConfigFilePath))
-                {
-                }
-            }
+                File.Create(Program.ProjectsConfigFilePath).Close();
 
             if (!File.Exists(Program.StatisticServersFilePath))
-            {
-                using (File.Create(Program.StatisticServersFilePath))
-                {
-                }
-            }
+                File.Create(Program.StatisticServersFilePath).Close();
 
             var projectsPath = Path.Combine(Program.Path, "Projects");
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
             sectionsListView.DoubleBuffer();
-            Text = String.Format(Text, Program.VersionString);
-            headerLabel.Text = String.Format(Text, Program.VersionString);
+            Text = Format(Text, Program.VersionString);
+            headerLabel.Text = Format(Text, Program.VersionString);
 
-            /* Since 3.0.0 */
+            /* Since 4.0.0 */
             var projectConfiguration = ProjectConfiguration.Load(); 
             foreach (var configuration in projectConfiguration.Where(item => item.Guid == Guid.Empty))
             {
@@ -159,17 +143,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     try
                     {
-                        _ftpPassword =
+                        project.RuntimeFtpPassword =
                             AESManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
                                 credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
 
                         if (project.Proxy != null)
-                            _proxyPassword =
+                            project.RuntimeProxyPassword =
                                 AESManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
                                     credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
 
                         if (project.UseStatistics)
-                            _sqlPassword =
+                            project.RuntimeSqlPassword =
                                 AESManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
                                     credentialsDialog.Password.Trim(), credentialsDialog.Username.Trim());
                     }
@@ -201,17 +185,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                _ftpPassword =
+                project.RuntimeFtpPassword =
                     AESManager.Decrypt(Convert.FromBase64String(project.FtpPassword),
                         Program.AesKeyPassword, Program.AesIvPassword);
 
                 if (project.Proxy != null)
-                    _proxyPassword =
+                    project.RuntimeProxyPassword =
                         AESManager.Decrypt(Convert.FromBase64String(project.ProxyPassword),
                             Program.AesKeyPassword, Program.AesIvPassword);
 
                 if (project.UseStatistics)
-                    _sqlPassword =
+                    project.RuntimeSqlPassword =
                         AESManager.Decrypt(Convert.FromBase64String(project.SqlPassword),
                             Program.AesKeyPassword, Program.AesIvPassword);
             }
@@ -248,16 +232,8 @@ namespace nUpdate.Administration.UI.Dialogs
                             var projectDialog = new ProjectDialog
                             {
                                 Project = Project,
-                                FtpPassword = _ftpPassword.Copy(),
-                                ProxyPassword = _proxyPassword.Copy(),
-                                SqlPassword = _sqlPassword.Copy()
                             };
-                            if (projectDialog.ShowDialog() == DialogResult.OK)
-                            {
-                                _ftpPassword.Dispose();
-                                _proxyPassword.Dispose();
-                                _sqlPassword.Dispose();
-                            }
+                            projectDialog.ShowDialog();
                         }
                     }
                     break;
@@ -281,16 +257,8 @@ namespace nUpdate.Administration.UI.Dialogs
                             var projectEditDialog = new ProjectEditDialog
                             {
                                 Project = Project,
-                                FtpPassword = _ftpPassword,
-                                ProxyPassword = _proxyPassword,
-                                SqlPassword = _sqlPassword
                             };
-                            if (projectEditDialog.ShowDialog() == DialogResult.OK)
-                            {
-                                _ftpPassword.Dispose();
-                                _proxyPassword.Dispose();
-                                _sqlPassword.Dispose();
-                            }
+                            projectEditDialog.ShowDialog();
                         }
                     }
                     break;
@@ -311,7 +279,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case 7:
-                    var infoDialog = new InfoDialog();
+                    var infoDialog = new InformationDialog();
                     infoDialog.ShowDialog();
                     break;
                 case 8:
@@ -321,25 +289,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private PackageItem CreateHashesRecursively(PackageItem currentItem, DirectoryInfo currentDirectoryInfo)
-        {
-            foreach (var directoryInfo in currentDirectoryInfo.GetDirectories())
-            {
-                currentItem.Children.Add(new PackageItem(String.Empty, directoryInfo.Name, Guid.NewGuid(), true));
-                CreateHashesRecursively(currentItem, directoryInfo);
-            }
-
-            foreach (var fileInfo in currentDirectoryInfo.GetFiles())
-            {
-                currentItem.Children.Add(new PackageItem(SHAManager.HashFile(fileInfo.FullName), fileInfo.Name, Guid.NewGuid(), false));
-            }
-
-            return currentItem.IsRoot ? currentItem : null;
-        }
-
         private void MainDialog_Shown(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(ProjectPath))
+            if (IsNullOrEmpty(ProjectPath))
                 return;
 
             Project = OpenProject(ProjectPath);
@@ -349,16 +301,8 @@ namespace nUpdate.Administration.UI.Dialogs
             var projectDialog = new ProjectDialog
             {
                 Project = Project,
-                FtpPassword = _ftpPassword.Copy(),
-                ProxyPassword = _proxyPassword.Copy(),
-                SqlPassword = _sqlPassword.Copy()
             };
-            if (projectDialog.ShowDialog() != DialogResult.OK)
-                return;
-
-            _ftpPassword.Dispose();
-            _proxyPassword.Dispose();
-            _sqlPassword.Dispose();
+            projectDialog.ShowDialog();
         }
     }
 }

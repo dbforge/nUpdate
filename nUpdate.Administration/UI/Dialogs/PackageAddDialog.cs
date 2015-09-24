@@ -8,7 +8,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -56,15 +55,15 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
         private readonly TreeNode _replaceNode = new TreeNode("Replace file/folder", 11, 11) {Tag = "ReplaceFile"};
 
-        private readonly PackageItem _rootPackageItem = new PackageItem(String.Empty, "%root%", Guid.Empty, true)
+        private readonly PackageItem _rootPackageItem = new PackageItem(string.Empty, "%root%", Guid.Empty, true)
         {
             IsRoot = true,
             Children = (new[]
             {
-                new PackageItem(String.Empty, "Program", Guid.Empty, true),
-                new PackageItem(String.Empty, "AppData", Guid.Empty, true),
-                new PackageItem(String.Empty, "Temp", Guid.Empty, true),
-                new PackageItem(String.Empty, "Desktop", Guid.Empty, true)
+                new PackageItem(string.Empty, "Program", Guid.Empty, true),
+                new PackageItem(string.Empty, "AppData", Guid.Empty, true),
+                new PackageItem(string.Empty, "Temp", Guid.Empty, true),
+                new PackageItem(string.Empty, "Desktop", Guid.Empty, true)
             }.ToList())
         };
 
@@ -105,30 +104,10 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword { get; set; }
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword { get; set; }
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword { get; set; }
-
-        /// <summary>
-        ///     The existing package versions.
-        /// </summary>
-        public IEnumerable<UpdateVersion> ExistingVersions { get; set; }
-
-        /// <summary>
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
+        public void SetUIState(bool enabled)
         {
             _allowCancel = enabled;
 
@@ -169,7 +148,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            SetUiState(true);
+            SetUIState(true);
             if (_packageInitialized)
             {
                 if (Project.Packages != null)
@@ -194,18 +173,18 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageAddDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
 
             try
             {
                 _ftp =
                     new FTPManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
-                        FtpPassword,
+                        Project.RuntimeFtpPassword,
                         Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
                         Project.FtpProtocol);
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
-                if (!String.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
+                if (!string.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
                     _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
                 else
                     _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
@@ -247,12 +226,12 @@ namespace nUpdate.Administration.UI.Dialogs
             _necessaryUpdate = necessaryUpdateCheckBox.Checked;
             includeIntoStatisticsCheckBox.Enabled = Project.UseStatistics;
 
-            majorNumericUpDown.Maximum = Decimal.MaxValue;
-            minorNumericUpDown.Maximum = Decimal.MaxValue;
-            buildNumericUpDown.Maximum = Decimal.MaxValue;
-            revisionNumericUpDown.Maximum = Decimal.MaxValue;
+            majorNumericUpDown.Maximum = decimal.MaxValue;
+            minorNumericUpDown.Maximum = decimal.MaxValue;
+            buildNumericUpDown.Maximum = decimal.MaxValue;
+            revisionNumericUpDown.Maximum = decimal.MaxValue;
 
-            if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
+            if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
             {
                 var projectAssembly = Assembly.GetCallingAssembly();
                 var nUpateVersionAttribute =
@@ -304,7 +283,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (Project.Packages != null && Project.Packages.Count != 0)
             {
-                if (ExistingVersions.Any(item => item == _packageVersion))
+                if (Project.Packages.Select(item => new UpdateVersion(item.Version)).Any(item => item == _packageVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                         $"Version \"{_packageVersion.FullText}\" is already existing.", PopupButtons.Ok);
@@ -314,7 +293,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
             }
 
-            if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
+            if (string.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.",
                     "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.",
@@ -351,7 +330,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            SetUiState(false);
+            SetUIState(false);
 
             loadingPanel.Location = new Point(180, 91);
             loadingPanel.BringToFront();
@@ -382,7 +361,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         _zip.AddDirectoryByName(tmpDir);
-                        var packageItem = new PackageItem(String.Empty, node.Text, currentItem.Guid, true);
+                        var packageItem = new PackageItem(string.Empty, node.Text, currentItem.Guid, true);
                         currentItem.Children.Add(packageItem);
                         InitializeArchiveContents(node, tmpDir, packageItem);
                     }
@@ -401,7 +380,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     try
                     {
                         string hash = BitConverter.ToString(SHAManager.HashFile(node.Tag.ToString()))
-                            .Replace("-", String.Empty);
+                            .Replace("-", string.Empty);
                         string previousHash = null;
                         bool shouldNotBeAdded = false;
                         if (_previousDataPackageItem != null &&
@@ -617,7 +596,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
                 {
                     var panel = (ChangelogPanel) tabPage.Controls[0];
-                    if (String.IsNullOrEmpty(panel.Changelog)) continue;
+                    if (string.IsNullOrEmpty(panel.Changelog)) continue;
                     changelog.Add((CultureInfo) tabPage.Tag, panel.Changelog);
                 }
 
@@ -738,7 +717,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             var connectionString = $"SERVER={Project.SqlWebUrl};" +
                                                    $"DATABASE={Project.SqlDatabaseName};" +
                                                    $"UID={Project.SqlUsername};" +
-                                                   $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                                   $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
 
                             _insertConnection = new MySqlConnection(connectionString);
                             _insertConnection.Open();
@@ -883,7 +862,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     Reset();
                 }
 
-                SetUiState(true);
+                SetUIState(true);
                 DialogResult = DialogResult.OK;
             }));
         }
@@ -1001,7 +980,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 TreeNode fileNode;
-                if (String.IsNullOrWhiteSpace(file.Extension))
+                if (string.IsNullOrWhiteSpace(file.Extension))
                     fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
                 else
                 {

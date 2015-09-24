@@ -57,22 +57,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString FtpPassword { get; set; }
-
-        /// <summary>
-        ///     The proxy-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString ProxyPassword { get; set; }
-
-        /// <summary>
-        ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
-        /// </summary>
-        public SecureString SqlPassword { get; set; }
-
+        
         /// <summary>
         ///     Returns the private key.
         /// </summary>
@@ -98,7 +83,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public string SqlUsername { get; set; }
 
-        public void SetUiState(bool enabled)
+        public void SetUIState(bool enabled)
         {
             Invoke(new Action(() =>
             {
@@ -149,7 +134,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Error while resetting the project configuration.",
@@ -175,7 +160,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
@@ -201,7 +186,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
@@ -232,7 +217,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
@@ -262,12 +247,12 @@ namespace nUpdate.Administration.UI.Dialogs
                                 loadingLabel.Text = "Uploading old configuration..."));
                     _ftp.UploadFile(localConfigurationPath);
 
-                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    File.WriteAllText(localConfigurationPath, string.Empty);
                     _updateUrlChanged = false;
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
@@ -293,7 +278,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(new Action(() =>
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
@@ -321,7 +306,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Invoke(new Action(() =>
                     {
-                        SetUiState(true);
+                        SetUIState(true);
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while deleting the file \"statistics.php\" on the server.",
                             ex, PopupButtons.Ok);
@@ -359,7 +344,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(
                         new Action(
                             () =>
@@ -387,7 +372,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(
                         new Action(
                             () =>
@@ -406,12 +391,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                 try
                 {
-                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    File.WriteAllText(localConfigurationPath, string.Empty);
                     _updateConfigurationSaved = false;
                 }
                 catch (Exception ex)
                 {
-                    SetUiState(true);
+                    SetUIState(true);
                     Invoke(
                         new Action(
                             () =>
@@ -667,7 +652,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 }
             }
 
-            SetUiState(true);
+            SetUIState(true);
         }
 
         private void ProjectEditDialog_Load(object sender, EventArgs e)
@@ -681,7 +666,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 return;
             }
 
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
@@ -697,14 +682,14 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             ftpHostTextBox.Text = Project.FtpHost;
             ftpPortTextBox.Text = Project.FtpPort.ToString(CultureInfo.InvariantCulture);
             ftpUserTextBox.Text = Project.FtpUsername;
-            ftpPasswordTextBox.Text = FtpPassword.ConvertToUnsecureString();
+            ftpPasswordTextBox.Text = Project.RuntimeFtpPassword.ConvertToInsecureString();
             ftpModeComboBox.SelectedIndex = Project.FtpUsePassiveMode ? 0 : 1;
             ftpProtocolComboBox.SelectedIndex = Project.FtpProtocol;
             ftpDirectoryTextBox.Text = Project.FtpDirectory;
             try
             {
                 _ftp = new FTPManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
-                    FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
+                    Project.RuntimeFtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
                     Project.FtpProtocol);
             }
             catch (Exception ex)
@@ -713,14 +698,14 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     "Error while loading the FTP-transfer service.", ex,
                     PopupButtons.Ok);
                 _ftp = new FTPManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
-                    FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, null, 0);
+                    Project.RuntimeFtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, null, 0);
             }
 
             if (Project.UseStatistics)
             {
                 useStatisticsServerRadioButton.Checked = true;
                 databaseNameLabel.Text = Project.SqlDatabaseName;
-                sqlPasswordTextBox.Text = SqlPassword.ConvertToUnsecureString();
+                sqlPasswordTextBox.Text = Project.RuntimeSqlPassword.ConvertToInsecureString();
             }
 
             if (Project.Proxy != null)
@@ -728,7 +713,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 useProxyRadioButton.Checked = true;
                 proxyHostTextBox.Text = Project.Proxy.Address.ToString();
                 proxyUserTextBox.Text = Project.ProxyUsername;
-                proxyPasswordTextBox.Text = ProxyPassword.ConvertToUnsecureString();
+                proxyPasswordTextBox.Text = Project.RuntimeProxyPassword.ConvertToInsecureString();
             }
 
             _sender = generalTabPage;
@@ -826,7 +811,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
             else if (_sender == ftpTabPage)
             {
-                if (!ValidationManager.Validate(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
+                if (!ValidationManager.Validate(ftpPanel) || string.IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
@@ -870,7 +855,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 if (useStatisticsServerRadioButton.Checked)
                 {
                     if ((Project.SqlDatabaseName == null && SqlDatabaseName == null) ||
-                        String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
+                        string.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -885,8 +870,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -907,7 +892,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
         {
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -924,7 +909,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while authenticating the certificate.",
                                     ex.InnerException ?? ex, PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
                 catch (Exception ex)
@@ -934,7 +919,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while testing the FTP-data.",
                                     ex.InnerException ?? ex, PopupButtons.Ok)));
-                    SetUiState(true);
+                    SetUIState(true);
                     return;
                 }
                 Invoke(new Action(() =>
@@ -942,7 +927,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     if (useProxyRadioButton.Checked)
                     {
                         _proxy = new WebProxy(proxyHostTextBox.Text);
-                        if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                        if (!string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                             _proxy.Credentials = new NetworkCredential(proxyUserTextBox.Text, proxyPasswordTextBox.Text);
                         else
                             _proxy.UseDefaultCredentials = true;
@@ -1117,7 +1102,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1270,7 +1255,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1413,8 +1398,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         }
 
                         /*
-                    *  Setup the SQL-server and database.
-                    */
+                        *  Setup the SQL-server and database.
+                        */
 
                         var setupString = @"USE _DBNAME;";
                         setupString = _newUpdateConfiguration.Aggregate(setupString,
@@ -1440,7 +1425,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1466,7 +1451,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                 myConnectionString = $"SERVER={Project.SqlWebUrl};" +
                                                      $"DATABASE={Project.SqlDatabaseName};" +
                                                      $"UID={Project.SqlUsername};" +
-                                                     $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                                     $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
                             }));
 
                             myConnection = new MySqlConnection(myConnectionString);
@@ -1479,8 +1464,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                     () =>
                                         Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                             ex, PopupButtons.Ok)));
-                            if (myConnection != null)
-                                myConnection.Close();
+                            myConnection?.Close();
                             Reset();
                             return;
                         }
@@ -1492,8 +1476,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while connecting to the database.",
                                             ex, PopupButtons.Ok)));
-                            if (myConnection != null)
-                                myConnection.Close();
+                            myConnection?.Close();
                             Reset();
                             return;
                         }
@@ -1556,7 +1539,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                     if (useProxyRadioButton.Checked)
                     {
                         Project.Proxy = new WebProxy(new Uri(proxyHostTextBox.Text));
-                        if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                        if (!string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                         {
                             Project.ProxyUsername = proxyUserTextBox.Text;
                             if (!saveCredentialsCheckBox.Checked)
@@ -1624,7 +1607,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                     return;
                 }
 
-                SetUiState(true);
+                SetUIState(true);
                 Invoke(new Action(Close));
             });
         }
