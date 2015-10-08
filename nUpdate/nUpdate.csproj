@@ -93,6 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Architecture.cs" />
+    <Compile Include="WebClientWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WebConnection.cs" />
     <Compile Include="Localization\LocalizationHelper.cs" />
     <Compile Include="Localization\LocalizationProperties.cs" />
@@ -166,9 +169,6 @@
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UriConnector.cs" />
-    <Compile Include="WebClientWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Dialogs\BaseDialog.resx">

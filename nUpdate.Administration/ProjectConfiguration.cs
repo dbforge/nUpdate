@@ -38,7 +38,7 @@ namespace nUpdate.Administration
         public static IEnumerable<ProjectConfiguration> Load()
         {
             string content = File.ReadAllText(Program.ProjectsConfigFilePath);
-            return !String.IsNullOrEmpty(content)
+            return !string.IsNullOrEmpty(content)
                 ? Serializer.Deserialize<IEnumerable<ProjectConfiguration>>(content)
                 : Enumerable.Empty<ProjectConfiguration>();
         }

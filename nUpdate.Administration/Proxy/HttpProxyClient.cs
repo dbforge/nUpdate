@@ -92,7 +92,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyHost">Host name or IP address of the proxy.</param>
         public HttpProxyClient(string proxyHost)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             _proxyHost = proxyHost;
@@ -108,10 +108,10 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPassword">Password for the proxy server.</param>
         public HttpProxyClient(string proxyHost, int proxyPort, string proxyUsername, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
-            if (String.IsNullOrEmpty(proxyUsername))
+            if (string.IsNullOrEmpty(proxyUsername))
                 throw new ArgumentNullException("proxyUsername");
 
             if (proxyPassword == null)
@@ -133,7 +133,7 @@ namespace nUpdate.Administration.Proxy
         /// <param name="proxyPort">Port number for the proxy server.</param>
         public HttpProxyClient(string proxyHost, int proxyPort)
         {
-            if (String.IsNullOrEmpty(proxyHost))
+            if (string.IsNullOrEmpty(proxyHost))
                 throw new ArgumentNullException("proxyHost");
 
             if (proxyPort <= 0 || proxyPort > 65535)
@@ -204,7 +204,7 @@ namespace nUpdate.Administration.Proxy
                 // if we have no cached tcpip connection then create one
                 if (_tcpClientCached == null)
                 {
-                    if (String.IsNullOrEmpty(_proxyHost))
+                    if (string.IsNullOrEmpty(_proxyHost))
                         throw new ProxyException("ProxyHost property must contain a value.");
 
                     if (_proxyPort <= 0 || _proxyPort > 65535)
@@ -233,7 +233,7 @@ namespace nUpdate.Administration.Proxy
             catch (SocketException ex)
             {
                 throw new ProxyException(
-                    String.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
+                    string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)), ex);
             }
         }
@@ -295,7 +295,7 @@ namespace nUpdate.Administration.Proxy
                 //                        concatenated string
                 //[... other HTTP header lines ending with <CR><LF> if required]>
                 //<CR><LF>    // Last Empty Line
-                connectCmd = String.Format(CultureInfo.InvariantCulture, HTTP_PROXY_AUTHENTICATE_CMD, host,
+                connectCmd = string.Format(CultureInfo.InvariantCulture, HTTP_PROXY_AUTHENTICATE_CMD, host,
                     port.ToString(CultureInfo.InvariantCulture), auth);
             }
             else
@@ -306,7 +306,7 @@ namespace nUpdate.Administration.Proxy
                 //HOST starksoft.com:443<CR><LF>
                 //[... other HTTP header lines ending with <CR><LF> if required]>
                 //<CR><LF>    // Last Empty Line
-                connectCmd = String.Format(CultureInfo.InvariantCulture, HTTP_PROXY_CONNECT_CMD + "\r\n", host,
+                connectCmd = string.Format(CultureInfo.InvariantCulture, HTTP_PROXY_CONNECT_CMD + "\r\n", host,
                     port.ToString(CultureInfo.InvariantCulture));
             }
             return connectCmd;
@@ -319,20 +319,20 @@ namespace nUpdate.Administration.Proxy
             switch (_respCode)
             {
                 case HttpResponseCodes.None:
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} failed to return a recognized HTTP response code.  Server response: {2}",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient), _respText);
                     break;
 
                 case HttpResponseCodes.BadGateway:
                     //HTTP/1.1 502 Proxy Error (The specified Secure Sockets Layer (SSL) port is not allowed. ISA Server is not configured to allow SSL requests from this port. Most Web browsers use port 443 for SSL requests.)
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} responded with a 502 code - Bad Gateway.  If you are connecting to a Microsoft ISA destination please refer to knowledge based article Q283284 for more information.  Server response: {2}",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient), _respText);
                     break;
 
                 default:
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} responded with a {2} code - {3}", Utils.GetHost(_tcpClient),
                         Utils.GetPort(_tcpClient), ((int) _respCode).ToString(CultureInfo.InvariantCulture), _respText);
                     break;
@@ -373,9 +373,9 @@ namespace nUpdate.Administration.Proxy
             var end = line.IndexOf(" ", begin, StringComparison.Ordinal);
 
             var val = line.Substring(begin, end - begin);
-            Int32 code;
+            int code;
 
-            if (!Int32.TryParse(val, out code))
+            if (!int.TryParse(val, out code))
                 throw new ProxyException(
                     $"An invalid response code was received from proxy destination.  Server response: {line}.");
 
@@ -461,7 +461,7 @@ namespace nUpdate.Administration.Proxy
                 _asyncWorker.WorkerSupportsCancellation = true;
                 _asyncWorker.DoWork += CreateConnectionAsync_DoWork;
                 _asyncWorker.RunWorkerCompleted += CreateConnectionAsync_RunWorkerCompleted;
-                var args = new Object[2];
+                var args = new object[2];
                 args[0] = destinationHost;
                 args[1] = destinationPort;
                 _asyncWorker.RunWorkerAsync(args);
@@ -494,7 +494,7 @@ namespace nUpdate.Administration.Proxy
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 e.Result = CreateConnection((string) args[0], (int) args[1]);
             }
             catch (Exception ex)

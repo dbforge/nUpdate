@@ -8,6 +8,10 @@ namespace nUpdate.Exceptions
     [Serializable]
     public class StatisticsException : Exception
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="StatisticsException"/> class.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
         public StatisticsException(string message)
             : base(message)
         {

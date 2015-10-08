@@ -841,7 +841,7 @@ namespace nUpdate.Administration.Ftp
                     $"An error occurred when retrieving file size for {path}.  Reason: {LastResponse.Text}", fex);
             }
 
-            return Int32.Parse(LastResponse.Text.Substring(4), CultureInfo.InvariantCulture);
+            return int.Parse(LastResponse.Text.Substring(4), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1717,7 +1717,7 @@ namespace nUpdate.Administration.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format(
+                    string.Format(
                         "An error occurred when trying to set up the passive connection on '{1}' for a destination to destination copy between '{0}' and '{1}'.",
                         Host, destination.Host), fex);
             }
@@ -1834,7 +1834,7 @@ namespace nUpdate.Administration.Ftp
                 return path.Substring(path.LastIndexOf("/", StringComparison.Ordinal) + 1);
             if (path.Length > 0)
                 return path;
-            throw new FtpException(String.Format(CultureInfo.InvariantCulture, "Item name not found in path {0}.",
+            throw new FtpException(string.Format(CultureInfo.InvariantCulture, "Item name not found in path {0}.",
                 path));
         }
 
@@ -2040,7 +2040,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += GetFileAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += GetFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = remotePath;
             args[1] = localPath;
             args[2] = action;
@@ -2051,7 +2051,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 GetFile((string) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2109,7 +2109,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += GetFileStreamAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += GetFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = remotePath;
             args[1] = outStream;
             args[2] = restart;
@@ -2120,7 +2120,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 GetFile((string) args[0], (Stream) args[1], (bool) args[2]);
             }
             catch (Exception ex)
@@ -2169,7 +2169,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = localPath;
             args[1] = remotePath;
             args[2] = action;
@@ -2180,7 +2180,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((string) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2227,7 +2227,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileStreamAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = inputStream;
             args[1] = remotePath;
             args[2] = action;
@@ -2238,7 +2238,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((Stream) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2277,7 +2277,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileLocalAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = localPath;
             args[1] = action;
             AsyncWorker.RunWorkerAsync(args);
@@ -2287,7 +2287,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((string) args[0], (FileAction) args[1]);
             }
             catch (Exception ex)
@@ -2327,7 +2327,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += OpenAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += OpenAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = user;
             args[1] = password;
             AsyncWorker.RunWorkerAsync(args);
@@ -2337,7 +2337,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 Open((string) args[0], (string) args[1]);
             }
             catch (Exception ex)
@@ -2390,7 +2390,7 @@ namespace nUpdate.Administration.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += FxpCopyAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += FxpCopyAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = fileName;
             args[1] = destination;
             AsyncWorker.RunWorkerAsync(args);
@@ -2400,7 +2400,7 @@ namespace nUpdate.Administration.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 FxpCopy((string) args[0], (FtpClient) args[1]);
             }
             catch (Exception ex)

@@ -41,9 +41,9 @@
             // 
             this.assemblyFilePathTextBox.ButtonText = "...";
             this.assemblyFilePathTextBox.Cue = "The path of the binary including the assembly...";
-            this.assemblyFilePathTextBox.Location = new System.Drawing.Point(15, 36);
+            this.assemblyFilePathTextBox.Location = new System.Drawing.Point(15, 38);
             this.assemblyFilePathTextBox.Name = "assemblyFilePathTextBox";
-            this.assemblyFilePathTextBox.Size = new System.Drawing.Size(284, 22);
+            this.assemblyFilePathTextBox.Size = new System.Drawing.Size(346, 22);
             this.assemblyFilePathTextBox.TabIndex = 0;
             this.assemblyFilePathTextBox.ButtonClicked += new System.EventHandler<System.EventArgs>(this.assemblyFilePathTextBox_ButtonClicked);
             // 
@@ -60,15 +60,15 @@
             // 
             this.bottomPanel1.Controls.Add(this.cancelButton);
             this.bottomPanel1.Controls.Add(this.continueButton);
-            this.bottomPanel1.Location = new System.Drawing.Point(0, 77);
+            this.bottomPanel1.Location = new System.Drawing.Point(0, 85);
             this.bottomPanel1.Name = "bottomPanel1";
-            this.bottomPanel1.Size = new System.Drawing.Size(311, 40);
+            this.bottomPanel1.Size = new System.Drawing.Size(373, 40);
             this.bottomPanel1.TabIndex = 2;
             // 
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(151, 8);
+            this.cancelButton.Location = new System.Drawing.Point(211, 8);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -77,7 +77,7 @@
             // 
             // continueButton
             // 
-            this.continueButton.Location = new System.Drawing.Point(228, 8);
+            this.continueButton.Location = new System.Drawing.Point(288, 8);
             this.continueButton.Name = "continueButton";
             this.continueButton.Size = new System.Drawing.Size(75, 23);
             this.continueButton.TabIndex = 0;
@@ -91,7 +91,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(311, 117);
+            this.ClientSize = new System.Drawing.Size(373, 125);
             this.Controls.Add(this.bottomPanel1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.assemblyFilePathTextBox);

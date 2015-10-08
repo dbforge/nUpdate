@@ -21,7 +21,7 @@ namespace nUpdate.Administration.Operations.Panels
             set { processNameTextBox.Text = value; }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(processNameTextBox.Text);
+        public bool IsValid => !string.IsNullOrEmpty(processNameTextBox.Text);
 
         public Operation Operation => new Operation(OperationArea.Processes, OperationMethod.Stop, ProcessName);
 

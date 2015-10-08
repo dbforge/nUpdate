@@ -7,6 +7,6 @@ namespace nUpdate.Administration
     /// </summary>
     public interface IAsyncSupportable
     {
-        void SetUiState(bool enabled);
+        void SetUIState(bool enabled);
     }
 }

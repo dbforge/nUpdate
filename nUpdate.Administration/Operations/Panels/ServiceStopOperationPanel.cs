@@ -19,7 +19,7 @@ namespace nUpdate.Administration.Operations.Panels
             set { serviceNameTextBox.Text = value; }
         }
 
-        public bool IsValid => !String.IsNullOrEmpty(serviceNameTextBox.Text);
+        public bool IsValid => !string.IsNullOrEmpty(serviceNameTextBox.Text);
 
         public Operation Operation => new Operation(OperationArea.Services, OperationMethod.Stop, ServiceName);
     }

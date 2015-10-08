@@ -23,7 +23,7 @@ namespace nUpdate.Administration
         /// <param name="parentGuid">The unique identifier of the parent of this <see cref="PackageItem" />.</param>
         /// <param name="isDirectory">If set to <c>true</c> the <see cref="PackageItem" /> is a directory.</param>
         public PackageItem(byte[] hash, string name, Guid parentGuid, bool isDirectory)
-            : this(BitConverter.ToString(hash).Replace("-", String.Empty), name, parentGuid, isDirectory)
+            : this(BitConverter.ToString(hash).Replace("-", string.Empty), name, parentGuid, isDirectory)
         {
         }
 

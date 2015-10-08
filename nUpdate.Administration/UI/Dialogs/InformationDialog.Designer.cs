@@ -1,6 +1,6 @@
 ﻿namespace nUpdate.Administration.UI.Dialogs
 {
-    partial class InfoDialog
+    partial class InformationDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationDialog));
             this.closeButton = new System.Windows.Forms.Button();
             this.donatePictureBox = new System.Windows.Forms.PictureBox();
             this.line1 = new nUpdate.UI.Controls.Line();

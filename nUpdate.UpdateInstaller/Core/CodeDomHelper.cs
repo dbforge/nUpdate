@@ -17,7 +17,7 @@ namespace nUpdate.UpdateInstaller.Core
             var referencedAssemblies = sourceCode.Split('\r', '\n').Where(item => item.StartsWith("using"));
             foreach (var assembly in referencedAssemblies)
             {
-                _compileParameters.ReferencedAssemblies.Add($"{assembly.Split(' ')[1].Replace(";", String.Empty)}.dll");
+                _compileParameters.ReferencedAssemblies.Add($"{assembly.Split(' ')[1].Replace(";", string.Empty)}.dll");
             }
 
             _compileParameters.GenerateInMemory = false;

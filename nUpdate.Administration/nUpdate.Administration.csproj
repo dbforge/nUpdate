@@ -242,6 +242,12 @@
     <Compile Include="Operations\Panels\ServiceStopOperationPanel.Designer.cs">
       <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Dialogs\ParameterAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ParameterAddDialog.Designer.cs">
+      <DependentUpon>ParameterAddDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win32\IconReader.cs" />
     <Compile Include="Win32\Margins.cs" />
     <Compile Include="Extensions.cs" />
@@ -398,11 +404,11 @@
     <Compile Include="UI\Controls\CueTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\InfoDialog.cs">
+    <Compile Include="UI\Dialogs\InformationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\InfoDialog.Designer.cs">
-      <DependentUpon>InfoDialog.cs</DependentUpon>
+    <Compile Include="UI\Dialogs\InformationDialog.Designer.cs">
+      <DependentUpon>InformationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Dialogs\NewProjectDialog.cs">
       <SubType>Form</SubType>
@@ -528,6 +534,9 @@
     <EmbeddedResource Include="UI\Dialogs\PackagesToAffectDialog.resx">
       <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ParameterAddDialog.resx">
+      <DependentUpon>ParameterAddDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\PreferencesDialog.resx">
       <DependentUpon>PreferencesDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -550,8 +559,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\Dialogs\InfoDialog.resx">
-      <DependentUpon>InfoDialog.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Dialogs\InformationDialog.resx">
+      <DependentUpon>InformationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>

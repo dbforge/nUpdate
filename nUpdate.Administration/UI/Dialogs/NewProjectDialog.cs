@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -17,6 +18,7 @@ using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
+using static System.String;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -34,10 +36,10 @@ namespace nUpdate.Administration.UI.Dialogs
         private List<ProjectConfiguration> _projectConfiguration;
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
-        private TabPage _sender;
         private string _sqlDatabaseName;
         private string _sqlWebUrl;
         private string _sqlUsername;
+        private readonly BindingList<string> _parametersBindingList = new BindingList<string>(); 
 
         public NewProjectDialog()
         {
@@ -47,7 +49,7 @@ namespace nUpdate.Administration.UI.Dialogs
         public string PrivateKey { get; set; }
         public string PublicKey { get; set; }
 
-        public void SetUiState(bool enabled)
+        public void SetUIState(bool enabled)
         {
             Invoke(new Action(() =>
             {
@@ -168,7 +170,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Settings.Default.Save();
             }
 
-            SetUiState(true);
+            SetUIState(true);
             if (_mustClose)
                 Invoke(new Action(Close));
         }
@@ -186,8 +188,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
-            Text = String.Format(Text, Program.VersionString);
-            localPathTextBox.ButtonClicked += BrowsePathButtonClick;
+            parametersListBox.DataSource = _parametersBindingList;
+            Text = Format(Text, Program.VersionString);
+            localPathTextBox.ButtonClicked += BrowseLocalPathButtonClick;
             localPathTextBox.Initialize();
 
             _projectConfiguration = ProjectConfiguration.Load().ToList();
@@ -214,7 +217,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     controlPanel1.Visible = true;
                     informationCategoriesTabControl.SelectedTab = generalTabPage;
-                    _sender = generalTabPage;
                 }));
 
                 _allowCancel = true;
@@ -223,7 +225,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void continueButton_Click(object sender, EventArgs e)
         {
-            if (_sender == generalTabPage)
+            if (informationCategoriesTabControl.SelectedTab == generalTabPage)
             {
                 if (!ValidationManager.Validate(generalPanel))
                 {
@@ -253,7 +255,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                if (Path.GetInvalidFileNameChars().Any(item => localPathTextBox.Text.Contains(item)))
+                if (Path.GetInvalidPathChars().Any(item => localPathTextBox.Text.Contains(item)))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid project name.",
                         "The given project file path contains invalid chars.", PopupButtons.Ok);
@@ -262,6 +264,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
+                    // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                     Path.GetFullPath(localPathTextBox.Text);
                 }
                 catch
@@ -270,14 +273,13 @@ namespace nUpdate.Administration.UI.Dialogs
                         "The given local path for the project is invalid.", PopupButtons.Ok);
                     return;
                 }
-
-                _sender = ftpTabPage;
+                
                 backButton.Enabled = true;
                 informationCategoriesTabControl.SelectedTab = ftpTabPage;
             }
-            else if (_sender == ftpTabPage)
+            else if (informationCategoriesTabControl.SelectedTab == ftpTabPage)
             {
-                if (!ValidationManager.Validate(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
+                if (!ValidationManager.Validate(ftpPanel) || IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
@@ -302,30 +304,39 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (!backButton.Enabled) // If the back-button was disabled, enabled it again
                     backButton.Enabled = true;
 
-                _sender = statisticsServerTabPage;
+                informationCategoriesTabControl.SelectedTab = ftpProtocolComboBox.SelectedIndex == ftpProtocolComboBox.Items.Count - 1 ? ftpTabPage1 : statisticsServerTabPage;
+            }
+            else if (informationCategoriesTabControl.SelectedTab == ftpTabPage1)
+            {
+                if (!ValidationManager.ValidateTabPage(ftpTabPage1))
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                            "All fields need to have a value.", PopupButtons.Ok);
+                    return;
+                }
+
                 informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
             }
-            else if (_sender == statisticsServerTabPage)
+            else if (informationCategoriesTabControl.SelectedTab == statisticsServerTabPage)
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if (_sqlDatabaseName == null || String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
+                    if (_sqlDatabaseName == null || IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
                         return;
                     }
                 }
-
-                _sender = proxyTabPage;
+                
                 informationCategoriesTabControl.SelectedTab = proxyTabPage;
             }
-            else if (_sender == proxyTabPage)
+            else if (informationCategoriesTabControl.SelectedTab == proxyTabPage)
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -351,11 +362,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 WebProxy proxy = null;
                 string proxyUsername = null;
                 string proxyPassword = null;
-                if (!String.IsNullOrEmpty(proxyHostTextBox.Text))
+                if (!IsNullOrEmpty(proxyHostTextBox.Text))
                 {
                     proxy = new WebProxy(proxyHostTextBox.Text);
-                    if (!String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         proxyUsername = proxyUserTextBox.Text;
                         if (!saveCredentialsCheckBox.Checked)
@@ -502,7 +513,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             await Task.Factory.StartNew(() =>
             {
-                SetUiState(false);
+                SetUIState(false);
                 Invoke(
                     new Action(
                         () =>
@@ -684,32 +695,25 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     }
                 }
 
-                SetUiState(true);
+                SetUIState(true);
                 Invoke(new Action(Close));
             });
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            if (_sender == ftpTabPage)
+            if (informationCategoriesTabControl.SelectedTab == ftpTabPage)
             {
-                informationCategoriesTabControl.SelectedTab = generalTabPage;
                 backButton.Enabled = false;
-                _sender = generalTabPage;
+                informationCategoriesTabControl.SelectedTab = generalTabPage;
 
                 if (_generalTabPassed)
                     backButton.Enabled = false;
             }
-            else if (_sender == statisticsServerTabPage)
-            {
+            else if (informationCategoriesTabControl.SelectedTab == statisticsServerTabPage)
                 informationCategoriesTabControl.SelectedTab = ftpTabPage;
-                _sender = ftpTabPage;
-            }
-            else if (_sender == proxyTabPage)
-            {
+            else if (informationCategoriesTabControl.SelectedTab == proxyTabPage)
                 informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
-                _sender = statisticsServerTabPage;
-            }
         }
 
         private void ftpPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -749,7 +753,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             searchDialog.Close();
         }
 
-        private void BrowsePathButtonClick(object sender, EventArgs e)
+        private void BrowseLocalPathButtonClick(object sender, EventArgs e)
         {
             using (var fileDialog = new SaveFileDialog())
             {
@@ -759,7 +763,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     localPathTextBox.Text = fileDialog.FileName;
             }
         }
-
+        
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
@@ -832,6 +836,18 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
 
             _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
+        }
+
+        private void addParameterButton_Click(object sender, EventArgs e)
+        {
+            var parameterAddDialog = new ParameterAddDialog();
+            if (parameterAddDialog.ShowDialog() == DialogResult.OK)
+                _parametersBindingList.Add(parameterAddDialog.Parameter);
+        }
+
+        private void parametersListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            removeParameterButton.Enabled = parametersListBox.SelectedIndex >= 0;
         }
     }
 }

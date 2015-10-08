@@ -77,6 +77,12 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpUserLabel = new System.Windows.Forms.Label();
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.ftpHeaderLabel = new System.Windows.Forms.Label();
+            this.ftpTabPage1 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.parametersListBox = new System.Windows.Forms.ListBox();
+            this.removeParameterButton = new System.Windows.Forms.Button();
+            this.addParameterButton = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             this.statisticsServerTabPage = new System.Windows.Forms.TabPage();
             this.line2 = new nUpdate.UI.Controls.Line();
             this.selectServerButton = new System.Windows.Forms.Button();
@@ -114,6 +120,7 @@ namespace nUpdate.Administration.UI.Dialogs
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.ftpTabPage.SuspendLayout();
             this.ftpPanel.SuspendLayout();
+            this.ftpTabPage1.SuspendLayout();
             this.statisticsServerTabPage.SuspendLayout();
             this.statisticsInfoPanel.SuspendLayout();
             this.proxyTabPage.SuspendLayout();
@@ -157,6 +164,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.informationCategoriesTabControl.Controls.Add(this.keyPairTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.generalTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.ftpTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.ftpTabPage1);
             this.informationCategoriesTabControl.Controls.Add(this.statisticsServerTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.proxyTabPage);
             resources.ApplyResources(this.informationCategoriesTabControl, "informationCategoriesTabControl");
@@ -440,6 +448,48 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpHeaderLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.ftpHeaderLabel.Name = "ftpHeaderLabel";
             // 
+            // ftpTabPage1
+            // 
+            this.ftpTabPage1.Controls.Add(this.label9);
+            this.ftpTabPage1.Controls.Add(this.parametersListBox);
+            this.ftpTabPage1.Controls.Add(this.removeParameterButton);
+            this.ftpTabPage1.Controls.Add(this.addParameterButton);
+            this.ftpTabPage1.Controls.Add(this.label6);
+            resources.ApplyResources(this.ftpTabPage1, "ftpTabPage1");
+            this.ftpTabPage1.Name = "ftpTabPage1";
+            this.ftpTabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            resources.ApplyResources(this.label9, "label9");
+            this.label9.Name = "label9";
+            // 
+            // parametersListBox
+            // 
+            this.parametersListBox.FormattingEnabled = true;
+            resources.ApplyResources(this.parametersListBox, "parametersListBox");
+            this.parametersListBox.Name = "parametersListBox";
+            this.parametersListBox.SelectedIndexChanged += new System.EventHandler(this.parametersListBox_SelectedIndexChanged);
+            // 
+            // removeParameterButton
+            // 
+            resources.ApplyResources(this.removeParameterButton, "removeParameterButton");
+            this.removeParameterButton.Name = "removeParameterButton";
+            this.removeParameterButton.UseVisualStyleBackColor = true;
+            // 
+            // addParameterButton
+            // 
+            resources.ApplyResources(this.addParameterButton, "addParameterButton");
+            this.addParameterButton.Name = "addParameterButton";
+            this.addParameterButton.UseVisualStyleBackColor = true;
+            this.addParameterButton.Click += new System.EventHandler(this.addParameterButton_Click);
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.label6.Name = "label6";
+            // 
             // statisticsServerTabPage
             // 
             this.statisticsServerTabPage.Controls.Add(this.line2);
@@ -652,6 +702,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpTabPage.ResumeLayout(false);
             this.ftpPanel.ResumeLayout(false);
             this.ftpPanel.PerformLayout();
+            this.ftpTabPage1.ResumeLayout(false);
+            this.ftpTabPage1.PerformLayout();
             this.statisticsServerTabPage.ResumeLayout(false);
             this.statisticsServerTabPage.PerformLayout();
             this.statisticsInfoPanel.ResumeLayout(false);
@@ -740,5 +792,11 @@ namespace nUpdate.Administration.UI.Dialogs
         private ButtonTextBox localPathTextBox;
         private System.Windows.Forms.CheckBox saveCredentialsCheckBox;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TabPage ftpTabPage1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button addParameterButton;
+        private System.Windows.Forms.Button removeParameterButton;
+        private System.Windows.Forms.ListBox parametersListBox;
+        private System.Windows.Forms.Label label9;
     }
 }

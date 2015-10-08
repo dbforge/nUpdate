@@ -22,7 +22,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void ProjectImportDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             _sender = optionTabPage;
 
             projectFilePathTextBox.Initialize();

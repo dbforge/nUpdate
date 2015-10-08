@@ -16,7 +16,7 @@ namespace nUpdate.Localization
         /// <param name="objects">The objects for the localization.</param>
         /// <returns>Returns the found localizations.</returns>
         public static IEnumerable<string> GetLocalizedEnumerationValues(LocalizationProperties properties,
-            Object[] objects)
+            object[] objects)
         {
             foreach (var o in objects)
             {

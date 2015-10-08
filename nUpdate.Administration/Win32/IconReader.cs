@@ -15,7 +15,7 @@ namespace nUpdate.Administration.Win32
         /// <returns>The associated icon of the <paramref name="fileExtension" />.</returns>
         public static Icon GetFileIcon(string fileExtension)
         {
-            if (String.IsNullOrWhiteSpace(fileExtension))
+            if (string.IsNullOrWhiteSpace(fileExtension))
                 throw new ArgumentNullException("fileExtension");
 
             var shfileinfo = new NativeMethods.Shfileinfo();

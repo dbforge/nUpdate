@@ -134,7 +134,7 @@ namespace nUpdate.Administration.Ftp
                 int curYear = DateTime.Today.Year;
 
                 DateTime result;
-                if (DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "1-{0}-2007", month), out result))
+                if (DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "1-{0}-2007", month), out result))
                 {
                     if ((curMonth - result.Month) < 0)
                         year = Convert.ToString(curYear - 1, CultureInfo.InvariantCulture);
@@ -144,11 +144,11 @@ namespace nUpdate.Administration.Ftp
             }
 
             DateTime dateObj;
-            DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2} {3}", day, month, year, time),
+            DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2} {3}", day, month, year, time),
                 out dateObj);
 
             long sizeLng;
-            Int64.TryParse(size, out sizeLng);
+            long.TryParse(size, out sizeLng);
 
             var itemTypeObj = FtpItemType.Unknown;
             switch (itemType.ToLower(CultureInfo.InvariantCulture))
@@ -196,11 +196,11 @@ namespace nUpdate.Administration.Ftp
 
             // put togther the date/time
             DateTime dateTime;
-            DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "{0} {1}", date, time), out dateTime);
+            DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "{0} {1}", date, time), out dateTime);
 
             // parse the file size
             long sizeLng;
-            Int64.TryParse(size, out sizeLng);
+            long.TryParse(size, out sizeLng);
 
             // determine the file item itemType
             FtpItemType itemTypeObj;
@@ -209,7 +209,7 @@ namespace nUpdate.Administration.Ftp
             else
                 itemTypeObj = FtpItemType.File;
 
-            return new FtpItem(name, dateTime, sizeLng, String.Empty, String.Empty, itemTypeObj, line);
+            return new FtpItem(name, dateTime, sizeLng, string.Empty, string.Empty, itemTypeObj, line);
         }
     }
 }

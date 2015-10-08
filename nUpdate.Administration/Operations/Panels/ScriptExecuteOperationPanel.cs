@@ -42,7 +42,7 @@ namespace nUpdate.Administration.Operations.Panels
             get
             {
                 string newText =
-                    String.Join("\n",
+                    string.Join("\n",
                         codeTextBox.Lines.Except(
                             codeTextBox.Lines.Where(item => item.StartsWith("using") || item.StartsWith("//")))).Trim();
                 return newText.StartsWith("public class Program") && newText.Contains("static void Main");

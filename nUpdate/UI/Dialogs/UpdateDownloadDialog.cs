@@ -49,7 +49,7 @@ namespace nUpdate.UI.Dialogs
                     Invoke(new Action(() =>
                     {
                         downloadProgressBar.Value = value;
-                        infoLabel.Text = String.Format(
+                        infoLabel.Text = string.Format(
                             _lp.UpdateDownloadDialogLoadingInfo, value);
                     }));
                 }
@@ -73,7 +73,7 @@ namespace nUpdate.UI.Dialogs
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(LanguageFilePath))
+            if (!string.IsNullOrEmpty(LanguageFilePath))
             {
                 try
                 {
@@ -84,7 +84,7 @@ namespace nUpdate.UI.Dialogs
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
                 string resourceName = $"nUpdate.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
@@ -92,13 +92,13 @@ namespace nUpdate.UI.Dialogs
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
             {
                 _lp = new LocalizationProperties();
             }
 
             headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
-            infoLabel.Text = String.Format(
+            infoLabel.Text = string.Format(
                 _lp.UpdateDownloadDialogLoadingInfo, "0");
             cancelButton.Text = _lp.CancelButtonText;
 
@@ -150,7 +150,7 @@ namespace nUpdate.UI.Dialogs
                 Invoke(new Action(() =>
                 {
                     downloadProgressBar.Value = (int) e.Percentage;
-                    infoLabel.Text = String.Format(
+                    infoLabel.Text = string.Format(
                         _lp.UpdateDownloadDialogLoadingInfo, (int) e.Percentage);
                 }));
             }

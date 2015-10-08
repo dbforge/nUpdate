@@ -94,7 +94,7 @@ namespace nUpdate.Administration.Ftp
                 string codeString = rawText.Substring(0, 3);
                 int codeInt = 0;
 
-                if (Int32.TryParse(codeString, out codeInt))
+                if (int.TryParse(codeString, out codeInt))
                 {
                     code = (FtpResponseCode) codeInt;
                 }

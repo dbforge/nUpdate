@@ -8,6 +8,8 @@ using System.Security;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.Win32;
+// ReSharper disable InconsistentNaming
+// ReSharper disable once IdentifierTypo
 
 namespace nUpdate.Administration
 {
@@ -41,14 +43,14 @@ namespace nUpdate.Administration
 
         public static T[] RemoveAt<T>(this T[] source, int index)
         {
-            var dest = new T[source.Length - 1];
+            var destination = new T[source.Length - 1];
             if (index > 0)
-                Array.Copy(source, 0, dest, 0, index);
+                Array.Copy(source, 0, destination, 0, index);
 
             if (index < source.Length - 1)
-                Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+                Array.Copy(source, index + 1, destination, index, source.Length - index - 1);
 
-            return dest;
+            return destination;
         }
 
         public static T Remove<T>(this Stack<T> stack, T element)
@@ -69,10 +71,10 @@ namespace nUpdate.Administration
             }
         }
 
-        public static string ConvertToUnsecureString(this SecureString securePassword)
+        public static string ConvertToInsecureString(this SecureString securePassword)
         {
             if (securePassword == null)
-                throw new ArgumentNullException("securePassword");
+                throw new ArgumentNullException(nameof(securePassword));
 
             var unmanagedString = IntPtr.Zero;
             try

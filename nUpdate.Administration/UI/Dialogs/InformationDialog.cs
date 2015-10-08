@@ -6,16 +6,16 @@ using System.Windows.Forms;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
-    public partial class InfoDialog : BaseDialog
+    public partial class InformationDialog : BaseDialog
     {
-        public InfoDialog()
+        public InformationDialog()
         {
             InitializeComponent();
         }
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             copyrightLabel.Text += DateTime.Now.Year.ToString();
         }
 

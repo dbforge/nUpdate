@@ -220,7 +220,7 @@
     <value>29, 241</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 39</value>
+    <value>395, 39</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -304,9 +304,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="label3.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -429,16 +426,13 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>controlPanel1</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
-    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;controlPanel1.ZOrder" xml:space="preserve">
     <value>11</value>
-  </data>
-  <data name="languagesComboBox.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="languagesComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>224, 65</value>
@@ -464,9 +458,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
   <data name="label7.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label7.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
     <value>29, 68</value>
   </data>
@@ -491,9 +482,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
   <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="editLanguageButton.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="editLanguageButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>303, 92</value>
   </data>
@@ -517,9 +505,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
   </data>
   <data name="&gt;&gt;editLanguageButton.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="openLanguagesPathButton.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="openLanguagesPathButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>143, 92</value>
@@ -591,7 +576,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>programPathTextBox</value>
   </data>
   <data name="&gt;&gt;programPathTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;programPathTextBox.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1143,6 +1128,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>PreferencesDialog</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

@@ -16,9 +16,6 @@
             if (disposing && (components != null))
             {
                 _ftp.Dispose();
-                FtpPassword.Dispose();
-                ProxyPassword.Dispose();
-                SqlPassword.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);

@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -15,14 +16,14 @@ namespace nUpdate.Administration
         private static Mutex _mutex;
 
         /// <summary>
-        ///     The path of the languages directory.
-        /// </summary>
-        public static string LanguagesDirectory { get; set; }
-
-        /// <summary>
         ///     The root path of the locally stored data.
         /// </summary>
         public static string Path => Settings.Default.ProgramPath;
+
+        /// <summary>
+        ///     The path of the languages directory.
+        /// </summary>
+        public static string LanguagesDirectory => System.IO.Path.Combine(Path, "Localization");
 
         /// <summary>
         ///     The path of the configuration file for all projects.
@@ -42,6 +43,8 @@ namespace nUpdate.Administration
         public static string AesKeyPassword => "VZh7mLRPNI";
 
         public static string AesIvPassword => "cOijH2vgwR";
+
+        public static CultureInfo Language => Settings.Default.Language;
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -77,8 +80,7 @@ namespace nUpdate.Administration
 
         private static void Exit(object sender, EventArgs e)
         {
-            if (_mutex != null)
-                _mutex.Dispose();
+            _mutex?.Dispose();
         }
     }
 }

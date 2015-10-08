@@ -23,6 +23,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             try
             {
+                // ReSharper disable once ObjectCreationAsStatement
                 new MailAddress(address);
                 return true;
             }
@@ -58,7 +59,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             $"http://www.nupdate.net/mail.php?name={nameTextBox.Text}&sender={emailTextBox.Text}&content={contentTextBox.Text}");
                 }
 
-                if (!String.IsNullOrEmpty(responseString) && responseString != "\n")
+                if (!string.IsNullOrEmpty(responseString) && responseString != "\n")
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.",
                         $"Please report this message: {responseString}", PopupButtons.Ok);
@@ -77,7 +78,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void FeedbackDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
         }
     }
 }

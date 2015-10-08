@@ -14,11 +14,6 @@ namespace nUpdate.Administration
 // ReSharper disable once InconsistentNaming
     public class FTPManager
     {
-        /// <summary>
-        ///     Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles" />-method.
-        /// </summary>
-        public IEnumerable<FtpItem> ListedFtpItems;
-
         private bool _disposed;
         private ITransferProvider _transferProvider;
 
@@ -27,8 +22,10 @@ namespace nUpdate.Administration
             GetTransferProvider();
         }
 
+        public IEnumerable<FtpItem> ListedFtpItems { get; set; }
+
         public FTPManager(string host, int port, string directory, string username, SecureString password,
-            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol)
+            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protocol)
         {
             TransferAssemblyPath = transferAssemblyFilePath;
             GetTransferProvider();
@@ -40,16 +37,21 @@ namespace nUpdate.Administration
             _transferProvider.Password = password.Copy();
             _transferProvider.Proxy = proxy;
             _transferProvider.UsePassiveMode = usePassiveMode;
-            if (String.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                Protocol = (FtpSecurityProtocol) protcol;
+            if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
+                Protocol = (FtpSecurityProtocol) protocol;
         }
 
         /// <summary>
-        ///     Sets the protocol to use.
+        ///     Gets or sets the protocol to use.
         /// </summary>
         public FtpSecurityProtocol Protocol
         {
-            get { return ((TransferService) _transferProvider).Protocol; }
+            get
+            {
+                if (_transferProvider.GetType() == typeof(TransferService))
+                    return ((TransferService) _transferProvider).Protocol;
+                return FtpSecurityProtocol.Custom;
+            }
             set
             {
                 if (_transferProvider.GetType() == typeof (TransferService))
@@ -136,7 +138,7 @@ namespace nUpdate.Administration
 
         private void GetTransferProvider()
         {
-            if (String.IsNullOrWhiteSpace(TransferAssemblyPath))
+            if (string.IsNullOrWhiteSpace(TransferAssemblyPath))
             {
                 var provider = GetDefaultServiceProvider();
                 _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));

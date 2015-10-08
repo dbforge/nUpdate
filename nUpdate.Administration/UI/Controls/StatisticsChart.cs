@@ -53,7 +53,7 @@ namespace nUpdate.Administration.UI.Controls
 
         private void StatisticsChart_Load(object sender, EventArgs e)
         {
-            operatingSystemChart.Titles[0].Text = String.Format(operatingSystemChart.Titles[0].Text, Version.FullText);
+            operatingSystemChart.Titles[0].Text = string.Format(operatingSystemChart.Titles[0].Text, Version.FullText);
             operatingSystemChart.Series[0]["PieLabelStyle"] = "Outside";
 
             double windowsVistaAmount = (TotalDownloadCount/100d)*WindowsVistaPercentage;
