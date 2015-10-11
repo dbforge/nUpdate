@@ -70,6 +70,11 @@ namespace nUpdate.Updating
         public bool NecessaryUpdate { get; set; }
 
         /// <summary>
+        ///     Gets or sets the requirements to install the update package
+        /// </summary>
+        public List<UpdateRequirement> UpdateRequirements { get; set; }
+
+        /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
         /// </summary>
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
@@ -99,7 +104,7 @@ namespace nUpdate.Updating
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUri);
-                if (!string.IsNullOrEmpty(source))
+                if (!String.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
 

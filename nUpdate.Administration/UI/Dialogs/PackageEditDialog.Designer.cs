@@ -29,12 +29,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackageEditDialog));
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Requirements", 16, 16);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
@@ -73,13 +73,12 @@
             System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes a C#-script."}, 15);
-            this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
-            this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.categoryImageList = new System.Windows.Forms.ImageList();
+            this.cancelToolTip = new System.Windows.Forms.ToolTip();
             this.saveButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
@@ -114,23 +113,8 @@
             this.changelogToolStrip = new System.Windows.Forms.ToolStrip();
             this.changelogLanguageComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.changelogClearButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.specialCharactersComboBox = new System.Windows.Forms.ToolStripDropDownButton();
-            this.bulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.insideQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.classicQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.outsideQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.apostropheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.copyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allRightsReservedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.soundRecordingCopyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.unregisteredTrademarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.serviceMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.availabilityTabPage = new System.Windows.Forms.TabPage();
             this.availabilityPanel = new System.Windows.Forms.Panel();
             this.unsupportedVersionsPanel = new System.Windows.Forms.Panel();
@@ -150,8 +134,36 @@
             this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.requirementsTabPage = new System.Windows.Forms.TabPage();
+            this.requirementRemoveButton = new System.Windows.Forms.Button();
+            this.requirementTypeLabel = new System.Windows.Forms.Label();
+            this.addRequirementButton = new System.Windows.Forms.Button();
+            this.requirementsTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.requirementsTypeTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.osRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumOSVersionLabel = new System.Windows.Forms.Label();
+            this.requiredOSComboBox = new System.Windows.Forms.ComboBox();
+            this.netRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumFrameworkVersionLabel = new System.Windows.Forms.Label();
+            this.requiredFrameworkComboBox = new System.Windows.Forms.ComboBox();
+            this.requirementsListBox = new System.Windows.Forms.ListBox();
+            this.changelogLoadButton = new System.Windows.Forms.ToolStripButton();
+            this.changelogClearButton = new System.Windows.Forms.ToolStripButton();
+            this.specialCharactersComboBox = new System.Windows.Forms.ToolStripDropDownButton();
+            this.bulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.insideQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.classicQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.outsideQuotationMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.apostropheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.copyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allRightsReservedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.soundRecordingCopyrightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unregisteredTrademarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serviceMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
             this.categoryTabControl.SuspendLayout();
             this.generalTabPage.SuspendLayout();
@@ -175,6 +187,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
             this.operationsTabPage.SuspendLayout();
             this.operationsPanel.SuspendLayout();
+            this.requirementsTabPage.SuspendLayout();
+            this.requirementsTypeTabControl.SuspendLayout();
+            this.osRequirementsTabPage.SuspendLayout();
+            this.netRequirementsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // categoryImageList
@@ -197,6 +214,7 @@
             this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "script-code.png");
+            this.categoryImageList.Images.SetKeyName(16, "ui-check-boxes.png");
             // 
             // cancelToolTip
             // 
@@ -250,16 +268,6 @@
             this.cancelLabel.Text = "x";
             this.cancelLabel.Visible = false;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(15, 17);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(17, 17);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 21;
-            this.pictureBox1.TabStop = false;
-            // 
             // loadingLabel
             // 
             this.loadingLabel.AutoEllipsis = true;
@@ -294,15 +302,20 @@
             treeNode3.Name = "availabilityNode";
             treeNode3.SelectedImageIndex = 0;
             treeNode3.Text = "Availability";
-            treeNode4.ImageIndex = 4;
-            treeNode4.Name = "operationsNode";
-            treeNode4.SelectedImageIndex = 4;
-            treeNode4.Text = "Operations";
+            treeNode4.ImageIndex = 16;
+            treeNode4.Name = "RequirementsNode";
+            treeNode4.SelectedImageIndex = 16;
+            treeNode4.Text = "Requirements";
+            treeNode5.ImageIndex = 4;
+            treeNode5.Name = "operationsNode";
+            treeNode5.SelectedImageIndex = 4;
+            treeNode5.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -328,6 +341,7 @@
             this.categoryTabControl.Controls.Add(this.changelogTabPage);
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
+            this.categoryTabControl.Controls.Add(this.requirementsTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
@@ -461,7 +475,7 @@
             this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.architectureInfoLabel.Location = new System.Drawing.Point(9, 137);
             this.architectureInfoLabel.Name = "architectureInfoLabel";
-            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.Size = new System.Drawing.Size(437, 26);
             this.architectureInfoLabel.TabIndex = 20;
             this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
@@ -548,7 +562,7 @@
             this.versionLabel.AutoSize = true;
             this.versionLabel.Location = new System.Drawing.Point(8, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(49, 13);
+            this.versionLabel.Size = new System.Drawing.Size(48, 13);
             this.versionLabel.TabIndex = 2;
             this.versionLabel.Text = "Version:";
             // 
@@ -667,136 +681,15 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
             // 
-            // changelogLoadButton
-            // 
-            this.changelogLoadButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogLoadButton.Image")));
-            this.changelogLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.changelogLoadButton.Name = "changelogLoadButton";
-            this.changelogLoadButton.Size = new System.Drawing.Size(101, 20);
-            this.changelogLoadButton.Text = "Load from file";
-            this.changelogLoadButton.Click += new System.EventHandler(this.changelogLoadButton_Click);
-            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
             // 
-            // changelogClearButton
-            // 
-            this.changelogClearButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogClearButton.Image")));
-            this.changelogClearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.changelogClearButton.Name = "changelogClearButton";
-            this.changelogClearButton.Size = new System.Drawing.Size(54, 20);
-            this.changelogClearButton.Text = "Clear";
-            this.changelogClearButton.Click += new System.EventHandler(this.changelogClearButton_Click);
-            // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 23);
-            // 
-            // specialCharactersComboBox
-            // 
-            this.specialCharactersComboBox.AutoToolTip = false;
-            this.specialCharactersComboBox.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bulletToolStripMenuItem,
-            this.toolStripSeparator7,
-            this.insideQuotationMarkToolStripMenuItem,
-            this.classicQuotationMarkToolStripMenuItem,
-            this.outsideQuotationMarkToolStripMenuItem,
-            this.apostropheToolStripMenuItem,
-            this.toolStripSeparator8,
-            this.copyrightToolStripMenuItem,
-            this.allRightsReservedToolStripMenuItem,
-            this.soundRecordingCopyrightToolStripMenuItem,
-            this.unregisteredTrademarkToolStripMenuItem,
-            this.serviceMarkToolStripMenuItem});
-            this.specialCharactersComboBox.Image = ((System.Drawing.Image)(resources.GetObject("specialCharactersComboBox.Image")));
-            this.specialCharactersComboBox.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.specialCharactersComboBox.Name = "specialCharactersComboBox";
-            this.specialCharactersComboBox.Size = new System.Drawing.Size(130, 20);
-            this.specialCharactersComboBox.Text = "Special characters";
-            this.specialCharactersComboBox.ToolTipText = "Special characters";
-            // 
-            // bulletToolStripMenuItem
-            // 
-            this.bulletToolStripMenuItem.Name = "bulletToolStripMenuItem";
-            this.bulletToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.bulletToolStripMenuItem.Text = "Bullet: •";
-            this.bulletToolStripMenuItem.Click += new System.EventHandler(this.bulletToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(232, 6);
-            // 
-            // insideQuotationMarkToolStripMenuItem
-            // 
-            this.insideQuotationMarkToolStripMenuItem.Name = "insideQuotationMarkToolStripMenuItem";
-            this.insideQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.insideQuotationMarkToolStripMenuItem.Text = "Quotation mark (inside): » « ";
-            this.insideQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.insideQuotationMarkToolStripMenuItem_Click);
-            // 
-            // classicQuotationMarkToolStripMenuItem
-            // 
-            this.classicQuotationMarkToolStripMenuItem.Name = "classicQuotationMarkToolStripMenuItem";
-            this.classicQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.classicQuotationMarkToolStripMenuItem.Text = "Quotation mark classic: „ “";
-            this.classicQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.classicQuotationMarkToolStripMenuItem_Click);
-            // 
-            // outsideQuotationMarkToolStripMenuItem
-            // 
-            this.outsideQuotationMarkToolStripMenuItem.Name = "outsideQuotationMarkToolStripMenuItem";
-            this.outsideQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.outsideQuotationMarkToolStripMenuItem.Text = "Quotation mark (outside): « »";
-            this.outsideQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.outsideQuotationMarkToolStripMenuItem_Click);
-            // 
-            // apostropheToolStripMenuItem
-            // 
-            this.apostropheToolStripMenuItem.Name = "apostropheToolStripMenuItem";
-            this.apostropheToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.apostropheToolStripMenuItem.Text = "Apostrophe: \'";
-            this.apostropheToolStripMenuItem.Click += new System.EventHandler(this.apostropheToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator8
-            // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(232, 6);
-            // 
-            // copyrightToolStripMenuItem
-            // 
-            this.copyrightToolStripMenuItem.Name = "copyrightToolStripMenuItem";
-            this.copyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.copyrightToolStripMenuItem.Text = "Copyright: ©";
-            this.copyrightToolStripMenuItem.Click += new System.EventHandler(this.copyrightToolStripMenuItem_Click);
-            // 
-            // allRightsReservedToolStripMenuItem
-            // 
-            this.allRightsReservedToolStripMenuItem.Name = "allRightsReservedToolStripMenuItem";
-            this.allRightsReservedToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.allRightsReservedToolStripMenuItem.Text = "Registered trademark: ®";
-            this.allRightsReservedToolStripMenuItem.Click += new System.EventHandler(this.allRightsReservedToolStripMenuItem_Click);
-            // 
-            // soundRecordingCopyrightToolStripMenuItem
-            // 
-            this.soundRecordingCopyrightToolStripMenuItem.Name = "soundRecordingCopyrightToolStripMenuItem";
-            this.soundRecordingCopyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.soundRecordingCopyrightToolStripMenuItem.Text = "Sound-recording copyright: ℗";
-            this.soundRecordingCopyrightToolStripMenuItem.Click += new System.EventHandler(this.soundRecordingCopyrightToolStripMenuItem_Click);
-            // 
-            // unregisteredTrademarkToolStripMenuItem
-            // 
-            this.unregisteredTrademarkToolStripMenuItem.Name = "unregisteredTrademarkToolStripMenuItem";
-            this.unregisteredTrademarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.unregisteredTrademarkToolStripMenuItem.Text = "Trademark: ™";
-            this.unregisteredTrademarkToolStripMenuItem.Click += new System.EventHandler(this.unregisteredTrademarkToolStripMenuItem_Click);
-            // 
-            // serviceMarkToolStripMenuItem
-            // 
-            this.serviceMarkToolStripMenuItem.Name = "serviceMarkToolStripMenuItem";
-            this.serviceMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
-            this.serviceMarkToolStripMenuItem.Text = "Service mark: ℠";
-            this.serviceMarkToolStripMenuItem.Click += new System.EventHandler(this.serviceMarkToolStripMenuItem_Click);
             // 
             // availabilityTabPage
             // 
@@ -1038,6 +931,293 @@
             // 
             this.Description.Width = 300;
             // 
+            // requirementsTabPage
+            // 
+            this.requirementsTabPage.Controls.Add(this.requirementRemoveButton);
+            this.requirementsTabPage.Controls.Add(this.requirementTypeLabel);
+            this.requirementsTabPage.Controls.Add(this.addRequirementButton);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeComboBox);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeTabControl);
+            this.requirementsTabPage.Controls.Add(this.requirementsListBox);
+            this.requirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.requirementsTabPage.Name = "requirementsTabPage";
+            this.requirementsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.requirementsTabPage.TabIndex = 7;
+            this.requirementsTabPage.Text = "Requirements";
+            this.requirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // requirementRemoveButton
+            // 
+            this.requirementRemoveButton.Location = new System.Drawing.Point(389, 156);
+            this.requirementRemoveButton.Name = "requirementRemoveButton";
+            this.requirementRemoveButton.Size = new System.Drawing.Size(81, 43);
+            this.requirementRemoveButton.TabIndex = 2;
+            this.requirementRemoveButton.Text = "Remove Requirement";
+            this.requirementRemoveButton.UseVisualStyleBackColor = true;
+            this.requirementRemoveButton.Click += new System.EventHandler(this.requirementRemoveButton_Click);
+            // 
+            // requirementTypeLabel
+            // 
+            this.requirementTypeLabel.AutoSize = true;
+            this.requirementTypeLabel.Location = new System.Drawing.Point(5, 6);
+            this.requirementTypeLabel.Name = "requirementTypeLabel";
+            this.requirementTypeLabel.Size = new System.Drawing.Size(135, 13);
+            this.requirementTypeLabel.TabIndex = 3;
+            this.requirementTypeLabel.Text = "Type of the Requirement:";
+            // 
+            // addRequirementButton
+            // 
+            this.addRequirementButton.Location = new System.Drawing.Point(167, 114);
+            this.addRequirementButton.Name = "addRequirementButton";
+            this.addRequirementButton.Size = new System.Drawing.Size(121, 25);
+            this.addRequirementButton.TabIndex = 2;
+            this.addRequirementButton.Text = "Add requirement";
+            this.addRequirementButton.UseVisualStyleBackColor = true;
+            this.addRequirementButton.Click += new System.EventHandler(this.addRequirementButton_Click);
+            // 
+            // requirementsTypeComboBox
+            // 
+            this.requirementsTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requirementsTypeComboBox.FormattingEnabled = true;
+            this.requirementsTypeComboBox.Items.AddRange(new object[] {
+            "OS Version",
+            ".NET Framework"});
+            this.requirementsTypeComboBox.Location = new System.Drawing.Point(167, 3);
+            this.requirementsTypeComboBox.Name = "requirementsTypeComboBox";
+            this.requirementsTypeComboBox.Size = new System.Drawing.Size(154, 21);
+            this.requirementsTypeComboBox.TabIndex = 2;
+            this.requirementsTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.requirementsTypeComboBox_SelectedIndexChanged);
+            this.requirementsTypeComboBox.Click += new System.EventHandler(this.requirementsTypeComboBox_SelectedIndexChanged);
+            // 
+            // requirementsTypeTabControl
+            // 
+            this.requirementsTypeTabControl.Controls.Add(this.osRequirementsTabPage);
+            this.requirementsTypeTabControl.Controls.Add(this.netRequirementsTabPage);
+            this.requirementsTypeTabControl.Location = new System.Drawing.Point(0, 25);
+            this.requirementsTypeTabControl.Name = "requirementsTypeTabControl";
+            this.requirementsTypeTabControl.SelectedIndex = 0;
+            this.requirementsTypeTabControl.Size = new System.Drawing.Size(459, 109);
+            this.requirementsTypeTabControl.TabIndex = 1;
+            // 
+            // osRequirementsTabPage
+            // 
+            this.osRequirementsTabPage.Controls.Add(this.minimumOSVersionLabel);
+            this.osRequirementsTabPage.Controls.Add(this.requiredOSComboBox);
+            this.osRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.osRequirementsTabPage.Name = "osRequirementsTabPage";
+            this.osRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.osRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.osRequirementsTabPage.TabIndex = 0;
+            this.osRequirementsTabPage.Text = "OS";
+            this.osRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumOSVersionLabel
+            // 
+            this.minimumOSVersionLabel.AutoSize = true;
+            this.minimumOSVersionLabel.Location = new System.Drawing.Point(6, 9);
+            this.minimumOSVersionLabel.Name = "minimumOSVersionLabel";
+            this.minimumOSVersionLabel.Size = new System.Drawing.Size(117, 13);
+            this.minimumOSVersionLabel.TabIndex = 4;
+            this.minimumOSVersionLabel.Text = "Minimum OS Version:";
+            // 
+            // requiredOSComboBox
+            // 
+            this.requiredOSComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredOSComboBox.FormattingEnabled = true;
+            this.requiredOSComboBox.Items.AddRange(new object[] {
+            "Windows Vista",
+            "Windows Vista Service Pack 1",
+            "Windows Vista Service Pack 2",
+            "Windows 7",
+            "Windows 7 Service Pack 1",
+            "Windows 8",
+            "Windows 8.1",
+            "Windows 10"});
+            this.requiredOSComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredOSComboBox.Name = "requiredOSComboBox";
+            this.requiredOSComboBox.Size = new System.Drawing.Size(174, 21);
+            this.requiredOSComboBox.TabIndex = 3;
+            // 
+            // netRequirementsTabPage
+            // 
+            this.netRequirementsTabPage.Controls.Add(this.minimumFrameworkVersionLabel);
+            this.netRequirementsTabPage.Controls.Add(this.requiredFrameworkComboBox);
+            this.netRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.netRequirementsTabPage.Name = "netRequirementsTabPage";
+            this.netRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.netRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.netRequirementsTabPage.TabIndex = 1;
+            this.netRequirementsTabPage.Text = ".NET";
+            this.netRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumFrameworkVersionLabel
+            // 
+            this.minimumFrameworkVersionLabel.AutoSize = true;
+            this.minimumFrameworkVersionLabel.Location = new System.Drawing.Point(3, 4);
+            this.minimumFrameworkVersionLabel.Name = "minimumFrameworkVersionLabel";
+            this.minimumFrameworkVersionLabel.Size = new System.Drawing.Size(143, 26);
+            this.minimumFrameworkVersionLabel.TabIndex = 5;
+            this.minimumFrameworkVersionLabel.Text = "Minimum .NET Framework \r\nVersion: ";
+            // 
+            // requiredFrameworkComboBox
+            // 
+            this.requiredFrameworkComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredFrameworkComboBox.FormattingEnabled = true;
+            this.requiredFrameworkComboBox.Items.AddRange(new object[] {
+            ".NET Framework 1.0.0",
+            ".NET Framework 2.0.0",
+            ".NET Framework 3.0.0",
+            ".NET Framework 3.5.0",
+            ".NET Framework 4.0.0",
+            ".NET Framework 4.5.0",
+            ".NET Framework 4.5.1",
+            ".NET Framework 4.5.2",
+            ".NET Framework 4.6.0"});
+            this.requiredFrameworkComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredFrameworkComboBox.Name = "requiredFrameworkComboBox";
+            this.requiredFrameworkComboBox.Size = new System.Drawing.Size(176, 21);
+            this.requiredFrameworkComboBox.TabIndex = 4;
+            // 
+            // requirementsListBox
+            // 
+            this.requirementsListBox.FormattingEnabled = true;
+            this.requirementsListBox.Location = new System.Drawing.Point(5, 140);
+            this.requirementsListBox.Name = "requirementsListBox";
+            this.requirementsListBox.Size = new System.Drawing.Size(378, 82);
+            this.requirementsListBox.TabIndex = 0;
+            this.requirementsListBox.SelectedIndexChanged += new System.EventHandler(this.requirementsListBox_SelectedIndexChanged);
+            // 
+            // changelogLoadButton
+            // 
+            this.changelogLoadButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogLoadButton.Image")));
+            this.changelogLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.changelogLoadButton.Name = "changelogLoadButton";
+            this.changelogLoadButton.Size = new System.Drawing.Size(101, 20);
+            this.changelogLoadButton.Text = "Load from file";
+            this.changelogLoadButton.Click += new System.EventHandler(this.changelogLoadButton_Click);
+            // 
+            // changelogClearButton
+            // 
+            this.changelogClearButton.Image = ((System.Drawing.Image)(resources.GetObject("changelogClearButton.Image")));
+            this.changelogClearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.changelogClearButton.Name = "changelogClearButton";
+            this.changelogClearButton.Size = new System.Drawing.Size(54, 20);
+            this.changelogClearButton.Text = "Clear";
+            this.changelogClearButton.Click += new System.EventHandler(this.changelogClearButton_Click);
+            // 
+            // specialCharactersComboBox
+            // 
+            this.specialCharactersComboBox.AutoToolTip = false;
+            this.specialCharactersComboBox.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bulletToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.insideQuotationMarkToolStripMenuItem,
+            this.classicQuotationMarkToolStripMenuItem,
+            this.outsideQuotationMarkToolStripMenuItem,
+            this.apostropheToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.copyrightToolStripMenuItem,
+            this.allRightsReservedToolStripMenuItem,
+            this.soundRecordingCopyrightToolStripMenuItem,
+            this.unregisteredTrademarkToolStripMenuItem,
+            this.serviceMarkToolStripMenuItem});
+            this.specialCharactersComboBox.Image = ((System.Drawing.Image)(resources.GetObject("specialCharactersComboBox.Image")));
+            this.specialCharactersComboBox.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.specialCharactersComboBox.Name = "specialCharactersComboBox";
+            this.specialCharactersComboBox.Size = new System.Drawing.Size(130, 20);
+            this.specialCharactersComboBox.Text = "Special characters";
+            this.specialCharactersComboBox.ToolTipText = "Special characters";
+            // 
+            // bulletToolStripMenuItem
+            // 
+            this.bulletToolStripMenuItem.Name = "bulletToolStripMenuItem";
+            this.bulletToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.bulletToolStripMenuItem.Text = "Bullet: •";
+            this.bulletToolStripMenuItem.Click += new System.EventHandler(this.bulletToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(232, 6);
+            // 
+            // insideQuotationMarkToolStripMenuItem
+            // 
+            this.insideQuotationMarkToolStripMenuItem.Name = "insideQuotationMarkToolStripMenuItem";
+            this.insideQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.insideQuotationMarkToolStripMenuItem.Text = "Quotation mark (inside): » « ";
+            this.insideQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.insideQuotationMarkToolStripMenuItem_Click);
+            // 
+            // classicQuotationMarkToolStripMenuItem
+            // 
+            this.classicQuotationMarkToolStripMenuItem.Name = "classicQuotationMarkToolStripMenuItem";
+            this.classicQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.classicQuotationMarkToolStripMenuItem.Text = "Quotation mark classic: „ “";
+            this.classicQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.classicQuotationMarkToolStripMenuItem_Click);
+            // 
+            // outsideQuotationMarkToolStripMenuItem
+            // 
+            this.outsideQuotationMarkToolStripMenuItem.Name = "outsideQuotationMarkToolStripMenuItem";
+            this.outsideQuotationMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.outsideQuotationMarkToolStripMenuItem.Text = "Quotation mark (outside): « »";
+            this.outsideQuotationMarkToolStripMenuItem.Click += new System.EventHandler(this.outsideQuotationMarkToolStripMenuItem_Click);
+            // 
+            // apostropheToolStripMenuItem
+            // 
+            this.apostropheToolStripMenuItem.Name = "apostropheToolStripMenuItem";
+            this.apostropheToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.apostropheToolStripMenuItem.Text = "Apostrophe: \'";
+            this.apostropheToolStripMenuItem.Click += new System.EventHandler(this.apostropheToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(232, 6);
+            // 
+            // copyrightToolStripMenuItem
+            // 
+            this.copyrightToolStripMenuItem.Name = "copyrightToolStripMenuItem";
+            this.copyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.copyrightToolStripMenuItem.Text = "Copyright: ©";
+            this.copyrightToolStripMenuItem.Click += new System.EventHandler(this.copyrightToolStripMenuItem_Click);
+            // 
+            // allRightsReservedToolStripMenuItem
+            // 
+            this.allRightsReservedToolStripMenuItem.Name = "allRightsReservedToolStripMenuItem";
+            this.allRightsReservedToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.allRightsReservedToolStripMenuItem.Text = "Registered trademark: ®";
+            this.allRightsReservedToolStripMenuItem.Click += new System.EventHandler(this.allRightsReservedToolStripMenuItem_Click);
+            // 
+            // soundRecordingCopyrightToolStripMenuItem
+            // 
+            this.soundRecordingCopyrightToolStripMenuItem.Name = "soundRecordingCopyrightToolStripMenuItem";
+            this.soundRecordingCopyrightToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.soundRecordingCopyrightToolStripMenuItem.Text = "Sound-recording copyright: ℗";
+            this.soundRecordingCopyrightToolStripMenuItem.Click += new System.EventHandler(this.soundRecordingCopyrightToolStripMenuItem_Click);
+            // 
+            // unregisteredTrademarkToolStripMenuItem
+            // 
+            this.unregisteredTrademarkToolStripMenuItem.Name = "unregisteredTrademarkToolStripMenuItem";
+            this.unregisteredTrademarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.unregisteredTrademarkToolStripMenuItem.Text = "Trademark: ™";
+            this.unregisteredTrademarkToolStripMenuItem.Click += new System.EventHandler(this.unregisteredTrademarkToolStripMenuItem_Click);
+            // 
+            // serviceMarkToolStripMenuItem
+            // 
+            this.serviceMarkToolStripMenuItem.Name = "serviceMarkToolStripMenuItem";
+            this.serviceMarkToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.serviceMarkToolStripMenuItem.Text = "Service mark: ℠";
+            this.serviceMarkToolStripMenuItem.Click += new System.EventHandler(this.serviceMarkToolStripMenuItem_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(15, 17);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(17, 17);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 21;
+            this.pictureBox1.TabStop = false;
+            // 
             // PackageEditDialog
             // 
             this.AcceptButton = this.saveButton;
@@ -1062,7 +1242,6 @@
             this.Load += new System.EventHandler(this.PackageEditDialog_Load);
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.controlPanel1.ResumeLayout(false);
             this.categoryTabControl.ResumeLayout(false);
             this.generalTabPage.ResumeLayout(false);
@@ -1091,6 +1270,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
             this.operationsTabPage.ResumeLayout(false);
             this.operationsPanel.ResumeLayout(false);
+            this.requirementsTabPage.ResumeLayout(false);
+            this.requirementsTabPage.PerformLayout();
+            this.requirementsTypeTabControl.ResumeLayout(false);
+            this.osRequirementsTabPage.ResumeLayout(false);
+            this.osRequirementsTabPage.PerformLayout();
+            this.netRequirementsTabPage.ResumeLayout(false);
+            this.netRequirementsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1174,8 +1361,18 @@
         private System.Windows.Forms.ListBox unsupportedVersionsListBox;
         private System.Windows.Forms.NumericUpDown unsupportedMinorNumericUpDown;
         private System.Windows.Forms.NumericUpDown unsupportedBuildNumericUpDown;
-
-
-
+        private System.Windows.Forms.TabPage requirementsTabPage;
+        private System.Windows.Forms.Label requirementTypeLabel;
+        private System.Windows.Forms.Button addRequirementButton;
+        private System.Windows.Forms.ComboBox requirementsTypeComboBox;
+        private Controls.TablessTabControl requirementsTypeTabControl;
+        private System.Windows.Forms.TabPage osRequirementsTabPage;
+        private System.Windows.Forms.Label minimumOSVersionLabel;
+        private System.Windows.Forms.ComboBox requiredOSComboBox;
+        private System.Windows.Forms.TabPage netRequirementsTabPage;
+        private System.Windows.Forms.Label minimumFrameworkVersionLabel;
+        private System.Windows.Forms.ComboBox requiredFrameworkComboBox;
+        private System.Windows.Forms.ListBox requirementsListBox;
+        private System.Windows.Forms.Button requirementRemoveButton;
     }
 }

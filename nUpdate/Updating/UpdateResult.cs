@@ -11,6 +11,7 @@ namespace nUpdate.Updating
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
         private readonly bool _updatesFound;
         private UpdateConfiguration _newestConfiguration;
+        private Dictionary<UpdateVersion, List<UpdateRequirement>> _requirements = new Dictionary<UpdateVersion, List<UpdateRequirement>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -55,7 +56,25 @@ namespace nUpdate.Updating
                     if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
                         continue;
 
-                    _newUpdateConfigurations.Add(config);
+                    bool requirementMatch = true;
+                    string message = "";
+                    Tuple<bool, string> requirementResult;
+
+                    if (config.UpdateRequirements != null)
+                    {
+                        foreach (var updateRequirement in config.UpdateRequirements)
+                        {
+                            requirementResult = updateRequirement.CheckRequirement();
+                            if (!requirementResult.Item1)
+                            {
+                                requirementMatch = false;
+                                _requirements.Add(new UpdateVersion(config.LiteralVersion), config.UpdateRequirements);
+                            }
+                        }
+                    }
+
+                    if (requirementMatch)
+                        _newUpdateConfigurations.Add(config);
                 }
 
                 var highestVersion =
@@ -72,6 +91,14 @@ namespace nUpdate.Updating
         ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
         public bool UpdatesFound => _updatesFound;
+
+        /// <summary>
+        ///     Gets the requirements of the update package, that are not given on the computer
+        /// </summary>
+        public Dictionary<UpdateVersion, List<UpdateRequirement>> Requirements
+        {
+            get { return _requirements; }
+        }
 
         /// <summary>
         ///     Returns all new configurations.

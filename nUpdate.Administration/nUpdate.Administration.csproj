@@ -642,6 +642,7 @@
     <None Include="Resources\server-property.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ui-check-boxes.png" />
     <None Include="Resources\application-import.png" />
     <None Include="Resources\arrow-045.png" />
     <None Include="Resources\new-text.png" />

@@ -32,52 +32,53 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackageAddDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "Rename file",
             "Renames a given file to the new name set."}, 10);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete file",
             "Deletes a given file."}, 9);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
             "Create sub key",
             "Creates a sub key in the registry."}, 14);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete sub key",
             "Deletes a sub key in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
             "Set value",
             "Creates or edits a name-value-pair in the registry."}, 13);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete name-value-pair",
             "Deletes a name-value-pair in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start process",
             "Starts a given process."}, 8);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
             "Terminate process",
             "Terminates a given process if possible."}, 7);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start service.",
             "Starts a windows service. If it is already running it will be restarted. "}, 5);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes C#-code."}, 16);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Requirements", 17, 17);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -175,6 +176,18 @@
             this.filesList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.requirementsTabPage = new System.Windows.Forms.TabPage();
+            this.requirementTypeLabel = new System.Windows.Forms.Label();
+            this.addRequirementButton = new System.Windows.Forms.Button();
+            this.requirementsTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.requirementsTypeTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
+            this.osRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumOSVersionLabel = new System.Windows.Forms.Label();
+            this.requiredOSComboBox = new System.Windows.Forms.ComboBox();
+            this.netRequirementsTabPage = new System.Windows.Forms.TabPage();
+            this.minimumFrameworkVersionLabel = new System.Windows.Forms.Label();
+            this.requiredFrameworkComboBox = new System.Windows.Forms.ComboBox();
+            this.requirementsListBox = new System.Windows.Forms.ListBox();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -204,6 +217,10 @@
             this.replaceFilesTabPage.SuspendLayout();
             this.filesPanel.SuspendLayout();
             this.replaceFilesToolStrip.SuspendLayout();
+            this.requirementsTabPage.SuspendLayout();
+            this.requirementsTypeTabControl.SuspendLayout();
+            this.osRequirementsTabPage.SuspendLayout();
+            this.netRequirementsTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // filesImageList
@@ -234,6 +251,7 @@
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "application--arrow.png");
             this.categoryImageList.Images.SetKeyName(16, "script-code.png");
+            this.categoryImageList.Images.SetKeyName(17, "ui-check-boxes.png");
             // 
             // cancelToolTip
             // 
@@ -324,6 +342,7 @@
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
             this.categoryTabControl.Controls.Add(this.replaceFilesTabPage);
+            this.categoryTabControl.Controls.Add(this.requirementsTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
@@ -461,7 +480,7 @@
             this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.architectureInfoLabel.Location = new System.Drawing.Point(9, 198);
             this.architectureInfoLabel.Name = "architectureInfoLabel";
-            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.Size = new System.Drawing.Size(437, 26);
             this.architectureInfoLabel.TabIndex = 20;
             this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
@@ -537,7 +556,7 @@
             this.publishInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.publishInfoLabel.Location = new System.Drawing.Point(8, 120);
             this.publishInfoLabel.Name = "publishInfoLabel";
-            this.publishInfoLabel.Size = new System.Drawing.Size(449, 26);
+            this.publishInfoLabel.Size = new System.Drawing.Size(448, 26);
             this.publishInfoLabel.TabIndex = 16;
             this.publishInfoLabel.Text = "Sets if the package should be uploaded yet. You can upload it later, if you disab" +
     "le this\r\noption. The update package will be saved locally on your PC then.";
@@ -560,7 +579,7 @@
             this.versionLabel.AutoSize = true;
             this.versionLabel.Location = new System.Drawing.Point(8, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(49, 13);
+            this.versionLabel.Size = new System.Drawing.Size(48, 13);
             this.versionLabel.TabIndex = 2;
             this.versionLabel.Text = "Version:";
             // 
@@ -990,58 +1009,58 @@
             this.itemName,
             this.Description});
             this.operationsListView.FullRowSelect = true;
-            listViewGroup6.Header = "Files";
-            listViewGroup6.Name = "filesGroup";
-            listViewGroup7.Header = "Registry";
-            listViewGroup7.Name = "registryGroup";
-            listViewGroup8.Header = "Processes";
-            listViewGroup8.Name = "processGroup";
-            listViewGroup9.Header = "Services";
-            listViewGroup9.Name = "serviceGroup";
-            listViewGroup10.Header = "Scripts";
-            listViewGroup10.Name = "scriptGroup";
+            listViewGroup1.Header = "Files";
+            listViewGroup1.Name = "filesGroup";
+            listViewGroup2.Header = "Registry";
+            listViewGroup2.Name = "registryGroup";
+            listViewGroup3.Header = "Processes";
+            listViewGroup3.Name = "processGroup";
+            listViewGroup4.Header = "Services";
+            listViewGroup4.Name = "serviceGroup";
+            listViewGroup5.Header = "Scripts";
+            listViewGroup5.Name = "scriptGroup";
             this.operationsListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8,
-            listViewGroup9,
-            listViewGroup10});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.operationsListView.HoverSelection = true;
-            listViewItem12.Group = listViewGroup6;
-            listViewItem12.Tag = "RenameFile";
-            listViewItem13.Group = listViewGroup6;
-            listViewItem13.Tag = "DeleteFile";
-            listViewItem14.Group = listViewGroup7;
-            listViewItem14.Tag = "CreateRegistrySubKey";
-            listViewItem15.Group = listViewGroup7;
-            listViewItem15.Tag = "DeleteRegistrySubKey";
-            listViewItem16.Group = listViewGroup7;
-            listViewItem16.Tag = "SetRegistryValue";
-            listViewItem17.Group = listViewGroup7;
-            listViewItem17.Tag = "DeleteRegistryValue";
-            listViewItem18.Group = listViewGroup8;
-            listViewItem18.Tag = "StartProcess";
-            listViewItem19.Group = listViewGroup8;
-            listViewItem19.Tag = "TerminateProcess";
-            listViewItem20.Group = listViewGroup9;
-            listViewItem20.Tag = "StartService";
-            listViewItem21.Group = listViewGroup9;
-            listViewItem21.Tag = "StopService";
-            listViewItem22.Group = listViewGroup10;
-            listViewItem22.Tag = "ExecuteScript";
+            listViewItem1.Group = listViewGroup1;
+            listViewItem1.Tag = "RenameFile";
+            listViewItem2.Group = listViewGroup1;
+            listViewItem2.Tag = "DeleteFile";
+            listViewItem3.Group = listViewGroup2;
+            listViewItem3.Tag = "CreateRegistrySubKey";
+            listViewItem4.Group = listViewGroup2;
+            listViewItem4.Tag = "DeleteRegistrySubKey";
+            listViewItem5.Group = listViewGroup2;
+            listViewItem5.Tag = "SetRegistryValue";
+            listViewItem6.Group = listViewGroup2;
+            listViewItem6.Tag = "DeleteRegistryValue";
+            listViewItem7.Group = listViewGroup3;
+            listViewItem7.Tag = "StartProcess";
+            listViewItem8.Group = listViewGroup3;
+            listViewItem8.Tag = "TerminateProcess";
+            listViewItem9.Group = listViewGroup4;
+            listViewItem9.Tag = "StartService";
+            listViewItem10.Group = listViewGroup4;
+            listViewItem10.Tag = "StopService";
+            listViewItem11.Group = listViewGroup5;
+            listViewItem11.Tag = "ExecuteScript";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20,
-            listViewItem21,
-            listViewItem22});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6,
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10,
+            listViewItem11});
             this.operationsListView.LargeImageList = this.categoryImageList;
             this.operationsListView.Location = new System.Drawing.Point(0, 0);
             this.operationsListView.MultiSelect = false;
@@ -1116,27 +1135,27 @@
             this.filesDataTreeView.LabelEdit = true;
             this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
             this.filesDataTreeView.Name = "filesDataTreeView";
-            treeNode9.ImageIndex = 0;
-            treeNode9.Name = "Knoten0";
-            treeNode9.SelectedImageIndex = 0;
-            treeNode9.Text = "Program directory";
-            treeNode10.ImageIndex = 0;
-            treeNode10.Name = "Knoten1";
-            treeNode10.SelectedImageIndex = 0;
-            treeNode10.Text = "AppData";
-            treeNode11.ImageIndex = 0;
-            treeNode11.Name = "Knoten2";
-            treeNode11.SelectedImageIndex = 0;
-            treeNode11.Text = "Temp directory";
-            treeNode12.ImageIndex = 0;
-            treeNode12.Name = "Knoten3";
-            treeNode12.SelectedImageIndex = 0;
-            treeNode12.Text = "Desktop";
+            treeNode1.ImageIndex = 0;
+            treeNode1.Name = "Knoten0";
+            treeNode1.SelectedImageIndex = 0;
+            treeNode1.Text = "Program directory";
+            treeNode2.ImageIndex = 0;
+            treeNode2.Name = "Knoten1";
+            treeNode2.SelectedImageIndex = 0;
+            treeNode2.Text = "AppData";
+            treeNode3.ImageIndex = 0;
+            treeNode3.Name = "Knoten2";
+            treeNode3.SelectedImageIndex = 0;
+            treeNode3.Text = "Temp directory";
+            treeNode4.ImageIndex = 0;
+            treeNode4.Name = "Knoten3";
+            treeNode4.SelectedImageIndex = 0;
+            treeNode4.Text = "Desktop";
             this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
             this.filesDataTreeView.SelectedImageIndex = 0;
             this.filesDataTreeView.ShowLines = false;
             this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
@@ -1256,6 +1275,149 @@
             this.columnHeader2.Text = "Size";
             this.columnHeader2.Width = 147;
             // 
+            // requirementsTabPage
+            // 
+            this.requirementsTabPage.Controls.Add(this.requirementTypeLabel);
+            this.requirementsTabPage.Controls.Add(this.addRequirementButton);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeComboBox);
+            this.requirementsTabPage.Controls.Add(this.requirementsTypeTabControl);
+            this.requirementsTabPage.Controls.Add(this.requirementsListBox);
+            this.requirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.requirementsTabPage.Name = "requirementsTabPage";
+            this.requirementsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.requirementsTabPage.TabIndex = 6;
+            this.requirementsTabPage.Text = "Requirements";
+            this.requirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // requirementTypeLabel
+            // 
+            this.requirementTypeLabel.AutoSize = true;
+            this.requirementTypeLabel.Location = new System.Drawing.Point(5, 6);
+            this.requirementTypeLabel.Name = "requirementTypeLabel";
+            this.requirementTypeLabel.Size = new System.Drawing.Size(135, 13);
+            this.requirementTypeLabel.TabIndex = 3;
+            this.requirementTypeLabel.Text = "Type of the Requirement:";
+            // 
+            // addRequirementButton
+            // 
+            this.addRequirementButton.Location = new System.Drawing.Point(167, 114);
+            this.addRequirementButton.Name = "addRequirementButton";
+            this.addRequirementButton.Size = new System.Drawing.Size(121, 25);
+            this.addRequirementButton.TabIndex = 2;
+            this.addRequirementButton.Text = "Add requirement";
+            this.addRequirementButton.UseVisualStyleBackColor = true;
+            this.addRequirementButton.Click += new System.EventHandler(this.addRequirementButton_Click);
+            // 
+            // requirementsTypeComboBox
+            // 
+            this.requirementsTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requirementsTypeComboBox.FormattingEnabled = true;
+            this.requirementsTypeComboBox.Items.AddRange(new object[] {
+            "OS Version",
+            ".NET Framework"});
+            this.requirementsTypeComboBox.Location = new System.Drawing.Point(167, 3);
+            this.requirementsTypeComboBox.Name = "requirementsTypeComboBox";
+            this.requirementsTypeComboBox.Size = new System.Drawing.Size(154, 21);
+            this.requirementsTypeComboBox.TabIndex = 2;
+            this.requirementsTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.requirementsTypeComboBox_SelectedIndexChanged);
+            // 
+            // requirementsTypeTabControl
+            // 
+            this.requirementsTypeTabControl.Controls.Add(this.osRequirementsTabPage);
+            this.requirementsTypeTabControl.Controls.Add(this.netRequirementsTabPage);
+            this.requirementsTypeTabControl.Location = new System.Drawing.Point(0, 25);
+            this.requirementsTypeTabControl.Name = "requirementsTypeTabControl";
+            this.requirementsTypeTabControl.SelectedIndex = 0;
+            this.requirementsTypeTabControl.Size = new System.Drawing.Size(459, 109);
+            this.requirementsTypeTabControl.TabIndex = 1;
+            // 
+            // osRequirementsTabPage
+            // 
+            this.osRequirementsTabPage.Controls.Add(this.minimumOSVersionLabel);
+            this.osRequirementsTabPage.Controls.Add(this.requiredOSComboBox);
+            this.osRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.osRequirementsTabPage.Name = "osRequirementsTabPage";
+            this.osRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.osRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.osRequirementsTabPage.TabIndex = 0;
+            this.osRequirementsTabPage.Text = "OS";
+            this.osRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumOSVersionLabel
+            // 
+            this.minimumOSVersionLabel.AutoSize = true;
+            this.minimumOSVersionLabel.Location = new System.Drawing.Point(6, 9);
+            this.minimumOSVersionLabel.Name = "minimumOSVersionLabel";
+            this.minimumOSVersionLabel.Size = new System.Drawing.Size(117, 13);
+            this.minimumOSVersionLabel.TabIndex = 4;
+            this.minimumOSVersionLabel.Text = "Minimum OS Version:";
+            // 
+            // requiredOSComboBox
+            // 
+            this.requiredOSComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredOSComboBox.FormattingEnabled = true;
+            this.requiredOSComboBox.Items.AddRange(new object[] {
+            "Windows Vista",
+            "Windows Vista Service Pack 1",
+            "Windows Vista Service Pack 2",
+            "Windows 7",
+            "Windows 7 Service Pack 1",
+            "Windows 8",
+            "Windows 8.1",
+            "Windows 10"});
+            this.requiredOSComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredOSComboBox.Name = "requiredOSComboBox";
+            this.requiredOSComboBox.Size = new System.Drawing.Size(174, 21);
+            this.requiredOSComboBox.TabIndex = 3;
+            // 
+            // netRequirementsTabPage
+            // 
+            this.netRequirementsTabPage.Controls.Add(this.minimumFrameworkVersionLabel);
+            this.netRequirementsTabPage.Controls.Add(this.requiredFrameworkComboBox);
+            this.netRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.netRequirementsTabPage.Name = "netRequirementsTabPage";
+            this.netRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.netRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.netRequirementsTabPage.TabIndex = 1;
+            this.netRequirementsTabPage.Text = ".NET";
+            this.netRequirementsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // minimumFrameworkVersionLabel
+            // 
+            this.minimumFrameworkVersionLabel.AutoSize = true;
+            this.minimumFrameworkVersionLabel.Location = new System.Drawing.Point(3, 4);
+            this.minimumFrameworkVersionLabel.Name = "minimumFrameworkVersionLabel";
+            this.minimumFrameworkVersionLabel.Size = new System.Drawing.Size(143, 26);
+            this.minimumFrameworkVersionLabel.TabIndex = 5;
+            this.minimumFrameworkVersionLabel.Text = "Minimum .NET Framework \r\nVersion: ";
+            // 
+            // requiredFrameworkComboBox
+            // 
+            this.requiredFrameworkComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.requiredFrameworkComboBox.FormattingEnabled = true;
+            this.requiredFrameworkComboBox.Items.AddRange(new object[] {
+            ".NET Framework 1.0",
+            ".NET Framework 2.0",
+            ".NET Framework 3.0",
+            ".NET Framework 3.5",
+            ".NET Framework 4.0",
+            ".NET Framework 4.5",
+            ".NET Framework 4.5.1",
+            ".NET Framework 4.5.2",
+            ".NET Framework 4.6.0"});
+            this.requiredFrameworkComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredFrameworkComboBox.Name = "requiredFrameworkComboBox";
+            this.requiredFrameworkComboBox.Size = new System.Drawing.Size(176, 21);
+            this.requiredFrameworkComboBox.TabIndex = 4;
+            // 
+            // requirementsListBox
+            // 
+            this.requirementsListBox.FormattingEnabled = true;
+            this.requirementsListBox.Location = new System.Drawing.Point(5, 140);
+            this.requirementsListBox.Name = "requirementsListBox";
+            this.requirementsListBox.Size = new System.Drawing.Size(460, 82);
+            this.requirementsListBox.TabIndex = 0;
+            // 
             // categoryTreeView
             // 
             this.categoryTreeView.AllowDrop = true;
@@ -1269,27 +1431,32 @@
             this.categoryTreeView.ItemHeight = 24;
             this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
             this.categoryTreeView.Name = "categoryTreeView";
-            treeNode1.ImageIndex = 2;
-            treeNode1.Name = "generalNode";
-            treeNode1.SelectedImageIndex = 2;
-            treeNode1.Text = "General";
-            treeNode2.ImageIndex = 3;
-            treeNode2.Name = "changelogNode";
-            treeNode2.SelectedImageIndex = 3;
-            treeNode2.Text = "Changelog";
-            treeNode3.ImageIndex = 0;
-            treeNode3.Name = "availabilityNode";
-            treeNode3.SelectedImageIndex = 0;
-            treeNode3.Text = "Availability";
-            treeNode4.ImageIndex = 4;
-            treeNode4.Name = "operationsNode";
-            treeNode4.SelectedImageIndex = 4;
-            treeNode4.Text = "Operations";
+            treeNode5.ImageIndex = 2;
+            treeNode5.Name = "generalNode";
+            treeNode5.SelectedImageIndex = 2;
+            treeNode5.Text = "General";
+            treeNode6.ImageIndex = 3;
+            treeNode6.Name = "changelogNode";
+            treeNode6.SelectedImageIndex = 3;
+            treeNode6.Text = "Changelog";
+            treeNode7.ImageIndex = 0;
+            treeNode7.Name = "availabilityNode";
+            treeNode7.SelectedImageIndex = 0;
+            treeNode7.Text = "Availability";
+            treeNode8.ImageIndex = 17;
+            treeNode8.Name = "requirementsNode";
+            treeNode8.SelectedImageIndex = 17;
+            treeNode8.Text = "Requirements";
+            treeNode9.ImageIndex = 4;
+            treeNode9.Name = "operationsNode";
+            treeNode9.SelectedImageIndex = 4;
+            treeNode9.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4});
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1359,6 +1526,13 @@
             this.filesPanel.PerformLayout();
             this.replaceFilesToolStrip.ResumeLayout(false);
             this.replaceFilesToolStrip.PerformLayout();
+            this.requirementsTabPage.ResumeLayout(false);
+            this.requirementsTabPage.PerformLayout();
+            this.requirementsTypeTabControl.ResumeLayout(false);
+            this.osRequirementsTabPage.ResumeLayout(false);
+            this.osRequirementsTabPage.PerformLayout();
+            this.netRequirementsTabPage.ResumeLayout(false);
+            this.netRequirementsTabPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1463,6 +1637,17 @@
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
         private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
         private System.Windows.Forms.CheckBox deltaPatchingCheckBox;
-
+        private System.Windows.Forms.TabPage requirementsTabPage;
+        private System.Windows.Forms.Label requirementTypeLabel;
+        private System.Windows.Forms.Button addRequirementButton;
+        private System.Windows.Forms.ComboBox requirementsTypeComboBox;
+        private Controls.TablessTabControl requirementsTypeTabControl;
+        private System.Windows.Forms.TabPage osRequirementsTabPage;
+        private System.Windows.Forms.Label minimumOSVersionLabel;
+        private System.Windows.Forms.ComboBox requiredOSComboBox;
+        private System.Windows.Forms.TabPage netRequirementsTabPage;
+        private System.Windows.Forms.Label minimumFrameworkVersionLabel;
+        private System.Windows.Forms.ComboBox requiredFrameworkComboBox;
+        private System.Windows.Forms.ListBox requirementsListBox;
     }
 }

@@ -264,8 +264,14 @@ namespace nUpdate.Updating
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
+
+            if (result.Requirements.Count != 0)
+                OnMissingRequirement(new MissingRequirementsEventArgs(result.Requirements));
+
             if (!result.UpdatesFound)
                 return false;
+
+          
 
             _updateConfigurations = result.NewestConfigurations;
             double updatePackageSize = 0;
@@ -844,6 +850,11 @@ namespace nUpdate.Updating
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
 
         /// <summary>
+        ///     Occurs when some requirements are missing
+        /// </summary>
+        public event EventHandler<MissingRequirementsEventArgs> MissingRequirement;
+
+        /// <summary>
         ///     Called when the update search is started.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -920,6 +931,16 @@ namespace nUpdate.Updating
         protected virtual void OnStatisticsEntryFailed(Exception exception)
         {
             StatisticsEntryFailed?.Invoke(this, new FailedEventArgs(exception));
+        }
+
+        /// <summary>
+        ///     Called when some requirements are missing
+        /// </summary>
+        /// <param name="exception">The exception that occured.</param>
+        protected virtual void OnMissingRequirement(MissingRequirementsEventArgs requirements)
+        {
+            if (MissingRequirement != null)
+                MissingRequirement(this, new MissingRequirementsEventArgs(requirements.Requirements));
         }
     }
 }

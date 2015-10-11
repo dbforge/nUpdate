@@ -32,6 +32,9 @@ namespace nUpdate.Localization
             UpdateDownloadDialogLoadingHeader = "Downloading updates...";
             UpdateDownloadDialogLoadingInfo = "Please wait while the available updates are\ndownloaded...  ({0}%)";
 
+            MissingRequirementDialogHeader = "Requirements missing.";
+            MissingRequirementDialogInfoText = "Some requirement are missing on your computer.";
+
             // Put the strings into \" because they are handled over as process arguments (Installer)
 
             InstallerExtractingFilesText = "\"Extracting files...\"";
@@ -94,6 +97,9 @@ namespace nUpdate.Localization
 
         public string UpdateDownloadDialogLoadingHeader { get; set; }
         public string UpdateDownloadDialogLoadingInfo { get; set; }
+
+        public string MissingRequirementDialogHeader { get; set;}
+        public string MissingRequirementDialogInfoText { get; set; }
 
         public string InstallerExtractingFilesText { get; set; }
         public string InstallerCopyingText { get; set; }
