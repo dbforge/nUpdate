@@ -1,3 +1,11 @@
+#Hey, this project is still alive!
+
+As you may have noticed, there haven't been any commits the last 9 months. It seems that nUpdate has reached its final version, but it hasn't. Actually, the core parts are rewritten at the moment and there is a lot of unfinshed stuff flying around that is not working at all. That's why I decided not to commit anything, yet, as I am also not sure, if I'm already happy with everything. But, I will catch up on that one and push some commits to the Release-branch.
+A big problem is that I haven't got any time at the moment. The final version 4.0.0, which will have tons of new features and improvements, will therefore be released next year. I'm sorry that it'll take so long, but it's too difficult for me to develop anything besides my final two years of school (which also include my seminar paper and a big website project). nUpdate has become a big project and I want to rewrite it completely, add new features to it and make it even better. All these changes are so diffucult because they require a converter to guarantee the compatibility with earlier versions.
+Nevertheless, I'm not done, yet, and i've still a lot of fun with this project. Also thank you all for your great support!
+
+---
+
 ![](http://www.nupdate.net/titlelogo.png)
 
 nUpdate is a modern update system for .NET applications.
