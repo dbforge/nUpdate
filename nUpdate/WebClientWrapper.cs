@@ -30,9 +30,13 @@ namespace nUpdate
 
         protected override WebRequest GetWebRequest(Uri address)
         {
-            var request = base.GetWebRequest(address);
+            var request = base.GetWebRequest(address) as HttpWebRequest;
             if (request != null)
+            {
+                //request.ServicePoint.ConnectionLimit = 5;
                 request.Timeout = Timeout;
+            }
+
             return request;
         }
     }
