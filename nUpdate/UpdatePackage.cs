@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using nUpdate.Operations;
 
 namespace nUpdate
@@ -101,7 +102,7 @@ namespace nUpdate
         /// </summary>
         /// <param name="configFileUri">The <see cref="Uri"/> of the <see cref="UpdatePackage"/> data file.</param>
         /// <param name="proxy">The optional <see cref="WebProxy"/> to use.</param>
-        public static IEnumerable<UpdatePackage> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
+        public async static Task<IEnumerable<UpdatePackage>> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
         {
             using (var wc = new WebClientWrapper(10000))
             {
@@ -111,7 +112,7 @@ namespace nUpdate
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                var source = wc.DownloadString(configFileUri);
+                var source = await wc.DownloadStringTaskAsync(configFileUri);
                 if (!string.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdatePackage>>(source);
             }
