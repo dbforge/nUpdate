@@ -198,7 +198,7 @@ namespace nUpdate
 
                 try
                 {
-                    configuration = UpdatePackage.DownloadPackages(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
+                    configuration = UpdatePackage.GetRemotePackageData(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
                 }
                 catch (JsonReaderException)
                 {
