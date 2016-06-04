@@ -46,8 +46,6 @@ namespace nUpdate
         /// </exception>
         /// <exception cref="ArgumentException">
         /// The version string couldn't be loaded because the <see cref="nUpdateVersionAttribute"/> isn't implemented in the executing assembly.
-        /// or
-        /// There is no argument given that corresponds to the path of the assembly that contains the custom user interface data of the update installer.
         /// </exception>
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it inside nUpdate Administration.
@@ -70,9 +68,6 @@ namespace nUpdate
                     "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
             CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-            if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
-                throw new ArgumentException(
-                    "There is no argument given that corresponds to the path of the assembly that contains the custom user interface data of the update installer.");
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _lp = LocalizationHelper.GetLocalizationProperties(new CultureInfo("en"), LocalizationFilePaths);
 
@@ -117,7 +112,7 @@ namespace nUpdate
                 if (!LocalizationHelper.IsIntegratedCulture(value, LocalizationFilePaths) &&
                     !LocalizationFilePaths.ContainsKey(_languageCulture))
                     throw new ArgumentException(
-                        "The localization file of the culture does not exist.");
+                        "The localization file of the culture set does not exist.");
                 _lp = LocalizationHelper.GetLocalizationProperties(value, LocalizationFilePaths);
                 _languageCulture = value;
             }
@@ -129,16 +124,10 @@ namespace nUpdate
         public Dictionary<CultureInfo, string> LocalizationFilePaths { get; set; } = new Dictionary<CultureInfo, string>();
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a custom user interface should be used in the nUpdate UpdateInstaller, or not.
-        /// </summary>
-        public bool UseCustomInstallerUserInterface { get; set; }
-
-        /// <summary>
         ///     Gets or sets the path of the assembly that contains the custom user interface data for the nUpdate UpdateInstaller.
         /// </summary>
-        /// <remarks>Make sure that the property <see cref="UseCustomInstallerUserInterface"/> is being set to <c>true</c> when you are using this feature, otherwise the custom user interface will be ignored.</remarks>
-        public string CustomInstallerUiAssemblyPath { get; set; }
-
+        public string CustomInstallerUIAssemblyPath { get; set; }
+        
         /// <summary>
         ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions, or not.
         /// </summary>
@@ -152,15 +141,16 @@ namespace nUpdate
         /// <summary>
         ///     Gets the filtered <see cref="UpdatePackage"/> collection that should be downloaded and installed after the update search has been finished.
         /// </summary>
-        public IEnumerable<UpdatePackage> FilteredUpdatePackageCollection { get; internal set; }
+        public IEnumerable<UpdatePackage> FilteredUpdatePackageCollection { get; internal set; } =
+            Enumerable.Empty<UpdatePackage>();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the current PC should be included into the statistics, or not.
         /// </summary>
-        public bool IncludeCurrentPcIntoStatistics { get; set; } = true;
+        public bool IncludeIntoStatistics { get; set; } = true;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be closed as soon as the nUpdate UpdateInstaller is being started, or not.
+        ///     Gets or sets a value indicating whether the host application should be closed as soon as the nUpdate UpdateInstaller is started, or not.
         /// </summary>
         public bool CloseHostApplication { get; set; } = true;
 
@@ -178,7 +168,7 @@ namespace nUpdate
         ///     Gets or sets the <see cref="UpdateArgument"/>s that should be handled over to the application by the nUpdate UpdateInstaller in order to determine whether the installation process has been successful, or not.
         /// </summary>
         public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
-        
+
         /// <summary>
         ///     Searches for updates.
         /// </summary>
@@ -187,54 +177,52 @@ namespace nUpdate
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdatesTask(CancellationToken cancellationToken)
         {
-            return await TaskEx.Run(() =>
+            if (!WebConnection.IsAvailable())
+                return false;
+
+            // Check for SSL and ignore it
+            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+            IEnumerable<UpdatePackage> configuration;
+
+            try
             {
-                if (!WebConnection.IsAvailable())
-                    return false;
+                configuration =
+                    await UpdatePackage.GetRemotePackageData(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
+            }
+            catch (JsonReaderException ex)
+            {
+                throw new Exception(_lp.InvalidJsonExceptionText, ex);
+            }
 
-                // Check for SSL and ignore it
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                IEnumerable<UpdatePackage> configuration;
+            var result = new UpdateResult(configuration, CurrentVersion,
+                IncludeAlpha, IncludeBeta);
 
-                try
-                {
-                    configuration = UpdatePackage.GetRemotePackageData(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
-                }
-                catch (JsonReaderException)
-                {
-                    throw new Exception(_lp.InvalidJsonExceptionText);
-                }
+            _unfulfilledRequirements = result.UnfulfilledRequirements;
+            if (!result.UpdatesFound)
+                return false;
 
-                var result = new UpdateResult(configuration, CurrentVersion,
-                    IncludeAlpha, IncludeBeta);
+            FilteredUpdatePackageCollection = result.NewestPackages;
+            double updatePackageSize = 0;
+            foreach (var updateConfiguration in FilteredUpdatePackageCollection)
+            {
+                var newPackageSize = SizeHelper.GetRemoteFileSize(updateConfiguration.UpdatePackageUri);
+                if (newPackageSize == null)
+                    throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
-                _unfulfilledRequirements = result.UnfulfilledRequirements;
-                if (!result.UpdatesFound)
-                    return false;
+                updatePackageSize += newPackageSize.Value;
+                _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                    updateConfiguration.Operations);
+            }
 
-                FilteredUpdatePackageCollection = result.NewestPackages;
-                double updatePackageSize = 0;
-                foreach (var updateConfiguration in FilteredUpdatePackageCollection)
-                {
-                    var newPackageSize = SizeHelper.GetRemoteFileSize(updateConfiguration.UpdatePackageUri);
-                    if (newPackageSize == null)
-                        throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
+            if (cancellationToken.IsCancellationRequested) // Only for async calls
+            {
+                _packageOperations.Clear();
+                _packageFilePaths.Clear();
+                throw new OperationCanceledException(cancellationToken);
+            }
 
-                    updatePackageSize += newPackageSize.Value;
-                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                        updateConfiguration.Operations);
-                }
-
-                if (cancellationToken.IsCancellationRequested) // Only for async calls
-                {
-                    _packageOperations.Clear();
-                    _packageFilePaths.Clear();
-                    throw new OperationCanceledException(cancellationToken);
-                }
-
-                TotalSize = updatePackageSize;
-                return true;
-            }, cancellationToken);
+            TotalSize = updatePackageSize;
+            return true;
         }
 
         /// <summary>
@@ -248,10 +236,6 @@ namespace nUpdate
         public async Task DownloadUpdatesTask(CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
         {
             long received = 0;
-            double total = FilteredUpdatePackageCollection.Select(config => SizeHelper.GetRemoteFileSize(config.UpdatePackageUri))
-                .Where(updatePackageSize => updatePackageSize != null)
-                .Sum(updatePackageSize => updatePackageSize.Value);
-
             foreach (var updateConfiguration in FilteredUpdatePackageCollection)
             {
                 WebResponse webResponse = null;
@@ -271,8 +255,8 @@ namespace nUpdate
                             {
                                 if (input == null)
                                     throw new Exception("The response stream couldn't be read.");
-                                
-                                int size = input.Read(buffer, 0, buffer.Length);
+
+                                int size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                                 while (size > 0)
                                 {
                                     if (cancellationToken.IsCancellationRequested)
@@ -286,17 +270,17 @@ namespace nUpdate
                                     await fileStream.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
                                     received += size;
                                     progress?.Report(new UpdateProgressData(received,
-                                        (long) total, (float) (received/total)*100));
+                                        (long) TotalSize, (float) (received/TotalSize)*100));
                                     size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                                 }
 
-                                if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
+                                if (!updateConfiguration.UseStatistics || !IncludeIntoStatistics)
                                     continue;
 
                                 try
                                 {
                                     string response =
-                                        new WebClient().DownloadString(
+                                        await new WebClient().DownloadStringTaskAsync(
                                             $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}");
                                     if (!string.IsNullOrEmpty(response))
                                     {
@@ -311,6 +295,11 @@ namespace nUpdate
                             }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Specify a clearer message here and pass an InnerException
+                    throw;
                 }
                 finally
                 {
@@ -336,26 +325,22 @@ namespace nUpdate
                 var configuration =
                     FilteredUpdatePackageCollection.First(config => config.LiteralVersion == filePathItem.Key.ToString());
                 if (configuration.Signature == null || configuration.Signature.Length <= 0)
-                    throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty.");
+                    throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty."); // TODO: Localize
 
                 using (var stream = File.Open(filePathItem.Value, FileMode.Open))
                 {
-                    RsaManager rsa;
-
                     try
                     {
-                        rsa = new RsaManager(PublicKey);
+                        var rsa = new RsaManager(PublicKey);
+                        if (rsa.VerifyData(stream, Convert.FromBase64String(configuration.Signature)))
+                            continue;
                     }
                     catch
                     {
-                        Reset();
-                        return false;
+                        // Don't throw an exception. Let the method continue and clean up all the packages before we return 'false'.
                     }
 
-                    if (rsa.VerifyData(stream, Convert.FromBase64String(configuration.Signature)))
-                        continue;
-
-                    Reset();
+                    CleanupData();
                     return false;
                 }
             }
@@ -398,8 +383,8 @@ namespace nUpdate
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
 
-            var installerUiAssemblyPath = UseCustomInstallerUserInterface
-                ? $"\"{CustomInstallerUiAssemblyPath}\""
+            var installerUiAssemblyPath = !string.IsNullOrEmpty(CustomInstallerUIAssemblyPath)
+                ? $"\"{CustomInstallerUIAssemblyPath}\""
                 : string.Empty;
             string[] args =
             {
@@ -445,7 +430,7 @@ namespace nUpdate
                 if (ex.NativeErrorCode != 1223)
                     throw;
 
-                Reset();
+                CleanupData();
                 return;
             }
 
@@ -459,13 +444,13 @@ namespace nUpdate
         {
             if (DomainHelper.EnumerateAppDomains().Count() > 1)
                 throw new InvalidOperationException(
-                    "There is more than one AppDomain active. The application can not be terminated.");
+                    "There is more than one AppDomain active. The application can not be terminated."); // TODO: Localize
 
             if (((Exception) e.ExceptionObject).GetType() == typeof (ApplicationTerminateException))
                 Process.GetCurrentProcess().Kill();
         }
 
-        private void Reset()
+        private void CleanupData()
         {
             // Delete the recently downloaded data
             foreach (var filePathItem in _packageFilePaths.Where(item => File.Exists(item.Value)))
@@ -476,7 +461,7 @@ namespace nUpdate
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"The package of version {filePathItem.Key.Description} could not be deleted: {ex.Message}");
+                    throw new Exception($"The package of version {filePathItem.Key.Description} could not be deleted: {ex.Message}"); // TODO: Localize
                 }
             }
 
