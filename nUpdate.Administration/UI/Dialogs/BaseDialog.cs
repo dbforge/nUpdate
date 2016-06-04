@@ -21,14 +21,17 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void InitializeComponent()
         {
-            SuspendLayout();
+            this.SuspendLayout();
             // 
             // BaseDialog
             // 
-            Name = "BaseDialog";
-            BackColor = SystemColors.Window;
-            Font = new Font("Segoe UI", 8);
-            ResumeLayout(false);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.Name = "BaseDialog";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BaseDialog_FormClosing);
+            this.ResumeLayout(false);
+
         }
 
         internal void AdjustControlsForAction(Action action, bool showLoadingOverlay)
@@ -72,6 +75,12 @@ namespace nUpdate.Administration.UI.Dialogs
                     (Height - LoadingPanel.Height) / 2);
                 LoadingPanel.BringToFront();
             }));
+        }
+
+        private void BaseDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!AllowCancel)
+                e.Cancel = true;
         }
     }
 }
