@@ -136,7 +136,7 @@ namespace nUpdate.Administration
 
         internal async Task RemovePackageData(IUpdateVersion updateVersion, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
-            var updateDataList = UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy).ToList();
+            var updateDataList = (await UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy)).ToList();
             var destinationPackage =
                 updateDataList.FirstOrDefault(item => new UpdateVersion(item.LiteralVersion).Equals(updateVersion));
             if (destinationPackage != null)
@@ -151,7 +151,7 @@ namespace nUpdate.Administration
 
         internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
-            var updateDataList = UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy).ToList();
+            var updateDataList = (await UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy)).ToList();
             updateDataList.Add(updatePackage);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updateDataList))))
