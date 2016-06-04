@@ -96,7 +96,7 @@ namespace nUpdate
         /// <summary>
         ///     Determines whether the signature of the data provided in the <see cref="Stream"/> is valid, or not.
         /// </summary>
-        /// <param name="data">The <see cref="Stream"/> containing the data to check.</param>
+        /// <param name="stream">The <see cref="Stream"/> containing the data to check.</param>
         /// <param name="signature">The signature to check.</param>
         /// <returns>Returns <c>true</c> if the signature is valid, otherwise <c>false</c>.</returns>
         public bool VerifyData(Stream stream, byte[] signature)
