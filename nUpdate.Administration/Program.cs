@@ -31,9 +31,19 @@ namespace nUpdate.Administration
         [STAThread]
         private static void Main(string[] args)
         {
+            // Check if the OS is supported...
+            if (Environment.OSVersion.Version.Major < 6)
+            {
+                var dr = MessageBox.Show("Your operating system is not supported.", string.Empty,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                if (dr == DialogResult.OK)
+                    System.Windows.Forms.Application.Exit();
+            }
+
+            // ... and if there is no other instance running.
             bool firstInstance;
             _mutex = new Mutex(true, "MainForm", out firstInstance);
-
             if (!firstInstance)
                 return;
 
@@ -45,16 +55,19 @@ namespace nUpdate.Administration
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             //ExceptionlessClient.Default.Register();
-
-            var dialog = new MainDialog();
+            
+            // A path is handled over to the application when double-clicking a ".nupdproj"-file...
             if (args.Length == 1)
             {
                 var file = new FileInfo(args[0]);
                 if (file.Exists)
-                    dialog.ProjectPath = file.FullName;
+                {
+                    System.Windows.Forms.Application.Run(new MainDialog(file.FullName));
+                    return;
+                }
             }
 
-            System.Windows.Forms.Application.Run(dialog);
+            System.Windows.Forms.Application.Run(new MainDialog(string.Empty));
         }
 
         private static void Exit(object sender, EventArgs e)

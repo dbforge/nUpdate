@@ -38,7 +38,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.sectionsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.itemDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.line1 = new Line();
+            this.line1 = new nUpdate.UI.WinForms.Controls.Line();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -104,7 +104,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
             resources.ApplyResources(this.line1, "line1");
             this.line1.Name = "line1";
             // 
@@ -127,7 +127,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "MainDialog";
-            this.Load += new System.EventHandler(this.MainDialog_Load);
             this.Shown += new System.EventHandler(this.MainDialog_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

@@ -15,26 +15,19 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     internal partial class MainDialog : BaseDialog
     {
-        public MainDialog()
+        private readonly string _projectPath;
+
+        public MainDialog(string projectPath)
         {
             InitializeComponent();
+            _projectPath = projectPath;
         }
 
-        /// <summary>
-        ///     Gets or sets the path of the project that is stored in the file that was opened.
-        /// </summary>
-        public string ProjectPath { get; set; }
-
-        private void MainDialog_Load(object sender, EventArgs e)
+        private void MainDialog_Shown(object sender, EventArgs e)
         {
-            if (Environment.OSVersion.Version.Major < 6)
-            {
-                var dr = MessageBox.Show("Your operating system is not supported.", Empty,
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                if (dr == DialogResult.OK)
-                    System.Windows.Forms.Application.Exit();
-            }
+            sectionsListView.DoubleBuffer();
+            Text = Format(Text, Program.VersionString);
+            headerLabel.Text = Format(Text, Program.VersionString);
 
             try
             {
@@ -84,27 +77,14 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
-            sectionsListView.DoubleBuffer();
-            Text = Format(Text, Program.VersionString);
-            headerLabel.Text = Format(Text, Program.VersionString);
-        }
-
-        public void OpenProject(string projectPath)
-        {
-            UpdateProject project;
-            try
-            {
-                project = UpdateProject.Load(projectPath);
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the project data.", ex,
-                    PopupButtons.Ok);
+            if (IsNullOrEmpty(_projectPath))
                 return;
-            }
 
-            // Initialize our application session, so that we can access all data of this project
-            Session.InitializeProject(project);
+            LoadProject(_projectPath);
+            new ProjectDialog().ShowDialog();
+
+            // Terminate the active session as soon as the project is closed.
+            Session.Terminate();
         }
 
         private void sectionsListView_Click(object sender, EventArgs e)
@@ -123,7 +103,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         fileDialog.Multiselect = false;
                         if (fileDialog.ShowDialog() == DialogResult.OK)
                         {
-                            OpenProject(fileDialog.FileName);
+                            LoadProject(fileDialog.FileName);
 
                             var projectDialog = new ProjectDialog();
                             projectDialog.ShowDialog();
@@ -144,7 +124,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         fileDialog.Multiselect = false;
                         if (fileDialog.ShowDialog() == DialogResult.OK)
                         {
-                            OpenProject(fileDialog.FileName);
+                            LoadProject(fileDialog.FileName);
 
                             var projectEditDialog = new ProjectEditDialog();
                             projectEditDialog.ShowDialog();
@@ -173,22 +153,25 @@ namespace nUpdate.Administration.UI.Dialogs
                     infoDialog.ShowDialog();
                     break;
                 case 8:
-                    var statisticsServerDialog = new StatisticalServerDialog {ReactsOnKeyDown = false};
+                    var statisticsServerDialog = new StatisticalServerDialog { ReactsOnKeyDown = false };
                     statisticsServerDialog.ShowDialog();
                     break;
             }
         }
 
-        private void MainDialog_Shown(object sender, EventArgs e)
+        private void LoadProject(string projectPath)
         {
-            if (IsNullOrEmpty(ProjectPath))
-                return;
-
-            OpenProject(ProjectPath);
-
-            var projectDialog = new ProjectDialog();
-            projectDialog.ShowDialog();
-            Session.Terminate();
+            try
+            {
+                // Initialize our application session, so that we can access all data of this project
+                Session.InitializeProject(UpdateProject.Load(projectPath));
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the project data.", ex,
+                    PopupButtons.Ok);
+            }
         }
+
     }
 }
