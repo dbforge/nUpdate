@@ -72,12 +72,6 @@ namespace nUpdate.Administration.UI.Dialogs
             await CheckPackageDataFile();
         }
 
-        private void ProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!AllowCancel)
-                e.Cancel = true;
-        }
-
         private void Initialize()
         {
             Invoke(new Action(() =>
@@ -86,8 +80,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 updateUriTextBox.Text = Session.ActiveProject.UpdateDirectoryUri.ToString();
                 amountLabel.Text =
                     Session.ActiveProject.Packages?.Count.ToString(CultureInfo.InvariantCulture) ?? "0";
-
-                // TODO: Else in designer
+                
                 if (!string.IsNullOrEmpty(Session.ActiveProject.AssemblyVersionPath))
                 {
                     loadFromAssemblyRadioButton.Checked = true;
@@ -133,7 +126,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             $"The update package of version \"{packageVersion.Description}\" could not be found on your computer. Specific actions and information won't be available.",
                             PopupButtons.Ok)));
 
-                    for (uint i = 0; i < 2; ++i) // Add two "-"-signs as we don't have any information
+                    for (uint i = 0; i < 2; ++i) // Add two "-"-signs as we don't have any information.
                         packageListViewItem.SubItems.Add("-");
                 }
 
@@ -284,7 +277,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 deleteButton.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
 
-                // If any of the selected items is already released, exit the void.
+                // If any of the selected items is already released, exit.
                 if (packagesList.SelectedItems.Cast<ListViewItem>().Any(item => item.Group != packagesList.Groups[1]))
                     return;
                 uploadButton.Enabled = true;
@@ -479,15 +472,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 try
                 {
-                    var stream =
+                    using (var stream =
                         await
-                            client.OpenReadTaskAsync(new Uri(Session.ActiveProject.UpdateDirectoryUri, "updates.json"));
-                    if (stream != null)
+                            client.OpenReadTaskAsync(new Uri(Session.ActiveProject.UpdateDirectoryUri, "updates.json")))
                     {
-                        tickPictureBox.Visible = true;
-                        checkingUrlPictureBox.Visible = false;
-                        checkUpdateConfigurationLinkLabel.Enabled = true;
-                        return;
+                        if (stream != null)
+                        {
+                            tickPictureBox.Visible = true;
+                            checkingUrlPictureBox.Visible = false;
+                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                            return;
+                        }
                     }
                 }
                 catch (WebException ex)
