@@ -97,11 +97,11 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Downloads all available <see cref="UpdatePackage"/>s from the file located at the specified <see cref="Uri"/>.
+        ///     Gathers the available <see cref="UpdatePackage"/> data from the file located at the specified <see cref="Uri"/>.
         /// </summary>
-        /// <param name="configFileUri">The <see cref="Uri"/> of the update configuration file.</param>
+        /// <param name="configFileUri">The <see cref="Uri"/> of the <see cref="UpdatePackage"/> data file.</param>
         /// <param name="proxy">The optional <see cref="WebProxy"/> to use.</param>
-        public static IEnumerable<UpdatePackage> DownloadPackages(Uri configFileUri, WebProxy proxy)
+        public static IEnumerable<UpdatePackage> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
         {
             using (var wc = new WebClientWrapper(10000))
             {
