@@ -33,9 +33,9 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationDialog));
             this.closeButton = new System.Windows.Forms.Button();
             this.donatePictureBox = new System.Windows.Forms.PictureBox();
-            this.line1 = new Line();
+            this.line1 = new nUpdate.UI.WinForms.Controls.Line();
             this.label13 = new System.Windows.Forms.Label();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.UI.WinForms.Controls.BottomPanel();
             this.websiteLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label12 = new System.Windows.Forms.Label();
             this.ll_github = new System.Windows.Forms.LinkLabel();
@@ -52,7 +52,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.line2 = new Line();
+            this.line2 = new nUpdate.UI.WinForms.Controls.Line();
             this.label1 = new System.Windows.Forms.Label();
             this.dotNetZipLinkLabel = new System.Windows.Forms.LinkLabel();
             this.jsonNetLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -91,7 +91,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(17, 157);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 14);
@@ -104,7 +104,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label13.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.Location = new System.Drawing.Point(134, 39);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 13);
+            this.label13.Size = new System.Drawing.Size(31, 13);
             this.label13.TabIndex = 20;
             this.label13.Text = "4.0.0";
             // 
@@ -122,7 +122,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.websiteLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.websiteLinkLabel.AutoSize = true;
             this.websiteLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.websiteLinkLabel.Location = new System.Drawing.Point(266, 235);
+            this.websiteLinkLabel.Location = new System.Drawing.Point(268, 235);
             this.websiteLinkLabel.Name = "websiteLinkLabel";
             this.websiteLinkLabel.Size = new System.Drawing.Size(71, 13);
             this.websiteLinkLabel.TabIndex = 17;
@@ -133,7 +133,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(174, 235);
+            this.label12.Location = new System.Drawing.Point(176, 235);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(93, 13);
             this.label12.TabIndex = 16;
@@ -146,10 +146,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ll_github.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.ll_github.Location = new System.Drawing.Point(136, 235);
             this.ll_github.Name = "ll_github";
-            this.ll_github.Size = new System.Drawing.Size(43, 13);
+            this.ll_github.Size = new System.Drawing.Size(44, 13);
             this.ll_github.TabIndex = 15;
             this.ll_github.TabStop = true;
-            this.ll_github.Text = "Github";
+            this.ll_github.Text = "GitHub";
             this.ll_github.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ll_github_LinkClicked);
             // 
             // label11
@@ -252,7 +252,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.versionLabel.Location = new System.Drawing.Point(92, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(46, 13);
+            this.versionLabel.Size = new System.Drawing.Size(45, 13);
             this.versionLabel.TabIndex = 4;
             this.versionLabel.Text = "Version";
             // 
@@ -288,7 +288,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line2
             // 
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(21, 254);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(397, 10);
@@ -338,7 +338,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.fastColoredTextBoxLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.fastColoredTextBoxLinkLabel.Location = new System.Drawing.Point(227, 141);
             this.fastColoredTextBoxLinkLabel.Name = "fastColoredTextBoxLinkLabel";
-            this.fastColoredTextBoxLinkLabel.Size = new System.Drawing.Size(108, 13);
+            this.fastColoredTextBoxLinkLabel.Size = new System.Drawing.Size(107, 13);
             this.fastColoredTextBoxLinkLabel.TabIndex = 28;
             this.fastColoredTextBoxLinkLabel.TabStop = true;
             this.fastColoredTextBoxLinkLabel.Text = "FastColoredTextBox";
@@ -401,7 +401,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.nafetsLinkLabel.Text = "Stefan Baumann";
             this.nafetsLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.nafetsLinkLabel_LinkClicked);
             // 
-            // InfoDialog
+            // InformationDialog
             // 
             this.AcceptButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -443,7 +443,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "InfoDialog";
+            this.Name = "InformationDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Information - {0}";
