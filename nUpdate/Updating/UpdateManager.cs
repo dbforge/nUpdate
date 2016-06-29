@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
 using System.Collections.Generic;
@@ -269,6 +269,8 @@ namespace nUpdate.Updating
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public bool SearchForUpdates()
         {
+            // It may be that this is not the search call and previously saved data needs to be disposed.
+            Cleanup();
             if (_searchCancellationTokenSource != null)
                 _searchCancellationTokenSource.Dispose();
             _searchCancellationTokenSource = new CancellationTokenSource();
@@ -301,8 +303,7 @@ namespace nUpdate.Updating
             TotalSize = updatePackageSize;
             if (_searchCancellationTokenSource.Token.IsCancellationRequested)
             {
-                _packageOperations.Clear();
-                _packageFilePaths.Clear();
+                Cleanup();
                 throw new OperationCanceledException();
             }
 
@@ -382,8 +383,7 @@ namespace nUpdate.Updating
                     if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                     {
                         DeletePackages();
-                        _packageOperations.Clear();
-                        _packageFilePaths.Clear();
+                        Cleanup();
                         throw new OperationCanceledException();
                     }
 
@@ -405,8 +405,7 @@ namespace nUpdate.Updating
                                 if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                                 {
                                     DeletePackages();
-                                    _packageOperations.Clear();
-                                    _packageFilePaths.Clear();
+                                    Cleanup();
                                     throw new OperationCanceledException();
                                 }
 
@@ -418,8 +417,7 @@ namespace nUpdate.Updating
                                         fileStream.Flush();
                                         fileStream.Close();
                                         DeletePackages();
-                                        _packageOperations.Clear();
-                                        _packageFilePaths.Clear();
+                                        Cleanup();
                                         throw new OperationCanceledException();
                                     }
 
@@ -497,8 +495,7 @@ namespace nUpdate.Updating
                     if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                     {
                         DeletePackages();
-                        _packageOperations.Clear();
-                        _packageFilePaths.Clear();
+                        Cleanup();
                         throw new OperationCanceledException();
                     }
 
@@ -520,8 +517,7 @@ namespace nUpdate.Updating
                             if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                             {
                                 DeletePackages();
-                                _packageOperations.Clear();
-                                _packageFilePaths.Clear();
+                                Cleanup();
                                 throw new OperationCanceledException();
                             }
 
@@ -533,8 +529,7 @@ namespace nUpdate.Updating
                                     fileStream.Flush();
                                     fileStream.Close();
                                     DeletePackages();
-                                    _packageOperations.Clear();
-                                    _packageFilePaths.Clear();
+                                    Cleanup();
                                     throw new OperationCanceledException();
                                 }
 
@@ -634,8 +629,7 @@ namespace nUpdate.Updating
                         try
                         {
                             DeletePackages();
-                            _packageFilePaths.Clear();
-                            _packageOperations.Clear();
+                            Cleanup();
                         }
                         catch (Exception ex)
                         {
@@ -655,9 +649,8 @@ namespace nUpdate.Updating
                     {
                         throw new PackageDeleteException(ex.Message);
                     }
-
-                    _packageFilePaths.Clear();
-                    _packageOperations.Clear();
+                    
+                    Cleanup();
                     return false;
                 }
                 finally
@@ -764,8 +757,7 @@ namespace nUpdate.Updating
                 if (ex.NativeErrorCode != 1223)
                     throw;
                 DeletePackages();
-                _packageFilePaths.Clear();
-                _packageOperations.Clear();
+                Cleanup();
                 return;
             }
 
@@ -826,6 +818,12 @@ namespace nUpdate.Updating
             {
                 _lp = new LocalizationProperties();
             }
+        }
+        
+        private void Cleanup()
+        {
+            _packageFilePaths.Clear();
+            _packageOperations.Clear();
         }
 
         /// <summary>
