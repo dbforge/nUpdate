@@ -269,7 +269,7 @@ namespace nUpdate.Updating
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public bool SearchForUpdates()
         {
-            // It may be that this is not the search call and previously saved data needs to be disposed.
+            // It may be that this is not the first search call and previously saved data needs to be disposed.
             Cleanup();
             if (_searchCancellationTokenSource != null)
                 _searchCancellationTokenSource.Dispose();
