@@ -55,9 +55,9 @@ namespace nUpdate
             if (updateDirectoryUri == null)
                 throw new ArgumentNullException(nameof(updateDirectoryUri));
             UpdateDirectoryUri = updateDirectoryUri;
-
+            
             if (string.IsNullOrEmpty(publicKey))
-                throw new ArgumentNullException(nameof(publicKey));
+                throw new ArgumentException(nameof(publicKey));
             PublicKey = publicKey;
 
             var projectAssembly = Assembly.GetCallingAssembly();
@@ -177,6 +177,7 @@ namespace nUpdate
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdatesTask(CancellationToken cancellationToken)
         {
+            CleanupData();
             if (!WebConnection.IsAvailable())
                 return false;
 
@@ -216,8 +217,7 @@ namespace nUpdate
 
             if (cancellationToken.IsCancellationRequested) // Only for async calls
             {
-                _packageOperations.Clear();
-                _packageFilePaths.Clear();
+                CleanupData();
                 throw new OperationCanceledException(cancellationToken);
             }
 
@@ -238,72 +238,58 @@ namespace nUpdate
             long received = 0;
             foreach (var updateConfiguration in FilteredUpdatePackageCollection)
             {
-                WebResponse webResponse = null;
-                try
-                {
+                WebResponse webResponse;
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
-                    using (webResponse = await webRequest.GetResponseAsync())
+                using (webResponse = await webRequest.GetResponseAsync())
+                {
+                    var buffer = new byte[1024];
+                    _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        Path.Combine(_applicationUpdateDirectory,
+                            $"{updateConfiguration.LiteralVersion}.zip"));
+                    using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                        $"{updateConfiguration.LiteralVersion}.zip")))
                     {
-                        var buffer = new byte[1024];
-                        _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                            Path.Combine(_applicationUpdateDirectory,
-                                $"{updateConfiguration.LiteralVersion}.zip"));
-                        using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
-                            $"{updateConfiguration.LiteralVersion}.zip")))
+                        using (Stream input = webResponse.GetResponseStream())
                         {
-                            using (Stream input = webResponse.GetResponseStream())
+                            if (input == null)
+                                throw new Exception("The response stream couldn't be read.");
+
+                            int size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                            while (size > 0)
                             {
-                                if (input == null)
-                                    throw new Exception("The response stream couldn't be read.");
-
-                                int size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                                while (size > 0)
+                                if (cancellationToken.IsCancellationRequested)
+                                    // Only for async calls
                                 {
-                                    if (cancellationToken.IsCancellationRequested)
-                                        // Only for async calls
-                                    {
-                                        fileStream.Flush();
-                                        fileStream.Close();
-                                        throw new OperationCanceledException(cancellationToken);
-                                    }
-
-                                    await fileStream.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
-                                    received += size;
-                                    progress?.Report(new UpdateProgressData(received,
-                                        (long) TotalSize, (float) (received/TotalSize)*100));
-                                    size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                                    throw new OperationCanceledException(cancellationToken);
                                 }
 
-                                if (!updateConfiguration.UseStatistics || !IncludeIntoStatistics)
-                                    continue;
+                                await fileStream.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
+                                received += size;
+                                progress?.Report(new UpdateProgressData(received,
+                                    (long) TotalSize, (float) (received/TotalSize)*100));
+                                size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                            }
 
-                                try
+                            if (!updateConfiguration.UseStatistics || !IncludeIntoStatistics)
+                                continue;
+
+                            try
+                            {
+                                string response =
+                                    await new WebClient().DownloadStringTaskAsync(
+                                        $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}");
+                                if (!string.IsNullOrEmpty(response))
                                 {
-                                    string response =
-                                        await new WebClient().DownloadStringTaskAsync(
-                                            $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}");
-                                    if (!string.IsNullOrEmpty(response))
-                                    {
-                                        throw new StatisticsException(string.Format(
-                                            _lp.StatisticsScriptExceptionText, response));
-                                    }
+                                    throw new StatisticsException(string.Format(
+                                        _lp.StatisticsScriptExceptionText, response));
                                 }
-                                catch (Exception ex)
-                                {
-                                    throw new StatisticsException(ex.Message);
-                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new StatisticsException(ex.Message);
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    // TODO: Specify a clearer message here and pass an InnerException
-                    throw;
-                }
-                finally
-                {
-                    webResponse?.Close();
                 }
             }
         }
@@ -327,6 +313,7 @@ namespace nUpdate
                 if (configuration.Signature == null || configuration.Signature.Length <= 0)
                     throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty."); // TODO: Localize
 
+                // TODO: Check if packages will be disposed properly
                 using (var stream = File.Open(filePathItem.Value, FileMode.Open))
                 {
                     try
@@ -337,10 +324,10 @@ namespace nUpdate
                     }
                     catch
                     {
-                        // Don't throw an exception. Let the method continue and clean up all the packages before we return 'false'.
+                        // Don't throw an exception. Let the method clean up all the packages before we return 'false'.
+                        CleanupData();
                     }
 
-                    CleanupData();
                     return false;
                 }
             }
