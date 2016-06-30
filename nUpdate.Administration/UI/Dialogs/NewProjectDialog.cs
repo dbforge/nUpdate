@@ -48,26 +48,20 @@ namespace nUpdate.Administration.UI.Dialogs
             await GenerateKeyPair();
         }
 
-        private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!AllowCancel)
-                e.Cancel = true;
-        }
-
-        private async Task GenerateKeyPair()
+        private Task GenerateKeyPair()
         {
             AllowCancel = false;
-            await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 _rsaManager = new RsaManager();
-
                 Invoke(new Action(() =>
                 {
                     controlPanel1.Visible = true;
                     informationCategoriesTabControl.SelectedTab = generalTabPage;
                 }));
+                
+                AllowCancel = true;
             });
-            AllowCancel = true;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
