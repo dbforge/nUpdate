@@ -814,7 +814,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MinimizeBox = false;
             this.Name = "NewProjectDialog";
             this.ShowInTaskbar = false;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewProjectDialog_FormClosing);
             this.Load += new System.EventHandler(this.NewProjectDialog_Load);
             this.controlPanel1.ResumeLayout(false);
             this.informationCategoriesTabControl.ResumeLayout(false);
