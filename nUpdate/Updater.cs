@@ -180,11 +180,11 @@ namespace nUpdate
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-            IEnumerable<UpdatePackage> configuration;
+            IEnumerable<UpdatePackage> packageData;
 
             try
             {
-                configuration =
+                packageData =
                     await UpdatePackage.GetRemotePackageData(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
             }
             catch (JsonReaderException ex)
@@ -192,7 +192,7 @@ namespace nUpdate
                 throw new Exception(_lp.InvalidJsonExceptionText, ex);
             }
 
-            var result = new UpdateResult(configuration, CurrentVersion,
+            var result = new UpdateResult(packageData, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
 
             _unfulfilledRequirements = result.UnfulfilledRequirements;
