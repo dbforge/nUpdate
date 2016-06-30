@@ -63,11 +63,8 @@ namespace nUpdate
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
                 projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
-            if (nUpateVersionAttribute == null)
-                throw new ArgumentException(
-                    "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
+            CurrentVersion = nUpateVersionAttribute == null ? new UpdateVersion(Application.ProductVersion) : new UpdateVersion(nUpateVersionAttribute.VersionString);
 
-            CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _lp = LocalizationHelper.GetLocalizationProperties(new CultureInfo("en"), LocalizationFilePaths);
 
