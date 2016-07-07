@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -20,59 +20,53 @@ namespace nUpdate
             {
                 var is64Bit = Environment.Is64BitOperatingSystem;
                 foreach (
-                    var config in
+                    var package in
                         packages.Where(
-                            item => new UpdateVersion(item.LiteralVersion).IsNewerThan(currentVersion) || item.NecessaryUpdate)
-                            .Where(
-                                config =>
-                                    new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
-                                    DevelopmentalStage.Release ||
-                                    new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
-                                    DevelopmentalStage.ReleaseCandidate ||
-                                    ((includeAlpha &&
-                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
-                                      DevelopmentalStage.Alpha) ||
-                                     (includeBeta &&
-                                      new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
-                                      DevelopmentalStage.Beta)))
-                    )
+                            item => new UpdateVersion(item.LiteralVersion).IsNewerThan(currentVersion)))
                 {
-                    if (config.UnsupportedVersions != null)
+                    var packageVersion = new UpdateVersion(package.LiteralVersion);
+
+                    // If it's an Alpha-version or Beta-version and we shouldn't include them...
+                    if ((!includeAlpha &&
+                         packageVersion.DevelopmentalStage ==
+                         DevelopmentalStage.Alpha) ||
+                        (!includeBeta &&
+                         packageVersion.DevelopmentalStage ==
+                         DevelopmentalStage.Beta))
+                        continue;
+
+                    if (package.UnsupportedVersions != null &&
+                        package.UnsupportedVersions.Any(
+                            unsupportedVersion =>
+                                new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
+                        continue;
+
+                    if (package.Architecture == Architecture.X86 && is64Bit ||
+                        package.Architecture == Architecture.X64 && !is64Bit)
+                        continue;
+
+                    if (package.UpdateRequirements != null &&
+                        package.UpdateRequirements.Any(req => !req.CheckRequirement()))
                     {
-                        if (
-                            config.UnsupportedVersions.Any(
-                                unsupportedVersion =>
-                                    new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
-                            continue;
+                        UnfulfilledRequirements.Add(packageVersion,
+                            package.UpdateRequirements.Where(req => !req.CheckRequirement()).ToList());
+                        continue;
                     }
 
-                    if (config.Architecture == Architecture.X86 && is64Bit ||
-                        config.Architecture == Architecture.X64 && !is64Bit)
-                        continue;
-
-                    if (new UpdateVersion(config.LiteralVersion).IsOlderOrEqualTo(currentVersion))
-                        continue;
-
-                    if (config.UpdateRequirements != null &&
-                        config.UpdateRequirements.Any(req => !req.CheckRequirement()))
-                    {
-                        UnfulfilledRequirements.Add(new UpdateVersion(config.LiteralVersion),
-                            config.UpdateRequirements.Where(req => !req.CheckRequirement()).ToList());
-                        continue;
-                    }
-
-                    _newUpdatePackages.Add(config);
+                    _newUpdatePackages.Add(package);
                 }
 
                 var highestVersion =
                     UpdateVersion.GetHighestUpdateVersion(
                         _newUpdatePackages.Select(item => new UpdateVersion(item.LiteralVersion)));
                 var ignoredVersions = _newUpdatePackages.Where(
-                    item => new UpdateVersion(item.LiteralVersion).IsOlderThan(highestVersion) && !item.NecessaryUpdate).Select(item => new UpdateVersion(item.LiteralVersion));
+                    item => new UpdateVersion(item.LiteralVersion).IsOlderThan(highestVersion) && !item.NecessaryUpdate)
+                    .Select(item => new UpdateVersion(item.LiteralVersion));
                 foreach (var ignoredVersion in ignoredVersions)
                 {
                     _newUpdatePackages.Remove(
-                        _newUpdatePackages.First(item => new UpdateVersion(item.LiteralVersion).IsEqualTo(ignoredVersion)));
+                        _newUpdatePackages.First(
+                            item => new UpdateVersion(item.LiteralVersion).IsEqualTo(ignoredVersion)));
                     UnfulfilledRequirements.Remove(ignoredVersion);
                 }
             }
@@ -86,12 +80,14 @@ namespace nUpdate
         public bool UpdatesFound { get; }
 
         /// <summary>
-        ///     Gets the <see cref="UpdateRequirement"/>s of their relating <see cref="UpdateVersion"/> that have not been fulfilled.
+        ///     Gets the <see cref="UpdateRequirement" />s of their relating <see cref="UpdateVersion" /> that have not been
+        ///     fulfilled.
         /// </summary>
-        public Dictionary<UpdateVersion, List<UpdateRequirement>> UnfulfilledRequirements { get; } = new Dictionary<UpdateVersion, List<UpdateRequirement>>();
+        public Dictionary<UpdateVersion, List<UpdateRequirement>> UnfulfilledRequirements { get; } =
+            new Dictionary<UpdateVersion, List<UpdateRequirement>>();
 
         /// <summary>
-        ///     Gets all new <see cref="UpdatePackage"/>s.
+        ///     Gets all new <see cref="UpdatePackage" />s.
         /// </summary>
         public IEnumerable<UpdatePackage> NewestPackages => _newUpdatePackages;
     }
