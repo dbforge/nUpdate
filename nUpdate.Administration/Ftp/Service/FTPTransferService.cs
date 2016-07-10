@@ -250,9 +250,9 @@ namespace nUpdate.Administration.Ftp.Service
             GC.SuppressFinalize(this);
         }
 
-        private async Task Login()
+        private Task Login()
         {
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 if (!_ftpClient.IsConnected)
                     _ftpClient.Open(_ftpData.Username, _password.ConvertToInsecureString());
