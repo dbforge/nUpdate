@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using nUpdate.Administration;
 using nUpdate.Administration.Ftp.Service;
 using nUpdate.Administration.Http;
 using nUpdate.Administration.TransferInterface;
 
 [assembly: ServiceProvider(typeof (TransferServiceProvider))]
 
-namespace nUpdate.Administration.Ftp.Service
+namespace nUpdate.Administration
 {
     public class TransferServiceProvider : IServiceProvider
     {

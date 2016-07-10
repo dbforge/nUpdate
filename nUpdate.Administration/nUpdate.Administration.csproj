@@ -181,7 +181,7 @@
     <Compile Include="Ftp\FtpResponseQueue.cs" />
     <Compile Include="Ftp\Hashing\Crc32.cs" />
     <Compile Include="Ftp\Service\FTPTransferService.cs" />
-    <Compile Include="Ftp\Service\TransferServiceProvider.cs" />
+    <Compile Include="TransferServiceProvider.cs" />
     <Compile Include="Http\HttpData.cs" />
     <Compile Include="Http\HttpTransferProvider.cs" />
     <Compile Include="Logging\PackageActionLogData.cs" />
