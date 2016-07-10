@@ -1,12 +1,10 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs

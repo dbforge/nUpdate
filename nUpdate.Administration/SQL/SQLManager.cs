@@ -1,6 +1,4 @@
-﻿using nUpdate.Administration.Application;
-
-namespace nUpdate.Administration.Sql
+﻿namespace nUpdate.Administration.Sql
 {
     // ReSharper disable once InconsistentNaming
     internal class SqlManager

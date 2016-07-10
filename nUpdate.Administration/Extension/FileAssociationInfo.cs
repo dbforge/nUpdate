@@ -32,7 +32,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
 
     #region Public Enums

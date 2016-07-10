@@ -1,6 +1,4 @@
-﻿using nUpdate.Administration.Application;
-
-namespace nUpdate.Administration
+﻿namespace nUpdate.Administration
 {
     internal struct UpdateFactoryPackage
     {

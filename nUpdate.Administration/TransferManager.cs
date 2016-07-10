@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.Exceptions;
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
@@ -52,7 +51,7 @@ namespace nUpdate.Administration
                     return httpTransferProvider;
                 case TransferProtocol.Custom:
                     if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                        throw new TransferProtocolException($"The project uses a custom transfer protocol, but the path to the file containing the transfer services is missing.");
+                        throw new TransferProtocolException("The project uses a custom transfer protocol, but the path to the file containing the transfer services is missing.");
                     if (!transferAssemblyFilePath.IsValidPath())
                         throw new TransferProtocolException($"The project uses a custom transfer protocol, but the path to the file containing the transfer services is invalid: \"{transferAssemblyFilePath}\"");
 

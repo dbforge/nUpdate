@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
 using nUpdate.Administration.Logging;

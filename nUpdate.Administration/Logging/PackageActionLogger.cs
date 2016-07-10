@@ -1,7 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using nUpdate.Administration.Application;
-
 namespace nUpdate.Administration.Logging
 {
     internal class PackageActionLogger

@@ -13,7 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Operations.Panels;
 using nUpdate.Administration.Properties;

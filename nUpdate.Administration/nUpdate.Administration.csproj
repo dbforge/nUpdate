@@ -128,16 +128,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AesManager.cs" />
-    <Compile Include="Application\Extension\FileAssociationInfo.cs" />
-    <Compile Include="Application\Extension\ProgramAssociationInfo.cs" />
-    <Compile Include="Application\Extension\ProgramIcon.cs" />
-    <Compile Include="Application\Extension\ProgramVerb.cs" />
-    <Compile Include="Application\Extension\RegistryException.cs" />
-    <Compile Include="Application\Extension\RegistryWrapper.cs" />
-    <Compile Include="Application\Extension\ShellNotification.cs" />
-    <Compile Include="Application\Session.cs" />
-    <Compile Include="Application\UpdateProject.cs" />
-    <Compile Include="Application\UpdateProjectLocation.cs" />
+    <Compile Include="Extension\FileAssociationInfo.cs" />
+    <Compile Include="Extension\ProgramAssociationInfo.cs" />
+    <Compile Include="Extension\ProgramIcon.cs" />
+    <Compile Include="Extension\ProgramVerb.cs" />
+    <Compile Include="Extension\RegistryException.cs" />
+    <Compile Include="Extension\RegistryWrapper.cs" />
+    <Compile Include="Extension\ShellNotification.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="UpdateProject.cs" />
+    <Compile Include="UpdateProjectLocation.cs" />
     <Compile Include="CodeDomHelper.cs" />
     <Compile Include="Exceptions\TransferProtocolException.cs" />
     <Compile Include="FilePathProvider.cs" />

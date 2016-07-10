@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;

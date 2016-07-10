@@ -29,7 +29,7 @@
 
 using System;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     public class ProgramIcon
     {
