@@ -7,7 +7,7 @@ using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration.Http
 {
-    internal class HttpTransferProvider : ITransferProvider
+    internal class HttpTransferService : ITransferProvider
     {
         internal HttpData Data { get; set; }
 

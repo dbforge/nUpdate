@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using nUpdate.Administration.TransferInterface;
 
-namespace nUpdate.Administration.Ftp.Service
+namespace nUpdate.Administration.Ftp
 {
     // ReSharper disable once InconsistentNaming
     internal class FtpTransferService : ITransferProvider

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using nUpdate.Administration.Application;
 using nUpdate.Administration.Exceptions;
-using nUpdate.Administration.Ftp.Service;
+using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
 using nUpdate.Administration.TransferInterface;
 
@@ -47,7 +47,7 @@ namespace nUpdate.Administration
                     return ftpTransferProvider;
                 case TransferProtocol.HTTP:
                     var httpTransferProvider =
-                        (HttpTransferProvider)GetDefaultServiceProvider().GetService(typeof(HttpTransferProvider));
+                        (HttpTransferService)GetDefaultServiceProvider().GetService(typeof(HttpTransferService));
                     httpTransferProvider.Data = (HttpData)data;
                     return httpTransferProvider;
                 case TransferProtocol.Custom:
