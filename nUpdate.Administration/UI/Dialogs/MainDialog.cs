@@ -103,7 +103,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         fileDialog.Multiselect = false;
                         if (fileDialog.ShowDialog() == DialogResult.OK)
                         {
-                            LoadProject(fileDialog.FileName);
+                            if (!LoadProject(fileDialog.FileName))
+                                return;
 
                             var projectDialog = new ProjectDialog();
                             projectDialog.ShowDialog();
@@ -124,7 +125,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         fileDialog.Multiselect = false;
                         if (fileDialog.ShowDialog() == DialogResult.OK)
                         {
-                            LoadProject(fileDialog.FileName);
+                            if (!LoadProject(fileDialog.FileName))
+                                return;
 
                             var projectEditDialog = new ProjectEditDialog();
                             projectEditDialog.ShowDialog();
@@ -159,19 +161,21 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void LoadProject(string projectPath)
+        private bool LoadProject(string projectPath)
         {
             try
             {
-                // Initialize our application session, so that we can access all data of this project
+                // Initialize our application session, so that we can access all data of this project.
                 Session.InitializeProject(UpdateProject.Load(projectPath));
+                return true;
             }
             catch (Exception ex)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while reading the project data.", ex,
                     PopupButtons.Ok);
+                Session.Terminate(); // Clear the session again.
+                return false;
             }
         }
-
     }
 }
