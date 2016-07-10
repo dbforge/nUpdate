@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.UI.Controls;
+using nUpdate.Administration.UserInterface.Controls;
 
 namespace nUpdate.Administration
 {

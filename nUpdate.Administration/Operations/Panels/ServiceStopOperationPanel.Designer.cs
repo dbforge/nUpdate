@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Operations.Panels
+﻿using nUpdate.Administration.UserInterface.Controls;
+
+namespace nUpdate.Administration.Operations.Panels
 {
     partial class ServiceStopOperationPanel
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServiceStopOperationPanel));
-            this.serviceNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.serviceNameTextBox = new CueTextBox();
             this.serviceNameLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -92,7 +94,7 @@
 
         #endregion
 
-        private UI.Controls.CueTextBox serviceNameTextBox;
+        private CueTextBox serviceNameTextBox;
         private System.Windows.Forms.Label serviceNameLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;

@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using nUpdate.Administration.UI.Controls;
+using nUpdate.Administration.UserInterface.Controls;
 
 namespace nUpdate.Administration.Win32
 {

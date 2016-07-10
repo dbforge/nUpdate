@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Operations.Panels
+﻿using nUpdate.Administration.UserInterface.Controls;
+
+namespace nUpdate.Administration.Operations.Panels
 {
     partial class ProcessStopOperationPanel
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessStopOperationPanel));
-            this.processNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.processNameTextBox = new CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -104,7 +106,7 @@
 
         #endregion
 
-        private UI.Controls.CueTextBox processNameTextBox;
+        private CueTextBox processNameTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;

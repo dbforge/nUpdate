@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.UI.Controls;
+﻿using nUpdate.Administration.UserInterface.Controls;
 
 namespace nUpdate.Administration.Operations.Panels
 {
@@ -31,9 +31,9 @@ namespace nUpdate.Administration.Operations.Panels
         private void InitializeComponent()
         {
             this.addButton = new System.Windows.Forms.Button();
-            this.keyNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.keyNameTextBox = new CueTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.subKeyTextBox = new CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.subKeysToCreateListBox = new System.Windows.Forms.ListBox();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();

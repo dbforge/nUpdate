@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.UI.Controls;
+﻿using nUpdate.Administration.UserInterface.Controls;
 
 namespace nUpdate.Administration.Operations.Panels
 {
@@ -36,8 +36,8 @@ namespace nUpdate.Administration.Operations.Panels
             this.pathLabel = new System.Windows.Forms.Label();
             this.filesToDeleteListBox = new System.Windows.Forms.ListBox();
             this.removeButton = new System.Windows.Forms.Button();
-            this.fileNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.pathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.fileNameTextBox = new CueTextBox();
+            this.pathTextBox = new CueTextBox();
             this.environmentVariablesButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 

@@ -5,9 +5,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Exceptionless;
 using nUpdate.Administration.Properties;
-using nUpdate.Administration.UI.Dialogs;
+using nUpdate.Administration.UserInterface.Dialogs;
 
 //using nUpdate.Administration.UI.Dialogs;
 
@@ -38,7 +37,7 @@ namespace nUpdate.Administration
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
-                    System.Windows.Forms.Application.Exit();
+                    Application.Exit();
             }
 
             // ... and if there is no other instance running.
@@ -50,10 +49,10 @@ namespace nUpdate.Administration
             //AppDomain currentDomain = AppDomain.CurrentDomain;
             //currentDomain.UnhandledException += UnhandledException;
             //Application.ThreadException += UnhandledThreadException;
-            System.Windows.Forms.Application.ApplicationExit += Exit;
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ApplicationExit += Exit;
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             //ExceptionlessClient.Default.Register();
             
             // A path is handled over to the application when double-clicking a ".nupdproj"-file...
@@ -62,12 +61,12 @@ namespace nUpdate.Administration
                 var file = new FileInfo(args[0]);
                 if (file.Exists)
                 {
-                    System.Windows.Forms.Application.Run(new MainDialog(file.FullName));
+                    Application.Run(new MainDialog(file.FullName));
                     return;
                 }
             }
 
-            System.Windows.Forms.Application.Run(new MainDialog(string.Empty));
+            Application.Run(new MainDialog(string.Empty));
         }
 
         private static void Exit(object sender, EventArgs e)
