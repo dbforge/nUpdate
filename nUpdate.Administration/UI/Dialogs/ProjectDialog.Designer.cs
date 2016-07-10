@@ -1,5 +1,4 @@
-﻿using nUpdate.Administration.Application;
-using nUpdate.Administration.UI.Controls;
+﻿using nUpdate.Administration.UI.Controls;
 using nUpdate.UI.WinForms.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs

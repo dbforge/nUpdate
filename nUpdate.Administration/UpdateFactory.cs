@@ -1,5 +1,4 @@
-﻿using nUpdate.Administration.Application;
-using nUpdate.Administration.Logging;
+﻿using nUpdate.Administration.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;

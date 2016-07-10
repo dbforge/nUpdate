@@ -10,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Windows.Forms;
-using nUpdate.Administration.Application;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs

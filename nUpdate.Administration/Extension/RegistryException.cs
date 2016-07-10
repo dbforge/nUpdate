@@ -29,7 +29,7 @@
 
 using System;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     /// <summary>
     ///     This exception is thrown when there is an error when reading, writing or modifying file assocation info.

@@ -30,7 +30,7 @@
 using System;
 using nUpdate.Administration.Win32;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     public class ShellNotification
     {

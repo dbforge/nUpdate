@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using System.Linq;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Proxy;
 using nUpdate.Administration.Sql;
-using System.Linq;
+
 // ReSharper disable InconsistentNaming
 
-namespace nUpdate.Administration.Application
+namespace nUpdate.Administration
 {
     internal static class Session
     {

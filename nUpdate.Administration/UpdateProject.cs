@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 
-namespace nUpdate.Administration.Application
+namespace nUpdate.Administration
 {
     /// <summary>
     ///     Represents a local update project.

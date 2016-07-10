@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Win32;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     /// <summary>
     ///     Specifies values that control some aspects of the Shell's handling of the file types linked to a ProgID.

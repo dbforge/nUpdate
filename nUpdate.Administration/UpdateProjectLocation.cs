@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace nUpdate.Administration.Application
+namespace nUpdate.Administration
 {
     [Serializable]
     internal class UpdateProjectLocation : PropertyChangedBase

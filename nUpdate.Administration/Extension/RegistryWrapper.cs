@@ -30,7 +30,7 @@
 using System;
 using Microsoft.Win32;
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     /// <summary>
     ///     Provides a streamlined interface for reading and writing to the registry.

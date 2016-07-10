@@ -27,7 +27,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-namespace nUpdate.Administration.Application.Extension
+namespace nUpdate.Administration.Extension
 {
     /// <summary>
     ///     Provides representation of verb that is used to determine mode file is being opened in. Contained within ProgID.
