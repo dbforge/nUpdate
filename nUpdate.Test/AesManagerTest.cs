@@ -12,8 +12,8 @@ namespace nUpdate.Test
         public void CanEncryptAndDecrypt()
         {
             const string password = "ILikeTrains";
-            byte[] encrypted = AESManager.Encrypt(password, "testKey", "testIV");
-            var decrypted = AESManager.Decrypt(encrypted, "testKey", "testIV");
+            byte[] encrypted = AesManager.Encrypt(password, "testKey", "testIV");
+            var decrypted = AesManager.Decrypt(encrypted, "testKey", "testIV");
             Assert.IsTrue(password == decrypted.ConvertToInsecureString());
             Assert.IsFalse("NotThePassword" == decrypted.ConvertToInsecureString());
         }
