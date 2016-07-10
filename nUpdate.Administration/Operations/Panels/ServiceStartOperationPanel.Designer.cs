@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Operations.Panels
+﻿using nUpdate.Administration.UserInterface.Controls;
+
+namespace nUpdate.Administration.Operations.Panels
 {
     partial class ServiceStartOperationPanel
     {
@@ -29,11 +31,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServiceStartOperationPanel));
-            this.serviceNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.serviceNameTextBox = new CueTextBox();
             this.serviceNameLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.argumentTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.argumentTextBox = new CueTextBox();
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -111,11 +113,11 @@
 
         #endregion
 
-        private UI.Controls.CueTextBox serviceNameTextBox;
+        private CueTextBox serviceNameTextBox;
         private System.Windows.Forms.Label serviceNameLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private UI.Controls.CueTextBox argumentTextBox;
+        private CueTextBox argumentTextBox;
         private System.Windows.Forms.Label label1;
     }
 }

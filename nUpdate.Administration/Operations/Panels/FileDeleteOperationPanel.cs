@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.UI.Popups;
+using nUpdate.Administration.UserInterface.Popups;
 using nUpdate.Operations;
 
 namespace nUpdate.Administration.Operations.Panels

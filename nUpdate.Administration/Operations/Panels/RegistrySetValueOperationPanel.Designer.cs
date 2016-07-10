@@ -1,4 +1,5 @@
-﻿using nUpdate.UI.WinForms.Controls;
+﻿using nUpdate.Administration.UserInterface.Controls;
+using nUpdate.UI.WinForms.Controls;
 
 namespace nUpdate.Administration.Operations.Panels
 {
@@ -33,9 +34,9 @@ namespace nUpdate.Administration.Operations.Panels
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RegistrySetValueOperationPanel));
             this.label3 = new System.Windows.Forms.Label();
             this.mainKeyComboBox = new System.Windows.Forms.ComboBox();
-            this.valueTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.valueTextBox = new CueTextBox();
             this.dataTypeLabel = new System.Windows.Forms.Label();
-            this.subKeyTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.subKeyTextBox = new CueTextBox();
             this.pathLabel = new System.Windows.Forms.Label();
             this.valueKindComboBox = new System.Windows.Forms.ComboBox();
             this.valueLabel = new System.Windows.Forms.Label();
@@ -44,12 +45,12 @@ namespace nUpdate.Administration.Operations.Panels
             this.label1 = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
             this.addButton = new System.Windows.Forms.Button();
-            this.nameValuePairListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
+            this.nameValuePairListView = new ExplorerListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label4 = new System.Windows.Forms.Label();
-            this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.nameTextBox = new CueTextBox();
             this.line1 = new Line();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -270,9 +271,9 @@ namespace nUpdate.Administration.Operations.Panels
 
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox mainKeyComboBox;
-        private UI.Controls.CueTextBox valueTextBox;
+        private CueTextBox valueTextBox;
         private System.Windows.Forms.Label dataTypeLabel;
-        private UI.Controls.CueTextBox subKeyTextBox;
+        private CueTextBox subKeyTextBox;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.ComboBox valueKindComboBox;
         private System.Windows.Forms.Label valueLabel;
@@ -281,12 +282,12 @@ namespace nUpdate.Administration.Operations.Panels
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button addButton;
-        private UI.Controls.ExplorerListView nameValuePairListView;
+        private ExplorerListView nameValuePairListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.Label label4;
-        private UI.Controls.CueTextBox nameTextBox;
+        private CueTextBox nameTextBox;
         private nUpdate.UI.WinForms.Controls.Line line1;
     }
 }

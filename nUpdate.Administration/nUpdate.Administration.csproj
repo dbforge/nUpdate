@@ -274,212 +274,210 @@
     <Compile Include="StatisticsEntryMethod.cs" />
     <Compile Include="TransferProtocol.cs" />
     <Compile Include="TrulyObservableCollection.cs" />
-    <Compile Include="UI\Controls\ActionList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ActionList.Designer.cs">
-      <DependentUpon>ActionList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\ButtonTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ChangelogPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ChangelogPanel.Designer.cs">
-      <DependentUpon>ChangelogPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\CommandLink.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\CueTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExpandButton.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerListViewGroup.cs" />
-    <Compile Include="UI\Controls\ExplorerNavigationButton\AeroTemplate.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerNavigationButton\ArrowDirection.cs" />
-    <Compile Include="UI\Controls\ExplorerNavigationButton\ButtonState.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerNavigationButton\ButtonTheme.cs" />
-    <Compile Include="UI\Controls\ExplorerNavigationButton\ExplorerNavigationButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerNavigationButton\MetroTemplate.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerNavigationButton\Template.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ExplorerTreeNode.cs" />
-    <Compile Include="UI\Controls\ExplorerTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ManualScrollTabPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ServerList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ServerList.Designer.cs">
-      <DependentUpon>ServerList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\StatisticsChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\StatisticsChart.Designer.cs">
-      <DependentUpon>StatisticsChart.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\TablessTabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\BaseDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\DirectorySearchDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\DirectorySearchDialog.Designer.cs">
-      <DependentUpon>DirectorySearchDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\FeedbackDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\FeedbackDialog.Designer.cs">
-      <DependentUpon>FeedbackDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\FtpAssemblyInputDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\FtpAssemblyInputDialog.Designer.cs">
-      <DependentUpon>FtpAssemblyInputDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\HistoryDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\HistoryDialog.Designer.cs">
-      <DependentUpon>HistoryDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\InformationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\InformationDialog.Designer.cs">
-      <DependentUpon>InformationDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\JsonEditorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\JsonEditorDialog.Designer.cs">
-      <DependentUpon>JsonEditorDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\MainDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\MainDialog.Designer.cs">
-      <DependentUpon>MainDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\NewProjectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\NewProjectDialog.Designer.cs">
-      <DependentUpon>NewProjectDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackageAddDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackageAddDialog.Designer.cs">
-      <DependentUpon>PackageAddDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackageEditDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackageEditDialog.Designer.cs">
-      <DependentUpon>PackageEditDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackagesToAffectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\PackagesToAffectDialog.Designer.cs">
-      <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\ParameterAddDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ParameterAddDialog.Designer.cs">
-      <DependentUpon>ParameterAddDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\PreferencesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\PreferencesDialog.Designer.cs">
-      <DependentUpon>PreferencesDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectDialog.Designer.cs">
-      <DependentUpon>ProjectDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectEditDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectEditDialog.Designer.cs">
-      <DependentUpon>ProjectEditDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectImportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectImportDialog.Designer.cs">
-      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectRemovalDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ProjectRemovalDialog.Designer.cs">
-      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerAddDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerAddDialog.Designer.cs">
-      <DependentUpon>StatisticalServerAddDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerDialog.Designer.cs">
-      <DependentUpon>StatisticalServerDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerEditDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\StatisticalServerEditDialog.Designer.cs">
-      <DependentUpon>StatisticalServerEditDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Dialogs\UpdatingInfoDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\UpdatingInfoDialog.Designer.cs">
-      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Popups\Popup.cs" />
-    <Compile Include="UI\Popups\PopupButtons.cs" />
-    <Compile Include="UI\Popups\PopupDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Popups\PopupDialog.Designer.cs">
-      <DependentUpon>PopupDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UpdateFactory.cs" />
     <Compile Include="UpdateFactoryPackage.cs" />
+    <Compile Include="UserInterface\Controls\ActionList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ActionList.Designer.cs">
+      <DependentUpon>ActionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ButtonTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ChangelogPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ChangelogPanel.Designer.cs">
+      <DependentUpon>ChangelogPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Controls\CommandLink.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\CueTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExpandButton.cs" />
+    <Compile Include="UserInterface\Controls\ExplorerListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerListViewGroup.cs" />
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\AeroTemplate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\ArrowDirection.cs" />
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\ButtonState.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\ButtonTheme.cs" />
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\ExplorerNavigationButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\MetroTemplate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerNavigationButton\Template.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ExplorerTreeNode.cs" />
+    <Compile Include="UserInterface\Controls\ExplorerTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ManualScrollTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ServerList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\ServerList.Designer.cs">
+      <DependentUpon>ServerList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Controls\StatisticsChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\StatisticsChart.Designer.cs">
+      <DependentUpon>StatisticsChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Controls\TablessTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\BaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\DirectorySearchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\DirectorySearchDialog.Designer.cs">
+      <DependentUpon>DirectorySearchDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\FeedbackDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\FeedbackDialog.Designer.cs">
+      <DependentUpon>FeedbackDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\FtpAssemblyInputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\FtpAssemblyInputDialog.Designer.cs">
+      <DependentUpon>FtpAssemblyInputDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\HistoryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\HistoryDialog.Designer.cs">
+      <DependentUpon>HistoryDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\InformationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\InformationDialog.Designer.cs">
+      <DependentUpon>InformationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\JsonEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\JsonEditorDialog.Designer.cs">
+      <DependentUpon>JsonEditorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\MainDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\MainDialog.Designer.cs">
+      <DependentUpon>MainDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\NewProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\NewProjectDialog.Designer.cs">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackageAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackageAddDialog.Designer.cs">
+      <DependentUpon>PackageAddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackageEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackageEditDialog.Designer.cs">
+      <DependentUpon>PackageEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackagesToAffectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PackagesToAffectDialog.Designer.cs">
+      <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ParameterAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ParameterAddDialog.Designer.cs">
+      <DependentUpon>ParameterAddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PreferencesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\PreferencesDialog.Designer.cs">
+      <DependentUpon>PreferencesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectDialog.Designer.cs">
+      <DependentUpon>ProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectEditDialog.Designer.cs">
+      <DependentUpon>ProjectEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectImportDialog.Designer.cs">
+      <DependentUpon>ProjectImportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectRemovalDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\ProjectRemovalDialog.Designer.cs">
+      <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerAddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerAddDialog.Designer.cs">
+      <DependentUpon>StatisticalServerAddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerDialog.Designer.cs">
+      <DependentUpon>StatisticalServerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\StatisticalServerEditDialog.Designer.cs">
+      <DependentUpon>StatisticalServerEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\UpdatingInfoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Dialogs\UpdatingInfoDialog.Designer.cs">
+      <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Popups\Popup.cs" />
+    <Compile Include="UserInterface\Popups\PopupButtons.cs" />
+    <Compile Include="UserInterface\Popups\PopupDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Popups\PopupDialog.Designer.cs">
+      <DependentUpon>PopupDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win32\IconReader.cs" />
     <Compile Include="Win32\Margins.cs" />
     <Compile Include="Extensions.cs" />
@@ -540,79 +538,79 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\Controls\ChangelogPanel.resx">
+    <EmbeddedResource Include="UserInterface\Controls\ChangelogPanel.resx">
       <DependentUpon>ChangelogPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Controls\StatisticsChart.resx">
+    <EmbeddedResource Include="UserInterface\Controls\StatisticsChart.resx">
       <DependentUpon>StatisticsChart.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\BaseDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\BaseDialog.resx">
       <DependentUpon>BaseDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\DirectorySearchDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\DirectorySearchDialog.resx">
       <DependentUpon>DirectorySearchDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\FeedbackDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\FeedbackDialog.resx">
       <DependentUpon>FeedbackDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\FtpAssemblyInputDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\FtpAssemblyInputDialog.resx">
       <DependentUpon>FtpAssemblyInputDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\HistoryDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\HistoryDialog.resx">
       <DependentUpon>HistoryDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\InformationDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\InformationDialog.resx">
       <DependentUpon>InformationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\JsonEditorDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\JsonEditorDialog.resx">
       <DependentUpon>JsonEditorDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\MainDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\NewProjectDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\PackageAddDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\PackageAddDialog.resx">
       <DependentUpon>PackageAddDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\PackageEditDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\PackageEditDialog.resx">
       <DependentUpon>PackageEditDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\PackagesToAffectDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\PackagesToAffectDialog.resx">
       <DependentUpon>PackagesToAffectDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ParameterAddDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\ParameterAddDialog.resx">
       <DependentUpon>ParameterAddDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\PreferencesDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\PreferencesDialog.resx">
       <DependentUpon>PreferencesDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ProjectDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\ProjectDialog.resx">
       <DependentUpon>ProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ProjectEditDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\ProjectEditDialog.resx">
       <DependentUpon>ProjectEditDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ProjectImportDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\ProjectImportDialog.resx">
       <DependentUpon>ProjectImportDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\ProjectRemovalDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\ProjectRemovalDialog.resx">
       <DependentUpon>ProjectRemovalDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\StatisticalServerAddDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\StatisticalServerAddDialog.resx">
       <DependentUpon>StatisticalServerAddDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\StatisticalServerDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\StatisticalServerDialog.resx">
       <DependentUpon>StatisticalServerDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\StatisticalServerEditDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\StatisticalServerEditDialog.resx">
       <DependentUpon>StatisticalServerEditDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Dialogs\UpdatingInfoDialog.resx">
+    <EmbeddedResource Include="UserInterface\Dialogs\UpdatingInfoDialog.resx">
       <DependentUpon>UpdatingInfoDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Popups\PopupDialog.resx">
+    <EmbeddedResource Include="UserInterface\Popups\PopupDialog.resx">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Localization\de-DE.json" />

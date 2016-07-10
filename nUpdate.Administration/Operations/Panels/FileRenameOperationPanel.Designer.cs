@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.UI.Controls;
+﻿using nUpdate.Administration.UserInterface.Controls;
 
 namespace nUpdate.Administration.Operations.Panels
 {
@@ -35,8 +35,8 @@ namespace nUpdate.Administration.Operations.Panels
             this.pathLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.newNameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.pathTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.newNameTextBox = new CueTextBox();
+            this.pathTextBox = new CueTextBox();
             this.environmentVariablesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
-using nUpdate.Administration.UI.Popups;
+using nUpdate.Administration.UserInterface.Popups;
 using nUpdate.Operations;
 
 namespace nUpdate.Administration.Operations.Panels

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using nUpdate.Administration.UI.Controls;
+using nUpdate.Administration.UserInterface.Controls;
 using nUpdate.Administration.Win32;
 // ReSharper disable InconsistentNaming
 // ReSharper disable once IdentifierTypo
