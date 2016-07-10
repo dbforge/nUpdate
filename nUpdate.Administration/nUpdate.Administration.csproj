@@ -180,10 +180,10 @@
     <Compile Include="Ftp\FtpResponseCollection.cs" />
     <Compile Include="Ftp\FtpResponseQueue.cs" />
     <Compile Include="Ftp\Hashing\Crc32.cs" />
-    <Compile Include="Ftp\Service\FtpTransferService.cs" />
+    <Compile Include="Ftp\FtpTransferService.cs" />
     <Compile Include="TransferServiceProvider.cs" />
     <Compile Include="Http\HttpData.cs" />
-    <Compile Include="Http\HttpTransferProvider.cs" />
+    <Compile Include="Http\HttpTransferService.cs" />
     <Compile Include="Logging\PackageActionLogData.cs" />
     <Compile Include="Operations\Panels\FileDeleteOperationPanel.cs">
       <SubType>UserControl</SubType>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using nUpdate.Administration;
-using nUpdate.Administration.Ftp.Service;
+using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
 using nUpdate.Administration.TransferInterface;
 
@@ -30,7 +30,7 @@ namespace nUpdate.Administration
         private void InitializeServices()
         {
             _services.Add(typeof (FtpTransferService), new FtpTransferService());
-            _services.Add(typeof(HttpTransferProvider), new HttpTransferProvider());
+            _services.Add(typeof(HttpTransferService), new HttpTransferService());
         }
     }
 }
