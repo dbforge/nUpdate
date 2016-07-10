@@ -5,6 +5,7 @@
 // die mit einer Assembly verknüpft sind.
 using System.Reflection;
 using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Exceptionless.Configuration;
 using nUpdate;
@@ -45,3 +46,4 @@ using nUpdate;
 [assembly: NeutralResourcesLanguage("")]
 [assembly: nUpdateVersion("4")]
 [assembly: Exceptionless("ZmNZSHjnJ6DrGPoWHxAgxlP491Plche8G7gkk87p")]
+[assembly: InternalsVisibleTo("nUpdate.Test")]
