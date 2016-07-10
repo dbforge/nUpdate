@@ -172,7 +172,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     Port = int.Parse(ftpPortTextBox.Text),
                     Directory = ftpDirectoryTextBox.Text,
                     UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
-                    Protocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
+                    FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                     Username = ftpUserTextBox.Text,
                     Password = Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
                 };
@@ -242,7 +242,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Packages = Enumerable.Empty<UpdatePackage>().ToList(),
                 PrivateKey = _rsaManager.PrivateKey,
                 PublicKey = _rsaManager.PublicKey,
-                Protocol = (TransferProtocol) protocolComboBox.SelectedIndex,
+                TransferProtocol = (TransferProtocol) protocolComboBox.SelectedIndex,
                 TransferData = _transferData,
                 UpdateDirectoryUri = new Uri(updateDirectoryUriTextBox.Text),
                 UseProxy = useProxyRadioButton.Checked,
@@ -328,12 +328,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 Host = ftpHostTextBox.Text,
                 Port = int.Parse(ftpPortTextBox.Text),
                 UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
-                Protocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
+                FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                 Username = ftpUserTextBox.Text,
                 Password = Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
             };
 
-            var searchDialog = new DirectorySearchDialog(new TransferManager(transferData), nameTextBox.Text);
+            var searchDialog = new DirectorySearchDialog(new TransferManager(TransferProtocol.FTP, transferData), nameTextBox.Text);
             if (searchDialog.ShowDialog() == DialogResult.OK)
                 ftpDirectoryTextBox.Text = searchDialog.SelectedDirectory;
             searchDialog.Close();
@@ -379,7 +379,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     var importProject = UpdateProject.Load(fileDialog.FileName);
-                    if (importProject.Protocol != TransferProtocol.FTP)
+                    if (importProject.TransferProtocol != TransferProtocol.FTP)
                     {
                         Popup.ShowPopup(this, SystemIcons.Warning, "Importing canceled.", "The specified project does not contain transfer data that conforms to the FTP-specification. It uses another protocol instead.",
                             PopupButtons.Ok);
@@ -389,7 +389,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     ftpHostTextBox.Text = ftpData.Host;
                     ftpPortTextBox.Text = ftpData.Port.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = ftpData.Username;
-                    ftpProtocolComboBox.SelectedIndex = (int)ftpData.Protocol;
+                    ftpProtocolComboBox.SelectedIndex = (int)ftpData.FtpSpecificProtocol;
                     ftpModeComboBox.SelectedIndex = ftpData.UsePassiveMode ? 0 : 1;
                     ftpDirectoryTextBox.Text = ftpData.Directory;
                     ftpPasswordTextBox.Focus();
