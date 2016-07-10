@@ -490,7 +490,7 @@
     <Compile Include="Navigator.cs" />
     <Compile Include="PackageItem.cs" />
     <Compile Include="ServiceProviderHelper.cs" />
-    <Compile Include="ShaManager.cs" />
+    <Compile Include="SHAManager.cs" />
     <Compile Include="StatisticsServer.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Win32\PaintStruct.cs" />
