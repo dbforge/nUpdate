@@ -2,9 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.Win32;
@@ -13,14 +15,14 @@ using nUpdate.Administration.Win32;
 
 namespace nUpdate.Administration
 {
-    public static class Extensions
+    internal static class Extensions
     {
         private const int TVIF_STATE = 0x8;
         private const int TVIS_STATEIMAGEMASK = 0xF000;
         private const int TV_FIRST = 0x1100;
         private const int TVM_SETITEM = TV_FIRST + 63;
 
-        public static void DoubleBuffer(this Control control)
+        internal static void DoubleBuffer(this Control control)
         {
             if (SystemInformation.TerminalServerSession)
                 return;
@@ -29,7 +31,7 @@ namespace nUpdate.Administration
             dbProp.SetValue(control, true, null);
         }
 
-        public static void HideCheckBox(this TreeNode node)
+        internal static void HideCheckBox(this TreeNode node)
         {
             var tvi = new ExplorerTreeNode
             {
@@ -41,7 +43,7 @@ namespace nUpdate.Administration
             NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
 
-        public static T[] RemoveAt<T>(this T[] source, int index)
+        internal static T[] RemoveAt<T>(this T[] source, int index)
         {
             var destination = new T[source.Length - 1];
             if (index > 0)
@@ -53,7 +55,7 @@ namespace nUpdate.Administration
             return destination;
         }
 
-        public static T Remove<T>(this Stack<T> stack, T element)
+        internal static T Remove<T>(this Stack<T> stack, T element)
         {
             var obj = stack.Pop();
             if (obj.Equals(element))
@@ -63,7 +65,7 @@ namespace nUpdate.Administration
             return toReturn;
         }
 
-        public static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
+        internal static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
         {
             foreach (var i in ie)
             {
@@ -71,7 +73,7 @@ namespace nUpdate.Administration
             }
         }
 
-        public static string ConvertToInsecureString(this SecureString securePassword)
+        internal static string ConvertToInsecureString(this SecureString securePassword)
         {
             if (securePassword == null)
                 throw new ArgumentNullException(nameof(securePassword));
@@ -88,7 +90,7 @@ namespace nUpdate.Administration
             }
         }
 
-        public static void MoveUp(this TreeNode node)
+        internal static void MoveUp(this TreeNode node)
         {
             TreeNode parent = node.Parent;
             TreeView view = node.TreeView;
@@ -110,7 +112,7 @@ namespace nUpdate.Administration
             }
         }
 
-        public static void MoveDown(this TreeNode node)
+        internal static void MoveDown(this TreeNode node)
         {
             TreeNode parent = node.Parent;
             TreeView view = node.TreeView;
@@ -130,6 +132,24 @@ namespace nUpdate.Administration
                 view.Nodes.RemoveAt(index);
                 view.Nodes.Insert(index + 1, node);
             }
+        }
+
+        internal static bool IsValidPath(this string path)
+        {
+            var driveCheckRegEx = new Regex(@"^[a-zA-Z]:\\$");
+            if (!driveCheckRegEx.IsMatch(path.Substring(0, 3)))
+                return false;
+
+            string invalidPathChars = new string(Path.GetInvalidPathChars());
+            invalidPathChars += @":/?*" + "\"";
+            var containsBadCharacterRegEx = new Regex("[" + Regex.Escape(invalidPathChars) + "]");
+            if (containsBadCharacterRegEx.IsMatch(path.Substring(3, path.Length - 3)))
+                return false;
+
+            var directory = new DirectoryInfo(Path.GetFullPath(path));
+            if (!directory.Exists)
+                directory.Create();
+            return true;
         }
     }
 }
