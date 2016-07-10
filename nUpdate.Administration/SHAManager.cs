@@ -6,7 +6,7 @@ using System.Text;
 namespace nUpdate.Administration
 {
     // ReSharper disable once InconsistentNaming
-    public class SHAManager
+    public class ShaManager
     {
         public static byte[] HashDirectory(string path)
         {

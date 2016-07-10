@@ -166,7 +166,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                _transferData = new FTPData
+                _transferData = new FtpData
                 {
                     Host = ftpHostTextBox.Text,
                     Port = int.Parse(ftpPortTextBox.Text),
@@ -323,7 +323,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            var transferData = new FTPData
+            var transferData = new FtpData
             {
                 Host = ftpHostTextBox.Text,
                 Port = int.Parse(ftpPortTextBox.Text),
@@ -385,7 +385,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             PopupButtons.Ok);
                     }
 
-                    var ftpData = (FTPData) importProject.TransferData;
+                    var ftpData = (FtpData) importProject.TransferData;
                     ftpHostTextBox.Text = ftpData.Host;
                     ftpPortTextBox.Text = ftpData.Port.ToString(CultureInfo.InvariantCulture);
                     ftpUserTextBox.Text = ftpData.Username;

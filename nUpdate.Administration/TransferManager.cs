@@ -42,8 +42,8 @@ namespace nUpdate.Administration
             {
                 case TransferProtocol.FTP:
                     var ftpTransferProvider =
-                        (FTPTransferService)GetDefaultServiceProvider().GetService(typeof(FTPTransferService));
-                    ftpTransferProvider.Data = (FTPData)data;
+                        (FtpTransferService)GetDefaultServiceProvider().GetService(typeof(FtpTransferService));
+                    ftpTransferProvider.Data = (FtpData)data;
                     return ftpTransferProvider;
                 case TransferProtocol.HTTP:
                     var httpTransferProvider =
