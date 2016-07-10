@@ -81,7 +81,7 @@ namespace nUpdate.Administration.Application
             ActiveProject = default(UpdateProject);
             UpdateFactory = null;
             Logger = null;
-            TransferManager.Dispose();
+            TransferManager?.Dispose();
             TransferManager = null;
         }
     }
