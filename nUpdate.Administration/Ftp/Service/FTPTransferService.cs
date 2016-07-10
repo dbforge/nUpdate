@@ -29,7 +29,7 @@ namespace nUpdate.Administration.Ftp.Service
                 if (_ftpData.Directory != null && _ftpData.Directory.EndsWith("/") && _ftpData.Directory.Length > 1)
                     _ftpData.Directory = _ftpData.Directory.Remove(_ftpData.Directory.Length - 1);
 
-                _ftpClient = new FtpClient(_ftpData.Host, _ftpData.Port, _ftpData.Protocol)
+                _ftpClient = new FtpClient(_ftpData.Host, _ftpData.Port, _ftpData.FtpSpecificProtocol)
                 {
                     DataTransferMode = _ftpData.UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                     FileTransferType = TransferType.Binary,

@@ -6,9 +6,9 @@ namespace nUpdate.Administration
     internal struct FTPData : ITransferData
     {
         /// <summary>
-        ///     Gets or sets the protocol to use.
+        ///     Gets or sets the specific FTP protocol to use.
         /// </summary>
-        public FtpSecurityProtocol Protocol { get; set; }
+        public FtpSecurityProtocol FtpSpecificProtocol { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether passive move should be used, or not.
