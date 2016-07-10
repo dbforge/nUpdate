@@ -484,7 +484,6 @@
     <Compile Include="Win32\Margins.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="TransferManager.cs" />
-    <Compile Include="IResettable.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="ListingItem.cs" />
     <Compile Include="Navigator.cs" />
