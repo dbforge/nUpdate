@@ -152,7 +152,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     ScriptUri = new Uri(phpScriptUriTextBox.Text),
                     MustAuthenticate = authenticateCheckBox.Checked,
                     Username = httpUsernameTextBox.Text,
-                    Password = authenticateCheckBox.Checked ? Convert.ToBase64String(AESManager.Encrypt(httpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword)) : Empty
+                    Password = authenticateCheckBox.Checked ? Convert.ToBase64String(AesManager.Encrypt(httpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword)) : Empty
                 };
                 
                 informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
@@ -174,7 +174,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
                     FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                     Username = ftpUserTextBox.Text,
-                    Password = Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
+                    Password = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
                 };
 
                 informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
@@ -330,7 +330,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
                 FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                 Username = ftpUserTextBox.Text,
-                Password = Convert.ToBase64String(AESManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
+                Password = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
             };
 
             var searchDialog = new DirectorySearchDialog(new TransferManager(TransferProtocol.FTP, transferData), nameTextBox.Text);

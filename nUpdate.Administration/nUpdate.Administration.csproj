@@ -127,7 +127,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AESManager.cs" />
+    <Compile Include="AesManager.cs" />
     <Compile Include="Application\Extension\FileAssociationInfo.cs" />
     <Compile Include="Application\Extension\ProgramAssociationInfo.cs" />
     <Compile Include="Application\Extension\ProgramIcon.cs" />

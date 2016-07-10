@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 namespace nUpdate.Administration
 {
 // ReSharper disable once InconsistentNaming
-    public class AESManager
+    public class AesManager
     {
         /// <summary>
         ///     Encrypts a string with the given key and initializing vector.

@@ -37,7 +37,7 @@ namespace nUpdate.Administration.Ftp.Service
                     //Proxy = _ftpData.Proxy != null ? new HttpProxyClient(_ftpData.Proxy.Address.ToString()) : null
                 };
 
-                _password = AESManager.Decrypt(Convert.FromBase64String(_ftpData.Password),
+                _password = AesManager.Decrypt(Convert.FromBase64String(_ftpData.Password),
                     Program.AesKeyPassword, Program.AesIvPassword);
             }
         }
