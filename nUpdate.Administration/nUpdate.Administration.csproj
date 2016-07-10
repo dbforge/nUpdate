@@ -141,7 +141,7 @@
     <Compile Include="CodeDomHelper.cs" />
     <Compile Include="Exceptions\TransferProtocolException.cs" />
     <Compile Include="FilePathProvider.cs" />
-    <Compile Include="FTPData.cs" />
+    <Compile Include="FtpData.cs" />
     <Compile Include="Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
     <Compile Include="Ftp\EventArgs\FtpRequestEventArgs.cs" />
     <Compile Include="Ftp\EventArgs\FtpResponseEventArgs.cs" />
@@ -180,7 +180,7 @@
     <Compile Include="Ftp\FtpResponseCollection.cs" />
     <Compile Include="Ftp\FtpResponseQueue.cs" />
     <Compile Include="Ftp\Hashing\Crc32.cs" />
-    <Compile Include="Ftp\Service\FTPTransferService.cs" />
+    <Compile Include="Ftp\Service\FtpTransferService.cs" />
     <Compile Include="TransferServiceProvider.cs" />
     <Compile Include="Http\HttpData.cs" />
     <Compile Include="Http\HttpTransferProvider.cs" />
@@ -269,8 +269,8 @@
     <Compile Include="Localization\LocalizationProperties.cs" />
     <Compile Include="ResourceHelper.cs" />
     <Compile Include="Singleton.cs" />
-    <Compile Include="SQL\SqlData.cs" />
-    <Compile Include="SQL\SQLManager.cs" />
+    <Compile Include="Sql\SqlData.cs" />
+    <Compile Include="Sql\SqlManager.cs" />
     <Compile Include="StatisticsEntryMethod.cs" />
     <Compile Include="TransferProtocol.cs" />
     <Compile Include="TrulyObservableCollection.cs" />
@@ -490,7 +490,7 @@
     <Compile Include="Navigator.cs" />
     <Compile Include="PackageItem.cs" />
     <Compile Include="ServiceProviderHelper.cs" />
-    <Compile Include="SHAManager.cs" />
+    <Compile Include="ShaManager.cs" />
     <Compile Include="StatisticsServer.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Win32\PaintStruct.cs" />

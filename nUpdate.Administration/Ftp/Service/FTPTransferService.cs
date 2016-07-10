@@ -10,14 +10,14 @@ using nUpdate.Administration.TransferInterface;
 namespace nUpdate.Administration.Ftp.Service
 {
     // ReSharper disable once InconsistentNaming
-    internal class FTPTransferService : ITransferProvider
+    internal class FtpTransferService : ITransferProvider
     {
         private bool _disposed;
         private FtpClient _ftpClient;
-        private FTPData _ftpData;
+        private FtpData _ftpData;
         private SecureString _password;
 
-        internal FTPData Data
+        internal FtpData Data
         {
             get { return _ftpData; }
             set

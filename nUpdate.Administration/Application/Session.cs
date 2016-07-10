@@ -43,9 +43,9 @@ namespace nUpdate.Administration.Application
             => AvailableLocations.First(x => x.Guid == ActiveProject.Guid).LastSeenPath;
 
         /// <summary>
-        ///     Gets the <see cref="Sql.SQLManager"/> of the <see cref="Session"/> for managing statistics entries.
+        ///     Gets the <see cref="Sql.SqlManager"/> of the <see cref="Session"/> for managing statistics entries.
         /// </summary>
-        internal static SQLManager SQLManager { get; private set; }
+        internal static SqlManager SQLManager { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="Proxy.ProxyManager"/> of the <see cref="Session"/> for managing proxies.
@@ -69,7 +69,7 @@ namespace nUpdate.Administration.Application
             UpdateFactory = new UpdateFactory(project);
             Logger = new PackageActionLogger(project);
             TransferManager = new TransferManager(project);
-            SQLManager = new SQLManager(project);
+            SQLManager = new SqlManager(project);
             ProxyManager = new ProxyManager();
             PackagesPath = Path.Combine(FilePathProvider.Path, "Projects", project.Guid.ToString());
 

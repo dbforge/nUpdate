@@ -3,9 +3,9 @@
 namespace nUpdate.Administration.Sql
 {
     // ReSharper disable once InconsistentNaming
-    internal class SQLManager
+    internal class SqlManager
     {
-        public SQLManager(UpdateProject project)
+        public SqlManager(UpdateProject project)
         {
             Data = project.SqlData;
         }

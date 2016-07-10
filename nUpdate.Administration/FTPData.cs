@@ -3,7 +3,7 @@
 namespace nUpdate.Administration
 {
     // ReSharper disable once InconsistentNaming
-    internal struct FTPData : ITransferData
+    internal struct FtpData : ITransferData
     {
         /// <summary>
         ///     Gets or sets the specific FTP protocol to use.
