@@ -25,7 +25,7 @@ namespace nUpdate.Administration.Application
         private string _name;
         private List<UpdatePackage> _packages;
         private string _privateKey;
-        private TransferProtocol _protocol;
+        private TransferProtocol _transferProtocol;
         private ProxyData _proxyData;
         private string _publicKey;
         private SqlData _sqlData;
@@ -157,14 +157,14 @@ namespace nUpdate.Administration.Application
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="TransferProtocol" /> that should be used for data transfers.
+        ///     Gets or sets the <see cref="Administration.TransferProtocol" /> that should be used for data transfers.
         /// </summary>
-        public TransferProtocol Protocol
+        public TransferProtocol TransferProtocol
         {
-            get { return _protocol; }
+            get { return _transferProtocol; }
             set
             {
-                _protocol = value;
+                _transferProtocol = value;
                 OnPropertyChanged();
             }
         }
