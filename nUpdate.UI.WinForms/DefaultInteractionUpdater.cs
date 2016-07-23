@@ -20,7 +20,6 @@ namespace nUpdate.UI.WinForms
     public class DefaultInteractionUpdater
     {
         private readonly LocalizationProperties _lp = new LocalizationProperties();
-        private bool _updatesAvailable;
         private bool _isTaskRunning;
         private readonly Updater _updaterInstance;
 
@@ -68,6 +67,8 @@ namespace nUpdate.UI.WinForms
             var progressIndicator = new Microsoft.Progress<UpdateProgressData>();
             var downloadDialog = new UpdateDownloadDialog { InteractionUpdater = _updaterInstance };
 
+            UpdateResult updateResult;
+
             try
             {
                 // ReSharper disable once MethodSupportsCancellation
@@ -78,7 +79,7 @@ namespace nUpdate.UI.WinForms
 
                     try
                     {
-                        _updatesAvailable = await _updaterInstance.SearchForUpdatesTask(searchCancellationToken);
+                        updateResult = await _updaterInstance.SearchForUpdates(searchCancellationToken);
                     }
                     catch (OperationCanceledException)
                     {
@@ -105,16 +106,16 @@ namespace nUpdate.UI.WinForms
                         await TaskEx.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
                     }
 
-                    if (_updatesAvailable)
+                    if (updateResult.UpdatesFound)
                     {
                         var newUpdateDialogReference = new DialogResultReference();
                         Context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
                             return;
                     }
-                    else if (!_updatesAvailable && UseBackgroundSearch)
+                    else if (!updateResult.UpdatesFound && UseBackgroundSearch)
                         return;
-                    else if (!_updatesAvailable && !UseBackgroundSearch)
+                    else if (!updateResult.UpdatesFound && !UseBackgroundSearch)
                     {
                         var noUpdateDialogResultReference = new DialogResultReference();
                         if (!UseBackgroundSearch)
@@ -129,7 +130,7 @@ namespace nUpdate.UI.WinForms
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
                         
-                        await _updaterInstance.DownloadUpdatesTask(downloadCancellationToken, progressIndicator);
+                        await _updaterInstance.DownloadUpdates(updateResult.NewestPackages, downloadCancellationToken, progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
@@ -143,10 +144,10 @@ namespace nUpdate.UI.WinForms
                     }
                     Context.Send(downloadDialog.CloseDialog, null);
 
-                    bool isValid = false;
+                    ValidationResult result = null;
                     try
                     {
-                        isValid = _updaterInstance.ValidateSignatures();
+                        result = await _updaterInstance.ValidateUpdates(updateResult.NewestPackages);
                     }
                     catch (FileNotFoundException)
                     {
@@ -165,12 +166,12 @@ namespace nUpdate.UI.WinForms
                             ex, PopupButtons.Ok), null);
                     }
 
-                    if (!isValid)
+                    if (result != null && !result.AreValid)
                         Context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        _updaterInstance.InstallUpdates();
+                        _updaterInstance.ApplyUpdates(updateResult.NewestPackages);
                 });
             }
             finally
