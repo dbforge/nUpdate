@@ -6,78 +6,87 @@ using System.Linq;
 
 namespace nUpdate
 {
-    internal class UpdateResult
+    public class UpdateResult
     {
         private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
+
+        internal UpdateResult(IEnumerable<UpdatePackage> newPackages)
+        {
+            _newUpdatePackages.AddRange(newPackages);
+        }
+
         // TODO: Requirements
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
-        public UpdateResult(IEnumerable<UpdatePackage> packages, IUpdateVersion currentVersion,
+        internal UpdateResult(IEnumerable<UpdatePackage> packages, IUpdateVersion currentVersion,
             bool includeAlpha, bool includeBeta)
         {
-            if (packages != null)
+            if (packages == null)
+                throw new ArgumentNullException(nameof(packages));
+
+            var is64Bit = Environment.Is64BitOperatingSystem;
+            foreach (
+                var package in
+                    packages.Where(
+                        item => new UpdateVersion(item.LiteralVersion).IsNewerThan(currentVersion)))
             {
-                var is64Bit = Environment.Is64BitOperatingSystem;
-                foreach (
-                    var package in
-                        packages.Where(
-                            item => new UpdateVersion(item.LiteralVersion).IsNewerThan(currentVersion)))
+                var packageVersion = new UpdateVersion(package.LiteralVersion);
+
+                // If it's an Alpha-version or Beta-version and we shouldn't include them...
+                if ((!includeAlpha &&
+                     packageVersion.DevelopmentalStage ==
+                     DevelopmentalStage.Alpha) ||
+                    (!includeBeta &&
+                     packageVersion.DevelopmentalStage ==
+                     DevelopmentalStage.Beta))
+                    continue;
+
+                if (package.UnsupportedVersions != null &&
+                    package.UnsupportedVersions.Any(
+                        unsupportedVersion =>
+                            new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
+                    continue;
+
+                if (package.Architecture == Architecture.X86 && is64Bit ||
+                    package.Architecture == Architecture.X64 && !is64Bit)
+                    continue;
+
+                if (package.UpdateRequirements != null &&
+                    package.UpdateRequirements.Any(req => !req.CheckRequirement()))
                 {
-                    var packageVersion = new UpdateVersion(package.LiteralVersion);
-
-                    // If it's an Alpha-version or Beta-version and we shouldn't include them...
-                    if ((!includeAlpha &&
-                         packageVersion.DevelopmentalStage ==
-                         DevelopmentalStage.Alpha) ||
-                        (!includeBeta &&
-                         packageVersion.DevelopmentalStage ==
-                         DevelopmentalStage.Beta))
-                        continue;
-
-                    if (package.UnsupportedVersions != null &&
-                        package.UnsupportedVersions.Any(
-                            unsupportedVersion =>
-                                new UpdateVersion(unsupportedVersion).BasicVersion == currentVersion.BasicVersion))
-                        continue;
-
-                    if (package.Architecture == Architecture.X86 && is64Bit ||
-                        package.Architecture == Architecture.X64 && !is64Bit)
-                        continue;
-
-                    if (package.UpdateRequirements != null &&
-                        package.UpdateRequirements.Any(req => !req.CheckRequirement()))
-                    {
-                        UnfulfilledRequirements.Add(packageVersion,
-                            package.UpdateRequirements.Where(req => !req.CheckRequirement()).ToList());
-                        continue;
-                    }
-
-                    _newUpdatePackages.Add(package);
+                    UnfulfilledRequirements.Add(packageVersion,
+                        package.UpdateRequirements.Where(req => !req.CheckRequirement()).ToList());
+                    continue;
                 }
 
-                var highestVersion =
-                    UpdateVersion.GetHighestUpdateVersion(
-                        _newUpdatePackages.Select(item => new UpdateVersion(item.LiteralVersion)));
-                var ignoredVersions = _newUpdatePackages.Where(
-                    item => new UpdateVersion(item.LiteralVersion).IsOlderThan(highestVersion) && !item.NecessaryUpdate)
-                    .Select(item => new UpdateVersion(item.LiteralVersion));
-                foreach (var ignoredVersion in ignoredVersions)
-                {
-                    _newUpdatePackages.Remove(
-                        _newUpdatePackages.First(
-                            item => new UpdateVersion(item.LiteralVersion).IsEqualTo(ignoredVersion)));
-                    UnfulfilledRequirements.Remove(ignoredVersion);
-                }
+                _newUpdatePackages.Add(package);
             }
 
-            UpdatesFound = _newUpdatePackages.Count > 0;
+            var highestVersion =
+                UpdateVersion.GetHighestUpdateVersion(
+                    _newUpdatePackages.Select(item => new UpdateVersion(item.LiteralVersion)));
+            var ignoredVersions = _newUpdatePackages.Where(
+                item => new UpdateVersion(item.LiteralVersion).IsOlderThan(highestVersion) && !item.NecessaryUpdate)
+                .Select(item => new UpdateVersion(item.LiteralVersion));
+            foreach (var ignoredVersion in ignoredVersions)
+            {
+                _newUpdatePackages.Remove(
+                    _newUpdatePackages.First(
+                        item => new UpdateVersion(item.LiteralVersion).IsEqualTo(ignoredVersion)));
+                UnfulfilledRequirements.Remove(ignoredVersion);
+            }
+        }
+
+        internal static UpdateResult Empty()
+        {
+            return new UpdateResult(Enumerable.Empty<UpdatePackage>());
         }
 
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
-        public bool UpdatesFound { get; }
+        public bool UpdatesFound => _newUpdatePackages.Count > 0;
 
         /// <summary>
         ///     Gets the <see cref="UpdateRequirement" />s of their relating <see cref="UpdateVersion" /> that have not been

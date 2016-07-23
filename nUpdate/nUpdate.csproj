@@ -72,13 +72,15 @@
   <ItemGroup>
     <Compile Include="Architecture.cs" />
     <Compile Include="DomainHelper.cs" />
+    <Compile Include="Downloader.cs" />
     <Compile Include="Exceptions\ApplicationTerminateException.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ITransferData.cs" />
     <Compile Include="IUpdateVersion.cs" />
     <Compile Include="SemanticVersion.cs" />
-    <Compile Include="SizeHelper.cs" />
     <Compile Include="UpdateArgument.cs" />
     <Compile Include="UpdateArgumentExecutionOptions.cs" />
+    <Compile Include="UpdateHelper.cs" />
     <Compile Include="UpdatePackage.cs" />
     <Compile Include="UpdateProgressData.cs" />
     <Compile Include="Updater.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="UpdateResult.cs" />
     <Compile Include="UpdateVersion.cs" />
     <Compile Include="UriConverter.cs" />
+    <Compile Include="ValidationResult.cs" />
     <Compile Include="WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
