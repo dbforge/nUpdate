@@ -141,9 +141,9 @@ namespace nUpdate
         public bool IncludeBeta { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the current PC should be included into the statistics, or not.
+        ///     Gets or sets a value indicating whether the current client should be included into the statistics, or not.
         /// </summary>
-        public bool IncludeIntoStatistics { get; set; } = true;
+        public bool CaptureStatistics { get; set; } = true;
 
         /// <summary>
         ///     Gets or sets a value indicating whether the host application should be closed as soon as the nUpdate
@@ -212,7 +212,7 @@ namespace nUpdate
                 await Downloader.DownloadFile(p.UpdatePackageUri, Path.Combine(_applicationUpdateDirectory,
                     $"{p.LiteralVersion}.zip"), (long) totalSize, cancellationToken, progress);
 
-                if (!p.UseStatistics || !IncludeIntoStatistics)
+                if (!p.UseStatistics || !CaptureStatistics)
                     return;
 
                 try
