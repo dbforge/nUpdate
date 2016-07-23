@@ -128,7 +128,7 @@ namespace nUpdate
         /// <summary>
         ///     Gets or sets the path of the assembly that contains the custom user interface data for the nUpdate UpdateInstaller.
         /// </summary>
-        public string CustomInstallerUIAssemblyPath { get; set; }
+        public string InstallerUserInterfacePath { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions, or not.
@@ -356,8 +356,8 @@ namespace nUpdate
                 updatePackages.ToDictionary<UpdatePackage, IUpdateVersion, IEnumerable<Operation>>(
                     package => package.LiteralVersion.ToUpdateVersion(), package => package.Operations);
 
-            var installerUiAssemblyPath = !string.IsNullOrEmpty(CustomInstallerUIAssemblyPath)
-                ? $"\"{CustomInstallerUIAssemblyPath}\""
+            var installerUiAssemblyPath = !string.IsNullOrEmpty(InstallerUserInterfacePath)
+                ? $"\"{InstallerUserInterfacePath}\""
                 : string.Empty;
             string[] args =
             {
