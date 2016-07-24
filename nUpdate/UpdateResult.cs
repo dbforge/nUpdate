@@ -19,16 +19,16 @@ namespace nUpdate
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
-        internal UpdateResult(IEnumerable<UpdatePackage> packages, IUpdateVersion currentVersion,
+        internal UpdateResult(IEnumerable<UpdatePackage> fullPackageData, IUpdateVersion currentVersion,
             bool includeAlpha, bool includeBeta)
         {
-            if (packages == null)
-                throw new ArgumentNullException(nameof(packages));
+            if (fullPackageData == null)
+                throw new ArgumentNullException(nameof(fullPackageData));
 
             var is64Bit = Environment.Is64BitOperatingSystem;
             foreach (
                 var package in
-                    packages.Where(
+                    fullPackageData.Where(
                         item => new UpdateVersion(item.LiteralVersion).IsNewerThan(currentVersion)))
             {
                 var packageVersion = new UpdateVersion(package.LiteralVersion);
