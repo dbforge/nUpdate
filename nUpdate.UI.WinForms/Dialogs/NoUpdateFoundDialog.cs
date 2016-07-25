@@ -24,7 +24,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             headerLabel.Text = _lp.NoUpdateDialogHeader;
             infoLabel.Text = _lp.NoUpdateDialogInfoText;
 
-            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
         }
 

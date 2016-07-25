@@ -59,6 +59,7 @@
     <Compile Include="Downloader.cs" />
     <Compile Include="Exceptions\ApplicationTerminateException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="IconHelper.cs" />
     <Compile Include="ITransferData.cs" />
     <Compile Include="IUpdateVersion.cs" />
     <Compile Include="SemanticVersion.cs" />

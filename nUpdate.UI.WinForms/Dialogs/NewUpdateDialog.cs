@@ -52,7 +52,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             installButton.Text = _lp.InstallButtonText;
             updateSizeLabel.Text = string.Format(_lp.NewUpdateDialogSizeText, ((long)Updater.TotalSize).ToAdequateSizeString());
             
-            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
             if (Icon != null)
                 iconPictureBox.Image = Icon.ToBitmap();

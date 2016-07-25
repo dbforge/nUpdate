@@ -51,7 +51,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             cancelButton.Text = _lp.CancelButtonText;
 
             Text = Application.ProductName;
-            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
         }
 
         public void ShowModalDialog(object dialogResultReference)
