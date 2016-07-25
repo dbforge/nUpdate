@@ -273,7 +273,7 @@ namespace nUpdate
             if (package == null)
                 throw new ArgumentNullException(nameof(package));
 
-            return TaskEx.Run(() =>
+            return Task.Run(() =>
             {
                 if (package.Signature == null || package.Signature.Length <= 0)
                     throw new ArgumentException(

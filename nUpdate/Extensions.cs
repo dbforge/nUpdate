@@ -12,9 +12,9 @@ namespace nUpdate
     {
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> body, int degreeOfParallelism = 4)
         {
-            return TaskEx.WhenAll(
+            return Task.WhenAll(
                 from partition in Partitioner.Create(source).GetPartitions(degreeOfParallelism)
-                select TaskEx.Run(async () => {
+                select Task.Run(async () => {
                     using (partition)
                         while (partition.MoveNext())
                             await body(partition.Current);

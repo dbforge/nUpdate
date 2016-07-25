@@ -65,7 +65,7 @@ namespace nUpdate.UI.WinForms
             var noUpdateDialog = new NoUpdateFoundDialog { Updater = _updater };
 
             // ReSharper disable once UnusedVariable
-            var progressIndicator = new Microsoft.Progress<UpdateProgressData>();
+            var progressIndicator = new Progress<UpdateProgressData>();
             var downloadDialog = new UpdateDownloadDialog { Updater = _updater };
 
             try
@@ -103,7 +103,7 @@ namespace nUpdate.UI.WinForms
                     if (!UseBackgroundSearch)
                     {
                         Context.Post(searchDialog.CloseDialog, null);
-                        await TaskEx.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
+                        await Task.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
                     }
 
                     if (updatesFound)
