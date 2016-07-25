@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace nUpdate
 {
-    public class UpdateResult
+    internal class UpdateResult
     {
         private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
 
