@@ -78,6 +78,7 @@
     <Compile Include="Core\ProgressReporterService.cs" />
     <Compile Include="Core\ServiceProviderHelper.cs" />
     <Compile Include="Exceptions\CompileException.cs" />
+    <Compile Include="IconHelper.cs" />
     <Compile Include="UI\Controls\ControlPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -98,6 +99,7 @@
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Updater.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
     <EmbeddedResource Include="UI\Dialogs\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
