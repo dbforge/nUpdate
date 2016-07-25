@@ -116,7 +116,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 if (packageFileInfo.Exists)
                 {
                     packageListViewItem.SubItems.Add(packageFileInfo.CreationTime.ToString(CultureInfo.InvariantCulture));
-                    packageListViewItem.SubItems.Add(SizeHelper.ToAdequateSizeString(packageFileInfo.Length));
+                    packageListViewItem.SubItems.Add(packageFileInfo.Length.ToAdequateSizeString());
                 }
                 else
                 {
