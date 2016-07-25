@@ -24,7 +24,7 @@ namespace nUpdate.Administration
 
         internal static void DoubleBuffer(this Control control)
         {
-            if (SystemInformation.TerminalServerSession)
+            if (System.Windows.Forms.SystemInformation.TerminalServerSession)
                 return;
             var dbProp = typeof (Control).GetProperty("DoubleBuffered",
                 BindingFlags.NonPublic | BindingFlags.Instance);
