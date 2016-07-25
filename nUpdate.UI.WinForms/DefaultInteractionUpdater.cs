@@ -61,26 +61,25 @@ namespace nUpdate.UI.WinForms
             
             var searchDialog = new UpdateSearchDialog { Updater = _updater };
 
-            var newUpdateDialog = new NewUpdateDialog {NewUpdatePackages = _updater };
-            var noUpdateDialog = new NoUpdateFoundDialog { NewUpdatePackages = _updater };
+            var newUpdateDialog = new NewUpdateDialog { Updater = _updater };
+            var noUpdateDialog = new NoUpdateFoundDialog { Updater = _updater };
 
             // ReSharper disable once UnusedVariable
             var progressIndicator = new Microsoft.Progress<UpdateProgressData>();
-            var downloadDialog = new UpdateDownloadDialog { NewUpdatePackages = _updater };
-
-            UpdateResult updateResult;
+            var downloadDialog = new UpdateDownloadDialog { Updater = _updater };
 
             try
             {
                 // ReSharper disable once MethodSupportsCancellation
-                TaskEx.Run(async delegate
+                Task.Run(async delegate
                 {
                     if (!UseBackgroundSearch)
                         Context.Post(searchDialog.ShowModalDialog, null);
 
+                    bool updatesFound;
                     try
                     {
-                        updateResult = await _updater.SearchForUpdates(searchCancellationToken);
+                        updatesFound = await _updater.SearchForUpdates(searchCancellationToken);
                     }
                     catch (OperationCanceledException)
                     {
@@ -107,16 +106,16 @@ namespace nUpdate.UI.WinForms
                         await TaskEx.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
                     }
 
-                    if (updateResult.UpdatesFound)
+                    if (updatesFound)
                     {
                         var newUpdateDialogReference = new DialogResultReference();
                         Context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
                             return;
                     }
-                    else if (!updateResult.UpdatesFound && UseBackgroundSearch)
+                    else if (UseBackgroundSearch)
                         return;
-                    else if (!updateResult.UpdatesFound && !UseBackgroundSearch)
+                    else if (!UseBackgroundSearch)
                     {
                         var noUpdateDialogResultReference = new DialogResultReference();
                         if (!UseBackgroundSearch)
@@ -131,7 +130,7 @@ namespace nUpdate.UI.WinForms
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
                         
-                        await _updater.DownloadUpdates(updateResult.NewestPackages, downloadCancellationToken, progressIndicator);
+                        await _updater.DownloadUpdates(downloadCancellationToken, progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
@@ -148,7 +147,7 @@ namespace nUpdate.UI.WinForms
                     ValidationResult result = null;
                     try
                     {
-                        result = await _updater.ValidateUpdates(updateResult.NewestPackages);
+                        result = await _updater.ValidateUpdates();
                     }
                     catch (FileNotFoundException)
                     {
@@ -172,7 +171,7 @@ namespace nUpdate.UI.WinForms
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        _updater.ApplyUpdates(updateResult.NewestPackages);
+                        _updater.ApplyUpdates();
                 });
             }
             finally
