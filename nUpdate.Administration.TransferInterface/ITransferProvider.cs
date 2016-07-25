@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft;
 
 namespace nUpdate.Administration.TransferInterface
 {
@@ -76,7 +75,7 @@ namespace nUpdate.Administration.TransferInterface
         ///     Uploads a file onto the server.
         /// </summary>
         /// <param name="filePath">The local path of the file to upload.</param>
-        /// <param name="progress">The <see cref="Progress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
+        /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
         Task UploadFile(string filePath, IProgress<TransferProgressEventArgs> progress);
 
         // TODO: Docs and params
@@ -85,7 +84,7 @@ namespace nUpdate.Administration.TransferInterface
         /// </summary>
         /// <param name="fileStream">The <see cref="Stream"/> containing the data to upload.</param>
         /// <param name="remotePath">The remote path of the file.</param>
-        /// <param name="progress">The <see cref="Progress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
+        /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
         Task UploadFile(Stream fileStream, string remotePath, IProgress<TransferProgressEventArgs> progress);
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace nUpdate.Administration.TransferInterface
         /// </summary>
         /// <param name="packagePath">The local path of the package.</param>
         /// <param name="packageVersionString">The package version represented as a <see cref="string"/> for specifying the directory name.</param>
-        /// <param name="progress">The <see cref="Progress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
+        /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that should be used for cancelling the upload.</param>
         Task UploadPackage(string packagePath, string packageVersionString, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress);
     }
