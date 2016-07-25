@@ -47,9 +47,9 @@ namespace nUpdate.UI.WinForms
         public bool UseBackgroundSearch { get; set; }
 
         /// <summary>
-        ///     Begins the automated update process.
+        ///     Executes the integrated update process.
         /// </summary>
-        public void Begin()
+        public void Execute()
         {
             if (_isTaskRunning)
                 return;
