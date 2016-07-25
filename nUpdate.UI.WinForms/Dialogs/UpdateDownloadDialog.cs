@@ -43,7 +43,7 @@ namespace nUpdate.UI.WinForms.Dialogs
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture, InteractionUpdater.LocalizationFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
 
             headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
             infoLabel.Text = string.Format(

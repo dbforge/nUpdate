@@ -21,7 +21,7 @@ namespace nUpdate.UI.WinForms
     {
         private readonly LocalizationProperties _lp = new LocalizationProperties();
         private bool _isTaskRunning;
-        private readonly Updater _updaterInstance;
+        private readonly Updater _updater;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultInteractionUpdater"/> class.
@@ -33,7 +33,7 @@ namespace nUpdate.UI.WinForms
         {
             Context = context;
             UseBackgroundSearch = useHiddenSearch;
-            _updaterInstance = updater;
+            _updater = updater;
         }
 
         /// <summary>
@@ -55,17 +55,18 @@ namespace nUpdate.UI.WinForms
                 return;
 
             _isTaskRunning = true;
+
             var searchCancellationToken = new CancellationToken();
             var downloadCancellationToken = new CancellationToken();
+            
+            var searchDialog = new UpdateSearchDialog { Updater = _updater };
 
-            var searchDialog = new UpdateSearchDialog { InteractionUpdater = _updaterInstance };
-
-            var newUpdateDialog = new NewUpdateDialog {InteractionUpdater = _updaterInstance };
-            var noUpdateDialog = new NoUpdateFoundDialog { InteractionUpdater = _updaterInstance };
+            var newUpdateDialog = new NewUpdateDialog {NewUpdatePackages = _updater };
+            var noUpdateDialog = new NoUpdateFoundDialog { NewUpdatePackages = _updater };
 
             // ReSharper disable once UnusedVariable
             var progressIndicator = new Microsoft.Progress<UpdateProgressData>();
-            var downloadDialog = new UpdateDownloadDialog { InteractionUpdater = _updaterInstance };
+            var downloadDialog = new UpdateDownloadDialog { NewUpdatePackages = _updater };
 
             UpdateResult updateResult;
 
@@ -79,7 +80,7 @@ namespace nUpdate.UI.WinForms
 
                     try
                     {
-                        updateResult = await _updaterInstance.SearchForUpdates(searchCancellationToken);
+                        updateResult = await _updater.SearchForUpdates(searchCancellationToken);
                     }
                     catch (OperationCanceledException)
                     {
@@ -130,7 +131,7 @@ namespace nUpdate.UI.WinForms
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
                         
-                        await _updaterInstance.DownloadUpdates(updateResult.NewestPackages, downloadCancellationToken, progressIndicator);
+                        await _updater.DownloadUpdates(updateResult.NewestPackages, downloadCancellationToken, progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
@@ -147,7 +148,7 @@ namespace nUpdate.UI.WinForms
                     ValidationResult result = null;
                     try
                     {
-                        result = await _updaterInstance.ValidateUpdates(updateResult.NewestPackages);
+                        result = await _updater.ValidateUpdates(updateResult.NewestPackages);
                     }
                     catch (FileNotFoundException)
                     {
@@ -171,7 +172,7 @@ namespace nUpdate.UI.WinForms
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        _updaterInstance.ApplyUpdates(updateResult.NewestPackages);
+                        _updater.ApplyUpdates(updateResult.NewestPackages);
                 });
             }
             finally

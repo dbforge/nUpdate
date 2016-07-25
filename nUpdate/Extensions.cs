@@ -20,7 +20,7 @@ namespace nUpdate
                             await body(partition.Current);
                 }));
         }
-        public static string ToAdequateSizeString(long fileSize)
+        public static string ToAdequateSizeString(this long fileSize)
         {
             var sb = new StringBuilder(20);
             NativeMethods.StrFormatByteSize(fileSize, sb, 20);

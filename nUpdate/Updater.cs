@@ -152,6 +152,16 @@ namespace nUpdate
         public bool CloseHostApplication { get; set; } = true;
 
         /// <summary>
+        ///     Gets all new update packages that have been found.
+        /// </summary>
+        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } = Enumerable.Empty<UpdatePackage>();
+
+        /// <summary>
+        ///     Gets the total size of all found update packages.
+        /// </summary>
+        public double TotalSize { get; private set; } = double.NaN;
+
+        /// <summary>
         ///     Gets or sets the <see cref="WebProxy" /> that should be used.
         /// </summary>
         public WebProxy Proxy { get; set; }
@@ -167,10 +177,10 @@ namespace nUpdate
         /// </summary>
         /// <returns>Returns a <c>UpdateResult</c> object that contains the result data of the update search.</returns>
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
-        public async Task<UpdateResult> SearchForUpdates(CancellationToken cancellationToken)
+        public async Task<bool> SearchForUpdates(CancellationToken cancellationToken)
         {
             if (!WebConnection.IsAvailable())
-                return UpdateResult.Empty();
+                return false;
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
@@ -187,9 +197,25 @@ namespace nUpdate
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            return new UpdateResult(packageData, CurrentVersion,
+            var result = new UpdateResult(packageData, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
+            AvailablePackages = result.NewestPackages;
+            TotalSize = await UpdateHelper.GetTotalPackageSize(AvailablePackages);
+            return result.UpdatesFound;
         }
+
+        /// <summary>
+        ///     Downloads all available update packages from the server.
+        /// </summary>
+        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException" />.</exception>
+        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
+        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        public async Task DownloadUpdates(CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
+        {
+            await DownloadUpdates(AvailablePackages, cancellationToken, progress);
+        } 
 
         /// <summary>
         ///     Downloads the specified update packages from the server.
@@ -240,7 +266,8 @@ namespace nUpdate
         /// <exception cref="FileNotFoundException">One of the specified update packages could not be found.</exception>
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="ValidateUpdates" />
+        /// <seealso cref="ValidateUpdates()" />
+        /// <seealso cref="ValidateUpdates(IEnumerable{UpdatePackage})" />
         public Task<bool> ValidateUpdate(UpdatePackage package)
         {
             if (package == null)
@@ -276,6 +303,19 @@ namespace nUpdate
         }
 
         /// <summary>
+        ///     Determines whether all available packages are valid, or not.
+        /// </summary>
+        /// <returns>A <see cref="ValidationResult" /> containing information about the validation of all packages.</returns>
+        /// <exception cref="FileNotFoundException">One of the specified update packages could not be found.</exception>
+        /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="ValidateUpdate" />
+        public async Task<ValidationResult> ValidateUpdates()
+        {
+            return await ValidateUpdates(AvailablePackages);
+        } 
+
+        /// <summary>
         ///     Determines whether all specified update packages are valid, or not.
         /// </summary>
         /// <returns>A <see cref="ValidationResult" /> containing information about the validation of all packages.</returns>
@@ -298,11 +338,25 @@ namespace nUpdate
             return validationResult;
         }
 
+        /// <summary>
+        ///     Removes the specified update package.
+        /// </summary>
+        /// <param name="package">The update package.</param>
+        /// <seealso cref="RemoveLocalPackages()" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
         public void RemoveLocalPackage(UpdatePackage package)
         {
-            File.Delete(GetLocalPackagePath(package));
+            string path = GetLocalPackagePath(package);
+            if (File.Exists(path))
+                File.Delete(path);
         }
 
+        /// <summary>
+        ///     Removes the specified update packages.
+        /// </summary>
+        /// <param name="packages">The update packages.</param>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="RemoveLocalPackages()" />
         public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
         {
             foreach (var package in packages)
@@ -310,12 +364,36 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Starts the nUpdate UpdateInstaller to unpack the packages and starts the updating process.
+        ///     Removes all downloaded update packages.
+        /// </summary>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        public void RemoveLocalPackages()
+        {
+            RemoveLocalPackages(AvailablePackages);
+        }
+
+        /// <summary>
+        ///     Prepares and installs the specified update packages.
         /// </summary>
         /// <exception cref="ApplicationTerminateException">
         ///     The application is being terminated. To implement custom actions, catch
         ///     this exception, execute your action(s) and rethrow it.
         /// </exception>
+        /// <seealso cref="ApplyUpdates(IEnumerable{UpdatePackage})"/>
+        public void ApplyUpdates()
+        {
+            ApplyUpdates(AvailablePackages);
+        }
+
+        /// <summary>
+        ///     Prepares and installs the specified update packages.
+        /// </summary>
+        /// <exception cref="ApplicationTerminateException">
+        ///     The application is being terminated. To implement custom actions, catch
+        ///     this exception, execute your action(s) and rethrow it.
+        /// </exception>
+        /// <seealso cref="ApplyUpdates()"/>
         public void ApplyUpdates(IEnumerable<UpdatePackage> packages)
         {
             if (packages == null)

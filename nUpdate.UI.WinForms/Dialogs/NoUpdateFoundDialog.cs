@@ -18,7 +18,7 @@ namespace nUpdate.UI.WinForms.Dialogs
 
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture, InteractionUpdater.LocalizationFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
 
             closeButton.Text = _lp.CloseButtonText;
             headerLabel.Text = _lp.NoUpdateDialogHeader;
