@@ -10,11 +10,6 @@ namespace nUpdate
     {
         private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
 
-        internal UpdateResult(IEnumerable<UpdatePackage> newPackages)
-        {
-            _newUpdatePackages.AddRange(newPackages);
-        }
-
         // TODO: Requirements
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -76,11 +71,6 @@ namespace nUpdate
                         item => new UpdateVersion(item.LiteralVersion).IsEqualTo(ignoredVersion)));
                 UnfulfilledRequirements.Remove(ignoredVersion);
             }
-        }
-
-        internal static UpdateResult Empty()
-        {
-            return new UpdateResult(Enumerable.Empty<UpdatePackage>());
         }
 
         /// <summary>

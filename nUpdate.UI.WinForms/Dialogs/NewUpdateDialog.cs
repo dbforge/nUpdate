@@ -31,26 +31,26 @@ namespace nUpdate.UI.WinForms.Dialogs
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture, InteractionUpdater.LocalizationFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
 
             headerLabel.Text =
                 string.Format(
-                    InteractionUpdater.FilteredUpdatePackageCollection.Count() > 1
+                    Updater.AvailablePackages.Count() > 1
                         ? _lp.NewUpdateDialogMultipleUpdatesHeader
-                        : _lp.NewUpdateDialogSingleUpdateHeader, InteractionUpdater.FilteredUpdatePackageCollection.Count());
+                        : _lp.NewUpdateDialogSingleUpdateHeader, Updater.AvailablePackages.Count());
             infoLabel.Text = string.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
 
             var availableVersions =
-                InteractionUpdater.FilteredUpdatePackageCollection.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
+                Updater.AvailablePackages.Select(item => item.LiteralVersion.ToUpdateVersion()).ToArray();
             newestVersionLabel.Text = string.Format(_lp.NewUpdateDialogAvailableVersionsText,
-                InteractionUpdater.FilteredUpdatePackageCollection.Count() <= 2
+                Updater.AvailablePackages.Count() <= 2
                     ? string.Join(", ", availableVersions.Select(item => item.Description))
                     : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).Description} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).Description}");
-            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, InteractionUpdater.CurrentVersion.Description);
+            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, Updater.CurrentVersion.Description);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
-            updateSizeLabel.Text = string.Format(_lp.NewUpdateDialogSizeText, SizeHelper.ToAdequateSizeString((long)InteractionUpdater.TotalSize));
+            updateSizeLabel.Text = string.Format(_lp.NewUpdateDialogSizeText, ((long)Updater.TotalSize).ToAdequateSizeString());
             
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
@@ -59,12 +59,12 @@ namespace nUpdate.UI.WinForms.Dialogs
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
             AddShieldToButton(installButton);
 
-            foreach (var updateData in InteractionUpdater.FilteredUpdatePackageCollection)
+            foreach (var updatePackage in Updater.AvailablePackages)
             {
-                var versionText = new UpdateVersion(updateData.LiteralVersion).Description;
-                var changelogText = updateData.Changelog.ContainsKey(InteractionUpdater.LanguageCulture)
-                    ? updateData.Changelog.First(item => Equals(item.Key, InteractionUpdater.LanguageCulture)).Value
-                    : updateData.Changelog.First(item => Equals(item.Key, new CultureInfo("en"))).Value;
+                var versionText = new UpdateVersion(updatePackage.LiteralVersion).Description;
+                var changelogText = updatePackage.Changelog.ContainsKey(Updater.LanguageCulture)
+                    ? updatePackage.Changelog.First(item => Equals(item.Key, Updater.LanguageCulture)).Value
+                    : updatePackage.Changelog.First(item => Equals(item.Key, new CultureInfo("en"))).Value;
 
                 changelogTextBox.Text +=
                     string.Format(string.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
@@ -72,7 +72,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             }
 
             var operationAreas =
-                InteractionUpdater.FilteredUpdatePackageCollection.Select(item => item.Operations.Select(op => op.Area)).ToList();
+                Updater.AvailablePackages.Select(item => item.Operations.Select(op => op.Area)).ToList();
             if (!operationAreas.Any())
             {
                 accessLabel.Text = $"{_lp.NewUpdateDialogAccessText} -";

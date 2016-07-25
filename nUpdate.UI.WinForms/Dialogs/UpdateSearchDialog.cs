@@ -23,7 +23,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             headerLabel.Text = _lp.UpdateSearchDialogHeader;
 
             Text = Application.ProductName;
-            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture, InteractionUpdater.LocalizationFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
