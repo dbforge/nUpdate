@@ -13,9 +13,19 @@ namespace nUpdate.Administration.Ftp
     internal class FtpTransferService : ITransferProvider
     {
         private bool _disposed;
-        private FtpClient _ftpClient;
         private FtpData _ftpData;
         private SecureString _password;
+
+        private FtpClient GetNewFtpClient()
+        {
+            return new FtpClient(_ftpData.Host, _ftpData.Port, _ftpData.FtpSpecificProtocol)
+            {
+                DataTransferMode = _ftpData.UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                // TODO: Proxy
+                //Proxy = _ftpData.Proxy != null ? new HttpProxyClient(_ftpData.Proxy.Address.ToString()) : null
+            };
+        }
 
         internal FtpData Data
         {
@@ -29,14 +39,6 @@ namespace nUpdate.Administration.Ftp
                 if (_ftpData.Directory != null && _ftpData.Directory.EndsWith("/") && _ftpData.Directory.Length > 1)
                     _ftpData.Directory = _ftpData.Directory.Remove(_ftpData.Directory.Length - 1);
 
-                _ftpClient = new FtpClient(_ftpData.Host, _ftpData.Port, _ftpData.FtpSpecificProtocol)
-                {
-                    DataTransferMode = _ftpData.UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                    FileTransferType = TransferType.Binary,
-                    // TODO: Proxy
-                    //Proxy = _ftpData.Proxy != null ? new HttpProxyClient(_ftpData.Proxy.Address.ToString()) : null
-                };
-
                 _password = AesManager.Decrypt(Convert.FromBase64String(_ftpData.Password),
                     Program.AesKeyPassword, Program.AesIvPassword);
             }
@@ -44,10 +46,10 @@ namespace nUpdate.Administration.Ftp
 
         public async Task DeleteDirectory(string directoryPath)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
                 IEnumerable<FtpItem> directoryItems = await List(directoryPath, true);
-                await Login();
+                await Login(ftpClient);
 
                 foreach (var item in directoryItems)
                 {
@@ -62,53 +64,37 @@ namespace nUpdate.Administration.Ftp
                     }
                 }
 
-                _ftpClient.DeleteDirectory(directoryPath);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                ftpClient.DeleteDirectory(directoryPath);
             }
         }
 
         public async Task DeleteFile(string directoryPath, string fileName)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(directoryPath);
-                _ftpClient.DeleteFile(fileName);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(directoryPath);
+                ftpClient.DeleteFile(fileName);
             }
         }
 
         public async Task DeleteFile(string fileName)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
-                _ftpClient.DeleteFile(fileName);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+                ftpClient.DeleteFile(fileName);
             }
         }
 
         public async Task<bool> Exists(string directoryPath, string destinationName)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(directoryPath);
-                return _ftpClient.Exists(destinationName);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(directoryPath);
+                return ftpClient.Exists(destinationName);
             }
         }
 
@@ -119,28 +105,24 @@ namespace nUpdate.Administration.Ftp
 
         public async Task<IEnumerable<FtpItem>> List(string path, bool recursive)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                var items = recursive ? _ftpClient.GetDirListDeep(path) : _ftpClient.GetDirList(path);
+                await Login(ftpClient);
+                FtpItemCollection items = null;
+                await TaskEx.Run(() =>
+                {
+                    items = recursive ? ftpClient.GetDirListDeep(path) : ftpClient.GetDirList(path);
+                });
                 return items;
-            }
-            finally
-            {
-                _ftpClient.Close();
             }
         }
 
         public async Task MakeDirectory(string name)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                _ftpClient.MakeDirectory(name);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.MakeDirectory(name);
             }
         }
 
@@ -151,96 +133,79 @@ namespace nUpdate.Administration.Ftp
 
         public async Task RenameDirectory(string oldName, string newName)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
-                _ftpClient.Rename(oldName, newName);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+                ftpClient.Rename(oldName, newName);
             }
         }
 
         public async Task<bool> TestConnection()
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
-                await Login();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                _ftpClient.Close();
+                try
+                {
+                    await Login(ftpClient);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
         public async Task UploadFile(string filePath, IProgress<TransferProgressEventArgs> progress)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
                 if (progress != null)
-                    _ftpClient.TransferProgress += (o, e) =>
+                    ftpClient.TransferProgress += (o, e) =>
                     {
                         progress.Report(e);
                     };
 
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
-                _ftpClient.PutFile(filePath, FileAction.Create);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+                ftpClient.PutFile(filePath, FileAction.Create);
             }
         }
 
         public async Task UploadFile(Stream fileStream, string remotePath, IProgress<TransferProgressEventArgs> progress)
         {
-            try
+            using (var ftpClient = GetNewFtpClient())
             {
                 if (progress != null)
-                    _ftpClient.TransferProgress += (o, e) =>
+                    ftpClient.TransferProgress += (o, e) =>
                     {
                         progress.Report(e);
                     };
 
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
-                _ftpClient.PutFile(fileStream, remotePath, FileAction.Create);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+                ftpClient.PutFile(fileStream, remotePath, FileAction.Create);
             }
         }
 
         public async Task UploadPackage(string packagePath, string packageVersionString,
             CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
-            if (progress != null)
-                _ftpClient.TransferProgress += (o, e) =>
-                {
-                    progress.Report(e);
-                };
+            using (var ftpClient = GetNewFtpClient())
+            {
+                if (progress != null)
+                    ftpClient.TransferProgress += (o, e) =>
+                    {
+                        progress.Report(e);
+                    };
 
-            try
-            {
-                await Login();
-                _ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+                await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
                 if (!await Exists(packageVersionString))
-                    _ftpClient.MakeDirectory(packageVersionString);
-                _ftpClient.ChangeDirectory(packageVersionString);
-                _ftpClient.PutFile(packagePath, FileAction.Create);
-            }
-            finally
-            {
-                _ftpClient.Close();
+                    ftpClient.MakeDirectory(packageVersionString);
+                ftpClient.ChangeDirectory(packageVersionString);
+                ftpClient.PutFile(packagePath, FileAction.Create);
             }
         }
 
@@ -250,12 +215,12 @@ namespace nUpdate.Administration.Ftp
             GC.SuppressFinalize(this);
         }
 
-        private Task Login()
+        private Task Login(FtpClient ftpClient)
         {
             return Task.Run(() =>
             {
-                if (!_ftpClient.IsConnected)
-                    _ftpClient.Open(_ftpData.Username, _password.ConvertToInsecureString());
+                if (!ftpClient.IsConnected)
+                    ftpClient.Open(_ftpData.Username, _password.ConvertToInsecureString());
             });
         }
 
@@ -265,15 +230,15 @@ namespace nUpdate.Administration.Ftp
                 .Where(
                     item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
             {
-                try
+                using (var ftpClient = GetNewFtpClient())
                 {
                     Guid guid; // Just for the out-reference of TryParse
                     if (item.ItemType == FtpItemType.Directory && UpdateVersion.IsValid(item.Name))
                     {
-                        _ftpClient.ChangeDirectoryMultiPath(aimPath);
+                        ftpClient.ChangeDirectoryMultiPath(aimPath);
                         if (!await Exists(aimPath, item.Name))
-                            _ftpClient.MakeDirectory(item.Name);
-                        _ftpClient.ChangeDirectoryMultiPath(item.Name);
+                            ftpClient.MakeDirectory(item.Name);
+                        ftpClient.ChangeDirectoryMultiPath(item.Name);
 
                         await InternalMoveContent(item.FullPath, $"{aimPath}/{item.Name}");
                         await DeleteDirectory(item.FullPath);
@@ -285,20 +250,16 @@ namespace nUpdate.Administration.Ftp
                         if (!await Exists(aimPath, item.Name))
                         {
                             // "MoveFile"-method damages the files, so we do it manually with a work-around
-                            _ftpClient.MoveFile(item.FullPath, $"{aimPath}/{item.Name}");
+                            ftpClient.MoveFile(item.FullPath, $"{aimPath}/{item.Name}");
 
                             //string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
-                            //_ftpClient.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                            //_ftpClient.PutFile(localFilePath, $"{aimPath}/{item.Name}",
+                            //ftpClient.GetFile(item.FullPath, localFilePath, FileAction.Create);
+                            //ftpClient.PutFile(localFilePath, $"{aimPath}/{item.Name}",
                             //    FileAction.Create);
                             //File.Delete(localFilePath);
                         }
                         await DeleteFile(item.ParentPath, item.Name);
                     }
-                }
-                finally
-                {
-                    _ftpClient.Close();
                 }
             }
         }
@@ -307,8 +268,7 @@ namespace nUpdate.Administration.Ftp
         {
             if (!disposing || _disposed)
                 return;
-
-            _ftpClient.Dispose();
+            
             _password.Dispose();
             _disposed = true;
         }
