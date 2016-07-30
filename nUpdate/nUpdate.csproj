@@ -61,10 +61,9 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="IconHelper.cs" />
     <Compile Include="ITransferData.cs" />
-    <Compile Include="IUpdateVersion.cs" />
-    <Compile Include="SemanticVersion.cs" />
     <Compile Include="UpdateArgument.cs" />
     <Compile Include="UpdateArgumentExecutionOptions.cs" />
+    <Compile Include="UpdateFeed.cs" />
     <Compile Include="UpdateHelper.cs" />
     <Compile Include="UpdatePackage.cs" />
     <Compile Include="UpdateProgressData.cs" />
