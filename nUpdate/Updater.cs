@@ -109,12 +109,12 @@ namespace nUpdate
         public Version ApplicationVersion { get; }
 
         /// <summary>
-        ///     Gets the current feed.
+        ///     Gets the current channel's name.
         /// </summary>
         public string ApplicationChannel { get; }
 
         /// <summary>
-        ///     Gets the lowest update feed that should be used for the update search.
+        ///     Gets the lowest update channel that should be used for the update search.
         /// </summary>
         public string SearchChannel { get; }
 
