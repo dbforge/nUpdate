@@ -5,11 +5,11 @@ namespace nUpdate.Administration.Logging
     [Serializable]
     public struct PackageActionLogData
     {
-        public PackageActionLogData(PackageActionType type, IUpdateVersion packageVersion)
+        public PackageActionLogData(PackageActionType type, string packageName)
         {
             EntryDateTime = DateTime.Now;
             PackageActionType = type;
-            PackageVersion = packageVersion;
+            PackageName = packageName;
         }
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace nUpdate.Administration.Logging
         public PackageActionType PackageActionType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the version of the package.
+        ///     Gets or sets the name of the package.
         /// </summary>
-        public IUpdateVersion PackageVersion { get; set; }
+        public string PackageName { get; set; }
     }
 }

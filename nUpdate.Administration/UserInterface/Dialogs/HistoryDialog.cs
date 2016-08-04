@@ -33,7 +33,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    ItemText = $"{logDataEntry.PackageVersion} - {logDataEntry.EntryDateTime}"
+                    ItemText = $"{logDataEntry.PackageName} - {logDataEntry.EntryDateTime}"
                 };
 
                 switch (logDataEntry.PackageActionType)
@@ -137,7 +137,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 var logEntryList =
                     Session.ActiveProject.LogData.Select(
                         logEntry =>
-                            $"{logEntry.PackageVersion}-{logEntry.PackageActionType}-{logEntry.EntryDateTime}")
+                            $"{logEntry.PackageName}-{logEntry.PackageActionType}-{logEntry.EntryDateTime}")
                         .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }

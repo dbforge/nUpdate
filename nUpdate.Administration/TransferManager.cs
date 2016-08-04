@@ -106,9 +106,9 @@ namespace nUpdate.Administration
             return _transferProvider.UploadFile(filePath, progress);
         }
 
-        public Task UploadPackage(string packagePath, string packageVersion, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
-            return _transferProvider.UploadPackage(packagePath, packageVersion, cancellationToken, progress);
+            return _transferProvider.UploadPackage(packagePath, guid, cancellationToken, progress);
         }
 
         public void Dispose()

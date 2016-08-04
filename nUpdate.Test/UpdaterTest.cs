@@ -13,11 +13,7 @@ namespace nUpdate.Test
         [TestInitialize]
         public void Initialize()
         {
-            //File.WriteAllText(@"D:\Desktop\en.json", Serializer.Serialize(new LocalizationProperties()));
-            _updater = new Updater(new Uri("http://www.nupdate.net/test/"), "Test")
-            {
-                LanguageCulture = new CultureInfo("de-DE")
-            };
+            // TODO: Rewrite test
         }
 
         [TestMethod]

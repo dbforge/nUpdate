@@ -5,20 +5,20 @@ using System.Net;
 
 namespace nUpdate
 {
-    public class WebClientWrapper : WebClient
+    public class WebClientEx : WebClient
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="WebClientWrapper" />-class.
+        ///     Initializes a new instance of the <see cref="WebClientEx" />-class.
         /// </summary>
-        public WebClientWrapper() : this(5000)
+        public WebClientEx() : this(5000)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="WebClientWrapper" />-class.
+        ///     Initializes a new instance of the <see cref="WebClientEx" />-class.
         /// </summary>
         /// <param name="timeout">The timeout to use.</param>
-        public WebClientWrapper(int timeout)
+        public WebClientEx(int timeout)
         {
             Timeout = timeout;
         }

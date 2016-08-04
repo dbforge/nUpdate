@@ -1,11 +1,11 @@
-﻿using nUpdate.Administration.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using nUpdate.Administration.Logging;
 using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration
@@ -24,16 +24,16 @@ namespace nUpdate.Administration
             return _project.Packages;
         }
 
-        internal async Task RemoveUpdate(IUpdateVersion updateVersion, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task RemoveUpdate(Version updateVersion, string updateChannelName, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
-            await RemovePackageData(updateVersion, cancellationToken, progress);
+            await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
 
             if (await Session.TransferManager.Exists(updateVersion.ToString()))
                 await Session.TransferManager.DeleteDirectory(updateVersion.ToString());
 
             var destinationPackage =
-                _project.Packages.FirstOrDefault(item => new UpdateVersion(item.LiteralVersion).Equals(updateVersion));
+                _project.Packages.FirstOrDefault(item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
             if (destinationPackage != null)
             {
                 _project.Packages.Remove(destinationPackage);
@@ -50,7 +50,7 @@ namespace nUpdate.Administration
 
                 File.WriteAllText(
                     Path.Combine(FilePathProvider.Path, "Projects", _project.Guid.ToString(),
-                        factoryPackage.PackageData.LiteralVersion, "updates.json"),
+                        factoryPackage.PackageData.Guid.ToString(), "updates.json"),
                     Serializer.Serialize(factoryPackage.PackageData));
             });
         }
@@ -126,18 +126,22 @@ namespace nUpdate.Administration
             //}
 
             // Upload the package
-            await Session.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.LiteralVersion, cancellationToken, progress);
+            await Session.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.Guid, cancellationToken, progress);
             await PushPackageData(factoryPackage.PackageData, cancellationToken, progress);
 
-            Session.Logger.AppendEntry(PackageActionType.UploadPackage,
-                new UpdateVersion(factoryPackage.PackageData.LiteralVersion));
+            Session.Logger.AppendEntry(PackageActionType.UploadPackage, $"{factoryPackage.PackageData.Version} ({factoryPackage.PackageData.ChannelName})");
         }
 
-        internal async Task RemovePackageData(IUpdateVersion updateVersion, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task RemovePackageData(Version updateVersion, UpdateChannel updateChannel, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        {
+            await RemovePackageData(updateVersion, updateChannel.Name, cancellationToken, progress);
+        }
+
+        internal async Task RemovePackageData(Version updateVersion, string updateChannelName, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             var updateDataList = (await UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy)).ToList();
             var destinationPackage =
-                updateDataList.FirstOrDefault(item => new UpdateVersion(item.LiteralVersion).Equals(updateVersion));
+                updateDataList.FirstOrDefault(item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
             if (destinationPackage != null)
                 updateDataList.Remove(destinationPackage);
 

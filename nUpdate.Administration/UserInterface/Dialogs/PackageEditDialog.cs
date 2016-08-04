@@ -80,7 +80,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         
         private void PackageEditDialog_Load(object sender, EventArgs e)
         {
-            Text = string.Format(Text, PackageVersion.Description, Program.VersionString);
+            Text = string.Format(Text, PackageVersion, Program.VersionString);
             if (PackageData == null)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the configuration.",
@@ -90,9 +90,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            if (PackageData.Any(item => item.LiteralVersion == PackageVersion.ToString()))
+            // TODO: Rewrite
+            /*
+            if (PackageData.Any(item => item.Version == PackageVersion.ToString()))
                 _packageConfiguration =
-                    PackageData.First(item => item.LiteralVersion == PackageVersion.ToString()).DeepCopy();
+                    PackageData.First(item => item.Version == PackageVersion.ToString()).DeepCopy();
             else
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the configuration.",
@@ -100,7 +102,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 PopupButtons.Ok);
                 Close();
                 return;
-            }
+            }*/
 
             majorNumericUpDown.Maximum = decimal.MaxValue;
             minorNumericUpDown.Maximum = decimal.MaxValue;
@@ -115,18 +117,18 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             var devStages = Enum.GetValues(typeof(DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
-            developmentalStageComboBox.SelectedIndex =
+            /*developmentalStageComboBox.SelectedIndex =
                 developmentalStageComboBox.FindStringExact(PackageVersion.DevelopmentalStage.ToString());
             developmentBuildNumericUpDown.Value = PackageVersion.DevelopmentBuild;
-            developmentBuildNumericUpDown.Enabled = (PackageVersion.DevelopmentalStage != DevelopmentalStage.Release);
+            developmentBuildNumericUpDown.Enabled = (PackageVersion.DevelopmentalStage != DevelopmentalStage.Release);*/
             architectureComboBox.SelectedIndex = (int)_packageConfiguration.Architecture;
             necessaryUpdateCheckBox.Checked = _packageConfiguration.NecessaryUpdate;
             includeIntoStatisticsCheckBox.Enabled = Session.ActiveProject.UseStatistics;
             includeIntoStatisticsCheckBox.Checked = _packageConfiguration.UseStatistics;
-            foreach (var package in Session.ActiveProject.Packages.Where(package => Equals(new UpdateVersion(package.LiteralVersion), PackageVersion)))
+            /*foreach (var package in Session.ActiveProject.Packages.Where(package => Equals(new UpdateVersion(package.Version), PackageVersion)))
             {
                 descriptionTextBox.Text = package.Description;
-            }
+            }*/
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
@@ -388,7 +390,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            _newVersion = new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value,
+            /*_newVersion = new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value,
                 (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value, (DevelopmentalStage)
                     Enum.Parse(typeof(DevelopmentalStage),
                         developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
@@ -404,7 +406,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
             if (Session.ActiveProject.Packages != null && Session.ActiveProject.Packages.Count != 0)
             {
-                if (PackageVersion != _newVersion && Session.ActiveProject.Packages.Any(item => new UpdateVersion(item.LiteralVersion) == _newVersion))
+                if (PackageVersion != _newVersion && Session.ActiveProject.Packages.Any(item => new UpdateVersion(item.Version) == _newVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
                         $"Version \"{_newVersion.Description}\" is already existing.", PopupButtons.Ok);
@@ -412,7 +414,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                     return;
                 }
-            }
+            }*/
 
             if (string.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
@@ -486,9 +488,9 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             }
 
             _packageConfiguration.UnsupportedVersions = unsupportedVersionLiterals;
-            _packageConfiguration.LiteralVersion = _newVersion.ToString();
+            /*_packageConfiguration.Version = _newVersion.ToString();
             _packageConfiguration.UpdatePackageUri = new Uri(
-                $"{new Uri(Session.ActiveProject.UpdateDirectoryUri, _packageConfiguration.LiteralVersion)}/{Session.ActiveProject.Guid}.zip");
+                $"{new Uri(Session.ActiveProject.UpdateDirectoryUri, _packageConfiguration.Version)}/{Session.ActiveProject.Guid}.zip");*/
 
             _newPackageDirectory = Path.Combine(FilePathProvider.Path, "Projects", Session.ActiveProject.Name,
                 _newVersion.ToString());
@@ -510,10 +512,10 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 }
             }
 
-            PackageData[
+            /*PackageData[
                 PackageData.IndexOf(
-                    PackageData.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
-                _packageConfiguration;
+                    PackageData.First(item => item.Version == PackageVersion.ToString()))] =
+                _packageConfiguration;*/
             var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
             try
             {
@@ -562,14 +564,14 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 try
                 {
                     string description = null;
-                    Invoke(new Action(() => description = descriptionTextBox.Text));
-                        Session.ActiveProject.Packages.First(item => Equals(new UpdateVersion(item.LiteralVersion), PackageVersion)).
+                    /*Invoke(new Action(() => description = descriptionTextBox.Text));
+                        Session.ActiveProject.Packages.First(item => Equals(new UpdateVersion(item.Version), PackageVersion)).
                         Description = description;
                     if (_newVersion != PackageVersion)
                     {
-                            Session.ActiveProject.Packages.First(item => item.LiteralVersion == PackageVersion.ToString())
-                            .LiteralVersion = _packageConfiguration.LiteralVersion;
-                    }
+                            Session.ActiveProject.Packages.First(item => item.Version == PackageVersion.ToString())
+                            .Version = _packageConfiguration.Version;
+                    }*/
 
                         Session.ActiveProject.Save();
                 }
@@ -781,10 +783,10 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
+            /*var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
                 (int)unsupportedMinorNumericUpDown.Value, (int)unsupportedBuildNumericUpDown.Value,
                 (int)unsupportedRevisionNumericUpDown.Value);
-            _unsupportedVersionLiteralsBindingList.Add(version.ToString());
+            _unsupportedVersionLiteralsBindingList.Add(version.ToString());*/
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)

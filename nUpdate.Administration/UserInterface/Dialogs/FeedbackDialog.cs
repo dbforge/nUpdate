@@ -52,7 +52,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             try
             {
                 string responseString;
-                using (var client = new WebClientWrapper())
+                using (var client = new WebClientEx())
                 {
                     responseString =
                         client.DownloadString(

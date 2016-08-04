@@ -19,9 +19,9 @@ namespace nUpdate.Administration.Logging
             return _project;
         }
 
-        public UpdateProject AppendEntry(PackageActionType type, IUpdateVersion packageVersion)
+        public UpdateProject AppendEntry(PackageActionType type, string packageName)
         {
-            var logData = new PackageActionLogData(type, packageVersion);
+            var logData = new PackageActionLogData(type, packageName);
             _project.LogData.Add(logData);
             _project.Save();
 
