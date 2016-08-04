@@ -1,10 +1,8 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using nUpdate.Administration.TransferInterface;
-using nUpdate.Administration.UserInterface.Controls;
 using nUpdate.Administration.UserInterface.Popups;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
@@ -22,8 +19,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
     internal partial class ProjectDialog : BaseDialog
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private readonly Dictionary<UpdateVersion, StatisticsChart> _dataGridViewRowTags =
-            new Dictionary<UpdateVersion, StatisticsChart>();
 
         public ProjectDialog()
         {
@@ -31,21 +26,19 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             LoadingPanel = loadingPanel;
         }
 
-        private async void ProjectDialog_Load(object sender, EventArgs e)
+        private async void ProjectDialog_Shown(object sender, EventArgs e)
         {
             Text = string.Format(Text, Session.ActiveProject.Name, Program.VersionString);
-            string[] programmingLanguages = {"VB.NET", "C#"};
+            string[] programmingLanguages = { "VB.NET", "C#" };
             programmingLanguageComboBox.DataSource = programmingLanguages;
             programmingLanguageComboBox.SelectedIndex = 0;
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
-            updateStatisticsButtonToolTip.SetToolTip(updateStatisticsButton, "Update the statistics.");
             assemblyPathTextBox.ButtonClicked += BrowseAssemblyButtonClicked;
             assemblyPathTextBox.Initialize();
 
             packagesList.DoubleBuffer();
             projectDataPartsTabControl.DoubleBuffer();
             packagesList.MakeCollapsable();
-            statisticsDataGridView.RowHeadersVisible = false;
 
             await Task.Run(() =>
             {
@@ -153,20 +146,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 checkUpdateConfigurationLinkLabel.Enabled = enabled;
                 addButton.Enabled = enabled;
                 deleteButton.Enabled = enabled;
-                // TODO: Designer
-                noStatisticsLabel.Text = "No network connection available.";
-
-                // Prevent that the user is inside this TabPage when we want to make it invisible
-                if (projectDataPartsTabControl.SelectedTab == statisticsTabPage)
-                    projectDataPartsTabControl.SelectTab(overviewTabPage);
-
-                statisticsTabPage.Visible = false;
-                //foreach (
-                //    var c in
-                //        from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
-                //{
-                //    c.Visible = enabled;
-                //}
             }));
         }
 
@@ -333,11 +312,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             }
         }
 
-        private void updateStatisticsButton_Click(object sender, EventArgs e)
-        {
-            //InitializeStatisticsData();
-        }
-
         private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             if (!loadFromAssemblyRadioButton.Checked)
@@ -357,35 +331,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
             assemblyPathTextBox.Clear();
             Initialize();
-        }
-
-        private void statisticsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            /*if (e.RowIndex == -1)
-                return;
-
-            updateStatisticsButton.Enabled = false;
-            chartPanel.Visible = true;
-            var chart =
-                _dataGridViewRowTags.First(
-                    item =>
-                        Equals(item.Key,
-                            UpdateVersion.FromDescription(
-                                (string) statisticsDataGridView.Rows[e.RowIndex].Cells[0].Value)))
-                    .Value;
-            chart.TotalDownloadCount = Convert.ToInt32(statisticsDataGridView.Rows[e.RowIndex].Cells[1].Value);
-            chart.StatisticsChartClosed += CurrentChartClosed;
-            chart.Dock = DockStyle.Fill;
-            chartPanel.Controls.Add(chart);
-            statisticsDataGridView.Visible = false;*/
-        }
-
-        private void CurrentChartClosed(object sender, EventArgs e)
-        {
-            chartPanel.Controls.Remove((StatisticsChart) sender);
-            chartPanel.Visible = false;
-            updateStatisticsButton.Enabled = true;
-            statisticsDataGridView.Visible = true;
         }
 
         private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
