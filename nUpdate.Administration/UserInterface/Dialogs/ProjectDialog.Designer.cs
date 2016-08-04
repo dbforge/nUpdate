@@ -37,13 +37,13 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
-            this.overviewTabPage = new ManualScrollTabPage();
+            this.overviewTabPage = new nUpdate.Administration.UserInterface.Controls.ManualScrollTabPage();
             this.line3 = new nUpdate.UI.WinForms.Controls.Line();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.line2 = new nUpdate.UI.WinForms.Controls.Line();
             this.label1 = new System.Windows.Forms.Label();
-            this.assemblyPathTextBox = new ButtonTextBox();
+            this.assemblyPathTextBox = new nUpdate.Administration.UserInterface.Controls.ButtonTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.line5 = new nUpdate.UI.WinForms.Controls.Line();
@@ -77,7 +77,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.loadFromAssemblyRadioButton = new System.Windows.Forms.RadioButton();
             this.enterVersionManuallyRadioButton = new System.Windows.Forms.RadioButton();
             this.packagesTabPage = new System.Windows.Forms.TabPage();
-            this.packagesList = new ExplorerListView();
+            this.packagesList = new nUpdate.Administration.UserInterface.Controls.ExplorerListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -101,18 +101,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.historyButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.searchTextBox = new CueTextBox();
-            this.statisticsTabPage = new System.Windows.Forms.TabPage();
-            this.updateStatisticsButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.WinForms.Controls.BottomPanel();
-            this.lastUpdatedLabel = new System.Windows.Forms.Label();
-            this.chartPanel = new System.Windows.Forms.Panel();
-            this.gatheringStatisticsPictureBox = new System.Windows.Forms.PictureBox();
-            this.statisticsStatusLabel = new System.Windows.Forms.Label();
-            this.noStatisticsPanel = new System.Windows.Forms.Panel();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.noStatisticsLabel = new System.Windows.Forms.Label();
-            this.statisticsDataGridView = new System.Windows.Forms.DataGridView();
+            this.searchTextBox = new nUpdate.Administration.UserInterface.Controls.CueTextBox();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -128,12 +117,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.packagesTabPage.SuspendLayout();
             this.packagesContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.statisticsTabPage.SuspendLayout();
-            this.controlPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).BeginInit();
-            this.noStatisticsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).BeginInit();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -151,7 +134,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             // 
             this.projectDataPartsTabControl.Controls.Add(this.overviewTabPage);
             this.projectDataPartsTabControl.Controls.Add(this.packagesTabPage);
-            this.projectDataPartsTabControl.Controls.Add(this.statisticsTabPage);
             this.projectDataPartsTabControl.HotTrack = true;
             this.projectDataPartsTabControl.ImageList = this.imageList1;
             this.projectDataPartsTabControl.Location = new System.Drawing.Point(0, 0);
@@ -839,128 +821,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.searchTextBox.TabIndex = 2;
             this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
             // 
-            // statisticsTabPage
-            // 
-            this.statisticsTabPage.Controls.Add(this.updateStatisticsButton);
-            this.statisticsTabPage.Controls.Add(this.controlPanel1);
-            this.statisticsTabPage.Controls.Add(this.chartPanel);
-            this.statisticsTabPage.Controls.Add(this.gatheringStatisticsPictureBox);
-            this.statisticsTabPage.Controls.Add(this.statisticsStatusLabel);
-            this.statisticsTabPage.Controls.Add(this.noStatisticsPanel);
-            this.statisticsTabPage.Controls.Add(this.statisticsDataGridView);
-            this.statisticsTabPage.ImageIndex = 3;
-            this.statisticsTabPage.Location = new System.Drawing.Point(4, 23);
-            this.statisticsTabPage.Name = "statisticsTabPage";
-            this.statisticsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.statisticsTabPage.Size = new System.Drawing.Size(566, 386);
-            this.statisticsTabPage.TabIndex = 2;
-            this.statisticsTabPage.Text = "Statistics";
-            this.statisticsTabPage.UseVisualStyleBackColor = true;
-            // 
-            // updateStatisticsButton
-            // 
-            this.updateStatisticsButton.Image = ((System.Drawing.Image)(resources.GetObject("updateStatisticsButton.Image")));
-            this.updateStatisticsButton.Location = new System.Drawing.Point(535, 358);
-            this.updateStatisticsButton.Name = "updateStatisticsButton";
-            this.updateStatisticsButton.Size = new System.Drawing.Size(25, 22);
-            this.updateStatisticsButton.TabIndex = 92;
-            this.updateStatisticsButton.UseVisualStyleBackColor = true;
-            this.updateStatisticsButton.Click += new System.EventHandler(this.updateStatisticsButton_Click);
-            // 
-            // controlPanel1
-            // 
-            this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.controlPanel1.Controls.Add(this.lastUpdatedLabel);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 353);
-            this.controlPanel1.Name = "controlPanel1";
-            this.controlPanel1.Size = new System.Drawing.Size(566, 33);
-            this.controlPanel1.TabIndex = 93;
-            // 
-            // lastUpdatedLabel
-            // 
-            this.lastUpdatedLabel.AutoSize = true;
-            this.lastUpdatedLabel.Location = new System.Drawing.Point(6, 10);
-            this.lastUpdatedLabel.Name = "lastUpdatedLabel";
-            this.lastUpdatedLabel.Size = new System.Drawing.Size(77, 13);
-            this.lastUpdatedLabel.TabIndex = 0;
-            this.lastUpdatedLabel.Text = "Last updated:";
-            // 
-            // chartPanel
-            // 
-            this.chartPanel.Location = new System.Drawing.Point(0, 6);
-            this.chartPanel.Name = "chartPanel";
-            this.chartPanel.Size = new System.Drawing.Size(566, 348);
-            this.chartPanel.TabIndex = 96;
-            this.chartPanel.Visible = false;
-            // 
-            // gatheringStatisticsPictureBox
-            // 
-            this.gatheringStatisticsPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("gatheringStatisticsPictureBox.Image")));
-            this.gatheringStatisticsPictureBox.Location = new System.Drawing.Point(232, 187);
-            this.gatheringStatisticsPictureBox.Name = "gatheringStatisticsPictureBox";
-            this.gatheringStatisticsPictureBox.Size = new System.Drawing.Size(16, 16);
-            this.gatheringStatisticsPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.gatheringStatisticsPictureBox.TabIndex = 95;
-            this.gatheringStatisticsPictureBox.TabStop = false;
-            this.gatheringStatisticsPictureBox.Visible = false;
-            // 
-            // statisticsStatusLabel
-            // 
-            this.statisticsStatusLabel.AutoSize = true;
-            this.statisticsStatusLabel.Location = new System.Drawing.Point(248, 188);
-            this.statisticsStatusLabel.Name = "statisticsStatusLabel";
-            this.statisticsStatusLabel.Size = new System.Drawing.Size(86, 13);
-            this.statisticsStatusLabel.TabIndex = 93;
-            this.statisticsStatusLabel.Text = "No downloads.";
-            // 
-            // noStatisticsPanel
-            // 
-            this.noStatisticsPanel.Controls.Add(this.pictureBox2);
-            this.noStatisticsPanel.Controls.Add(this.noStatisticsLabel);
-            this.noStatisticsPanel.Location = new System.Drawing.Point(185, 150);
-            this.noStatisticsPanel.Name = "noStatisticsPanel";
-            this.noStatisticsPanel.Size = new System.Drawing.Size(202, 42);
-            this.noStatisticsPanel.TabIndex = 2;
-            this.noStatisticsPanel.Visible = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(13, 8);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
-            // 
-            // noStatisticsLabel
-            // 
-            this.noStatisticsLabel.AutoSize = true;
-            this.noStatisticsLabel.Location = new System.Drawing.Point(39, 7);
-            this.noStatisticsLabel.Name = "noStatisticsLabel";
-            this.noStatisticsLabel.Size = new System.Drawing.Size(148, 26);
-            this.noStatisticsLabel.TabIndex = 0;
-            this.noStatisticsLabel.Text = "This project was not linked \r\nwith a statistics server.";
-            this.noStatisticsLabel.Visible = false;
-            // 
-            // statisticsDataGridView
-            // 
-            this.statisticsDataGridView.AllowUserToAddRows = false;
-            this.statisticsDataGridView.AllowUserToDeleteRows = false;
-            this.statisticsDataGridView.AllowUserToOrderColumns = true;
-            this.statisticsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.statisticsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.statisticsDataGridView.Location = new System.Drawing.Point(2, 6);
-            this.statisticsDataGridView.Name = "statisticsDataGridView";
-            this.statisticsDataGridView.ReadOnly = true;
-            this.statisticsDataGridView.RowHeadersWidth = 100;
-            this.statisticsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.statisticsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.statisticsDataGridView.ShowEditingIcon = false;
-            this.statisticsDataGridView.Size = new System.Drawing.Size(560, 348);
-            this.statisticsDataGridView.TabIndex = 88;
-            this.statisticsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.statisticsDataGridView_CellDoubleClick);
-            // 
             // loadingPanel
             // 
             this.loadingPanel.BackColor = System.Drawing.Color.White;
@@ -1028,7 +888,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.Name = "ProjectDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "{0} - {1}";
-            this.Load += new System.EventHandler(this.ProjectDialog_Load);
+            this.Shown += new System.EventHandler(this.ProjectDialog_Shown);
             this.projectDataPartsTabControl.ResumeLayout(false);
             this.overviewTabPage.ResumeLayout(false);
             this.overviewTabPage.PerformLayout();
@@ -1042,15 +902,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.packagesContextMenuStrip.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.statisticsTabPage.ResumeLayout(false);
-            this.statisticsTabPage.PerformLayout();
-            this.controlPanel1.ResumeLayout(false);
-            this.controlPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gatheringStatisticsPictureBox)).EndInit();
-            this.noStatisticsPanel.ResumeLayout(false);
-            this.noStatisticsPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.statisticsDataGridView)).EndInit();
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -1107,27 +958,16 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private System.Windows.Forms.Label label2;
         private Line line5;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TabPage statisticsTabPage;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.Label noStatisticsLabel;
-        private System.Windows.Forms.Panel noStatisticsPanel;
-        private System.Windows.Forms.DataGridView statisticsDataGridView;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RadioButton loadFromAssemblyRadioButton;
         private System.Windows.Forms.RadioButton enterVersionManuallyRadioButton;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button updateStatisticsButton;
-        private System.Windows.Forms.Label statisticsStatusLabel;
         private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.Label cancelLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.ToolTip cancelToolTip;
         private System.Windows.Forms.ToolTip updateStatisticsButtonToolTip;
-        private System.Windows.Forms.PictureBox gatheringStatisticsPictureBox;
-        private System.Windows.Forms.Panel chartPanel;
-        private BottomPanel controlPanel1;
-        private System.Windows.Forms.Label lastUpdatedLabel;
         private ButtonTextBox assemblyPathTextBox;
         private System.Windows.Forms.ContextMenuStrip packagesContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
