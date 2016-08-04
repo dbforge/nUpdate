@@ -189,7 +189,7 @@ namespace nUpdate.Administration.Ftp
             }
         }
 
-        public async Task UploadPackage(string packagePath, string packageVersionString,
+        public async Task UploadPackage(string packagePath, Guid guid,
             CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             using (var ftpClient = GetNewFtpClient())
@@ -202,9 +202,9 @@ namespace nUpdate.Administration.Ftp
 
                 await Login(ftpClient);
                 ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
-                if (!await Exists(packageVersionString))
-                    ftpClient.MakeDirectory(packageVersionString);
-                ftpClient.ChangeDirectory(packageVersionString);
+                if (!await Exists(guid.ToString()))
+                    ftpClient.MakeDirectory(guid.ToString());
+                ftpClient.ChangeDirectory(guid.ToString());
                 ftpClient.PutFile(packagePath, FileAction.Create);
             }
         }
@@ -226,7 +226,7 @@ namespace nUpdate.Administration.Ftp
 
         public async Task InternalMoveContent(string directory, string aimPath)
         {
-            foreach (FtpItem item in (await List(directory, false))
+            foreach (var item in (await List(directory, false))
                 .Where(
                     item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
             {

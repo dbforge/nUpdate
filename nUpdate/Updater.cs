@@ -40,6 +40,8 @@ namespace nUpdate
         ///     update files.
         /// </param>
         /// <param name="publicKey">The public key used to verify the signature of the update packages.</param>
+        /// <param name="applicationChannel">The current channel of the application.</param>
+        /// <param name="searchChannel">The lowest update channel that should be included into the update search.</param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -49,22 +51,30 @@ namespace nUpdate
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it inside nUpdate Administration.
         /// </remarks>
-        public Updater(Uri updateDirectoryUri, string publicKey)
+        public Updater(Uri updateDirectoryUri, string publicKey, string applicationChannel, string searchChannel)
         {
-            if (updateDirectoryUri == null)
-                throw new ArgumentNullException(nameof(updateDirectoryUri));
+            if (updateDirectoryUri == null || !updateDirectoryUri.IsWellFormedOriginalString())
+                throw new ArgumentException(nameof(updateDirectoryUri));
             UpdateDirectoryUri = updateDirectoryUri;
 
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentException(nameof(publicKey));
             PublicKey = publicKey;
 
+            if (string.IsNullOrWhiteSpace(applicationChannel))
+                throw new ArgumentException(nameof(applicationChannel));
+            ApplicationChannel = applicationChannel;
+
+            if (string.IsNullOrWhiteSpace(searchChannel))
+                throw new ArgumentException(nameof(searchChannel));
+            SearchChannel = searchChannel;
+
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
                 projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
-            CurrentVersion = nUpateVersionAttribute == null
-                ? new UpdateVersion(Application.ProductVersion)
-                : new UpdateVersion(nUpateVersionAttribute.VersionString);
+            ApplicationVersion = nUpateVersionAttribute == null
+                ? new Version(Application.ProductVersion)
+                : new Version(nUpateVersionAttribute.VersionString);
 
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _lp = LocalizationHelper.GetLocalizationProperties(new CultureInfo("en"), LocalizationFilePaths);
@@ -96,7 +106,17 @@ namespace nUpdate
         /// <summary>
         ///     Gets the version of the current application.
         /// </summary>
-        public UpdateVersion CurrentVersion { get; }
+        public Version ApplicationVersion { get; }
+
+        /// <summary>
+        ///     Gets the current feed.
+        /// </summary>
+        public string ApplicationChannel { get; }
+
+        /// <summary>
+        ///     Gets the lowest update feed that should be used for the update search.
+        /// </summary>
+        public string SearchChannel { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
@@ -154,7 +174,8 @@ namespace nUpdate
         /// <summary>
         ///     Gets all new update packages that have been found.
         /// </summary>
-        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } = Enumerable.Empty<UpdatePackage>();
+        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } =
+            Enumerable.Empty<UpdatePackage>();
 
         /// <summary>
         ///     Gets the total size of all found update packages.
@@ -173,9 +194,12 @@ namespace nUpdate
         public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
 
         /// <summary>
-        ///     Searches for updates.
+        /// Searches for updates.
         /// </summary>
-        /// <returns>Returns a <c>UpdateResult</c> object that contains the result data of the update search.</returns>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// Returns a <c>UpdateResult</c> object that contains the result data of the update search.
+        /// </returns>
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdates(CancellationToken cancellationToken)
         {
@@ -184,12 +208,12 @@ namespace nUpdate
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-            IEnumerable<UpdatePackage> packageData;
+            IEnumerable<UpdateChannel> masterChannel;
 
             try
             {
-                packageData =
-                    await UpdatePackage.GetRemotePackageData(new Uri(UpdateDirectoryUri, "updates.json"), Proxy);
+                masterChannel =
+                    await UpdateChannel.GetMasterChannel(new Uri(UpdateDirectoryUri, "masterfeed.json"), Proxy);
             }
             catch (JsonReaderException ex)
             {
@@ -197,8 +221,9 @@ namespace nUpdate
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            var result = new UpdateResult(packageData, CurrentVersion,
-                IncludeAlpha, IncludeBeta);
+            var result = new UpdateResult();
+            await result.Initialize(masterChannel, ApplicationVersion,
+                ApplicationChannel, SearchChannel);
             AvailablePackages = result.NewestPackages;
             TotalSize = await UpdateHelper.GetTotalPackageSize(AvailablePackages);
             return result.UpdatesFound;
@@ -236,7 +261,7 @@ namespace nUpdate
             await updatePackages.ForEachAsync(async p =>
             {
                 await Downloader.DownloadFile(p.UpdatePackageUri, Path.Combine(_applicationUpdateDirectory,
-                    $"{p.LiteralVersion}.zip"), (long) totalSize, cancellationToken, progress);
+                    $"{p.Guid}.zip"), (long) totalSize, cancellationToken, progress);
 
                 if (!p.UseStatistics || !CaptureStatistics)
                     return;
@@ -277,13 +302,13 @@ namespace nUpdate
             {
                 if (package.Signature == null || package.Signature.Length <= 0)
                     throw new ArgumentException(
-                        $"The signature of version \"{package.LiteralVersion}\" is empty and thus invalid.");
+                        $"The signature of version \"{package.Version}\" is empty and thus invalid.");
                 // TODO: Localize
 
                 string packagePath = GetLocalPackagePath(package);
                 if (!File.Exists(packagePath))
                     throw new FileNotFoundException(string.Format(_lp.PackageFileNotFoundExceptionText,
-                        package.LiteralVersion.ToUpdateVersion().Description));
+                        package.Version));
 
                 // TODO: Check if packages will be disposed properly
                 using (var stream = File.Open(packagePath, FileMode.Open))
@@ -431,8 +456,8 @@ namespace nUpdate
 
             var updatePackages = packages.ToArray();
             var packageOperations =
-                updatePackages.ToDictionary<UpdatePackage, IUpdateVersion, IEnumerable<Operation>>(
-                    package => package.LiteralVersion.ToUpdateVersion(), package => package.Operations);
+                updatePackages.ToDictionary<UpdatePackage, Version, IEnumerable<Operation>>(
+                    package => package.Version, package => package.Operations);
 
             var installerUiAssemblyPath = !string.IsNullOrEmpty(InstallerUserInterfacePath)
                 ? $"\"{InstallerUserInterfacePath}\""
@@ -502,7 +527,7 @@ namespace nUpdate
         private string GetLocalPackagePath(UpdatePackage package)
         {
             return Path.Combine(_applicationUpdateDirectory,
-                $"{package.LiteralVersion}.zip");
+                $"{package.Guid}.zip");
         }
     }
 }

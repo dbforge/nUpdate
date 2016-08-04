@@ -91,9 +91,9 @@ namespace nUpdate.Administration.TransferInterface
         ///     Uploads an update package onto the server.
         /// </summary>
         /// <param name="packagePath">The local path of the package.</param>
-        /// <param name="packageVersionString">The package version represented as a <see cref="string"/> for specifying the directory name.</param>
+        /// <param name="guid">The <see cref="Guid"/> of the package for specifying the directory name.</param>
         /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that should be used for cancelling the upload.</param>
-        Task UploadPackage(string packagePath, string packageVersionString, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress);
+        Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress);
     }
 }

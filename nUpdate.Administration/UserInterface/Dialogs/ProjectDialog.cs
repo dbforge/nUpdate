@@ -73,13 +73,14 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void Initialize()
         {
-            Invoke(new Action(() =>
+            // TODO: Adjust this to the new versioning system
+            /*Invoke(new Action(() =>
             {
                 nameTextBox.Text = Session.ActiveProject.Name;
                 updateUriTextBox.Text = Session.ActiveProject.UpdateDirectoryUri.ToString();
                 amountLabel.Text =
                     Session.ActiveProject.Packages?.Count.ToString(CultureInfo.InvariantCulture) ?? "0";
-                
+
                 if (!string.IsNullOrEmpty(Session.ActiveProject.AssemblyVersionPath))
                 {
                     loadFromAssemblyRadioButton.Checked = true;
@@ -92,12 +93,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     Session.ActiveProject.Save();
                 }
 
-                newestPackageLabel.Text = Session.ActiveProject.Packages.Count > 0
+                /*newestPackageLabel.Text = Session.ActiveProject.Packages.Count > 0
                     ? UpdateVersion.GetHighestUpdateVersion(
-                        Session.ActiveProject.Packages?.Select(item => new UpdateVersion(item.LiteralVersion)))
+                        Session.ActiveProject.Packages?.Select(item => new UpdateVersion(item.Version)))
                         .Description
                     : "-";
-
                 projectIdTextBox.Text = Session.ActiveProject.Guid.ToString();
                 publicKeyTextBox.Text = Session.ActiveProject.PublicKey;
 
@@ -105,9 +105,9 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     packagesList.Items.Clear();
             }));
 
-            foreach (var package in Session.ActiveProject.Packages)
+                foreach (var package in Session.ActiveProject.Packages)
             {
-                var packageVersion = new UpdateVersion(package.LiteralVersion);
+                var packageVersion = new UpdateVersion(package.Version);
                 var packageListViewItem = new ListViewItem(packageVersion.Description);
                 var packageFileInfo =
                     new FileInfo(Path.Combine(FilePathProvider.Path, "Projects", Session.ActiveProject.Guid.ToString(),
@@ -134,6 +134,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 packageListViewItem.Tag = packageVersion;
                 Invoke(new Action(() => packagesList.Items.Add(packageListViewItem)));
             }
+                    */
         }
 
         public void NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
@@ -200,13 +201,13 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
 
             var packageVersion = new UpdateVersion((string) packagesList.SelectedItems[0].Tag);
-            UpdatePackage correspondingPackage;
+            /*UpdatePackage correspondingPackage;
 
             try
             {
                 correspondingPackage =
                     Session.ActiveProject.Packages.First(
-                        item => Equals(new UpdateVersion(item.LiteralVersion), packageVersion));
+                        item => Equals(item.Version, packageVersion));
             }
             catch (Exception ex)
             {
@@ -223,7 +224,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             };
 
             if (packageEditDialog.ShowDialog() != DialogResult.OK)
-                return;
+                return;*/
 
             // Re-initialize our data
             Initialize();
@@ -360,7 +361,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void statisticsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex == -1)
+            /*if (e.RowIndex == -1)
                 return;
 
             updateStatisticsButton.Enabled = false;
@@ -376,7 +377,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             chart.StatisticsChartClosed += CurrentChartClosed;
             chart.Dock = DockStyle.Fill;
             chartPanel.Controls.Add(chart);
-            statisticsDataGridView.Visible = false;
+            statisticsDataGridView.Visible = false;*/
         }
 
         private void CurrentChartClosed(object sender, EventArgs e)
@@ -404,22 +405,22 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
-            AdjustControlsForAction(async () =>
+            /*AdjustControlsForAction(async () =>
             {
                 for (int i = 0; i < packagesList.SelectedItems.Count; ++i)
                 {
                     var currentVersion = new UpdateVersion((string) packagesList.SelectedItems[i].Tag);
-                    loadingLabel.Text = $"Uploading package {currentVersion.Description}";
+                    loadingLabel.Text = $"Uploading package {currentVersion}";
                     await UploadPackage(currentVersion);
                 }
-            }, true);
+            }, true);*/
         }
 
-        private async Task UploadPackage(IUpdateVersion packageVersion)
+        private async Task UploadPackage(Version packageVersion)
         {
             var updatePackage =
                 Session.ActiveProject.Packages.First(
-                    item => new UpdateVersion(item.LiteralVersion).Equals(packageVersion));
+                    item => item.Version.Equals(packageVersion));
             string packageFilePath = Path.Combine(Session.PackagesPath, packageVersion.ToString());
             if (!File.Exists(packageFilePath))
             {
@@ -466,7 +467,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             checkUpdateConfigurationLinkLabel.Enabled = false;
 
             HttpStatusCode statusCode = HttpStatusCode.OK;
-            using (var client = new WebClientWrapper(5000))
+            using (var client = new WebClientEx(5000))
             {
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 try
@@ -542,7 +543,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (answer != DialogResult.Yes)
                 return;
 
-            AdjustControlsForAction(async () =>
+            /*AdjustControlsForAction(async () =>
             {
                 for (int i = 0; i < packagesList.SelectedItems.Count; ++i)
                 {
@@ -553,7 +554,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                         progress.ProgressChanged += (s, args) =>
                         {
                             loadingLabel.Text =
-                                $"Deleting package {currentVersion.Description}... {$"{Math.Round(args.Percentage, 1)}% | {args.BytesPerSecond/1024}KB/s"}";
+                                $"Deleting package {currentVersion}... {$"{Math.Round(args.Percentage, 1)}% | {args.BytesPerSecond/1024}KB/s"}";
                         };
                         await
                             Session.UpdateFactory.RemoveUpdate(currentVersion, _cancellationTokenSource.Token, progress);
@@ -564,7 +565,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                             PopupButtons.Ok);
                     }
                 }
-            }, true);
+            }, true);*/
             Initialize();
         }
 

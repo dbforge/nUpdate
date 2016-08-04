@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace nUpdate
@@ -79,7 +81,7 @@ namespace nUpdate
         public int Minor { get; }
 
         /// <summary>
-        ///     Gets or sets the build version.
+        ///     Gets or sets the build/patch version.
         /// </summary>
         public int Build { get; }
 
@@ -89,7 +91,7 @@ namespace nUpdate
         public string SemVerSuffix { get; set; }
 
         /// <summary>
-        ///     Gets or sets the revision/patch version.
+        ///     Gets or sets the revision version.
         /// </summary>
         public int Revision { get; }
 
@@ -115,6 +117,29 @@ namespace nUpdate
         {
             var regex = new Regex(_regexString, RegexOptions.IgnoreCase);
             return regex.IsMatch(versionString);
+        }
+
+        /// <summary>
+        ///     Gets the <see cref="UpdateChannel"/> that this <see cref="UpdateVersion"/> is associated with.
+        /// </summary>
+        /// <param name="masterChannel">The master channel containing all available channels.</param>
+        /// <returns>The <see cref="UpdateChannel"/> associated with this <see cref="UpdateVersion"/>.</returns>
+        public UpdateChannel GetUpdateChannel(IEnumerable<UpdateChannel> masterChannel)
+        {
+            return masterChannel.First(x => x.SupportedSuffixes.Contains(SemVerSuffix.ToLowerInvariant()));
+        }
+
+        /// <summary>
+        ///     Tries to get the <see cref="UpdateChannel"/> that this <see cref="UpdateVersion"/> is associated with.
+        /// </summary>
+        /// <param name="masterChannel">The master channel containing all available channels.</param>
+        /// <param name="updateChannel">The <see cref="UpdateChannel"/> object that should be initialized.</param>
+        /// <returns><c>true</c>, if the <see cref="UpdateChannel"/> could be determined, otherwise <c>false</c>.</returns>
+        public bool TryGetUpdateChannel(IEnumerable<UpdateChannel> masterChannel, out UpdateChannel updateChannel)
+        {
+            updateChannel =
+                masterChannel.FirstOrDefault(x => x.SupportedSuffixes.Contains(SemVerSuffix.ToLowerInvariant()));
+            return updateChannel != null;
         }
     }
 }

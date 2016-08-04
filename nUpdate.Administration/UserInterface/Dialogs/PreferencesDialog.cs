@@ -45,10 +45,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void searchUpdatesButton_Click(object sender, EventArgs e)
         {
-            _updater = new Updater(new Uri("http://www.nupdate.net/updates/updates.json"),
+            // TODO: Adjust this later
+            /*_updater = new Updater(new Uri("http://www.nupdate.net/updates/updates.json"),
                 "<RSAKeyValue><Modulus>lLM5SxeIVrEJZyT/QfsZANZ5rdxHriQ85axYspvfmtVEV1QcoOcNhjieODYpTYlpfVieFCP+ktwS56Y4Q1nsesembolrmnS3nUsFZs39jWkkJZG41e9IliwdJRbn6vueBxsUOUDsXVQVmXyrSjrzxCT6AaTcK9IQoAp+/3Ecrib+dMbzwGeCKR/b2gNyFSjAagILLrq1NuRlYGYKlT4MUHbLgHlj4M3GgVEunu32RjAYNcafYPHjesIa92PqJhCNz2ksw66+tDgBmgYHaMwlDDxJFqbB+ALMqGAp6Mkuc9wCEVoYZZPEH4WSH7tz9OwRvkJqGYrJYCuyii9O3xWLZJiGmSAs5GMdmtzcC/RlgEGOQ63GSwCze/AM+8gw7pjF3PgApEkGbXz4GJRe4iPhbLb5bekFbu66KU1UsYOmx/dIVfcIokvVo0CKj6QWnzaBUiuhs7zH/qzW4BWLG+FsPbMDif9zQ86kdedvBY6YmtsZ3/zurAVa+ad63QCYchO1qenIjfRNZJqv33FKyVsH1ZV4u3TqaG6ygL4iZ0wJCPYc91mi6wUr5t8inHro20zASpwcldTEZjZwFuJIOa3vGmF+dI4xKyVUnDfEzC4JiNs5T1lLnaJvhLR6205zSwfKCBNVv5u9dvGZvEaifAfokC322B7euFzkzbgwXZXbj+ubxfQpRF3ZzwUsdvVvRN9FVGy8WW5fMnjflyGXYAi8rqpHPISRunGA/35I5tH63RCRl6OjkGHqcH1tCNCZP3Q2zraY4nazgFjATp9JgvThCc7VHhRIWOIvFe+5HhmNT43Rp/dZlCzXgSQgkaMC9VDHOhP0Q8Bpnzw+fKzn41ysPxiUnl1aDNzmieHaIdd0DDbmIO6H7qpQW+7Tp08zfxzn0TOzHrBeRyUUTTR8dRCWFgUerjNYTMA6C58aRIlOXxJ6xycBpa38g0eneV/WOKis2uzR4NlxPmkpAQVbS8L0EK/On80phRXSpsn0pob60hU5Yy2VrBW1ENwrGBu5o0TDq2a/Bg3aXQ/7FUUiukv6aIButv7D9YNDahnx5HFdIlkyyXcXeJSve8MliOjLPxm7LZFb7GceQz7JJSrobB6KapLJwZVBECeA1vmCGYr4m2nO3KS1Plj/7ugMSIfVIkoPtDYLydoGXkSEAa8V0rl+Cx9NcIOs722PgVlGTw4GcFSxAGWLddmIe//kmeflS+EbbtFZr3+dCYbSGg4R9Qvx/g8SpwsXIssjmrlD76jyNyKEO3l0xDO4EgvgsUUP0C2e/bBo2w2Gi6Hdb/0gMrCTE/LOwaQy1ic3yy4uHT5GPEkKOMVnZ93tsaPk8QFATFft89PTKrFSwiB6jkn6oFjFhQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
             var interactionUpdater = new DefaultInteractionUpdater(_updater, SynchronizationContext.Current);
-            interactionUpdater.Execute();
+            interactionUpdater.Execute();*/
         }
 
         private void includeAlphaCheckBox_CheckedChanged(object sender, EventArgs e)

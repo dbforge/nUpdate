@@ -26,10 +26,5 @@ namespace nUpdate
             NativeMethods.StrFormatByteSize(fileSize, sb, 20);
             return sb.ToString();
         }
-
-        public static UpdateVersion ToUpdateVersion(this string versionString)
-        {
-            return new UpdateVersion(versionString);
-        }
     }
 }

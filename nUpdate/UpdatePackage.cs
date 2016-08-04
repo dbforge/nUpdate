@@ -20,9 +20,24 @@ namespace nUpdate
     public class UpdatePackage : IDeepCopy<UpdatePackage>
     {
         /// <summary>
-        ///     Gets or sets the literal version of the package.
+        ///     Gets or sets the <see cref="System.Guid"/> of the package.
         /// </summary>
-        public string LiteralVersion { get; set; }
+        public Guid Guid { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the release date of the package.
+        /// </summary>
+        public DateTime ReleaseDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the version of the package.
+        /// </summary>
+        public Version Version { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name of the channel that the update package is located in.
+        /// </summary>
+        public string ChannelName { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the package should be included into the statistics, or not.
@@ -104,7 +119,7 @@ namespace nUpdate
         /// <param name="proxy">The optional <see cref="WebProxy"/> to use.</param>
         public async static Task<IEnumerable<UpdatePackage>> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
         {
-            using (var wc = new WebClientWrapper(10000))
+            using (var wc = new WebClientEx(10000))
             {
                 wc.Encoding = Encoding.UTF8;
                 if (proxy != null)
@@ -120,6 +135,7 @@ namespace nUpdate
             return Enumerable.Empty<UpdatePackage>();
         }
 
+        // TODO: Change within changes in the versioning system
         /// <summary>
         ///     Loads all available <see cref="UpdatePackage"/>s from a local file at the specified path.
         /// </summary>

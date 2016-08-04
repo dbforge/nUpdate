@@ -76,7 +76,7 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task UploadPackage(string packagePath, string packageVersionString, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             throw new NotImplementedException();
         }

@@ -156,7 +156,8 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void createPackageButton_Click(object sender, EventArgs e)
         {
-            if (_developmentalStage == DevelopmentalStage.Release)
+            // TODO: Rewrite all this code
+            /*if (_developmentalStage == DevelopmentalStage.Release)
             {
                 _packageVersion = new UpdateVersion((int)majorNumericUpDown.Value, (int)minorNumericUpDown.Value,
                     (int)buildNumericUpDown.Value, (int)revisionNumericUpDown.Value);
@@ -181,7 +182,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             {
                 if (
                     UpdateVersion.GetHighestUpdateVersion(
-                        Session.ActiveProject.Packages.Select(item => new UpdateVersion(item.LiteralVersion)))
+                        Session.ActiveProject.Packages.Select(item => new UpdateVersion(item.Version)))
                         .IsNewerOrEqualTo(_packageVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
@@ -228,6 +229,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                         .First(item => item.Index == tabPage.TabIndex - 4);
                 return;
             }
+            */
 
             DisableControls(true);
             InitializePackage();
@@ -312,7 +314,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
             _packageFile = Path.Combine(packageFolder, $"{Session.ActiveProject.Guid}.zip");
             _zip.Save();
-            Session.Logger.AppendEntry(PackageActionType.CreatePackage, _packageVersion);
+            // Session.Logger.AppendEntry(PackageActionType.CreatePackage, _packageVersion);
 
             Invoke(
                 new Action(
@@ -343,7 +345,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             _package.UpdatePhpFileUri = new Uri(Session.ActiveProject.UpdateDirectoryUri, "statistics.php");
             _package.UpdatePackageUri = new Uri(Session.ActiveProject.UpdateDirectoryUri,
                 $"{_packageVersion}/{Session.ActiveProject.Guid}.zip");
-            _package.LiteralVersion = _packageVersion.ToString();
+            // _package.Version = _packageVersion.ToString();
             _package.UseStatistics = _includeIntoStatistics;
 
             // TODO: Check if Invoke is necessary
@@ -394,7 +396,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                         _package.Description = descriptionTextBox.Text));
 
             _package.IsReleased = _publishUpdate;
-            _package.LiteralVersion = _packageVersion.ToString();
+            // _package.Version = _packageVersion.ToString();
 
             var progress = new Microsoft.Progress<TransferProgressEventArgs>();
             progress.ProgressChanged += (sender, args) =>
@@ -672,10 +674,10 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
+            /*var version = new UpdateVersion((int)unsupportedMajorNumericUpDown.Value,
                 (int)unsupportedMinorNumericUpDown.Value, (int)unsupportedBuildNumericUpDown.Value,
                 (int)unsupportedRevisionNumericUpDown.Value);
-            _unsupportedVersionLiteralsBindingList.Add(version.ToString());
+            _unsupportedVersionLiteralsBindingList.Add(version.ToString());*/
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)
