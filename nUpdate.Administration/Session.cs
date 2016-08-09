@@ -44,7 +44,7 @@ namespace nUpdate.Administration
             => AvailableLocations.First(x => x.Guid == ActiveProject.Guid).LastSeenPath;
 
         /// <summary>
-        ///     Gets the <see cref="Sql.SqlManager"/> of the <see cref="Session"/> for managing statistics entries.
+        ///     Gets the <see cref="SqlManager"/> of the <see cref="Session"/> for managing statistics entries.
         /// </summary>
         internal static SqlManager SQLManager { get; private set; }
 
