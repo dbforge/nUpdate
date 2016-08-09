@@ -20,17 +20,16 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // BaseDialog
             // 
-            this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.Name = "BaseDialog";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BaseDialog_FormClosing);
-            this.ResumeLayout(false);
-
+            BackColor = SystemColors.Window;
+            ClientSize = new Size(284, 261);
+            Font = new Font("Segoe UI", 8F);
+            Name = "BaseDialog";
+            FormClosing += BaseDialog_FormClosing;
+            ResumeLayout(false);
         }
 
         internal void AdjustControlsForAction(Action action, bool showLoadingOverlay)
