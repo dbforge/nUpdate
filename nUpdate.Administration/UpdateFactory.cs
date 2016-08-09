@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,7 +26,8 @@ namespace nUpdate.Administration
             return _project.Packages;
         }
 
-        internal async Task RemoveUpdate(Version updateVersion, string updateChannelName, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task RemoveUpdate(Version updateVersion, string updateChannelName,
+            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
             await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
@@ -33,7 +36,8 @@ namespace nUpdate.Administration
                 await Session.TransferManager.DeleteDirectory(updateVersion.ToString());
 
             var destinationPackage =
-                _project.Packages.FirstOrDefault(item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
+                _project.Packages.FirstOrDefault(
+                    item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
             if (destinationPackage != null)
             {
                 _project.Packages.Remove(destinationPackage);
@@ -126,49 +130,99 @@ namespace nUpdate.Administration
             //}
 
             // Upload the package
-            await Session.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.Guid, cancellationToken, progress);
+            await
+                Session.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.Guid,
+                    cancellationToken, progress);
             await PushPackageData(factoryPackage.PackageData, cancellationToken, progress);
 
-            Session.Logger.AppendEntry(PackageActionType.UploadPackage, $"{factoryPackage.PackageData.Version} ({factoryPackage.PackageData.ChannelName})");
+            Session.Logger.AppendEntry(PackageActionType.UploadPackage,
+                $"{factoryPackage.PackageData.Version} ({factoryPackage.PackageData.ChannelName})");
         }
 
-        internal async Task RemovePackageData(Version updateVersion, UpdateChannel updateChannel, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task RemovePackageData(Version updateVersion, UpdateChannel updateChannel,
+            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
             await RemovePackageData(updateVersion, updateChannel.Name, cancellationToken, progress);
         }
 
-        internal async Task RemovePackageData(Version updateVersion, string updateChannelName, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task RemovePackageData(Version updateVersion, string updateChannelName,
+            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
         {
-            var updateDataList = (await UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy)).ToList();
+            var masterChannel =
+                await
+                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
+                        _project.ProxyData.Proxy);
+            var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updateChannelName);
+            if (destinationChannel == null)
+                throw new InvalidOperationException("Invalid update channel.");
+
+            var updatePackages =
+                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
             var destinationPackage =
-                updateDataList.FirstOrDefault(item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
+                updatePackages.FirstOrDefault(item => item.Version.Equals(updateVersion));
             if (destinationPackage != null)
-                updateDataList.Remove(destinationPackage);
+                updatePackages.Remove(destinationPackage);
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updateDataList))))
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
             {
                 // TODO: Upload the package data
-                await Session.TransferManager.UploadFile(stream, "updates.json", progress);
+                await
+                    Session.TransferManager.UploadFile(stream,
+                        $"/channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
             }
         }
 
-        internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
+            IProgress<TransferProgressEventArgs> progress)
         {
-            var updateDataList = (await UpdatePackage.GetRemotePackageData(new Uri(_project.UpdateDirectoryUri, "updates.json"), _project.ProxyData.Proxy)).ToList();
-            updateDataList.Add(updatePackage);
+            var masterChannel =
+                await
+                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
+                        _project.ProxyData.Proxy);
+            var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
+            if (destinationChannel == null)
+                throw new InvalidOperationException("Invalid update channel.");
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updateDataList))))
+            var updatePackages =
+                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+            updatePackages.Add(updatePackage);
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
             {
                 // TODO: Upload the package data
-                await Session.TransferManager.UploadFile(stream, "updates.json", progress);
+                await
+                    Session.TransferManager.UploadFile(stream,
+                        $"channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
             }
         }
 
-        internal async Task PushDefaultPackageData(CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        internal async Task PushDefaultMasterChannel(bool overrideOldChannels, CancellationToken cancellationToken,
+            IProgress<TransferProgressEventArgs> progress)
         {
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(Enumerable.Empty<UpdatePackage>()))))
+            var masterChannel = UpdateChannel.GetDefaultMasterChannel(_project.UpdateDirectoryUri);
+            using (
+                var masterChannelStream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(masterChannel))))
+                await Session.TransferManager.UploadFile(masterChannelStream, "masterchannel.json", progress);
+
+            if (!await Session.TransferManager.Exists("channels"))
+                await Session.TransferManager.MakeDirectory("channels");
+
+            foreach (var updateChannel in masterChannel)
             {
-                await Session.TransferManager.UploadFile(stream, "updates.json", progress);
+                using (
+                    var updateChannelStream =
+                        new MemoryStream(
+                            Encoding.UTF8.GetBytes(
+                                Serializer.Serialize(Enumerable.Empty<UpdatePackage>())))
+                    )
+                {
+                    if (
+                        !(await
+                            Session.TransferManager.Exists($"channels/{updateChannel.Name.ToLowerInvariant()}.json")) && !overrideOldChannels)
+                        await
+                            Session.TransferManager.UploadFile(updateChannelStream,
+                                $"channels/{updateChannel.Name.ToLowerInvariant()}.json", progress);
+                }
             }
         }
     }

@@ -33,60 +33,34 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectDialog));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Released", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not released", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("ListViewGroup", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("ListViewGroup", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.projectDataPartsTabControl = new System.Windows.Forms.TabControl();
-            this.overviewTabPage = new nUpdate.Administration.UserInterface.Controls.ManualScrollTabPage();
-            this.line3 = new nUpdate.UI.WinForms.Controls.Line();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.line2 = new nUpdate.UI.WinForms.Controls.Line();
-            this.label1 = new System.Windows.Forms.Label();
-            this.assemblyPathTextBox = new nUpdate.Administration.UserInterface.Controls.ButtonTextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.line5 = new nUpdate.UI.WinForms.Controls.Line();
-            this.label3 = new System.Windows.Forms.Label();
-            this.stepTwoLabel = new System.Windows.Forms.Label();
-            this.programmingLanguageComboBox = new System.Windows.Forms.ComboBox();
-            this.stepOneLabel = new System.Windows.Forms.Label();
-            this.assumeInfoLabel = new System.Windows.Forms.Label();
-            this.copySourceButton = new System.Windows.Forms.Button();
-            this.assumeHeader = new System.Windows.Forms.Label();
-            this.checkingUrlPictureBox = new System.Windows.Forms.PictureBox();
-            this.tickPictureBox = new System.Windows.Forms.PictureBox();
-            this.newestPackageLabel = new System.Windows.Forms.Label();
-            this.amountLabel = new System.Windows.Forms.Label();
-            this.checkUpdateConfigurationLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.infoFileloadingLabel = new System.Windows.Forms.Label();
-            this.updateUriTextBox = new System.Windows.Forms.TextBox();
-            this.nameTextBox = new System.Windows.Forms.TextBox();
-            this.nameLabel = new System.Windows.Forms.Label();
-            this.updateUriLabel = new System.Windows.Forms.Label();
-            this.projectIdTextBox = new System.Windows.Forms.TextBox();
-            this.projectIdLabel = new System.Windows.Forms.Label();
-            this.publicKeyTextBox = new System.Windows.Forms.TextBox();
-            this.publicKeyLabel = new System.Windows.Forms.Label();
+            this.masterChannelHeader = new System.Windows.Forms.Label();
+            this.checkMasterChannelLinkLabel = new System.Windows.Forms.LinkLabel();
             this.line1 = new nUpdate.UI.WinForms.Controls.Line();
             this.overviewHeader = new System.Windows.Forms.Label();
+            this.newestPackageLabel = new System.Windows.Forms.Label();
+            this.amountLabel = new System.Windows.Forms.Label();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.updateUriLabel = new System.Windows.Forms.Label();
             this.newestPackageReleasedLabel = new System.Windows.Forms.Label();
             this.releasedPackagesAmountLabel = new System.Windows.Forms.Label();
-            this.line4 = new nUpdate.UI.WinForms.Controls.Line();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.loadFromAssemblyRadioButton = new System.Windows.Forms.RadioButton();
-            this.enterVersionManuallyRadioButton = new System.Windows.Forms.RadioButton();
-            this.packagesTabPage = new System.Windows.Forms.TabPage();
-            this.packagesList = new nUpdate.Administration.UserInterface.Controls.ExplorerListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.packagesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.publicKeyLabel = new System.Windows.Forms.Label();
+            this.projectIdLabel = new System.Windows.Forms.Label();
+            this.nameTextBox = new System.Windows.Forms.TextBox();
+            this.updateUriTextBox = new System.Windows.Forms.TextBox();
+            this.publicKeyTextBox = new System.Windows.Forms.TextBox();
+            this.projectIdTextBox = new System.Windows.Forms.TextBox();
+            this.packageListView = new nUpdate.Administration.UserInterface.Controls.ExplorerListView();
+            this.versionHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.descriptionHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.releaseDateHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.necessaryHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.searchTextBox = new nUpdate.Administration.UserInterface.Controls.CueTextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.addButton = new System.Windows.Forms.ToolStripSplitButton();
             this.addPackageToolStripButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,25 +74,41 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.uploadButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.historyButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.searchTextBox = new nUpdate.Administration.UserInterface.Controls.CueTextBox();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.packageStatusStrip = new System.Windows.Forms.StatusStrip();
+            this.activeTaskLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.packageTaskProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.placeHolderLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.packagesCountLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.packagesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.cancelLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.updateStatisticsButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.projectDataPartsTabControl.SuspendLayout();
-            this.overviewTabPage.SuspendLayout();
+            this.overviewContentSwitch = new nUpdate.Administration.UserInterface.Controls.ContentSwitch();
+            this.packagesContentSwitch = new nUpdate.Administration.UserInterface.Controls.ContentSwitch();
+            this.tabControl = new nUpdate.Administration.UserInterface.Controls.TablessTabControl();
+            this.overviewTabPage = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.line3 = new nUpdate.UI.WinForms.Controls.Line();
+            this.tickPictureBox = new System.Windows.Forms.PictureBox();
+            this.packageTabPage = new System.Windows.Forms.TabPage();
+            this.statisticsContentSwitch = new nUpdate.Administration.UserInterface.Controls.ContentSwitch();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkingUrlPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).BeginInit();
-            this.panel2.SuspendLayout();
-            this.packagesTabPage.SuspendLayout();
-            this.packagesContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.packageStatusStrip.SuspendLayout();
+            this.packagesContextMenuStrip.SuspendLayout();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabControl.SuspendLayout();
+            this.overviewTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).BeginInit();
+            this.packageTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageList1
@@ -130,94 +120,21 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.imageList1.Images.SetKeyName(2, "wrench.png");
             this.imageList1.Images.SetKeyName(3, "counter-count-up.png");
             // 
-            // projectDataPartsTabControl
-            // 
-            this.projectDataPartsTabControl.Controls.Add(this.overviewTabPage);
-            this.projectDataPartsTabControl.Controls.Add(this.packagesTabPage);
-            this.projectDataPartsTabControl.HotTrack = true;
-            this.projectDataPartsTabControl.ImageList = this.imageList1;
-            this.projectDataPartsTabControl.Location = new System.Drawing.Point(0, 0);
-            this.projectDataPartsTabControl.Name = "projectDataPartsTabControl";
-            this.projectDataPartsTabControl.SelectedIndex = 0;
-            this.projectDataPartsTabControl.Size = new System.Drawing.Size(574, 413);
-            this.projectDataPartsTabControl.TabIndex = 3;
-            // 
-            // overviewTabPage
-            // 
-            this.overviewTabPage.AutoScroll = true;
-            this.overviewTabPage.AutoScrollMargin = new System.Drawing.Size(1, 20);
-            this.overviewTabPage.AutoScrollMinSize = new System.Drawing.Size(540, 600);
-            this.overviewTabPage.Controls.Add(this.line3);
-            this.overviewTabPage.Controls.Add(this.label4);
-            this.overviewTabPage.Controls.Add(this.pictureBox3);
-            this.overviewTabPage.Controls.Add(this.line2);
-            this.overviewTabPage.Controls.Add(this.label1);
-            this.overviewTabPage.Controls.Add(this.assemblyPathTextBox);
-            this.overviewTabPage.Controls.Add(this.label8);
-            this.overviewTabPage.Controls.Add(this.label2);
-            this.overviewTabPage.Controls.Add(this.line5);
-            this.overviewTabPage.Controls.Add(this.label3);
-            this.overviewTabPage.Controls.Add(this.stepTwoLabel);
-            this.overviewTabPage.Controls.Add(this.programmingLanguageComboBox);
-            this.overviewTabPage.Controls.Add(this.stepOneLabel);
-            this.overviewTabPage.Controls.Add(this.assumeInfoLabel);
-            this.overviewTabPage.Controls.Add(this.copySourceButton);
-            this.overviewTabPage.Controls.Add(this.assumeHeader);
-            this.overviewTabPage.Controls.Add(this.checkingUrlPictureBox);
-            this.overviewTabPage.Controls.Add(this.tickPictureBox);
-            this.overviewTabPage.Controls.Add(this.newestPackageLabel);
-            this.overviewTabPage.Controls.Add(this.amountLabel);
-            this.overviewTabPage.Controls.Add(this.checkUpdateConfigurationLinkLabel);
-            this.overviewTabPage.Controls.Add(this.infoFileloadingLabel);
-            this.overviewTabPage.Controls.Add(this.updateUriTextBox);
-            this.overviewTabPage.Controls.Add(this.nameTextBox);
-            this.overviewTabPage.Controls.Add(this.nameLabel);
-            this.overviewTabPage.Controls.Add(this.updateUriLabel);
-            this.overviewTabPage.Controls.Add(this.projectIdTextBox);
-            this.overviewTabPage.Controls.Add(this.projectIdLabel);
-            this.overviewTabPage.Controls.Add(this.publicKeyTextBox);
-            this.overviewTabPage.Controls.Add(this.publicKeyLabel);
-            this.overviewTabPage.Controls.Add(this.line1);
-            this.overviewTabPage.Controls.Add(this.overviewHeader);
-            this.overviewTabPage.Controls.Add(this.newestPackageReleasedLabel);
-            this.overviewTabPage.Controls.Add(this.releasedPackagesAmountLabel);
-            this.overviewTabPage.Controls.Add(this.line4);
-            this.overviewTabPage.Controls.Add(this.panel2);
-            this.overviewTabPage.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.overviewTabPage.ImageIndex = 1;
-            this.overviewTabPage.Location = new System.Drawing.Point(4, 23);
-            this.overviewTabPage.Name = "overviewTabPage";
-            this.overviewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.overviewTabPage.Size = new System.Drawing.Size(566, 386);
-            this.overviewTabPage.TabIndex = 1;
-            this.overviewTabPage.Text = "Overview";
-            this.overviewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // line3
-            // 
-            this.line3.BackColor = System.Drawing.Color.White;
-            this.line3.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            this.line3.Location = new System.Drawing.Point(21, 174);
-            this.line3.Name = "line3";
-            this.line3.Size = new System.Drawing.Size(511, 10);
-            this.line3.TabIndex = 78;
-            this.line3.Text = "line3";
-            // 
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(47, 322);
+            this.label4.Location = new System.Drawing.Point(52, 330);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(473, 30);
+            this.label4.Size = new System.Drawing.Size(444, 41);
             this.label4.TabIndex = 77;
-            this.label4.Text = "The package data file contains the frame data of all available update packages an" +
-    "d links this project with the nUpdate-library to enable the update process for t" +
-    "he client.";
+            this.label4.Text = "The MasterChannel contains all available update channels in this project to manag" +
+    "e the package exchange and the comparison of different package versions in your " +
+    "project.";
             // 
             // pictureBox3
             // 
             this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-            this.pictureBox3.Location = new System.Drawing.Point(30, 320);
+            this.pictureBox3.Location = new System.Drawing.Point(32, 329);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(16, 16);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -228,278 +145,44 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             // 
             this.line2.BackColor = System.Drawing.Color.White;
             this.line2.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            this.line2.Location = new System.Drawing.Point(144, 267);
+            this.line2.Location = new System.Drawing.Point(126, 280);
             this.line2.Name = "line2";
-            this.line2.Size = new System.Drawing.Size(386, 13);
+            this.line2.Size = new System.Drawing.Size(393, 10);
             this.line2.TabIndex = 75;
             this.line2.Text = "line2";
             // 
-            // label1
+            // masterChannelHeader
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 11.25F);
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
-            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(20, 260);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(122, 20);
-            this.label1.TabIndex = 74;
-            this.label1.Text = "Package data file";
+            this.masterChannelHeader.AutoSize = true;
+            this.masterChannelHeader.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.masterChannelHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.masterChannelHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.masterChannelHeader.Location = new System.Drawing.Point(15, 274);
+            this.masterChannelHeader.Name = "masterChannelHeader";
+            this.masterChannelHeader.Size = new System.Drawing.Size(107, 20);
+            this.masterChannelHeader.TabIndex = 74;
+            this.masterChannelHeader.Text = "MasterChannel";
             // 
-            // assemblyPathTextBox
+            // checkMasterChannelLinkLabel
             // 
-            this.assemblyPathTextBox.ButtonText = "...";
-            this.assemblyPathTextBox.Cue = null;
-            this.assemblyPathTextBox.Enabled = false;
-            this.assemblyPathTextBox.Location = new System.Drawing.Point(93, 503);
-            this.assemblyPathTextBox.Name = "assemblyPathTextBox";
-            this.assemblyPathTextBox.Size = new System.Drawing.Size(425, 22);
-            this.assemblyPathTextBox.TabIndex = 73;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(44, 506);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(33, 13);
-            this.label8.TabIndex = 61;
-            this.label8.Text = "Path:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 404);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(494, 26);
-            this.label2.TabIndex = 44;
-            this.label2.Text = "Set if the version should be entered manually or loaded from an assembly when add" +
-    "ing a new \r\npackage. ";
-            // 
-            // line5
-            // 
-            this.line5.BackColor = System.Drawing.Color.White;
-            this.line5.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            this.line5.Location = new System.Drawing.Point(132, 375);
-            this.line5.Name = "line5";
-            this.line5.Size = new System.Drawing.Size(398, 13);
-            this.line5.TabIndex = 43;
-            this.line5.Text = "line5";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 11.25F);
-            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
-            this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label3.Location = new System.Drawing.Point(20, 368);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(105, 20);
-            this.label3.TabIndex = 42;
-            this.label3.Text = "Version linking";
-            // 
-            // stepTwoLabel
-            // 
-            this.stepTwoLabel.Location = new System.Drawing.Point(29, 636);
-            this.stepTwoLabel.Name = "stepTwoLabel";
-            this.stepTwoLabel.Size = new System.Drawing.Size(299, 32);
-            this.stepTwoLabel.TabIndex = 41;
-            this.stepTwoLabel.Text = "2. Click \"Copy source\" and paste the clipboard content into your source code.";
-            // 
-            // programmingLanguageComboBox
-            // 
-            this.programmingLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.programmingLanguageComboBox.FormattingEnabled = true;
-            this.programmingLanguageComboBox.Location = new System.Drawing.Point(353, 601);
-            this.programmingLanguageComboBox.Name = "programmingLanguageComboBox";
-            this.programmingLanguageComboBox.Size = new System.Drawing.Size(139, 21);
-            this.programmingLanguageComboBox.TabIndex = 40;
-            // 
-            // stepOneLabel
-            // 
-            this.stepOneLabel.AutoSize = true;
-            this.stepOneLabel.Location = new System.Drawing.Point(29, 604);
-            this.stepOneLabel.Name = "stepOneLabel";
-            this.stepOneLabel.Size = new System.Drawing.Size(318, 13);
-            this.stepOneLabel.TabIndex = 39;
-            this.stepOneLabel.Text = "1. Please choose the programming language of your project:\r\n";
-            // 
-            // assumeInfoLabel
-            // 
-            this.assumeInfoLabel.Location = new System.Drawing.Point(29, 563);
-            this.assumeInfoLabel.Name = "assumeInfoLabel";
-            this.assumeInfoLabel.Size = new System.Drawing.Size(502, 26);
-            this.assumeInfoLabel.TabIndex = 38;
-            this.assumeInfoLabel.Text = "You can generate the adequate source code for your application that uses nUpdate " +
-    "and is related to this project without copying the data manually by following th" +
-    "ese steps:";
-            // 
-            // copySourceButton
-            // 
-            this.copySourceButton.Location = new System.Drawing.Point(380, 631);
-            this.copySourceButton.Name = "copySourceButton";
-            this.copySourceButton.Size = new System.Drawing.Size(112, 23);
-            this.copySourceButton.TabIndex = 37;
-            this.copySourceButton.Text = "Copy source";
-            this.copySourceButton.UseVisualStyleBackColor = true;
-            this.copySourceButton.Click += new System.EventHandler(this.copySourceButton_Click);
-            // 
-            // assumeHeader
-            // 
-            this.assumeHeader.AutoSize = true;
-            this.assumeHeader.Font = new System.Drawing.Font("Segoe UI", 11.25F);
-            this.assumeHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
-            this.assumeHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.assumeHeader.Location = new System.Drawing.Point(23, 532);
-            this.assumeHeader.Name = "assumeHeader";
-            this.assumeHeader.Size = new System.Drawing.Size(77, 20);
-            this.assumeHeader.TabIndex = 35;
-            this.assumeHeader.Text = "Copy data";
-            // 
-            // checkingUrlPictureBox
-            // 
-            this.checkingUrlPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("checkingUrlPictureBox.Image")));
-            this.checkingUrlPictureBox.Location = new System.Drawing.Point(311, 297);
-            this.checkingUrlPictureBox.Name = "checkingUrlPictureBox";
-            this.checkingUrlPictureBox.Size = new System.Drawing.Size(16, 16);
-            this.checkingUrlPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.checkingUrlPictureBox.TabIndex = 31;
-            this.checkingUrlPictureBox.TabStop = false;
-            this.checkingUrlPictureBox.Visible = false;
-            // 
-            // tickPictureBox
-            // 
-            this.tickPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("tickPictureBox.Image")));
-            this.tickPictureBox.Location = new System.Drawing.Point(311, 297);
-            this.tickPictureBox.Name = "tickPictureBox";
-            this.tickPictureBox.Size = new System.Drawing.Size(16, 16);
-            this.tickPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tickPictureBox.TabIndex = 30;
-            this.tickPictureBox.TabStop = false;
-            this.tickPictureBox.Visible = false;
-            // 
-            // newestPackageLabel
-            // 
-            this.newestPackageLabel.AutoSize = true;
-            this.newestPackageLabel.Location = new System.Drawing.Point(232, 221);
-            this.newestPackageLabel.Name = "newestPackageLabel";
-            this.newestPackageLabel.Size = new System.Drawing.Size(26, 13);
-            this.newestPackageLabel.TabIndex = 28;
-            this.newestPackageLabel.Text = "N/A";
-            // 
-            // amountLabel
-            // 
-            this.amountLabel.AutoSize = true;
-            this.amountLabel.Location = new System.Drawing.Point(232, 196);
-            this.amountLabel.Name = "amountLabel";
-            this.amountLabel.Size = new System.Drawing.Size(26, 13);
-            this.amountLabel.TabIndex = 27;
-            this.amountLabel.Text = "N/A";
-            // 
-            // checkUpdateConfigurationLinkLabel
-            // 
-            this.checkUpdateConfigurationLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            this.checkUpdateConfigurationLinkLabel.AutoSize = true;
-            this.checkUpdateConfigurationLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.checkUpdateConfigurationLinkLabel.Location = new System.Drawing.Point(235, 298);
-            this.checkUpdateConfigurationLinkLabel.Name = "checkUpdateConfigurationLinkLabel";
-            this.checkUpdateConfigurationLinkLabel.Size = new System.Drawing.Size(75, 13);
-            this.checkUpdateConfigurationLinkLabel.TabIndex = 26;
-            this.checkUpdateConfigurationLinkLabel.TabStop = true;
-            this.checkUpdateConfigurationLinkLabel.Text = "Check status ";
-            this.checkUpdateConfigurationLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.checkUpdateConfigurationLinkLabel_LinkClicked);
-            // 
-            // infoFileloadingLabel
-            // 
-            this.infoFileloadingLabel.AutoSize = true;
-            this.infoFileloadingLabel.Location = new System.Drawing.Point(27, 298);
-            this.infoFileloadingLabel.Name = "infoFileloadingLabel";
-            this.infoFileloadingLabel.Size = new System.Drawing.Size(167, 13);
-            this.infoFileloadingLabel.TabIndex = 24;
-            this.infoFileloadingLabel.Text = "Status of the package data file:";
-            // 
-            // updateUriTextBox
-            // 
-            this.updateUriTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.updateUriTextBox.Location = new System.Drawing.Point(235, 80);
-            this.updateUriTextBox.Name = "updateUriTextBox";
-            this.updateUriTextBox.ReadOnly = true;
-            this.updateUriTextBox.Size = new System.Drawing.Size(285, 22);
-            this.updateUriTextBox.TabIndex = 21;
-            this.updateUriTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
-            // 
-            // nameTextBox
-            // 
-            this.nameTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.nameTextBox.Location = new System.Drawing.Point(235, 52);
-            this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.ReadOnly = true;
-            this.nameTextBox.Size = new System.Drawing.Size(285, 22);
-            this.nameTextBox.TabIndex = 20;
-            this.nameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
-            // 
-            // nameLabel
-            // 
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(24, 55);
-            this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(39, 13);
-            this.nameLabel.TabIndex = 19;
-            this.nameLabel.Text = "Name:";
-            // 
-            // updateUriLabel
-            // 
-            this.updateUriLabel.AutoSize = true;
-            this.updateUriLabel.Location = new System.Drawing.Point(24, 83);
-            this.updateUriLabel.Name = "updateUriLabel";
-            this.updateUriLabel.Size = new System.Drawing.Size(70, 13);
-            this.updateUriLabel.TabIndex = 18;
-            this.updateUriLabel.Text = "Update-URI:";
-            // 
-            // projectIdTextBox
-            // 
-            this.projectIdTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.projectIdTextBox.Location = new System.Drawing.Point(235, 136);
-            this.projectIdTextBox.Name = "projectIdTextBox";
-            this.projectIdTextBox.ReadOnly = true;
-            this.projectIdTextBox.Size = new System.Drawing.Size(285, 22);
-            this.projectIdTextBox.TabIndex = 17;
-            this.projectIdTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
-            // 
-            // projectIdLabel
-            // 
-            this.projectIdLabel.AutoSize = true;
-            this.projectIdLabel.Location = new System.Drawing.Point(24, 139);
-            this.projectIdLabel.Name = "projectIdLabel";
-            this.projectIdLabel.Size = new System.Drawing.Size(60, 13);
-            this.projectIdLabel.TabIndex = 16;
-            this.projectIdLabel.Text = "Project-ID:";
-            // 
-            // publicKeyTextBox
-            // 
-            this.publicKeyTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.publicKeyTextBox.Location = new System.Drawing.Point(235, 108);
-            this.publicKeyTextBox.Name = "publicKeyTextBox";
-            this.publicKeyTextBox.ReadOnly = true;
-            this.publicKeyTextBox.Size = new System.Drawing.Size(285, 22);
-            this.publicKeyTextBox.TabIndex = 15;
-            this.publicKeyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
-            // 
-            // publicKeyLabel
-            // 
-            this.publicKeyLabel.AutoSize = true;
-            this.publicKeyLabel.Location = new System.Drawing.Point(24, 111);
-            this.publicKeyLabel.Name = "publicKeyLabel";
-            this.publicKeyLabel.Size = new System.Drawing.Size(61, 13);
-            this.publicKeyLabel.TabIndex = 14;
-            this.publicKeyLabel.Text = "Public key:";
+            this.checkMasterChannelLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.checkMasterChannelLinkLabel.AutoSize = true;
+            this.checkMasterChannelLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
+            this.checkMasterChannelLinkLabel.Location = new System.Drawing.Point(217, 310);
+            this.checkMasterChannelLinkLabel.Name = "checkMasterChannelLinkLabel";
+            this.checkMasterChannelLinkLabel.Size = new System.Drawing.Size(75, 13);
+            this.checkMasterChannelLinkLabel.TabIndex = 26;
+            this.checkMasterChannelLinkLabel.TabStop = true;
+            this.checkMasterChannelLinkLabel.Text = "Check status ";
+            this.checkMasterChannelLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.checkMasterChannelnLinkLabel_LinkClicked);
             // 
             // line1
             // 
             this.line1.BackColor = System.Drawing.Color.White;
             this.line1.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            this.line1.Location = new System.Drawing.Point(144, 24);
+            this.line1.Location = new System.Drawing.Point(85, 20);
             this.line1.Name = "line1";
-            this.line1.Size = new System.Drawing.Size(386, 13);
+            this.line1.Size = new System.Drawing.Size(434, 10);
             this.line1.TabIndex = 11;
             this.line1.Text = "line1";
             // 
@@ -509,17 +192,52 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.overviewHeader.Font = new System.Drawing.Font("Segoe UI", 11.25F);
             this.overviewHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.overviewHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.overviewHeader.Location = new System.Drawing.Point(20, 17);
+            this.overviewHeader.Location = new System.Drawing.Point(15, 13);
             this.overviewHeader.Name = "overviewHeader";
-            this.overviewHeader.Size = new System.Drawing.Size(124, 20);
+            this.overviewHeader.Size = new System.Drawing.Size(70, 20);
             this.overviewHeader.TabIndex = 8;
-            this.overviewHeader.Text = "Project-overview ";
-            this.overviewHeader.Click += new System.EventHandler(this.overviewHeader_Click);
+            this.overviewHeader.Text = "Overview";
+            // 
+            // newestPackageLabel
+            // 
+            this.newestPackageLabel.AutoSize = true;
+            this.newestPackageLabel.Location = new System.Drawing.Point(217, 228);
+            this.newestPackageLabel.Name = "newestPackageLabel";
+            this.newestPackageLabel.Size = new System.Drawing.Size(26, 13);
+            this.newestPackageLabel.TabIndex = 28;
+            this.newestPackageLabel.Text = "N/A";
+            // 
+            // amountLabel
+            // 
+            this.amountLabel.AutoSize = true;
+            this.amountLabel.Location = new System.Drawing.Point(217, 201);
+            this.amountLabel.Name = "amountLabel";
+            this.amountLabel.Size = new System.Drawing.Size(26, 13);
+            this.amountLabel.TabIndex = 27;
+            this.amountLabel.Text = "N/A";
+            // 
+            // nameLabel
+            // 
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Location = new System.Drawing.Point(28, 52);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(39, 13);
+            this.nameLabel.TabIndex = 19;
+            this.nameLabel.Text = "Name:";
+            // 
+            // updateUriLabel
+            // 
+            this.updateUriLabel.AutoSize = true;
+            this.updateUriLabel.Location = new System.Drawing.Point(28, 82);
+            this.updateUriLabel.Name = "updateUriLabel";
+            this.updateUriLabel.Size = new System.Drawing.Size(96, 13);
+            this.updateUriLabel.TabIndex = 18;
+            this.updateUriLabel.Text = "Update directory:";
             // 
             // newestPackageReleasedLabel
             // 
             this.newestPackageReleasedLabel.AutoSize = true;
-            this.newestPackageReleasedLabel.Location = new System.Drawing.Point(24, 221);
+            this.newestPackageReleasedLabel.Location = new System.Drawing.Point(29, 228);
             this.newestPackageReleasedLabel.Name = "newestPackageReleasedLabel";
             this.newestPackageReleasedLabel.Size = new System.Drawing.Size(140, 13);
             this.newestPackageReleasedLabel.TabIndex = 7;
@@ -528,113 +246,298 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             // releasedPackagesAmountLabel
             // 
             this.releasedPackagesAmountLabel.AutoSize = true;
-            this.releasedPackagesAmountLabel.Location = new System.Drawing.Point(24, 196);
+            this.releasedPackagesAmountLabel.Location = new System.Drawing.Point(29, 201);
             this.releasedPackagesAmountLabel.Name = "releasedPackagesAmountLabel";
             this.releasedPackagesAmountLabel.Size = new System.Drawing.Size(162, 13);
             this.releasedPackagesAmountLabel.TabIndex = 6;
-            this.releasedPackagesAmountLabel.Text = "Amount of packages released:";
+            this.releasedPackagesAmountLabel.Text = "Amount of released packages:";
             // 
-            // line4
+            // publicKeyLabel
             // 
-            this.line4.BackColor = System.Drawing.Color.White;
-            this.line4.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            this.line4.Location = new System.Drawing.Point(101, 539);
-            this.line4.Name = "line4";
-            this.line4.Size = new System.Drawing.Size(432, 10);
-            this.line4.TabIndex = 36;
-            this.line4.Text = "line4";
+            this.publicKeyLabel.AutoSize = true;
+            this.publicKeyLabel.Location = new System.Drawing.Point(28, 111);
+            this.publicKeyLabel.Name = "publicKeyLabel";
+            this.publicKeyLabel.Size = new System.Drawing.Size(61, 13);
+            this.publicKeyLabel.TabIndex = 14;
+            this.publicKeyLabel.Text = "Public Key:";
             // 
-            // panel2
+            // projectIdLabel
             // 
-            this.panel2.Controls.Add(this.loadFromAssemblyRadioButton);
-            this.panel2.Controls.Add(this.enterVersionManuallyRadioButton);
-            this.panel2.Location = new System.Drawing.Point(18, 437);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(191, 59);
-            this.panel2.TabIndex = 64;
+            this.projectIdLabel.AutoSize = true;
+            this.projectIdLabel.Location = new System.Drawing.Point(29, 140);
+            this.projectIdLabel.Name = "projectIdLabel";
+            this.projectIdLabel.Size = new System.Drawing.Size(37, 13);
+            this.projectIdLabel.TabIndex = 16;
+            this.projectIdLabel.Text = "GUID:";
             // 
-            // loadFromAssemblyRadioButton
+            // nameTextBox
             // 
-            this.loadFromAssemblyRadioButton.AutoSize = true;
-            this.loadFromAssemblyRadioButton.Location = new System.Drawing.Point(9, 32);
-            this.loadFromAssemblyRadioButton.Name = "loadFromAssemblyRadioButton";
-            this.loadFromAssemblyRadioButton.Size = new System.Drawing.Size(169, 17);
-            this.loadFromAssemblyRadioButton.TabIndex = 60;
-            this.loadFromAssemblyRadioButton.Text = "Load version from assembly:";
-            this.loadFromAssemblyRadioButton.UseVisualStyleBackColor = true;
-            this.loadFromAssemblyRadioButton.CheckedChanged += new System.EventHandler(this.loadFromAssemblyRadioButton_CheckedChanged);
+            this.nameTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.nameTextBox.Location = new System.Drawing.Point(220, 49);
+            this.nameTextBox.Name = "nameTextBox";
+            this.nameTextBox.ReadOnly = true;
+            this.nameTextBox.Size = new System.Drawing.Size(276, 22);
+            this.nameTextBox.TabIndex = 20;
+            this.nameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
             // 
-            // enterVersionManuallyRadioButton
+            // updateUriTextBox
             // 
-            this.enterVersionManuallyRadioButton.AutoSize = true;
-            this.enterVersionManuallyRadioButton.Checked = true;
-            this.enterVersionManuallyRadioButton.Location = new System.Drawing.Point(9, 9);
-            this.enterVersionManuallyRadioButton.Name = "enterVersionManuallyRadioButton";
-            this.enterVersionManuallyRadioButton.Size = new System.Drawing.Size(141, 17);
-            this.enterVersionManuallyRadioButton.TabIndex = 59;
-            this.enterVersionManuallyRadioButton.TabStop = true;
-            this.enterVersionManuallyRadioButton.Text = "Enter version manually";
-            this.enterVersionManuallyRadioButton.UseVisualStyleBackColor = true;
-            this.enterVersionManuallyRadioButton.CheckedChanged += new System.EventHandler(this.enterVersionManuallyRadioButton_CheckedChanged);
+            this.updateUriTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.updateUriTextBox.Location = new System.Drawing.Point(220, 79);
+            this.updateUriTextBox.Name = "updateUriTextBox";
+            this.updateUriTextBox.ReadOnly = true;
+            this.updateUriTextBox.Size = new System.Drawing.Size(276, 22);
+            this.updateUriTextBox.TabIndex = 21;
+            this.updateUriTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
             // 
-            // packagesTabPage
+            // publicKeyTextBox
             // 
-            this.packagesTabPage.Controls.Add(this.packagesList);
-            this.packagesTabPage.Controls.Add(this.toolStrip1);
-            this.packagesTabPage.Controls.Add(this.searchTextBox);
-            this.packagesTabPage.ImageIndex = 0;
-            this.packagesTabPage.Location = new System.Drawing.Point(4, 23);
-            this.packagesTabPage.Name = "packagesTabPage";
-            this.packagesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.packagesTabPage.Size = new System.Drawing.Size(566, 386);
-            this.packagesTabPage.TabIndex = 0;
-            this.packagesTabPage.Text = "Packages";
-            this.packagesTabPage.UseVisualStyleBackColor = true;
+            this.publicKeyTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.publicKeyTextBox.Location = new System.Drawing.Point(220, 108);
+            this.publicKeyTextBox.Name = "publicKeyTextBox";
+            this.publicKeyTextBox.ReadOnly = true;
+            this.publicKeyTextBox.Size = new System.Drawing.Size(276, 22);
+            this.publicKeyTextBox.TabIndex = 15;
+            this.publicKeyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
             // 
-            // packagesList
+            // projectIdTextBox
             // 
-            this.packagesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.packagesList.ContextMenuStrip = this.packagesContextMenuStrip;
-            this.packagesList.FullRowSelect = true;
-            listViewGroup1.Header = "Released";
-            listViewGroup1.Name = "listViewGroup1";
-            listViewGroup2.Header = "Not released";
-            listViewGroup2.Name = "listViewGroup2";
-            this.packagesList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            this.projectIdTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.projectIdTextBox.Location = new System.Drawing.Point(220, 137);
+            this.projectIdTextBox.Name = "projectIdTextBox";
+            this.projectIdTextBox.ReadOnly = true;
+            this.projectIdTextBox.Size = new System.Drawing.Size(276, 22);
+            this.projectIdTextBox.TabIndex = 17;
+            this.projectIdTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.readOnlyTextBox_KeyDown);
+            // 
+            // packageListView
+            // 
+            this.packageListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.packageListView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.packageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.versionHeader,
+            this.descriptionHeader,
+            this.releaseDateHeader,
+            this.necessaryHeader});
+            this.packageListView.FullRowSelect = true;
+            listViewGroup1.Header = "ListViewGroup";
+            listViewGroup1.Name = "notReleasedGroup";
+            listViewGroup2.Header = "ListViewGroup";
+            listViewGroup2.Name = "releasedGroup";
+            this.packageListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2});
-            this.packagesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.packagesList.Location = new System.Drawing.Point(4, 31);
-            this.packagesList.Name = "packagesList";
-            this.packagesList.Size = new System.Drawing.Size(558, 351);
-            this.packagesList.TabIndex = 3;
-            this.packagesList.UseCompatibleStateImageBehavior = false;
-            this.packagesList.View = System.Windows.Forms.View.Details;
-            this.packagesList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.packagesList_ItemSelectionChanged);
+            this.packageListView.Location = new System.Drawing.Point(-1, 34);
+            this.packageListView.Name = "packageListView";
+            this.packageListView.Size = new System.Drawing.Size(525, 369);
+            this.packageListView.TabIndex = 6;
+            this.packageListView.UseCompatibleStateImageBehavior = false;
+            this.packageListView.View = System.Windows.Forms.View.Details;
+            this.packageListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.packageListView_ItemSelectionChanged);
             // 
-            // columnHeader1
+            // versionHeader
             // 
-            this.columnHeader1.Text = "Version";
-            this.columnHeader1.Width = 116;
+            this.versionHeader.Text = "Package version";
+            this.versionHeader.Width = 156;
             // 
-            // columnHeader2
+            // descriptionHeader
             // 
-            this.columnHeader2.Text = "Released";
-            this.columnHeader2.Width = 148;
+            this.descriptionHeader.Text = "Description";
+            this.descriptionHeader.Width = 164;
             // 
-            // columnHeader3
+            // releaseDateHeader
             // 
-            this.columnHeader3.Text = "Size";
-            this.columnHeader3.Width = 95;
+            this.releaseDateHeader.Text = "Release Date";
+            this.releaseDateHeader.Width = 98;
             // 
-            // columnHeader4
+            // necessaryHeader
             // 
-            this.columnHeader4.Text = "Description";
-            this.columnHeader4.Width = 194;
+            this.necessaryHeader.Text = "Necessary";
+            this.necessaryHeader.Width = 105;
+            // 
+            // searchTextBox
+            // 
+            this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchTextBox.Cue = "Search...";
+            this.searchTextBox.Location = new System.Drawing.Point(341, 6);
+            this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.Size = new System.Drawing.Size(179, 22);
+            this.searchTextBox.TabIndex = 2;
+            this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.AutoSize = false;
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.Window;
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addButton,
+            this.toolStripSeparator1,
+            this.editButton,
+            this.toolStripSeparator2,
+            this.deleteButton,
+            this.toolStripSeparator3,
+            this.uploadButton,
+            this.toolStripSeparator4,
+            this.historyButton,
+            this.toolStripSeparator6});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 3);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip1.Size = new System.Drawing.Size(517, 28);
+            this.toolStrip1.TabIndex = 0;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // addButton
+            // 
+            this.addButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addPackageToolStripButton,
+            this.packageFromTemplateToolStripButton,
+            this.addTemplateToolStripButton});
+            this.addButton.Image = ((System.Drawing.Image)(resources.GetObject("addButton.Image")));
+            this.addButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(61, 25);
+            this.addButton.Text = "Add";
+            this.addButton.ButtonClick += new System.EventHandler(this.addButton_Click);
+            // 
+            // addPackageToolStripButton
+            // 
+            this.addPackageToolStripButton.Name = "addPackageToolStripButton";
+            this.addPackageToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.addPackageToolStripButton.Text = "Add package";
+            this.addPackageToolStripButton.Click += new System.EventHandler(this.addButton_Click);
+            // 
+            // packageFromTemplateToolStripButton
+            // 
+            this.packageFromTemplateToolStripButton.Name = "packageFromTemplateToolStripButton";
+            this.packageFromTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.packageFromTemplateToolStripButton.Text = "Add package from template";
+            this.packageFromTemplateToolStripButton.Click += new System.EventHandler(this.packageFromTemplateToolStripButton_Click);
+            // 
+            // addTemplateToolStripButton
+            // 
+            this.addTemplateToolStripButton.Name = "addTemplateToolStripButton";
+            this.addTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
+            this.addTemplateToolStripButton.Text = "Add template";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
+            // 
+            // editButton
+            // 
+            this.editButton.AutoToolTip = false;
+            this.editButton.Enabled = false;
+            this.editButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.editButton.Image = ((System.Drawing.Image)(resources.GetObject("editButton.Image")));
+            this.editButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.editButton.Name = "editButton";
+            this.editButton.Size = new System.Drawing.Size(50, 25);
+            this.editButton.Text = "Edit ";
+            this.editButton.ToolTipText = "Edit the configuration of the selected package.";
+            this.editButton.Click += new System.EventHandler(this.editButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 28);
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.AutoToolTip = false;
+            this.deleteButton.Enabled = false;
+            this.deleteButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteButton.Image")));
+            this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(63, 25);
+            this.deleteButton.Text = "Delete ";
+            this.deleteButton.ToolTipText = "Delete the selected package from the server and/or locally.";
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 28);
+            // 
+            // uploadButton
+            // 
+            this.uploadButton.AutoToolTip = false;
+            this.uploadButton.Enabled = false;
+            this.uploadButton.Image = ((System.Drawing.Image)(resources.GetObject("uploadButton.Image")));
+            this.uploadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.uploadButton.Name = "uploadButton";
+            this.uploadButton.Size = new System.Drawing.Size(68, 25);
+            this.uploadButton.Text = "Upload ";
+            this.uploadButton.ToolTipText = "Upload the selected package onto the server and make it available for all clients" +
+    ".";
+            this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 28);
+            // 
+            // historyButton
+            // 
+            this.historyButton.AutoToolTip = false;
+            this.historyButton.Image = ((System.Drawing.Image)(resources.GetObject("historyButton.Image")));
+            this.historyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.historyButton.Name = "historyButton";
+            this.historyButton.Size = new System.Drawing.Size(65, 25);
+            this.historyButton.Text = "History";
+            this.historyButton.ToolTipText = "Load the history of the packages.";
+            this.historyButton.Click += new System.EventHandler(this.historyButton_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 28);
+            // 
+            // packageStatusStrip
+            // 
+            this.packageStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.activeTaskLabel,
+            this.packageTaskProgressBar,
+            this.placeHolderLabel,
+            this.packagesCountLabel});
+            this.packageStatusStrip.Location = new System.Drawing.Point(0, 454);
+            this.packageStatusStrip.Name = "packageStatusStrip";
+            this.packageStatusStrip.Size = new System.Drawing.Size(672, 22);
+            this.packageStatusStrip.SizingGrip = false;
+            this.packageStatusStrip.TabIndex = 4;
+            // 
+            // activeTaskLabel
+            // 
+            this.activeTaskLabel.BackColor = System.Drawing.Color.Transparent;
+            this.activeTaskLabel.Name = "activeTaskLabel";
+            this.activeTaskLabel.Size = new System.Drawing.Size(89, 17);
+            this.activeTaskLabel.Text = "No active tasks.";
+            // 
+            // packageTaskProgressBar
+            // 
+            this.packageTaskProgressBar.Name = "packageTaskProgressBar";
+            this.packageTaskProgressBar.Size = new System.Drawing.Size(100, 16);
+            this.packageTaskProgressBar.Visible = false;
+            // 
+            // placeHolderLabel
+            // 
+            this.placeHolderLabel.BackColor = System.Drawing.Color.Transparent;
+            this.placeHolderLabel.Name = "placeHolderLabel";
+            this.placeHolderLabel.Size = new System.Drawing.Size(460, 17);
+            this.placeHolderLabel.Spring = true;
+            // 
+            // packagesCountLabel
+            // 
+            this.packagesCountLabel.BackColor = System.Drawing.Color.Transparent;
+            this.packagesCountLabel.Name = "packagesCountLabel";
+            this.packagesCountLabel.Size = new System.Drawing.Size(108, 17);
+            this.packagesCountLabel.Text = "0 update packages.";
             // 
             // packagesContextMenuStrip
             // 
@@ -682,145 +585,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.uploadToolStripMenuItem.Text = "Upload";
             this.uploadToolStripMenuItem.Click += new System.EventHandler(this.uploadButton_Click);
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.AutoSize = false;
-            this.toolStrip1.BackColor = System.Drawing.Color.Transparent;
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addButton,
-            this.toolStripSeparator1,
-            this.editButton,
-            this.toolStripSeparator2,
-            this.deleteButton,
-            this.toolStripSeparator3,
-            this.uploadButton,
-            this.toolStripSeparator4,
-            this.historyButton,
-            this.toolStripSeparator5});
-            this.toolStrip1.Location = new System.Drawing.Point(2, 3);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(424, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // addButton
-            // 
-            this.addButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addPackageToolStripButton,
-            this.packageFromTemplateToolStripButton,
-            this.addTemplateToolStripButton});
-            this.addButton.Image = ((System.Drawing.Image)(resources.GetObject("addButton.Image")));
-            this.addButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(61, 22);
-            this.addButton.Text = "Add";
-            this.addButton.ButtonClick += new System.EventHandler(this.addButton_Click);
-            // 
-            // addPackageToolStripButton
-            // 
-            this.addPackageToolStripButton.Name = "addPackageToolStripButton";
-            this.addPackageToolStripButton.Size = new System.Drawing.Size(222, 22);
-            this.addPackageToolStripButton.Text = "Add package";
-            this.addPackageToolStripButton.Click += new System.EventHandler(this.addButton_Click);
-            // 
-            // packageFromTemplateToolStripButton
-            // 
-            this.packageFromTemplateToolStripButton.Name = "packageFromTemplateToolStripButton";
-            this.packageFromTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
-            this.packageFromTemplateToolStripButton.Text = "Add package from template";
-            this.packageFromTemplateToolStripButton.Click += new System.EventHandler(this.packageFromTemplateToolStripButton_Click);
-            // 
-            // addTemplateToolStripButton
-            // 
-            this.addTemplateToolStripButton.Name = "addTemplateToolStripButton";
-            this.addTemplateToolStripButton.Size = new System.Drawing.Size(222, 22);
-            this.addTemplateToolStripButton.Text = "Add template";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // editButton
-            // 
-            this.editButton.AutoToolTip = false;
-            this.editButton.Enabled = false;
-            this.editButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.editButton.Image = ((System.Drawing.Image)(resources.GetObject("editButton.Image")));
-            this.editButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.editButton.Name = "editButton";
-            this.editButton.Size = new System.Drawing.Size(50, 22);
-            this.editButton.Text = "Edit ";
-            this.editButton.ToolTipText = "Edit the configuration of the selected package.";
-            this.editButton.Click += new System.EventHandler(this.editButton_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // deleteButton
-            // 
-            this.deleteButton.AutoToolTip = false;
-            this.deleteButton.Enabled = false;
-            this.deleteButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteButton.Image")));
-            this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(63, 22);
-            this.deleteButton.Text = "Delete ";
-            this.deleteButton.ToolTipText = "Delete the selected package from the server and/or locally.";
-            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // uploadButton
-            // 
-            this.uploadButton.AutoToolTip = false;
-            this.uploadButton.Enabled = false;
-            this.uploadButton.Image = ((System.Drawing.Image)(resources.GetObject("uploadButton.Image")));
-            this.uploadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.uploadButton.Name = "uploadButton";
-            this.uploadButton.Size = new System.Drawing.Size(68, 22);
-            this.uploadButton.Text = "Upload ";
-            this.uploadButton.ToolTipText = "Upload the selected package onto the server and make it available for all clients" +
-    ".";
-            this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
-            // historyButton
-            // 
-            this.historyButton.AutoToolTip = false;
-            this.historyButton.Image = ((System.Drawing.Image)(resources.GetObject("historyButton.Image")));
-            this.historyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.historyButton.Name = "historyButton";
-            this.historyButton.Size = new System.Drawing.Size(65, 22);
-            this.historyButton.Text = "History";
-            this.historyButton.ToolTipText = "Load the history of the packages.";
-            this.historyButton.Click += new System.EventHandler(this.historyButton_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // searchTextBox
-            // 
-            this.searchTextBox.Cue = "Search...";
-            this.searchTextBox.Location = new System.Drawing.Point(429, 4);
-            this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(132, 22);
-            this.searchTextBox.TabIndex = 2;
-            this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
-            // 
             // loadingPanel
             // 
             this.loadingPanel.BackColor = System.Drawing.Color.White;
@@ -828,7 +592,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.loadingPanel.Controls.Add(this.cancelLabel);
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(148, 419);
+            this.loadingPanel.Location = new System.Drawing.Point(148, 480);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(269, 51);
             this.loadingPanel.TabIndex = 66;
@@ -873,14 +637,137 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.cancelToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.cancelToolTip.ToolTipTitle = "Cancel the upload.";
             // 
+            // overviewContentSwitch
+            // 
+            this.overviewContentSwitch.Checked = true;
+            this.overviewContentSwitch.Location = new System.Drawing.Point(17, 32);
+            this.overviewContentSwitch.Name = "overviewContentSwitch";
+            this.overviewContentSwitch.Size = new System.Drawing.Size(113, 29);
+            this.overviewContentSwitch.TabIndex = 67;
+            this.overviewContentSwitch.TabStop = true;
+            this.overviewContentSwitch.Text = "Overview";
+            this.overviewContentSwitch.UseVisualStyleBackColor = true;
+            this.overviewContentSwitch.CheckedChanged += new System.EventHandler(this.overviewContentSwitch_CheckedChanged);
+            // 
+            // packagesContentSwitch
+            // 
+            this.packagesContentSwitch.Location = new System.Drawing.Point(17, 70);
+            this.packagesContentSwitch.Name = "packagesContentSwitch";
+            this.packagesContentSwitch.Size = new System.Drawing.Size(113, 29);
+            this.packagesContentSwitch.TabIndex = 68;
+            this.packagesContentSwitch.Text = "Packages";
+            this.packagesContentSwitch.UseVisualStyleBackColor = true;
+            this.packagesContentSwitch.CheckedChanged += new System.EventHandler(this.overviewContentSwitch_CheckedChanged);
+            // 
+            // tabControl
+            // 
+            this.tabControl.Controls.Add(this.overviewTabPage);
+            this.tabControl.Controls.Add(this.packageTabPage);
+            this.tabControl.Location = new System.Drawing.Point(129, 13);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(533, 430);
+            this.tabControl.TabIndex = 69;
+            // 
+            // overviewTabPage
+            // 
+            this.overviewTabPage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.overviewTabPage.Controls.Add(this.label2);
+            this.overviewTabPage.Controls.Add(this.line3);
+            this.overviewTabPage.Controls.Add(this.newestPackageLabel);
+            this.overviewTabPage.Controls.Add(this.pictureBox3);
+            this.overviewTabPage.Controls.Add(this.newestPackageReleasedLabel);
+            this.overviewTabPage.Controls.Add(this.amountLabel);
+            this.overviewTabPage.Controls.Add(this.label4);
+            this.overviewTabPage.Controls.Add(this.updateUriLabel);
+            this.overviewTabPage.Controls.Add(this.releasedPackagesAmountLabel);
+            this.overviewTabPage.Controls.Add(this.nameLabel);
+            this.overviewTabPage.Controls.Add(this.projectIdTextBox);
+            this.overviewTabPage.Controls.Add(this.projectIdLabel);
+            this.overviewTabPage.Controls.Add(this.publicKeyLabel);
+            this.overviewTabPage.Controls.Add(this.publicKeyTextBox);
+            this.overviewTabPage.Controls.Add(this.overviewHeader);
+            this.overviewTabPage.Controls.Add(this.updateUriTextBox);
+            this.overviewTabPage.Controls.Add(this.line2);
+            this.overviewTabPage.Controls.Add(this.masterChannelHeader);
+            this.overviewTabPage.Controls.Add(this.nameTextBox);
+            this.overviewTabPage.Controls.Add(this.line1);
+            this.overviewTabPage.Controls.Add(this.checkMasterChannelLinkLabel);
+            this.overviewTabPage.Controls.Add(this.tickPictureBox);
+            this.overviewTabPage.Location = new System.Drawing.Point(4, 22);
+            this.overviewTabPage.Name = "overviewTabPage";
+            this.overviewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.overviewTabPage.Size = new System.Drawing.Size(525, 404);
+            this.overviewTabPage.TabIndex = 0;
+            this.overviewTabPage.Text = "overviewTabPage";
+            this.overviewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(29, 310);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(176, 13);
+            this.label2.TabIndex = 79;
+            this.label2.Text = "Status of the MasterChannel file:";
+            // 
+            // line3
+            // 
+            this.line3.BackColor = System.Drawing.Color.White;
+            this.line3.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
+            this.line3.Location = new System.Drawing.Point(23, 176);
+            this.line3.Name = "line3";
+            this.line3.Size = new System.Drawing.Size(478, 10);
+            this.line3.TabIndex = 78;
+            this.line3.Text = "line3";
+            // 
+            // tickPictureBox
+            // 
+            this.tickPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("tickPictureBox.Image")));
+            this.tickPictureBox.Location = new System.Drawing.Point(294, 309);
+            this.tickPictureBox.Name = "tickPictureBox";
+            this.tickPictureBox.Size = new System.Drawing.Size(16, 16);
+            this.tickPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.tickPictureBox.TabIndex = 30;
+            this.tickPictureBox.TabStop = false;
+            this.tickPictureBox.Visible = false;
+            // 
+            // packageTabPage
+            // 
+            this.packageTabPage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.packageTabPage.Controls.Add(this.packageListView);
+            this.packageTabPage.Controls.Add(this.searchTextBox);
+            this.packageTabPage.Controls.Add(this.toolStrip1);
+            this.packageTabPage.Location = new System.Drawing.Point(4, 22);
+            this.packageTabPage.Name = "packageTabPage";
+            this.packageTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.packageTabPage.Size = new System.Drawing.Size(525, 404);
+            this.packageTabPage.TabIndex = 1;
+            this.packageTabPage.Text = "packageTabPage";
+            this.packageTabPage.UseVisualStyleBackColor = true;
+            // 
+            // statisticsContentSwitch
+            // 
+            this.statisticsContentSwitch.Location = new System.Drawing.Point(17, 108);
+            this.statisticsContentSwitch.Name = "statisticsContentSwitch";
+            this.statisticsContentSwitch.Size = new System.Drawing.Size(113, 29);
+            this.statisticsContentSwitch.TabIndex = 70;
+            this.statisticsContentSwitch.Text = "Statistics";
+            this.statisticsContentSwitch.UseVisualStyleBackColor = true;
+            this.statisticsContentSwitch.CheckedChanged += new System.EventHandler(this.overviewContentSwitch_CheckedChanged);
+            // 
             // ProjectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(572, 412);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(672, 476);
+            this.Controls.Add(this.statisticsContentSwitch);
+            this.Controls.Add(this.packagesContentSwitch);
+            this.Controls.Add(this.overviewContentSwitch);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.loadingPanel);
-            this.Controls.Add(this.projectDataPartsTabControl);
+            this.Controls.Add(this.packageStatusStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -889,23 +776,23 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "{0} - {1}";
             this.Shown += new System.EventHandler(this.ProjectDialog_Shown);
-            this.projectDataPartsTabControl.ResumeLayout(false);
-            this.overviewTabPage.ResumeLayout(false);
-            this.overviewTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.checkingUrlPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).EndInit();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.packagesTabPage.ResumeLayout(false);
-            this.packagesTabPage.PerformLayout();
-            this.packagesContextMenuStrip.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.packageStatusStrip.ResumeLayout(false);
+            this.packageStatusStrip.PerformLayout();
+            this.packagesContextMenuStrip.ResumeLayout(false);
             this.loadingPanel.ResumeLayout(false);
             this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabControl.ResumeLayout(false);
+            this.overviewTabPage.ResumeLayout(false);
+            this.overviewTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tickPictureBox)).EndInit();
+            this.packageTabPage.ResumeLayout(false);
+            this.packageTabPage.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -921,9 +808,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private System.Windows.Forms.ToolStripButton uploadButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton historyButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.TabControl projectDataPartsTabControl;
-        private System.Windows.Forms.TabPage packagesTabPage;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label newestPackageReleasedLabel;
         private System.Windows.Forms.Label releasedPackagesAmountLabel;
@@ -937,38 +821,14 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private System.Windows.Forms.Label overviewHeader;
         private System.Windows.Forms.TextBox updateUriTextBox;
         private System.Windows.Forms.TextBox nameTextBox;
-        private System.Windows.Forms.Label infoFileloadingLabel;
         private System.Windows.Forms.Label newestPackageLabel;
         private System.Windows.Forms.Label amountLabel;
-        private System.Windows.Forms.LinkLabel checkUpdateConfigurationLinkLabel;
-        private System.Windows.Forms.PictureBox tickPictureBox;
-        private System.Windows.Forms.PictureBox checkingUrlPictureBox;
-        private System.Windows.Forms.Label assumeHeader;
-        private Line line4;
-        private System.Windows.Forms.Button copySourceButton;
-        private System.Windows.Forms.Label stepTwoLabel;
-        private System.Windows.Forms.ComboBox programmingLanguageComboBox;
-        private System.Windows.Forms.Label stepOneLabel;
-        private System.Windows.Forms.Label assumeInfoLabel;
-        private Controls.ExplorerListView packagesList;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Label label2;
-        private Line line5;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.RadioButton loadFromAssemblyRadioButton;
-        private System.Windows.Forms.RadioButton enterVersionManuallyRadioButton;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.LinkLabel checkMasterChannelLinkLabel;
         private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.Label cancelLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.ToolTip cancelToolTip;
-        private System.Windows.Forms.ToolTip updateStatisticsButtonToolTip;
-        private ButtonTextBox assemblyPathTextBox;
         private System.Windows.Forms.ContextMenuStrip packagesContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
@@ -979,10 +839,28 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private System.Windows.Forms.ToolStripMenuItem packageFromTemplateToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripButton;
         private Line line2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label masterChannelHeader;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.StatusStrip packageStatusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel activeTaskLabel;
+        private System.Windows.Forms.ToolStripProgressBar packageTaskProgressBar;
+        private System.Windows.Forms.ToolStripStatusLabel placeHolderLabel;
+        private System.Windows.Forms.ToolStripStatusLabel packagesCountLabel;
+        private ExplorerListView packageListView;
+        private System.Windows.Forms.ColumnHeader versionHeader;
+        private System.Windows.Forms.ColumnHeader descriptionHeader;
+        private System.Windows.Forms.ColumnHeader releaseDateHeader;
+        private System.Windows.Forms.ColumnHeader necessaryHeader;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private ContentSwitch overviewContentSwitch;
+        private ContentSwitch packagesContentSwitch;
+        private TablessTabControl tabControl;
+        private System.Windows.Forms.TabPage overviewTabPage;
+        private System.Windows.Forms.TabPage packageTabPage;
+        private ContentSwitch statisticsContentSwitch;
         private Line line3;
-        private ManualScrollTabPage overviewTabPage;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox tickPictureBox;
     }
 }

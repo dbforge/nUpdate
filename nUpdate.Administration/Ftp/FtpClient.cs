@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -1186,7 +1187,7 @@ namespace nUpdate.Administration.Ftp
                 throw new ArgumentException("must have a value", "path");
 
             // In order to test that a file exists we have to look for one of two conditions.  Some FTP servers will send a 550 error after
-            // they go ahead and transmit zero length data.  This results in not FtpException being thrown.  Other servers will send a 450 error that the file
+            // they go ahead and transmit zero length data.  This results in no FtpException being thrown.  Other servers will send a 450 error that the file
             // was not found and this will cause an FtpException to be thrown.
 
             string result;
@@ -1194,11 +1195,12 @@ namespace nUpdate.Administration.Ftp
             {
                 string origDir = _currentDirectory;
                 ChangeDirectory(path);
-                result = GetNameList(path);
                 ChangeDirectory(origDir);
+                result = GetNameList(path);
             }
-            catch (FtpException)
+            catch (FtpException ex)
             {
+                Debug.WriteLine(ex.ToString());
                 return false;
             }
 

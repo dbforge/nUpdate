@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -21,7 +22,7 @@ namespace nUpdate.Administration.Ftp
             return new FtpClient(_ftpData.Host, _ftpData.Port, _ftpData.FtpSpecificProtocol)
             {
                 DataTransferMode = _ftpData.UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary,
+                FileTransferType = TransferType.Binary
                 // TODO: Proxy
                 //Proxy = _ftpData.Proxy != null ? new HttpProxyClient(_ftpData.Proxy.Address.ToString()) : null
             };
@@ -122,6 +123,7 @@ namespace nUpdate.Administration.Ftp
             using (var ftpClient = GetNewFtpClient())
             {
                 await Login(ftpClient);
+                ftpClient.ChangeDirectoryMultiPath(_ftpData.Directory);
                 ftpClient.MakeDirectory(name);
             }
         }
