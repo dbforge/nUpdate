@@ -19,7 +19,7 @@ namespace nUpdate.UI.WinForms.Controls
         {
             base.OnPaint(e);
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.LightGray)), new Point(5, 5),
-                LineAlignment == Alignment.Horizontal ? new Point(500, 5) : new Point(5, 500));
+                LineAlignment == Alignment.Horizontal ? new Point(Width - 5, 5) : new Point(5, Height - 5));
         }
     }
 }
