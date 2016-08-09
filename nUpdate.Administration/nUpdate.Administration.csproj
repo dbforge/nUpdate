@@ -68,23 +68,31 @@
     <ApplicationIcon>nUpdate.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Exceptionless.Extras, Version=3.3.1504.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Exceptionless.Windows.3.3.1504\lib\net45\Exceptionless.Extras.dll</HintPath>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exceptionless.Portable, Version=3.3.1504.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Exceptionless.Portable.3.3.1504\lib\net45\Exceptionless.Portable.dll</HintPath>
+    <Reference Include="Exceptionless, Version=4.0.1891.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Exceptionless.4.0.1891\lib\net45\Exceptionless.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exceptionless.Windows, Version=3.3.1504.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Exceptionless.Windows.3.3.1504\lib\net45\Exceptionless.Windows.dll</HintPath>
+    <Reference Include="Exceptionless.Portable, Version=4.0.1891.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Exceptionless.Portable.4.0.1891\lib\net45\Exceptionless.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Exceptionless.Windows, Version=4.0.1891.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Exceptionless.Windows.4.0.1891\lib\net45\Exceptionless.Windows.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FastColoredTextBox">
       <HintPath>..\packages\FCTB.2.16.11.0\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.8\lib\net20\Ionic.Zip.dll</HintPath>
+    <Reference Include="Google.ProtocolBuffers, Version=2.4.1.555, Culture=neutral, PublicKeyToken=55f7125234beb589, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.ProtocolBuffers.Serialization, Version=2.4.1.555, Culture=neutral, PublicKeyToken=55f7125234beb589, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -100,12 +108,12 @@
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=7.0.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.7.0.3-DMR\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nUpdate.Administration.TransferInterface">
@@ -113,6 +121,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="starksoft.aspen, Version=1.1.0.0, Culture=neutral, PublicKeyToken=56b8923a24d03eb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\starksoft.aspen.1.1.0\lib\net40\starksoft.aspen.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -294,6 +306,9 @@
     <Compile Include="UserInterface\Controls\CommandLink.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserInterface\Controls\ContentSwitch.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterface\Controls\CueTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -323,6 +338,7 @@
     <Compile Include="UserInterface\Controls\ExplorerTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserInterface\Controls\GraphicUtils.cs" />
     <Compile Include="UserInterface\Controls\ManualScrollTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
