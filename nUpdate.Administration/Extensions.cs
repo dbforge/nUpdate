@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -92,8 +95,8 @@ namespace nUpdate.Administration
 
         internal static void MoveUp(this TreeNode node)
         {
-            TreeNode parent = node.Parent;
-            TreeView view = node.TreeView;
+            var parent = node.Parent;
+            var view = node.TreeView;
             if (parent != null)
             {
                 int index = node.Index;
@@ -114,8 +117,8 @@ namespace nUpdate.Administration
 
         internal static void MoveDown(this TreeNode node)
         {
-            TreeNode parent = node.Parent;
-            TreeView view = node.TreeView;
+            var parent = node.Parent;
+            var view = node.TreeView;
             if (parent != null)
             {
                 int index = node.Index;
@@ -150,6 +153,12 @@ namespace nUpdate.Administration
             if (!directory.Exists)
                 directory.Create();
             return true;
+        }
+
+        internal static void SetRowHeight(this ListView listView, int height)
+        {
+            var imageList = new ImageList {ImageSize = new Size(1, height)};
+            listView.SmallImageList = imageList;
         }
     }
 }
