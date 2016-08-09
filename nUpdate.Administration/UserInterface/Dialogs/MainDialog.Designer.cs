@@ -36,11 +36,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.sectionsListView = new ExplorerListView();
+            this.sectionsListView = new nUpdate.Administration.UserInterface.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.itemDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.line1 = new nUpdate.UI.WinForms.Controls.Line();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.line1 = new nUpdate.UI.WinForms.Controls.Line();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,17 +103,17 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             this.sectionsListView.View = System.Windows.Forms.View.Tile;
             this.sectionsListView.Click += new System.EventHandler(this.sectionsListView_Click);
             // 
-            // line1
-            // 
-            this.line1.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
-            resources.ApplyResources(this.line1, "line1");
-            this.line1.Name = "line1";
-            // 
             // pictureBox1
             // 
             resources.ApplyResources(this.pictureBox1, "pictureBox1");
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.TabStop = false;
+            // 
+            // line1
+            // 
+            this.line1.LineAlignment = nUpdate.UI.WinForms.Controls.Line.Alignment.Horizontal;
+            resources.ApplyResources(this.line1, "line1");
+            this.line1.Name = "line1";
             // 
             // MainDialog
             // 
@@ -141,11 +141,10 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.Label infoLabel;
-        private Line line1;
         private ExplorerListView sectionsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader itemDescription;
-
+        private Line line1;
     }
 }
 
