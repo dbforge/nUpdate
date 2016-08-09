@@ -59,6 +59,9 @@ namespace nUpdate.Administration.Win32
         [DllImport("dwmapi.dll")]
         public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
 
+        [DllImport("dwmapi.dll", PreserveSig = false)]
+        public static extern void DwmGetColorizationColor(out uint colorizationColor, [MarshalAs(UnmanagedType.Bool)]out bool colorizationOpaqueBlend);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam,
             ref ExplorerTreeNode item);
@@ -71,7 +74,7 @@ namespace nUpdate.Administration.Win32
 
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
-
+        
         [DllImport("user32.dll")]
         public static extern IntPtr BeginPaint(IntPtr hWnd, ref PaintStruct paintStruct);
 
