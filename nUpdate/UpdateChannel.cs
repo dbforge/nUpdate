@@ -10,6 +10,17 @@ namespace nUpdate
     [Serializable]
     public class UpdateChannel
     {
+        public UpdateChannel()
+        { }
+
+        public UpdateChannel(string name, Uri uri, Version latestVersion, IEnumerable<string> supportedSuffixes)
+        {
+            Name = name;
+            Uri = uri;
+            LatestVersion = latestVersion;
+            SupportedSuffixes = supportedSuffixes;
+        }
+
         /// <summary>
         ///     Gets or sets the name of the <see cref="UpdateChannel"/>.
         /// </summary>
@@ -51,6 +62,14 @@ namespace nUpdate
             }
 
             return Enumerable.Empty<UpdateChannel>();
+        }
+
+        public static IEnumerable<UpdateChannel> GetDefaultMasterChannel(Uri updateDirectoryUri)
+        {
+            yield return new UpdateChannel("Alpha", new Uri(updateDirectoryUri, "/channels/alpha.json"), null, new[] {"alpha", "a"});
+            yield return new UpdateChannel("Beta", new Uri(updateDirectoryUri, "/channels/beta.json"), null, new[] { "beta", "b" });
+            yield return new UpdateChannel("ReleaseCandidate", new Uri(updateDirectoryUri, "/channels/releasecandidate.json"), null, new[] { "rc" });
+            yield return new UpdateChannel("Release", new Uri(updateDirectoryUri, "/channels/release.json"), null, Enumerable.Empty<string>());
         }
     }
 }

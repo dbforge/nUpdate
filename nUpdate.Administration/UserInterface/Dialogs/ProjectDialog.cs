@@ -1,13 +1,13 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,21 +24,16 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         {
             InitializeComponent();
             LoadingPanel = loadingPanel;
+            packageListView.SetRowHeight(24);
+            packageListView.DoubleBuffer();
+            packageListView.MakeCollapsable();
+            tabControl.DoubleBuffer();
         }
 
         private async void ProjectDialog_Shown(object sender, EventArgs e)
         {
             Text = string.Format(Text, Session.ActiveProject.Name, Program.VersionString);
-            string[] programmingLanguages = { "VB.NET", "C#" };
-            programmingLanguageComboBox.DataSource = programmingLanguages;
-            programmingLanguageComboBox.SelectedIndex = 0;
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
-            assemblyPathTextBox.ButtonClicked += BrowseAssemblyButtonClicked;
-            assemblyPathTextBox.Initialize();
-
-            packagesList.DoubleBuffer();
-            projectDataPartsTabControl.DoubleBuffer();
-            packagesList.MakeCollapsable();
 
             await Task.Run(() =>
             {
@@ -61,73 +56,42 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            await CheckPackageDataFile();
+            await CheckMasterChannelFile();
         }
 
         private void Initialize()
         {
-            // TODO: Adjust this to the new versioning system
-            /*Invoke(new Action(() =>
+            Invoke(new Action(() =>
             {
                 nameTextBox.Text = Session.ActiveProject.Name;
                 updateUriTextBox.Text = Session.ActiveProject.UpdateDirectoryUri.ToString();
-                amountLabel.Text =
-                    Session.ActiveProject.Packages?.Count.ToString(CultureInfo.InvariantCulture) ?? "0";
-
-                if (!string.IsNullOrEmpty(Session.ActiveProject.AssemblyVersionPath))
-                {
-                    loadFromAssemblyRadioButton.Checked = true;
-                    assemblyPathTextBox.Text = Session.ActiveProject.AssemblyVersionPath;
-                }
-
-                if (Session.ActiveProject.Packages == null)
-                {
-                    Session.ActiveProject.Packages = new List<UpdatePackage>();
-                    Session.ActiveProject.Save();
-                }
-
-                /*newestPackageLabel.Text = Session.ActiveProject.Packages.Count > 0
-                    ? UpdateVersion.GetHighestUpdateVersion(
-                        Session.ActiveProject.Packages?.Select(item => new UpdateVersion(item.Version)))
-                        .Description
-                    : "-";
-                projectIdTextBox.Text = Session.ActiveProject.Guid.ToString();
                 publicKeyTextBox.Text = Session.ActiveProject.PublicKey;
+                projectIdTextBox.Text = Session.ActiveProject.Guid.ToString();
 
-                if (packagesList.Items.Count > 0)
-                    packagesList.Items.Clear();
+                string packageAmountString = Session.ActiveProject.Packages?.Count.ToString(CultureInfo.InvariantCulture) ?? "0";
+                amountLabel.Text = packageAmountString;
+                packagesCountLabel.Text = packageAmountString + " update packages.";
+                    
+                var listViewItems = Session.ActiveProject.Packages?.Select(x => new ListViewItem(new[]
+                {
+                    GetVersionDescription(x), x.Description, x.ReleaseDate.ToShortDateString(),
+                    x.NecessaryUpdate.ToString()
+                })).ToArray();
+
+                if (listViewItems == null)
+                    return;
+
+                packageListView.Items.AddRange(listViewItems);
+                newestPackageLabel.Text = listViewItems.Any() ? "" : "There aren't any update packages available.";
             }));
+        }
 
-                foreach (var package in Session.ActiveProject.Packages)
-            {
-                var packageVersion = new UpdateVersion(package.Version);
-                var packageListViewItem = new ListViewItem(packageVersion.Description);
-                var packageFileInfo =
-                    new FileInfo(Path.Combine(FilePathProvider.Path, "Projects", Session.ActiveProject.Guid.ToString(),
-                        packageVersion.ToString(),
-                        $"{Session.ActiveProject.Guid}.zip"));
-                if (packageFileInfo.Exists)
-                {
-                    packageListViewItem.SubItems.Add(packageFileInfo.CreationTime.ToString(CultureInfo.InvariantCulture));
-                    packageListViewItem.SubItems.Add(packageFileInfo.Length.ToAdequateSizeString());
-                }
-                else
-                {
-                    Invoke(new Action(() =>
-                        Popup.ShowPopup(this, SystemIcons.Information, "Missing package file.",
-                            $"The update package of version \"{packageVersion.Description}\" could not be found on your computer. Specific actions and information won't be available.",
-                            PopupButtons.Ok)));
-
-                    for (uint i = 0; i < 2; ++i) // Add two "-"-signs as we don't have any information.
-                        packageListViewItem.SubItems.Add("-");
-                }
-
-                packageListViewItem.SubItems.Add(package.Description);
-                packageListViewItem.Group = package.IsReleased ? packagesList.Groups[0] : packagesList.Groups[1];
-                packageListViewItem.Tag = packageVersion;
-                Invoke(new Action(() => packagesList.Items.Add(packageListViewItem)));
-            }
-                    */
+        private static string GetVersionDescription(UpdatePackage package)
+        {
+            var versionStringBuilder = new StringBuilder(package.Version.ToString());
+            if (package.ChannelName.ToLowerInvariant() != "release")
+                versionStringBuilder.Append($" {package.ChannelName}");
+            return versionStringBuilder.ToString();
         }
 
         public void NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
@@ -143,7 +107,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         {
             Invoke(new Action(() =>
             {
-                checkUpdateConfigurationLinkLabel.Enabled = enabled;
+                checkMasterChannelLinkLabel.Enabled = enabled;
                 addButton.Enabled = enabled;
                 deleteButton.Enabled = enabled;
             }));
@@ -154,84 +118,29 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (e.KeyCode != Keys.Enter)
                 return;
 
-            var matchingItem = packagesList.FindItemWithText(searchTextBox.Text, true, 0);
+            var matchingItem = packageListView.FindItemWithText(searchTextBox.Text, true, 0);
             if (matchingItem != null)
-                packagesList.Items[matchingItem.Index].Selected = true;
+                packageListView.Items[matchingItem.Index].Selected = true;
             else
-                packagesList.SelectedItems.Clear();
+                packageListView.SelectedItems.Clear();
 
             searchTextBox.Clear();
             e.SuppressKeyPress = true;
         }
 
-        private void addButton_Click(object sender, EventArgs e)
+        private async void addButton_Click(object sender, EventArgs e)
         {
             var packageAddDialog = new PackageAddDialog();
             if (packageAddDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             // Re-initialize our data
-            Initialize();
+            await Task.Run(() => Initialize());
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems.Count == 0)
-                return;
-
-            var packageVersion = new UpdateVersion((string) packagesList.SelectedItems[0].Tag);
-            /*UpdatePackage correspondingPackage;
-
-            try
-            {
-                correspondingPackage =
-                    Session.ActiveProject.Packages.First(
-                        item => Equals(item.Version, packageVersion));
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while selecting the corresponding package.", ex,
-                    PopupButtons.Ok);
-                return;
-            }
-
-            var packageEditDialog = new PackageEditDialog
-            {
-                PackageVersion = packageVersion,
-                IsReleased = correspondingPackage.IsReleased,
-                PackageData = Session.ActiveProject.Packages
-            };
-
-            if (packageEditDialog.ShowDialog() != DialogResult.OK)
-                return;*/
-
-            // Re-initialize our data
-            Initialize();
-        }
-
-        private void copySourceButton_Click(object sender, EventArgs e)
-        {
-            var vbSource =
-                $"Dim manager As New UpdateManager(New Uri(\"{new Uri(new Uri(updateUriTextBox.Text), "updates.json")}\"), \"{publicKeyTextBox.Text}\", New CultureInfo(\"en\"))";
-            var cSharpSource =
-                $"UpdateManager manager = new UpdateManager(new Uri(\"{new Uri(new Uri(updateUriTextBox.Text), "updates.json")}\"), \"{publicKeyTextBox.Text}\", new CultureInfo(\"en\"));";
-
-            try
-            {
-                switch (programmingLanguageComboBox.SelectedIndex)
-                {
-                    case 0:
-                        Clipboard.SetText(vbSource);
-                        break;
-                    case 1:
-                        Clipboard.SetText(cSharpSource);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while copying the source-code.", ex, PopupButtons.Ok);
-            }
+            // TODO: Implement
         }
 
         private void historyButton_Click(object sender, EventArgs e)
@@ -239,7 +148,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             new HistoryDialog().ShowDialog();
         }
 
-        private void packagesList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void packageListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             editButton.Enabled = false;
             uploadButton.Enabled = false;
@@ -249,7 +158,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             uploadToolStripMenuItem.Enabled = false;
             deleteToolStripMenuItem.Enabled = false;
 
-            if (packagesList.SelectedItems.Count == 1)
+            if (packageListView.SelectedItems.Count == 1)
             {
                 editButton.Enabled = true;
                 editToolStripMenuItem.Enabled = true;
@@ -257,80 +166,18 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 deleteToolStripMenuItem.Enabled = true;
 
                 // If any of the selected items is already released, exit.
-                if (packagesList.SelectedItems.Cast<ListViewItem>().Any(item => item.Group != packagesList.Groups[1]))
+                if (
+                    packageListView.SelectedItems.Cast<ListViewItem>()
+                        .Any(item => item.Group != packageListView.Groups[1]))
                     return;
                 uploadButton.Enabled = true;
                 uploadToolStripMenuItem.Enabled = true;
             }
-            else if (packagesList.SelectedItems.Count > 1)
+            else if (packageListView.SelectedItems.Count > 1)
             {
                 deleteButton.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
             }
-        }
-
-        private void BrowseAssemblyButtonClicked(object sender, EventArgs e)
-        {
-            using (var fileDialog = new OpenFileDialog())
-            {
-                fileDialog.Multiselect = false;
-                fileDialog.SupportMultiDottedExtensions = false;
-                fileDialog.Filter = "Executable files (*.exe)|*.exe|Dynamic link libraries (*.dll)|*.dll";
-
-                if (fileDialog.ShowDialog() != DialogResult.OK)
-                    return;
-
-                try
-                {
-                    var projectAssembly = Assembly.LoadFile(fileDialog.FileName);
-                    FileVersionInfo.GetVersionInfo(projectAssembly.Location);
-                }
-                catch
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid assembly found.",
-                        "The version of the assembly of the selected file could not be read.",
-                        PopupButtons.Ok);
-                    enterVersionManuallyRadioButton.Checked = true;
-                    return;
-                }
-
-                assemblyPathTextBox.Text = fileDialog.FileName;
-                Session.ActiveProject.AssemblyVersionPath = assemblyPathTextBox.Text;
-
-                try
-                {
-                    Session.ActiveProject.Save();
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving new project data.", ex,
-                                    PopupButtons.Ok)));
-                }
-            }
-        }
-
-        private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!loadFromAssemblyRadioButton.Checked)
-                return;
-
-            assemblyPathTextBox.Enabled = true;
-        }
-
-        private void enterVersionManuallyRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!enterVersionManuallyRadioButton.Checked)
-                return;
-
-            assemblyPathTextBox.Enabled = false;
-            Session.ActiveProject.AssemblyVersionPath = null;
-            Session.ActiveProject.Save();
-
-            assemblyPathTextBox.Clear();
-            Initialize();
         }
 
         private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -341,24 +188,9 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             e.Handled = true;
         }
 
-        private void overviewHeader_Click(object sender, EventArgs e)
-        {
-        }
-
         private void uploadButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems.Count == 0)
-                return;
-
-            /*AdjustControlsForAction(async () =>
-            {
-                for (int i = 0; i < packagesList.SelectedItems.Count; ++i)
-                {
-                    var currentVersion = new UpdateVersion((string) packagesList.SelectedItems[i].Tag);
-                    loadingLabel.Text = $"Uploading package {currentVersion}";
-                    await UploadPackage(currentVersion);
-                }
-            }, true);*/
+            // TODO: Implement
         }
 
         private async Task UploadPackage(Version packageVersion)
@@ -400,18 +232,18 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             _cancellationTokenSource.Cancel(false);
         }
 
-        private async void checkUpdateConfigurationLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private async void checkMasterChannelnLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            await CheckPackageDataFile();
+            await CheckMasterChannelFile();
         }
 
-        private async Task CheckPackageDataFile()
+        private async Task CheckMasterChannelFile()
         {
+            checkMasterChannelLinkLabel.Enabled = false;
             tickPictureBox.Visible = false;
-            checkingUrlPictureBox.Visible = true;
-            checkUpdateConfigurationLinkLabel.Enabled = false;
+            activeTaskLabel.Text = "Checking MasterChannel file...";
 
-            HttpStatusCode statusCode = HttpStatusCode.OK;
+            var statusCode = HttpStatusCode.OK;
             using (var client = new WebClientEx(5000))
             {
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
@@ -419,13 +251,14 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 {
                     using (var stream =
                         await
-                            client.OpenReadTaskAsync(new Uri(Session.ActiveProject.UpdateDirectoryUri, "updates.json")))
+                            client.OpenReadTaskAsync(new Uri(Session.ActiveProject.UpdateDirectoryUri,
+                                "masterchannel.json")))
                     {
                         if (stream != null)
                         {
                             tickPictureBox.Visible = true;
-                            checkingUrlPictureBox.Visible = false;
-                            checkUpdateConfigurationLinkLabel.Enabled = true;
+                            checkMasterChannelLinkLabel.Enabled = true;
+                            activeTaskLabel.Text = "No active tasks.";
                             return;
                         }
                     }
@@ -437,31 +270,37 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 }
             }
 
-            DialogResult hintPopupResult = DialogResult.None;
-            Invoke(new Action(() =>
+            if (statusCode != HttpStatusCode.NotFound)
             {
-                if (statusCode == HttpStatusCode.NotFound)
-                    hintPopupResult = Popup.ShowPopup(this, SystemIcons.Information, "Package data file not found.",
-                        "No package data file associated with this project could be found on the server. Would you like to upload the default package data file?",
-                        PopupButtons.YesNo);
-                else
-                {
-                    hintPopupResult = Popup.ShowPopup(this, SystemIcons.Information,
-                        "Package data file could not be checked.",
-                        $"The package data file associated with this project could not be checked as the server returned code {statusCode}.",
-                        PopupButtons.Ok);
-                }
-            }));
-
-            if (hintPopupResult == DialogResult.No || hintPopupResult == DialogResult.OK)
+                Popup.ShowPopup(this, SystemIcons.Error,
+                    "MasterChannel file could not be checked.",
+                    $"Checking the MasterChannel file failed because the server returned code {statusCode}.",
+                    PopupButtons.Ok);
+                activeTaskLabel.Text = "No active tasks.";
                 return;
-            
+            }
+
+            activeTaskLabel.Text = "Uploading default channel data...";
+
+            bool overrideChannelFiles = false;
+            // TODO: Fix
+            if (await Session.TransferManager.Exists("channels") &&
+                (await Session.TransferManager.List("channels", false)).Any())
+            {
+                overrideChannelFiles = Popup.ShowPopup(this, SystemIcons.Question, "Override old update channels?",
+                    "nUpdate Administration found existing update channels on your server. Overriding these files will result in loss of these channels. Should these files be overriden? (If you only lost/deleted the MasterChannel file and want to keep the current channels, press \"No\". nUpdate Administration will then help you to recover the MasterChannel file correctly.)",
+                    PopupButtons.YesNo) == DialogResult.Yes;
+            }
+
             AdjustControlsForAction(async () =>
             {
                 try
                 {
-                    await Session.UpdateFactory.PushDefaultPackageData(_cancellationTokenSource.Token, null);
+                    await
+                        Session.UpdateFactory.PushDefaultMasterChannel(overrideChannelFiles,
+                            _cancellationTokenSource.Token, null);
                     tickPictureBox.Visible = true;
+                    activeTaskLabel.Text = "No active tasks.";
                 }
                 catch (Exception ex)
                 {
@@ -470,52 +309,38 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 }
                 finally
                 {
-                    checkingUrlPictureBox.Visible = false;
-                    checkUpdateConfigurationLinkLabel.Enabled = true;
+                    checkMasterChannelLinkLabel.Enabled = true;
+                    activeTaskLabel.Text = "No active tasks.";
                 }
             }, false);
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            if (packagesList.SelectedItems.Count == 0)
+            if (packageListView.SelectedItems.Count == 0)
                 return;
 
             var answer = Popup.ShowPopup(this, SystemIcons.Question,
                 "Delete the selected update packages?",
-                $"Are you sure that you want to delete {(packagesList.SelectedItems.Count > 1 ? "these packages" : "this package")}?",
+                $"Are you sure that you want to delete {(packageListView.SelectedItems.Count > 1 ? "these packages" : "this package")}?",
                 PopupButtons.YesNo);
             if (answer != DialogResult.Yes)
                 return;
 
-            /*AdjustControlsForAction(async () =>
-            {
-                for (int i = 0; i < packagesList.SelectedItems.Count; ++i)
-                {
-                    var currentVersion = new UpdateVersion((string) packagesList.SelectedItems[i].Tag);
-                    try
-                    {
-                        var progress = new Progress<TransferProgressEventArgs>();
-                        progress.ProgressChanged += (s, args) =>
-                        {
-                            loadingLabel.Text =
-                                $"Deleting package {currentVersion}... {$"{Math.Round(args.Percentage, 1)}% | {args.BytesPerSecond/1024}KB/s"}";
-                        };
-                        await
-                            Session.UpdateFactory.RemoveUpdate(currentVersion, _cancellationTokenSource.Token, progress);
-                    }
-                    catch (Exception ex)
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, $"Removing package {currentVersion} failed.", ex,
-                            PopupButtons.Ok);
-                    }
-                }
-            }, true);*/
+            // TODO: Implement
             Initialize();
         }
 
         private void packageFromTemplateToolStripButton_Click(object sender, EventArgs e)
         {
+        }
+
+        private void overviewContentSwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (overviewContentSwitch.Checked)
+                tabControl.SelectedTab = overviewTabPage;
+            else if (packagesContentSwitch.Checked)
+                tabControl.SelectedTab = packageTabPage;
         }
     }
 }
