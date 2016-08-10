@@ -18,7 +18,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private const int HT_CAPTION = 0x2;
         private TransferManager _transferManager;
         private readonly Navigator<TreeNode> _navigator = new Navigator<TreeNode>();
-        private List<FtpItem> _listedFtpItems = new List<FtpItem>();
+        private List<IServerItem> _listedFtpItems = new List<IServerItem>();
         private Margins _margins;
         private bool _nodeSelectedByUser = true;
 
@@ -132,7 +132,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            if (_listedFtpItems != null)
+            /*if (_listedFtpItems != null)
             {
                 var root = ConvertToListingItem(_listedFtpItems, "/");
                 var rootNode = new TreeNode("Server", 0, 0);
@@ -143,7 +143,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     serverDataTreeView.Nodes[0].Expand();
                     serverDataTreeView.SelectedNode = rootNode;
                 }));
-            }
+            }*/
 
             EnableControls();
         }
@@ -159,28 +159,6 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 target.Nodes.Add(childNode);
                 RecursiveAdd(child, childNode);
             }
-        }
-
-        public static ListingItem ConvertToListingItem(IEnumerable<FtpItem> inputItems, string separator)
-        {
-            var root = new ListingItem("Root", false);
-            foreach (var item in inputItems)
-            {
-                var currentParent = root;
-                foreach (
-                    var pathSegment in item.FullPath.Remove(0, 1).Split(new[] {separator}, StringSplitOptions.None))
-                {
-                    var child = currentParent.Children.FirstOrDefault(t => t.Text == pathSegment);
-                    if (child == null)
-                    {
-                        child = new ListingItem(pathSegment, item.ItemType == FtpItemType.Directory);
-                        currentParent.Children.Add(child);
-                    }
-                    currentParent = child;
-                }
-            }
-
-            return root;
         }
 
         private void continueButton_Click(object sender, EventArgs e)

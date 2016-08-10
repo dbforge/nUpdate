@@ -41,7 +41,7 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<FtpItem>> List(string path, bool recursive)
+        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +51,7 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task MoveContent(string aimPath)
+        public Task MoveContent(string aimPath, IEnumerable<string> availableChannelNames)
         {
             throw new NotImplementedException();
         }
@@ -66,17 +66,17 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task UploadFile(string filePath, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }
 
-        public Task UploadFile(Stream fileStream, string remotePath, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadFile(Stream fileStream, string remotePath, IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }
 
-        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }

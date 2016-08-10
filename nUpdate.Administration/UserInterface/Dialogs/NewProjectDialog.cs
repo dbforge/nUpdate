@@ -14,6 +14,7 @@ using nUpdate.Administration.Http;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Sql;
 using nUpdate.Administration.UserInterface.Popups;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
 {
@@ -170,7 +171,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     Port = int.Parse(ftpPortTextBox.Text),
                     Directory = ftpDirectoryTextBox.Text,
                     UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
-                    FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
+                    FtpSpecificProtocol = (FtpsSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                     Username = ftpUserTextBox.Text,
                     Password = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
                 };
@@ -326,7 +327,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 Host = ftpHostTextBox.Text,
                 Port = int.Parse(ftpPortTextBox.Text),
                 UsePassiveMode = ftpModeComboBox.SelectedIndex == 0,
-                FtpSpecificProtocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
+                FtpSpecificProtocol = (FtpsSecurityProtocol)ftpProtocolComboBox.SelectedIndex,
                 Username = ftpUserTextBox.Text,
                 Password = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword, Program.AesIvPassword))
             };

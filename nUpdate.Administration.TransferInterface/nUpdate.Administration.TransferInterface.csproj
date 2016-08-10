@@ -51,12 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FtpItem.cs" />
-    <Compile Include="FtpItemCollection.cs" />
-    <Compile Include="IFtpItemParser.cs" />
+    <Compile Include="IServerItem.cs" />
+    <Compile Include="ITransferProgressData.cs" />
+    <Compile Include="ServerItemType.cs" />
     <Compile Include="ITransferProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransferProgressEventArgs.cs" />
     <Compile Include="ServiceProviderAttribute.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

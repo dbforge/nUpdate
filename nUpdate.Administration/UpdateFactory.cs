@@ -27,7 +27,7 @@ namespace nUpdate.Administration
         }
 
         internal async Task RemoveUpdate(Version updateVersion, string updateChannelName,
-            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+            CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
             await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
@@ -60,7 +60,7 @@ namespace nUpdate.Administration
         }
 
         internal async Task PushUpdate(UpdateFactoryPackage factoryPackage, CancellationToken cancellationToken,
-            IProgress<TransferProgressEventArgs> progress)
+            IProgress<ITransferProgressData> progress)
         {
             var package = factoryPackage.PackageData;
             package.IsReleased = true;
@@ -140,13 +140,13 @@ namespace nUpdate.Administration
         }
 
         internal async Task RemovePackageData(Version updateVersion, UpdateChannel updateChannel,
-            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+            CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             await RemovePackageData(updateVersion, updateChannel.Name, cancellationToken, progress);
         }
 
         internal async Task RemovePackageData(Version updateVersion, string updateChannelName,
-            CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+            CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             var masterChannel =
                 await
@@ -173,7 +173,7 @@ namespace nUpdate.Administration
         }
 
         internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
-            IProgress<TransferProgressEventArgs> progress)
+            IProgress<ITransferProgressData> progress)
         {
             var masterChannel =
                 await
@@ -197,7 +197,7 @@ namespace nUpdate.Administration
         }
 
         internal async Task PushDefaultMasterChannel(bool overrideOldChannels, CancellationToken cancellationToken,
-            IProgress<TransferProgressEventArgs> progress)
+            IProgress<ITransferProgressData> progress)
         {
             var masterChannel = UpdateChannel.GetDefaultMasterChannel(_project.UpdateDirectoryUri);
             using (
