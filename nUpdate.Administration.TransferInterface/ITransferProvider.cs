@@ -35,7 +35,7 @@ namespace nUpdate.Administration.TransferInterface
         /// <summary>
         ///     Lists the directories and files of the current directory as an <see cref="IEnumerable{FtpItem}"/>.
         /// </summary>
-        Task<IEnumerable<FtpItem>> List(string path, bool recursive);
+        Task<IEnumerable<IServerItem>> List(string path, bool recursive);
 
         /// <summary>
         ///     Renames a directory on the server.
@@ -51,10 +51,12 @@ namespace nUpdate.Administration.TransferInterface
         Task MakeDirectory(string name);
 
         /// <summary>
-        ///     Moves all files and subdirectories from the current directory to the given aim directory, if they are update data.
+        ///     Moves all files and subdirectories related to nUpdate Administration from the current directory to the given destination directory.
         /// </summary>
-        /// <param name="aimPath">The aim directory to move the files and subdirectories to.</param>
-        Task MoveContent(string aimPath);
+        /// <param name="destinationPath">The destination directory to move the files and subdirectories to.</param>
+        /// <param name="availableChannelNames">The available update channel names for selecting the specific update channels that need to be moved, too.</param>
+        /// <remarks>This method should only affect specific update data used and created by nUpdate Administration (the master channel, all available update channels and update packages). Other files and/or directories should be ignored.</remarks>
+        Task MoveContent(string destinationPath, IEnumerable<string> availableChannelNames);
 
         /// <summary>
         ///     Determines whether a file or directory exists on the server.
@@ -76,7 +78,7 @@ namespace nUpdate.Administration.TransferInterface
         /// </summary>
         /// <param name="filePath">The local path of the file to upload.</param>
         /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
-        Task UploadFile(string filePath, IProgress<TransferProgressEventArgs> progress);
+        Task UploadFile(string filePath, IProgress<ITransferProgressData> progress);
 
         // TODO: Docs and params
         /// <summary>
@@ -85,7 +87,7 @@ namespace nUpdate.Administration.TransferInterface
         /// <param name="fileStream">The <see cref="Stream"/> containing the data to upload.</param>
         /// <param name="remotePath">The remote path of the file.</param>
         /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
-        Task UploadFile(Stream fileStream, string remotePath, IProgress<TransferProgressEventArgs> progress);
+        Task UploadFile(Stream fileStream, string remotePath, IProgress<ITransferProgressData> progress);
 
         /// <summary>
         ///     Uploads an update package onto the server.
@@ -94,6 +96,6 @@ namespace nUpdate.Administration.TransferInterface
         /// <param name="guid">The <see cref="Guid"/> of the package for specifying the directory name.</param>
         /// <param name="progress">The <see cref="IProgress{TransferProgressEventArgs}"/> instance that should be used for reporting the upload progress.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that should be used for cancelling the upload.</param>
-        Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress);
+        Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress);
     }
 }

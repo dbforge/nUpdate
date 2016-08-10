@@ -96,17 +96,17 @@ namespace nUpdate.Administration
             return _transferProvider.MakeDirectory(name);
         }
 
-        public Task MoveContent(string aimPath)
+        public Task MoveContent(string destinationPath, IEnumerable<string> availableUpdateChannels)
         {
-            return _transferProvider.MoveContent(aimPath);
+            return _transferProvider.MoveContent(destinationPath, availableUpdateChannels);
         }
         
-        public Task UploadFile(string filePath, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
         {
             return _transferProvider.UploadFile(filePath, progress);
         }
 
-        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             return _transferProvider.UploadPackage(packagePath, guid, cancellationToken, progress);
         }
@@ -131,7 +131,7 @@ namespace nUpdate.Administration
             return _transferProvider.TestConnection();
         }
 
-        public Task<IEnumerable<FtpItem>> List(string path, bool recursive)
+        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
         {
             return _transferProvider.List(path, recursive);
         }
@@ -146,7 +146,7 @@ namespace nUpdate.Administration
             return _transferProvider.Exists(directoryPath, destinationName);
         }
 
-        public Task UploadFile(Stream fileStream, string remotePath, IProgress<TransferProgressEventArgs> progress)
+        public Task UploadFile(Stream fileStream, string remotePath, IProgress<ITransferProgressData> progress)
         {
             return _transferProvider.UploadFile(fileStream, remotePath, progress);
         }

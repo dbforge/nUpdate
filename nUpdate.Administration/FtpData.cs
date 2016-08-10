@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.Ftp;
+﻿using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration
 {
@@ -8,7 +8,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the specific FTP protocol to use.
         /// </summary>
-        public FtpSecurityProtocol FtpSpecificProtocol { get; set; }
+        public FtpsSecurityProtocol FtpSpecificProtocol { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether passive move should be used, or not.

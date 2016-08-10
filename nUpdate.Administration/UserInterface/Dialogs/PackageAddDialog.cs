@@ -398,11 +398,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             _package.IsReleased = _publishUpdate;
             // _package.Version = _packageVersion.ToString();
 
-            var progress = new Microsoft.Progress<TransferProgressEventArgs>();
+            var progress = new Microsoft.Progress<ITransferProgressData>();
             progress.ProgressChanged += (sender, args) =>
             {
                 loadingLabel.Text =
-                    $"Uploading... {$"{Math.Round(args.Percentage, 1)}% | {args.BytesPerSecond/1024}KB/s"}";
+                    $"Uploading... {$"{args.PercentComplete}% | {args.BytesPerSecond/1024}KB/s"}";
             };
 
             var factoryPackage = new UpdateFactoryPackage(_packageFile, _package);
