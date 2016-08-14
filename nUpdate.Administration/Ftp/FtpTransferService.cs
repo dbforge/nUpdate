@@ -106,16 +106,18 @@ namespace nUpdate.Administration.Ftp
 
         public async Task<IEnumerable<IServerItem>> List(string path, bool recursive)
         {
-            using (var ftpsClient = GetNewFtpsClient())
+            var ftpsClient = GetNewFtpsClient();
+            await Login(ftpsClient);
+            ftpsClient.ChangeDirectoryMultiPath(_ftpData.Directory);
+
+            FtpsItemCollection items = null;
+            await TaskEx.Run(() =>
             {
-                await Login(ftpsClient);
-                FtpsItemCollection items = null;
-                await TaskEx.Run(() =>
-                {
-                    items = recursive ? ftpsClient.GetDirListDeep(path) : ftpsClient.GetDirList(path);
-                });
-                return items.Select(x => (FtpsItemEx)x);
-            }
+                items = recursive ? ftpsClient.GetDirListDeep(path) : ftpsClient.GetDirList(path);
+            });
+            ftpsClient.Close();
+
+            return items.Select(x => new FtpsItemEx(x));
         }
 
         public async Task MakeDirectory(string name)
