@@ -218,7 +218,7 @@ namespace nUpdate.Administration
                 {
                     if (
                         !(await
-                            Session.TransferManager.Exists($"channels/{updateChannel.Name.ToLowerInvariant()}.json")) && !overrideOldChannels)
+                            Session.TransferManager.Exists($"channels/{updateChannel.Name.ToLowerInvariant()}.json")) || overrideOldChannels)
                         await
                             Session.TransferManager.UploadFile(updateChannelStream,
                                 $"channels/{updateChannel.Name.ToLowerInvariant()}.json", progress);
