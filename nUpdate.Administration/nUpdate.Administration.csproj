@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AesManager.cs" />
+    <Compile Include="DistinctChannelComparer.cs" />
     <Compile Include="Extension\FileAssociationInfo.cs" />
     <Compile Include="Extension\ProgramAssociationInfo.cs" />
     <Compile Include="Extension\ProgramIcon.cs" />
