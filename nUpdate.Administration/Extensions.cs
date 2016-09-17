@@ -2,17 +2,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using nUpdate.Administration.UserInterface.Controls;
 using nUpdate.Administration.Win32;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable once IdentifierTypo
 
@@ -159,6 +160,13 @@ namespace nUpdate.Administration
         {
             var imageList = new ImageList {ImageSize = new Size(1, height)};
             listView.SmallImageList = imageList;
+        }
+
+        internal static async Task<bool> AllAsync<T>(this IEnumerable<T> items, Func<T, Task<bool>> predicate)
+        {
+            var itemTaskList = items.Select(item => new { Item = item, PredTask = predicate.Invoke(item) }).ToList();
+            await Task.WhenAll(itemTaskList.Select(x => x.PredTask));
+            return itemTaskList.All(x => x.PredTask.Result);
         }
     }
 }
