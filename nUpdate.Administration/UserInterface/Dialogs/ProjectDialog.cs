@@ -1,11 +1,11 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
@@ -56,7 +56,9 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             }
 
-            await CheckMasterChannelFile();
+            checkMasterChannelLinkLabel.Enabled = false;
+            tickPictureBox.Visible = false;
+            await CheckRemoteData();
         }
 
         private void Initialize()
@@ -234,85 +236,76 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private async void checkMasterChannelnLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            await CheckMasterChannelFile();
-        }
-
-        private async Task CheckMasterChannelFile()
-        {
             checkMasterChannelLinkLabel.Enabled = false;
             tickPictureBox.Visible = false;
-            activeTaskLabel.Text = "Checking MasterChannel file...";
+            await CheckRemoteData();
+        }
 
-            var statusCode = HttpStatusCode.OK;
-            using (var client = new WebClientEx(5000))
+        private async Task CheckRemoteData()
+        {
+            var releaseControls = new Action(() => 
             {
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-                try
-                {
-                    using (var stream =
-                        await
-                            client.OpenReadTaskAsync(new Uri(Session.ActiveProject.UpdateDirectoryUri,
-                                "masterchannel.json")))
-                    {
-                        if (stream != null)
-                        {
-                            tickPictureBox.Visible = true;
-                            checkMasterChannelLinkLabel.Enabled = true;
-                            activeTaskLabel.Text = "No active tasks.";
-                            return;
-                        }
-                    }
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Status == WebExceptionStatus.ProtocolError)
-                        statusCode = ((HttpWebResponse) ex.Response).StatusCode;
-                }
-            }
-
-            if (statusCode != HttpStatusCode.NotFound)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error,
-                    "MasterChannel file could not be checked.",
-                    $"Checking the MasterChannel file failed because the server returned code {statusCode}.",
-                    PopupButtons.Ok);
+                checkMasterChannelLinkLabel.Enabled = true;
                 activeTaskLabel.Text = "No active tasks.";
+            });
+
+            IEnumerable<UpdateChannel> masterChannel;
+            try
+            {
+                activeTaskLabel.Text = "Checking master channel...";
+                masterChannel =
+                    await
+                        UpdateChannel.TryGetMasterChannel(
+                            new Uri(Session.ActiveProject.UpdateDirectoryUri, "masterchannel.json"),
+                            Session.ProxyManager.Data.Proxy);
+            }
+            catch (Exception ex) // There has been an error that is not 404.
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while downloading the master channel.", ex,
+                        PopupButtons.Ok);
+
+                releaseControls();
                 return;
             }
 
-            activeTaskLabel.Text = "Uploading default channel data...";
-
-            bool overrideChannelFiles = false;
-            // TODO: Fix
-            if (await Session.TransferManager.Exists("channels") &&
-                (await Session.TransferManager.List("channels", false)).Any())
+            if (masterChannel == null) // Master channel does not exist.
             {
-                overrideChannelFiles = Popup.ShowPopup(this, SystemIcons.Question, "Override old update channels?",
-                    "nUpdate Administration found existing update channels on your server. Overriding these files will result in loss of these channels. Should these files be overriden? (If you only lost/deleted the MasterChannel file and want to keep the current channels, press \"No\". nUpdate Administration will then help you to recover the MasterChannel file correctly.)",
-                    PopupButtons.YesNo) == DialogResult.Yes;
-            }
-
-            AdjustControlsForAction(async () =>
-            {
+                masterChannel = Session.ActiveProject.MasterChannel ?? Enumerable.Empty<UpdateChannel>();
                 try
                 {
-                    await
-                        Session.UpdateFactory.PushDefaultMasterChannel(overrideChannelFiles,
-                            _cancellationTokenSource.Token, null);
-                    tickPictureBox.Visible = true;
-                    activeTaskLabel.Text = "No active tasks.";
+                    activeTaskLabel.Text = "Synchronizing master channel with the server...";
+                    await Session.UpdateFactory.SynchronizeMasterChannel();
                 }
                 catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the default package data file.", ex,
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while synchronizing the master channel with the server.", ex,
                         PopupButtons.Ok);
+
+                    releaseControls();
+                    return;
                 }
-                finally
+            }
+
+            // Master channel exists, so we check the update channels.
+            var masterChannelArray = masterChannel.ToArray();
+            try
+            {
+                activeTaskLabel.Text = "Checking update channels...";
+                if (!await Session.UpdateFactory.CheckUpdateChannels(masterChannelArray))
                 {
-                    checkMasterChannelLinkLabel.Enabled = true;
-                    activeTaskLabel.Text = "No active tasks.";
+                    // There are update channels missing and we need to upload them.
+                    activeTaskLabel.Text = "Synchronizing update channels with the server...";
+                    await Session.UpdateFactory.SynchronizeUpdateChannels(masterChannelArray);
                 }
-            }, false);
+                tickPictureBox.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while checking/synchronizing the update channels.", ex,
+                    PopupButtons.Ok);
+            }
+
+            releaseControls();
         }
 
         private void deleteButton_Click(object sender, EventArgs e)

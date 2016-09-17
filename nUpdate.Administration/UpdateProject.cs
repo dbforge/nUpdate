@@ -34,6 +34,7 @@ namespace nUpdate.Administration
         private Uri _updateDirectoryUri;
         private bool _useProxy;
         private bool _useStatistics;
+        private List<UpdateChannel> _channels;
 
         public string ConfigVersion => "4";
 
@@ -178,6 +179,19 @@ namespace nUpdate.Administration
             set
             {
                 _logData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the master channel of the project.
+        /// </summary>
+        public List<UpdateChannel> MasterChannel
+        {
+            get { return _channels; }
+            set
+            {
+                _channels = value;
                 OnPropertyChanged();
             }
         }

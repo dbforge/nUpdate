@@ -21,27 +21,42 @@ namespace nUpdate.Administration
             _project = project;
         }
 
+        internal async Task<bool> CheckUpdateChannels(IEnumerable<UpdateChannel> masterChannel)
+        {
+            if (!await Session.TransferManager.Exists("channels"))
+                return false;
+            return
+                await
+                    masterChannel.AllAsync(
+                        c => Session.TransferManager.Exists($"channels/{c.Name.ToLowerInvariant()}.json"));
+        }
+
         internal IEnumerable<UpdatePackage> LoadPackageData()
         {
             return _project.Packages;
         }
 
-        internal async Task RemoveUpdate(Version updateVersion, string updateChannelName,
-            CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
+        internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
+            IProgress<ITransferProgressData> progress)
         {
-            // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
-            await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
+            var masterChannel =
+                await
+                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
+                        _project.ProxyData.Proxy);
+            var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
+            if (destinationChannel == null)
+                throw new InvalidOperationException("Invalid update channel.");
 
-            if (await Session.TransferManager.Exists(updateVersion.ToString()))
-                await Session.TransferManager.DeleteDirectory(updateVersion.ToString());
+            var updatePackages =
+                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+            updatePackages.Add(updatePackage);
 
-            var destinationPackage =
-                _project.Packages.FirstOrDefault(
-                    item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
-            if (destinationPackage != null)
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
             {
-                _project.Packages.Remove(destinationPackage);
-                _project.Save();
+                // TODO: Upload the package data
+                await
+                    Session.TransferManager.UploadFile(stream,
+                        $"channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
             }
         }
 
@@ -66,68 +81,6 @@ namespace nUpdate.Administration
             package.IsReleased = true;
             _project.Packages.Add(package);
             _project.Save();
-
-            // TODO: Statistics stuff, if enabled
-            //if (Project.UseStatistics)
-            //{
-            //    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-            //    try
-            //    {
-            //        var connectionString = $"SERVER={Project.SqlWebUrl};" +
-            //                               $"DATABASE={Project.SqlDatabaseName};" +
-            //                               $"UID={Project.SqlUsername};" +
-            //                               $"PASSWORD={Project.RuntimeSqlPassword.ConvertToInsecureString()};";
-
-            //        _insertConnection = new MySqlConnection(connectionString);
-            //        _insertConnection.Open();
-            //    }
-            //    catch (MySqlException ex)
-            //    {
-            //        Invoke(
-            //            new Action(
-            //                () =>
-            //                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-            //                        ex, PopupButtons.Ok)));
-            //        _insertConnection.Close();
-            //        Reset();
-            //        return;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Invoke(
-            //            new Action(
-            //                () =>
-            //                    Popup.ShowPopup(this, SystemIcons.Error,
-            //                        "Error while connecting to the database.",
-            //                        ex, PopupButtons.Ok)));
-            //        _insertConnection.Close();
-            //        Reset();
-            //        return;
-            //    }
-
-            //    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
-
-            //    var command = _insertConnection.CreateCommand();
-            //    command.CommandText =
-            //        $"INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({Settings.Default.VersionID}, \"{_packageVersion}\", {Project.ApplicationId});";
-            //    // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
-
-            //    try
-            //    {
-            //        command.ExecuteNonQuery();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Invoke(
-            //            new Action(
-            //                () =>
-            //                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-            //                        ex, PopupButtons.Ok)));
-            //        _insertConnection.Close();
-            //        Reset();
-            //        return;
-            //    }
-            //}
 
             // Upload the package
             await
@@ -172,58 +125,64 @@ namespace nUpdate.Administration
             }
         }
 
-        internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
-            IProgress<ITransferProgressData> progress)
+        internal async Task RemoveUpdate(Version updateVersion, string updateChannelName,
+            CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
-            var masterChannel =
-                await
-                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
-                        _project.ProxyData.Proxy);
-            var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
-            if (destinationChannel == null)
-                throw new InvalidOperationException("Invalid update channel.");
+            // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
+            await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
 
-            var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
-            updatePackages.Add(updatePackage);
+            if (await Session.TransferManager.Exists(updateVersion.ToString()))
+                await Session.TransferManager.DeleteDirectory(updateVersion.ToString());
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
+            var destinationPackage =
+                _project.Packages.FirstOrDefault(
+                    item => item.Version.Equals(updateVersion) && item.ChannelName.Equals(updateChannelName));
+            if (destinationPackage != null)
             {
-                // TODO: Upload the package data
-                await
-                    Session.TransferManager.UploadFile(stream,
-                        $"channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
+                _project.Packages.Remove(destinationPackage);
+                _project.Save();
             }
         }
 
-        internal async Task PushDefaultMasterChannel(bool overrideOldChannels, CancellationToken cancellationToken,
-            IProgress<ITransferProgressData> progress)
+        internal async Task SynchronizeMasterChannel()
         {
-            var masterChannel = UpdateChannel.GetDefaultMasterChannel(_project.UpdateDirectoryUri);
             using (
-                var masterChannelStream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(masterChannel))))
-                await Session.TransferManager.UploadFile(masterChannelStream, "masterchannel.json", progress);
+                var stream =
+                    new MemoryStream(
+                        Encoding.UTF8.GetBytes(Serializer.Serialize(_project.MasterChannel))))
+            {
+                await
+                    Session.TransferManager.UploadFile(stream, "masterchannel.json", null);
+            }
+        }
 
+        internal async Task SynchronizeUpdateChannels(IEnumerable<UpdateChannel> masterChannel)
+        {
+            var masterChannelArray = masterChannel.ToArray();
+
+            // Create the "channels" folder, if it does not yet exist.
             if (!await Session.TransferManager.Exists("channels"))
                 await Session.TransferManager.MakeDirectory("channels");
 
-            foreach (var updateChannel in masterChannel)
+            // Upload all the packages to the associated update channel, if it is not yet existing.
+            await masterChannelArray.ForEachAsync(async channel =>
             {
+                if (
+                    (await
+                        Session.TransferManager.Exists($"channels/{channel.Name.ToLowerInvariant()}.json")))
+                    return;
+
+                var channelPackages = Session.ActiveProject.Packages.Where(p => p.ChannelName == channel.Name);
                 using (
-                    var updateChannelStream =
+                    var stream =
                         new MemoryStream(
-                            Encoding.UTF8.GetBytes(
-                                Serializer.Serialize(Enumerable.Empty<UpdatePackage>())))
-                    )
+                            Encoding.UTF8.GetBytes(Serializer.Serialize(channelPackages))))
                 {
-                    if (
-                        !(await
-                            Session.TransferManager.Exists($"channels/{updateChannel.Name.ToLowerInvariant()}.json")) || overrideOldChannels)
-                        await
-                            Session.TransferManager.UploadFile(updateChannelStream,
-                                $"channels/{updateChannel.Name.ToLowerInvariant()}.json", progress);
+                    await
+                        Session.TransferManager.UploadFile(stream, $"channels/{channel.Name.ToLowerInvariant()}.json",
+                            null);
                 }
-            }
+            });
         }
     }
 }
