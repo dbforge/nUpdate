@@ -23,7 +23,7 @@ namespace nUpdate.Administration
         internal static UpdateProject ActiveProject { get; private set; }
 
         /// <summary>
-        ///     Gets the <see cref="Administration.UpdateFactory"/> of the <see cref="Session"/> for managing updates.
+        ///     Gets the <see cref="Administration.UpdateFactory"/> of the <see cref="Session"/> for managing channels and updates.
         /// </summary>
         internal static UpdateFactory UpdateFactory { get; private set; }
 
@@ -64,7 +64,7 @@ namespace nUpdate.Administration
         ///     Initializes the <see cref="Session"/> with the specified <see cref="UpdateProject"/>.
         /// </summary>
         /// <param name="project">The <see cref="UpdateProject"/> of the <see cref="Session"/>.</param>
-        internal static void InitializeProject(UpdateProject project)
+        internal static void InitializeWithProject(UpdateProject project)
         {
             ActiveProject = project;
             UpdateFactory = new UpdateFactory(project);
