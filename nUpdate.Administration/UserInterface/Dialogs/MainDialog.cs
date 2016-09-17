@@ -8,6 +8,7 @@ using nUpdate.Administration.Extension;
 using nUpdate.Administration.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UserInterface.Popups;
+using static System.String;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
 {
@@ -24,8 +25,8 @@ namespace nUpdate.Administration.UserInterface.Dialogs
         private void MainDialog_Shown(object sender, EventArgs e)
         {
             sectionsListView.DoubleBuffer();
-            Text = String.Format(Text, Program.VersionString);
-            headerLabel.Text = String.Format(Text, Program.VersionString);
+            Text = Format(Text, Program.VersionString);
+            headerLabel.Text = Format(Text, Program.VersionString);
 
             try
             {
@@ -39,8 +40,8 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     {
                         pai.Create("nUpdate Administration Project File",
                             new ProgramVerb("Open",
-                                $"\"{System.Windows.Forms.Application.ExecutablePath} %1\""));
-                        pai.DefaultIcon = new ProgramIcon(System.Windows.Forms.Application.ExecutablePath);
+                                $"\"{Application.ExecutablePath} %1\""));
+                        pai.DefaultIcon = new ProgramIcon(Application.ExecutablePath);
                     }
                 }
             }
@@ -51,7 +52,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     PopupButtons.Ok);
             }
 
-            if (String.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
+            if (IsNullOrWhiteSpace(Settings.Default.ProgramPath))
                 Settings.Default.ProgramPath =
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "nUpdate Administration");
@@ -75,7 +76,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (!Directory.Exists(projectsPath))
                 Directory.CreateDirectory(projectsPath);
 
-            if (String.IsNullOrEmpty(_projectPath))
+            if (IsNullOrEmpty(_projectPath))
                 return;
 
             LoadProject(_projectPath);
@@ -164,7 +165,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             try
             {
                 // Initialize our application session, so that we can access all data of this project.
-                Session.InitializeProject(UpdateProject.Load(projectPath));
+                Session.InitializeWithProject(UpdateProject.Load(projectPath));
                 return true;
             }
             catch (Exception ex)
