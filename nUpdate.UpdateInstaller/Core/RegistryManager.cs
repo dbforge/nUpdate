@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Linq;
@@ -35,11 +35,11 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.CreateSubKey(subKeyName);
                 }
@@ -56,18 +56,18 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.DeleteSubKeyTree(subKeyName, false);
                 }
             }
         }
 
-        /// <summary> 
+        /// <summary>
         ///     Sets the value of a name-value-pair. If the pair does not already exist, it will be created.
         /// </summary>
         /// <param name="keyPath">The path of the key to use.</param>
@@ -79,11 +79,11 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.SetValue(valueName, value, valueKind);
                 }
@@ -100,11 +100,11 @@ namespace nUpdate.UpdateInstaller.Core
             var keyParts = keyPath.Split('\\');
             using (var key = GetRootKeyByName(keyParts[0]))
             {
-                var subKeyPath = String.Join("\\", keyParts.Where(item => item != keyParts[0]));
+                var subKeyPath = string.Join("\\", keyParts.Where(item => item != keyParts[0]));
                 using (var subKey = key.OpenSubKey(subKeyPath, true))
                 {
                     if (subKey == null)
-                        throw new Exception(String.Format("The sub key \"{0}\" couldn't be found.", subKeyPath));
+                        throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
                     subKey.DeleteValue(valueName, false);
                 }

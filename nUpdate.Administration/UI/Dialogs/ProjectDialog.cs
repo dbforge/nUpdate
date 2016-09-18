@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections;
@@ -19,11 +19,11 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Properties;
+using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
-using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -35,22 +35,29 @@ namespace nUpdate.Administration.UI.Dialogs
         private const float MB = 1048576;
         // ReSharper disable once InconsistentNaming
         private const float GB = 1073741824;
-        private bool _allowCancel = true;
-        private Uri _configurationFileUrl;
-        private IEnumerable<UpdateConfiguration> _backupConfiguration;
-        private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
-        private MySqlConnection _queryConnection;
-        private FtpManager _ftp;
+
+        private readonly Dictionary<UpdateVersion, StatisticsChart> _dataGridViewRowTags =
+            new Dictionary<UpdateVersion, StatisticsChart>();
+
         private readonly ManualResetEvent _loadConfigurationResetEvent = new ManualResetEvent(false);
         private readonly Log _updateLog = new Log();
-        private readonly Dictionary<UpdateVersion, StatisticsChart> _dataGridViewRowTags = new Dictionary<UpdateVersion, StatisticsChart>();
-        private bool _isSetByUser;
-
+        private bool _allowCancel = true;
+        private IEnumerable<UpdateConfiguration> _backupConfiguration;
         /* This variables relate to the upload */
         private bool _commandsExecuted;
-        private bool _packageExisting;
+        private Uri _configurationFileUrl;
         private bool _configurationUploaded;
+        private IEnumerable<UpdateConfiguration> _editingUpdateConfiguration;
+        private FtpManager _ftp;
+        private bool _isSetByUser;
+        private bool _packageExisting;
+        private MySqlConnection _queryConnection;
         private bool _uploadCancelled;
+
+        public ProjectDialog()
+        {
+            InitializeComponent();
+        }
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -67,12 +74,36 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public SecureString SqlPassword { get; set; }
 
-        public ProjectDialog()
+        /// <summary>
+        ///     Enables or disables the UI controls.
+        /// </summary>
+        /// <param name="enabled">Sets the activation state.</param>
+        public void SetUiState(bool enabled)
         {
-            InitializeComponent();
+            Invoke(new Action(() =>
+            {
+                foreach (var c in from Control c in Controls where c.Visible select c)
+                {
+                    c.Enabled = enabled;
+                }
+
+                if (!enabled)
+                {
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                    loadingPanel.Location = new Point(179, 135);
+                    loadingPanel.BringToFront();
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
+            }));
         }
 
         /* The Reset-method is only used for the upload */
+
         public void Reset()
         {
             UpdateVersion packageVersion = null;
@@ -83,13 +114,9 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
 
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
+                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                       $"UID={Project.SqlUsername};" +
+                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                 var deleteConnection = new MySqlConnection(connectionString);
                 try
@@ -122,7 +149,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var command = deleteConnection.CreateCommand();
                 command.CommandText =
-                    String.Format("DELETE FROM `Version` WHERE `Version` = \"{0}\"", packageVersion);
+                    $"DELETE FROM `Version` WHERE `Version` = \"{packageVersion}\"";
 
                 try
                 {
@@ -149,7 +176,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             loadingLabel.Text = "Undoing package upload..."));
                 try
                 {
-                    _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
+                    _ftp.DeleteDirectory($"{_ftp.Directory}/{packageVersion}");
                     _packageExisting = false;
                 }
                 catch (Exception ex)
@@ -211,47 +238,20 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    File.WriteAllText(updateConfigurationFilePath, String.Empty);
+                    File.WriteAllText(updateConfigurationFilePath, string.Empty);
                 }
                 catch (Exception ex)
                 {
                     Invoke(
                         new Action(
                             () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the local configuration.", ex,
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the local configuration.",
+                                    ex,
                                     PopupButtons.Ok)));
                 }
             }
 
             SetUiState(true);
-        }
-
-        /// <summary>
-        ///     Enables or disables the UI controls.
-        /// </summary>
-        /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
-        {
-            Invoke(new Action(() =>
-            {
-                foreach (var c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                if (!enabled)
-                {
-                    _allowCancel = false;
-                    loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(179, 135);
-                    loadingPanel.BringToFront();
-                }
-                else
-                {
-                    _allowCancel = true;
-                    loadingPanel.Visible = false;
-                }
-            }));
         }
 
         ///// <summary>
@@ -314,10 +314,12 @@ namespace nUpdate.Administration.UI.Dialogs
                     updateUrlTextBox.Text = Project.UpdateUrl;
                     ftpHostTextBox.Text = Project.FtpHost;
                     ftpDirectoryTextBox.Text = Project.FtpDirectory;
-                    amountLabel.Text = Project.Packages != null ? Project.Packages.Count().ToString(CultureInfo.InvariantCulture) : "0";
+                    amountLabel.Text = Project.Packages != null
+                        ? Project.Packages.Count().ToString(CultureInfo.InvariantCulture)
+                        : "0";
                 }));
-                
-                if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
+
+                if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
                 {
                     Invoke(new Action(() =>
                     {
@@ -335,7 +337,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     if (Project.Packages != null && Project.Packages.Count != 0)
                     {
                         newestPackageLabel.Text = UpdateVersion.GetHighestUpdateVersion(
-                                Project.Packages.Select(item => new UpdateVersion(item.Version))).FullText;
+                            Project.Packages.Select(item => new UpdateVersion(item.Version))).FullText;
                     }
                     else
                     {
@@ -383,13 +385,13 @@ namespace nUpdate.Administration.UI.Dialogs
                         string sizeText = null;
 
                         if (sizeInBytes >= 107374182.4) // 0,1 GB
-                            sizeText = String.Format("{0} GB", (float) Math.Round(sizeInBytes/GB, 1));
+                            sizeText = $"{(float) Math.Round(sizeInBytes/GB, 1)} GB";
                         else if (sizeInBytes >= 104857.6) // 0,1 MB
-                            sizeText = String.Format("{0} MB", (float) Math.Round(sizeInBytes/MB, 1));
+                            sizeText = $"{(float) Math.Round(sizeInBytes/MB, 1)} MB";
                         else if (sizeInBytes >= 102.4) // 0,1 KB
-                            sizeText = String.Format("{0} KB", (float) Math.Round(sizeInBytes/KB, 1));
+                            sizeText = $"{(float) Math.Round(sizeInBytes/KB, 1)} KB";
                         else if (sizeInBytes >= 1) // 1 B
-                            sizeText = String.Format("{0} B", sizeInBytes);
+                            sizeText = $"{sizeInBytes} B";
 
                         packageListViewItem.SubItems.Add(sizeText);
                     }
@@ -399,9 +401,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         Invoke(new Action(() =>
                         {
                             Popup.ShowPopup(this, SystemIcons.Information, "Missing package file.",
-                                String.Format(
-                                    "The package of version \"{0}\" could not be found on your computer. Specific actions and information won't be available.",
-                                    new UpdateVersion(package1.Version).FullText),
+                                $"The package of version \"{new UpdateVersion(package1.Version).FullText}\" could not be found on your computer. Specific actions and information won't be available.",
                                 PopupButtons.Ok);
                             packageListViewItem.SubItems.Add("-");
                             packageListViewItem.SubItems.Add("-");
@@ -423,7 +423,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         new Action(
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error,
-                                    String.Format("Error while loading the package \"{0}\".", packagePlaceholder.Version),
+                                    $"Error while loading the package \"{packagePlaceholder.Version}\".",
                                     ex,
                                     PopupButtons.Ok)));
                 }
@@ -443,7 +443,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp =
                     new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                         FtpPassword,
-                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath, Project.FtpProtocol);
+                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
+                        Project.FtpProtocol);
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
             }
@@ -459,7 +460,7 @@ namespace nUpdate.Administration.UI.Dialogs
             _updateLog.Project = Project;
             _configurationFileUrl = UriConnector.ConnectUri(Project.UpdateUrl, "updates.json");
 
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
             string[] programmingLanguages = {"VB.NET", "C#"};
             programmingLanguageComboBox.DataSource = programmingLanguages;
             programmingLanguageComboBox.SelectedIndex = 0;
@@ -468,7 +469,7 @@ namespace nUpdate.Administration.UI.Dialogs
             assemblyPathTextBox.ButtonClicked += BrowseAssemblyButtonClicked;
             assemblyPathTextBox.Initialize();
 
-            var values = Enum.GetValues(typeof(DevelopmentalStage));
+            var values = Enum.GetValues(typeof (DevelopmentalStage));
             Array.Reverse(values);
 
             packagesList.DoubleBuffer();
@@ -485,7 +486,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 foreach (
                     var c in
-                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
                 {
                     c.Visible = false;
                 }
@@ -516,7 +517,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 foreach (
                     var c in
-                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof(Panel) select c)
+                        from Control c in statisticsTabPage.Controls where c.GetType() != typeof (Panel) select c)
                 {
                     c.Visible = false;
                 }
@@ -524,7 +525,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 noStatisticsPanel.Visible = true;
                 noStatisticsLabel.Visible = true;
                 _isSetByUser = true;
-            } 
+            }
         }
 
         private async Task InitializeStatisticsData()
@@ -544,13 +545,9 @@ namespace nUpdate.Administration.UI.Dialogs
                             statisticsStatusLabel.Text = "Gathering statistics...";
                         }));
 
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
+                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                       $"UID={Project.SqlUsername};" +
+                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                 _queryConnection = new MySqlConnection(connectionString);
                 try
@@ -587,9 +584,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var dataSet = new DataSet();
                 using (var dataAdapter =
                     new MySqlDataAdapter(
-                        String.Format(
-                            "SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {0} GROUP BY Version_ID;",
-                            Project.ApplicationId),
+                        $"SELECT v.Version, COUNT(*) AS 'Downloads' FROM Download LEFT JOIN Version v ON (v.ID = Version_ID) WHERE `Application_ID` = {Project.ApplicationId} GROUP BY Version_ID;",
                         _queryConnection))
                 {
                     try
@@ -654,7 +649,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     };
                     foreach (var operatingSystemString in operatingSystemStrings)
                     {
-                        string adjustedCommandString = String.Format(commandString,
+                        string adjustedCommandString = string.Format(commandString,
                             updateConfigurationArray.First(item => item.LiteralVersion == version.ToString())
                                 .VersionId, operatingSystemString);
                         var command = _queryConnection.CreateCommand();
@@ -734,7 +729,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     statisticsDataGridView.DataSource = dataSet.Tables[0];
                     statisticsDataGridView.Columns[0].Width = 278;
                     statisticsDataGridView.Columns[1].Width = 278;
-                    lastUpdatedLabel.Text = String.Format("Last updated: {0}", DateTime.Now);
+                    lastUpdatedLabel.Text = $"Last updated: {DateTime.Now}";
                     gatheringStatisticsPictureBox.Visible = false;
                     statisticsDataGridView.Visible = true;
 
@@ -749,7 +744,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 _queryConnection.Close();
                 _isSetByUser = true;
-
             });
         }
 
@@ -808,7 +802,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
-            var packageVersion = new UpdateVersion((string)packagesList.SelectedItems[0].Tag);
+            var packageVersion = new UpdateVersion((string) packagesList.SelectedItems[0].Tag);
             UpdatePackage correspondingPackage;
 
             try
@@ -855,12 +849,13 @@ namespace nUpdate.Administration.UI.Dialogs
             else
             {
                 if (!File.Exists(
-                        Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
+                    Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
                 {
                     Invoke(
                         new Action(
                             () => Popup.ShowPopup(this, SystemIcons.Error,
-                                "Edit operation cancelled", "The package file doesn't exist locally and can't be edited locally.", PopupButtons.Ok)));
+                                "Edit operation cancelled",
+                                "The package file doesn't exist locally and can't be edited locally.", PopupButtons.Ok)));
                     return;
                 }
                 packageEditDialog.IsReleased = false;
@@ -869,7 +864,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     packageEditDialog.UpdateConfiguration =
                         UpdateConfiguration.FromFile(Path.Combine(Directory.GetParent(
-                            Project.Packages.First(item => new UpdateVersion(item.Version) == packageVersion).LocalPackagePath).FullName,
+                            Project.Packages.First(item => new UpdateVersion(item.Version) == packageVersion)
+                                .LocalPackagePath).FullName,
                             "updates.json")).ToList();
                 }
                 catch (Exception ex)
@@ -928,13 +924,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private void copySourceButton_Click(object sender, EventArgs e)
         {
             var vbSource =
-                String.Format(
-                    "Dim manager As New UpdateManager(New Uri(\"{0}\"), \"{1}\", New CultureInfo(\"en\"))",
-                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
+                $"Dim manager As New UpdateManager(New Uri(\"{UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json")}\"), \"{publicKeyTextBox.Text}\", New CultureInfo(\"en\"))";
             var cSharpSource =
-                String.Format(
-                    "UpdateManager manager = new UpdateManager(new Uri(\"{0}\"), \"{1}\", new CultureInfo(\"en\"));",
-                    UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json"), publicKeyTextBox.Text);
+                $"UpdateManager manager = new UpdateManager(new Uri(\"{UriConnector.ConnectUri(updateUrlTextBox.Text, "updates.json")}\"), \"{publicKeyTextBox.Text}\", new CultureInfo(\"en\"));";
 
             try
             {
@@ -1085,6 +1077,47 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeProjectData();
         }
 
+        private void statisticsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+
+            updateStatisticsButton.Enabled = false;
+            chartPanel.Visible = true;
+            var chart =
+                _dataGridViewRowTags.First(
+                    item =>
+                        item.Key ==
+                        UpdateVersion.FromFullText((string) statisticsDataGridView.Rows[e.RowIndex].Cells[0].Value))
+                    .Value;
+            chart.TotalDownloadCount = Convert.ToInt32(statisticsDataGridView.Rows[e.RowIndex].Cells[1].Value);
+            chart.StatisticsChartClosed += CurrentChartClosed;
+            chart.Dock = DockStyle.Fill;
+            chartPanel.Controls.Add(chart);
+            statisticsDataGridView.Visible = false;
+        }
+
+        private void CurrentChartClosed(object sender, EventArgs e)
+        {
+            chartPanel.Controls.Remove((StatisticsChart) sender);
+            chartPanel.Visible = false;
+            updateStatisticsButton.Enabled = true;
+            statisticsDataGridView.Visible = true;
+        }
+
+        private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control || (e.KeyCode != Keys.A))
+                return;
+            if (sender != null)
+                ((TextBox) sender).SelectAll();
+            e.Handled = true;
+        }
+
+        private void overviewHeader_Click(object sender, EventArgs e)
+        {
+        }
+
         #region "Upload"
 
         private void uploadButton_Click(object sender, EventArgs e)
@@ -1103,12 +1136,14 @@ namespace nUpdate.Administration.UI.Dialogs
             await TaskEx.Run(() =>
             {
                 if (!File.Exists(
-                        Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
+                    Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))
                 {
                     Invoke(
                         new Action(
                             () => Popup.ShowPopup(this, SystemIcons.Error,
-                                "Upload operation cancelled", "The package file doesn't exist locally and can't be uploaded to the server.", PopupButtons.Ok)));
+                                "Upload operation cancelled",
+                                "The package file doesn't exist locally and can't be uploaded to the server.",
+                                PopupButtons.Ok)));
                     return;
                 }
 
@@ -1119,7 +1154,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
                 try
                 {
-                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ?? Enumerable.Empty<UpdateConfiguration>();
+                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ??
+                                              Enumerable.Empty<UpdateConfiguration>();
                     _backupConfiguration = updateConfiguration.ToList();
                 }
                 catch (Exception ex)
@@ -1156,13 +1192,9 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                    var connectionString = String.Format("SERVER={0};" +
-                                                         "DATABASE={1};" +
-                                                         "UID={2};" +
-                                                         "PASSWORD={3};",
-                        Project.SqlWebUrl, Project.SqlDatabaseName,
-                        Project.SqlUsername,
-                        SqlPassword.ConvertToUnsecureString());
+                    var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                           $"UID={Project.SqlUsername};" +
+                                           $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                     var insertConnection = new MySqlConnection(connectionString);
                     try
@@ -1196,9 +1228,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var command = insertConnection.CreateCommand();
                     command.CommandText =
-                        String.Format(
-                            "INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
-                            versionId, packageVersion, Project.ApplicationId);
+                        $"INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({versionId}, \"{packageVersion}\", {Project.ApplicationId});";
 
                     try
                     {
@@ -1224,13 +1254,14 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Invoke(new Action(() =>
                 {
-                    loadingLabel.Text = String.Format("Uploading... {0}", "0%");
+                    loadingLabel.Text = $"Uploading... {"0%"}";
                     cancelLabel.Visible = true;
                 }));
 
                 try
                 {
-                    var packagePath = Project.Packages.First(x => new UpdateVersion(x.Version) == packageVersion).LocalPackagePath;
+                    var packagePath =
+                        Project.Packages.First(x => new UpdateVersion(x.Version) == packageVersion).LocalPackagePath;
                     _ftp.UploadPackage(packagePath, packageVersion.ToString());
                 }
                 catch (InvalidOperationException)
@@ -1322,8 +1353,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            String.Format("Uploading... {0}",
-                                String.Format("{0}% | {1}KB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024))));
+                            $"Uploading... {string.Format($"{Math.Round(e.Percentage, 1)}% | {e.BytesPerSecond/1024}KB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024)}"));
 
             if (_uploadCancelled)
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -1332,7 +1362,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private void cancelLabel_Click(object sender, EventArgs e)
         {
             _uploadCancelled = true;
-            
+
             Invoke(new Action(() =>
             {
                 loadingLabel.Text = "Cancelling upload...";
@@ -1350,8 +1380,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            packageVersion = new UpdateVersion((string)packagesList.SelectedItems[0].Tag)));
-                _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, packageVersion));
+                            packageVersion = new UpdateVersion((string) packagesList.SelectedItems[0].Tag)));
+                _ftp.DeleteDirectory($"{_ftp.Directory}/{packageVersion}");
             }
             catch (Exception deletingEx)
             {
@@ -1401,8 +1431,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
-                                String.Format(
-                                    "Checking the update configuration failed because there is no network connection avilable."),
+                                "Checking the update configuration failed because there is no network connection avilable.",
                                 PopupButtons.Ok);
 
                             checkingUrlPictureBox.Visible = false;
@@ -1519,9 +1548,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error,
-                                        String.Format(
-                                            "Error while saving the edited local configuration of package \"{0}\".",
-                                            new UpdateVersion(info.Name).FullText), ex,
+                                        $"Error while saving the edited local configuration of package \"{new UpdateVersion(info.Name).FullText}\".", ex,
                                         PopupButtons.Ok)));
                         return;
                     }
@@ -1567,9 +1594,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         () =>
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "HTTP(S)-access of configuration file failed.",
-                                String.Format(
-                                    "The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). {0}",
-                                    _urlCheckException != null ? _urlCheckException.Message : String.Empty),
+                                $"The configuration file was found on the FTP-server but it couldn't be accessed via HTTP(S). {(_urlCheckException != null ? _urlCheckException.Message : string.Empty)}",
                                 PopupButtons.Ok);
 
                             checkingUrlPictureBox.Visible = false;
@@ -1732,7 +1757,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         try
                         {
                             updateConfig.Remove(
-                                updateConfig.First(item => item.LiteralVersion == (string)((ListViewItem) enumerator.Current).Tag));
+                                updateConfig.First(
+                                    item => item.LiteralVersion == (string) ((ListViewItem) enumerator.Current).Tag));
                         }
                         catch
                         {
@@ -1777,7 +1803,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        File.WriteAllText(configurationFilePath, String.Empty);
+                        File.WriteAllText(configurationFilePath, string.Empty);
                     }
                     catch (Exception ex)
                     {
@@ -1803,11 +1829,11 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () =>
                                     loadingLabel.Text =
-                                        String.Format("Deleting package {0} on the server...", selectedItem.Text)));
+                                        $"Deleting package {selectedItem.Text} on the server..."));
 
                         try
                         {
-                            _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, selectedItem.Tag));
+                            _ftp.DeleteDirectory($"{_ftp.Directory}/{selectedItem.Tag}");
                         }
                         catch (Exception ex)
                         {
@@ -1873,7 +1899,9 @@ namespace nUpdate.Administration.UI.Dialogs
                             Settings.Default.Reload();
                         }
 
-                        Project.Packages.Remove(Project.Packages.First(item => item.Version == (string)((ListViewItem) enumerator.Current).Tag));
+                        Project.Packages.Remove(
+                            Project.Packages.First(
+                                item => item.Version == (string) ((ListViewItem) enumerator.Current).Tag));
                         UpdateProject.SaveProject(Project.Path, Project);
                     }
                     catch (Exception ex)
@@ -1893,13 +1921,9 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                        var connectionString = String.Format("SERVER={0};" +
-                                                             "DATABASE={1};" +
-                                                             "UID={2};" +
-                                                             "PASSWORD={3};",
-                            Project.SqlWebUrl, Project.SqlDatabaseName,
-                            Project.SqlUsername,
-                            SqlPassword.ConvertToUnsecureString());
+                        var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                               $"UID={Project.SqlUsername};" +
+                                               $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                         var deleteConnection = new MySqlConnection(connectionString);
 
@@ -1936,8 +1960,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () => loadingLabel.Text = "Executing SQL-commands..."));
 
                         var queryCommand = deleteConnection.CreateCommand();
-                        queryCommand.CommandText = String.Format("SELECT `ID` FROM `Version` WHERE `Version` = \"{0}\"",
-                            selectedItem.Tag);
+                        queryCommand.CommandText =
+                            $"SELECT `ID` FROM `Version` WHERE `Version` = \"{selectedItem.Tag}\"";
 
                         int versionId;
                         MySqlDataReader dataReader = null;
@@ -1960,12 +1984,12 @@ namespace nUpdate.Administration.UI.Dialogs
                         }
                         finally
                         {
-                            if (dataReader != null) 
+                            if (dataReader != null)
                                 dataReader.Close();
                         }
 
                         var deleteCommand = deleteConnection.CreateCommand();
-                        deleteCommand.CommandText = String.Format(@"DELETE FROM Download WHERE `Version_ID`= {0};
+                        deleteCommand.CommandText = string.Format(@"DELETE FROM Download WHERE `Version_ID`= {0};
 DELETE FROM Version WHERE `ID` = {0};", versionId);
 
                         try
@@ -2005,42 +2029,5 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
         }
 
         #endregion
-
-        private void statisticsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1)
-                return;
-
-            updateStatisticsButton.Enabled = false;
-            chartPanel.Visible = true;
-            var chart = _dataGridViewRowTags.First(item => item.Key == UpdateVersion.FromFullText((string)statisticsDataGridView.Rows[e.RowIndex].Cells[0].Value)).Value;
-            chart.TotalDownloadCount = Convert.ToInt32(statisticsDataGridView.Rows[e.RowIndex].Cells[1].Value);
-            chart.StatisticsChartClosed += CurrentChartClosed;
-            chart.Dock = DockStyle.Fill;
-            chartPanel.Controls.Add(chart);
-            statisticsDataGridView.Visible = false;
-        }
-
-        private void CurrentChartClosed(object sender, EventArgs e)
-        {
-            chartPanel.Controls.Remove((StatisticsChart)sender);
-            chartPanel.Visible = false;
-            updateStatisticsButton.Enabled = true;
-            statisticsDataGridView.Visible = true;
-        }
-
-        private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Control || (e.KeyCode != Keys.A)) 
-                return;
-            if (sender != null)
-                ((TextBox)sender).SelectAll();
-            e.Handled = true;
-        }
-
-        private void overviewHeader_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

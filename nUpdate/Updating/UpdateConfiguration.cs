@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,8 @@ namespace nUpdate.Updating
         public List<Operation> Operations { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have a higher <see cref="UpdateVersion"/>.
+        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have
+        ///     a higher <see cref="UpdateVersion" />.
         /// </summary>
         public bool NecessaryUpdate { get; set; }
 
@@ -76,7 +77,7 @@ namespace nUpdate.Updating
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
         public UpdateConfiguration DeepCopy()
         {
-            return (UpdateConfiguration)MemberwiseClone();
+            return (UpdateConfiguration) MemberwiseClone();
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace nUpdate.Updating
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = wc.DownloadString(configFileUri);
-                if (!String.IsNullOrEmpty(source))
+                if (!string.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);
             }
 
@@ -113,7 +114,8 @@ namespace nUpdate.Updating
         /// <param name="filePath">The path of the file.</param>
         public static IEnumerable<UpdateConfiguration> FromFile(string filePath)
         {
-            return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(File.ReadAllText(filePath)) ?? Enumerable.Empty<UpdateConfiguration>();
+            return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(File.ReadAllText(filePath)) ??
+                   Enumerable.Empty<UpdateConfiguration>();
         }
     }
 }

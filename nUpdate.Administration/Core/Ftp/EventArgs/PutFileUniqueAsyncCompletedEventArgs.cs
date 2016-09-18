@@ -1,9 +1,4 @@
-/////////////////////////////////////////////////////////////
-////
-//// Copyright (c) 2007 Starksoft, LLC
-//// All Rights Reserved.
-////
-/////////////////////////////////////////////////////////////
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 
@@ -11,26 +6,13 @@ namespace nUpdate.Administration.Core.Ftp.EventArgs
 {
     public class PutFileUniqueAsyncCompletedEventArgs : System.EventArgs
     {
-        private readonly Exception _error;
-        private readonly bool _cancelled;
-
         public PutFileUniqueAsyncCompletedEventArgs(Exception error, bool cancelled)
         {
-            _error = error;
-            _cancelled = cancelled;
+            Error = error;
+            Cancelled = cancelled;
         }
 
-        public Exception Error
-        {
-            get { return _error; }
-        }
-
-        public bool Cancelled
-        {
-            get { return _cancelled; }
-        }
-
+        public Exception Error { get; }
+        public bool Cancelled { get; }
     }
-
-} 
-
+}

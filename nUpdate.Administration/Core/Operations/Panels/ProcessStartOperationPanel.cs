@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -17,11 +17,6 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public bool IsValid
-        {
-            get { return !String.IsNullOrEmpty(pathTextBox.Text) && pathTextBox.Text.Contains("\\") && pathTextBox.Text.Split(new [] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2; }
-        }
-
         public string Path
         {
             get { return pathTextBox.Text; }
@@ -31,17 +26,16 @@ namespace nUpdate.Administration.Core.Operations.Panels
         public IEnumerable<string> Arguments
         {
             get { return argumentTextBox.Text.Split(','); }
-            set { argumentTextBox.Text = String.Join(",", value); }
+            set { argumentTextBox.Text = string.Join(",", value); }
         }
 
-        public Operation Operation
-        {
-            get
-            {
-                return new Operation(OperationArea.Processes, OperationMethod.Start, pathTextBox.Text,
-                    Arguments.ToList());
-            }
-        }
+        public bool IsValid
+            =>
+                !string.IsNullOrEmpty(pathTextBox.Text) && pathTextBox.Text.Contains("\\") &&
+                pathTextBox.Text.Split(new[] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2;
+
+        public Operation Operation => new Operation(OperationArea.Processes, OperationMethod.Start, pathTextBox.Text,
+            Arguments.ToList());
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)
         {

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    ItemText = String.Format("{0} - {1}", logEntry.PackageVersion, logEntry.EntryTime)
+                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}"
                 };
 
                 switch (logEntry.Entry)
@@ -111,7 +111,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void HistoryDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
             orderComboBox.SelectedIndex = 0;
             InitializeLog();
             SetActivationState();
@@ -154,7 +154,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var logEntryList =
                     Project.Log.Select(
                         logEntry =>
-                            String.Format("{0}-{1}-{2}", logEntry.PackageVersion, logEntry.Entry, logEntry.EntryTime))
+                            $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}")
                         .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }

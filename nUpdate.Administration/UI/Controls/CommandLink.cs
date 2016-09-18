@@ -1,4 +1,4 @@
-// Author: Dominic Beger (Trade/ProgTrade)
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -24,10 +24,7 @@ namespace nUpdate.Administration.UI.Controls
             FlatStyle = FlatStyle.System;
         }
 
-        protected override Size DefaultSize
-        {
-            get { return new Size(180, 60); }
-        }
+        protected override Size DefaultSize => new Size(180, 60);
 
         protected override CreateParams CreateParams
         {

@@ -1,4 +1,4 @@
-﻿// Author: Stefan Baumann (from AeroSuite library: https://github.com/stefan-baumann/AeroSuite)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -42,10 +42,7 @@ namespace nUpdate.Administration.UI.Controls
         /// <value>
         ///     The default size.
         /// </value>
-        protected override Size DefaultSize
-        {
-            get { return new Size(19, 21); }
-        }
+        protected override Size DefaultSize => new Size(19, 21);
 
         /// <summary>
         ///     Gets or sets a value indicating whether this <see cref="ExpandButton" /> is expanded.
@@ -58,7 +55,7 @@ namespace nUpdate.Administration.UI.Controls
             get { return _expanded; }
             set
             {
-                if (value == _expanded) 
+                if (value == _expanded)
                     return;
                 _expanded = value;
                 ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (ButtonRenderer.State + 3)%6);
@@ -114,7 +111,7 @@ namespace nUpdate.Administration.UI.Controls
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected override void OnMouseLeave(EventArgs e)
         {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int)PushButtonState.Normal + (Expanded ? 3 : 0));
+            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int) PushButtonState.Normal + (Expanded ? 3 : 0));
             Invalidate();
             base.OnMouseLeave(e);
         }
@@ -125,7 +122,8 @@ namespace nUpdate.Administration.UI.Controls
         /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int)PushButtonState.Pressed + (Expanded ? 3 : 0));
+            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
+                (int) PushButtonState.Pressed + (Expanded ? 3 : 0));
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -137,7 +135,10 @@ namespace nUpdate.Administration.UI.Controls
         protected override void OnMouseUp(MouseEventArgs e)
         {
             ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
-                (int)((e.X >= 0 && e.X < Width && e.Y >= 0 && e.Y < Height) ? PushButtonState.Hot : PushButtonState.Normal) +
+                (int)
+                    ((e.X >= 0 && e.X < Width && e.Y >= 0 && e.Y < Height)
+                        ? PushButtonState.Hot
+                        : PushButtonState.Normal) +
                 (Expanded ? 3 : 0));
             Invalidate();
             base.OnMouseUp(e);
@@ -170,7 +171,7 @@ namespace nUpdate.Administration.UI.Controls
         protected override void OnEnabledChanged(EventArgs e)
         {
             ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
-                (int)(Enabled ? PushButtonState.Normal : PushButtonState.Disabled) + (Expanded ? 3 : 0));
+                (int) (Enabled ? PushButtonState.Normal : PushButtonState.Disabled) + (Expanded ? 3 : 0));
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -199,10 +200,7 @@ namespace nUpdate.Administration.UI.Controls
             /// <value>
             ///     The selection rules.
             /// </value>
-            public override SelectionRules SelectionRules
-            {
-                get { return SelectionRules.Moveable; }
-            }
+            public override SelectionRules SelectionRules => SelectionRules.Moveable;
         }
     }
 }

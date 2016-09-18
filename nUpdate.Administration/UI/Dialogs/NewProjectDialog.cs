@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -24,10 +24,13 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class NewProjectDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+        private readonly FtpManager _ftp = new FtpManager();
         private bool _allowCancel;
-        private bool _mustClose;
+        private string _ftpAssemblyPath;
         private bool _generalTabPassed;
         private bool _isSetByUser = true;
+        private int _lastSelectedIndex;
+        private bool _mustClose;
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
@@ -35,9 +38,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _projectConfigurationEdited;
         private bool _projectFileCreated;
         private TabPage _sender;
-        private int _lastSelectedIndex;
-        private string _ftpAssemblyPath;
-        private readonly FtpManager _ftp = new FtpManager();
 
         public NewProjectDialog()
         {
@@ -191,7 +191,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             SetUiState(true);
-            if (_mustClose) 
+            if (_mustClose)
                 Invoke(new Action(Close));
         }
 
@@ -241,8 +241,8 @@ namespace nUpdate.Administration.UI.Dialogs
             if (!ConnectionChecker.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
-                       "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
-                       PopupButtons.Ok);
+                    "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
+                    PopupButtons.Ok);
                 Close();
                 return;
             }
@@ -252,7 +252,7 @@ namespace nUpdate.Administration.UI.Dialogs
             ftpProtocolComboBox.SelectedIndex = 0;
 
             //SetLanguage();
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             localPathTextBox.ButtonClicked += BrowsePathButtonClick;
             localPathTextBox.Initialize();
             controlPanel1.Visible = false;
@@ -306,9 +306,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         if (_projectConfiguration.Any(item => item.Name == nameTextBox.Text))
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
-                                String.Format(
-                                    "The project \"{0}\" is already existing.",
-                                    nameTextBox.Text), PopupButtons.Ok);
+                                $"The project \"{nameTextBox.Text}\" is already existing.", PopupButtons.Ok);
                             return;
                         }
                     }
@@ -349,7 +347,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else if (_sender == ftpTabPage)
             {
-                if (!ValidationManager.Validate(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
+                if (!ValidationManager.Validate(ftpPanel) || string.IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
@@ -381,7 +379,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if (SqlDatabaseName == null || String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
+                    if (SqlDatabaseName == null || string.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -396,8 +394,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -423,11 +421,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 WebProxy proxy = null;
                 string proxyUsername = null;
                 string proxyPassword = null;
-                if (!String.IsNullOrEmpty(proxyHostTextBox.Text))
+                if (!string.IsNullOrEmpty(proxyHostTextBox.Text))
                 {
                     proxy = new WebProxy(proxyHostTextBox.Text);
-                    if (!String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!string.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         proxyUsername = proxyUserTextBox.Text;
                         if (!saveCredentialsCheckBox.Checked)
@@ -707,11 +705,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         string myConnectionString = null;
                         Invoke(new Action(() =>
                         {
-                            myConnectionString = String.Format("SERVER={0};" +
-                                                               "DATABASE={1};" +
-                                                               "UID={2};" +
-                                                               "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                                SqlUsername, sqlPasswordTextBox.Text);
+                            myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
+                                                 $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);

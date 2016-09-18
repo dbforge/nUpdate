@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
@@ -19,41 +20,45 @@ using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
-using System.Threading.Tasks;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectEditDialog : BaseDialog, IAsyncSupportable, IResettable
     {
+        private bool _allowCancel = true;
+        private FtpManager _ftp;
+        private string _ftpAssemblyPath;
+        private bool _ftpDirectoryChanged;
+        private bool _generalTabPassed;
+        private bool _isSetByUser;
         private int _lastSelectedIndex;
         private string _localPath;
-        private string _ftpAssemblyPath;
         //private LocalizationProperties _lp = new LocalizationProperties();
         private string _name;
         private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
         private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
-        private IEnumerable<UpdateVersion> _packageVersionsToAffect; 
-        private List<ProjectConfiguration> _projectConfiguration;
-        private FtpManager _ftp;
-        private TabPage _sender;
-        private WebProxy _proxy;
-        private bool _allowCancel = true;
-        private bool _isSetByUser; 
-        private bool _ftpDirectoryChanged;
-        private bool _generalTabPassed;
+        private IEnumerable<UpdateVersion> _packageVersionsToAffect;
         private bool _phpFileCreated;
         private bool _phpFileDeleted;
         private bool _phpFileOnlineDeleted;
         private bool _phpFileUploaded;
+        private List<ProjectConfiguration> _projectConfiguration;
         private bool _projectConfigurationEdited;
         private bool _projectDirectoryMoved;
         private bool _projectFileMoved;
+        private WebProxy _proxy;
+        private TabPage _sender;
         private bool _sqlDataDeleted;
         private bool _sqlDataInitialized;
         private bool _updateConfigurationSaved;
         private string _updateUrl;
         private bool _updateUrlChanged;
         private bool _useStatistics;
+
+        public ProjectEditDialog()
+        {
+            InitializeComponent();
+        }
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -69,11 +74,6 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The MySQL-password. Set as SecureString for deleting it out of the memory after runtime.
         /// </summary>
         public SecureString SqlPassword { get; set; }
-
-        public ProjectEditDialog()
-        {
-            InitializeComponent();
-        }
 
         /// <summary>
         ///     Returns the private key.
@@ -125,7 +125,7 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        /// Resets this instance.
+        ///     Resets this instance.
         /// </summary>
         public void Reset()
         {
@@ -264,7 +264,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 loadingLabel.Text = "Uploading old configuration..."));
                     _ftp.UploadFile(localConfigurationPath);
 
-                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    File.WriteAllText(localConfigurationPath, string.Empty);
                     _updateUrlChanged = false;
                 }
                 catch (Exception ex)
@@ -408,7 +408,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                 try
                 {
-                    File.WriteAllText(localConfigurationPath, String.Empty);
+                    File.WriteAllText(localConfigurationPath, string.Empty);
                     _updateConfigurationSaved = false;
                 }
                 catch (Exception ex)
@@ -437,6 +437,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var setupString = @"USE _DBNAME;
 DELETE FROM Application WHERE `ID` = _APPID;";
+
                 #endregion
 
                 setupString = setupString.Replace("_DBNAME", SqlDatabaseName);
@@ -454,8 +455,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                     {
                         updateConfig.UseStatistics = true;
                         setupString +=
-                            String.Format(
-                                "\nDELETE FROM Version WHERE `ID` = {0};", updateConfig.VersionId);
+                            $"\nDELETE FROM Version WHERE `ID` = {updateConfig.VersionId};";
                     }
                 }
 
@@ -470,11 +470,8 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
+                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
+                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
                     }));
 
                     myConnection = new MySqlConnection(myConnectionString);
@@ -597,9 +594,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     {
                         updateConfig.UseStatistics = true;
                         setupString +=
-                            String.Format(
-                                "\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
-                                updateConfig.VersionId, updateConfig.LiteralVersion, Project.ApplicationId);
+                            $"\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({updateConfig.VersionId}, \"{updateConfig.LiteralVersion}\", {Project.ApplicationId});";
                     }
                 }
 
@@ -614,11 +609,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
+                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
+                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
                     }));
 
                     myConnection = new MySqlConnection(myConnectionString);
@@ -722,13 +714,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             if (!ConnectionChecker.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
-                       "No active network connection was found. In order to edit a project a network connection is required in order to communicate with the server.",
-                       PopupButtons.Ok);
+                    "No active network connection was found. In order to edit a project a network connection is required in order to communicate with the server.",
+                    PopupButtons.Ok);
                 Close();
                 return;
             }
 
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
@@ -762,7 +754,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftp = new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                     FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, null, 0);
             }
-            
+
             if (Project.UseStatistics)
             {
                 useStatisticsServerRadioButton.Checked = true;
@@ -819,9 +811,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             Project.Name != nameTextBox.Text)
                         {
                             Popup.ShowPopup(this, SystemIcons.Error, "The project is already existing.",
-                                String.Format(
-                                    "The project \"{0}\" is already existing. Please choose another name for it.",
-                                    nameTextBox.Text), PopupButtons.Ok);
+                                $"The project \"{nameTextBox.Text}\" is already existing. Please choose another name for it.", PopupButtons.Ok);
                             return;
                         }
                     }
@@ -862,7 +852,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
             else if (_sender == ftpTabPage)
             {
-                if (!ValidationManager.Validate(ftpPanel) || String.IsNullOrEmpty(ftpPasswordTextBox.Text))
+                if (!ValidationManager.Validate(ftpPanel) || string.IsNullOrEmpty(ftpPasswordTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
@@ -881,13 +871,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftp.Password = ftpPassword;
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
-                _ftp.Protocol = (FtpSecurityProtocol)ftpProtocolComboBox.SelectedIndex;
+                _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enable it again
                     backButton.Enabled = true;
 
                 if (!ftpDirectoryTextBox.Text.StartsWith("/"))
-                    ftpDirectoryTextBox.Text = String.Format("/{0}", ftpDirectoryTextBox.Text);
+                    ftpDirectoryTextBox.Text = $"/{ftpDirectoryTextBox.Text}";
 
                 if (ftpDirectoryTextBox.Text != Project.FtpDirectory && updateUrlTextBox.Text == Project.UpdateUrl)
                 {
@@ -906,7 +896,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 if (useStatisticsServerRadioButton.Checked)
                 {
                     if ((Project.SqlDatabaseName == null && SqlDatabaseName == null) ||
-                        String.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
+                        string.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -921,8 +911,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
@@ -977,13 +967,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 {
                     if (useProxyRadioButton.Checked)
                     {
-
                         _proxy = new WebProxy(proxyHostTextBox.Text);
-                        if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                        if (!string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                             _proxy.Credentials = new NetworkCredential(proxyUserTextBox.Text, proxyPasswordTextBox.Text);
                         else
                             _proxy.UseDefaultCredentials = true;
-
                     }
                 }));
 
@@ -1089,7 +1077,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         new Action(
                             () =>
                                 loadingLabel.Text =
-                                    String.Format("Moving old directory content to \"{0}\"...", ftpDirectory)));
+                                    $"Moving old directory content to \"{ftpDirectory}\"..."));
 
                     try
                     {
@@ -1128,7 +1116,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             item =>
                             {
                                 item.UpdatePackageUri =
-                                    UriConnector.ConnectUri(_updateUrl, String.Format("{0}.zip", Project.Guid));
+                                    UriConnector.ConnectUri(_updateUrl, $"{Project.Guid}.zip");
                                 item.UpdatePhpFileUri = UriConnector.ConnectUri(_updateUrl, "statistics.php");
                             });
                         _updateUrlChanged = true;
@@ -1155,7 +1143,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1293,9 +1281,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         {
                             updateConfig.UseStatistics = true;
                             setupString +=
-                                String.Format(
-                                    "\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
-                                    updateConfig.VersionId, updateConfig.LiteralVersion, Project.ApplicationId);
+                                $"\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({updateConfig.VersionId}, \"{updateConfig.LiteralVersion}\", {Project.ApplicationId});";
                         }
 
                         Invoke(
@@ -1310,7 +1296,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1331,11 +1317,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = String.Format("SERVER={0};" +
-                                                           "DATABASE={1};" +
-                                                           "UID={2};" +
-                                                           "PASSWORD={3};", SqlWebUrl, SqlDatabaseName,
-                            SqlUsername, sqlPasswordTextBox.Text);
+                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
+                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
                     }));
 
                     var myConnection = new MySqlConnection(myConnectionString);
@@ -1463,8 +1446,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         setupString = _newUpdateConfiguration.Aggregate(setupString,
                             (current, configuration) =>
                                 current +
-                                String.Format("DELETE FROM Download WHERE `Version_ID` = {0};",
-                                    configuration.VersionId));
+                                $"DELETE FROM Download WHERE `Version_ID` = {configuration.VersionId};");
 
                         setupString += @"DELETE FROM Version WHERE `Application_ID` = _APPID;
 DELETE FROM Application WHERE `ID` = _APPID;";
@@ -1484,7 +1466,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             _updateConfigurationSaved = true;
 
                             _ftp.UploadFile(localConfigurationPath);
-                            File.WriteAllText(localConfigurationPath, String.Empty);
+                            File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
                         }
@@ -1507,12 +1489,10 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             string myConnectionString = null;
                             Invoke(new Action(() =>
                             {
-                                myConnectionString = String.Format("SERVER={0};" +
-                                                                   "DATABASE={1};" +
-                                                                   "UID={2};" +
-                                                                   "PASSWORD={3};", Project.SqlWebUrl,
-                                    Project.SqlDatabaseName,
-                                    Project.SqlUsername, SqlPassword.ConvertToUnsecureString());
+                                myConnectionString = $"SERVER={Project.SqlWebUrl};" +
+                                                     $"DATABASE={Project.SqlDatabaseName};" +
+                                                     $"UID={Project.SqlUsername};" +
+                                                     $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
                             }));
 
                             myConnection = new MySqlConnection(myConnectionString);
@@ -1589,25 +1569,32 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             ftpPasswordTextBox.Text,
                             ftpUserTextBox.Text));
                     else
-                        Project.FtpPassword = Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword,
-                            Program.AesIvPassword));
+                        Project.FtpPassword =
+                            Convert.ToBase64String(AesManager.Encrypt(ftpPasswordTextBox.Text, Program.AesKeyPassword,
+                                Program.AesIvPassword));
                     Project.FtpUsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
                     Project.FtpProtocol = ftpProtocolComboBox.SelectedIndex;
                     Project.FtpDirectory = ftpDirectoryTextBox.Text;
-                    Project.FtpTransferAssemblyFilePath = ftpProtocolComboBox.SelectedIndex == ftpProtocolComboBox.Items.Count - 1 ? _ftpAssemblyPath : null;
+                    Project.FtpTransferAssemblyFilePath = ftpProtocolComboBox.SelectedIndex ==
+                                                          ftpProtocolComboBox.Items.Count - 1
+                        ? _ftpAssemblyPath
+                        : null;
                     if (useProxyRadioButton.Checked)
                     {
                         Project.Proxy = new WebProxy(new Uri(proxyHostTextBox.Text));
-                        if (!String.IsNullOrEmpty(proxyPasswordTextBox.Text))
+                        if (!string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                         {
                             Project.ProxyUsername = proxyUserTextBox.Text;
                             if (!saveCredentialsCheckBox.Checked)
-                                Project.ProxyPassword = Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
-                                    ftpPasswordTextBox.Text,
-                                    ftpUserTextBox.Text));
+                                Project.ProxyPassword =
+                                    Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                                        ftpPasswordTextBox.Text,
+                                        ftpUserTextBox.Text));
                             else
-                                Project.ProxyPassword = Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text, Program.AesKeyPassword,
-                                    Program.AesIvPassword));
+                                Project.ProxyPassword =
+                                    Convert.ToBase64String(AesManager.Encrypt(proxyPasswordTextBox.Text,
+                                        Program.AesKeyPassword,
+                                        Program.AesIvPassword));
                         }
                         else
                         {
@@ -1633,8 +1620,10 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                 ftpPasswordTextBox.Text,
                                 ftpUserTextBox.Text));
                         else
-                            Project.SqlPassword = Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, Program.AesKeyPassword,
-                                Program.AesIvPassword));
+                            Project.SqlPassword =
+                                Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text,
+                                    Program.AesKeyPassword,
+                                    Program.AesIvPassword));
                     }
                     else
                     {
@@ -1851,7 +1840,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
 
         private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_isSetByUser || (ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1)) 
+            if (!_isSetByUser || (ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1))
                 return;
             var ftpAssemblyInputDialog = new FtpAssemblyInputDialog();
             if (ftpAssemblyInputDialog.ShowDialog() == DialogResult.Cancel)

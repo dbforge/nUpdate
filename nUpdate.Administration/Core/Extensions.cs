@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,13 @@ namespace nUpdate.Administration.Core
 
         public static void HideCheckBox(this TreeNode node)
         {
-            var tvi = new ExplorerTreeNode {HItem = node.Handle, Mask = TVIF_STATE, StateMask = TVIS_STATEIMAGEMASK, State = 0};
+            var tvi = new ExplorerTreeNode
+            {
+                HItem = node.Handle,
+                Mask = TVIF_STATE,
+                StateMask = TVIS_STATEIMAGEMASK,
+                State = 0
+            };
             NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
         }
 
@@ -66,7 +72,7 @@ namespace nUpdate.Administration.Core
         public static string ConvertToUnsecureString(this SecureString securePassword)
         {
             if (securePassword == null)
-                throw new ArgumentNullException("securePassword");
+                throw new ArgumentNullException(nameof(securePassword));
 
             var unmanagedString = IntPtr.Zero;
             try
@@ -87,7 +93,7 @@ namespace nUpdate.Administration.Core
             if (parent != null)
             {
                 int index = node.Index;
-                if (index <= 0) 
+                if (index <= 0)
                     return;
                 parent.Nodes.RemoveAt(index);
                 parent.Nodes.Insert(index - 1, node);
@@ -95,7 +101,7 @@ namespace nUpdate.Administration.Core
             else if (node.TreeView.Nodes.Contains(node))
             {
                 int index = view.Nodes.IndexOf(node);
-                if (index <= 0) 
+                if (index <= 0)
                     return;
                 view.Nodes.RemoveAt(index);
                 view.Nodes.Insert(index - 1, node);
@@ -109,7 +115,7 @@ namespace nUpdate.Administration.Core
             if (parent != null)
             {
                 int index = node.Index;
-                if (index >= parent.Nodes.Count - 1) 
+                if (index >= parent.Nodes.Count - 1)
                     return;
                 parent.Nodes.RemoveAt(index);
                 parent.Nodes.Insert(index + 1, node);
@@ -117,7 +123,7 @@ namespace nUpdate.Administration.Core
             else if (view != null && view.Nodes.Contains(node))
             {
                 int index = view.Nodes.IndexOf(node);
-                if (index >= view.Nodes.Count - 1) 
+                if (index >= view.Nodes.Count - 1)
                     return;
                 view.Nodes.RemoveAt(index);
                 view.Nodes.Insert(index + 1, node);

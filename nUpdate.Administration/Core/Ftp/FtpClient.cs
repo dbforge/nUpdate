@@ -1,27 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -232,12 +209,9 @@ namespace nUpdate.Administration.Core.Ftp
         private const int FXP_TRANSFER_TIMEOUT = 600000; // 10 minutes
 
         private TransferType _fileTransferType = TransferType.Binary;
-        private IFtpItemParser _itemParser;
         private string _user;
         private string _password;
         private bool _opened;
-        private string _currentDirectory;
-        private int _fxpTransferTimeout = FXP_TRANSFER_TIMEOUT;
 
         // transfer log
         private Stream _log = new MemoryStream();
@@ -273,11 +247,7 @@ namespace nUpdate.Administration.Core.Ftp
         ///     IFtpItemParser interface.  This is particular useful when parsing exotic file directory listing
         ///     formats from specific FTP servers.
         /// </remarks>
-        public IFtpItemParser ItemParser
-        {
-            get { return _itemParser; }
-            set { _itemParser = value; }
-        }
+        public IFtpItemParser ItemParser { get; set; }
 
         /// <summary>
         ///     Gets or sets logging of file transfers.
@@ -302,7 +272,7 @@ namespace nUpdate.Administration.Core.Ftp
             {
                 if (value.CanWrite == false)
                     throw new ArgumentException(
-                        "must be writable. The property CanWrite must have a value equals to 'true'.", "value");
+                        "must be writable. The property CanWrite must have a value equals to 'true'.", nameof(value));
                 _log = value;
             }
         }
@@ -314,20 +284,13 @@ namespace nUpdate.Administration.Core.Ftp
         ///     By default this timeout value is set to 600000 (10 minutes).  For large FXP file transfers you may need to
         ///     adjust this number higher.
         /// </remarks>
-        public int FxpTransferTimeout
-        {
-            get { return _fxpTransferTimeout; }
-            set { _fxpTransferTimeout = value; }
-        }
+        public int FxpTransferTimeout { get; set; } = FXP_TRANSFER_TIMEOUT;
 
         /// <summary>
         ///     Gets the current directory path without sending having to send a request to the server.
         /// </summary>
         /// <seealso cref="GetWorkingDirectory" />
-        public string CurrentDirectory
-        {
-            get { return _currentDirectory; }
-        }
+        public string CurrentDirectory { get; private set; }
 
         #endregion
 
@@ -345,13 +308,13 @@ namespace nUpdate.Administration.Core.Ftp
         public void Open(string user, string password)
         {
             if (user == null)
-                throw new ArgumentNullException("user", "must have a value");
+                throw new ArgumentNullException(nameof(user), "must have a value");
 
             if (user.Length == 0)
-                throw new ArgumentException("must have a value", "user");
+                throw new ArgumentException("must have a value", nameof(user));
 
             if (password == null)
-                throw new ArgumentNullException("password", "must have a value or an empty string");
+                throw new ArgumentNullException(nameof(password), "must have a value or an empty string");
 
             // if the command connection is no already open then open a new command connect
             if (!IsConnected)
@@ -367,7 +330,7 @@ namespace nUpdate.Administration.Core.Ftp
 
             _user = user;
             _password = password;
-            _currentDirectory = "/";
+            CurrentDirectory = "/";
 
             SendRequest(new FtpRequest(FtpCmd.User, user));
 
@@ -401,8 +364,8 @@ namespace nUpdate.Administration.Core.Ftp
             }
 
             // if the custom item parser is not set then set to use the built-in generic parser
-            if (_itemParser == null)
-                _itemParser = new FtpGenericParser();
+            if (ItemParser == null)
+                ItemParser = new FtpGenericParser();
 
             //  set the file type used for transfers
             SetFileTransferType();
@@ -445,13 +408,13 @@ namespace nUpdate.Administration.Core.Ftp
         public void ChangeUser(string user, string password)
         {
             if (user == null)
-                throw new ArgumentNullException("user", "must have a value");
+                throw new ArgumentNullException(nameof(user), "must have a value");
 
             if (user.Length == 0)
-                throw new ArgumentException("must have a value", "user");
+                throw new ArgumentException("must have a value", nameof(user));
 
             if (password == null)
-                throw new ArgumentNullException("password", "must have a value");
+                throw new ArgumentNullException(nameof(password), "must have a value");
 
             SendRequest(new FtpRequest(FtpCmd.User, user));
 
@@ -503,10 +466,10 @@ namespace nUpdate.Administration.Core.Ftp
             // which is nice but frustrating that the ftp server implementors did not fix it for other commands
 
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             // replace the windows style directory delimiter with a unix style delimiter
             path = path.Replace("\\", "/");
@@ -520,7 +483,7 @@ namespace nUpdate.Administration.Core.Ftp
             {
                 SendRequest(new FtpRequest(FtpCmd.Cwd, dir));
             }
-            _currentDirectory = GetWorkingDirectory();
+            CurrentDirectory = GetWorkingDirectory();
         }
 
         /// <summary>
@@ -536,16 +499,16 @@ namespace nUpdate.Administration.Core.Ftp
             // which is nice but frustrating that the ftp server implementors did not fix it for other commands
 
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             // replace the windows style directory delimiter with a unix style delimiter
             path = path.Replace("\\", "/");
 
             SendRequest(new FtpRequest(FtpCmd.Cwd, path));
-            _currentDirectory = GetWorkingDirectory();
+            CurrentDirectory = GetWorkingDirectory();
         }
 
 
@@ -582,10 +545,10 @@ namespace nUpdate.Administration.Core.Ftp
         public void DeleteFile(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             SendRequest(new FtpRequest(FtpCmd.Dele, path));
         }
@@ -612,10 +575,10 @@ namespace nUpdate.Administration.Core.Ftp
         public void MakeDirectory(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must contain a value", "path");
+                throw new ArgumentException("must contain a value", nameof(path));
 
             SendRequest(new FtpRequest(FtpCmd.Mkd, path));
         }
@@ -634,16 +597,16 @@ namespace nUpdate.Administration.Core.Ftp
         public void MoveFile(string fromPath, string toPath)
         {
             if (fromPath == null)
-                throw new ArgumentNullException("fromPath");
+                throw new ArgumentNullException(nameof(fromPath));
 
             if (fromPath.Length == 0)
-                throw new ArgumentException("must contain a value", "fromPath");
+                throw new ArgumentException("must contain a value", nameof(fromPath));
 
             if (toPath == null)
-                throw new ArgumentNullException("toPath");
+                throw new ArgumentNullException(nameof(toPath));
 
             if (fromPath.Length == 0)
-                throw new ArgumentException("must contain a value", "toPath");
+                throw new ArgumentException("must contain a value", nameof(toPath));
 
             //  retrieve the server file from the current working directory
             var fileStream = new MemoryStream();
@@ -669,10 +632,10 @@ namespace nUpdate.Administration.Core.Ftp
         public void DeleteDirectory(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             SendRequest(new FtpRequest(FtpCmd.Rmd, path));
         }
@@ -714,10 +677,10 @@ namespace nUpdate.Administration.Core.Ftp
         public DateTime GetFileDateTime(string fileName, bool adjustToLocalTime)
         {
             if (fileName == null)
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException(nameof(fileName));
 
             if (fileName.Length == 0)
-                throw new ArgumentException("must contain a value", "fileName");
+                throw new ArgumentException("must contain a value", nameof(fileName));
 
             try
             {
@@ -726,8 +689,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when retrieving file date and time for '{0}'.  Reason: {1}",
-                        fileName, LastResponse.Text), fex);
+                    $"An error occurred when retrieving file date and time for '{fileName}'.  Reason: {LastResponse.Text}", fex);
             }
 
             string response = LastResponse.Text;
@@ -757,10 +719,10 @@ namespace nUpdate.Administration.Core.Ftp
         public void SetDateTime(string path, DateTime dateTime)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             // MDTM [YYMMDDHHMMSS] [filename]
 
@@ -773,7 +735,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when setting a file date and time for '{0}'.", path), fex);
+                    $"An error occurred when setting a file date and time for '{path}'.", fex);
             }
         }
 
@@ -796,8 +758,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred while getting the system status.  Reason: {0}",
-                        LastResponse.Text), fex);
+                    $"An error occurred while getting the system status.  Reason: {LastResponse.Text}", fex);
             }
 
             return LastResponse.Text;
@@ -831,10 +792,10 @@ namespace nUpdate.Administration.Core.Ftp
         public int GetFileSize(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must contain a value", "path");
+                throw new ArgumentException("must contain a value", nameof(path));
 
             try
             {
@@ -843,11 +804,10 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when retrieving file size for {0}.  Reason: {1}", path,
-                        LastResponse.Text), fex);
+                    $"An error occurred when retrieving file size for {path}.  Reason: {LastResponse.Text}", fex);
             }
 
-            return Int32.Parse(LastResponse.Text.Substring(4), CultureInfo.InvariantCulture);
+            return int.Parse(LastResponse.Text.Substring(4), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -867,8 +827,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when retrieving destination features.  Reason: {0}",
-                        LastResponse.Text), fex);
+                    $"An error occurred when retrieving destination features.  Reason: {LastResponse.Text}", fex);
             }
 
             return LastResponse.Text;
@@ -890,10 +849,10 @@ namespace nUpdate.Administration.Core.Ftp
         public string GetStatus(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must contain a value", "path");
+                throw new ArgumentException("must contain a value", nameof(path));
 
             try
             {
@@ -902,8 +861,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when retrieving file status for file '{0}'.  Reason: {1}", path,
-                        LastResponse.Text), fex);
+                    $"An error occurred when retrieving file status for file '{path}'.  Reason: {LastResponse.Text}", fex);
             }
 
             return LastResponse.Text;
@@ -928,8 +886,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred when trying to allocate storage on the destination.  Reason: {0}",
-                        LastResponse.Text), fex);
+                    $"An error occurred when trying to allocate storage on the destination.  Reason: {LastResponse.Text}", fex);
             }
         }
 
@@ -961,7 +918,7 @@ namespace nUpdate.Administration.Core.Ftp
         public void PutFileUnique(string localPath)
         {
             if (localPath == null)
-                throw new ArgumentNullException("localPath");
+                throw new ArgumentNullException(nameof(localPath));
 
             using (FileStream fileStream = File.OpenRead(localPath))
             {
@@ -988,11 +945,11 @@ namespace nUpdate.Administration.Core.Ftp
         public void PutFileUnique(Stream inputStream)
         {
             if (inputStream == null)
-                throw new ArgumentNullException("inputStream");
+                throw new ArgumentNullException(nameof(inputStream));
 
             if (!inputStream.CanRead)
                 throw new ArgumentException("must be readable.  The CanRead property must return a value of 'true'.",
-                    "inputStream");
+                    nameof(inputStream));
 
             try
             {
@@ -1001,9 +958,8 @@ namespace nUpdate.Administration.Core.Ftp
             catch (Exception ex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred while executing PutFileUnique() on the remote FTP destination. {0}", ex));
+                    $"An error occurred while executing PutFileUnique() on the remote FTP destination. {ex}");
             }
-
         }
 
         /// <summary>
@@ -1043,19 +999,19 @@ namespace nUpdate.Administration.Core.Ftp
         public void GetFile(string remotePath, string localPath, FileAction action)
         {
             if (remotePath == null)
-                throw new ArgumentNullException("remotePath");
+                throw new ArgumentNullException(nameof(remotePath));
 
             if (remotePath.Length == 0)
-                throw new ArgumentException("must contain a value", "remotePath");
+                throw new ArgumentException("must contain a value", nameof(remotePath));
 
             if (localPath == null)
-                throw new ArgumentNullException("localPath");
+                throw new ArgumentNullException(nameof(localPath));
 
             if (localPath.Length == 0)
-                throw new ArgumentException("must contain a value", "localPath");
+                throw new ArgumentException("must contain a value", nameof(localPath));
 
             if (action == FileAction.None)
-                throw new ArgumentOutOfRangeException("action", "must contain a value other than 'Unknown'");
+                throw new ArgumentOutOfRangeException(nameof(action), "must contain a value other than 'Unknown'");
 
             localPath = CorrectLocalPath(localPath);
             var request = new FtpRequest(FtpCmd.Retr, remotePath);
@@ -1112,8 +1068,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (Exception ex)
             {
                 throw new FtpException(
-                    String.Format("An unexpected exception occurred while retrieving file '{0}. Error: {1}", remotePath,
-                        ex.Message));
+                    $"An unexpected exception occurred while retrieving file '{remotePath}. Error: {ex.Message}");
             }
         }
 
@@ -1147,17 +1102,17 @@ namespace nUpdate.Administration.Core.Ftp
         public void GetFile(string remotePath, Stream outStream, bool restart)
         {
             if (remotePath == null)
-                throw new ArgumentNullException("remotePath");
+                throw new ArgumentNullException(nameof(remotePath));
 
             if (remotePath.Length == 0)
-                throw new ArgumentException("must contain a value", "remotePath");
+                throw new ArgumentException("must contain a value", nameof(remotePath));
 
             if (outStream == null)
-                throw new ArgumentNullException("outStream");
+                throw new ArgumentNullException(nameof(outStream));
 
             if (outStream.CanWrite == false)
                 throw new ArgumentException("must be writable.  The CanWrite property must return the value 'true'.",
-                    "outStream");
+                    nameof(outStream));
 
             var request = new FtpRequest(FtpCmd.Retr, remotePath);
 
@@ -1191,10 +1146,10 @@ namespace nUpdate.Administration.Core.Ftp
         public bool Exists(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             // In order to test that a file exists we have to look for one of two conditions.  Some FTP servers will send a 550 error after
             // they go ahead and transmit zero length data.  This results in not FtpException being thrown.  Other servers will send a 450 error that the file
@@ -1203,7 +1158,7 @@ namespace nUpdate.Administration.Core.Ftp
             string result;
             try
             {
-                string origDir = _currentDirectory;
+                string origDir = CurrentDirectory;
                 ChangeDirectory(path);
                 result = GetNameList(path);
                 ChangeDirectory(origDir);
@@ -1249,7 +1204,7 @@ namespace nUpdate.Administration.Core.Ftp
         public string GetNameList(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             return TransferText(new FtpRequest(FtpCmd.Nlst, path));
         }
@@ -1285,7 +1240,7 @@ namespace nUpdate.Administration.Core.Ftp
         public string GetDirListAsText(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             return TransferText(new FtpRequest(FtpCmd.List, "-al", path));
         }
@@ -1305,8 +1260,8 @@ namespace nUpdate.Administration.Core.Ftp
         /// <seealso cref="GetNameList(string)" />
         public FtpItemCollection GetDirList()
         {
-            return new FtpItemCollection(_currentDirectory, TransferText(new FtpRequest(FtpCmd.List, "-al")),
-                _itemParser);
+            return new FtpItemCollection(CurrentDirectory, TransferText(new FtpRequest(FtpCmd.List, "-al")),
+                ItemParser);
         }
 
         /// <summary>
@@ -1327,9 +1282,9 @@ namespace nUpdate.Administration.Core.Ftp
         public FtpItemCollection GetDirList(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
-            return new FtpItemCollection(path, TransferText(new FtpRequest(FtpCmd.List, "-al", path)), _itemParser);
+            return new FtpItemCollection(path, TransferText(new FtpRequest(FtpCmd.List, "-al", path)), ItemParser);
         }
 
         /// <summary>
@@ -1350,7 +1305,7 @@ namespace nUpdate.Administration.Core.Ftp
         public FtpItemCollection GetDirListDeep(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             var deepCol = new FtpItemCollection();
             ParseDirListDeep(path, deepCol);
@@ -1384,16 +1339,16 @@ namespace nUpdate.Administration.Core.Ftp
         public void Rename(string name, string newName)
         {
             if (name == null)
-                throw new ArgumentNullException("name", "must have a value");
+                throw new ArgumentNullException(nameof(name), "must have a value");
 
             if (name.Length == 0)
-                throw new ArgumentException("must have a value", "name");
+                throw new ArgumentException("must have a value", nameof(name));
 
             if (newName == null)
-                throw new ArgumentNullException("newName", "must have a value");
+                throw new ArgumentNullException(nameof(newName), "must have a value");
 
             if (newName.Length == 0)
-                throw new ArgumentException("must have a value", "newName");
+                throw new ArgumentException("must have a value", nameof(newName));
 
             SendRequest(new FtpRequest(FtpCmd.Rnfr, name));
             SendRequest(new FtpRequest(FtpCmd.Rnto, newName));
@@ -1421,11 +1376,11 @@ namespace nUpdate.Administration.Core.Ftp
         public string Quote(string command)
         {
             if (command == null)
-                throw new ArgumentNullException("command");
+                throw new ArgumentNullException(nameof(command));
 
             if (command.Length < 3)
             {
-                throw new ArgumentException(String.Format("Invalid command '{0}'.", command), "command");
+                throw new ArgumentException($"Invalid command '{command}'.", nameof(command));
             }
 
             char[] separator = {' '};
@@ -1445,11 +1400,10 @@ namespace nUpdate.Administration.Core.Ftp
             // Try to parse out the command if we can 
             if (Enum.TryParse(command, true, out ftpCmd))
             {
-
                 if (ftpCmd == FtpCmd.Pasv || ftpCmd == FtpCmd.Retr || ftpCmd == FtpCmd.Stor || ftpCmd == FtpCmd.Stou ||
                     ftpCmd == FtpCmd.Erpt || ftpCmd == FtpCmd.Epsv)
-                    throw new ArgumentException(String.Format("Command '{0}' not supported by Quote() method.", code),
-                        "command");
+                    throw new ArgumentException($"Command '{code}' not supported by Quote() method.",
+                        nameof(command));
 
                 if (ftpCmd == FtpCmd.List || ftpCmd == FtpCmd.Nlst)
                     return TransferText(new FtpRequest(ftpCmd, args));
@@ -1491,16 +1445,15 @@ namespace nUpdate.Administration.Core.Ftp
         public void ChangeMode(string path, int octalValue)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             SendRequest(new FtpRequest(FtpCmd.Site, "CHMOD", octalValue.ToString(), path));
 
             if (LastResponse.Code == FtpResponseCode.CommandNotImplementedSuperfluousAtThisSite)
-                throw new FtpException(String.Format("Unable to the change file mode for file {0}.  Reason: {1}", path,
-                    LastResponse.Text));
+                throw new FtpException($"Unable to the change file mode for file {path}.  Reason: {LastResponse.Text}");
         }
 
         /// <summary>
@@ -1513,10 +1466,10 @@ namespace nUpdate.Administration.Core.Ftp
         public void Site(string argument)
         {
             if (argument == null)
-                throw new ArgumentNullException("argument", "must have a value");
+                throw new ArgumentNullException(nameof(argument), "must have a value");
 
             if (argument.Length == 0)
-                throw new ArgumentException("must have a value", "argument");
+                throw new ArgumentException("must have a value", nameof(argument));
 
             SendRequest(new FtpRequest(FtpCmd.Site, argument));
         }
@@ -1639,19 +1592,19 @@ namespace nUpdate.Administration.Core.Ftp
         public void PutFile(Stream inputStream, string remotePath, FileAction action)
         {
             if (inputStream == null)
-                throw new ArgumentNullException("inputStream");
+                throw new ArgumentNullException(nameof(inputStream));
 
             if (!inputStream.CanRead)
-                throw new ArgumentException("must be readable", "inputStream");
+                throw new ArgumentException("must be readable", nameof(inputStream));
 
             if (remotePath == null)
-                throw new ArgumentNullException("remotePath");
+                throw new ArgumentNullException(nameof(remotePath));
 
             if (remotePath.Length == 0)
-                throw new ArgumentException("must contain a value", "remotePath");
+                throw new ArgumentException("must contain a value", nameof(remotePath));
 
             if (action == FileAction.None)
-                throw new ArgumentOutOfRangeException("action", "must contain a value other than 'Unknown'");
+                throw new ArgumentOutOfRangeException(nameof(action), "must contain a value other than 'Unknown'");
 
             switch (action)
             {
@@ -1709,17 +1662,17 @@ namespace nUpdate.Administration.Core.Ftp
                     "The connection must be open before a transfer between servers can be intitiated.");
 
             if (destination == null)
-                throw new ArgumentNullException("destination");
+                throw new ArgumentNullException(nameof(destination));
 
             if (destination.IsConnected == false)
                 throw new FtpException(
                     "The destination object must be open and connected before a transfer between servers can be intitiated.");
 
             if (fileName == null)
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException(nameof(fileName));
 
             if (fileName.Length == 0)
-                throw new ArgumentException("must have a value", "fileName");
+                throw new ArgumentException("must have a value", nameof(fileName));
 
 
             //  send command to destination FTP server to get passive port to be used from the source FTP server
@@ -1730,7 +1683,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format(
+                    string.Format(
                         "An error occurred when trying to set up the passive connection on '{1}' for a destination to destination copy between '{0}' and '{1}'.",
                         Host, destination.Host), fex);
             }
@@ -1749,7 +1702,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("Command instructing '{0}' to open connection failed.", Host), fex);
+                    $"Command instructing '{Host}' to open connection failed.", fex);
             }
 
             // send command to tell the source server to retrieve the file from the destination server
@@ -1760,8 +1713,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred transfering on a server to server copy between '{0}' and '{1}'.",
-                        Host, destination.Host), fex);
+                    $"An error occurred transfering on a server to server copy between '{Host}' and '{destination.Host}'.", fex);
             }
 
             // send command to tell the destination to store the file
@@ -1772,8 +1724,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred transfering on a server to server copy between '{0}' and '{1}'.",
-                        Host, destination.Host), fex);
+                    $"An error occurred transfering on a server to server copy between '{Host}' and '{destination.Host}'.", fex);
             }
 
             // wait until we get a file completed response back from the destination server and the source server
@@ -1790,10 +1741,10 @@ namespace nUpdate.Administration.Core.Ftp
         private string CorrectLocalPath(string path)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
 
             if (path.Length == 0)
-                throw new ArgumentException("must have a value", "path");
+                throw new ArgumentException("must have a value", nameof(path));
 
             string[] fileName = {ExtractPathItemName(path)};
             string pathOnly = path.Substring(0, path.Length - fileName[0].Length - 1);
@@ -1817,7 +1768,7 @@ namespace nUpdate.Administration.Core.Ftp
             }
 
             char[] invalidFile = Path.GetInvalidFileNameChars();
-            if (fileName[0].IndexOfAny(invalidFile) == -1) 
+            if (fileName[0].IndexOfAny(invalidFile) == -1)
                 return Path.Combine(pathOnly, fileName[0]);
             foreach (char c in invalidFile.Where(c => fileName[0].IndexOf(c) != -1))
             {
@@ -1849,7 +1800,7 @@ namespace nUpdate.Administration.Core.Ftp
                 return path.Substring(path.LastIndexOf("/", StringComparison.Ordinal) + 1);
             if (path.Length > 0)
                 return path;
-            throw new FtpException(String.Format(CultureInfo.InvariantCulture, "Item name not found in path {0}.",
+            throw new FtpException(string.Format(CultureInfo.InvariantCulture, "Item name not found in path {0}.",
                 path));
         }
 
@@ -2055,7 +2006,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += GetFileAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += GetFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = remotePath;
             args[1] = localPath;
             args[2] = action;
@@ -2066,7 +2017,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 GetFile((string) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2124,7 +2075,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += GetFileStreamAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += GetFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = remotePath;
             args[1] = outStream;
             args[2] = restart;
@@ -2135,7 +2086,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 GetFile((string) args[0], (Stream) args[1], (bool) args[2]);
             }
             catch (Exception ex)
@@ -2184,7 +2135,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = localPath;
             args[1] = remotePath;
             args[2] = action;
@@ -2195,7 +2146,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((string) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2242,7 +2193,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileStreamAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[3];
+            var args = new object[3];
             args[0] = inputStream;
             args[1] = remotePath;
             args[2] = action;
@@ -2253,7 +2204,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((Stream) args[0], (string) args[1], (FileAction) args[2]);
             }
             catch (Exception ex)
@@ -2292,7 +2243,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += PutFileLocalAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += PutFileAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = localPath;
             args[1] = action;
             AsyncWorker.RunWorkerAsync(args);
@@ -2302,7 +2253,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 PutFile((string) args[0], (FileAction) args[1]);
             }
             catch (Exception ex)
@@ -2342,7 +2293,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += OpenAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += OpenAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = user;
             args[1] = password;
             AsyncWorker.RunWorkerAsync(args);
@@ -2352,7 +2303,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 Open((string) args[0], (string) args[1]);
             }
             catch (Exception ex)
@@ -2405,7 +2356,7 @@ namespace nUpdate.Administration.Core.Ftp
             AsyncWorker.WorkerSupportsCancellation = true;
             AsyncWorker.DoWork += FxpCopyAsync_DoWork;
             AsyncWorker.RunWorkerCompleted += FxpCopyAsync_RunWorkerCompleted;
-            var args = new Object[2];
+            var args = new object[2];
             args[0] = fileName;
             args[1] = destination;
             AsyncWorker.RunWorkerAsync(args);
@@ -2415,7 +2366,7 @@ namespace nUpdate.Administration.Core.Ftp
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 FxpCopy((string) args[0], (FtpClient) args[1]);
             }
             catch (Exception ex)
@@ -2444,7 +2395,10 @@ namespace nUpdate.Administration.Core.Ftp
         /// <summary>
         ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        ///     unmanaged resources.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             if (!disposing || _disposed)

@@ -1,6 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
-using System;
 using System.Windows.Forms;
 using nUpdate.Core.Operations;
 
@@ -13,20 +12,13 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public bool IsValid
-        {
-            get { return !String.IsNullOrEmpty(serviceNameTextBox.Text); }
-        }
-
         public string ServiceName
         {
             get { return serviceNameTextBox.Text; }
             set { serviceNameTextBox.Text = value; }
         }
 
-        public Operation Operation
-        {
-            get { return new Operation(OperationArea.Services, OperationMethod.Stop, ServiceName); }
-        }
+        public bool IsValid => !string.IsNullOrEmpty(serviceNameTextBox.Text);
+        public Operation Operation => new Operation(OperationArea.Services, OperationMethod.Stop, ServiceName);
     }
 }

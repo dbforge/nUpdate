@@ -1,4 +1,5 @@
-using System;
+// Author: Dominic Beger (Trade/ProgTrade) 2016
+
 using System.Security.Cryptography;
 
 namespace nUpdate.Administration.Core.Ftp.Hashing
@@ -7,17 +8,16 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
     {
         /// <summary>
         /// </summary>
-        public const UInt32 DEFAULT_POLYNOMIAL = 0xedb88320;
+        public const uint DEFAULT_POLYNOMIAL = 0xedb88320;
 
         /// <summary>
         /// </summary>
-        public const UInt32 DEFAULT_SEED = 0xffffffff;
+        public const uint DEFAULT_SEED = 0xffffffff;
 
-        private static UInt32[] _defaultTable;
-
-        private readonly UInt32 _seed;
-        private readonly UInt32[] _table;
-        private UInt32 _hash;
+        private static uint[] _defaultTable;
+        private readonly uint _seed;
+        private readonly uint[] _table;
+        private uint _hash;
 
         /// <summary>
         /// </summary>
@@ -32,7 +32,7 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
         /// </summary>
         /// <param name="polynomial"></param>
         /// <param name="seed"></param>
-        public Crc32(UInt32 polynomial, UInt32 seed)
+        public Crc32(uint polynomial, uint seed)
         {
             _table = InitializeTable(polynomial);
             _seed = seed;
@@ -41,10 +41,7 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
 
         /// <summary>
         /// </summary>
-        public override int HashSize
-        {
-            get { return 32; }
-        }
+        public override int HashSize => 32;
 
         public override sealed void Initialize()
         {
@@ -75,7 +72,7 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static UInt32 Compute(byte[] buffer)
+        public static uint Compute(byte[] buffer)
         {
             return ~CalculateHash(InitializeTable(DEFAULT_POLYNOMIAL), DEFAULT_SEED, buffer, 0, buffer.Length);
         }
@@ -85,7 +82,7 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
         /// <param name="seed"></param>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static UInt32 Compute(UInt32 seed, byte[] buffer)
+        public static uint Compute(uint seed, byte[] buffer)
         {
             return ~CalculateHash(InitializeTable(DEFAULT_POLYNOMIAL), seed, buffer, 0, buffer.Length);
         }
@@ -96,20 +93,20 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
         /// <param name="seed"></param>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static UInt32 Compute(UInt32 polynomial, UInt32 seed, byte[] buffer)
+        public static uint Compute(uint polynomial, uint seed, byte[] buffer)
         {
             return ~CalculateHash(InitializeTable(polynomial), seed, buffer, 0, buffer.Length);
         }
 
-        private static UInt32[] InitializeTable(UInt32 polynomial)
+        private static uint[] InitializeTable(uint polynomial)
         {
             if (polynomial == DEFAULT_POLYNOMIAL && _defaultTable != null)
                 return _defaultTable;
 
-            var createTable = new UInt32[256];
+            var createTable = new uint[256];
             for (int i = 0; i < 256; i++)
             {
-                var entry = (UInt32) i;
+                var entry = (uint) i;
                 for (int j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
@@ -124,9 +121,9 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
             return createTable;
         }
 
-        private static UInt32 CalculateHash(UInt32[] table, UInt32 seed, byte[] buffer, int start, int size)
+        private static uint CalculateHash(uint[] table, uint seed, byte[] buffer, int start, int size)
         {
-            UInt32 crc = seed;
+            uint crc = seed;
             for (int i = start; i < size; i++)
                 unchecked
                 {
@@ -135,7 +132,7 @@ namespace nUpdate.Administration.Core.Ftp.Hashing
             return crc;
         }
 
-        private byte[] UInt32ToBigEndianBytes(UInt32 x)
+        private byte[] UInt32ToBigEndianBytes(uint x)
         {
             return new[]
             {

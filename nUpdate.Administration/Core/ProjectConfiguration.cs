@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -34,8 +34,9 @@ namespace nUpdate.Administration.Core
         public static IEnumerable<ProjectConfiguration> Load()
         {
             string content = File.ReadAllText(Program.ProjectsConfigFilePath);
-            return !String.IsNullOrEmpty(content) ? 
-                Serializer.Deserialize<IEnumerable<ProjectConfiguration>>(content) : Enumerable.Empty<ProjectConfiguration>();
+            return !string.IsNullOrEmpty(content)
+                ? Serializer.Deserialize<IEnumerable<ProjectConfiguration>>(content)
+                : Enumerable.Empty<ProjectConfiguration>();
         }
     }
 }

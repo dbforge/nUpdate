@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System.Windows.Forms;
 
 namespace nUpdate.UI.Dialogs
 {

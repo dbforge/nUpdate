@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,7 +18,9 @@ namespace nUpdate.Administration.Core
         public static bool Validate(Control owner)
         {
             return (from Control control in owner.Controls
-                    where control.GetType() == typeof(TextBox) || control.GetType() == typeof(CueTextBox) || control.GetType() == typeof(ButtonTextBox)
+                where
+                    control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox) ||
+                    control.GetType() == typeof (ButtonTextBox)
                 where control.Enabled
                 select !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray).FirstOrDefault();
         }
@@ -50,7 +52,8 @@ namespace nUpdate.Administration.Core
                 where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 where fieldsToIgnore.All(item => item != control)
-                select control).Select(control => !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray)
+                select control).Select(
+                    control => !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray)
                 .FirstOrDefault();
         }
 
@@ -63,7 +66,8 @@ namespace nUpdate.Administration.Core
                 where control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox)
                 where control.Enabled
                 where control != textBoxToIgnore
-                select control).Select(control => !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray)
+                select control).Select(
+                    control => !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray)
                 .FirstOrDefault();
         }
     }

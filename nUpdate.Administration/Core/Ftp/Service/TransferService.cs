@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,7 +91,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
                     switch (item.ItemType)
                     {
                         case FtpItemType.Directory:
-                            DeleteDirectory(String.Format("/{0}/{1}/", directoryPath, item.Name));
+                            DeleteDirectory($"/{directoryPath}/{item.Name}/");
                             break;
                         case FtpItemType.File:
                             DeleteFile(directoryPath, item.Name);
@@ -426,7 +428,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
                             ftp.MakeDirectory(item.Name);
                         ftp.ChangeDirectoryMultiPath(item.Name);
 
-                        InternalMoveContent(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
+                        InternalMoveContent(item.FullPath, $"{aimPath}/{item.Name}");
                         DeleteDirectory(item.FullPath);
                     }
                     else if (item.ItemType == FtpItemType.File &&
@@ -440,7 +442,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
 
                             string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
                             ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                            ftp.PutFile(localFilePath, String.Format("{0}/{1}", aimPath, item.Name),
+                            ftp.PutFile(localFilePath, $"{aimPath}/{item.Name}",
                                 FileAction.Create);
                             File.Delete(localFilePath);
                         }

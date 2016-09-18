@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,28 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public IEnumerable<FtpItem> ListedFtpItems;
 
+        public FtpManager()
+        {
+            GetTransferProvider();
+        }
+
+        public FtpManager(string host, int port, string directory, string username, SecureString password,
+            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol)
+        {
+            TransferAssemblyPath = transferAssemblyFilePath;
+            GetTransferProvider();
+
+            _transferProvider.Host = host;
+            _transferProvider.Port = port;
+            _transferProvider.Directory = directory;
+            _transferProvider.Username = username;
+            _transferProvider.Password = password.Copy();
+            _transferProvider.Proxy = proxy;
+            _transferProvider.UsePassiveMode = usePassiveMode;
+            if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
+                Protocol = (FtpSecurityProtocol) protcol;
+        }
+
         /// <summary>
         ///     Sets the protocol to use.
         /// </summary>
@@ -29,7 +51,7 @@ namespace nUpdate.Administration.Core
             get { return ((TransferService) _transferProvider).Protocol; }
             set
             {
-                if (_transferProvider.GetType() == typeof(TransferService))
+                if (_transferProvider.GetType() == typeof (TransferService))
                     ((TransferService) _transferProvider).Protocol = value;
             }
         }
@@ -111,40 +133,20 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public string TransferAssemblyPath { get; set; }
 
-        public FtpManager()
-        {
-            GetTransferProvider();
-        }
-
-        public FtpManager(string host, int port, string directory, string username, SecureString password, WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol)
-        {
-            TransferAssemblyPath = transferAssemblyFilePath;
-            GetTransferProvider();
-
-            _transferProvider.Host = host;
-            _transferProvider.Port = port;
-            _transferProvider.Directory = directory;
-            _transferProvider.Username = username;
-            _transferProvider.Password = password.Copy();
-            _transferProvider.Proxy = proxy;
-            _transferProvider.UsePassiveMode = usePassiveMode;
-            if (String.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                Protocol = (FtpSecurityProtocol)protcol;
-        }
-
         private void GetTransferProvider()
         {
-            if (String.IsNullOrWhiteSpace(TransferAssemblyPath))
+            if (string.IsNullOrWhiteSpace(TransferAssemblyPath))
             {
                 var provider = GetDefaultServiceProvider();
-                _transferProvider = (ITransferProvider)provider.GetService(typeof(ITransferProvider));
-                ((TransferService)_transferProvider).Protocol = Protocol; // Default integrated services define a protocol as there are multiple ones available
+                _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));
+                ((TransferService) _transferProvider).Protocol = Protocol;
+                    // Default integrated services define a protocol as there are multiple ones available
             }
             else
             {
                 var assembly = Assembly.LoadFrom(TransferAssemblyPath);
                 var provider = ServiceProviderHelper.CreateServiceProvider(assembly) ?? GetDefaultServiceProvider();
-                _transferProvider = (ITransferProvider)provider.GetService(typeof(ITransferProvider));
+                _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));
             }
         }
 
@@ -285,7 +287,7 @@ namespace nUpdate.Administration.Core
 
         public event EventHandler<EventArgs> CancellationFinished
         {
-            add {  _transferProvider.CancellationFinished += value; }
+            add { _transferProvider.CancellationFinished += value; }
             remove { _transferProvider.CancellationFinished -= value; }
         }
     }

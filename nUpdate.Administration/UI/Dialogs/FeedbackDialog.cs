@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -57,15 +57,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     responseString =
                         client.DownloadString(
-                            String.Format(
-                                "http://www.nupdate.net/mail.php?name={0}&sender={1}&content={2}",
-                                nameTextBox.Text, emailTextBox.Text, contentTextBox.Text));
+                            $"http://www.nupdate.net/mail.php?name={nameTextBox.Text}&sender={emailTextBox.Text}&content={contentTextBox.Text}");
                 }
 
-                if (!String.IsNullOrEmpty(responseString) && responseString != "\n")
+                if (!string.IsNullOrEmpty(responseString) && responseString != "\n")
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.",
-                        String.Format("Please report this message: {0}", responseString), PopupButtons.Ok);
+                        $"Please report this message: {responseString}", PopupButtons.Ok);
                     return;
                 }
 
@@ -81,7 +79,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void FeedbackDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
         }
     }
 }

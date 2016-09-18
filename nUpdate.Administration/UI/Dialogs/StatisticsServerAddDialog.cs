@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Windows.Forms;
@@ -37,7 +37,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerAddDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
         }
     }
 }

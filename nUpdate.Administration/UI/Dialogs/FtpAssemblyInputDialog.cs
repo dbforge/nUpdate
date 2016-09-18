@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -16,7 +18,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public string AssemblyPath
         {
-            get { return assemblyFilePathTextBox.Text; } 
+            get { return assemblyFilePathTextBox.Text; }
             set { assemblyFilePathTextBox.Text = value; }
         }
 
@@ -35,7 +37,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (ServiceProviderHelper.CreateServiceProvider(assembly) == null)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Error while creating a service provider.",
-                    "The selected assembly doesn't contain any types that are marked with the TransferServiceProvider-attribute.", PopupButtons.Ok);
+                        "The selected assembly doesn't contain any types that are marked with the TransferServiceProvider-attribute.",
+                        PopupButtons.Ok);
                     return;
                 }
             }
@@ -51,7 +54,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void FtpAssemblyInputDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             assemblyFilePathTextBox.Initialize();
         }
 

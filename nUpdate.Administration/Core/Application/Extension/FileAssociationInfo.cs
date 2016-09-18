@@ -1,31 +1,4 @@
-﻿/*
-* Copyright (c) 2006, Brendan Grant (grantb@dahat.com)
-* All rights reserved.
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*     * All original and modified versions of this source code must include the
-*       above copyright notice, this list of conditions and the following
-*       disclaimer.
-*     * This code may not be used with or within any modules or code that is 
-*       licensed in any way that that compels or requires users or modifiers
-*       to release their source code or changes as a requirement for
-*       the use, modification or distribution of binary, object or source code
-*       based on the licensed source code. (ex: Cannot be used with GPL code.)
-*     * The name of Brendan Grant may be used to endorse or promote products
-*       derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY BRENDAN GRANT ``AS IS'' AND ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-* EVENT SHALL BRENDAN GRANT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Linq;
@@ -86,7 +59,6 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// </summary>
     public class FileAssociationInfo
     {
-        private string _extension;
         private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
 
         /// <summary>
@@ -101,7 +73,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </example>
         public FileAssociationInfo(string extension)
         {
-            _extension = extension;
+            Extension = extension;
         }
 
         /// <summary>
@@ -123,7 +95,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 var root = Registry.ClassesRoot;
                 try
                 {
-                    var key = root.OpenSubKey(_extension);
+                    var key = root.OpenSubKey(Extension);
 
                     if (key == null)
                         return false;
@@ -142,11 +114,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <summary>
         ///     Gets the name of the extension.
         /// </summary>
-        public string Extension
-        {
-            get { return _extension; }
-            set { _extension = value; }
-        }
+        public string Extension { get; set; }
 
         /// <summary>
         ///     Gets or sets array of containing program file names which should be displayed in the Open With List.
@@ -241,10 +209,10 @@ namespace nUpdate.Administration.Core.Application.Extension
                 file.Delete();
 
             var root = Registry.ClassesRoot;
-            root.CreateSubKey(file._extension);
+            root.CreateSubKey(file.Extension);
             var subKey = root.CreateSubKey("nUpdate Administration\\shell\\open\\command");
             if (subKey != null)
-                subKey.SetValue("", String.Format("{0} \"%1\" ", System.Windows.Forms.Application.ExecutablePath),
+                subKey.SetValue("", $"{System.Windows.Forms.Application.ExecutablePath} \"%1\" ",
                     RegistryValueKind.String);
         }
 
@@ -258,7 +226,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Key not found.");
 
             var root = Registry.ClassesRoot;
-            root.DeleteSubKeyTree(file._extension);
+            root.DeleteSubKeyTree(file.Extension);
         }
 
         #region Public Functions - Creators
@@ -307,7 +275,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         public FileAssociationInfo Create(string progId, PerceivedTypes perceivedType, string contentType,
             string[] openwithList)
         {
-            var fai = new FileAssociationInfo(_extension);
+            var fai = new FileAssociationInfo(Extension);
 
             if (fai.Exists)
                 fai.Delete();
@@ -342,7 +310,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 throw new Exception("Extension does not exist");
 
             var root = Registry.ClassesRoot;
-            var key = root.OpenSubKey(file._extension);
+            var key = root.OpenSubKey(file.Extension);
 
             if (key != null)
             {
@@ -369,7 +337,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             var root = Registry.ClassesRoot;
 
-            var key = root.OpenSubKey(file._extension, true);
+            var key = root.OpenSubKey(file.Extension, true);
             if (key != null)
             {
                 var tmpkey = key.OpenSubKey("OpenWithList", true);
@@ -379,7 +347,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                 key = key.CreateSubKey("OpenWithList");
                 foreach (var s in programList)
                 {
-                    if (key != null) 
+                    if (key != null)
                         key.CreateSubKey(s);
                 }
             }
@@ -397,7 +365,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            var val = _registryWrapper.Read(file._extension, "PerceivedType");
+            var val = _registryWrapper.Read(file.Extension, "PerceivedType");
             var actualType = PerceivedTypes.None;
 
             if (val == null)
@@ -426,7 +394,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            _registryWrapper.Write(file._extension, "PerceivedType", type.ToString());
+            _registryWrapper.Write(file.Extension, "PerceivedType", type.ToString());
 
             ShellNotification.NotifyOfChange();
         }
@@ -442,7 +410,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            var val = _registryWrapper.Read(file._extension + "\\PersistentHandler", string.Empty);
+            var val = _registryWrapper.Read(file.Extension + "\\PersistentHandler", string.Empty);
 
             if (val == null)
                 return new Guid();
@@ -462,7 +430,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (persistentHandler == Guid.Empty)
                 return;
 
-            _registryWrapper.Write(file._extension + "\\" + PersistentHandler, string.Empty, persistentHandler);
+            _registryWrapper.Write(file.Extension + "\\" + PersistentHandler, string.Empty, persistentHandler);
 
             ShellNotification.NotifyOfChange();
         }
@@ -477,7 +445,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            var val = _registryWrapper.Read(file._extension, "Content Type");
+            var val = _registryWrapper.Read(file.Extension, "Content Type");
 
             if (val == null)
                 return string.Empty;
@@ -494,7 +462,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            _registryWrapper.Write(file._extension, "Content Type", type);
+            _registryWrapper.Write(file.Extension, "Content Type", type);
 
             ShellNotification.NotifyOfChange();
         }
@@ -510,7 +478,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            var val = _registryWrapper.Read(file._extension, string.Empty);
+            var val = _registryWrapper.Read(file.Extension, string.Empty);
 
             if (val == null)
                 return string.Empty;
@@ -528,7 +496,7 @@ namespace nUpdate.Administration.Core.Application.Extension
             if (!file.Exists)
                 throw new Exception("Extension does not exist");
 
-            _registryWrapper.Write(file._extension, string.Empty, progId);
+            _registryWrapper.Write(file.Extension, string.Empty, progId);
 
             ShellNotification.NotifyOfChange();
         }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,8 @@ namespace nUpdate.UpdateInstaller.Core
         /// <param name="version">The update version.</param>
         public UpdateVersion(string version)
         {
-            Match match = Regex.Match(version, @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$");
+            Match match = Regex.Match(version,
+                @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$");
             if (!match.Success || !match.Groups["Version"].Success)
                 throw new ArgumentException("The specified version is not valid.");
 
@@ -33,13 +34,19 @@ namespace nUpdate.UpdateInstaller.Core
                 Minor = int.Parse(match.Groups["VersionNumber"].Captures[1].Value);
             else
                 Build = 0;
-            Build = match.Groups["VersionNumber"].Captures.Count > 2 ? int.Parse(match.Groups["VersionNumber"].Captures[2].Value) : 0;
-            Revision = match.Groups["VersionNumber"].Captures.Count > 3 ? int.Parse(match.Groups["VersionNumber"].Captures[3].Value) : 0;
+            Build = match.Groups["VersionNumber"].Captures.Count > 2
+                ? int.Parse(match.Groups["VersionNumber"].Captures[2].Value)
+                : 0;
+            Revision = match.Groups["VersionNumber"].Captures.Count > 3
+                ? int.Parse(match.Groups["VersionNumber"].Captures[3].Value)
+                : 0;
 
             if (!match.Groups["DevStage"].Success)
                 return;
             var devStage = match.Groups["Type"].Value;
-            DevelopmentalStage = devStage == "a" ? DevelopmentalStage.Alpha : devStage == "b" ? DevelopmentalStage.Beta : DevelopmentalStage.ReleaseCandidate;
+            DevelopmentalStage = devStage == "a"
+                ? DevelopmentalStage.Alpha
+                : devStage == "b" ? DevelopmentalStage.Beta : DevelopmentalStage.ReleaseCandidate;
 
             DevelopmentBuild = match.Groups["DevBuild"].Success ? int.Parse(match.Groups["DevBuild"].Value) : 0;
         }
@@ -69,16 +76,16 @@ namespace nUpdate.UpdateInstaller.Core
             int developmentBuild)
         {
             if (major < 0)
-                throw new ArgumentOutOfRangeException("major", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(major), "Index must be 0 or higher");
 
             if (minor < 0)
-                throw new ArgumentOutOfRangeException("minor", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(minor), "Index must be 0 or higher");
 
             if (build < 0)
-                throw new ArgumentOutOfRangeException("build", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(build), "Index must be 0 or higher");
 
             if (revision < 0)
-                throw new ArgumentOutOfRangeException("revision", "Index must be 0 or higher");
+                throw new ArgumentOutOfRangeException(nameof(revision), "Index must be 0 or higher");
 
             Major = major;
             Minor = minor;
@@ -91,22 +98,22 @@ namespace nUpdate.UpdateInstaller.Core
         /// <summary>
         ///     The major of the version.
         /// </summary>
-        public int Major { get; set; }
+        public int Major { get; }
 
         /// <summary>
         ///     The minor of the version.
         /// </summary>
-        public int Minor { get; set; }
+        public int Minor { get; }
 
         /// <summary>
         ///     The build of the version.
         /// </summary>
-        public int Build { get; set; }
+        public int Build { get; }
 
         /// <summary>
         ///     The revision of the version.
         /// </summary>
-        public int Revision { get; set; }
+        public int Revision { get; }
 
         /// <summary>
         ///     The developmental stage of the version.
@@ -119,28 +126,21 @@ namespace nUpdate.UpdateInstaller.Core
         public int DevelopmentBuild { get; set; }
 
         /// <summary>
-        ///     Gets the full description text for the current <see cref="UpdateVersion"/>.
+        ///     Gets the full description text for the current <see cref="UpdateVersion" />.
         /// </summary>
-        public string FullText
-        {
-            get
-            {
-                return DevelopmentalStage != DevelopmentalStage.Release
-                    ? DevelopmentBuild != 0 ? String.Format("{0} {1} {2}", BasicVersion, DevelopmentalStage, DevelopmentBuild.ToString(CultureInfo.InvariantCulture)) : String.Format("{0} {1}", BasicVersion, DevelopmentalStage)
-                    : BasicVersion;
-            }
-        }
+        public string FullText => DevelopmentalStage != DevelopmentalStage.Release
+            ? DevelopmentBuild != 0
+                ? $"{BasicVersion} {DevelopmentalStage} {DevelopmentBuild.ToString(CultureInfo.InvariantCulture)}"
+                : $"{BasicVersion} {DevelopmentalStage}"
+            : BasicVersion;
 
         /// <summary>
-        ///     Gets the current <see cref="UpdateVersion"/> without the developmental stage and development build.
+        ///     Gets the current <see cref="UpdateVersion" /> without the developmental stage and development build.
         /// </summary>
-        public string BasicVersion
-        {
-            get { return String.Format("{0}.{1}.{2}.{3}", Major, Minor, Build, Revision); }
-        }
+        public string BasicVersion => $"{Major}.{Minor}.{Build}.{Revision}";
 
         /// <summary>
-        ///     Gets the semantic version string of the current <see cref="UpdateVersion"/>.
+        ///     Gets the semantic version string of the current <see cref="UpdateVersion" />.
         /// </summary>
         public string SemanticVersion
         {
@@ -149,11 +149,18 @@ namespace nUpdate.UpdateInstaller.Core
                 if (DevelopmentalStage != DevelopmentalStage.Release)
                 {
                     return
-                        String.Format("{0}.{1}.{2}.{3}-{4}.{5}", Major, Minor, Build, Revision, DevelopmentalStage.ToString().Substring(0, 1).ToLower(),
-                            DevelopmentBuild).Replace(".0", String.Empty);
+                        $"{Major}.{Minor}.{Build}.{Revision}-{DevelopmentalStage.ToString().Substring(0, 1).ToLower()}.{DevelopmentBuild}"
+                            .Replace(".0", string.Empty);
                 }
                 return BasicVersion;
             }
+        }
+
+        public int CompareTo(UpdateVersion version)
+        {
+            if (this > version)
+                return -1;
+            return this == version ? 0 : 1;
         }
 
         // Overwritten Instance Methods
@@ -178,8 +185,8 @@ namespace nUpdate.UpdateInstaller.Core
                         devStageShortcut = "rc";
                         break;
                 }
-                return String.Format("{0}.{1}.{2}.{3}{4}{5}", Major, Minor, Build, Revision, devStageShortcut
-                    , DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : String.Empty);
+                return
+                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
             }
             return BasicVersion;
         }
@@ -211,7 +218,7 @@ namespace nUpdate.UpdateInstaller.Core
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
+            return obj.GetType() == typeof (UpdateVersion) && ToString() == obj.ToString();
         }
 
         // Operators
@@ -442,14 +449,14 @@ namespace nUpdate.UpdateInstaller.Core
         }
 
         /// <summary>
-        ///     Returns a new <see cref="UpdateVersion"/> from the given full text.
+        ///     Returns a new <see cref="UpdateVersion" /> from the given full text.
         /// </summary>
         /// <param name="fullText">The full text containing the version information.</param>
-        /// <returns>Returns a new <see cref="UpdateVersion"/> from the given full text.</returns>
+        /// <returns>Returns a new <see cref="UpdateVersion" /> from the given full text.</returns>
         /// <exception cref="System.ArgumentException">fullText</exception>
         public static UpdateVersion FromFullText(string fullText)
         {
-            var versionSections = fullText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var versionSections = fullText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
             if (versionSections.Length > 3)
                 throw new ArgumentException("fullText");
 
@@ -498,15 +505,11 @@ namespace nUpdate.UpdateInstaller.Core
         /// <param name="versionString">The version string to check.</param>
         public static bool IsValid(string versionString)
         {
-            var regex = new Regex(@"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$", RegexOptions.IgnoreCase);
+            var regex =
+                new Regex(
+                    @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$",
+                    RegexOptions.IgnoreCase);
             return regex.IsMatch(versionString);
-        }
-
-        public int CompareTo(UpdateVersion version)
-        {
-            if (this > version)
-                return -1;
-            return this == version ? 0 : 1;
         }
     }
 }

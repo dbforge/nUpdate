@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -21,8 +23,6 @@ namespace nUpdate.Administration.TransferInterface
         private const string COL_RAW_TEXT = "RawText";
         private readonly List<FtpItem> _list = new List<FtpItem>();
 
-        private long _totalSize;
-
         /// <summary>
         ///     Default constructor for FtpItemCollection.
         /// </summary>
@@ -44,28 +44,19 @@ namespace nUpdate.Administration.TransferInterface
         /// <summary>
         ///     Gets the size, in bytes, of all files in the collection as reported by the FTP server.
         /// </summary>
-        public long TotalSize
-        {
-            get { return _totalSize; }
-        }
+        public long TotalSize { get; private set; }
 
         /// <summary>
         ///     Gets the number of elements actually contained in the FtpItemCollection list.
         /// </summary>
-        public int Count
-        {
-            get { return _list.Count; }
-        }
+        public int Count => _list.Count;
 
         /// <summary>
         ///     Gets an FtpItem from the FtpItemCollection based on index value.
         /// </summary>
         /// <param name="index">Numeric index of item to retrieve.</param>
         /// <returns>FtpItem</returns>
-        public FtpItem this[int index]
-        {
-            get { return _list[index]; }
-        }
+        public FtpItem this[int index] => _list[index];
 
         IEnumerator<FtpItem> IEnumerable<FtpItem>.GetEnumerator()
         {
@@ -84,12 +75,12 @@ namespace nUpdate.Administration.TransferInterface
         public void Merge(FtpItemCollection items)
         {
             if (items == null)
-                throw new ArgumentNullException("items", "must have a value");
+                throw new ArgumentNullException(nameof(items), "must have a value");
 
             foreach (FtpItem item in items)
             {
                 var newItem = new FtpItem(item.Name, item.Modified, item.Size, item.SymbolicLink, item.Attributes,
-                    item.ItemType, item.RawText) { ParentPath = item.ParentPath };
+                    item.ItemType, item.RawText) {ParentPath = item.ParentPath};
                 Add(newItem);
             }
         }
@@ -107,7 +98,7 @@ namespace nUpdate.Administration.TransferInterface
                     // set the parent path to the value passed in
                     item.ParentPath = path;
                     _list.Add(item);
-                    _totalSize += item.Size;
+                    TotalSize += item.Size;
                 }
             }
         }
@@ -126,7 +117,7 @@ namespace nUpdate.Administration.TransferInterface
         /// <returns>Data table object.</returns>
         public DataTable ToDataTable()
         {
-            var dataTbl = new DataTable { Locale = CultureInfo.InvariantCulture };
+            var dataTbl = new DataTable {Locale = CultureInfo.InvariantCulture};
 
             CreateColumns(dataTbl);
 
@@ -148,13 +139,13 @@ namespace nUpdate.Administration.TransferInterface
 
         private void CreateColumns(DataTable dataTbl)
         {
-            dataTbl.Columns.Add(new DataColumn(COL_NAME, typeof(string)));
-            dataTbl.Columns.Add(new DataColumn(COL_MODIFIED, typeof(DateTime)));
-            dataTbl.Columns.Add(new DataColumn(COL_SIZE, typeof(long)));
-            dataTbl.Columns.Add(new DataColumn(COL_TYPE, typeof(string)));
-            dataTbl.Columns.Add(new DataColumn(COL_ATTRIBUTES, typeof(string)));
-            dataTbl.Columns.Add(new DataColumn(COL_SYMBOLIC_LINK, typeof(string)));
-            dataTbl.Columns.Add(new DataColumn(COL_RAW_TEXT, typeof(string)));
+            dataTbl.Columns.Add(new DataColumn(COL_NAME, typeof (string)));
+            dataTbl.Columns.Add(new DataColumn(COL_MODIFIED, typeof (DateTime)));
+            dataTbl.Columns.Add(new DataColumn(COL_SIZE, typeof (long)));
+            dataTbl.Columns.Add(new DataColumn(COL_TYPE, typeof (string)));
+            dataTbl.Columns.Add(new DataColumn(COL_ATTRIBUTES, typeof (string)));
+            dataTbl.Columns.Add(new DataColumn(COL_SYMBOLIC_LINK, typeof (string)));
+            dataTbl.Columns.Add(new DataColumn(COL_RAW_TEXT, typeof (string)));
         }
 
         /// <summary>
@@ -186,7 +177,7 @@ namespace nUpdate.Administration.TransferInterface
         public bool ContainsName(string name)
         {
             if (name == null)
-                throw new ArgumentNullException("name", "must have a value");
+                throw new ArgumentNullException(nameof(name), "must have a value");
 
             return _list.Any(item => name == item.Name);
         }

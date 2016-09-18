@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -17,11 +17,6 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public bool IsValid
-        {
-            get { return !Controls.OfType<CueTextBox>().Any(item => String.IsNullOrEmpty(item.Text)) && Path.Contains("\\") && Path.Split(new[] { "\\" }, StringSplitOptions.RemoveEmptyEntries).Length >= 2; }
-        }
-
         public string Path
         {
             get { return pathTextBox.Text; }
@@ -34,10 +29,17 @@ namespace nUpdate.Administration.Core.Operations.Panels
             set { newNameTextBox.Text = value; }
         }
 
-        public Operation Operation
+        public bool IsValid
         {
-            get { return new Operation(OperationArea.Files, OperationMethod.Rename, Path, NewName); }
+            get
+            {
+                return !Controls.OfType<CueTextBox>().Any(item => string.IsNullOrEmpty(item.Text)) &&
+                       Path.Contains("\\") &&
+                       Path.Split(new[] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2;
+            }
         }
+
+        public Operation Operation => new Operation(OperationArea.Files, OperationMethod.Rename, Path, NewName);
 
         private void FileRenameOperationPanel_Load(object sender, EventArgs e)
         {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 
 namespace nUpdate.UpdateInstaller.Exceptions
 {

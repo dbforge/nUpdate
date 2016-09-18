@@ -1,10 +1,12 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Collections.Generic;
 using nUpdate.Administration.Core.Ftp.Service;
 using nUpdate.Administration.TransferInterface;
 
+[assembly: ServiceProvider(typeof (TransferServiceProvider))]
 
-[assembly: ServiceProvider(typeof(TransferServiceProvider))]
 namespace nUpdate.Administration.Core.Ftp.Service
 {
     public class TransferServiceProvider : IServiceProvider
@@ -17,17 +19,17 @@ namespace nUpdate.Administration.Core.Ftp.Service
             InitializeServices();
         }
 
-        private void InitializeServices()
-        {
-            _services.Add(typeof(ITransferProvider), new TransferService());
-        }
-
         public object GetService(Type serviceType)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
             object service;
             return !_services.TryGetValue(serviceType, out service) ? null : service;
+        }
+
+        private void InitializeServices()
+        {
+            _services.Add(typeof (ITransferProvider), new TransferService());
         }
     }
 }

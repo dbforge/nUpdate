@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,8 @@ namespace nUpdate.Updating
 {
     internal class UpdateResult
     {
-        private UpdateConfiguration _newestConfiguration;
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
-        private readonly bool _updatesFound;
+        private UpdateConfiguration _newestConfiguration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -66,23 +65,17 @@ namespace nUpdate.Updating
                     item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
             }
 
-            _updatesFound = _newUpdateConfigurations.Count != 0;
+            UpdatesFound = _newUpdateConfigurations.Count != 0;
         }
 
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
-        public bool UpdatesFound
-        {
-            get { return _updatesFound; }
-        }
+        public bool UpdatesFound { get; }
 
         /// <summary>
         ///     Returns all new configurations.
         /// </summary>
-        public IEnumerable<UpdateConfiguration> NewestConfigurations
-        {
-            get { return _newUpdateConfigurations; }
-        }
+        public IEnumerable<UpdateConfiguration> NewestConfigurations => _newUpdateConfigurations;
     }
 }

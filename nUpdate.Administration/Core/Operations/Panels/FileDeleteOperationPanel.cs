@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -12,16 +12,9 @@ namespace nUpdate.Administration.Core.Operations.Panels
 {
     public partial class FileDeleteOperationPanel : UserControl, IOperationPanel
     {
-        private BindingList<string> _itemList = new BindingList<string>();
-
         public FileDeleteOperationPanel()
         {
             InitializeComponent();
-        }
-
-        public bool IsValid
-        {
-            get { return ItemList.Any(); }
         }
 
         public string Path
@@ -30,27 +23,22 @@ namespace nUpdate.Administration.Core.Operations.Panels
             set { pathTextBox.Text = value; }
         }
 
-        public BindingList<string> ItemList
-        {
-            get { return _itemList; }
-            set { _itemList = value; }
-        }
+        public BindingList<string> ItemList { get; set; } = new BindingList<string>();
+        public bool IsValid => ItemList.Any();
 
         public Operation Operation
-        {
-            get { return new Operation(OperationArea.Files, OperationMethod.Delete, Path, ItemList.ToList()); }
-        }
+            => new Operation(OperationArea.Files, OperationMethod.Delete, Path, ItemList.ToList());
 
         private void FileDeleteOperationPanel_Load(object sender, EventArgs e)
         {
-            filesToDeleteListBox.DataSource = _itemList;
+            filesToDeleteListBox.DataSource = ItemList;
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(fileNameTextBox.Text))
+            if (string.IsNullOrEmpty(fileNameTextBox.Text))
                 return;
-            _itemList.Add(fileNameTextBox.Text);
+            ItemList.Add(fileNameTextBox.Text);
             fileNameTextBox.Clear();
         }
 
@@ -62,7 +50,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            _itemList.RemoveAt(filesToDeleteListBox.SelectedIndex);
+            ItemList.RemoveAt(filesToDeleteListBox.SelectedIndex);
         }
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)

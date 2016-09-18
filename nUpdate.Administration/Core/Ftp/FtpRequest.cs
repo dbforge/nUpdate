@@ -1,29 +1,5 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -248,16 +224,14 @@ namespace nUpdate.Administration.Core.Ftp
     public class FtpRequest
     {
         private readonly string[] _arguments;
-        private readonly FtpCmd _command;
-        private readonly string _text;
 
         /// <summary>
         ///     Default constructor.
         /// </summary>
         public FtpRequest()
         {
-            _command = new FtpCmd();
-            _text = string.Empty;
+            Command = new FtpCmd();
+            Text = string.Empty;
         }
 
         /// <summary>
@@ -267,9 +241,9 @@ namespace nUpdate.Administration.Core.Ftp
         /// <param name="arguments">Parameters for the request</param>
         internal FtpRequest(FtpCmd command, params string[] arguments)
         {
-            _command = command;
+            Command = command;
             _arguments = arguments;
-            _text = BuildCommandText();
+            Text = BuildCommandText();
         }
 
         /// <summary>
@@ -284,10 +258,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <summary>
         ///     Get the FTP command enumeration value.
         /// </summary>
-        public FtpCmd Command
-        {
-            get { return _command; }
-        }
+        public FtpCmd Command { get; }
 
         /// <summary>
         ///     Get the FTP command arguments (if any).
@@ -308,10 +279,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <summary>
         ///     Get the FTP command text with any arguments.
         /// </summary>
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
 
         /// <summary>
         ///     Gets a boolean value indicating if the command is a file transfer or not.
@@ -320,20 +288,17 @@ namespace nUpdate.Administration.Core.Ftp
         {
             get
             {
-                if (_command == FtpCmd.Stou || _command == FtpCmd.Stor || _command == FtpCmd.Retr)
+                if (Command == FtpCmd.Stou || Command == FtpCmd.Stor || Command == FtpCmd.Retr)
                     return true;
                 return false;
             }
         }
 
-        internal bool HasHappyCodes
-        {
-            get { return GetHappyCodes().Length != 0; }
-        }
+        internal bool HasHappyCodes => GetHappyCodes().Length != 0;
 
         internal string BuildCommandText()
         {
-            string commandText = _command.ToString().ToUpper(CultureInfo.InvariantCulture);
+            string commandText = Command.ToString().ToUpper(CultureInfo.InvariantCulture);
 
             if (_arguments == null)
             {
@@ -347,19 +312,19 @@ namespace nUpdate.Administration.Core.Ftp
             }
             string argText = builder.ToString().TrimEnd();
 
-            if (_command == FtpCmd.Unknown)
+            if (Command == FtpCmd.Unknown)
                 return argText;
-            return String.Format("{0} {1}", commandText, argText).TrimEnd();
+            return $"{commandText} {argText}".TrimEnd();
         }
 
         internal byte[] GetBytes()
         {
-            return Encoding.ASCII.GetBytes(String.Format("{0}\r\n", _text));
+            return Encoding.ASCII.GetBytes($"{Text}\r\n");
         }
 
         internal FtpResponseCode[] GetHappyCodes()
         {
-            switch (_command)
+            switch (Command)
             {
                 case FtpCmd.Unknown:
                     return BuildResponseArray();
@@ -451,7 +416,7 @@ namespace nUpdate.Administration.Core.Ftp
                     return BuildResponseArray();
 
                 default:
-                    throw new FtpException(String.Format("No response code(s) defined for FtpCmd {0}.", _command));
+                    throw new FtpException($"No response code(s) defined for FtpCmd {Command}.");
             }
         }
 

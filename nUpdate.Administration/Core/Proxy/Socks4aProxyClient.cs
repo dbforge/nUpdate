@@ -1,27 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Net.Sockets;
 using System.Text;
@@ -99,10 +76,7 @@ namespace nUpdate.Administration.Core.Proxy
         ///     Gets String representing the name of the proxy.
         /// </summary>
         /// <remarks>This property will always return the value 'SOCKS4a'</remarks>
-        public override string ProxyName
-        {
-            get { return PROXY_NAME; }
-        }
+        public override string ProxyName => PROXY_NAME;
 
         /// <summary>
         ///     Sends a command to the proxy server.
@@ -176,7 +150,7 @@ namespace nUpdate.Administration.Core.Proxy
             request[8 + userIdBytes.Length] = 0x00; // null (byte with all zeros) terminator for userId
             hostBytes.CopyTo(request, 9 + userIdBytes.Length); // copy the host name to the request byte array
             request[9 + userIdBytes.Length + hostBytes.Length] = 0x00;
-                // null (byte with all zeros) terminator for userId
+            // null (byte with all zeros) terminator for userId
 
             // send the connect request
             proxy.Write(request, 0, request.Length);

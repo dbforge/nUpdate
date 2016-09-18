@@ -1,31 +1,4 @@
-﻿/*
-* Copyright (c) 2006, Brendan Grant (grantb@dahat.com)
-* All rights reserved.
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*     * All original and modified versions of this source code must include the
-*       above copyright notice, this list of conditions and the following
-*       disclaimer.
-*     * This code may not be used with or within any modules or code that is 
-*       licensed in any way that that compels or requires users or modifiers
-*       to release their source code or changes as a requirement for
-*       the use, modification or distribution of binary, object or source code
-*       based on the licensed source code. (ex: Cannot be used with GPL code.)
-*     * The name of Brendan Grant may be used to endorse or promote products
-*       derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY BRENDAN GRANT ``AS IS'' AND ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-* EVENT SHALL BRENDAN GRANT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -151,12 +124,12 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// </summary>
     public class ProgramAssociationInfo
     {
+        private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
+
         /// <summary>
         ///     Actual name of Programmatic Identifier
         /// </summary>
         protected string ProgId;
-
-        private readonly RegistryWrapper _registryWrapper = new RegistryWrapper();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProgramAssociationInfo" /> class, which acts as a wrapper for a
@@ -217,10 +190,7 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <summary>
         ///     Gets a value that is the name of the Programatic Identifier
         /// </summary>
-        public string ProgID
-        {
-            get { return ProgId; }
-        }
+        public string ProgID => ProgId;
 
         /// <summary>
         ///     Gets a value that determines of a registry key exists with this Programatic Identifier
@@ -317,7 +287,8 @@ namespace nUpdate.Administration.Core.Application.Extension
             {
                 val = 0;
                 return false;
-            }        }
+            }
+        }
 
         #region Public Functions - Creators
 
@@ -428,7 +399,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             var root = Registry.ClassesRoot;
             var key = root.OpenSubKey(ProgId);
-            if (key == null) 
+            if (key == null)
                 return true;
 
             var o = key.GetValue("AlwaysShowExt", "ThisValueShouldNotExist");
@@ -645,7 +616,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                                 command.Close();
                             }
                         }
-                        if (newVerb != null) 
+                        if (newVerb != null)
                             newVerb.Close();
                     }
                 }

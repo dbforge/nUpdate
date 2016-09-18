@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,7 +14,7 @@ namespace nUpdate.Test
         {
             var alphaVersion = new UpdateVersion("1.0.0.0a1");
             var betaVersion = new UpdateVersion("1.0.0.0b1");
-                var releaseCandidateVersion = new UpdateVersion("1.0.0.0rc1");
+            var releaseCandidateVersion = new UpdateVersion("1.0.0.0rc1");
             var normalVersion = new UpdateVersion("1.0.0.0");
             //var firstInvalidVersion = new UpdateVersion("1.0.0."); // Invalid
             //var secondInvalidVersion = new UpdateVersion("1.0.0.0c1"); // Invalid
@@ -120,11 +120,12 @@ namespace nUpdate.Test
             var sixthVersion = new UpdateVersion("1.4.0.0rc");
             var seventhVersion = new UpdateVersion("1.4.0.0-rc.1");
             var eighthVersion = new UpdateVersion("1.4.0.0");
-            Assert.AreEqual(fifthVersion < sixthVersion && sixthVersion < seventhVersion && seventhVersion < eighthVersion, true);
+            Assert.AreEqual(
+                fifthVersion < sixthVersion && sixthVersion < seventhVersion && seventhVersion < eighthVersion, true);
         }
 
         /// <summary>
-        /// Determines whether this instance [can create version from full text].
+        ///     Determines whether this instance [can create version from full text].
         /// </summary>
         [TestMethod]
         public void CanCreateVersionFromFullText()

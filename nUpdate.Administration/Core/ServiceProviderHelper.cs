@@ -1,15 +1,18 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Linq;
+using System.Reflection;
 using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration.Core
 {
     public class ServiceProviderHelper
     {
-        public static IServiceProvider CreateServiceProvider(System.Reflection.Assembly assembly)
+        public static IServiceProvider CreateServiceProvider(Assembly assembly)
         {
             if (assembly == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
 
             var attribute =
                 assembly.GetCustomAttributes(typeof (ServiceProviderAttribute), false)

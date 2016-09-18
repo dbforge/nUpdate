@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Drawing;
 using System.Drawing.Text;
@@ -102,7 +102,6 @@ namespace nUpdate.Administration.UI.Controls
 
     public class ServerListItem
     {
-        private Color _headerColor = SystemColors.ControlText;
         public string HeaderText { get; set; }
         public string ItemText { get; set; }
         public Image ItemImage { get; set; }
@@ -110,12 +109,7 @@ namespace nUpdate.Administration.UI.Controls
         /// <summary>
         ///     Sets the header color.
         /// </summary>
-        public Color HeaderColor
-        {
-            get { return _headerColor; }
-
-            set { _headerColor = value; }
-        }
+        public Color HeaderColor { get; set; } = SystemColors.ControlText;
 
         public static bool TryParse(object source, out ServerListItem item)
         {

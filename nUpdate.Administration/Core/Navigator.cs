@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Collections.Generic;
 using System.Linq;
@@ -7,32 +7,23 @@ namespace nUpdate.Administration.Core
 {
     public class Navigator<T>
     {
-        private int _currentIndex;
         private readonly List<T> _itemList = new List<T>();
+        private int _currentIndex;
 
         /// <summary>
         ///     Gets a value indicating whether the navigator can go back or not.
         /// </summary>
-        public bool CanGoBack
-        {
-            get { return _currentIndex != 0; }
-        }
+        public bool CanGoBack => _currentIndex != 0;
 
         /// <summary>
         ///     Gets a value indicating whether the navigator can go forward or not.
         /// </summary>
-        public bool CanGoForward
-        {
-            get { return _currentIndex != _itemList.Count - 1; }
-        }
+        public bool CanGoForward => _currentIndex != _itemList.Count - 1;
 
         /// <summary>
         ///     Returns the current item selected.
         /// </summary>
-        public T Current
-        {
-            get { return _itemList.ElementAt(_currentIndex); }
-        }
+        public T Current => _itemList.ElementAt(_currentIndex);
 
         /// <summary>
         ///     Adds a new item to the current navigator's list.

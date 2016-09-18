@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -15,8 +15,8 @@ namespace nUpdate.Administration.Core.Win32
         /// <returns>The associated icon of the <paramref name="fileExtension" />.</returns>
         public static Icon GetFileIcon(string fileExtension)
         {
-            if (String.IsNullOrWhiteSpace(fileExtension))
-                throw new ArgumentNullException("fileExtension");
+            if (string.IsNullOrWhiteSpace(fileExtension))
+                throw new ArgumentNullException(nameof(fileExtension));
 
             var shfileinfo = new NativeMethods.Shfileinfo();
             const NativeMethods.ShGetFileInfoFlags flags =

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             copyrightLabel.Text += DateTime.Now.Year.ToString();
         }
 
@@ -62,9 +62,7 @@ namespace nUpdate.Administration.UI.Dialogs
             const string currency = "EUR";
 
             var url =
-                String.Format(
-                    "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business={0}&lc={1}&item_name={2}&currency_code={3}&bn=PP%2dDonationsBF",
-                    business, country, description, currency);
+                $"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business={business}&lc={country}&item_name={description}&currency_code={currency}&bn=PP%2dDonationsBF";
 
             Process.Start(url);
         }
