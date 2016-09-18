@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -15,7 +17,7 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class ProjectImportDialog : BaseDialog
     {
-        private List<ProjectConfiguration> _projectConfigurations; 
+        private List<ProjectConfiguration> _projectConfigurations;
         private TabPage _sender;
 
         public ProjectImportDialog()
@@ -25,7 +27,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void ProjectImportDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             _sender = optionTabPage;
 
             projectFilePathTextBox.Initialize();
@@ -89,7 +91,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (_projectConfigurations.Any(item => item.Name == projectNameTextBox.Text))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Project already existing.",
-                        String.Format("A project with the name \"{0}\" does already exist.", projectNameTextBox.Text), PopupButtons.Ok);
+                        $"A project with the name \"{projectNameTextBox.Text}\" does already exist.",
+                        PopupButtons.Ok);
                     return;
                 }
 
@@ -98,13 +101,15 @@ namespace nUpdate.Administration.UI.Dialogs
                     string folderPath = Path.Combine(Program.Path, "ImpProj");
                     string statisticsFilePath = Path.Combine(folderPath, "statistics.php");
                     string projectFilePath = Path.Combine(folderPath,
-                        String.Format("{0}.nupdproj", projectNameTextBox.Text));
+                        $"{projectNameTextBox.Text}.nupdproj");
                     Directory.CreateDirectory(folderPath);
 
                     var updateProject = UpdateProject.LoadProject(projectFilePath);
                     if (updateProject.UseStatistics)
                     {
-                        Popup.ShowPopup(this, SystemIcons.Warning, "Incompatible project.", "This project cannot be imported because the support for projects using statistics is currently missing. It will be available in the next version(s) of nUpdate Administration.", PopupButtons.Ok);
+                        Popup.ShowPopup(this, SystemIcons.Warning, "Incompatible project.",
+                            "This project cannot be imported because the support for projects using statistics is currently missing. It will be available in the next version(s) of nUpdate Administration.",
+                            PopupButtons.Ok);
                         Directory.Delete(folderPath);
                         return;
                     }

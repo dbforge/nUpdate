@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -37,7 +37,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void JSONEditorDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             var bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
             codeTextBox.Text = Encoding.UTF8.GetString(bytes);
         }
@@ -66,7 +66,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             try
             {
-                var filePath = Path.Combine(Program.Path, "Localization", String.Format("{0}.json", CultureName));
+                var filePath = Path.Combine(Program.Path, "Localization", $"{CultureName}.json");
                 using (File.Create(filePath))
                 {
                 }

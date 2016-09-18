@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -20,11 +20,14 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PreferencesDialog : BaseDialog
     {
-        private CultureInfo[] _cultureInfos = {};
         private readonly List<string> _cultureNames = new List<string>();
 
         private readonly UpdateManager _manager =
-            new UpdateManager(new Uri("http://www.nupdate.net/updates.json"), "<RSAKeyValue><Modulus>lLM5SxeIVrEJZyT/QfsZANZ5rdxHriQ85axYspvfmtVEV1QcoOcNhjieODYpTYlpfVieFCP+ktwS56Y4Q1nsesembolrmnS3nUsFZs39jWkkJZG41e9IliwdJRbn6vueBxsUOUDsXVQVmXyrSjrzxCT6AaTcK9IQoAp+/3Ecrib+dMbzwGeCKR/b2gNyFSjAagILLrq1NuRlYGYKlT4MUHbLgHlj4M3GgVEunu32RjAYNcafYPHjesIa92PqJhCNz2ksw66+tDgBmgYHaMwlDDxJFqbB+ALMqGAp6Mkuc9wCEVoYZZPEH4WSH7tz9OwRvkJqGYrJYCuyii9O3xWLZJiGmSAs5GMdmtzcC/RlgEGOQ63GSwCze/AM+8gw7pjF3PgApEkGbXz4GJRe4iPhbLb5bekFbu66KU1UsYOmx/dIVfcIokvVo0CKj6QWnzaBUiuhs7zH/qzW4BWLG+FsPbMDif9zQ86kdedvBY6YmtsZ3/zurAVa+ad63QCYchO1qenIjfRNZJqv33FKyVsH1ZV4u3TqaG6ygL4iZ0wJCPYc91mi6wUr5t8inHro20zASpwcldTEZjZwFuJIOa3vGmF+dI4xKyVUnDfEzC4JiNs5T1lLnaJvhLR6205zSwfKCBNVv5u9dvGZvEaifAfokC322B7euFzkzbgwXZXbj+ubxfQpRF3ZzwUsdvVvRN9FVGy8WW5fMnjflyGXYAi8rqpHPISRunGA/35I5tH63RCRl6OjkGHqcH1tCNCZP3Q2zraY4nazgFjATp9JgvThCc7VHhRIWOIvFe+5HhmNT43Rp/dZlCzXgSQgkaMC9VDHOhP0Q8Bpnzw+fKzn41ysPxiUnl1aDNzmieHaIdd0DDbmIO6H7qpQW+7Tp08zfxzn0TOzHrBeRyUUTTR8dRCWFgUerjNYTMA6C58aRIlOXxJ6xycBpa38g0eneV/WOKis2uzR4NlxPmkpAQVbS8L0EK/On80phRXSpsn0pob60hU5Yy2VrBW1ENwrGBu5o0TDq2a/Bg3aXQ/7FUUiukv6aIButv7D9YNDahnx5HFdIlkyyXcXeJSve8MliOjLPxm7LZFb7GceQz7JJSrobB6KapLJwZVBECeA1vmCGYr4m2nO3KS1Plj/7ugMSIfVIkoPtDYLydoGXkSEAa8V0rl+Cx9NcIOs722PgVlGTw4GcFSxAGWLddmIe//kmeflS+EbbtFZr3+dCYbSGg4R9Qvx/g8SpwsXIssjmrlD76jyNyKEO3l0xDO4EgvgsUUP0C2e/bBo2w2Gi6Hdb/0gMrCTE/LOwaQy1ic3yy4uHT5GPEkKOMVnZ93tsaPk8QFATFft89PTKrFSwiB6jkn6oFjFhQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", new CultureInfo("en"));
+            new UpdateManager(new Uri("http://www.nupdate.net/updates.json"),
+                "<RSAKeyValue><Modulus>lLM5SxeIVrEJZyT/QfsZANZ5rdxHriQ85axYspvfmtVEV1QcoOcNhjieODYpTYlpfVieFCP+ktwS56Y4Q1nsesembolrmnS3nUsFZs39jWkkJZG41e9IliwdJRbn6vueBxsUOUDsXVQVmXyrSjrzxCT6AaTcK9IQoAp+/3Ecrib+dMbzwGeCKR/b2gNyFSjAagILLrq1NuRlYGYKlT4MUHbLgHlj4M3GgVEunu32RjAYNcafYPHjesIa92PqJhCNz2ksw66+tDgBmgYHaMwlDDxJFqbB+ALMqGAp6Mkuc9wCEVoYZZPEH4WSH7tz9OwRvkJqGYrJYCuyii9O3xWLZJiGmSAs5GMdmtzcC/RlgEGOQ63GSwCze/AM+8gw7pjF3PgApEkGbXz4GJRe4iPhbLb5bekFbu66KU1UsYOmx/dIVfcIokvVo0CKj6QWnzaBUiuhs7zH/qzW4BWLG+FsPbMDif9zQ86kdedvBY6YmtsZ3/zurAVa+ad63QCYchO1qenIjfRNZJqv33FKyVsH1ZV4u3TqaG6ygL4iZ0wJCPYc91mi6wUr5t8inHro20zASpwcldTEZjZwFuJIOa3vGmF+dI4xKyVUnDfEzC4JiNs5T1lLnaJvhLR6205zSwfKCBNVv5u9dvGZvEaifAfokC322B7euFzkzbgwXZXbj+ubxfQpRF3ZzwUsdvVvRN9FVGy8WW5fMnjflyGXYAi8rqpHPISRunGA/35I5tH63RCRl6OjkGHqcH1tCNCZP3Q2zraY4nazgFjATp9JgvThCc7VHhRIWOIvFe+5HhmNT43Rp/dZlCzXgSQgkaMC9VDHOhP0Q8Bpnzw+fKzn41ysPxiUnl1aDNzmieHaIdd0DDbmIO6H7qpQW+7Tp08zfxzn0TOzHrBeRyUUTTR8dRCWFgUerjNYTMA6C58aRIlOXxJ6xycBpa38g0eneV/WOKis2uzR4NlxPmkpAQVbS8L0EK/On80phRXSpsn0pob60hU5Yy2VrBW1ENwrGBu5o0TDq2a/Bg3aXQ/7FUUiukv6aIButv7D9YNDahnx5HFdIlkyyXcXeJSve8MliOjLPxm7LZFb7GceQz7JJSrobB6KapLJwZVBECeA1vmCGYr4m2nO3KS1Plj/7ugMSIfVIkoPtDYLydoGXkSEAa8V0rl+Cx9NcIOs722PgVlGTw4GcFSxAGWLddmIe//kmeflS+EbbtFZr3+dCYbSGg4R9Qvx/g8SpwsXIssjmrlD76jyNyKEO3l0xDO4EgvgsUUP0C2e/bBo2w2Gi6Hdb/0gMrCTE/LOwaQy1ic3yy4uHT5GPEkKOMVnZ93tsaPk8QFATFft89PTKrFSwiB6jkn6oFjFhQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>",
+                new CultureInfo("en"));
+
+        private CultureInfo[] _cultureInfos = {};
 
         public PreferencesDialog()
         {
@@ -36,11 +39,11 @@ namespace nUpdate.Administration.UI.Dialogs
             _cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
             foreach (var info in _cultureInfos)
             {
-                languagesComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
+                languagesComboBox.Items.Add($"{info.EnglishName} - {info.Name}");
                 _cultureNames.Add(info.Name);
             }
 
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             versionLabel.Text += " 3.0.0.0 Beta 3";
             includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
             includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;
@@ -103,7 +106,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     var projectConfiguration = ProjectConfiguration.Load();
                     if (projectConfiguration != null)
                     {
-                        foreach (var project in projectConfiguration.Select(config => UpdateProject.LoadProject(config.Path)).Where(project => project.Packages != null))
+                        foreach (
+                            var project in
+                                projectConfiguration.Select(config => UpdateProject.LoadProject(config.Path))
+                                    .Where(project => project.Packages != null))
                         {
                             foreach (var package in project.Packages)
                             {

@@ -1,8 +1,7 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,12 +19,11 @@ namespace nUpdate.Updating
 {
     public class UpdaterUI
     {
-        private readonly ManualResetEvent _searchResetEvent = new ManualResetEvent(false);
         private readonly LocalizationProperties _lp;
+        private readonly ManualResetEvent _searchResetEvent = new ManualResetEvent(false);
         private SynchronizationContext _context;
-        private UpdateManager _updateManager;
-        private bool _updatesAvailable;
         private bool _isTaskRunning;
+        private bool _updatesAvailable;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdaterUI" />-class.
@@ -38,11 +36,14 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdaterUI"/> class.
+        ///     Initializes a new instance of the <see cref="UpdaterUI" /> class.
         /// </summary>
         /// <param name="updateManager">The update manager.</param>
         /// <param name="context">The context.</param>
-        /// <param name="useHiddenSearch">If set to <c>true</c> a hidden search will be provided in order to search in the background without informing the user.</param>
+        /// <param name="useHiddenSearch">
+        ///     If set to <c>true</c> a hidden search will be provided in order to search in the
+        ///     background without informing the user.
+        /// </param>
         public UpdaterUI(UpdateManager updateManager, SynchronizationContext context, bool useHiddenSearch)
         {
             UpdateManagerInstance = updateManager;
@@ -53,14 +54,15 @@ namespace nUpdate.Updating
             try
             {
                 languageFilePath =
-                    _updateManager.CultureFilePaths.First(item => item.Key.Equals(_updateManager.LanguageCulture)).Value;
+                    UpdateManagerInstance.CultureFilePaths.First(
+                        item => item.Key.Equals(UpdateManagerInstance.LanguageCulture)).Value;
             }
             catch (InvalidOperationException)
             {
                 languageFilePath = null;
             }
 
-            if (!String.IsNullOrEmpty(languageFilePath))
+            if (!string.IsNullOrEmpty(languageFilePath))
             {
                 try
                 {
@@ -71,16 +73,15 @@ namespace nUpdate.Updating
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(languageFilePath) && _updateManager.LanguageCulture.Name != "en")
+            else if (string.IsNullOrEmpty(languageFilePath) && UpdateManagerInstance.LanguageCulture.Name != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json",
-                    _updateManager.LanguageCulture.Name);
+                string resourceName = $"nUpdate.Core.Localization.{UpdateManagerInstance.LanguageCulture.Name}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(languageFilePath) && _updateManager.LanguageCulture.Name == "en")
+            else if (string.IsNullOrEmpty(languageFilePath) && UpdateManagerInstance.LanguageCulture.Name == "en")
             {
                 _lp = new LocalizationProperties();
             }
@@ -95,21 +96,18 @@ namespace nUpdate.Updating
             set
             {
                 _context = value;
-                _updateManager.Context = value;
+                UpdateManagerInstance.Context = value;
             }
         }
 
         /// <summary>
         ///     Gets or sets the given instance of the <see cref="UpdateManager" />-class.
         /// </summary>
-        internal UpdateManager UpdateManagerInstance
-        {
-            get { return _updateManager; }
-            set { _updateManager = value; }
-        }
+        internal UpdateManager UpdateManagerInstance { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a hidden search should be provided in order to search in the background without informing the user, or not.
+        ///     Gets or sets a value indicating whether a hidden search should be provided in order to search in the background
+        ///     without informing the user, or not.
         /// </summary>
         public bool UseHiddenSearch { get; set; }
 
@@ -122,21 +120,21 @@ namespace nUpdate.Updating
                 return;
 
             _isTaskRunning = true;
-            var searchDialog = new UpdateSearchDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var searchDialog = new UpdateSearchDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
             var newUpdateDialog = new NewUpdateDialog
             {
-                LanguageName = _updateManager.LanguageCulture.Name,
-                CurrentVersion = _updateManager.CurrentVersion,
+                LanguageName = UpdateManagerInstance.LanguageCulture.Name,
+                CurrentVersion = UpdateManagerInstance.CurrentVersion
             };
 
-            var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = _updateManager.LanguageCulture.Name};
+            var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
             var downloadDialog = new UpdateDownloadDialog
             {
-                LanguageName = _updateManager.LanguageCulture.Name
+                LanguageName = UpdateManagerInstance.LanguageCulture.Name
             };
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
@@ -260,16 +258,16 @@ namespace nUpdate.Updating
             try
             {
                 //EAP
-                _updateManager.UpdateSearchFinished += SearchFinished;
-                _updateManager.UpdateSearchFinished += searchDialog.Finished;
-                _updateManager.UpdateSearchFailed += searchDialog.Failed;
-                _updateManager.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
-                _updateManager.PackagesDownloadFinished += downloadDialog.Finished;
-                _updateManager.PackagesDownloadFailed += downloadDialog.Failed;
+                UpdateManagerInstance.UpdateSearchFinished += SearchFinished;
+                UpdateManagerInstance.UpdateSearchFinished += searchDialog.Finished;
+                UpdateManagerInstance.UpdateSearchFailed += searchDialog.Failed;
+                UpdateManagerInstance.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
+                UpdateManagerInstance.PackagesDownloadFinished += downloadDialog.Finished;
+                UpdateManagerInstance.PackagesDownloadFailed += downloadDialog.Failed;
 
                 Task.Factory.StartNew(() =>
                 {
-                    _updateManager.SearchForUpdatesAsync();
+                    UpdateManagerInstance.SearchForUpdatesAsync();
                     if (!UseHiddenSearch)
                     {
                         var searchDialogResultReference = new DialogResultReference();
@@ -285,8 +283,8 @@ namespace nUpdate.Updating
 
                     if (_updatesAvailable)
                     {
-                        newUpdateDialog.PackageSize = _updateManager.TotalSize;
-                        newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
+                        newUpdateDialog.PackageSize = UpdateManagerInstance.TotalSize;
+                        newUpdateDialog.PackageConfigurations = UpdateManagerInstance.PackageConfigurations;
 
                         var newUpdateDialogResultReference = new DialogResultReference();
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
@@ -302,7 +300,7 @@ namespace nUpdate.Updating
                         return;
                     }
 
-                    _updateManager.DownloadPackagesAsync();
+                    UpdateManagerInstance.DownloadPackagesAsync();
 
                     var downloadDialogResultReference = new DialogResultReference();
                     _context.Send(downloadDialog.ShowModalDialog, downloadDialogResultReference);
@@ -313,7 +311,7 @@ namespace nUpdate.Updating
                     bool isValid = false;
                     try
                     {
-                        isValid = _updateManager.ValidatePackages();
+                        isValid = UpdateManagerInstance.ValidatePackages();
                     }
                     catch (FileNotFoundException)
                     {
@@ -337,7 +335,7 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        _updateManager.InstallPackage();
+                        UpdateManagerInstance.InstallPackage();
                 });
             }
             finally
@@ -355,12 +353,12 @@ namespace nUpdate.Updating
 
         private void UpdateSearchDialogCancelButtonClick(object sender, EventArgs e)
         {
-            _updateManager.CancelSearch();
+            UpdateManagerInstance.CancelSearch();
         }
 
         private void UpdateDownloadDialogCancelButtonClick(object sender, EventArgs e)
         {
-            _updateManager.CancelDownload();
+            UpdateManagerInstance.CancelDownload();
         }
     }
 }

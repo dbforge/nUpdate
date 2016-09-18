@@ -1,9 +1,11 @@
-﻿using nUpdate.Core.Win32;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
 using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using nUpdate.Core.Win32;
 
 namespace nUpdate.Core
 {
@@ -15,7 +17,10 @@ namespace nUpdate.Core
         /// <param name="filePath">The path to the file that contains an image.</param>
         /// <returns>The System.Drawing.Icon representation of the image contained in the specified file.</returns>
         /// <exception cref="System.ArgumentException">filePath does not indicate a valid file.</exception>
-        /// <remarks>This function is identical to <see cref="IconHelper.ExtractAssociatedIcon"/>, except this version accepts the UNC format.</remarks>
+        /// <remarks>
+        ///     This function is identical to <see cref="IconHelper.ExtractAssociatedIcon" />, except this version accepts the
+        ///     UNC format.
+        /// </remarks>
         internal static Icon ExtractAssociatedIcon(string filePath)
         {
             int index = 0;

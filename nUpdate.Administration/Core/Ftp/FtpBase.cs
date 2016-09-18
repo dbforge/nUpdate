@@ -1,28 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
-
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -39,10 +15,10 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using nUpdate.Administration.Core.Ftp.EventArgs;
 using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Core.Ftp.Hashing;
 using nUpdate.Administration.Core.Proxy;
-using nUpdate.Administration.Core.Ftp.EventArgs;
 using nUpdate.Administration.Core.Proxy.Exceptions;
 using nUpdate.Administration.TransferInterface;
 
@@ -502,10 +478,7 @@ namespace nUpdate.Administration.Core.Ftp
     {
         #region Internal Properties
 
-        internal BackgroundWorker AsyncWorker
-        {
-            get { return _asyncWorker; }
-        }
+        internal BackgroundWorker AsyncWorker { get; private set; }
 
         #endregion
 
@@ -548,16 +521,13 @@ namespace nUpdate.Administration.Core.Ftp
         private TransferMode _dataTransferMode = TransferMode.Passive;
 
         private readonly FtpResponseQueue _responseQueue = new FtpResponseQueue();
-        private FtpResponse _response = new FtpResponse();
-        private readonly FtpResponseCollection _responseList = new FtpResponseCollection();
 
-        private readonly Object _reponseMonitorLock = new Object();
-        private readonly Object _createSslLock = new Object();
-        private readonly Object _cmdStreamWriteLock = new Object();
+        private readonly object _reponseMonitorLock = new object();
+        private readonly object _createSslLock = new object();
+        private readonly object _cmdStreamWriteLock = new object();
 
         private Thread _responseMonitor;
 
-        private IProxyClient _proxy;
         private int _maxUploadSpeed;
         private int _maxDownloadSpeed;
 
@@ -575,20 +545,16 @@ namespace nUpdate.Administration.Core.Ftp
         // secure communications specific 
         private FtpSecurityProtocol _securityProtocol;
         private X509Certificate2 _serverCertificate;
-        private readonly X509CertificateCollection _clientCertificates = new X509CertificateCollection();
 
         // data compresion specific
         private bool _isCompressionEnabled;
 
         // data integrity specific
-        private HashingFunction _hashAlgorithm;
 
         // thread signal for active mode data transfer
         private readonly ManualResetEvent _activeSignal = new ManualResetEvent(false);
 
         // async background worker event-based object
-        private BackgroundWorker _asyncWorker;
-        private bool _asyncCanceled;
 
         private const int TCP_BUFFER_SIZE = 8192;
         private const int TCP_TIMEOUT = 30000; // 30 seconds
@@ -653,10 +619,10 @@ namespace nUpdate.Administration.Core.Ftp
         /// <seealso cref="FtpClient.PutFileAsync(string, FileAction)" />
         public void CancelAsync()
         {
-            if (_asyncWorker != null && !_asyncWorker.CancellationPending && _asyncWorker.IsBusy)
+            if (AsyncWorker != null && !AsyncWorker.CancellationPending && AsyncWorker.IsBusy)
             {
-                _asyncCanceled = true;
-                _asyncWorker.CancelAsync();
+                IsAsyncCanceled = true;
+                AsyncWorker.CancelAsync();
             }
         }
 
@@ -686,16 +652,18 @@ namespace nUpdate.Administration.Core.Ftp
         public string GetChecksum(HashingFunction hash, string path, long startPosition, long endPosition)
         {
             if (hash == HashingFunction.None)
-                throw new ArgumentOutOfRangeException("hash", "must contain a value other than 'Unknown'");
+                throw new ArgumentOutOfRangeException(nameof(hash), "must contain a value other than 'Unknown'");
 
             if (startPosition < 0)
-                throw new ArgumentOutOfRangeException("startPosition", "must contain a value greater than or equal to 0");
+                throw new ArgumentOutOfRangeException(nameof(startPosition),
+                    "must contain a value greater than or equal to 0");
 
             if (endPosition < 0)
-                throw new ArgumentOutOfRangeException("startPosition", "must contain a value greater than or equal to 0");
+                throw new ArgumentOutOfRangeException(nameof(startPosition),
+                    "must contain a value greater than or equal to 0");
 
             if (startPosition > endPosition)
-                throw new ArgumentOutOfRangeException("startPosition",
+                throw new ArgumentOutOfRangeException(nameof(startPosition),
                     "must contain a value less than or equal to endPosition");
 
             var command = FtpCmd.Unknown;
@@ -718,7 +686,7 @@ namespace nUpdate.Administration.Core.Ftp
                 ? new FtpRequest(command, path, startPosition.ToString(), endPosition.ToString())
                 : new FtpRequest(command, path));
 
-            return _response.Text;
+            return LastResponse.Text;
         }
 
         /// <summary>
@@ -731,7 +699,7 @@ namespace nUpdate.Administration.Core.Ftp
         public string ComputeChecksum(HashingFunction hash, string localPath)
         {
             if (!File.Exists(localPath))
-                throw new ArgumentException("file does not exist.", "localPath");
+                throw new ArgumentException("file does not exist.", nameof(localPath));
 
             using (FileStream fileStream = File.OpenRead(localPath))
             {
@@ -768,21 +736,22 @@ namespace nUpdate.Administration.Core.Ftp
         public static string ComputeChecksum(HashingFunction hash, Stream inputStream, long startPosition)
         {
             if (hash == HashingFunction.None)
-                throw new ArgumentOutOfRangeException("hash", "must contain a value other than 'Unknown'");
+                throw new ArgumentOutOfRangeException(nameof(hash), "must contain a value other than 'Unknown'");
 
             if (inputStream == null)
-                throw new ArgumentNullException("inputStream");
+                throw new ArgumentNullException(nameof(inputStream));
 
             if (!inputStream.CanRead)
                 throw new ArgumentException("must be readable.  The CanRead property must return a value of 'true'.",
-                    "inputStream");
+                    nameof(inputStream));
 
             if (!inputStream.CanSeek)
                 throw new ArgumentException("must be seekable.  The CanSeek property must return a value of 'true'.",
-                    "inputStream");
+                    nameof(inputStream));
 
             if (startPosition < 0)
-                throw new ArgumentOutOfRangeException("startPosition", "must contain a value greater than or equal to 0");
+                throw new ArgumentOutOfRangeException(nameof(startPosition),
+                    "must contain a value greater than or equal to 0");
 
             HashAlgorithm hashAlgo = null;
 
@@ -801,7 +770,7 @@ namespace nUpdate.Administration.Core.Ftp
 
             inputStream.Position = startPosition > 0 ? startPosition : 0;
 
-            if (hashAlgo == null) 
+            if (hashAlgo == null)
                 return null;
 
             byte[] hashArray = hashAlgo.ComputeHash(inputStream);
@@ -826,10 +795,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <remarks>
         ///     Returns true if an asynchronous operation is canceled; otherwise, false.
         /// </remarks>
-        public bool IsAsyncCanceled
-        {
-            get { return _asyncCanceled; }
-        }
+        public bool IsAsyncCanceled { get; private set; }
 
         /// <summary>
         ///     Gets a value indicating whether an asynchronous operation is running.
@@ -837,10 +803,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <remarks>
         ///     Returns true if an asynchronous operation is running; otherwise, false.
         /// </remarks>
-        public bool IsBusy
-        {
-            get { return _asyncWorker != null && _asyncWorker.IsBusy; }
-        }
+        public bool IsBusy => AsyncWorker != null && AsyncWorker.IsBusy;
 
         /// <summary>
         ///     Gets or sets the current port number used by the FtpClient to make a connection to the FTP server.
@@ -916,10 +879,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <remarks>Returns a X509CertificateCollection list contains X.509 security certificates.</remarks>
         /// <seealso cref="SecurityProtocol" />
         /// <seealso cref="ValidateServerCertificate" />
-        public X509CertificateCollection SecurityCertificates
-        {
-            get { return _clientCertificates; }
-        }
+        public X509CertificateCollection SecurityCertificates { get; } = new X509CertificateCollection();
 
         /// <summary>
         ///     Gets or sets a value indicating that the client will use compression when uploading and downloading
@@ -978,7 +938,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException("value",
+                    throw new ArgumentOutOfRangeException(nameof(value),
                         "The MaxUploadSpeed property must have a range of 0 to 2,097,152.");
 
                 _maxUploadSpeed = value;
@@ -1002,7 +962,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException("value", "must have a range of 0 to 2,097,152.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must have a range of 0 to 2,097,152.");
 
                 _maxDownloadSpeed = value;
             }
@@ -1015,19 +975,13 @@ namespace nUpdate.Administration.Core.Ftp
         ///     Returns a FtpResponse object containing the last FTP server response; other the value null (or Nothing in VB)
         ///     is returned.
         /// </remarks>
-        public FtpResponse LastResponse
-        {
-            get { return _response; }
-        }
+        public FtpResponse LastResponse { get; private set; } = new FtpResponse();
 
         /// <summary>
         ///     Gets the list of all responses since the last command was issues to the server.
         /// </summary>
         /// <remarks>Returns a FtpResponseCollection list containing all the responses.</remarks>
-        public FtpResponseCollection LastResponseList
-        {
-            get { return _responseList; }
-        }
+        public FtpResponseCollection LastResponseList { get; } = new FtpResponseCollection();
 
         /// <summary>
         ///     Gets or sets the TCP buffer size used when communicating with the FTP server in bytes.
@@ -1039,7 +993,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 1)
-                    throw new ArgumentOutOfRangeException("value", "must be greater than 0.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be greater than 0.");
 
                 _tcpBufferSize = value;
             }
@@ -1059,7 +1013,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException("value", "must be greater than or equal to 0.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be greater than or equal to 0.");
 
                 _tcpTimeout = value;
             }
@@ -1079,7 +1033,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 1)
-                    throw new ArgumentOutOfRangeException("value", "must be greater than 0.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be greater than 0.");
 
                 _transferTimeout = value;
             }
@@ -1099,7 +1053,7 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < 1)
-                    throw new ArgumentOutOfRangeException("value", "must be greater than 0.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be greater than 0.");
 
                 _commandTimeout = value;
             }
@@ -1124,10 +1078,11 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value > _activePortRangeMin)
-                    throw new ArgumentOutOfRangeException("value", "must be less than the ActivePortRangeMax value.");
+                    throw new ArgumentOutOfRangeException(nameof(value),
+                        "must be less than the ActivePortRangeMax value.");
 
                 if (value < 1 || value > 65534)
-                    throw new ArgumentOutOfRangeException("value", "must be between 1 and 65534.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be between 1 and 65534.");
 
                 if (IsBusy)
                     throw new FtpException(
@@ -1155,10 +1110,11 @@ namespace nUpdate.Administration.Core.Ftp
             set
             {
                 if (value < _activePortRangeMin)
-                    throw new ArgumentOutOfRangeException("value", "must be greater than the ActivePortRangeMin value.");
+                    throw new ArgumentOutOfRangeException(nameof(value),
+                        "must be greater than the ActivePortRangeMin value.");
 
                 if (value < 1 || value > 65534)
-                    throw new ArgumentOutOfRangeException("value", "must be between 1 and 65534.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "must be between 1 and 65534.");
 
                 if (IsBusy)
                     throw new FtpException(
@@ -1198,11 +1154,7 @@ namespace nUpdate.Administration.Core.Ftp
         ///  ftp.Proxy = (new ProxyClientFactory()).CreateProxyClient(ProxyType.Http, "localhost", 6588);
         ///         
         ///  </code>
-        public IProxyClient Proxy
-        {
-            get { return _proxy; }
-            set { _proxy = value; }
-        }
+        public IProxyClient Proxy { get; set; }
 
         /// <summary>
         ///     Gets the connection status to the FTP server.
@@ -1263,11 +1215,7 @@ namespace nUpdate.Administration.Core.Ftp
         /// <seealso cref="FtpFileIntegrityException" />
         /// <seealso cref="GetChecksum(HashingFunction, string)" />
         /// <seealso cref="ComputeChecksum(HashingFunction, string)" />
-        public HashingFunction AutoChecksumValidation
-        {
-            get { return _hashAlgorithm; }
-            set { _hashAlgorithm = value; }
-        }
+        public HashingFunction AutoChecksumValidation { get; set; }
 
         #endregion
 
@@ -1297,7 +1245,7 @@ namespace nUpdate.Administration.Core.Ftp
             }
             catch (IOException ex)
             {
-                throw new FtpException(String.Format("Connection is broken. Failed to send command. {0}", ex.Message));
+                throw new FtpException($"Connection is broken. Failed to send command. {ex.Message}");
             }
 
             // most commands will have happy codes but the quote() command does not 
@@ -1320,14 +1268,14 @@ namespace nUpdate.Administration.Core.Ftp
             if (_responseQueue.Count == 0)
                 return;
 
-            _responseList.Clear();
+            LastResponseList.Clear();
             while (_responseQueue.Count > 0)
             {
                 FtpResponse response = _responseQueue.Dequeue();
-                _responseList.Add(response);
+                LastResponseList.Add(response);
                 RaiseServerResponseEvent(new FtpResponse(response));
             }
-            _response = _responseList.GetLast();
+            LastResponse = LastResponseList.GetLast();
         }
 
 
@@ -1336,11 +1284,11 @@ namespace nUpdate.Administration.Core.Ftp
         /// </summary>
         internal void CreateAsyncWorker()
         {
-            if (_asyncWorker != null)
-                _asyncWorker.Dispose();
-            _asyncWorker = null;
-            _asyncCanceled = false;
-            _asyncWorker = new BackgroundWorker();
+            if (AsyncWorker != null)
+                AsyncWorker.Dispose();
+            AsyncWorker = null;
+            IsAsyncCanceled = false;
+            AsyncWorker = new BackgroundWorker();
         }
 
         /// <summary>
@@ -1406,10 +1354,10 @@ namespace nUpdate.Administration.Core.Ftp
                 throw new FtpException("Connection is closed.");
 
             if (request == null)
-                throw new ArgumentNullException("request", "value is required");
+                throw new ArgumentNullException(nameof(request), "value is required");
 
             if (data == null)
-                throw new ArgumentNullException("data", "value is required");
+                throw new ArgumentNullException(nameof(data), "value is required");
 
             switch (direction)
             {
@@ -1476,7 +1424,7 @@ namespace nUpdate.Administration.Core.Ftp
             // If no errors occurred and this is not a quoted command then we will wait for the server to send a closing connection message
             WaitForHappyCodes(FtpResponseCode.ClosingDataConnection);
 
-            if (_hashAlgorithm != HashingFunction.None && request.IsFileTransfer)
+            if (AutoChecksumValidation != HashingFunction.None && request.IsFileTransfer)
                 DoIntegrityCheck(request, data, restartPosition);
         }
 
@@ -1526,9 +1474,9 @@ namespace nUpdate.Administration.Core.Ftp
 
         private bool IsAsyncCancellationPending()
         {
-            if (_asyncWorker != null && _asyncWorker.CancellationPending)
+            if (AsyncWorker != null && AsyncWorker.CancellationPending)
             {
-                _asyncCanceled = true;
+                IsAsyncCanceled = true;
                 return true;
             }
             return false;
@@ -1601,8 +1549,8 @@ namespace nUpdate.Administration.Core.Ftp
 
                     // can only sleep to a max of an Int32 so we need to check this since bytesTotal is a long value
                     // this should never be an issue but never say never
-                    if (millisecDelay > Int32.MaxValue)
-                        millisecDelay = Int32.MaxValue;
+                    if (millisecDelay > int.MaxValue)
+                        millisecDelay = int.MaxValue;
 
                     // go to sleep
                     Thread.Sleep((int) millisecDelay);
@@ -1620,7 +1568,7 @@ namespace nUpdate.Administration.Core.Ftp
             {
                 //  test to see if we should use the user supplied proxy object
                 //  to create the connection
-                _commandConn = _proxy != null ? _proxy.CreateConnection(_host, _port) : new TcpClient(_host, _port);
+                _commandConn = Proxy != null ? Proxy.CreateConnection(_host, _port) : new TcpClient(_host, _port);
 
                 // give the server a little time to catch up
                 Thread.Sleep(300);
@@ -1630,7 +1578,7 @@ namespace nUpdate.Administration.Core.Ftp
                 if (_commandConn != null)
                     _commandConn.Close();
 
-                throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                     "A proxy error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
                     _port.ToString(CultureInfo.InvariantCulture), pex.Message));
             }
@@ -1639,7 +1587,7 @@ namespace nUpdate.Administration.Core.Ftp
                 if (_commandConn != null)
                     _commandConn.Close();
 
-                throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                     "An error occurred while creating connection to FTP destination {0} on port {1}. {2}", _host,
                     _port.ToString(CultureInfo.InvariantCulture), ex.Message));
             }
@@ -1657,10 +1605,12 @@ namespace nUpdate.Administration.Core.Ftp
         // Based on the ftp settings get or create the proper data stream object
         private Stream GetDataStream(TransferDirection dataTransferDirection)
         {
-            var dataStream = _securityProtocol != FtpSecurityProtocol.None ? CreateSslStream(_dataConn.GetStream()) : _dataConn.GetStream();
+            var dataStream = _securityProtocol != FtpSecurityProtocol.None
+                ? CreateSslStream(_dataConn.GetStream())
+                : _dataConn.GetStream();
 
             // Test to see if we need to enable compression by using the DeflateStream
-            if (!_isCompressionEnabled) 
+            if (!_isCompressionEnabled)
                 return dataStream;
 
             DeflateStream deflateStream = null;
@@ -1723,11 +1673,11 @@ namespace nUpdate.Administration.Core.Ftp
         /// <param name="happyResponseCodes">Server response codes to wait for.</param>
         protected internal void WaitForHappyCodes(int timeout, params FtpResponseCode[] happyResponseCodes)
         {
-            _responseList.Clear();
+            LastResponseList.Clear();
             do
             {
                 FtpResponse response = GetNextCommandResponse(timeout);
-                _responseList.Add(response);
+                LastResponseList.Add(response);
                 RaiseServerResponseEvent(new FtpResponse(response));
 
                 if (!response.IsInformational)
@@ -1740,7 +1690,7 @@ namespace nUpdate.Administration.Core.Ftp
                 }
             } while (true);
 
-            _response = _responseList.GetLast();
+            LastResponse = LastResponseList.GetLast();
         }
 
         private void RaiseServerResponseEvent(FtpResponse response)
@@ -1838,7 +1788,7 @@ namespace nUpdate.Administration.Core.Ftp
                 if (sleepTime > timeout)
                     throw new FtpException(
                         "A timeout occurred while waiting for the destination to send a response. The last reponse from the destination is '" +
-                        _response.Text + "'");
+                        LastResponse.Text + "'");
             }
 
             // return next response object from the queue
@@ -1891,14 +1841,14 @@ namespace nUpdate.Administration.Core.Ftp
                         _activeListener.Stop();
                     else
                         throw new FtpException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 "An error occurred while trying to create an active connection on host {0} port {1}. {2}",
                                 localHost, listenerPort.ToString(CultureInfo.InvariantCulture), socketError.Message));
                 }
             } while (!success);
 
             byte[] addrBytes = localAddr.GetAddressBytes();
-            string dataPortInfo = String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5}",
+            string dataPortInfo = string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5}",
                 addrBytes[0].ToString(CultureInfo.InvariantCulture), addrBytes[1].ToString(CultureInfo.InvariantCulture),
                 addrBytes[2].ToString(CultureInfo.InvariantCulture), addrBytes[3].ToString(CultureInfo.InvariantCulture),
                 listenerPort/256, listenerPort%256);
@@ -1915,9 +1865,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format(
-                        "An error occurred while issuing data port command '{0}' on an active FTP connection. {1}",
-                        dataPortInfo, fex.Message));
+                    $"An error occurred while issuing data port command '{dataPortInfo}' on an active FTP connection. {fex.Message}");
             }
         }
 
@@ -1979,8 +1927,8 @@ namespace nUpdate.Administration.Core.Ftp
                 case TransferMode.Active:
                     if (!_activeSignal.WaitOne(_transferTimeout, false))
                     {
-                        if (_response.Code == FtpResponseCode.CannotOpenDataConnection)
-                            throw new FtpException(String.Format(CultureInfo.InvariantCulture,
+                        if (LastResponse.Code == FtpResponseCode.CannotOpenDataConnection)
+                            throw new FtpException(string.Format(CultureInfo.InvariantCulture,
                                 "The ftp destination was unable to open a data connection to the ftp client on port {0}.",
                                 _activePort));
                         throw new FtpException(
@@ -2001,8 +1949,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpException fex)
             {
                 throw new FtpException(
-                    String.Format("An error occurred while issuing up a passive FTP connection command. {0}",
-                        fex.Message));
+                    $"An error occurred while issuing up a passive FTP connection command. {fex.Message}");
             }
 
             //  get the port on the end
@@ -2014,24 +1961,24 @@ namespace nUpdate.Administration.Core.Ftp
             //  on TCP port 40474 for the data channel. (Note: the destinationPort is the 158,26 pair and is: 158x256 + 26 = 40474).
 
             //  get the begin and end positions to extract data from the response string
-            int startIdx = _response.Text.IndexOf("(", StringComparison.Ordinal) + 1;
-            int endIdx = _response.Text.IndexOf(")", StringComparison.Ordinal);
+            int startIdx = LastResponse.Text.IndexOf("(", StringComparison.Ordinal) + 1;
+            int endIdx = LastResponse.Text.IndexOf(")", StringComparison.Ordinal);
 
             //  parse the transfer connection data from the ftp server response
-            string[] data = _response.Text.Substring(startIdx, endIdx - startIdx).Split(',');
+            string[] data = LastResponse.Text.Substring(startIdx, endIdx - startIdx).Split(',');
 
             // build the data host name from the server response
             string passiveHost = data[0] + "." + data[1] + "." + data[2] + "." + data[3];
             // extract and convert the port number from the server response
-            int passivePort = Int32.Parse(data[4], CultureInfo.InvariantCulture)*256 +
-                              Int32.Parse(data[5], CultureInfo.InvariantCulture);
+            int passivePort = int.Parse(data[4], CultureInfo.InvariantCulture)*256 +
+                              int.Parse(data[5], CultureInfo.InvariantCulture);
 
             try
             {
                 //  create a new tcp client object and use proxy if supplied
-                if (_proxy != null)
+                if (Proxy != null)
                 {
-                    _dataConn = _proxy.CreateConnection(passiveHost, passivePort);
+                    _dataConn = Proxy.CreateConnection(passiveHost, passivePort);
                 }
                 else
                 {
@@ -2048,7 +1995,7 @@ namespace nUpdate.Administration.Core.Ftp
             catch (Exception ex)
             {
                 throw new FtpException(
-                    String.Format(CultureInfo.InvariantCulture,
+                    string.Format(CultureInfo.InvariantCulture,
                         "An error occurred while opening passive data connection to destination '{0}' on port '{1}'. {2}",
                         passiveHost, passivePort, ex.Message));
             }
@@ -2086,19 +2033,19 @@ namespace nUpdate.Administration.Core.Ftp
                     protocol = SslProtocols.Tls;
                     break;
                 default:
-                    throw new FtpSecureConnectionException(String.Format("Unexpected FtpSecurityProtocol type '{0}'",
-                        _securityProtocol));
+                    throw new FtpSecureConnectionException($"Unexpected FtpSecurityProtocol type '{_securityProtocol}'");
             }
 
             // Note: the server name must match the name on the server certificate.
             try
             {
                 // Authenticate the client
-                ssl.AuthenticateAsClient(_host, _clientCertificates, protocol, true);
+                ssl.AuthenticateAsClient(_host, SecurityCertificates, protocol, true);
             }
             catch (AuthenticationException authEx)
             {
-                throw new FtpAuthenticationException(String.Format("Secure FTP session certificate authentication failed. {0}", authEx.Message));
+                throw new FtpAuthenticationException(
+                    $"Secure FTP session certificate authentication failed. {authEx.Message}");
             }
 
             return ssl;
@@ -2142,15 +2089,12 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpAuthenticationException fauth)
             {
                 throw new FtpSecureConnectionException(
-                    String.Format(
-                        "An ftp authentication exception occurred while setting up a explicit ssl/tls command stream. {0}",
-                        fauth.Message));
+                    $"An ftp authentication exception occurred while setting up a explicit ssl/tls command stream. {fauth.Message}");
             }
             catch (FtpException fex)
             {
                 throw new FtpSecureConnectionException(
-                    String.Format("An error occurred while setting up a explicit ssl/tls command stream. {0}",
-                        fex.Message));
+                    $"An error occurred while setting up a explicit ssl/tls command stream. {fex.Message}");
             }
         }
 
@@ -2169,15 +2113,12 @@ namespace nUpdate.Administration.Core.Ftp
             catch (FtpAuthenticationException fauth)
             {
                 throw new FtpSecureConnectionException(
-                    String.Format(
-                        "An ftp authentication exception occurred while setting up a implicit ssl/tls command stream. {0}",
-                        fauth.Message));
+                    $"An ftp authentication exception occurred while setting up a implicit ssl/tls command stream. {fauth.Message}");
             }
             catch (FtpException fex)
             {
                 throw new FtpSecureConnectionException(
-                    String.Format("An error occurred while setting up a implicit ssl/tls command stream. {0}",
-                        fex.Message));
+                    $"An error occurred while setting up a implicit ssl/tls command stream. {fex.Message}");
             }
         }
 
@@ -2226,15 +2167,13 @@ namespace nUpdate.Administration.Core.Ftp
             long startPos = restartPosition;
             long endPos = stream.Length;
 
-            string streamHash = ComputeChecksum(_hashAlgorithm, stream, startPos);
-            string serverHash = GetChecksum(_hashAlgorithm, path, startPos, endPos);
+            string streamHash = ComputeChecksum(AutoChecksumValidation, stream, startPos);
+            string serverHash = GetChecksum(AutoChecksumValidation, path, startPos, endPos);
 
             // string compare the dataHash to the server hash value and see if they are the same
-            if (String.Compare(streamHash, serverHash, StringComparison.InvariantCultureIgnoreCase) != 0)
+            if (string.Compare(streamHash, serverHash, StringComparison.InvariantCultureIgnoreCase) != 0)
                 throw new FtpFileIntegrityException(
-                    String.Format(
-                        "File integrity check failed.  The destination integrity value '{0}' for the file '{1}' did not match the data transfer integrity value '{2}'.",
-                        serverHash, path, streamHash));
+                    $"File integrity check failed.  The destination integrity value '{serverHash}' for the file '{path}' did not match the data transfer integrity value '{streamHash}'.");
         }
 
         #endregion
@@ -2259,16 +2198,16 @@ namespace nUpdate.Administration.Core.Ftp
         {
             if (disposing)
             {
-                if (_asyncWorker != null && _asyncWorker.IsBusy)
-                    _asyncWorker.CancelAsync();
+                if (AsyncWorker != null && AsyncWorker.IsBusy)
+                    AsyncWorker.CancelAsync();
 
                 if (_activeListener != null)
                     _activeListener.Stop();
 
                 try
                 {
-                    if (_asyncWorker != null)
-                        _asyncWorker.Dispose();
+                    if (AsyncWorker != null)
+                        AsyncWorker.Dispose();
 
                     if (_dataConn != null && _dataConn.Connected)
                         _dataConn.Close();
@@ -2283,7 +2222,7 @@ namespace nUpdate.Administration.Core.Ftp
                 {
                     // Ignored
                 }
-                
+
                 if (_activeSignal != null)
                     _activeSignal.Close();
             }

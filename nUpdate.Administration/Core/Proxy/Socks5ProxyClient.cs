@@ -1,27 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -44,7 +21,6 @@ namespace nUpdate.Administration.Core.Proxy
     {
         private const string PROXY_NAME = "SOCKS5";
         private const int SOCKS5_DEFAULT_PORT = 1080;
-
         private const byte SOCKS5_VERSION_NUMBER = 5;
         private const byte SOCKS5_RESERVED = 0x00;
         private const byte SOCKS5_AUTH_NUMBER_OF_AUTH_METHODS_SUPPORTED = 2;
@@ -66,12 +42,7 @@ namespace nUpdate.Administration.Core.Proxy
         private const byte SOCKS5_ADDRTYPE_IPV6 = 0x04;
         private bool _disposed;
         private SocksAuthentication _proxyAuthMethod;
-        private string _proxyHost;
-        private string _proxyPassword;
-        private int _proxyPort;
-        private string _proxyUserName;
         private TcpClient _tcpClient;
-        private TcpClient _tcpClientCached;
 
         /// <summary>
         ///     Create a Socks5 proxy client object.
@@ -87,9 +58,9 @@ namespace nUpdate.Administration.Core.Proxy
         public Socks5ProxyClient(TcpClient tcpClient)
         {
             if (tcpClient == null)
-                throw new ArgumentNullException("tcpClient");
+                throw new ArgumentNullException(nameof(tcpClient));
 
-            _tcpClientCached = tcpClient;
+            TcpClient = tcpClient;
         }
 
         /// <summary>
@@ -98,11 +69,11 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyHost">Host name or IP address of the proxy server.</param>
         public Socks5ProxyClient(string proxyHost)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
-            _proxyHost = proxyHost;
-            _proxyPort = SOCKS5_DEFAULT_PORT;
+            ProxyHost = proxyHost;
+            ProxyPort = SOCKS5_DEFAULT_PORT;
         }
 
         /// <summary>
@@ -112,14 +83,15 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyPort">Port used to connect to proxy server.</param>
         public Socks5ProxyClient(string proxyHost, int proxyPort)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
             if (proxyPort <= 0 || proxyPort > 65535)
-                throw new ArgumentOutOfRangeException("proxyPort", "port must be greater than zero and less than 65535");
+                throw new ArgumentOutOfRangeException(nameof(proxyPort),
+                    "port must be greater than zero and less than 65535");
 
-            _proxyHost = proxyHost;
-            _proxyPort = proxyPort;
+            ProxyHost = proxyHost;
+            ProxyPort = proxyPort;
         }
 
         /// <summary>
@@ -130,19 +102,19 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyPassword">Proxy authentication password.</param>
         public Socks5ProxyClient(string proxyHost, string proxyUserName, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
             if (proxyUserName == null)
-                throw new ArgumentNullException("proxyUserName");
+                throw new ArgumentNullException(nameof(proxyUserName));
 
             if (proxyPassword == null)
-                throw new ArgumentNullException("proxyPassword");
+                throw new ArgumentNullException(nameof(proxyPassword));
 
-            _proxyHost = proxyHost;
-            _proxyPort = SOCKS5_DEFAULT_PORT;
-            _proxyUserName = proxyUserName;
-            _proxyPassword = proxyPassword;
+            ProxyHost = proxyHost;
+            ProxyPort = SOCKS5_DEFAULT_PORT;
+            ProxyUserName = proxyUserName;
+            ProxyPassword = proxyPassword;
         }
 
         /// <summary>
@@ -154,41 +126,34 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyPassword">Proxy authentication password.</param>
         public Socks5ProxyClient(string proxyHost, int proxyPort, string proxyUserName, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
             if (proxyPort <= 0 || proxyPort > 65535)
-                throw new ArgumentOutOfRangeException("proxyPort", "port must be greater than zero and less than 65535");
+                throw new ArgumentOutOfRangeException(nameof(proxyPort),
+                    "port must be greater than zero and less than 65535");
 
             if (proxyUserName == null)
-                throw new ArgumentNullException("proxyUserName");
+                throw new ArgumentNullException(nameof(proxyUserName));
 
             if (proxyPassword == null)
-                throw new ArgumentNullException("proxyPassword");
+                throw new ArgumentNullException(nameof(proxyPassword));
 
-            _proxyHost = proxyHost;
-            _proxyPort = proxyPort;
-            _proxyUserName = proxyUserName;
-            _proxyPassword = proxyPassword;
+            ProxyHost = proxyHost;
+            ProxyPort = proxyPort;
+            ProxyUserName = proxyUserName;
+            ProxyPassword = proxyPassword;
         }
 
         /// <summary>
         ///     Gets or sets proxy authentication user name.
         /// </summary>
-        public string ProxyUserName
-        {
-            get { return _proxyUserName; }
-            set { _proxyUserName = value; }
-        }
+        public string ProxyUserName { get; set; }
 
         /// <summary>
         ///     Gets or sets proxy authentication password.
         /// </summary>
-        public string ProxyPassword
-        {
-            get { return _proxyPassword; }
-            set { _proxyPassword = value; }
-        }
+        public string ProxyPassword { get; set; }
 
         public void Dispose()
         {
@@ -199,39 +164,24 @@ namespace nUpdate.Administration.Core.Proxy
         /// <summary>
         ///     Gets or sets host name or IP address of the proxy server.
         /// </summary>
-        public string ProxyHost
-        {
-            get { return _proxyHost; }
-            set { _proxyHost = value; }
-        }
+        public string ProxyHost { get; set; }
 
         /// <summary>
         ///     Gets or sets port used to connect to proxy server.
         /// </summary>
-        public int ProxyPort
-        {
-            get { return _proxyPort; }
-            set { _proxyPort = value; }
-        }
+        public int ProxyPort { get; set; }
 
         /// <summary>
         ///     Gets String representing the name of the proxy.
         /// </summary>
         /// <remarks>This property will always return the value 'SOCKS5'</remarks>
-        public string ProxyName
-        {
-            get { return PROXY_NAME; }
-        }
+        public string ProxyName => PROXY_NAME;
 
         /// <summary>
         ///     Gets or sets the TcpClient object.
         ///     This property can be set prior to executing CreateConnection to use an existing TcpClient connection.
         /// </summary>
-        public TcpClient TcpClient
-        {
-            get { return _tcpClientCached; }
-            set { _tcpClientCached = value; }
-        }
+        public TcpClient TcpClient { get; set; }
 
         /// <summary>
         ///     Creates a remote TCP connection through a proxy server to the destination host on the destination port.
@@ -249,33 +199,33 @@ namespace nUpdate.Administration.Core.Proxy
         /// </remarks>
         public TcpClient CreateConnection(string destinationHost, int destinationPort)
         {
-            if (String.IsNullOrEmpty(destinationHost))
-                throw new ArgumentNullException("destinationHost");
+            if (string.IsNullOrEmpty(destinationHost))
+                throw new ArgumentNullException(nameof(destinationHost));
 
             if (destinationPort <= 0 || destinationPort > 65535)
-                throw new ArgumentOutOfRangeException("destinationPort",
+                throw new ArgumentOutOfRangeException(nameof(destinationPort),
                     "port must be greater than zero and less than 65535");
 
             try
             {
                 // if we have no cached tcpip connection then create one
-                if (_tcpClientCached == null)
+                if (TcpClient == null)
                 {
-                    if (String.IsNullOrEmpty(_proxyHost))
+                    if (string.IsNullOrEmpty(ProxyHost))
                         throw new ProxyException("ProxyHost property must contain a value.");
 
-                    if (_proxyPort <= 0 || _proxyPort > 65535)
+                    if (ProxyPort <= 0 || ProxyPort > 65535)
                         throw new ProxyException("ProxyPort value must be greater than zero and less than 65535");
 
                     //  create new tcp client object to the proxy server
                     _tcpClient = new TcpClient();
 
                     // attempt to open the connection
-                    _tcpClient.Connect(_proxyHost, _proxyPort);
+                    _tcpClient.Connect(ProxyHost, ProxyPort);
                 }
                 else
                 {
-                    _tcpClient = _tcpClientCached;
+                    _tcpClient = TcpClient;
                 }
 
                 //  determine which authentication method the client would like to use
@@ -296,16 +246,15 @@ namespace nUpdate.Administration.Core.Proxy
             catch (Exception ex)
             {
                 throw new ProxyException(
-                    String.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
+                    string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)), ex);
             }
         }
 
-
         private void DetermineClientAuthMethod()
         {
             //  set the authentication itemType used based on values inputed by the user
-            if (_proxyUserName != null && _proxyPassword != null)
+            if (ProxyUserName != null && ProxyPassword != null)
                 _proxyAuthMethod = SocksAuthentication.UsernamePassword;
             else
                 _proxyAuthMethod = SocksAuthentication.None;
@@ -396,17 +345,17 @@ namespace nUpdate.Administration.Core.Proxy
 
                 // create a data structure (binary array) containing credentials
                 // to send to the proxy server which consists of clear username and password data
-                var credentials = new byte[_proxyUserName.Length + _proxyPassword.Length + 3];
+                var credentials = new byte[ProxyUserName.Length + ProxyPassword.Length + 3];
 
                 // for SOCKS5 username/password authentication the VER field must be set to 0x01
                 //  http://en.wikipedia.org/wiki/SOCKS
                 //      field 1: version number, 1 byte (must be 0x01)"
                 credentials[0] = 0x01;
-                credentials[1] = (byte) _proxyUserName.Length;
-                Array.Copy(Encoding.ASCII.GetBytes(_proxyUserName), 0, credentials, 2, _proxyUserName.Length);
-                credentials[_proxyUserName.Length + 2] = (byte) _proxyPassword.Length;
-                Array.Copy(Encoding.ASCII.GetBytes(_proxyPassword), 0, credentials, _proxyUserName.Length + 3,
-                    _proxyPassword.Length);
+                credentials[1] = (byte) ProxyUserName.Length;
+                Array.Copy(Encoding.ASCII.GetBytes(ProxyUserName), 0, credentials, 2, ProxyUserName.Length);
+                credentials[ProxyUserName.Length + 2] = (byte) ProxyPassword.Length;
+                Array.Copy(Encoding.ASCII.GetBytes(ProxyPassword), 0, credentials, ProxyUserName.Length + 3,
+                    ProxyPassword.Length);
 
                 // USERNAME / PASSWORD SERVER RESPONSE
                 // The server verifies the supplied UNAME and PASSWD, and sends the
@@ -454,7 +403,7 @@ namespace nUpdate.Administration.Core.Proxy
                 case AddressFamily.InterNetworkV6:
                     return SOCKS5_ADDRTYPE_IPV6;
                 default:
-                    throw new ProxyException(String.Format(CultureInfo.InvariantCulture,
+                    throw new ProxyException(string.Format(CultureInfo.InvariantCulture,
                         "The host addess {0} of type '{1}' is not a supported address type.  The supported types are InterNetwork and InterNetworkV6.",
                         host, Enum.GetName(typeof (AddressFamily), ipAddr.AddressFamily)));
             }
@@ -570,7 +519,7 @@ namespace nUpdate.Administration.Core.Proxy
             byte replyCode = response[1];
             byte addrType = response[3];
             string addr = "";
-            Int16 port = 0;
+            short port = 0;
 
             switch (addrType)
             {
@@ -639,12 +588,12 @@ namespace nUpdate.Administration.Core.Proxy
                     proxyErrorText = "the address type specified is not supported";
                     break;
                 default:
-                    proxyErrorText = String.Format(CultureInfo.InvariantCulture,
+                    proxyErrorText = string.Format(CultureInfo.InvariantCulture,
                         "that an unknown reply with the code value '{0}' was received by the destination",
                         replyCode.ToString(CultureInfo.InvariantCulture));
                     break;
             }
-            string exceptionMsg = String.Format(CultureInfo.InvariantCulture,
+            string exceptionMsg = string.Format(CultureInfo.InvariantCulture,
                 "The {0} concerning destination host {1} port number {2}.  The destination reported the host as {3} port {4}.",
                 proxyErrorText, destinationHost, destinationPort, addr, port.ToString(CultureInfo.InvariantCulture));
 
@@ -666,17 +615,32 @@ namespace nUpdate.Administration.Core.Proxy
             if (_tcpClient != null)
                 _tcpClient.Close();
 
-            if (_tcpClientCached != null)
-                _tcpClientCached.Close();
+            if (TcpClient != null)
+                TcpClient.Close();
 
             if (_asyncWorker != null)
                 _asyncWorker.Dispose();
             _disposed = true;
         }
 
+        /// <summary>
+        ///     Authentication itemType.
+        /// </summary>
+        private enum SocksAuthentication
+        {
+            /// <summary>
+            ///     No authentication used.
+            /// </summary>
+            None,
+
+            /// <summary>
+            ///     Username and password authentication.
+            /// </summary>
+            UsernamePassword
+        }
+
         #region "Async Methods"
 
-        private bool _asyncCancelled;
         private Exception _asyncException;
         private BackgroundWorker _asyncWorker;
 
@@ -686,10 +650,7 @@ namespace nUpdate.Administration.Core.Proxy
         /// <remarks>
         ///     Returns true if an asynchronous operation is running; otherwise, false.
         /// </remarks>
-        public bool IsBusy
-        {
-            get { return _asyncWorker == null ? false : _asyncWorker.IsBusy; }
-        }
+        public bool IsBusy => _asyncWorker == null ? false : _asyncWorker.IsBusy;
 
         /// <summary>
         ///     Gets a value indicating whether an asynchronous operation is cancelled.
@@ -697,10 +658,7 @@ namespace nUpdate.Administration.Core.Proxy
         /// <remarks>
         ///     Returns true if an asynchronous operation is cancelled; otherwise, false.
         /// </remarks>
-        public bool IsAsyncCancelled
-        {
-            get { return _asyncCancelled; }
-        }
+        public bool IsAsyncCancelled { get; private set; }
 
         /// <summary>
         ///     Event handler for CreateConnectionAsync method completed.
@@ -736,7 +694,7 @@ namespace nUpdate.Administration.Core.Proxy
                 _asyncWorker.DoWork += CreateConnectionAsync_DoWork;
                 _asyncWorker.RunWorkerCompleted +=
                     CreateConnectionAsync_RunWorkerCompleted;
-                var args = new Object[2];
+                var args = new object[2];
                 args[0] = destinationHost;
                 args[1] = destinationPort;
                 _asyncWorker.RunWorkerAsync(args);
@@ -750,7 +708,7 @@ namespace nUpdate.Administration.Core.Proxy
         {
             if (_asyncWorker != null && !_asyncWorker.CancellationPending && _asyncWorker.IsBusy)
             {
-                _asyncCancelled = true;
+                IsAsyncCancelled = true;
                 _asyncWorker.CancelAsync();
             }
         }
@@ -761,7 +719,7 @@ namespace nUpdate.Administration.Core.Proxy
                 _asyncWorker.Dispose();
             _asyncException = null;
             _asyncWorker = null;
-            _asyncCancelled = false;
+            IsAsyncCancelled = false;
             _asyncWorker = new BackgroundWorker();
         }
 
@@ -769,7 +727,7 @@ namespace nUpdate.Administration.Core.Proxy
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 e.Result = CreateConnection((string) args[0], (int) args[1]);
             }
             catch (Exception ex)
@@ -782,25 +740,9 @@ namespace nUpdate.Administration.Core.Proxy
         {
             if (CreateConnectionAsyncCompleted != null)
                 CreateConnectionAsyncCompleted(this,
-                    new CreateConnectionAsyncCompletedEventArgs(_asyncException, _asyncCancelled, (TcpClient) e.Result));
+                    new CreateConnectionAsyncCompletedEventArgs(_asyncException, IsAsyncCancelled, (TcpClient) e.Result));
         }
 
         #endregion
-
-        /// <summary>
-        ///     Authentication itemType.
-        /// </summary>
-        private enum SocksAuthentication
-        {
-            /// <summary>
-            ///     No authentication used.
-            /// </summary>
-            None,
-
-            /// <summary>
-            ///     Username and password authentication.
-            /// </summary>
-            UsernamePassword
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.IO;
@@ -18,12 +18,12 @@ namespace nUpdate.Administration.Core
         /// <returns>Returns the encrypted string as a byte-array.</returns>
         public static byte[] Encrypt(string plainText, string keyPassword, string ivPassword)
         {
-            if (String.IsNullOrEmpty(plainText))
-                throw new ArgumentNullException("plainText");
+            if (string.IsNullOrEmpty(plainText))
+                throw new ArgumentNullException(nameof(plainText));
             if (keyPassword == null || keyPassword.Length <= 0)
-                throw new ArgumentNullException("keyPassword");
+                throw new ArgumentNullException(nameof(keyPassword));
             if (ivPassword == null || ivPassword.Length <= 0)
-                throw new ArgumentNullException("ivPassword");
+                throw new ArgumentNullException(nameof(ivPassword));
 
             var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});
@@ -69,11 +69,11 @@ namespace nUpdate.Administration.Core
         public static SecureString Decrypt(byte[] cipherText, string keyPassword, string ivPassword)
         {
             if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
+                throw new ArgumentNullException(nameof(cipherText));
             if (keyPassword == null || keyPassword.Length <= 0)
-                throw new ArgumentNullException("keyPassword");
+                throw new ArgumentNullException(nameof(keyPassword));
             if (ivPassword == null || ivPassword.Length <= 0)
-                throw new ArgumentNullException("ivPassword");
+                throw new ArgumentNullException(nameof(ivPassword));
 
             var keyPasswordDeriveBytes = new Rfc2898DeriveBytes(keyPassword,
                 new byte[] {0x43, 0x87, 0x23, 0x72, 0x45, 0x56, 0x68, 0x14, 0x62, 0x84});

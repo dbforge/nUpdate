@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -16,17 +16,11 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public bool IsValid
-        {
-            get { return !String.IsNullOrEmpty(subKeyTextBox.Text) && nameValuePairListView.Items.Count > 0; }
-        }
-
         public string KeyPath
         {
             get
             {
-                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem),
-                    subKeyTextBox.Text);
+                return $"{mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem)}\\{subKeyTextBox.Text}";
             }
             set
             {
@@ -39,7 +33,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     }
                     else
                     {
-                        subKeyTextBox.Text += String.Format("\\{0}", pathPart);
+                        subKeyTextBox.Text += $"\\{pathPart}";
                     }
                 }
             }
@@ -68,10 +62,10 @@ namespace nUpdate.Administration.Core.Operations.Panels
             }
         }
 
+        public bool IsValid => !string.IsNullOrEmpty(subKeyTextBox.Text) && nameValuePairListView.Items.Count > 0;
+
         public Operation Operation
-        {
-            get { return new Operation(OperationArea.Registry, OperationMethod.SetValue, KeyPath, NameValuePairs); }
-        }
+            => new Operation(OperationArea.Registry, OperationMethod.SetValue, KeyPath, NameValuePairs);
 
         private void RegistryEntrySetValueOperationPanel_Load(object sender, EventArgs e)
         {
@@ -82,7 +76,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(nameTextBox.Text) || String.IsNullOrEmpty(valueTextBox.Text))
+            if (string.IsNullOrEmpty(nameTextBox.Text) || string.IsNullOrEmpty(valueTextBox.Text))
                 return;
             var item = new ListViewItem(nameTextBox.Text);
             item.SubItems.Add(valueTextBox.Text);

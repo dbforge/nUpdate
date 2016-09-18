@@ -1,3 +1,5 @@
+// Author: Dominic Beger (Trade/ProgTrade) 2016
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -14,20 +16,14 @@ namespace nUpdate.Administration.Core.Ftp
         /// <summary>
         ///     Gets the number of elements actually contained in the FtpResponseCollection list.
         /// </summary>
-        public int Count
-        {
-            get { return _list.Count; }
-        }
+        public int Count => _list.Count;
 
         /// <summary>
         ///     Gets an FtpResponse from the FtpResponseCollection list based on index value.
         /// </summary>
         /// <param name="index">Numeric index of item to retrieve.</param>
         /// <returns>FtpResponse object.</returns>
-        public FtpResponse this[int index]
-        {
-            get { return _list[index]; }
-        }
+        public FtpResponse this[int index] => _list[index];
 
         IEnumerator<FtpResponse> IEnumerable<FtpResponse>.GetEnumerator()
         {
@@ -49,7 +45,6 @@ namespace nUpdate.Administration.Core.Ftp
         {
             return _list.IndexOf(item);
         }
-
 
         /// <summary>
         ///     Adds an FtpResponse to the end of the FtpResponseCollection list.

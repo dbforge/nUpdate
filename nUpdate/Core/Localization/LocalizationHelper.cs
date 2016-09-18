@@ -1,6 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace nUpdate.Core.Localization
         /// <param name="objects">The objects for the localization.</param>
         /// <returns>Returns the found localizations.</returns>
         public static IEnumerable<string> GetLocalizedEnumerationValues(LocalizationProperties properties,
-            Object[] objects)
+            object[] objects)
         {
             foreach (var o in objects)
             {

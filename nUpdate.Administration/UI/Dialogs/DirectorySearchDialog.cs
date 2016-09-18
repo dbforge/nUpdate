@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -18,12 +18,12 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HT_CAPTION = 0x2;
+        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private bool _allowCancel;
         private FtpManager _ftp;
         private List<FtpItem> _listedFtpItems = new List<FtpItem>();
         private Margins _margins;
         private bool _nodeSelectedByUser = true;
-        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
 
         public DirectorySearchDialog()
         {
@@ -125,7 +125,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
-            Text = String.Format(Text, ProjectName, Program.VersionString);
+            Text = string.Format(Text, ProjectName, Program.VersionString);
             if (NativeMethods.DwmIsCompositionEnabled())
             {
                 _margins = new Margins {Top = 38};
@@ -172,7 +172,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 currentNode = currentNode.Parent;
             }
 
-            var directory = String.Format("/{0}/{1}", String.Join("/", directories), e.Node.Text);
+            var directory = $"/{string.Join("/", directories)}/{e.Node.Text}";
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
         }
 
@@ -304,7 +304,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(e.Label))
+            if (string.IsNullOrWhiteSpace(e.Label))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                     "Please enter a name for the directory to create.", PopupButtons.Ok);
@@ -314,7 +314,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             serverDataTreeView.LabelEdit = false;
 #pragma warning disable 4014
-                    CreateDirectory(String.Format("{0}/{1}", directoryTextBox.Text, e.Label));
+            CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
 #pragma warning restore 4014
         }
 
@@ -325,8 +325,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 SetUiState(false);
                 Invoke(
                     new Action(
-                        () => 
-                            loadingLabel.Text = String.Format("Creating directory \"{0}\"...", path)));
+                        () =>
+                            loadingLabel.Text = $"Creating directory \"{path}\"..."));
                 try
                 {
                     _ftp.MakeDirectory(path);
@@ -334,9 +334,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 catch (Exception ex)
                 {
                     Invoke(
-                       new Action(
-                           () =>
-                               Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex, PopupButtons.Ok)));
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex,
+                                    PopupButtons.Ok)));
                 }
                 SetUiState(true);
             });
@@ -344,7 +345,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void removeDirectoryButton_Click(object sender, EventArgs e)
         {
-            if (serverDataTreeView.SelectedNode == null || serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
+            if (serverDataTreeView.SelectedNode == null ||
+                serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
                 return;
 
             RemoveDirectory(directoryTextBox.Text);
@@ -358,7 +360,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = String.Format("Deleting directory \"{0}\"...", path)));
+                            loadingLabel.Text = $"Deleting directory \"{path}\"..."));
                 try
                 {
                     _ftp.DeleteDirectory(path);
@@ -366,16 +368,17 @@ namespace nUpdate.Administration.UI.Dialogs
                 catch (Exception ex)
                 {
                     Invoke(
-                       new Action(
-                           () =>
-                               Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex, PopupButtons.Ok)));
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex,
+                                    PopupButtons.Ok)));
                     SetUiState(true);
                     return;
                 }
 
                 Invoke(
                     new Action(
-                        () => 
+                        () =>
                             serverDataTreeView.SelectedNode.Remove()));
                 SetUiState(true);
             });

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.IO;
@@ -17,6 +17,47 @@ namespace nUpdate.Administration
         ///     The path of the languages directory.
         /// </summary>
         public static string LanguagesDirectory { get; set; }
+
+        //private static void HandleException(Exception ex)
+        //{
+        //    Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
+        //        (ex), PopupButtons.Ok);
+        //    var eventBuilder = (ex).ToExceptionless();
+        //    var nUpdateVersion = Assembly.GetExecutingAssembly()
+        //        .GetCustomAttributes(false)
+        //        .OfType<nUpdateVersionAttribute>()
+        //        .SingleOrDefault();
+        //    if (nUpdateVersion != null)
+        //        eventBuilder.SetVersion(
+        //            nUpdateVersion
+        //                .VersionString);
+        //    eventBuilder.MarkAsCritical().Submit();
+        //    ExceptionlessClient.Default.ProcessQueue();
+        //    Application.Exit();
+        //}
+
+        /// <summary>
+        ///     The root path of the locally stored data.
+        /// </summary>
+        public static string Path => Settings.Default.ProgramPath;
+
+        /// <summary>
+        ///     The path of the configuration file for all projects.
+        /// </summary>
+        public static string ProjectsConfigFilePath => System.IO.Path.Combine(Path, "projconf.json");
+
+        /// <summary>
+        ///     The path of the statistic server file.
+        /// </summary>
+        public static string StatisticServersFilePath => System.IO.Path.Combine(Path, "statservers.json");
+
+        /// <summary>
+        ///     The version string shown in all dialog titles.
+        /// </summary>
+        public static string VersionString => "nUpdate Administration 3.0.0.0 Beta 4";
+
+        public static string AesKeyPassword => "VZh7mLRPNI";
+        public static string AesIvPassword => "cOijH2vgwR";
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -58,73 +99,15 @@ namespace nUpdate.Administration
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception) e.ExceptionObject;
-            MessageBox.Show($"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
+            MessageBox.Show(
+                $"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
         }
 
         private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
         {
             var exception = e.Exception;
-            MessageBox.Show($"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
-        }
-
-        //private static void HandleException(Exception ex)
-        //{
-        //    Popup.ShowPopup(SystemIcons.Error, "nUpdate has just noticed an unhandled error.",
-        //        (ex), PopupButtons.Ok);
-        //    var eventBuilder = (ex).ToExceptionless();
-        //    var nUpdateVersion = Assembly.GetExecutingAssembly()
-        //        .GetCustomAttributes(false)
-        //        .OfType<nUpdateVersionAttribute>()
-        //        .SingleOrDefault();
-        //    if (nUpdateVersion != null)
-        //        eventBuilder.SetVersion(
-        //            nUpdateVersion
-        //                .VersionString);
-        //    eventBuilder.MarkAsCritical().Submit();
-        //    ExceptionlessClient.Default.ProcessQueue();
-        //    Application.Exit();
-        //}
-
-        /// <summary>
-        ///     The root path of the locally stored data.
-        /// </summary>
-        public static string Path
-        {
-            get { return Settings.Default.ProgramPath; }
-        }
-
-        /// <summary>
-        ///     The path of the configuration file for all projects.
-        /// </summary>
-        public static string ProjectsConfigFilePath
-        {
-            get { return System.IO.Path.Combine(Path, "projconf.json"); }
-        }
-
-        /// <summary>
-        ///     The path of the statistic server file.
-        /// </summary>
-        public static string StatisticServersFilePath
-        {
-            get { return System.IO.Path.Combine(Path, "statservers.json"); }
-        }
-
-        /// <summary>
-        ///     The version string shown in all dialog titles.
-        /// </summary>
-        public static string VersionString
-        {
-            get { return "nUpdate Administration 3.0.0.0 Beta 4"; }
-        }
-
-        public static string AesKeyPassword
-        {
-            get { return "VZh7mLRPNI"; }
-        }
-
-        public static string AesIvPassword
-        {
-            get { return "cOijH2vgwR"; }
+            MessageBox.Show(
+                $"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -79,16 +79,14 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         ItemImage = imageList1.Images[0],
                         HeaderText = server.DatabaseName,
-                        ItemText = String.Format("Web-URL: \"{0}\" - Database: \"{1}\"",
-                            server.WebUrl, server.DatabaseName)
+                        ItemText = $"Web-URL: \"{server.WebUrl}\" - Database: \"{server.DatabaseName}\""
                     };
 
                     serverList.Items.Add(listItem);
                 }
                 catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, String.Format("Error while loading \"{0}\"",
-                        server.DatabaseName), ex, PopupButtons.Ok);
+                    Popup.ShowPopup(this, SystemIcons.Error, $"Error while loading \"{server.DatabaseName}\"", ex, PopupButtons.Ok);
                     return false;
                 }
             }
@@ -98,7 +96,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void StatisticsServerDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             if (!InitializeServers())
             {
                 Close();
