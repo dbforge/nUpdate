@@ -100,14 +100,18 @@ namespace nUpdate.Administration
         {
             var exception = (Exception) e.ExceptionObject;
             MessageBox.Show(
-                $"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
+                $"nUpdate Administration has encountered an unhandled error and needs to exit:\n{exception.Message}\n{exception.StackTrace}",
+                "Unhandled Exception in nUpdate Administration", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
         }
 
         private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
         {
             var exception = e.Exception;
             MessageBox.Show(
-                $"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
+                $"nUpdate Administration has encountered an unhandled error and needs to exit:\n{exception.Message}\n{exception.StackTrace}",
+                "Unhandled Exception in nUpdate Administration", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
         }
     }
 }
