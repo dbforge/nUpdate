@@ -1,16 +1,11 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using Exceptionless;
+using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Dialogs;
-using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
 
 namespace nUpdate.Administration
 {
@@ -35,14 +30,13 @@ namespace nUpdate.Administration
             if (!firstInstance)
                 return;
 
-            //AppDomain currentDomain = AppDomain.CurrentDomain;
-            //currentDomain.UnhandledException += UnhandledException;
-            //Application.ThreadException += UnhandledThreadException;
+            var currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += UnhandledException;
+            Application.ThreadException += UnhandledThreadException;
             Application.ApplicationExit += Exit;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            ExceptionlessClient.Default.Register();
 
             var dialog = new MainDialog();
             if (args.Length == 1)
@@ -61,15 +55,17 @@ namespace nUpdate.Administration
                 _mutex.Dispose();
         }
 
-        //private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        //{
-        //    HandleException((Exception)e.ExceptionObject);
-        //}
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = (Exception) e.ExceptionObject;
+            MessageBox.Show($"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
+        }
 
-        //private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
-        //{
-        //    HandleException(e.Exception);
-        //}
+        private static void UnhandledThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            var exception = e.Exception;
+            MessageBox.Show($"nUpdate Administration has encountered an unhandled error:\n{exception.Message}\n{exception.StackTrace}");
+        }
 
         //private static void HandleException(Exception ex)
         //{
@@ -94,7 +90,7 @@ namespace nUpdate.Administration
         /// </summary>
         public static string Path
         {
-            get { return Properties.Settings.Default.ProgramPath; }
+            get { return Settings.Default.ProgramPath; }
         }
 
         /// <summary>
