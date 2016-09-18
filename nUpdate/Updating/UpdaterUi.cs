@@ -120,22 +120,14 @@ namespace nUpdate.Updating
                 return;
 
             _isTaskRunning = true;
-            var searchDialog = new UpdateSearchDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
+            var searchDialog = new UpdateSearchDialog { Updater = UpdateManagerInstance };
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
-            var newUpdateDialog = new NewUpdateDialog
-            {
-                LanguageName = UpdateManagerInstance.LanguageCulture.Name,
-                CurrentVersion = UpdateManagerInstance.CurrentVersion
-            };
-
-            var noUpdateDialog = new NoUpdateFoundDialog {LanguageName = UpdateManagerInstance.LanguageCulture.Name};
+            var newUpdateDialog = new NewUpdateDialog { Updater = UpdateManagerInstance };
+            var noUpdateDialog = new NoUpdateFoundDialog { Updater = UpdateManagerInstance };
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
-            var downloadDialog = new UpdateDownloadDialog
-            {
-                LanguageName = UpdateManagerInstance.LanguageCulture.Name
-            };
+            var downloadDialog = new UpdateDownloadDialog { Updater = UpdateManagerInstance };
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
 #if PROVIDE_TAP
@@ -180,8 +172,6 @@ namespace nUpdate.Updating
 
                     if (_updatesAvailable)
                     {
-                        newUpdateDialog.PackageSize = _updateManager.TotalSize;
-                        newUpdateDialog.PackageConfigurations = _updateManager.PackageConfigurations;
                         var newUpdateDialogReference = new DialogResultReference();
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
                         if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
@@ -196,8 +186,7 @@ namespace nUpdate.Updating
                             _context.Send(noUpdateDialog.ShowModalDialog, noUpdateDialogResultReference);
                         return;
                     }
-
-                    downloadDialog.PackagesCount = _updateManager.PackageConfigurations.Count();
+            
                     _context.Post(downloadDialog.ShowModalDialog, null);
 
                     try
@@ -283,9 +272,6 @@ namespace nUpdate.Updating
 
                     if (_updatesAvailable)
                     {
-                        newUpdateDialog.PackageSize = UpdateManagerInstance.TotalSize;
-                        newUpdateDialog.PackageConfigurations = UpdateManagerInstance.PackageConfigurations;
-
                         var newUpdateDialogResultReference = new DialogResultReference();
                         _context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
                         if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)

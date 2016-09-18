@@ -2,8 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
@@ -21,21 +19,6 @@ namespace nUpdate.UI.Dialogs
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        ///     Gets or sets the name of the language file in the resources to use, if no own file is used.
-        /// </summary>
-        public string LanguageName { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the path of the file which contains the specific language content a user added on its own.
-        /// </summary>
-        public string LanguageFilePath { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the packages amount.
-        /// </summary>
-        public int PackagesCount { get; set; }
 
         /// <summary>
         ///     Gets or sets the progress percentage.
@@ -74,29 +57,7 @@ namespace nUpdate.UI.Dialogs
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LanguageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
-            {
-                string resourceName = $"nUpdate.Core.Localization.{LanguageName}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
 
             headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
             infoLabel.Text = string.Format(

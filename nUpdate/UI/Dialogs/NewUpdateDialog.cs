@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
@@ -31,31 +28,6 @@ namespace nUpdate.UI.Dialogs
         }
 
         /// <summary>
-        ///     Sets the name of the language file in the resources to use, if no own file is used.
-        /// </summary>
-        public string LanguageName { get; set; }
-
-        /// <summary>
-        ///     Sets the path of the file which contains the specific language content a user added on its own.
-        /// </summary>
-        public string LanguageFilePath { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the package configurations.
-        /// </summary>
-        public IEnumerable<UpdateConfiguration> PackageConfigurations { get; set; }
-
-        /// <summary>
-        ///     Sets the current version.
-        /// </summary>
-        public UpdateVersion CurrentVersion { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the size of all packages.
-        /// </summary>
-        public double PackageSize { get; set; }
-
-        /// <summary>
         ///     Sets a list of areas for this update's operations.
         /// </summary>
         public List<OperationArea> OperationAreas { get; set; }
@@ -70,48 +42,26 @@ namespace nUpdate.UI.Dialogs
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LanguageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
-            {
-                string resourceName = $"nUpdate.Core.Localization.{LanguageName}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
 
             headerLabel.Text =
                 string.Format(
-                    PackageConfigurations.Count() > 1
+                    Updater.PackageConfigurations.Count() > 1
                         ? _lp.NewUpdateDialogMultipleUpdatesHeader
-                        : _lp.NewUpdateDialogSingleUpdateHeader, PackageConfigurations.Count());
+                        : _lp.NewUpdateDialogSingleUpdateHeader, Updater.PackageConfigurations.Count());
             infoLabel.Text = string.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
             var availableVersions =
-                PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
+                Updater.PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
             newestVersionLabel.Text = string.Format(_lp.NewUpdateDialogAvailableVersionsText,
-                PackageConfigurations.Count() <= 2
+                Updater.PackageConfigurations.Count() <= 2
                     ? string.Join(", ", availableVersions.Select(item => item.FullText))
                     : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText}");
-            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, CurrentVersion.FullText);
+            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, Updater.CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            var size = SizeHelper.ConvertSize(PackageSize);
+            var size = SizeHelper.ConvertSize(Updater.TotalSize);
             updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, size.Item1)} {size.Item2}";
 
             Icon = _appIcon;
@@ -119,14 +69,14 @@ namespace nUpdate.UI.Dialogs
             iconPictureBox.Image = _appIcon.ToBitmap();
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
-            foreach (var updateConfiguration in PackageConfigurations)
+            foreach (var updateConfiguration in Updater.PackageConfigurations)
             {
                 var versionText = new UpdateVersion(updateConfiguration.LiteralVersion).FullText;
-                var changelogText = updateConfiguration.Changelog.ContainsKey(new CultureInfo(LanguageName))
-                    ? updateConfiguration.Changelog.First(item => item.Key.Name == LanguageName).Value
+                var changelogText = updateConfiguration.Changelog.ContainsKey(Updater.LanguageCulture)
+                    ? updateConfiguration.Changelog.First(item => Equals(item.Key, Updater.LanguageCulture)).Value
                     : updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
 
-                if (PackageSize > GB)
+                if (Updater.TotalSize > GB)
                     changelogTextBox.Text += _lp.NewUpdateDialogBigPackageWarning;
 
                 changelogTextBox.Text +=
@@ -163,9 +113,9 @@ namespace nUpdate.UI.Dialogs
         private void installButton_Click(object sender, EventArgs e)
         {
             double necessarySpaceToFree;
-            if (!SizeHelper.HasEnoughSpace(PackageSize, out necessarySpaceToFree))
+            if (!SizeHelper.HasEnoughSpace(Updater.TotalSize, out necessarySpaceToFree))
             {
-                var packageSizeData = SizeHelper.ConvertSize(PackageSize);
+                var packageSizeData = SizeHelper.ConvertSize(Updater.TotalSize);
                 var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
                 Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.",
                     $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeData.Item1} {packageSizeData.Item2}). Please free a minimum of {spaceToFreeData.Item1} {spaceToFreeData.Item2} to make sure the updates can be downloaded and installed without any problems.",
