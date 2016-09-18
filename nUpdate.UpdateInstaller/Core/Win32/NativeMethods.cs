@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 

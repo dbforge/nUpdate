@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -15,21 +15,14 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public bool IsValid
-        {
-            get { return !String.IsNullOrEmpty(processNameTextBox.Text); }
-        }
-
         public string ProcessName
         {
             get { return processNameTextBox.Text; }
             set { processNameTextBox.Text = value; }
         }
 
-        public Operation Operation
-        {
-            get { return new Operation(OperationArea.Processes, OperationMethod.Stop, ProcessName); }
-        }
+        public bool IsValid => !string.IsNullOrEmpty(processNameTextBox.Text);
+        public Operation Operation => new Operation(OperationArea.Processes, OperationMethod.Stop, ProcessName);
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)
         {

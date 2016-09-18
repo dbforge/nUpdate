@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -21,34 +21,17 @@ using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.Properties;
+using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Core.Operations;
 using nUpdate.Updating;
-using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class PackageAddDialog : BaseDialog, IAsyncSupportable, IResettable
     {
-        private bool _allowCancel = true;
-        private int _architectureIndex = 2;
-        private Uri _configurationFileUrl;
-        private DevelopmentalStage _developmentalStage;
-        private bool _includeIntoStatistics;
-        private MySqlConnection _insertConnection;
-        private bool _necessaryUpdate;
-        private bool _nodeInitializingFailed;
-        private string _packageFolder;
-        private bool _packageInitialized;
-        private bool _packageUploaded;
-        private UpdateVersion _packageVersion;
-        private bool _publishUpdate;
-        private string _updateConfigFile;
-        //private string _hashFile;
-
-        private bool _uploadCancelled;
         private readonly UpdateConfiguration _configuration = new UpdateConfiguration();
 
         private readonly TreeNode _createRegistrySubKeyNode = new TreeNode("Create registry sub key", 14, 14)
@@ -69,7 +52,7 @@ namespace nUpdate.Administration.UI.Dialogs
             Tag = "DeleteRegistryValue"
         };
 
-        private FtpManager _ftp;
+        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 16, 16) {Tag = "ExecuteScript"};
         private readonly UpdatePackage _package = new UpdatePackage();
         private readonly TreeNode _renameNode = new TreeNode("Rename file", 10, 10) {Tag = "RenameFile"};
         private readonly TreeNode _replaceNode = new TreeNode("Replace file/folder", 11, 11) {Tag = "ReplaceFile"};
@@ -83,10 +66,27 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _startServiceNode = new TreeNode("Start service", 5, 5) {Tag = "StartService"};
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7) {Tag = "StopProcess"};
-        private readonly TreeNode _executeScriptNode = new TreeNode("Execute Script", 16, 16) {Tag = "ExecuteScript"};
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
         private readonly Log _updateLog = new Log();
         private readonly ZipFile _zip = new ZipFile();
+        private bool _allowCancel = true;
+        private int _architectureIndex = 2;
+        private Uri _configurationFileUrl;
+        private DevelopmentalStage _developmentalStage;
+        private FtpManager _ftp;
+        private bool _includeIntoStatistics;
+        private MySqlConnection _insertConnection;
+        private bool _necessaryUpdate;
+        private bool _nodeInitializingFailed;
+        private string _packageFolder;
+        private bool _packageInitialized;
+        private bool _packageUploaded;
+        private UpdateVersion _packageVersion;
+        private bool _publishUpdate;
+        private string _updateConfigFile;
+        //private string _hashFile;
+
+        private bool _uploadCancelled;
 
         public PackageAddDialog()
         {
@@ -148,7 +148,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     Invoke(new Action(() => loadingLabel.Text = "Undoing package upload..."));
-                    _ftp.DeleteDirectory(String.Format("{0}/{1}", _ftp.Directory, _packageVersion));
+                    _ftp.DeleteDirectory($"{_ftp.Directory}/{_packageVersion}");
                 }
                 catch (Exception ex)
                 {
@@ -167,13 +167,9 @@ namespace nUpdate.Administration.UI.Dialogs
             if (Project.UseStatistics)
             {
                 Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
-                var connectionString = String.Format("SERVER={0};" +
-                                                     "DATABASE={1};" +
-                                                     "UID={2};" +
-                                                     "PASSWORD={3};",
-                    Project.SqlWebUrl, Project.SqlDatabaseName,
-                    Project.SqlUsername,
-                    SqlPassword.ConvertToUnsecureString());
+                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
+                                       $"UID={Project.SqlUsername};" +
+                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                 bool connectingFailed = false;
                 var deleteConnection = new MySqlConnection(connectionString);
@@ -195,9 +191,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     var command = deleteConnection.CreateCommand();
                     command.CommandText =
-                        String.Format(
-                            "DELETE FROM `Version` WHERE `ID` = {0};",
-                            Settings.Default.VersionID);
+                        $"DELETE FROM `Version` WHERE `ID` = {Settings.Default.VersionID};";
                     // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
 
                     try
@@ -245,20 +239,21 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void PackageAddDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Project.Name, Program.VersionString);
+            Text = string.Format(Text, Project.Name, Program.VersionString);
 
             try
             {
                 _ftp =
                     new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                         FtpPassword,
-                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath, Project.FtpProtocol);
+                        Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
+                        Project.FtpProtocol);
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
-                if (!String.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
+                if (!string.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
                     _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
                 else
-                    _ftp.Protocol = (FtpSecurityProtocol)Project.FtpProtocol;
+                    _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
             }
             catch (Exception ex)
             {
@@ -281,7 +276,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
             foreach (var info in cultureInfos)
             {
-                changelogLanguageComboBox.Items.Add(String.Format("{0} - {1}", info.EnglishName, info.Name));
+                changelogLanguageComboBox.Items.Add($"{info.EnglishName} - {info.Name}");
                 _cultures.Add(info);
             }
 
@@ -297,20 +292,21 @@ namespace nUpdate.Administration.UI.Dialogs
             _necessaryUpdate = necessaryUpdateCheckBox.Checked;
             includeIntoStatisticsCheckBox.Enabled = Project.UseStatistics;
 
-            majorNumericUpDown.Maximum = Decimal.MaxValue;
-            minorNumericUpDown.Maximum = Decimal.MaxValue;
-            buildNumericUpDown.Maximum = Decimal.MaxValue;
-            revisionNumericUpDown.Maximum = Decimal.MaxValue;
+            majorNumericUpDown.Maximum = decimal.MaxValue;
+            minorNumericUpDown.Maximum = decimal.MaxValue;
+            buildNumericUpDown.Maximum = decimal.MaxValue;
+            revisionNumericUpDown.Maximum = decimal.MaxValue;
 
-            if (!String.IsNullOrEmpty(Project.AssemblyVersionPath))
+            if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
             {
                 var projectAssembly = Assembly.GetCallingAssembly();
-                var nUpateVersionAttribute = projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
+                var nUpateVersionAttribute =
+                    projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
 
                 if (nUpateVersionAttribute == null)
                     return;
                 var assemblyVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-               
+
                 majorNumericUpDown.Value = assemblyVersion.Major;
                 minorNumericUpDown.Value = assemblyVersion.Minor;
                 buildNumericUpDown.Value = assemblyVersion.Build;
@@ -356,19 +352,18 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (ExistingVersions.Any(item => item == _packageVersion))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Invalid version set.",
-                        String.Format(
-                            "Version \"{0}\" is already existing.",
-                            _packageVersion.FullText), PopupButtons.Ok);
+                        $"Version \"{_packageVersion.FullText}\" is already existing.", PopupButtons.Ok);
                     generalPanel.BringToFront();
                     categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                     return;
                 }
             }
 
-            if (String.IsNullOrEmpty(englishChangelogTextBox.Text))
+            if (string.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No changelog set.",
-                    "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.", PopupButtons.Ok);
+                    "Please specify a changelog for the package. If you have already set a changelog in another language you still need to specify one for \"English - en\" to support client's that don't use your specified culture on their computer.",
+                    PopupButtons.Ok);
                 changelogPanel.BringToFront();
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[1];
                 return;
@@ -384,8 +379,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 categoryTreeView.SelectedNode = categoryTreeView.Nodes[3].Nodes[0];
                 return;
             }
-            
-            foreach (var tabPage in from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 4) let operationPanel = tabPage.Controls[0] as IOperationPanel where operationPanel != null && !operationPanel.IsValid select tabPage)
+
+            foreach (
+                var tabPage in
+                    from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 4)
+                    let operationPanel = tabPage.Controls[0] as IOperationPanel
+                    where operationPanel != null && !operationPanel.IsValid
+                    select tabPage)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
                     "Please make sure to fill out all required fields correctly.",
@@ -423,7 +423,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 if (isDirectory)
                 {
-                    var tmpDir = string.Format("{0}/{1}", currentDirectory, node.Text);
+                    var tmpDir = $"{currentDirectory}/{node.Text}";
                     try
                     {
                         _zip.AddDirectoryByName(tmpDir);
@@ -436,9 +436,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Information, "The element was removed.",
-                                        String.Format(
-                                            "The file/folder \"{0}\" was removed from the collection because it is already existing in the current directory.",
-                                            nodePlaceHolder.Text), PopupButtons.Ok)));
+                                        $"The file/folder \"{nodePlaceHolder.Text}\" was removed from the collection because it is already existing in the current directory.", PopupButtons.Ok)));
                     }
                 }
                 else
@@ -454,9 +452,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Information, "The element was removed.",
-                                        String.Format(
-                                            "The file/folder \"{0}\" was removed from the collection because it is already existing in the current directory.",
-                                            nodePlaceHolder.Text), PopupButtons.Ok)));
+                                        $"The file/folder \"{nodePlaceHolder.Text}\" was removed from the collection because it is already existing in the current directory.", PopupButtons.Ok)));
                     }
                 }
             }
@@ -521,7 +517,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 //    return;
                 //}
 
-                var packageFile = String.Format("{0}.zip", Project.Guid);
+                var packageFile = $"{Project.Guid}.zip";
 
                 try
                 {
@@ -558,22 +554,22 @@ namespace nUpdate.Administration.UI.Dialogs
                     var tabPage in
                         changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
                 {
-                    var panel = (ChangelogPanel)tabPage.Controls[0];
-                    if (String.IsNullOrEmpty(panel.Changelog)) continue;
-                    changelog.Add((CultureInfo)tabPage.Tag, panel.Changelog);
+                    var panel = (ChangelogPanel) tabPage.Controls[0];
+                    if (string.IsNullOrEmpty(panel.Changelog)) continue;
+                    changelog.Add((CultureInfo) tabPage.Tag, panel.Changelog);
                 }
 
                 // Create a new package configuration
                 _configuration.Changelog = changelog;
                 _configuration.NecessaryUpdate = _necessaryUpdate;
-                _configuration.Architecture = (Architecture)_architectureIndex;
+                _configuration.Architecture = (Architecture) _architectureIndex;
 
                 _configuration.Operations = new List<Operation>();
                 Invoke(new Action(() =>
                 {
                     foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
-                                                   where node.Index != 0
-                                                   select (IOperationPanel)categoryTabControl.TabPages[4 + node.Index].Controls[0])
+                        where node.Index != 0
+                        select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
                     {
                         _configuration.Operations.Add(operationPanel.Operation);
                     }
@@ -583,10 +579,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    using (var stream = File.Open(Path.Combine(_packageFolder, String.Format("{0}.zip", Project.Guid)),
-                            FileMode.Open))
+                    using (var stream = File.Open(Path.Combine(_packageFolder, $"{Project.Guid}.zip"),
+                        FileMode.Open))
                     {
-                        _configuration.Signature = Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(stream));
+                        _configuration.Signature =
+                            Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(stream));
                     }
                 }
                 catch (Exception ex)
@@ -603,7 +600,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.UnsupportedVersions = unsupportedVersionLiterals;
                 _configuration.UpdatePhpFileUri = UriConnector.ConnectUri(Project.UpdateUrl, "statistics.php");
                 _configuration.UpdatePackageUri = UriConnector.ConnectUri(Project.UpdateUrl,
-                    String.Format("{0}/{1}.zip", _packageVersion, Project.Guid));
+                    $"{_packageVersion}/{Project.Guid}.zip");
                 _configuration.LiteralVersion = _packageVersion.ToString();
                 _configuration.UseStatistics = _includeIntoStatistics;
 
@@ -661,7 +658,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _package.IsReleased = _publishUpdate;
                 _package.LocalPackagePath = Path.Combine(Program.Path, "Projects", Project.Name,
                     _packageVersion.ToString(),
-                    String.Format("{0}.zip", Project.Guid));
+                    $"{Project.Guid}.zip");
                 _package.Version = _packageVersion.ToString();
                 _packageInitialized = true;
 
@@ -676,13 +673,10 @@ namespace nUpdate.Administration.UI.Dialogs
                         Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
                         try
                         {
-                            var connectionString = String.Format("SERVER={0};" +
-                                                                 "DATABASE={1};" +
-                                                                 "UID={2};" +
-                                                                 "PASSWORD={3};",
-                                Project.SqlWebUrl, Project.SqlDatabaseName,
-                                Project.SqlUsername,
-                                SqlPassword.ConvertToUnsecureString());
+                            var connectionString = $"SERVER={Project.SqlWebUrl};" +
+                                                   $"DATABASE={Project.SqlDatabaseName};" +
+                                                   $"UID={Project.SqlUsername};" +
+                                                   $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
 
                             _insertConnection = new MySqlConnection(connectionString);
                             _insertConnection.Open();
@@ -715,9 +709,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         var command = _insertConnection.CreateCommand();
                         command.CommandText =
-                            String.Format(
-                                "INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({0}, \"{1}\", {2});",
-                                Settings.Default.VersionID, _packageVersion, Project.ApplicationId);
+                            $"INSERT INTO `Version` (`ID`, `Version`, `Application_ID`) VALUES ({Settings.Default.VersionID}, \"{_packageVersion}\", {Project.ApplicationId});";
                         // SQL-injections are impossible as conversions to the relating datatype would already fail if any injection statements were attached (would have to be a string then)
 
                         try
@@ -740,7 +732,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     /* -------------- Package upload -----------------*/
                     Invoke(new Action(() =>
                     {
-                        loadingLabel.Text = String.Format("Uploading package... {0}", "0%");
+                        loadingLabel.Text = $"Uploading package... {"0%"}";
                         cancelLabel.Visible = true;
                     }));
 
@@ -748,7 +740,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         _ftp.UploadPackage(
                             Path.Combine(Program.Path, "Projects", Project.Name, _packageVersion.ToString(),
-                                String.Format("{0}.zip", Project.Guid)), _packageVersion.ToString());
+                                $"{Project.Guid}.zip"), _packageVersion.ToString());
                     }
                     catch (Exception ex) // Upload-method is async, it's true, but directory creation can fail.
                     {
@@ -806,7 +798,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                     catch (Exception ex)
                     {
-
                         Reset();
                         Invoke(
                             new Action(
@@ -844,8 +835,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            String.Format("Uploading package... {0}% | {1}KB/s", Math.Round(e.Percentage, 1),
-                                e.BytesPerSecond/1024)));
+                            $"Uploading package... {Math.Round(e.Percentage, 1)}% | {e.BytesPerSecond/1024}KB/s"));
             if (_uploadCancelled)
             {
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -949,14 +939,14 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 TreeNode fileNode;
-                if (String.IsNullOrWhiteSpace(file.Extension))
-                    fileNode = new TreeNode(file.Name, 1, 1) { Tag = file.FullName };
+                if (string.IsNullOrWhiteSpace(file.Extension))
+                    fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
                 else
                 {
                     if (filesImageList.Images.ContainsKey(file.Extension))
                     {
                         var index = filesImageList.Images.IndexOfKey(file.Extension);
-                        fileNode = new TreeNode(file.Name, index, index) { Tag = file.FullName };
+                        fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
                     }
                     else
                     {
@@ -970,11 +960,11 @@ namespace nUpdate.Administration.UI.Dialogs
                                 filesImageList.Images.Add(file1.Extension, icon.ToBitmap());
                                 index = filesImageList.Images.IndexOfKey(file1.Extension);
                             }));
-                            fileNode = new TreeNode(file.Name, index, index) { Tag = file.FullName };
+                            fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
                         }
                         else
                         {
-                            fileNode = new TreeNode(file.Name, 1, 1) { Tag = file.FullName };
+                            fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
                         }
                     }
                 }
@@ -1094,7 +1084,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 (DevelopmentalStage)
                     Enum.Parse(typeof (DevelopmentalStage),
                         developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem));
-            if (_developmentalStage == DevelopmentalStage.Alpha || _developmentalStage == DevelopmentalStage.Beta || _developmentalStage == DevelopmentalStage.ReleaseCandidate)
+            if (_developmentalStage == DevelopmentalStage.Alpha || _developmentalStage == DevelopmentalStage.Beta ||
+                _developmentalStage == DevelopmentalStage.ReleaseCandidate)
                 developmentBuildNumericUpDown.Enabled = true;
             else
                 developmentBuildNumericUpDown.Enabled = false;
@@ -1191,7 +1182,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             if (e.Control && e.KeyCode == Keys.Up)
             {
-                if (categoryTreeView.SelectedNode.Text != "Replace file/folder" && categoryTreeView.SelectedNode.Index != 1)
+                if (categoryTreeView.SelectedNode.Text != "Replace file/folder" &&
+                    categoryTreeView.SelectedNode.Index != 1)
                     categoryTreeView.SelectedNode.MoveUp();
             }
             else if (e.Control && e.KeyCode == Keys.Down)
@@ -1213,7 +1205,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
             if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
                 return;
-            
+
             var data = e.Data.GetData(typeof (string));
             if (data == null)
                 return;
@@ -1327,6 +1319,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             e.Effect = DragDropEffects.Move;
         }
+
         private void cancelLabel_Click(object sender, EventArgs e)
         {
             _uploadCancelled = true;

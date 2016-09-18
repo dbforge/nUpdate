@@ -1,27 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2012 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -48,7 +25,6 @@ namespace nUpdate.Administration.Core.Proxy
     /// </summary>
     public class HttpProxyClient : IProxyClient, IDisposable
     {
-        private bool _disposed;
         private const int HTTP_PROXY_DEFAULT_PORT = 8080;
         private const string HTTP_PROXY_CONNECT_CMD = "CONNECT {0}:{1} HTTP/1.0\r\nHOST {0}:{1}\r\n\r\n";
 
@@ -58,14 +34,12 @@ namespace nUpdate.Administration.Core.Proxy
         private const int WAIT_FOR_DATA_INTERVAL = 50; // 50 ms
         private const int WAIT_FOR_DATA_TIMEOUT = 15000; // 15 seconds
         private const string PROXY_NAME = "HTTP";
-        private string _proxyHost;
-        private int _proxyPort;
+        private readonly string _proxyPassword;
+        private readonly string _proxyUsername;
+        private bool _disposed;
         private HttpResponseCodes _respCode;
         private string _respText;
         private TcpClient _tcpClient;
-        private TcpClient _tcpClientCached;
-        private readonly string _proxyPassword;
-        private readonly string _proxyUsername;
 
         /// <summary>
         ///     Constructor.
@@ -81,9 +55,9 @@ namespace nUpdate.Administration.Core.Proxy
         public HttpProxyClient(TcpClient tcpClient)
         {
             if (tcpClient == null)
-                throw new ArgumentNullException("tcpClient");
+                throw new ArgumentNullException(nameof(tcpClient));
 
-            _tcpClientCached = tcpClient;
+            TcpClient = tcpClient;
         }
 
         /// <summary>
@@ -92,11 +66,11 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyHost">Host name or IP address of the proxy.</param>
         public HttpProxyClient(string proxyHost)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
-            _proxyHost = proxyHost;
-            _proxyPort = HTTP_PROXY_DEFAULT_PORT;
+            ProxyHost = proxyHost;
+            ProxyPort = HTTP_PROXY_DEFAULT_PORT;
         }
 
         /// <summary>
@@ -108,20 +82,21 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyPassword">Password for the proxy server.</param>
         public HttpProxyClient(string proxyHost, int proxyPort, string proxyUsername, string proxyPassword)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
-            if (String.IsNullOrEmpty(proxyUsername))
-                throw new ArgumentNullException("proxyUsername");
+            if (string.IsNullOrEmpty(proxyUsername))
+                throw new ArgumentNullException(nameof(proxyUsername));
 
             if (proxyPassword == null)
-                throw new ArgumentNullException("proxyPassword");
+                throw new ArgumentNullException(nameof(proxyPassword));
 
             if (proxyPort <= 0 || proxyPort > 65535)
-                throw new ArgumentOutOfRangeException("proxyPort", "port must be greater than zero and less than 65535");
+                throw new ArgumentOutOfRangeException(nameof(proxyPort),
+                    "port must be greater than zero and less than 65535");
 
-            _proxyHost = proxyHost;
-            _proxyPort = proxyPort;
+            ProxyHost = proxyHost;
+            ProxyPort = proxyPort;
             _proxyUsername = proxyUsername;
             _proxyPassword = proxyPassword;
         }
@@ -133,52 +108,44 @@ namespace nUpdate.Administration.Core.Proxy
         /// <param name="proxyPort">Port number for the proxy server.</param>
         public HttpProxyClient(string proxyHost, int proxyPort)
         {
-            if (String.IsNullOrEmpty(proxyHost))
-                throw new ArgumentNullException("proxyHost");
+            if (string.IsNullOrEmpty(proxyHost))
+                throw new ArgumentNullException(nameof(proxyHost));
 
             if (proxyPort <= 0 || proxyPort > 65535)
-                throw new ArgumentOutOfRangeException("proxyPort", "port must be greater than zero and less than 65535");
+                throw new ArgumentOutOfRangeException(nameof(proxyPort),
+                    "port must be greater than zero and less than 65535");
 
-            _proxyHost = proxyHost;
-            _proxyPort = proxyPort;
+            ProxyHost = proxyHost;
+            ProxyPort = proxyPort;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
         ///     Gets or sets host name or IP address of the proxy server.
         /// </summary>
-        public string ProxyHost
-        {
-            get { return _proxyHost; }
-            set { _proxyHost = value; }
-        }
+        public string ProxyHost { get; set; }
 
         /// <summary>
         ///     Gets or sets port number for the proxy server.
         /// </summary>
-        public int ProxyPort
-        {
-            get { return _proxyPort; }
-            set { _proxyPort = value; }
-        }
+        public int ProxyPort { get; set; }
 
         /// <summary>
         ///     Gets String representing the name of the proxy.
         /// </summary>
         /// <remarks>This property will always return the value 'HTTP'</remarks>
-        public string ProxyName
-        {
-            get { return PROXY_NAME; }
-        }
+        public string ProxyName => PROXY_NAME;
 
         /// <summary>
         ///     Gets or sets the TcpClient object.
         ///     This property can be set prior to executing CreateConnection to use an existing TcpClient connection.
         /// </summary>
-        public TcpClient TcpClient
-        {
-            get { return _tcpClientCached; }
-            set { _tcpClientCached = value; }
-        }
+        public TcpClient TcpClient { get; set; }
 
         /// <summary>
         ///     Creates a remote TCP connection through a proxy server to the destination host on the destination port.
@@ -199,23 +166,23 @@ namespace nUpdate.Administration.Core.Proxy
             try
             {
                 // if we have no cached tcpip connection then create one
-                if (_tcpClientCached == null)
+                if (TcpClient == null)
                 {
-                    if (String.IsNullOrEmpty(_proxyHost))
+                    if (string.IsNullOrEmpty(ProxyHost))
                         throw new ProxyException("ProxyHost property must contain a value.");
 
-                    if (_proxyPort <= 0 || _proxyPort > 65535)
+                    if (ProxyPort <= 0 || ProxyPort > 65535)
                         throw new ProxyException("ProxyPort value must be greater than zero and less than 65535");
 
                     //  create new tcp client object to the proxy server
                     _tcpClient = new TcpClient();
 
                     // attempt to open the connection
-                    _tcpClient.Connect(_proxyHost, _proxyPort);
+                    _tcpClient.Connect(ProxyHost, ProxyPort);
                 }
                 else
                 {
-                    _tcpClient = _tcpClientCached;
+                    _tcpClient = TcpClient;
                 }
 
                 //  send connection command to proxy host for the specified destination host and port
@@ -230,7 +197,7 @@ namespace nUpdate.Administration.Core.Proxy
             catch (SocketException ex)
             {
                 throw new ProxyException(
-                    String.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
+                    string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)), ex);
             }
         }
@@ -281,7 +248,7 @@ namespace nUpdate.Administration.Core.Proxy
                 //  gets the user/pass into base64 encoded string in the form of [username]:[password]
                 string auth =
                     Convert.ToBase64String(
-                        Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _proxyUsername, _proxyPassword)));
+                        Encoding.ASCII.GetBytes($"{_proxyUsername}:{_proxyPassword}"));
 
                 // PROXY SERVER REQUEST
                 // =======================================================================
@@ -292,7 +259,7 @@ namespace nUpdate.Administration.Core.Proxy
                 //                        concatenated string
                 //[... other HTTP header lines ending with <CR><LF> if required]>
                 //<CR><LF>    // Last Empty Line
-                connectCmd = String.Format(CultureInfo.InvariantCulture, HTTP_PROXY_AUTHENTICATE_CMD, host,
+                connectCmd = string.Format(CultureInfo.InvariantCulture, HTTP_PROXY_AUTHENTICATE_CMD, host,
                     port.ToString(CultureInfo.InvariantCulture), auth);
             }
             else
@@ -303,7 +270,7 @@ namespace nUpdate.Administration.Core.Proxy
                 //HOST starksoft.com:443<CR><LF>
                 //[... other HTTP header lines ending with <CR><LF> if required]>
                 //<CR><LF>    // Last Empty Line
-                connectCmd = String.Format(CultureInfo.InvariantCulture, HTTP_PROXY_CONNECT_CMD + "\r\n", host,
+                connectCmd = string.Format(CultureInfo.InvariantCulture, HTTP_PROXY_CONNECT_CMD + "\r\n", host,
                     port.ToString(CultureInfo.InvariantCulture));
             }
             return connectCmd;
@@ -316,20 +283,20 @@ namespace nUpdate.Administration.Core.Proxy
             switch (_respCode)
             {
                 case HttpResponseCodes.None:
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} failed to return a recognized HTTP response code.  Server response: {2}",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient), _respText);
                     break;
 
                 case HttpResponseCodes.BadGateway:
                     //HTTP/1.1 502 Proxy Error (The specified Secure Sockets Layer (SSL) port is not allowed. ISA Server is not configured to allow SSL requests from this port. Most Web browsers use port 443 for SSL requests.)
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} responded with a 502 code - Bad Gateway.  If you are connecting to a Microsoft ISA destination please refer to knowledge based article Q283284 for more information.  Server response: {2}",
                         Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient), _respText);
                     break;
 
                 default:
-                    msg = String.Format(CultureInfo.InvariantCulture,
+                    msg = string.Format(CultureInfo.InvariantCulture,
                         "Proxy destination {0} on port {1} responded with a {2} code - {3}", Utils.GetHost(_tcpClient),
                         Utils.GetPort(_tcpClient), ((int) _respCode).ToString(CultureInfo.InvariantCulture), _respText);
                     break;
@@ -348,8 +315,7 @@ namespace nUpdate.Administration.Core.Proxy
                 sleepTime += WAIT_FOR_DATA_INTERVAL;
                 if (sleepTime > WAIT_FOR_DATA_TIMEOUT)
                     throw new ProxyException(
-                        String.Format("A timeout while waiting for the proxy server at {0} on port {1} to respond.",
-                            Utils.GetHost(_tcpClient), Utils.GetPort(_tcpClient)));
+                        $"A timeout while waiting for the proxy server at {Utils.GetHost(_tcpClient)} on port {Utils.GetPort(_tcpClient)} to respond.");
             }
         }
 
@@ -365,35 +331,50 @@ namespace nUpdate.Administration.Core.Proxy
         {
             if (line.IndexOf("HTTP", StringComparison.Ordinal) == -1)
                 throw new ProxyException(
-                    String.Format("No HTTP response received from proxy destination.  Server response: {0}.", line));
+                    $"No HTTP response received from proxy destination.  Server response: {line}.");
 
             var begin = line.IndexOf(" ", StringComparison.Ordinal) + 1;
             var end = line.IndexOf(" ", begin, StringComparison.Ordinal);
 
             var val = line.Substring(begin, end - begin);
-            Int32 code;
+            int code;
 
-            if (!Int32.TryParse(val, out code))
+            if (!int.TryParse(val, out code))
                 throw new ProxyException(
-                    String.Format(
-                        "An invalid response code was received from proxy destination.  Server response: {0}.", line));
+                    $"An invalid response code was received from proxy destination.  Server response: {line}.");
 
             _respCode = (HttpResponseCodes) code;
             _respText = line.Substring(end + 1).Trim();
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (_asyncWorker != null)
+                _asyncWorker.Dispose();
+
+            if (_tcpClient != null)
+                _tcpClient.Close();
+
+            if (TcpClient != null)
+                TcpClient.Close();
+
+            _disposed = true;
         }
 
         private enum HttpResponseCodes
         {
             None = 0,
             Ok = 200,
-            BadGateway = 502,
+            BadGateway = 502
         }
 
         #region "Async Methods"
 
         private BackgroundWorker _asyncWorker;
         private Exception _asyncException;
-        private bool _asyncCancelled;
 
         /// <summary>
         ///     Gets a value indicating whether an asynchronous operation is running.
@@ -401,10 +382,7 @@ namespace nUpdate.Administration.Core.Proxy
         /// <remarks>
         ///     Returns true if an asynchronous operation is running; otherwise, false.
         /// </remarks>
-        public bool IsBusy
-        {
-            get { return _asyncWorker != null && _asyncWorker.IsBusy; }
-        }
+        public bool IsBusy => _asyncWorker != null && _asyncWorker.IsBusy;
 
         /// <summary>
         ///     Gets a value indicating whether an asynchronous operation is cancelled.
@@ -412,10 +390,7 @@ namespace nUpdate.Administration.Core.Proxy
         /// <remarks>
         ///     Returns true if an asynchronous operation is cancelled; otherwise, false.
         /// </remarks>
-        public bool IsAsyncCancelled
-        {
-            get { return _asyncCancelled; }
-        }
+        public bool IsAsyncCancelled { get; private set; }
 
         /// <summary>
         ///     Cancels any asychronous operation that is currently active.
@@ -424,7 +399,7 @@ namespace nUpdate.Administration.Core.Proxy
         {
             if (_asyncWorker != null && !_asyncWorker.CancellationPending && _asyncWorker.IsBusy)
             {
-                _asyncCancelled = true;
+                IsAsyncCancelled = true;
                 _asyncWorker.CancelAsync();
             }
         }
@@ -435,7 +410,7 @@ namespace nUpdate.Administration.Core.Proxy
                 _asyncWorker.Dispose();
             _asyncException = null;
             _asyncWorker = null;
-            _asyncCancelled = false;
+            IsAsyncCancelled = false;
             _asyncWorker = new BackgroundWorker();
         }
 
@@ -471,7 +446,7 @@ namespace nUpdate.Administration.Core.Proxy
                 _asyncWorker.WorkerSupportsCancellation = true;
                 _asyncWorker.DoWork += CreateConnectionAsync_DoWork;
                 _asyncWorker.RunWorkerCompleted += CreateConnectionAsync_RunWorkerCompleted;
-                var args = new Object[2];
+                var args = new object[2];
                 args[0] = destinationHost;
                 args[1] = destinationPort;
                 _asyncWorker.RunWorkerAsync(args);
@@ -482,7 +457,7 @@ namespace nUpdate.Administration.Core.Proxy
         {
             try
             {
-                var args = (Object[]) e.Argument;
+                var args = (object[]) e.Argument;
                 e.Result = CreateConnection((string) args[0], (int) args[1]);
             }
             catch (Exception ex)
@@ -495,32 +470,9 @@ namespace nUpdate.Administration.Core.Proxy
         {
             if (CreateConnectionAsyncCompleted != null)
                 CreateConnectionAsyncCompleted(this,
-                    new CreateConnectionAsyncCompletedEventArgs(_asyncException, _asyncCancelled, (TcpClient) e.Result));
+                    new CreateConnectionAsyncCompletedEventArgs(_asyncException, IsAsyncCancelled, (TcpClient) e.Result));
         }
 
         #endregion
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (_asyncWorker != null)
-                _asyncWorker.Dispose();
-
-            if (_tcpClient != null)
-                _tcpClient.Close();
-
-            if (_tcpClientCached != null)
-                _tcpClientCached.Close();
-
-            _disposed = true;
-        }
     }
 }

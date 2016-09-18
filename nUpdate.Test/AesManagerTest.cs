@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Administration.Core;

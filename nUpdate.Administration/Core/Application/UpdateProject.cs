@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using nUpdate.Administration.Core.History;
 using nUpdate.Core;
-using Newtonsoft.Json.Linq;
 using nUpdate.Updating;
+using Newtonsoft.Json.Linq;
 
 namespace nUpdate.Administration.Core.Application
 {
@@ -18,10 +18,7 @@ namespace nUpdate.Administration.Core.Application
     [Serializable]
     public class UpdateProject
     {
-        public string ConfigVersion
-        {
-            get { return "1b2"; }
-        }
+        public string ConfigVersion => "1b2";
 
         /// <summary>
         ///     The path of the project.
@@ -168,11 +165,17 @@ namespace nUpdate.Administration.Core.Application
             string jsonString = File.ReadAllText(path);
             JObject jObject = JObject.Parse(jsonString);
             JToken value;
-            if (typeof(UpdateProject).GetProperties().All(property => jObject.TryGetValue(property.Name, out value) && property.PropertyType == value.Type.GetType()))
+            if (
+                typeof (UpdateProject).GetProperties()
+                    .All(
+                        property =>
+                            jObject.TryGetValue(property.Name, out value) &&
+                            property.PropertyType == value.Type.GetType()))
                 return Serializer.Deserialize<UpdateProject>(jsonString);
 
             UpdateProject newProject = null;
-            if (!jObject.TryGetValue("ConfigVersion", out value)) // Was before 1.0.0.0 Beta 2 as this property has been added there
+            if (!jObject.TryGetValue("ConfigVersion", out value))
+                // Was before 1.0.0.0 Beta 2 as this property has been added there
             {
                 var oldProject = Serializer.Deserialize<OldUpdateProject>(jsonString);
                 newProject = new UpdateProject
@@ -203,7 +206,7 @@ namespace nUpdate.Administration.Core.Application
                     SqlUsername = oldProject.SqlUsername,
                     SqlWebUrl = oldProject.SqlWebUrl,
                     UpdateUrl = oldProject.UpdateUrl,
-                    UseStatistics = oldProject.UseStatistics,
+                    UseStatistics = oldProject.UseStatistics
                 };
 
                 JToken packagesToken;
@@ -220,7 +223,7 @@ namespace nUpdate.Administration.Core.Application
                             LocalPackagePath = packages[i].LocalPackagePath
                         };
 
-                        var developmentalStage = (int)packages[i].Version.DevelopmentalStage;
+                        var developmentalStage = (int) packages[i].Version.DevelopmentalStage;
                         switch (developmentalStage)
                         {
                             case 0: // This was release
@@ -264,10 +267,7 @@ namespace nUpdate.Administration.Core.Application
     [Serializable]
     public class OldUpdateProject
     {
-        public string ConfigVersion
-        {
-            get { return "1b2"; }
-        }
+        public string ConfigVersion => "1b2";
 
         /// <summary>
         ///     The path of the project.

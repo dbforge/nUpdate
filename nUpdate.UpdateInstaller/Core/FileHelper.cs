@@ -1,12 +1,14 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 using System.Runtime.InteropServices;
 
 namespace nUpdate.UpdateInstaller.Core
 {
     public class FileHelper
     {
-        const int ERROR_SHARING_VIOLATION = 32;
-        const int ERROR_LOCK_VIOLATION = 33;
+        private const int ERROR_SHARING_VIOLATION = 32;
+        private const int ERROR_LOCK_VIOLATION = 33;
 
         public static bool IsFileLocked(Exception exception)
         {

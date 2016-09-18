@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System.Runtime.InteropServices;
 
 namespace nUpdate.Administration.Core.Win32
 {

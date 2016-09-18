@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -13,7 +13,6 @@ using nUpdate.Administration.Core.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
-using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -71,7 +70,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (Environment.OSVersion.Version.Major < 6)
             {
-                var dr = MessageBox.Show("Your operating system is not supported.", String.Empty,
+                var dr = MessageBox.Show("Your operating system is not supported.", string.Empty,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 if (dr == DialogResult.OK)
@@ -89,20 +88,22 @@ namespace nUpdate.Administration.UI.Dialogs
                     if (!pai.Exists)
                     {
                         pai.Create("nUpdate Administration Project File",
-                            new ProgramVerb("Open", String.Format("\"{0} %1\"", Application.ExecutablePath)));
+                            new ProgramVerb("Open", $"\"{Application.ExecutablePath} %1\""));
                         pai.DefaultIcon = new ProgramIcon(Application.ExecutablePath);
                     }
                 }
             }
             catch (UnauthorizedAccessException)
             {
-                Popup.ShowPopup(this, SystemIcons.Warning, "Missing rights.", "The registry entry for the extension (.nupdproj) couldn't be created. Without that file extension nUpdate Administration won't work correctly. Please make sure to start the administration with admin privileges the first time.",
+                Popup.ShowPopup(this, SystemIcons.Warning, "Missing rights.",
+                    "The registry entry for the extension (.nupdproj) couldn't be created. Without that file extension nUpdate Administration won't work correctly. Please make sure to start the administration with admin privileges the first time.",
                     PopupButtons.Ok);
             }
 
-            if (String.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
-                Settings.Default.ProgramPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "nUpdate Administration");
+            if (string.IsNullOrWhiteSpace(Settings.Default.ProgramPath))
+                Settings.Default.ProgramPath =
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "nUpdate Administration");
             Program.LanguagesDirectory = Path.Combine(Program.Path, "Localization");
             if (!Directory.Exists(Program.LanguagesDirectory))
             {
@@ -134,8 +135,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
             //SetLanguage();
             sectionsListView.DoubleBuffer();
-            Text = String.Format(Text, Program.VersionString);
-            headerLabel.Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
+            headerLabel.Text = string.Format(Text, Program.VersionString);
         }
 
         public UpdateProject OpenProject(string projectPath)
@@ -323,7 +324,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void MainDialog_Shown(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(ProjectPath))
+            if (string.IsNullOrEmpty(ProjectPath))
                 return;
 
             Project = OpenProject(ProjectPath);

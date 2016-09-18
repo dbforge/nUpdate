@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 namespace nUpdate.Core.Localization
 {
@@ -20,7 +20,8 @@ namespace nUpdate.Core.Localization
             NewUpdateDialogCurrentVersionText = "Current version: {0}";
             NewUpdateDialogSizeText = "Total package size: {0}";
             NewUpdateDialogChangelogText = "Changelog:";
-            NewUpdateDialogBigPackageWarning = "The download and/or the beginning of the installation of the available updates may take some time due to their size.";
+            NewUpdateDialogBigPackageWarning =
+                "The download and/or the beginning of the installation of the available updates may take some time due to their size.";
             NewUpdateDialogAccessText = "Accesses:";
             NewUpdateDialogFilesAccessText = "File system";
             NewUpdateDialogRegistryAccessText = "Registry";
@@ -34,7 +35,7 @@ namespace nUpdate.Core.Localization
             UpdateDownloadDialogLoadingInfo = "Please wait while the available updates are\ndownloaded...  ({0}%)";
 
             // Put the strings into \" because they are handled over as process arguments (Installer)
-            
+
             InstallerExtractingFilesText = "\"Extracting files...\"";
             InstallerCopyingText = "\"Copying {0}...\"";
             InstallerInitializingErrorCaption = "\"Error while iniaitializing the data.\"";
@@ -75,9 +76,7 @@ namespace nUpdate.Core.Localization
         public string ContinueButtonText { get; set; }
         public string InstallButtonText { get; set; }
         public string CloseButtonText { get; set; }
-
         public string UpdateSearchDialogHeader { get; set; }
-
         public string NewUpdateDialogMultipleUpdatesHeader { get; set; }
         public string NewUpdateDialogSingleUpdateHeader { get; set; }
         public string NewUpdateDialogInfoText { get; set; }
@@ -91,13 +90,10 @@ namespace nUpdate.Core.Localization
         public string NewUpdateDialogFilesAccessText { get; set; }
         public string NewUpdateDialogProcessesAccessText { get; set; }
         public string NewUpdateDialogServicesAccessText { get; set; }
-
         public string NoUpdateDialogHeader { get; set; }
         public string NoUpdateDialogInfoText { get; set; }
-
         public string UpdateDownloadDialogLoadingHeader { get; set; }
         public string UpdateDownloadDialogLoadingInfo { get; set; }
-
         public string InstallerExtractingFilesText { get; set; }
         public string InstallerCopyingText { get; set; }
         public string InstallerInitializingErrorCaption { get; set; }
@@ -113,14 +109,12 @@ namespace nUpdate.Core.Localization
         public string ProcessStopOperationText { get; set; }
         public string ServiceStartOperationText { get; set; }
         public string ServiceStopOperationText { get; set; }
-
         public string UpdateSearchErrorCaption { get; set; }
         public string PackageValidityCheckErrorCaption { get; set; }
         public string PackageNotFoundErrorText { get; set; }
         public string InvalidSignatureErrorCaption { get; set; }
         public string SignatureNotMatchingErrorText { get; set; }
         public string InvalidSignatureErrorText { get; set; }
-
         public string SearchProcessRunningExceptionText { get; set; }
         public string DownloadingProcessRunningExceptionText { get; set; }
         public string NetworkConnectionExceptionText { get; set; }

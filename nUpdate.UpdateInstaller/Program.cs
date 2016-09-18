@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -136,13 +136,13 @@ namespace nUpdate.UpdateInstaller
         private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false); 
+            Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
 
             if (args.Length != 1)
             {
                 Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
-                    String.Format("Invalid arguments count ({0}) where 1 argument was expected.", args.Length),
+                    $"Invalid arguments count ({args.Length}) where 1 argument was expected.",
                     PopupButtons.Ok);
                 return;
             }
@@ -174,7 +174,8 @@ namespace nUpdate.UpdateInstaller
                 UpdatingErrorCaption = appArguments[18];
                 InitializingErrorCaption = appArguments[19];
                 Arguments = Serializer.Deserialize<List<UpdateArgument>>(
-                        Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20]))); // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
+                    Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20])));
+                    // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
                 IsHostApplicationClosed = Convert.ToBoolean(appArguments[21]);
                 FileInUseError = appArguments[22];
             }
@@ -187,9 +188,9 @@ namespace nUpdate.UpdateInstaller
             new Updater().RunUpdate();
         }
 
-        static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
+        private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is ThreadAbortException) 
+            if (e.ExceptionObject is ThreadAbortException)
                 return;
             var exception = e.ExceptionObject as Exception;
             if (exception != null)

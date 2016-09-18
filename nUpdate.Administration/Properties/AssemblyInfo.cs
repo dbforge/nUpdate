@@ -1,13 +1,12 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
-
+using nUpdate.Core;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
-using nUpdate.Core;
 
 [assembly: AssemblyTitle("nUpdate Administration")]
 [assembly: AssemblyDescription("The administration of the nUpdate library.")]

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Reflection;
@@ -38,7 +38,8 @@ namespace nUpdate.Administration.UI.Controls
                 placeHolderGroup.GroupId = GetGroupId(group);
 
                 if (placeHolderGroup.GroupId >= 0)
-                    NativeMethods.SendMessage(Handle, LVM_SETGROUPINFO, new IntPtr(placeHolderGroup.GroupId), ref placeHolderGroup);
+                    NativeMethods.SendMessage(Handle, LVM_SETGROUPINFO, new IntPtr(placeHolderGroup.GroupId),
+                        ref placeHolderGroup);
             }
         }
 
@@ -46,12 +47,13 @@ namespace nUpdate.Administration.UI.Controls
         {
             var groupType = group.GetType();
             {
-                var groupIdProperty = groupType.GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance); // Include inner fields and instance members
+                var groupIdProperty = groupType.GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance);
+                    // Include inner fields and instance members
                 if (groupIdProperty == null)
                     return -1;
                 var value = groupIdProperty.GetValue(group, null);
                 if (value != null)
-                    return (int)value;
+                    return (int) value;
             }
             return -1;
         }

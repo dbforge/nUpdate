@@ -1,67 +1,51 @@
-﻿/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 
 namespace nUpdate.Administration.TransferInterface
 {
     /// <summary>
-    ///     The available types for the <see cref="FtpItem"/>.
+    ///     The available types for the <see cref="FtpItem" />.
     /// </summary>
     public enum FtpItemType
     {
         /// <summary>
-        /// Directory item.
+        ///     Directory item.
         /// </summary>
         Directory,
+
         /// <summary>
-        /// File item.
+        ///     File item.
         /// </summary>
         File,
+
         /// <summary>
-        /// Symbolic link item.
+        ///     Symbolic link item.
         /// </summary>
         SymbolicLink,
+
         /// <summary>
-        /// Block special file item.
+        ///     Block special file item.
         /// </summary>
         BlockSpecialFile,
+
         /// <summary>
-        /// Character special file item.
+        ///     Character special file item.
         /// </summary>
         CharacterSpecialFile,
+
         /// <summary>
-        /// Name socket item.
+        ///     Name socket item.
         /// </summary>
         NamedSocket,
+
         /// <summary>
-        /// Domain socket item.
+        ///     Domain socket item.
         /// </summary>
         DomainSocket,
+
         /// <summary>
-        /// Unknown item.  The system was unable to determine the itemType of item.
+        ///     Unknown item.  The system was unable to determine the itemType of item.
         /// </summary>
         Unknown
     }
@@ -72,17 +56,8 @@ namespace nUpdate.Administration.TransferInterface
     /// </summary>
     public class FtpItem
     {
-        private readonly string _name;
-        private readonly DateTime _modified;
-        private readonly long _size;
-        private readonly string _symbolicLink;
-        private readonly FtpItemType _itemType;
-        private readonly string _attributes;
-        private readonly string _rawText;
-        private string _parentPath;
-
         /// <summary>
-        ///     Initializes a new instace of the <see cref="FtpItem"/>-class.
+        ///     Initializes a new instace of the <see cref="FtpItem" />-class.
         /// </summary>
         /// <param name="name">The name of the item.</param>
         /// <param name="modified">The modified date and/or time of the item.</param>
@@ -91,89 +66,66 @@ namespace nUpdate.Administration.TransferInterface
         /// <param name="attributes">The permission text for item.</param>
         /// <param name="itemType">The type of the item.</param>
         /// <param name="rawText">The raw text of the item.</param>
-        public FtpItem(string name, DateTime modified, long size, string symbolicLink, string attributes, FtpItemType itemType, string rawText)
+        public FtpItem(string name, DateTime modified, long size, string symbolicLink, string attributes,
+            FtpItemType itemType, string rawText)
         {
-            _name = name;
-            _modified = modified;
-            _size = size;
-            _symbolicLink = symbolicLink;
-            _attributes = attributes;
-            _itemType = itemType;
-            _rawText = rawText;
+            Name = name;
+            Modified = modified;
+            Size = size;
+            SymbolicLink = symbolicLink;
+            Attributes = attributes;
+            ItemType = itemType;
+            RawText = rawText;
         }
 
         /// <summary>
-        ///     The name of the item. All servers should report a name value for the <see cref="FtpItem"/>.
+        ///     The name of the item. All servers should report a name value for the <see cref="FtpItem" />.
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
         /// <summary>
         ///     The permissions text for the item. Some servers will report file permission information.
         /// </summary>
-        public string Attributes
-        {
-            get { return _attributes; }
-        }
+        public string Attributes { get; }
 
         /// <summary>
-        ///     The modified date and possibly the time for the <see cref="FtpItem"/>.
+        ///     The modified date and possibly the time for the <see cref="FtpItem" />.
         /// </summary>
-        public DateTime Modified
-        {
-            get { return _modified; }
-        }
+        public DateTime Modified { get; }
 
         /// <summary>
-        ///     The size of the <see cref="FtpItem"/> as reported by the server.
+        ///     The size of the <see cref="FtpItem" /> as reported by the server.
         /// </summary>
-        public long Size
-        {
-            get { return _size; }
-        }
+        public long Size { get; }
 
         /// <summary>
-        ///     The symbolic link name if the <see cref="FtpItem"/> is a symbolic link.
+        ///     The symbolic link name if the <see cref="FtpItem" /> is a symbolic link.
         /// </summary>
-        public string SymbolicLink
-        {
-            get { return _symbolicLink; }
-        }
+        public string SymbolicLink { get; }
 
         /// <summary>
-        ///     The type of the <see cref="FtpItem"/>.
+        ///     The type of the <see cref="FtpItem" />.
         /// </summary>
-        public FtpItemType ItemType
-        {
-            get { return _itemType; }
-        }
+        public FtpItemType ItemType { get; }
 
         /// <summary>
-        ///     The raw textual line information as reported by the server. This can be useful for examining exotic FTP formats and for debugging a custom ftp item parser.
+        ///     The raw textual line information as reported by the server. This can be useful for examining exotic FTP formats and
+        ///     for debugging a custom ftp item parser.
         /// </summary>
-        public string RawText
-        {
-            get { return _rawText; }
-        }
+        public string RawText { get; }
 
         /// <summary>
         ///     the path to the parent directory.
         /// </summary>
-        public string ParentPath
-        {
-            get { return _parentPath; }
-            set { _parentPath = value; }
-        }
+        public string ParentPath { get; set; }
 
         /// <summary>
-        ///     The full path of the <see cref="FtpItem"/>.
+        ///     The full path of the <see cref="FtpItem" />.
         /// </summary>
         public string FullPath
-        {
-            get { return _parentPath == "/" || _parentPath == "//" ? String.Format("{0}{1}", _parentPath, _name) : String.Format("{0}/{1}", _parentPath, _name); }
-        }
-
+            =>
+                ParentPath == "/" || ParentPath == "//"
+                    ? $"{ParentPath}{Name}"
+                    : $"{ParentPath}/{Name}";
     }
 }

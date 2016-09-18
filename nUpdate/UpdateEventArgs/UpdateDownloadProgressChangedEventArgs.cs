@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+
+using System;
 
 namespace nUpdate.UpdateEventArgs
 {
@@ -8,7 +10,7 @@ namespace nUpdate.UpdateEventArgs
     public class UpdateDownloadProgressChangedEventArgs : EventArgs
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateDownloadProgressChangedEventArgs"/> class.
+        ///     Initializes a new instance of the <see cref="UpdateDownloadProgressChangedEventArgs" /> class.
         /// </summary>
         /// <param name="bytesReceived">The amount of bytes received.</param>
         /// <param name="totalBytesToReceive">The total bytes to receive.</param>

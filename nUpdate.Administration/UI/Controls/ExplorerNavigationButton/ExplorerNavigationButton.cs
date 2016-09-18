@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.ComponentModel;
@@ -17,11 +17,11 @@ namespace ExplorerNavigationButton
     [Description("A button with the appearance of the explorer navigation buttons.")]
     public partial class ExplorerNavigationButton : Control
     {
+        private readonly Bitmap[] _arrows;
         private ArrowDirection _arrowDirection;
         private ButtonState _state;
         private Template _template;
         private ButtonTheme _theme;
-        private readonly Bitmap[] _arrows;
 
         /// <summary>
         ///     Creates a new ExplorerNavigationButton.

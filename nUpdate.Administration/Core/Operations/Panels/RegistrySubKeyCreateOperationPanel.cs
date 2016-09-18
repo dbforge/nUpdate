@@ -1,7 +1,6 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,24 +10,16 @@ namespace nUpdate.Administration.Core.Operations.Panels
 {
     public partial class RegistrySubKeyCreateOperationPanel : UserControl, IOperationPanel
     {
-        private BindingList<string> _itemList = new BindingList<string>();
-
         public RegistrySubKeyCreateOperationPanel()
         {
             InitializeComponent();
-        }
-
-        public bool IsValid
-        {
-            get { return !String.IsNullOrEmpty(subKeyTextBox.Text) && ItemList.Any(); }
         }
 
         public string KeyPath
         {
             get
             {
-                return String.Format("{0}\\{1}", mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem),
-                    subKeyTextBox.Text);
+                return $"{mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem)}\\{subKeyTextBox.Text}";
             }
             set
             {
@@ -41,34 +32,29 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     }
                     else
                     {
-                        subKeyTextBox.Text += String.Format("\\{0}", pathPart);
+                        subKeyTextBox.Text += $"\\{pathPart}";
                     }
                 }
             }
         }
 
-        public BindingList<string> ItemList
-        {
-            get { return _itemList; }
-            set { _itemList = value; }
-        }
+        public BindingList<string> ItemList { get; set; } = new BindingList<string>();
+        public bool IsValid => !string.IsNullOrEmpty(subKeyTextBox.Text) && ItemList.Any();
 
         public Operation Operation
-        {
-            get { return new Operation(OperationArea.Registry, OperationMethod.Create, KeyPath, _itemList.ToList()); }
-        }
+            => new Operation(OperationArea.Registry, OperationMethod.Create, KeyPath, ItemList.ToList());
 
         private void RegistryEntryCreateOperationPanel_Load(object sender, EventArgs e)
         {
-            subKeysToCreateListBox.DataSource = _itemList;
+            subKeysToCreateListBox.DataSource = ItemList;
             mainKeyComboBox.SelectedIndex = 0;
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(keyNameTextBox.Text))
+            if (string.IsNullOrEmpty(keyNameTextBox.Text))
                 return;
-            _itemList.Add(keyNameTextBox.Text);
+            ItemList.Add(keyNameTextBox.Text);
             keyNameTextBox.Clear();
         }
 
@@ -80,12 +66,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            _itemList.RemoveAt(subKeysToCreateListBox.SelectedIndex);
+            ItemList.RemoveAt(subKeysToCreateListBox.SelectedIndex);
         }
 
         private void InputChanged(object sender, EventArgs e)
         {
-            var textBox = (TextBox)sender;
+            var textBox = (TextBox) sender;
             if (!textBox.Text.Contains("/"))
                 return;
             textBox.Text = textBox.Text.Replace('/', '\\');

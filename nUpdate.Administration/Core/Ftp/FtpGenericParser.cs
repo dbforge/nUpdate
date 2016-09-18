@@ -1,27 +1,4 @@
-/*
- *  Authors:  Benton Stark
- * 
- *  Copyright (c) 2007-2009 Starksoft, LLC (http://www.starksoft.com) 
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
+// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Globalization;
@@ -49,7 +26,6 @@ namespace nUpdate.Administration.Core.Ftp
             new Regex(@"((?<=(\d\d:\d\d\s*(AM|PM|am|pm)\s*))\d+)|(\d+(?=\s+\d\d-\d\d-\d\d\s+))", RegexOptions.Compiled);
 
         private readonly Regex _dosTime = new Regex(@"(\d\d:\d\d\s*(AM|PM|am|pm))|(\d\d:\d\d)", RegexOptions.Compiled);
-
         private readonly Regex _isUnix = new Regex(@"(d|l|-|b|c|p|s)(r|w|x|-|t|s){9}", RegexOptions.Compiled);
         private readonly Regex _unixAttribs = new Regex(@"(d|l|-|b|c|p|s)(r|w|x|-|t|s){9}", RegexOptions.Compiled);
 
@@ -134,7 +110,7 @@ namespace nUpdate.Administration.Core.Ftp
                 int curYear = DateTime.Today.Year;
 
                 DateTime result;
-                if (DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "1-{0}-2007", month), out result))
+                if (DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "1-{0}-2007", month), out result))
                 {
                     if ((curMonth - result.Month) < 0)
                         year = Convert.ToString(curYear - 1, CultureInfo.InvariantCulture);
@@ -144,11 +120,11 @@ namespace nUpdate.Administration.Core.Ftp
             }
 
             DateTime dateObj;
-            DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2} {3}", day, month, year, time),
+            DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2} {3}", day, month, year, time),
                 out dateObj);
 
             long sizeLng;
-            Int64.TryParse(size, out sizeLng);
+            long.TryParse(size, out sizeLng);
 
             var itemTypeObj = FtpItemType.Unknown;
             switch (itemType.ToLower(CultureInfo.InvariantCulture))
@@ -196,11 +172,11 @@ namespace nUpdate.Administration.Core.Ftp
 
             // put togther the date/time
             DateTime dateTime;
-            DateTime.TryParse(String.Format(CultureInfo.InvariantCulture, "{0} {1}", date, time), out dateTime);
+            DateTime.TryParse(string.Format(CultureInfo.InvariantCulture, "{0} {1}", date, time), out dateTime);
 
             // parse the file size
             long sizeLng;
-            Int64.TryParse(size, out sizeLng);
+            long.TryParse(size, out sizeLng);
 
             // determine the file item itemType
             FtpItemType itemTypeObj;
@@ -209,7 +185,7 @@ namespace nUpdate.Administration.Core.Ftp
             else
                 itemTypeObj = FtpItemType.File;
 
-            return new FtpItem(name, dateTime, sizeLng, String.Empty, String.Empty, itemTypeObj, line);
+            return new FtpItem(name, dateTime, sizeLng, string.Empty, string.Empty, itemTypeObj, line);
         }
     }
 }

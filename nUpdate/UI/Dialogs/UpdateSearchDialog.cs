@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Drawing;
@@ -14,8 +14,8 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateSearchDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
         private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
+        private LocalizationProperties _lp;
 
         public UpdateSearchDialog()
         {
@@ -45,7 +45,7 @@ namespace nUpdate.UI.Dialogs
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(LanguageFilePath))
+            if (!string.IsNullOrEmpty(LanguageFilePath))
             {
                 try
                 {
@@ -56,15 +56,15 @@ namespace nUpdate.UI.Dialogs
                     _lp = new LocalizationProperties();
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
             {
-                string resourceName = String.Format("nUpdate.Core.Localization.{0}.json", LanguageName);
+                string resourceName = $"nUpdate.Core.Localization.{LanguageName}.json";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     _lp = Serializer.Deserialize<LocalizationProperties>(stream);
                 }
             }
-            else if (String.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
+            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
             {
                 _lp = new LocalizationProperties();
             }
@@ -74,6 +74,12 @@ namespace nUpdate.UI.Dialogs
 
             Text = Application.ProductName;
             Icon = _appIcon;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancelButtonClicked();
+            DialogResult = DialogResult.Cancel;
         }
 
         #region TAP
@@ -87,7 +93,7 @@ namespace nUpdate.UI.Dialogs
         public void ShowModalDialog(object dialogResultReference)
         {
             if (dialogResultReference != null)
-                ((DialogResultReference)dialogResultReference).DialogResult = ShowDialog();
+                ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
             else
                 ShowDialog();
         }
@@ -103,8 +109,12 @@ namespace nUpdate.UI.Dialogs
 
         public void Failed(object sender, FailedEventArgs e)
         {
-            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, e.Exception.InnerException ?? e.Exception,
-                PopupButtons.Ok)));
+            Invoke(
+                new Action(
+                    () =>
+                        Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption,
+                            e.Exception.InnerException ?? e.Exception,
+                            PopupButtons.Ok)));
             DialogResult = DialogResult.Cancel;
         }
 
@@ -114,11 +124,5 @@ namespace nUpdate.UI.Dialogs
         }
 
         #endregion
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancelButtonClicked();
-            DialogResult = DialogResult.Cancel;
-        }
     }
 }

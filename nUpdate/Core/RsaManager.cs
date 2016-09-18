@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.IO;
@@ -16,8 +16,8 @@ namespace nUpdate.Core
         /// </summary>
         public const int DEFAULT_KEY_SIZE = 8192;
 
-        private bool _disposed;
         private readonly RSACryptoServiceProvider _rsa;
+        private bool _disposed;
 
         /// <summary>
         ///     Creates a new instance of the <see cref="RsaManager" />-class.
@@ -26,7 +26,7 @@ namespace nUpdate.Core
         public RsaManager(string rsaKey)
         {
             if (string.IsNullOrEmpty(rsaKey))
-                throw new ArgumentNullException("rsaKey");
+                throw new ArgumentNullException(nameof(rsaKey));
 
             _rsa = new RSACryptoServiceProvider();
             _rsa.FromXmlString(rsaKey);
@@ -46,18 +46,12 @@ namespace nUpdate.Core
         /// <summary>
         ///     Returns the public key.
         /// </summary>
-        public string PublicKey
-        {
-            get { return _rsa.ToXmlString(false); }
-        }
+        public string PublicKey => _rsa.ToXmlString(false);
 
         /// <summary>
         ///     Returns the private key.
         /// </summary>
-        public string PrivateKey
-        {
-            get { return _rsa.ToXmlString(true); }
-        }
+        public string PrivateKey => _rsa.ToXmlString(true);
 
         public void Dispose()
         {
@@ -82,7 +76,7 @@ namespace nUpdate.Core
         /// <returns>The calculated signature.</returns>
         public byte[] SignData(Stream stream)
         {
-            return _rsa.SignData(stream, typeof(SHA512));
+            return _rsa.SignData(stream, typeof (SHA512));
         }
 
         /// <summary>
@@ -107,12 +101,12 @@ namespace nUpdate.Core
             return VerifyDataInternal(stream, "SHA512", signature); // TODO: typeof(SHA512)
         }
 
-        private bool VerifyDataInternal(Stream stream, Object halg, byte[] signature)
+        private bool VerifyDataInternal(Stream stream, object halg, byte[] signature)
         {
-            HashAlgorithm hash = (HashAlgorithm)CryptoConfig.CreateFromName((string)halg);
+            HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName((string) halg);
             //HashAlgorithm hash = (HashAlgorithm)halg;
             byte[] hashVal = hash.ComputeHash(stream);
-            return _rsa.VerifyHash(hashVal, (string)halg, signature);
+            return _rsa.VerifyHash(hashVal, (string) halg, signature);
         }
 
         protected virtual void Dispose(bool disposing)

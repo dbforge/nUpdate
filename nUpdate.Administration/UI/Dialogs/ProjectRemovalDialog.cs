@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
 using System.Collections.Generic;
@@ -36,7 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void ProjectRemovalDialog_Load(object sender, EventArgs e)
         {
-            Text = String.Format(Text, Program.VersionString);
+            Text = string.Format(Text, Program.VersionString);
             var mainNode = new TreeNode("nUpdate Administration (Projects)");
             projectsTreeView.Nodes.Add(mainNode);
             projectsTreeView.Nodes[0].HideCheckBox();
@@ -85,7 +85,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var index = _projectConfiguration.FindIndex(item => item.Name == projectName);
 
             if (
-                Popup.ShowPopup(this, SystemIcons.Question, String.Format("Delete project {0}?", projectName),
+                Popup.ShowPopup(this, SystemIcons.Question, $"Delete project {projectName}?",
                     "Are you sure you want to remove the selected project from nUpdate Administration?",
                     PopupButtons.YesNo) == DialogResult.No)
             {
@@ -102,7 +102,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (GetNameOfExceptionType(ex) != "DirectoryNotFound")
                 {
                     Popup.ShowPopup(this, SystemIcons.Error,
-                        String.Format("Error while removing the project {0}.", projectName), ex, PopupButtons.Ok);
+                        $"Error while removing the project {projectName}.", ex, PopupButtons.Ok);
                     e.Node.Checked = true;
                     return;
                 }
