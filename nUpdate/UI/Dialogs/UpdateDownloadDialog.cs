@@ -15,7 +15,7 @@ namespace nUpdate.UI.Dialogs
     public partial class UpdateDownloadDialog : BaseDialog
     {
         private LocalizationProperties _lp;
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public UpdateDownloadDialog()
         {
