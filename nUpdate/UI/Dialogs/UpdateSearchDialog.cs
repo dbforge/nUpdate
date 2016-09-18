@@ -23,16 +23,6 @@ namespace nUpdate.UI.Dialogs
         }
 
         /// <summary>
-        ///     Sets the name of the languguage file in the resources to use, if no own file is used.
-        /// </summary>
-        public string LanguageName { get; set; }
-
-        /// <summary>
-        ///     Sets the path of the file which contains the specific language content a user added on its own.
-        /// </summary>
-        public string LanguageFilePath { get; set; }
-
-        /// <summary>
         ///     Occurs when the cancel button is clicked.
         /// </summary>
         public event EventHandler<EventArgs> CancelButtonClicked;
@@ -45,29 +35,7 @@ namespace nUpdate.UI.Dialogs
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LanguageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
-            {
-                string resourceName = $"nUpdate.Core.Localization.{LanguageName}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
+            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
 
             cancelButton.Text = _lp.CancelButtonText;
             headerLabel.Text = _lp.UpdateSearchDialogHeader;

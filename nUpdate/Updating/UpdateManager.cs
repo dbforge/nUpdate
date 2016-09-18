@@ -42,20 +42,21 @@ namespace nUpdate.Updating
             Application.ProductName);
 
         private LocalizationProperties _lp;
+        private CultureInfo _languageCulture = new CultureInfo("en");
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
         /// </summary>
         /// <param name="updateConfigurationFileUri">The URI of the update configuration file.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
-        /// <param name="languageCulture">The language culture to use for the localization of the integrated UpdaterUI.</param>
+        /// <param name="languageCulture">.</param>
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
         ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture)
+            CultureInfo languageCulture = null)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException(nameof(updateConfigurationFileUri));
@@ -64,10 +65,6 @@ namespace nUpdate.Updating
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException(nameof(publicKey));
             PublicKey = publicKey;
-
-            if (languageCulture == null)
-                throw new ArgumentNullException(nameof(languageCulture));
-            LanguageCulture = languageCulture;
 
             CultureFilePaths = new Dictionary<CultureInfo, string>();
             Arguments = new List<UpdateArgument>();
@@ -79,14 +76,14 @@ namespace nUpdate.Updating
                 throw new ArgumentException(
                     "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
-            CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-            var existingCultureInfos = new[]
-            {new CultureInfo("en"), new CultureInfo("de-DE"), new CultureInfo("de-AT"), new CultureInfo("de-CH")};
-            if (!existingCultureInfos.Any(item => item.Equals(LanguageCulture)) &&
-                !CultureFilePaths.ContainsKey(LanguageCulture))
-                throw new ArgumentException(
-                    "The given culture info does neither exist in nUpdate's resources, nor in property \"CultureFilePaths\".");
+            // TODO: This is just there to make sure we don't create an API-change that would require a new Major version. This will be changed/removed in v4.0.
+            // Before v3.0-beta5 it was not possible to use custom languages due to a mistake in the architecture. So we can be pretty sure that nobody specifies a custom CultureInfo in the constructor.
+            // We only need these two lines for those who specified one of the implemented CultureInfos here as they shouldn't have to change anything when updating to v3.0-beta5.
+            // Nevertheless, it's therefore possible to use custom CultureInfos just by leaving the optional parameter "null" and specifying the culture using the corresponding properties. So, both cases are covered with that solution.
+            if (languageCulture != null && LocalizationHelper.IsIntegratedCulture(languageCulture, CultureFilePaths))
+                LanguageCulture = languageCulture;
 
+            CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
@@ -129,7 +126,19 @@ namespace nUpdate.Updating
         ///     CultureFilePaths with the relating CultureInfo and path which locates the JSON-file on the client's
         ///     system (e. g. AppData).
         /// </remarks>
-        public CultureInfo LanguageCulture { get; }
+        public CultureInfo LanguageCulture
+        {
+            get { return _languageCulture; }
+            set
+            {
+                if (!LocalizationHelper.IsIntegratedCulture(value, CultureFilePaths) &&
+                    !CultureFilePaths.ContainsKey(_languageCulture))
+                    throw new ArgumentException(
+                        "The localization file of the culture set does not exist.");
+                _lp = LocalizationHelper.GetLocalizationProperties(value, CultureFilePaths);
+                _languageCulture = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the paths for the file with the content relating to the cultures.
