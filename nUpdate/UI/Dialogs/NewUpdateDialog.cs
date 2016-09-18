@@ -23,7 +23,7 @@ namespace nUpdate.UI.Dialogs
         private const float GB = 1073741824;
         private bool _allowCancel;
         private LocalizationProperties _lp;
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public NewUpdateDialog()
         {

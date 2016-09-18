@@ -66,6 +66,7 @@
     <Compile Include="Core\CodeDomHelper.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\FileHelper.cs" />
+    <Compile Include="Core\IconHelper.cs" />
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
     <Compile Include="Core\Operations\OperationMethod.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Core\InstallerServiceProvider.cs" />
     <Compile Include="Core\ProgressReporterService.cs" />
     <Compile Include="Core\ServiceProviderHelper.cs" />
+    <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Exceptions\CompileException.cs" />
     <Compile Include="UI\Controls\ControlPanel.cs">
       <SubType>Component</SubType>
