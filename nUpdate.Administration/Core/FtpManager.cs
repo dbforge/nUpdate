@@ -40,7 +40,7 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Sets the protocol to use.
+        ///     Sets the protocol to use, if FTP is used as protocol.
         /// </summary>
         public FtpsSecurityProtocol Protocol
         {
