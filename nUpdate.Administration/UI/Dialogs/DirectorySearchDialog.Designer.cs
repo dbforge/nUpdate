@@ -117,6 +117,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // serverDataTreeView
             // 
             this.serverDataTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.serverDataTreeView.HideSelection = false;
             this.serverDataTreeView.HotTracking = true;
             this.serverDataTreeView.ImageIndex = 0;
             this.serverDataTreeView.ImageList = this.serverImageList;
@@ -154,10 +155,10 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // loadingLabel
             // 
-            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.AutoEllipsis = true;
             this.loadingLabel.Location = new System.Drawing.Point(34, 19);
             this.loadingLabel.Name = "loadingLabel";
-            this.loadingLabel.Size = new System.Drawing.Size(112, 13);
+            this.loadingLabel.Size = new System.Drawing.Size(217, 15);
             this.loadingLabel.TabIndex = 11;
             this.loadingLabel.Text = "Waiting for thread...";
             // 
@@ -246,7 +247,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DirectorySearchDialog_MouseDown);
             this.controlPanel1.ResumeLayout(false);
             this.loadingPanel.ResumeLayout(false);
-            this.loadingPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

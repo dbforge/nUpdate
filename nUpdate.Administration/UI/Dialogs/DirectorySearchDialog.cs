@@ -19,9 +19,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HT_CAPTION = 0x2;
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
+        private readonly List<TreeNode> _handledNodes = new List<TreeNode>();
         private bool _allowCancel;
         private FtpManager _ftp;
-        private List<ServerItem> _listedFtpItems = new List<ServerItem>();
         private Margins _margins;
         private bool _nodeSelectedByUser = true;
 
@@ -123,7 +123,7 @@ namespace nUpdate.Administration.UI.Dialogs
             e.Graphics.FillRectangle(b, clientArea);
         }
 
-        private void DirectorySearchDialog_Shown(object sender, EventArgs e)
+        private async void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
             Text = string.Format(Text, ProjectName, Program.VersionString);
             if (NativeMethods.DwmIsCompositionEnabled())
@@ -135,8 +135,11 @@ namespace nUpdate.Administration.UI.Dialogs
             _ftp =
                 new FtpManager(Host, Port, null, Username,
                     Password, null, UsePassiveMode, FtpAssemblyPath, Protocol);
-
-            LoadListAsync();
+            
+            var node = new TreeNode("Server", 0, 0);
+            serverDataTreeView.Nodes.Add(node);
+            await LoadListAsync("/", node);
+            node.Expand();
         }
 
         private void DirectorySearchForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -154,10 +157,13 @@ namespace nUpdate.Administration.UI.Dialogs
             NativeMethods.SendMessage(Handle, WM_NCLBUTTONDOWN, new IntPtr(HT_CAPTION), new IntPtr(0));
         }
 
-        private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        private async void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node == serverDataTreeView.Nodes[0])
+            {
+                directoryTextBox.Text = "/";
                 return;
+            }
 
             if (_nodeSelectedByUser)
                 _nav.Add(e.Node);
@@ -174,9 +180,18 @@ namespace nUpdate.Administration.UI.Dialogs
 
             var directory = $"/{string.Join("/", directories)}/{e.Node.Text}";
             directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
+
+            if (!_handledNodes.Contains(e.Node))
+            {
+                await LoadListAsync(directory, e.Node);
+                _handledNodes.Add(e.Node);
+            }
+
+            serverDataTreeView.SelectedNode = e.Node;
+            e.Node.Expand();
         }
 
-        private async void LoadListAsync()
+        private async Task LoadListAsync(string path, TreeNode node)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -184,11 +199,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = "Loading server directories..."));
+                            loadingLabel.Text = "Loading directories..."));
 
+                List<ServerItem> directoryItems;
                 try
                 {
-                    _listedFtpItems = _ftp.ListDirectoriesAndFiles("/", true).ToList();
+                    directoryItems = _ftp.ListDirectoriesAndFiles(path, false).ToList();
                 }
                 catch (Exception ex)
                 {
@@ -196,65 +212,24 @@ namespace nUpdate.Administration.UI.Dialogs
                         new Action(
                             () =>
                             {
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the directories.", ex,
                                     PopupButtons.Ok);
                                 SetUiState(true);
                             }));
 
+                    SetUiState(true);
                     DialogResult = DialogResult.OK;
                     return;
                 }
 
-                if (_listedFtpItems != null)
+                foreach (var serverItem in directoryItems.Where(i => i.ItemType == ServerItemType.Directory))
                 {
-                    var root = ConvertToListingItem(_listedFtpItems, "/");
-                    var rootNode = new TreeNode("Server", 0, 0);
                     Invoke(new Action(() =>
-                    {
-                        RecursiveAdd(root, rootNode);
-                        serverDataTreeView.Nodes.Add(rootNode);
-                        serverDataTreeView.Nodes[0].Expand();
-                        serverDataTreeView.SelectedNode = rootNode;
-                    }));
+                        node.Nodes.Add(new TreeNode(serverItem.Name, 1, 1))));
                 }
 
                 SetUiState(true);
             });
-        }
-
-        private void RecursiveAdd(ListingItem item, TreeNode target)
-        {
-            foreach (var child in item.Children)
-            {
-                if (!child.IsDirectory)
-                    continue;
-
-                var childNode = new TreeNode(child.Text, 1, 1);
-                target.Nodes.Add(childNode);
-                RecursiveAdd(child, childNode);
-            }
-        }
-
-        public static ListingItem ConvertToListingItem(IEnumerable<ServerItem> inputItems, string separator)
-        {
-            var root = new ListingItem("Root", false);
-            foreach (var item in inputItems)
-            {
-                var currentParent = root;
-                foreach (
-                    var pathSegment in item.FullPath.Remove(0, 1).Split(new[] {separator}, StringSplitOptions.None))
-                {
-                    var child = currentParent.Children.FirstOrDefault(t => t.Text == pathSegment);
-                    if (child == null)
-                    {
-                        child = new ListingItem(pathSegment, item.ItemType == ServerItemType.Directory);
-                        currentParent.Children.Add(child);
-                    }
-                    currentParent = child;
-                }
-            }
-
-            return root;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -302,7 +277,7 @@ namespace nUpdate.Administration.UI.Dialogs
             node.BeginEdit();
         }
 
-        private void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        private async void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(e.Label))
             {
@@ -313,12 +288,11 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             serverDataTreeView.LabelEdit = false;
-#pragma warning disable 4014
-            CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
-#pragma warning restore 4014
+            await CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
+            _handledNodes.Add(e.Node);
         }
 
-        private async void CreateDirectory(string path)
+        private async Task CreateDirectory(string path)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -343,16 +317,16 @@ namespace nUpdate.Administration.UI.Dialogs
             });
         }
 
-        private void removeDirectoryButton_Click(object sender, EventArgs e)
+        private async void removeDirectoryButton_Click(object sender, EventArgs e)
         {
             if (serverDataTreeView.SelectedNode == null ||
                 serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
                 return;
 
-            RemoveDirectory(directoryTextBox.Text);
+            await RemoveDirectory(directoryTextBox.Text);
         }
 
-        private async void RemoveDirectory(string path)
+        private async Task RemoveDirectory(string path)
         {
             await Task.Factory.StartNew(() =>
             {
