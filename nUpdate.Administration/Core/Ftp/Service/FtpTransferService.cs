@@ -8,6 +8,7 @@ using System.Security;
 using System.Threading;
 using nUpdate.Administration.TransferInterface;
 using Starksoft.Aspen.Ftps;
+using Starksoft.Aspen.Proxy;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration.Core.Ftp.Service
@@ -95,9 +96,8 @@ namespace nUpdate.Administration.Core.Ftp.Service
             return new FtpsClient(Host, Port, Protocol)
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary
-                // TODO: Proxy
-                //Proxy = _ftpData.Proxy != null ? new HttpProxyClient(_ftpData.Proxy.Address.ToString()) : null
+                FileTransferType = TransferType.Binary,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
             };
         }
 

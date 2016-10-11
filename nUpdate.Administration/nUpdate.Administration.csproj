@@ -136,15 +136,6 @@
       <DependentUpon>ScriptExecuteOperationPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\ProjectConfiguration.cs" />
-    <Compile Include="Core\Proxy\EventArgs\CreateConnectionAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Proxy\Exceptions\ProxyException.cs" />
-    <Compile Include="Core\Proxy\HttpProxyClient.cs" />
-    <Compile Include="Core\Proxy\IProxyClient.cs" />
-    <Compile Include="Core\Proxy\ProxyClientFactory.cs" />
-    <Compile Include="Core\Proxy\Socks4aProxyClient.cs" />
-    <Compile Include="Core\Proxy\Socks4ProxyClient.cs" />
-    <Compile Include="Core\Proxy\Socks5ProxyClient.cs" />
-    <Compile Include="Core\Proxy\Utils.cs" />
     <Compile Include="Core\ServiceProviderHelper.cs" />
     <Compile Include="Core\StatisticsServer.cs" />
     <Compile Include="Core\History\LogEntry.cs" />
