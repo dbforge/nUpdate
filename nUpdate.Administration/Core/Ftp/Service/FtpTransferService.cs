@@ -7,6 +7,7 @@ using System.Net;
 using System.Security;
 using System.Threading;
 using nUpdate.Administration.TransferInterface;
+using nUpdate.Updating;
 using Starksoft.Aspen.Ftps;
 using Starksoft.Aspen.Proxy;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
@@ -149,18 +150,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
             {
                 ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(directoryPath);
-                string nameList;
-                try
-                {
-                    nameList = ftp.GetNameList(destinationName);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("No such file or directory"))
-                        return false;
-                    throw;
-                }
-                return !string.IsNullOrEmpty(nameList);
+                return ftp.Exists(directoryPath, destinationName);
             }
         }
 
@@ -205,7 +195,48 @@ namespace nUpdate.Administration.Core.Ftp.Service
 
         public void MoveContent(string aimPath)
         {
-            InternalMoveContent(Directory, aimPath);
+            MoveContent(Directory, aimPath);
+        }
+
+        public void MoveContent(string directory, string aimPath)
+        {
+            foreach (var item in ListDirectoriesAndFiles(directory, false)
+                .Where(
+                    item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
+            {
+                using (var ftp = GetNewFtpsClient())
+                {
+                    ftp.Open(Username, Password.ConvertToInsecureString());
+
+                    Guid guid; // Just for the out-reference of TryParse
+                    if (item.ItemType == ServerItemType.Directory && UpdateVersion.IsValid(item.Name))
+                    {
+                        ftp.ChangeDirectoryMultiPath(aimPath);
+                        if (!IsExisting(aimPath, item.Name))
+                            ftp.MakeDirectory(item.Name);
+                        ftp.ChangeDirectoryMultiPath(item.Name);
+
+                        MoveContent(item.FullPath, $"{aimPath}/{item.Name}");
+                        DeleteDirectory(item.FullPath);
+                    }
+                    else if (item.ItemType == ServerItemType.File &&
+                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
+                    // Second condition determines whether the item is a package-file or not
+                    {
+                        if (!IsExisting(aimPath, item.Name))
+                        {
+                            // "MoveFile"-method damages the files, so we do it manually with a work-around
+                            ftp.MoveFile(item.FullPath, $"{aimPath}/{item.Name}");
+
+                            /*string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
+                            ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
+                            ftp.PutFile(localFilePath, $"{aimPath}/{item.Name}",
+                                FileAction.Create);
+                            File.Delete(localFilePath);*/
+                        }
+                    }
+                }
+            }
         }
 
         public event EventHandler<TransferProgressEventArgs> ProgressChanged;
@@ -263,48 +294,6 @@ namespace nUpdate.Administration.Core.Ftp.Service
         {
             EventHandler<EventArgs> handler = CancellationFinished;
             handler?.Invoke(this, e);
-        }
-
-        public void InternalMoveContent(string directory, string aimPath)
-        {
-            /*foreach (var item in ListDirectoriesAndFiles(directory, false)
-                .Where(
-                    item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
-            {
-                using (var ftp = GetNewFtpsClient())
-                {
-                    ftp.Open(Username, Password.ConvertToInsecureString());
-
-                    Guid guid; // Just for the out-reference of TryParse
-                    if (item.ItemType == ServerItemType.Directory && UpdateVersion.IsValid(item.Name))
-                    {
-                        ftp.ChangeDirectoryMultiPath(aimPath);
-                        if (!IsExisting(aimPath, item.Name))
-                            ftp.MakeDirectory(item.Name);
-                        ftp.ChangeDirectoryMultiPath(item.Name);
-
-                        InternalMoveContent(item.FullPath, $"{aimPath}/{item.Name}");
-                        DeleteDirectory(item.FullPath);
-                    }
-                    else if (item.ItemType == ServerItemType.File &&
-                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
-                        // Second condition determines whether the item is a package-file or not
-                    {
-                        if (!IsExisting(aimPath, item.Name))
-                        {
-                            // "MoveFile"-method damages the files, so we do it manually with a work-around
-                            //ftp.MoveFile(item.FullPath, String.Format("{0}/{1}", aimPath, item.Name));
-
-                            string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
-                            ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                            ftp.PutFile(localFilePath, $"{aimPath}/{item.Name}",
-                                FileAction.Create);
-                            File.Delete(localFilePath);
-                        }
-                        DeleteFile(item.FullPath);
-                    }
-                }
-            }*/
         }
 
         public void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)

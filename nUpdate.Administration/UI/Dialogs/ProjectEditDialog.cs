@@ -27,7 +27,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _allowCancel = true;
         private FtpManager _ftp;
         private string _ftpAssemblyPath;
-        private bool _ftpDirectoryChanged;
         private bool _generalTabPassed;
         private bool _isSetByUser;
         private int _lastSelectedIndex;
@@ -207,37 +206,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while undoing the renaming of the project file.",
-                            ex, PopupButtons.Ok);
-                        Close();
-                    }));
-                    return;
-                }
-            }
-
-            if (_ftpDirectoryChanged)
-            {
-                Invoke(
-                    new Action(
-                        () =>
-                            loadingLabel.Text = "Undoing the directory changing..."));
-
-                try
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                _ftp.Directory = ftpDirectoryTextBox.Text));
-                    _ftp.MoveContent(Project.FtpDirectory);
-                    _ftpDirectoryChanged = false;
-                    _ftp.Directory = Project.FtpDirectory;
-                }
-                catch (Exception ex)
-                {
-                    SetUiState(true);
-                    Invoke(new Action(() =>
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error,
-                            "Error while undoing the directory changing.",
                             ex, PopupButtons.Ok);
                         Close();
                     }));
@@ -1066,36 +1034,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     }
                 }
 
-                string ftpDirectory = null;
-                Invoke(new Action(() => ftpDirectory = ftpDirectoryTextBox.Text));
-                if (Project.FtpDirectory != ftpDirectory &&
-                    Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1) &&
-                    Project.FtpDirectory.Substring(1) != ftpDirectory)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text =
-                                    $"Moving old directory content to \"{ftpDirectory}\"..."));
-
-                    try
-                    {
-                        _ftpDirectoryChanged = true;
-                        _ftp.MoveContent(ftpDirectory);
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the directory content.",
-                                        ex,
-                                        PopupButtons.Ok)));
-                        Reset();
-                        return;
-                    }
-                }
-
                 if (Project.UpdateUrl != _updateUrl)
                 {
                     if (_newUpdateConfiguration == null && !LoadConfiguration())
@@ -1140,8 +1078,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                             File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                             _updateConfigurationSaved = true;
-
+                            
+                            // Upload the configuration
                             _ftp.UploadFile(localConfigurationPath);
+
                             File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
@@ -1154,6 +1094,35 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             return;
                         }
                     }
+                }
+                
+                string ftpDirectory = null;
+                Invoke(new Action(() => ftpDirectory = ftpDirectoryTextBox.Text));
+                if (Project.FtpDirectory != ftpDirectory &&
+                    Project.FtpDirectory != ftpDirectory.Remove(ftpDirectory.Length - 1) &&
+                    Project.FtpDirectory.Substring(1) != ftpDirectory)
+                {
+                    //  Move all the content
+                    Invoke(
+                        new Action(
+                            () =>
+                                loadingLabel.Text = "Moving content to new directory..."));
+
+                    try
+                    {
+                        _ftp.MoveContent(ftpDirectory);
+                        // TODO: RESET ACTION
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while moving the content.", ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+
+                    // Set the new directory
+                    _ftp.Directory = ftpDirectory;
                 }
 
                 var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
@@ -1283,18 +1252,19 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 $"\nINSERT INTO Version (`ID`, `Version`, `Application_ID`) VALUES ({updateConfig.VersionId}, \"{updateConfig.LiteralVersion}\", {Project.ApplicationId});";
                         }
 
-                        Invoke(
-                            new Action(
-                                () =>
-                                    loadingLabel.Text = "Uploading new configuration..."));
-
                         try
                         {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        loadingLabel.Text = "Uploading new configuration..."));
+
+
                             var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                             File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                             _updateConfigurationSaved = true;
-
                             _ftp.UploadFile(localConfigurationPath);
+
                             File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
                             _updateUrlChanged = true;
@@ -1463,7 +1433,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             var localConfigurationPath = Path.Combine(Program.Path, "updates.json");
                             File.WriteAllText(localConfigurationPath, Serializer.Serialize(_newUpdateConfiguration));
                             _updateConfigurationSaved = true;
-
+                            
                             _ftp.UploadFile(localConfigurationPath);
                             File.WriteAllText(localConfigurationPath, string.Empty);
                             _updateConfigurationSaved = false;
@@ -1664,14 +1634,9 @@ DELETE FROM Application WHERE `ID` = _APPID;";
             try
             {
                 _oldUpdateConfiguration =
-                    UpdateConfiguration.Download(UriConnector.ConnectUri(_updateUrl, "updates.json"), Project.Proxy);
-                if (_oldUpdateConfiguration != null)
-                    _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
-                else
-                {
-                    _oldUpdateConfiguration = new List<UpdateConfiguration>();
-                    _newUpdateConfiguration = new List<UpdateConfiguration>();
-                }
+                    UpdateConfiguration.Download(UriConnector.ConnectUri(Project.UpdateUrl, "updates.json"), Project.Proxy) ??
+                    Enumerable.Empty<UpdateConfiguration>();
+                _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
 
                 return true;
             }
