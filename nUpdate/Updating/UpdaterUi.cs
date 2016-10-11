@@ -104,7 +104,7 @@ namespace nUpdate.Updating
 
                     try
                     {
-                        _updatesAvailable = await _updateManager.SearchForUpdatesAsync();
+                        _updatesAvailable = await UpdateManagerInstance.SearchForUpdatesAsync();
                     }
                     catch (OperationCanceledException)
                     {
@@ -156,7 +156,7 @@ namespace nUpdate.Updating
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
                         
-                        await _updateManager.DownloadPackagesAsync(progressIndicator);
+                        await UpdateManagerInstance.DownloadPackagesAsync(progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
@@ -173,7 +173,7 @@ namespace nUpdate.Updating
                     bool isValid = false;
                     try
                     {
-                        isValid = _updateManager.ValidatePackages();
+                        isValid = UpdateManagerInstance.ValidatePackages();
                     }
                     catch (FileNotFoundException)
                     {
@@ -197,7 +197,7 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        _updateManager.InstallPackage();
+                        UpdateManagerInstance.InstallPackage();
                 });
             }
             finally

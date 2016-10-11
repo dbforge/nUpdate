@@ -462,14 +462,14 @@ namespace nUpdate.Updating
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
             long received = 0;
-            double total = _updateConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+            double total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                     .Where(updatePackageSize => updatePackageSize != null)
                     .Sum(updatePackageSize => updatePackageSize.Value);
 
             if (!Directory.Exists(_applicationUpdateDirectory))
                 Directory.CreateDirectory(_applicationUpdateDirectory);
 
-            foreach (var updateConfiguration in _updateConfigurations)
+            foreach (var updateConfiguration in PackageConfigurations)
             {
                 WebResponse webResponse = null;
                 try
@@ -522,7 +522,7 @@ namespace nUpdate.Updating
                                 size = await input.ReadAsync(buffer, 0, buffer.Length);
                             }
 
-                            if (!updateConfiguration.UseStatistics || !_includeCurrentPcIntoStatistics)
+                            if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
                                 continue;
 
                             try
