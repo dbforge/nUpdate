@@ -430,7 +430,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void ProjectDialog_Load(object sender, EventArgs e)
+        private async void ProjectDialog_Load(object sender, EventArgs e)
         {
             if (!InitializeProjectData())
             {
@@ -497,7 +497,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _isSetByUser = true;
             }
 
-            InitializeAsync();
+            await InitializeAsync();
         }
 
         private void ProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -506,7 +506,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Cancel = true;
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             await BeginUpdateConfigurationCheck();
             if (Project.UseStatistics)
@@ -528,9 +528,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private async Task InitializeStatisticsData()
+        private Task InitializeStatisticsData()
         {
-            await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 if (_dataGridViewRowTags.Count > 0)
                     _dataGridViewRowTags.Clear();
@@ -792,12 +792,12 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeProjectData();
         }
 
-        private void editButton_Click(object sender, EventArgs e)
+        private async void editButton_Click(object sender, EventArgs e)
         {
-            InitializeEditing();
+            await InitializeEditing();
         }
 
-        private async void InitializeEditing()
+        private async Task InitializeEditing()
         {
             if (packagesList.SelectedItems.Count == 0)
                 return;
@@ -1120,18 +1120,16 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #region "Upload"
 
-        private void uploadButton_Click(object sender, EventArgs e)
+        private async void uploadButton_Click(object sender, EventArgs e)
         {
             if (packagesList.SelectedItems.Count == 0)
                 return;
 
             var version = new UpdateVersion((string) packagesList.SelectedItems[0].Tag);
-#pragma warning disable 4014
-            UploadPackage(version);
-#pragma warning restore 4014
+            await UploadPackage(version);
         }
 
-        private async void UploadPackage(UpdateVersion packageVersion)
+        private async Task UploadPackage(UpdateVersion packageVersion)
         {
             await TaskEx.Run(() =>
             {
