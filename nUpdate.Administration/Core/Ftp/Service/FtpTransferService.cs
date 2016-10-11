@@ -220,7 +220,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
                         DeleteDirectory(item.FullPath);
                     }
                     else if (item.ItemType == ServerItemType.File &&
-                             (item.Name == "updates.json" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
+                             (item.Name == "updates.json" || item.Name == "statistics.php" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
                     // Second condition determines whether the item is a package-file or not
                     {
                         if (!IsExisting(aimPath, item.Name))
