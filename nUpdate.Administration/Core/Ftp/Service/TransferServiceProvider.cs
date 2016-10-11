@@ -29,7 +29,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
 
         private void InitializeServices()
         {
-            _services.Add(typeof (ITransferProvider), new TransferService());
+            _services.Add(typeof (ITransferProvider), new FtpTransferService());
         }
     }
 }

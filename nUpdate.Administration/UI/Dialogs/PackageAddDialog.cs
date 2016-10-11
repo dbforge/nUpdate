@@ -16,17 +16,17 @@ using Ionic.Zip;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.Properties;
-using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Core.Operations;
 using nUpdate.Updating;
+using Starksoft.Aspen.Ftps;
+using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -169,7 +169,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                 bool connectingFailed = false;
                 var deleteConnection = new MySqlConnection(connectionString);
@@ -253,7 +253,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (!string.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
                     _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
                 else
-                    _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
+                    _ftp.Protocol = (FtpsSecurityProtocol) Project.FtpProtocol;
             }
             catch (Exception ex)
             {
@@ -676,7 +676,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             var connectionString = $"SERVER={Project.SqlWebUrl};" +
                                                    $"DATABASE={Project.SqlDatabaseName};" +
                                                    $"UID={Project.SqlUsername};" +
-                                                   $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                                   $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                             _insertConnection = new MySqlConnection(connectionString);
                             _insertConnection.Open();
@@ -835,7 +835,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            $"Uploading package... {Math.Round(e.Percentage, 1)}% | {e.BytesPerSecond/1024}KB/s"));
+                            $"Uploading package... {e.PercentComplete}% | {e.BytesPerSecond/1024}KB/s"));
             if (_uploadCancelled)
             {
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));

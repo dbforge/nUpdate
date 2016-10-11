@@ -14,12 +14,11 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
-using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
 using nUpdate.Updating;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -736,7 +735,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             ftpHostTextBox.Text = Project.FtpHost;
             ftpPortTextBox.Text = Project.FtpPort.ToString(CultureInfo.InvariantCulture);
             ftpUserTextBox.Text = Project.FtpUsername;
-            ftpPasswordTextBox.Text = FtpPassword.ConvertToUnsecureString();
+            ftpPasswordTextBox.Text = FtpPassword.ConvertToInsecureString();
             ftpModeComboBox.SelectedIndex = Project.FtpUsePassiveMode ? 0 : 1;
             ftpProtocolComboBox.SelectedIndex = Project.FtpProtocol;
             ftpDirectoryTextBox.Text = Project.FtpDirectory;
@@ -759,7 +758,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             {
                 useStatisticsServerRadioButton.Checked = true;
                 databaseNameLabel.Text = Project.SqlDatabaseName;
-                sqlPasswordTextBox.Text = SqlPassword.ConvertToUnsecureString();
+                sqlPasswordTextBox.Text = SqlPassword.ConvertToInsecureString();
             }
 
             if (Project.Proxy != null)
@@ -767,7 +766,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 useProxyRadioButton.Checked = true;
                 proxyHostTextBox.Text = Project.Proxy.Address.ToString();
                 proxyUserTextBox.Text = Project.ProxyUsername;
-                proxyPasswordTextBox.Text = ProxyPassword.ConvertToUnsecureString();
+                proxyPasswordTextBox.Text = ProxyPassword.ConvertToInsecureString();
             }
 
             _sender = generalTabPage;
@@ -871,7 +870,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftp.Password = ftpPassword;
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
-                _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
+                _ftp.Protocol = (FtpsSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enable it again
                     backButton.Enabled = true;
@@ -943,7 +942,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 {
                     _ftp.TestConnection();
                 }
-                catch (FtpAuthenticationException ex)
+                catch (FtpsAuthenticationException ex)
                 {
                     Invoke(
                         new Action(
@@ -1492,7 +1491,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                 myConnectionString = $"SERVER={Project.SqlWebUrl};" +
                                                      $"DATABASE={Project.SqlDatabaseName};" +
                                                      $"UID={Project.SqlUsername};" +
-                                                     $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                                     $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
                             }));
 
                             myConnection = new MySqlConnection(myConnectionString);

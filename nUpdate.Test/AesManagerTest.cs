@@ -14,8 +14,8 @@ namespace nUpdate.Test
             const string password = "ILikeTrains";
             byte[] encrypted = AesManager.Encrypt(password, "testKey", "testIV");
             var decrypted = AesManager.Decrypt(encrypted, "testKey", "testIV");
-            Assert.IsTrue(decrypted.ConvertToUnsecureString() == password);
-            Assert.IsFalse(decrypted.ConvertToUnsecureString() == "NotThePassword");
+            Assert.IsTrue(decrypted.ConvertToInsecureString() == password);
+            Assert.IsFalse(decrypted.ConvertToInsecureString() == "NotThePassword");
         }
     }
 }
