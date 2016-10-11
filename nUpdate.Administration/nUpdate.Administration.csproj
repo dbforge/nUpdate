@@ -84,6 +84,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="starksoft.aspen, Version=1.1.0.0, Culture=neutral, PublicKeyToken=56b8923a24d03eb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\starksoft.aspen.1.1.0\lib\net40\starksoft.aspen.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -120,45 +124,7 @@
     <Compile Include="Core\Application\Extension\RegistryWrapper.cs" />
     <Compile Include="Core\Application\Extension\ShellNotification.cs" />
     <Compile Include="Core\CodeDomHelper.cs" />
-    <Compile Include="Core\Ftp\EventArgs\ConnectionClosedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\FtpRequestEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\FtpResponseEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\FtpTransferEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\FxpCopyAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\GetDirListAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\GetDirListDeepAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\GetFileAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\OpenAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\PutFileAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\PutFileUniqueAsyncCompletedEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\TransferCompleteEventArgs.cs" />
-    <Compile Include="Core\Ftp\EventArgs\ValidateServerCertificateEventArgs.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpAsynchronousOperationException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpAuthenticationException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpCertificateValidationException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpCommandResponseTimeoutException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpConnectionBrokenException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpConnectionClosedException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpConnectionOpenException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpDataCompressionException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpDataConnectionTimeoutException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpDataTransferException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpFileIntegrityException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpLoginException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpProxyException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpResponseException.cs" />
-    <Compile Include="Core\Ftp\Exceptions\FtpSecureConnectionException.cs" />
-    <Compile Include="Core\Ftp\FtpBase.cs" />
-    <Compile Include="Core\Ftp\FtpClient.cs" />
-    <Compile Include="Core\Ftp\FtpGenericParser.cs" />
-    <Compile Include="Core\Ftp\FtpRequest.cs" />
-    <Compile Include="Core\Ftp\FtpResponse.cs" />
-    <Compile Include="Core\Ftp\FtpResponseCollection.cs" />
-    <Compile Include="Core\Ftp\FtpResponseQueue.cs" />
-    <Compile Include="Core\Ftp\Hashing\Crc32.cs" />
-    <Compile Include="Core\Ftp\Service\TransferService.cs" />
+    <Compile Include="Core\Ftp\Service\FtpTransferService.cs" />
     <Compile Include="Core\Ftp\Service\TransferServiceProvider.cs" />
     <Compile Include="Core\IAsyncSupportable.cs" />
     <Compile Include="Core\IResettable.cs" />

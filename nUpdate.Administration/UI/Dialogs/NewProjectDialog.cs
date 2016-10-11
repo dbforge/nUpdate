@@ -14,11 +14,10 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
-using nUpdate.Administration.Core.Ftp.Exceptions;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -367,7 +366,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Password = ftpPassword; // Same instance that FtpManager will automatically dispose
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
-                _ftp.Protocol = (FtpSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
+                _ftp.Protocol = (FtpsSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enabled it again
                     backButton.Enabled = true;
@@ -585,7 +584,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     _ftp.TestConnection();
                 }
-                catch (FtpAuthenticationException ex)
+                catch (FtpsAuthenticationException ex)
                 {
                     Invoke(
                         new Action(

@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 using System.Security;
-using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Ftp.Service;
 using nUpdate.Administration.TransferInterface;
+using Starksoft.Aspen.Ftps;
+using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration.Core
 {
@@ -15,11 +16,6 @@ namespace nUpdate.Administration.Core
     {
         private bool _disposed;
         private ITransferProvider _transferProvider;
-
-        /// <summary>
-        ///     Gets or sets the FTP-items that were listed by the <see cref="ListDirectoriesAndFiles" />-method.
-        /// </summary>
-        public IEnumerable<FtpItem> ListedFtpItems;
 
         public FtpManager()
         {
@@ -40,19 +36,19 @@ namespace nUpdate.Administration.Core
             _transferProvider.Proxy = proxy;
             _transferProvider.UsePassiveMode = usePassiveMode;
             if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                Protocol = (FtpSecurityProtocol) protcol;
+                Protocol = (FtpsSecurityProtocol) protcol;
         }
 
         /// <summary>
         ///     Sets the protocol to use.
         /// </summary>
-        public FtpSecurityProtocol Protocol
+        public FtpsSecurityProtocol Protocol
         {
-            get { return ((TransferService) _transferProvider).Protocol; }
+            get { return ((FtpTransferService) _transferProvider).Protocol; }
             set
             {
-                if (_transferProvider.GetType() == typeof (TransferService))
-                    ((TransferService) _transferProvider).Protocol = value;
+                if (_transferProvider.GetType() == typeof (FtpTransferService))
+                    ((FtpTransferService) _transferProvider).Protocol = value;
             }
         }
 
@@ -139,7 +135,7 @@ namespace nUpdate.Administration.Core
             {
                 var provider = GetDefaultServiceProvider();
                 _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));
-                ((TransferService) _transferProvider).Protocol = Protocol;
+                ((FtpTransferService) _transferProvider).Protocol = Protocol;
                     // Default integrated services define a protocol as there are multiple ones available
             }
             else
@@ -192,7 +188,7 @@ namespace nUpdate.Administration.Core
         /// <summary>
         ///     Lists the directories and files of the current FTP-directory.
         /// </summary>
-        public IEnumerable<FtpItem> ListDirectoriesAndFiles(string path, bool recursive)
+        public IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive)
         {
             return _transferProvider.ListDirectoriesAndFiles(path, recursive);
         }

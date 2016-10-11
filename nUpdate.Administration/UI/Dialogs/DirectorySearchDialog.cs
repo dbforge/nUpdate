@@ -21,7 +21,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private bool _allowCancel;
         private FtpManager _ftp;
-        private List<FtpItem> _listedFtpItems = new List<FtpItem>();
+        private List<ServerItem> _listedFtpItems = new List<ServerItem>();
         private Margins _margins;
         private bool _nodeSelectedByUser = true;
 
@@ -235,7 +235,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        public static ListingItem ConvertToListingItem(IEnumerable<FtpItem> inputItems, string separator)
+        public static ListingItem ConvertToListingItem(IEnumerable<ServerItem> inputItems, string separator)
         {
             var root = new ListingItem("Root", false);
             foreach (var item in inputItems)
@@ -247,7 +247,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     var child = currentParent.Children.FirstOrDefault(t => t.Text == pathSegment);
                     if (child == null)
                     {
-                        child = new ListingItem(pathSegment, item.ItemType == FtpItemType.Directory);
+                        child = new ListingItem(pathSegment, item.ItemType == ServerItemType.Directory);
                         currentParent.Children.Add(child);
                     }
                     currentParent = child;

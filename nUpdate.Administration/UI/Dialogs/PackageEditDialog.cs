@@ -15,7 +15,6 @@ using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Ftp;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
@@ -23,6 +22,7 @@ using nUpdate.Core;
 using nUpdate.Core.Operations;
 using nUpdate.Updating;
 using Newtonsoft.Json.Linq;
+using Starksoft.Aspen.Ftps;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -157,7 +157,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                 var myConnection = new MySqlConnection(connectionString);
                 try
@@ -250,7 +250,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (!string.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
                     _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
                 else
-                    _ftp.Protocol = (FtpSecurityProtocol) Project.FtpProtocol;
+                    _ftp.Protocol = (FtpsSecurityProtocol) Project.FtpProtocol;
             }
             catch (Exception ex)
             {
@@ -711,7 +711,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                            $"UID={Project.SqlUsername};" +
-                                           $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                           $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                     var myConnection = new MySqlConnection(connectionString);
                     try

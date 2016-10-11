@@ -84,9 +84,9 @@ namespace nUpdate.Administration.TransferInterface
         void DeleteDirectory(string directoryPath);
 
         /// <summary>
-        ///     Lists the directories and files of the current FTP-directory.
+        ///     Lists the directories and files of the current directory.
         /// </summary>
-        IEnumerable<FtpItem> ListDirectoriesAndFiles(string path, bool recursive);
+        IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive);
 
         /// <summary>
         ///     Renames a directory on the server.
