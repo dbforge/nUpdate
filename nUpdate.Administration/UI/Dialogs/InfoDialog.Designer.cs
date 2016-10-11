@@ -105,7 +105,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "3.0.0.0 Beta 4";
+            this.label13.Text = "3.0.0.0 Beta 5";
             // 
             // controlPanel1
             // 
@@ -337,7 +337,7 @@
             this.fastColoredTextBoxLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.fastColoredTextBoxLinkLabel.Location = new System.Drawing.Point(227, 141);
             this.fastColoredTextBoxLinkLabel.Name = "fastColoredTextBoxLinkLabel";
-            this.fastColoredTextBoxLinkLabel.Size = new System.Drawing.Size(108, 13);
+            this.fastColoredTextBoxLinkLabel.Size = new System.Drawing.Size(107, 13);
             this.fastColoredTextBoxLinkLabel.TabIndex = 28;
             this.fastColoredTextBoxLinkLabel.TabStop = true;
             this.fastColoredTextBoxLinkLabel.Text = "FastColoredTextBox";
