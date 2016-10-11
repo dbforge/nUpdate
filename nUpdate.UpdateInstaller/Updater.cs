@@ -508,9 +508,9 @@ namespace nUpdate.UpdateInstaller
                         catch (IOException ex)
                         {
                             if (FileHelper.IsFileLocked(ex))
-                            {
                                 _progressReporter.Fail(new Exception(string.Format(Program.FileInUseError, aimPath)));
-                            }
+                            else
+                                throw;
                         }
                     }
 
