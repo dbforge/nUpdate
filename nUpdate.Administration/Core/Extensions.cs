@@ -144,7 +144,7 @@ namespace nUpdate.Administration.Core
                     serverItemType = ServerItemType.File;
                     break;
             }
-            return new ServerItem(ftpsItem.Name, ftpsItem.Size, ftpsItem.Modified, serverItemType);
+            return new ServerItem(ftpsItem.Name, ftpsItem.FullPath, ftpsItem.Size, ftpsItem.Modified, serverItemType);
         }
 
         public static TransferInterface.TransferProgressEventArgs ToTransferInterfaceProgressEventArgs(
