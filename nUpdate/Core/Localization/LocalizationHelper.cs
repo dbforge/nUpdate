@@ -55,7 +55,7 @@ namespace nUpdate.Core.Localization
 
         internal static LocalizationProperties GetLocalizationProperties(CultureInfo cultureInfo, Dictionary<CultureInfo, string> localizationFilePaths)
         {
-            string resourceName = $"nUpdate.Localization.{cultureInfo.Name}.json";
+            string resourceName = $"nUpdate.Core.Localization.{cultureInfo.Name}.json";
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 if (stream != null)
