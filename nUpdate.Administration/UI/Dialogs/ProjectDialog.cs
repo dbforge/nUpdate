@@ -116,7 +116,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                 var deleteConnection = new MySqlConnection(connectionString);
                 try
@@ -547,7 +547,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                        $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                 _queryConnection = new MySqlConnection(connectionString);
                 try
@@ -1194,7 +1194,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                            $"UID={Project.SqlUsername};" +
-                                           $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                           $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                     var insertConnection = new MySqlConnection(connectionString);
                     try
@@ -1353,7 +1353,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            $"Uploading... {string.Format($"{Math.Round(e.Percentage, 1)}% | {e.BytesPerSecond/1024}KB/s", Math.Round(e.Percentage, 1), e.BytesPerSecond/1024)}"));
+                            $"Uploading... {$"{e.PercentComplete}% | {e.BytesPerSecond/1024}KB/s"}"));
 
             if (_uploadCancelled)
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
@@ -1923,7 +1923,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
                                                $"UID={Project.SqlUsername};" +
-                                               $"PASSWORD={SqlPassword.ConvertToUnsecureString()};";
+                                               $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
 
                         var deleteConnection = new MySqlConnection(connectionString);
 

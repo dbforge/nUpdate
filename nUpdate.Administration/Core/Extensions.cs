@@ -7,7 +7,9 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
 using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Core
 {
@@ -69,7 +71,7 @@ namespace nUpdate.Administration.Core
             }
         }
 
-        public static string ConvertToUnsecureString(this SecureString securePassword)
+        public static string ConvertToInsecureString(this SecureString securePassword)
         {
             if (securePassword == null)
                 throw new ArgumentNullException(nameof(securePassword));
@@ -128,6 +130,27 @@ namespace nUpdate.Administration.Core
                 view.Nodes.RemoveAt(index);
                 view.Nodes.Insert(index + 1, node);
             }
+        }
+
+        public static ServerItem ToServerItem(this FtpsItem ftpsItem)
+        {
+            var serverItemType = ServerItemType.Other;
+            switch (ftpsItem.ItemType)
+            {
+                case FtpItemType.Directory:
+                    serverItemType = ServerItemType.Directory;
+                    break;
+                case FtpItemType.File:
+                    serverItemType = ServerItemType.File;
+                    break;
+            }
+            return new ServerItem(ftpsItem.Name, ftpsItem.Size, ftpsItem.Modified, serverItemType);
+        }
+
+        public static TransferInterface.TransferProgressEventArgs ToTransferInterfaceProgressEventArgs(
+            this Starksoft.Aspen.Ftps.TransferProgressEventArgs progressEventArgs)
+        {
+            return new TransferInterface.TransferProgressEventArgs(progressEventArgs.BytesTransferred, progressEventArgs.TotalBytesTransferred, progressEventArgs.BytesPerSecond, progressEventArgs.KilobytesPerSecond, progressEventArgs.MegabytesPerSecond, progressEventArgs.GigabytesPerSecond, progressEventArgs.ElapsedTime, progressEventArgs.PercentComplete, progressEventArgs.TransferSize, progressEventArgs.BytesRemaining, progressEventArgs.TimeRemaining);
         }
     }
 }

@@ -4,72 +4,76 @@ using System;
 
 namespace nUpdate.Administration.TransferInterface
 {
-    /// <summary>
-    ///     Provides the data for the <see cref="TransferProgressEventArgs" />-event.
-    /// </summary>
     public class TransferProgressEventArgs : EventArgs
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TransferProgressEventArgs" />-class.
-        /// </summary>
-        /// <param name="bytesTransferred">The number of bytes transferred.</param>
-        /// <param name="totalBytesTransferred">Total number of bytes transferred.</param>
-        /// <param name="bytesPerSecond">The data transfer speed in bytes per second.</param>
-        /// <param name="elapsedTime">The time that has elapsed since the data transfer started.</param>
-        /// <param name="totalBytes">Total bytes of data.</param>
-        public TransferProgressEventArgs(int bytesTransferred, long totalBytesTransferred, int bytesPerSecond,
-            TimeSpan elapsedTime, long totalBytes)
+        public TransferProgressEventArgs(int bytesTransferred, long totalBytesTransferred, int bytesPerSecond, int kilobytesPerSecond, int megabytesPerSecond, int gigabytesPerSecond, TimeSpan elapsedTime, int percentComplete, long transferSize, long bytesRemaining, TimeSpan timeRemaining)
         {
             BytesTransferred = bytesTransferred;
             TotalBytesTransferred = totalBytesTransferred;
             BytesPerSecond = bytesPerSecond;
+            KilobytesPerSecond = kilobytesPerSecond;
+            MegabytesPerSecond = megabytesPerSecond;
+            GigabytesPerSecond = gigabytesPerSecond;
             ElapsedTime = elapsedTime;
-            TotalBytes = totalBytes;
+            PercentComplete = percentComplete;
+            TransferSize = transferSize;
+            BytesRemaining = bytesRemaining;
+            TimeRemaining = timeRemaining;
         }
 
         /// <summary>
-        ///     The number of bytes transferred.
+        ///     Gets or sets the number of bytes transferred in the last transfer block.
         /// </summary>
-        public int BytesTransferred { get; }
+        public int BytesTransferred { get; set; }
 
         /// <summary>
-        ///     Total number of bytes transferred.
+        ///     Gets or sets the total number of bytes transferred for a particular transfer event.
         /// </summary>
-        public long TotalBytesTransferred { get; }
+        public long TotalBytesTransferred { get; set; }
 
         /// <summary>
-        ///     Total bytes of data.
+        ///     Gets or sets the data transfer speed in bytes per second.
         /// </summary>
-        public long TotalBytes { get; }
+        public int BytesPerSecond { get; set; }
 
         /// <summary>
-        ///     Gets the data transfer speed in bytes per second.
+        ///     Gets or sets the data transfer speed in Kilobytes per second.
         /// </summary>
-        public int BytesPerSecond { get; }
+        public int KilobytesPerSecond { get; set; }
 
         /// <summary>
-        ///     Gets the data transfer speed in kilobytes per second.
+        ///     Gets or sets the data transfer speed in Megabytes per second.
         /// </summary>
-        public int KilobytesPerSecond => BytesPerSecond/1024;
+        public int MegabytesPerSecond { get; set; }
 
         /// <summary>
-        ///     Gets the time that has elapsed since the data transfer started.
+        ///     Gets or sets the data transfer speed in Gigabytes per second.
         /// </summary>
-        public TimeSpan ElapsedTime { get; }
+        public int GigabytesPerSecond { get; set; }
 
         /// <summary>
-        ///     Transferred data percentage.
+        ///     Gets or sets the time that has elapsed since the data transfer started.
         /// </summary>
-        public float Percentage => (float) TotalBytesTransferred/TotalBytes*100;
+        public TimeSpan ElapsedTime { get; set; }
 
-        public TimeSpan EstimatedCompleteTime
-        {
-            get
-            {
-                double elapsed = ElapsedTime.TotalMilliseconds;
-                double totalTime = (double) TotalBytes/TotalBytesTransferred*elapsed;
-                return TimeSpan.FromMilliseconds(totalTime - elapsed);
-            }
-        }
+        /// <summary>
+        ///     Gets or sets the percentage of the transfer completion, if data is available.
+        /// </summary>
+        public int PercentComplete { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the size of the data transfer´, if data is available.
+        /// </summary>
+        public long TransferSize { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the number of bytes remaining in the transfer.
+        /// </summary>
+        public long BytesRemaining { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the estimated time that remains for the data transfer.
+        /// </summary>
+        public TimeSpan TimeRemaining { get; set; }
     }
 }
