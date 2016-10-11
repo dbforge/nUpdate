@@ -891,7 +891,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
+            proxyPanel.Enabled = !doNotUseProxyRadioButton.Checked;
         }
 
         private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
