@@ -6,9 +6,10 @@ namespace nUpdate.Administration.TransferInterface
 {
     public class ServerItem
     {
-        public ServerItem(string name, long size, DateTime? modified, ServerItemType itemType)
+        public ServerItem(string name, string fullPath, long size, DateTime? modified, ServerItemType itemType)
         {
             Name = name;
+            FullPath = fullPath;
             Size = size;
             Modified = modified;
             ItemType = itemType;
