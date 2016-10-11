@@ -36,6 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private IEnumerable<UpdateConfiguration> _newUpdateConfiguration;
         private IEnumerable<UpdateConfiguration> _oldUpdateConfiguration;
         private IEnumerable<UpdateVersion> _packageVersionsToAffect;
+        private bool _ftpDirectoryChanged;
         private bool _phpFileCreated;
         private bool _phpFileDeleted;
         private bool _phpFileOnlineDeleted;
@@ -241,6 +242,28 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         Popup.ShowPopup(this, SystemIcons.Error,
                             "Error while saving and uploading the old configuration.",
+                            ex, PopupButtons.Ok);
+                        Close();
+                    }));
+                    return;
+                }
+            }
+
+            if (_ftpDirectoryChanged)
+            {
+                try
+                {
+                    _ftp.MoveContent(Project.FtpDirectory);
+                    _ftp.Directory = Project.FtpDirectory;
+                    _ftpDirectoryChanged = false;
+                }
+                catch (Exception ex)
+                {
+                    SetUiState(true);
+                    Invoke(new Action(() =>
+                    {
+                        Popup.ShowPopup(this, SystemIcons.Error,
+                            "Error while moving the content back to the old directory.",
                             ex, PopupButtons.Ok);
                         Close();
                     }));
@@ -1111,7 +1134,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     try
                     {
                         _ftp.MoveContent(ftpDirectory);
-                        // TODO: RESET ACTION
+                        _ftpDirectoryChanged = true;
+
+                        // Set the new directory
+                        _ftp.Directory = ftpDirectory;
                     }
                     catch (Exception ex)
                     {
@@ -1120,9 +1146,6 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         Reset();
                         return;
                     }
-
-                    // Set the new directory
-                    _ftp.Directory = ftpDirectory;
                 }
 
                 var phpFilePath = Path.Combine(Program.Path, "Projects", _name, "statistics.php");
