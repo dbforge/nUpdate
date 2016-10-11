@@ -3,13 +3,10 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft;
-using nUpdate.Core;
 using nUpdate.Core.Localization;
 using nUpdate.UI.Dialogs;
 using nUpdate.UI.Popups;
@@ -49,42 +46,7 @@ namespace nUpdate.Updating
             UpdateManagerInstance = updateManager;
             Context = context;
             UseHiddenSearch = useHiddenSearch;
-
-            string languageFilePath;
-            try
-            {
-                languageFilePath =
-                    UpdateManagerInstance.CultureFilePaths.First(
-                        item => item.Key.Equals(UpdateManagerInstance.LanguageCulture)).Value;
-            }
-            catch (InvalidOperationException)
-            {
-                languageFilePath = null;
-            }
-
-            if (!string.IsNullOrEmpty(languageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(languageFilePath) && UpdateManagerInstance.LanguageCulture.Name != "en")
-            {
-                string resourceName = $"nUpdate.Core.Localization.{UpdateManagerInstance.LanguageCulture.Name}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(languageFilePath) && UpdateManagerInstance.LanguageCulture.Name == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
+            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManagerInstance.LanguageCulture, UpdateManagerInstance.CultureFilePaths);
         }
 
         /// <summary>
