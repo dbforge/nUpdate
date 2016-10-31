@@ -63,6 +63,7 @@
             this.codeTextBox.CharWidth = 8;
             this.codeTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.codeTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.codeTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.codeTextBox.IsReplaceMode = false;
             this.codeTextBox.LeftBracket = '{';
             this.codeTextBox.LeftBracket2 = '[';
@@ -72,6 +73,7 @@
             this.codeTextBox.RightBracket = '}';
             this.codeTextBox.RightBracket2 = ']';
             this.codeTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.codeTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("codeTextBox.ServiceColors")));
             this.codeTextBox.Size = new System.Drawing.Size(518, 255);
             this.codeTextBox.TabIndex = 1;
             this.codeTextBox.Zoom = 100;
@@ -93,7 +95,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(318, 8);
+            this.cancelButton.Location = new System.Drawing.Point(429, 8);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -104,7 +106,7 @@
             // 
             this.saveLanguageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.saveLanguageButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.saveLanguageButton.Location = new System.Drawing.Point(399, 8);
+            this.saveLanguageButton.Location = new System.Drawing.Point(318, 8);
             this.saveLanguageButton.Name = "saveLanguageButton";
             this.saveLanguageButton.Size = new System.Drawing.Size(105, 23);
             this.saveLanguageButton.TabIndex = 0;
@@ -112,7 +114,7 @@
             this.saveLanguageButton.UseVisualStyleBackColor = true;
             this.saveLanguageButton.Click += new System.EventHandler(this.saveLanguageButton_Click);
             // 
-            // JSONEditorDialog
+            // JsonEditorDialog
             // 
             this.AcceptButton = this.saveLanguageButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
