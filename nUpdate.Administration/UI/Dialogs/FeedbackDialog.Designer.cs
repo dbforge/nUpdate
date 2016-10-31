@@ -44,7 +44,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // sendButton
             // 
             this.sendButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.sendButton.Location = new System.Drawing.Point(355, 7);
+            this.sendButton.Location = new System.Drawing.Point(274, 7);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(75, 23);
             this.sendButton.TabIndex = 24;
@@ -56,7 +56,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.cancelButton.Location = new System.Drawing.Point(274, 7);
+            this.cancelButton.Location = new System.Drawing.Point(353, 7);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 25;
