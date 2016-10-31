@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
@@ -44,28 +43,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             Text = string.Format(Text, Program.VersionString);
-            versionLabel.Text += " 3.0.0.0 Beta 3";
-            includeAlphaCheckBox.Checked = Settings.Default.IncludeAlpha;
-            includeBetaCheckBox.Checked = Settings.Default.IncludeBeta;
             languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);
             programPathTextBox.Text = Settings.Default.ProgramPath;
             programPathTextBox.Initialize();
-        }
-
-        private void searchUpdatesButton_Click(object sender, EventArgs e)
-        {
-            var updaterUi = new UpdaterUI(_manager, SynchronizationContext.Current);
-            updaterUi.ShowUserInterface();
-        }
-
-        private void includeAlphaCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            _manager.IncludeAlpha = includeAlphaCheckBox.Checked;
-        }
-
-        private void includeBetaCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            _manager.IncludeBeta = includeBetaCheckBox.Checked;
         }
 
         private void languagesComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -135,8 +115,6 @@ namespace nUpdate.Administration.UI.Dialogs
             Settings.Default.Language =
                 new CultureInfo(
                     languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim());
-            Settings.Default.IncludeAlpha = includeAlphaCheckBox.Checked;
-            Settings.Default.IncludeBeta = includeBetaCheckBox.Checked;
             Settings.Default.ProgramPath = programPathTextBox.Text;
             Settings.Default.Save();
             Settings.Default.Reload();
