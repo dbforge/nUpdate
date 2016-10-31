@@ -151,156 +151,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="searchUpdatesButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="searchUpdatesButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>292, 289</value>
-  </data>
-  <data name="searchUpdatesButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 23</value>
-  </data>
-  <data name="searchUpdatesButton.TabIndex" type="System.Int32, mscorlib">
-    <value>17</value>
-  </data>
-  <data name="searchUpdatesButton.Text" xml:space="preserve">
-    <value>Search for updates</value>
-  </data>
-  <data name="&gt;&gt;searchUpdatesButton.Name" xml:space="preserve">
-    <value>searchUpdatesButton</value>
-  </data>
-  <data name="&gt;&gt;searchUpdatesButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;searchUpdatesButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;searchUpdatesButton.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="versionLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="versionLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="versionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>29, 295</value>
-  </data>
-  <data name="versionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>89, 13</value>
-  </data>
-  <data name="versionLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>21</value>
-  </data>
-  <data name="versionLabel.Text" xml:space="preserve">
-    <value>Current version:</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.Name" xml:space="preserve">
-    <value>versionLabel</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>29, 241</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 39</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Alpha and Beta-versions are builds and could contain bugs and mistakes.
-To avoid problems the options are usually turned off. If you want to update
-to Pre-Release-versions though, this is at your own risk.</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="includeBetaCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="includeBetaCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="includeBetaCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 221</value>
-  </data>
-  <data name="includeBetaCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>150, 17</value>
-  </data>
-  <data name="includeBetaCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>19</value>
-  </data>
-  <data name="includeBetaCheckBox.Text" xml:space="preserve">
-    <value>Search for Beta-versions</value>
-  </data>
-  <data name="&gt;&gt;includeBetaCheckBox.Name" xml:space="preserve">
-    <value>includeBetaCheckBox</value>
-  </data>
-  <data name="&gt;&gt;includeBetaCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;includeBetaCheckBox.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;includeBetaCheckBox.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="includeAlphaCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="includeAlphaCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="includeAlphaCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 221</value>
-  </data>
-  <data name="includeAlphaCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 17</value>
-  </data>
-  <data name="includeAlphaCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
-  </data>
-  <data name="includeAlphaCheckBox.Text" xml:space="preserve">
-    <value>Search for Alpha-versions</value>
-  </data>
-  <data name="&gt;&gt;includeAlphaCheckBox.Name" xml:space="preserve">
-    <value>includeAlphaCheckBox</value>
-  </data>
-  <data name="&gt;&gt;includeAlphaCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;includeAlphaCheckBox.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;includeAlphaCheckBox.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>8</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -333,43 +184,13 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 200</value>
-  </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>53, 13</value>
-  </data>
-  <data name="label4.TabIndex" type="System.Int32, mscorlib">
-    <value>23</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>Updates:</value>
-  </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
-  </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
   <data name="saveButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="saveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>359, 6</value>
+    <value>273, 6</value>
   </data>
   <data name="saveButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>81, 23</value>
@@ -393,7 +214,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>1</value>
   </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>278, 6</value>
+    <value>360, 6</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -417,7 +238,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>0</value>
   </data>
   <data name="controlPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 329</value>
+    <value>0, 203</value>
   </data>
   <data name="controlPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>447, 34</value>
@@ -429,13 +250,13 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>controlPanel1</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Type" xml:space="preserve">
-    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.UI.Controls.BottomPanel, nUpdate, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;controlPanel1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;controlPanel1.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>7</value>
   </data>
   <data name="languagesComboBox.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -591,7 +412,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>programPathTextBox</value>
   </data>
   <data name="&gt;&gt;programPathTextBox.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Controls.ButtonTextBox, nUpdate Administration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;programPathTextBox.Parent" xml:space="preserve">
     <value>$this</value>
@@ -606,7 +427,7 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>447, 363</value>
+    <value>447, 237</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
@@ -1143,6 +964,6 @@ to Pre-Release-versions though, this is at your own risk.</value>
     <value>PreferencesDialog</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>nUpdate.Administration.UI.Dialogs.BaseDialog, nUpdate Administration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

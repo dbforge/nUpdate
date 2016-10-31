@@ -31,13 +31,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreferencesDialog));
             this.label1 = new System.Windows.Forms.Label();
-            this.searchUpdatesButton = new System.Windows.Forms.Button();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.includeBetaCheckBox = new System.Windows.Forms.CheckBox();
-            this.includeAlphaCheckBox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
             this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -56,46 +50,10 @@
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.label1.Name = "label1";
             // 
-            // searchUpdatesButton
-            // 
-            resources.ApplyResources(this.searchUpdatesButton, "searchUpdatesButton");
-            this.searchUpdatesButton.Name = "searchUpdatesButton";
-            this.searchUpdatesButton.UseVisualStyleBackColor = true;
-            this.searchUpdatesButton.Click += new System.EventHandler(this.searchUpdatesButton_Click);
-            // 
-            // versionLabel
-            // 
-            resources.ApplyResources(this.versionLabel, "versionLabel");
-            this.versionLabel.Name = "versionLabel";
-            // 
-            // label2
-            // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
-            // 
-            // includeBetaCheckBox
-            // 
-            resources.ApplyResources(this.includeBetaCheckBox, "includeBetaCheckBox");
-            this.includeBetaCheckBox.Name = "includeBetaCheckBox";
-            this.includeBetaCheckBox.UseVisualStyleBackColor = true;
-            this.includeBetaCheckBox.CheckedChanged += new System.EventHandler(this.includeBetaCheckBox_CheckedChanged);
-            // 
-            // includeAlphaCheckBox
-            // 
-            resources.ApplyResources(this.includeAlphaCheckBox, "includeAlphaCheckBox");
-            this.includeAlphaCheckBox.Name = "includeAlphaCheckBox";
-            this.includeAlphaCheckBox.UseVisualStyleBackColor = true;
-            this.includeAlphaCheckBox.CheckedChanged += new System.EventHandler(this.includeAlphaCheckBox_CheckedChanged);
-            // 
             // label3
             // 
             resources.ApplyResources(this.label3, "label3");
             this.label3.Name = "label3";
-            // 
-            // label4
-            // 
-            resources.ApplyResources(this.label4, "label4");
-            this.label4.Name = "label4";
             // 
             // saveButton
             // 
@@ -170,14 +128,8 @@
             this.Controls.Add(this.editLanguageButton);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.languagesComboBox);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.includeBetaCheckBox);
             this.Controls.Add(this.controlPanel1);
-            this.Controls.Add(this.includeAlphaCheckBox);
-            this.Controls.Add(this.searchUpdatesButton);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -194,14 +146,8 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button saveButton;
-        private System.Windows.Forms.Button searchUpdatesButton;
         private nUpdate.UI.Controls.BottomPanel controlPanel1;
-        private System.Windows.Forms.Label versionLabel;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox includeBetaCheckBox;
-        private System.Windows.Forms.CheckBox includeAlphaCheckBox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.ComboBox languagesComboBox;
         private System.Windows.Forms.Label label7;
