@@ -9,6 +9,7 @@ using nUpdate.Administration.Core.History;
 using nUpdate.Core;
 using nUpdate.Updating;
 using Newtonsoft.Json.Linq;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Core.Application
 {
@@ -119,6 +120,11 @@ namespace nUpdate.Administration.Core.Application
         ///     The FTP-directory of the project.
         /// </summary>
         public string FtpDirectory { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the IP-version for the FTP-connections.
+        /// </summary>
+        public NetworkVersion FtpNetworkVersion { get; set; }
 
         /// <summary>
         ///     The log of the project.

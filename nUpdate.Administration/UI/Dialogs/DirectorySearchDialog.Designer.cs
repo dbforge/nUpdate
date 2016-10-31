@@ -63,7 +63,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // continueButton
             // 
-            this.continueButton.Location = new System.Drawing.Point(346, 8);
+            this.continueButton.Location = new System.Drawing.Point(265, 8);
             this.continueButton.Name = "continueButton";
             this.continueButton.Size = new System.Drawing.Size(75, 23);
             this.continueButton.TabIndex = 0;
@@ -74,7 +74,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(265, 8);
+            this.cancelButton.Location = new System.Drawing.Point(346, 8);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;

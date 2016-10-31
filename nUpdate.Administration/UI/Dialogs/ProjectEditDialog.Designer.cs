@@ -99,6 +99,8 @@
             this.proxyPasswordLabel = new System.Windows.Forms.Label();
             this.proxyPasswordTextBox = new System.Windows.Forms.TextBox();
             this.proxyHostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.ipVersionComboBox = new System.Windows.Forms.ComboBox();
+            this.ipVersionLabel = new System.Windows.Forms.Label();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -174,7 +176,7 @@
             this.controlPanel1.Controls.Add(this.cancelButton);
             this.controlPanel1.Controls.Add(this.backButton);
             this.controlPanel1.Controls.Add(this.continueButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 217);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 228);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(502, 40);
             this.controlPanel1.TabIndex = 90;
@@ -200,7 +202,7 @@
             this.tablessTabControl1.Location = new System.Drawing.Point(1, 1);
             this.tablessTabControl1.Name = "tablessTabControl1";
             this.tablessTabControl1.SelectedIndex = 0;
-            this.tablessTabControl1.Size = new System.Drawing.Size(503, 221);
+            this.tablessTabControl1.Size = new System.Drawing.Size(503, 229);
             this.tablessTabControl1.TabIndex = 91;
             // 
             // generalTabPage
@@ -209,7 +211,7 @@
             this.generalTabPage.Location = new System.Drawing.Point(4, 22);
             this.generalTabPage.Name = "generalTabPage";
             this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalTabPage.Size = new System.Drawing.Size(495, 195);
+            this.generalTabPage.Size = new System.Drawing.Size(495, 203);
             this.generalTabPage.TabIndex = 0;
             this.generalTabPage.Text = "General";
             this.generalTabPage.UseVisualStyleBackColor = true;
@@ -229,7 +231,7 @@
             this.generalPanel.Controls.Add(this.nameLabel);
             this.generalPanel.Location = new System.Drawing.Point(0, 0);
             this.generalPanel.Name = "generalPanel";
-            this.generalPanel.Size = new System.Drawing.Size(495, 197);
+            this.generalPanel.Size = new System.Drawing.Size(495, 203);
             this.generalPanel.TabIndex = 9;
             // 
             // label5
@@ -346,7 +348,7 @@
             this.ftpTabPage.Location = new System.Drawing.Point(4, 22);
             this.ftpTabPage.Name = "ftpTabPage";
             this.ftpTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.ftpTabPage.Size = new System.Drawing.Size(495, 195);
+            this.ftpTabPage.Size = new System.Drawing.Size(495, 203);
             this.ftpTabPage.TabIndex = 2;
             this.ftpTabPage.Text = "FTP";
             this.ftpTabPage.UseVisualStyleBackColor = true;
@@ -354,6 +356,8 @@
             // ftpPanel
             // 
             this.ftpPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.ftpPanel.Controls.Add(this.ipVersionComboBox);
+            this.ftpPanel.Controls.Add(this.ipVersionLabel);
             this.ftpPanel.Controls.Add(this.ftpImportButton);
             this.ftpPanel.Controls.Add(this.securityInfoButton);
             this.ftpPanel.Controls.Add(this.searchOnServerButton);
@@ -375,7 +379,7 @@
             this.ftpPanel.Controls.Add(this.ftpHeaderLabel);
             this.ftpPanel.Location = new System.Drawing.Point(0, 0);
             this.ftpPanel.Name = "ftpPanel";
-            this.ftpPanel.Size = new System.Drawing.Size(495, 197);
+            this.ftpPanel.Size = new System.Drawing.Size(495, 203);
             this.ftpPanel.TabIndex = 24;
             // 
             // ftpImportButton
@@ -589,7 +593,7 @@
             this.statisticsServerTabPage.Location = new System.Drawing.Point(4, 22);
             this.statisticsServerTabPage.Name = "statisticsServerTabPage";
             this.statisticsServerTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.statisticsServerTabPage.Size = new System.Drawing.Size(495, 195);
+            this.statisticsServerTabPage.Size = new System.Drawing.Size(495, 203);
             this.statisticsServerTabPage.TabIndex = 3;
             this.statisticsServerTabPage.Text = "Statistics";
             this.statisticsServerTabPage.UseVisualStyleBackColor = true;
@@ -722,7 +726,7 @@
             this.proxyTabPage.Location = new System.Drawing.Point(4, 22);
             this.proxyTabPage.Name = "proxyTabPage";
             this.proxyTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.proxyTabPage.Size = new System.Drawing.Size(495, 195);
+            this.proxyTabPage.Size = new System.Drawing.Size(495, 203);
             this.proxyTabPage.TabIndex = 4;
             this.proxyTabPage.Text = "Proxy";
             this.proxyTabPage.UseVisualStyleBackColor = true;
@@ -843,13 +847,35 @@
             this.proxyHostTextBox.Size = new System.Drawing.Size(348, 22);
             this.proxyHostTextBox.TabIndex = 47;
             // 
+            // ipVersionComboBox
+            // 
+            this.ipVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ipVersionComboBox.FormattingEnabled = true;
+            this.ipVersionComboBox.Items.AddRange(new object[] {
+            "IPv4",
+            "IPv6"});
+            this.ipVersionComboBox.Location = new System.Drawing.Point(88, 182);
+            this.ipVersionComboBox.Name = "ipVersionComboBox";
+            this.ipVersionComboBox.Size = new System.Drawing.Size(142, 21);
+            this.ipVersionComboBox.TabIndex = 44;
+            // 
+            // ipVersionLabel
+            // 
+            this.ipVersionLabel.AutoSize = true;
+            this.ipVersionLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ipVersionLabel.Location = new System.Drawing.Point(17, 185);
+            this.ipVersionLabel.Name = "ipVersionLabel";
+            this.ipVersionLabel.Size = new System.Drawing.Size(60, 13);
+            this.ipVersionLabel.TabIndex = 43;
+            this.ipVersionLabel.Text = "IP-version:";
+            // 
             // ProjectEditDialog
             // 
             this.AcceptButton = this.continueButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(502, 257);
+            this.ClientSize = new System.Drawing.Size(502, 268);
             this.Controls.Add(this.loadingPanel);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.tablessTabControl1);
@@ -953,5 +979,7 @@
         private Controls.ButtonTextBox localPathTextBox;
         private System.Windows.Forms.CheckBox saveCredentialsCheckBox;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox ipVersionComboBox;
+        private System.Windows.Forms.Label ipVersionLabel;
     }
 }

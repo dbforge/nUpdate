@@ -249,6 +249,7 @@ namespace nUpdate.Administration.UI.Dialogs
             ftpPortTextBox.ShortcutsEnabled = false;
             ftpModeComboBox.SelectedIndex = 0;
             ftpProtocolComboBox.SelectedIndex = 0;
+            ipVersionComboBox.SelectedIndex = 0;
 
             //SetLanguage();
             Text = string.Format(Text, Program.VersionString);
@@ -367,6 +368,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
                 _ftp.Protocol = (FtpsSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
+                _ftp.NetworkVersion = (NetworkVersion) ipVersionComboBox.SelectedIndex;
 
                 if (!backButton.Enabled) // If the back-button was disabled, enabled it again
                     backButton.Enabled = true;
@@ -484,6 +486,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     FtpProtocol = ftpProtocolComboBox.SelectedIndex,
                     FtpUsePassiveMode = usePassive,
                     FtpTransferAssemblyFilePath = _ftpAssemblyPath,
+                    FtpNetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex,
                     Proxy = proxy,
                     ProxyUsername = proxyUsername,
                     ProxyPassword = proxyPassword,
@@ -814,7 +817,8 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                Protocol = ftpProtocolComboBox.SelectedIndex
+                Protocol = ftpProtocolComboBox.SelectedIndex,
+                NetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)

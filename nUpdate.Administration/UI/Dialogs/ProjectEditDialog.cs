@@ -730,11 +730,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             ftpModeComboBox.SelectedIndex = Project.FtpUsePassiveMode ? 0 : 1;
             ftpProtocolComboBox.SelectedIndex = Project.FtpProtocol;
             ftpDirectoryTextBox.Text = Project.FtpDirectory;
+            ipVersionComboBox.SelectedIndex = (int)Project.FtpNetworkVersion;
+
             try
             {
                 _ftp = new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                     FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
-                    Project.FtpProtocol);
+                    Project.FtpProtocol, Project.FtpNetworkVersion);
             }
             catch (Exception ex)
             {
@@ -742,7 +744,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     "Error while loading the FTP-transfer service.", ex,
                     PopupButtons.Ok);
                 _ftp = new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
-                    FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, null, 0);
+                    FtpPassword.Copy(), Project.Proxy, Project.FtpUsePassiveMode, null, 0, Project.FtpNetworkVersion);
             }
 
             if (Project.UseStatistics)
@@ -862,7 +864,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
                 _ftp.Protocol = (FtpsSecurityProtocol) ftpProtocolComboBox.SelectedIndex;
-
+                _ftp.NetworkVersion = (NetworkVersion) ipVersionComboBox.SelectedIndex;
                 if (!backButton.Enabled) // If the back-button was disabled, enable it again
                     backButton.Enabled = true;
 
@@ -1566,6 +1568,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                 Program.AesIvPassword));
                     Project.FtpUsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
                     Project.FtpProtocol = ftpProtocolComboBox.SelectedIndex;
+                    Project.FtpNetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex;
                     Project.FtpDirectory = ftpDirectoryTextBox.Text;
                     Project.FtpTransferAssemblyFilePath = ftpProtocolComboBox.SelectedIndex ==
                                                           ftpProtocolComboBox.Items.Count - 1
@@ -1727,7 +1730,8 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                 UsePassiveMode = ftpModeComboBox.SelectedIndex.Equals(0),
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
-                Protocol = ftpProtocolComboBox.SelectedIndex
+                Protocol = ftpProtocolComboBox.SelectedIndex,
+                NetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)

@@ -23,7 +23,7 @@ namespace nUpdate.Administration.Core
         }
 
         public FtpManager(string host, int port, string directory, string username, SecureString password,
-            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol)
+            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol, NetworkVersion networkVersion)
         {
             TransferAssemblyPath = transferAssemblyFilePath;
             GetTransferProvider();
@@ -35,8 +35,11 @@ namespace nUpdate.Administration.Core
             _transferProvider.Password = password.Copy();
             _transferProvider.Proxy = proxy;
             _transferProvider.UsePassiveMode = usePassiveMode;
-            if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                Protocol = (FtpsSecurityProtocol) protcol;
+
+            if (!string.IsNullOrWhiteSpace(transferAssemblyFilePath))
+                return;
+            Protocol = (FtpsSecurityProtocol) protcol;
+            NetworkVersion = networkVersion;
         }
 
         /// <summary>
@@ -49,6 +52,16 @@ namespace nUpdate.Administration.Core
             {
                 if (_transferProvider.GetType() == typeof (FtpTransferService))
                     ((FtpTransferService) _transferProvider).Protocol = value;
+            }
+        }
+
+        public NetworkVersion NetworkVersion
+        {
+            get { return ((FtpTransferService) _transferProvider).NetworkVersion; }
+            set
+            {
+                if (_transferProvider.GetType() == typeof(FtpTransferService))
+                    ((FtpTransferService)_transferProvider).NetworkVersion = value;
             }
         }
 

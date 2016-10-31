@@ -246,7 +246,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                         FtpPassword,
                         Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
-                        Project.FtpProtocol);
+                        Project.FtpProtocol, Project.FtpNetworkVersion);
                 if (!string.IsNullOrWhiteSpace(Project.FtpTransferAssemblyFilePath))
                     _ftp.TransferAssemblyPath = Project.FtpTransferAssemblyFilePath;
                 else

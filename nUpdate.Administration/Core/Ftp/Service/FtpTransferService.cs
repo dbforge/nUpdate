@@ -28,6 +28,11 @@ namespace nUpdate.Administration.Core.Ftp.Service
         public FtpsSecurityProtocol Protocol { get; set; }
 
         /// <summary>
+        ///     Gets or sets the network version.
+        /// </summary>
+        public NetworkVersion NetworkVersion { get; set; }
+
+        /// <summary>
         ///     Sets if passive mode should be used.
         /// </summary>
         public bool UsePassiveMode { get; set; }
@@ -98,6 +103,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
             {
                 DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
                 FileTransferType = TransferType.Binary,
+                NetworkProtocol = NetworkVersion,
                 Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
             };
         }

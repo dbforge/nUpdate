@@ -11,6 +11,7 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Popups;
+using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -76,6 +77,11 @@ namespace nUpdate.Administration.UI.Dialogs
         public string FtpAssemblyPath { get; set; }
 
         /// <summary>
+        ///     Gets or sets the network version.
+        /// </summary>
+        public NetworkVersion NetworkVersion { get; set; }
+
+        /// <summary>
         ///     Enables or disables the UI controls.
         /// </summary>
         /// <param name="enabled">Sets the activation state.</param>
@@ -134,7 +140,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _ftp =
                 new FtpManager(Host, Port, null, Username,
-                    Password, null, UsePassiveMode, FtpAssemblyPath, Protocol);
+                    Password, null, UsePassiveMode, FtpAssemblyPath, Protocol, NetworkVersion);
             
             var node = new TreeNode("Server", 0, 0);
             serverDataTreeView.Nodes.Add(node);

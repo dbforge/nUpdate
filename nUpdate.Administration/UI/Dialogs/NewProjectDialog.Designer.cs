@@ -58,6 +58,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.localPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.ftpTabPage = new System.Windows.Forms.TabPage();
             this.ftpPanel = new System.Windows.Forms.Panel();
+            this.ipVersionComboBox = new System.Windows.Forms.ComboBox();
+            this.ipVersionLabel = new System.Windows.Forms.Label();
             this.ftpImportButton = new System.Windows.Forms.Button();
             this.securityInfoButton = new System.Windows.Forms.Button();
             this.searchOnServerButton = new System.Windows.Forms.Button();
@@ -293,6 +295,8 @@ namespace nUpdate.Administration.UI.Dialogs
             // ftpPanel
             // 
             this.ftpPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.ftpPanel.Controls.Add(this.ipVersionComboBox);
+            this.ftpPanel.Controls.Add(this.ipVersionLabel);
             this.ftpPanel.Controls.Add(this.ftpImportButton);
             this.ftpPanel.Controls.Add(this.securityInfoButton);
             this.ftpPanel.Controls.Add(this.searchOnServerButton);
@@ -314,6 +318,21 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpPanel.Controls.Add(this.ftpHeaderLabel);
             resources.ApplyResources(this.ftpPanel, "ftpPanel");
             this.ftpPanel.Name = "ftpPanel";
+            // 
+            // ipVersionComboBox
+            // 
+            this.ipVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ipVersionComboBox.FormattingEnabled = true;
+            this.ipVersionComboBox.Items.AddRange(new object[] {
+            resources.GetString("ipVersionComboBox.Items"),
+            resources.GetString("ipVersionComboBox.Items1")});
+            resources.ApplyResources(this.ipVersionComboBox, "ipVersionComboBox");
+            this.ipVersionComboBox.Name = "ipVersionComboBox";
+            // 
+            // ipVersionLabel
+            // 
+            resources.ApplyResources(this.ipVersionLabel, "ipVersionLabel");
+            this.ipVersionLabel.Name = "ipVersionLabel";
             // 
             // ftpImportButton
             // 
@@ -696,7 +715,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ComboBox ftpProtocolComboBox;
         private System.Windows.Forms.Label ftpProtocolLabel;
         private System.Windows.Forms.Button searchOnServerButton;
-        private nUpdate.UI.Controls.Line line1;
         private System.Windows.Forms.Label localPathLabel;
         private System.Windows.Forms.Button securityInfoButton;
         private Controls.TablessTabControl informationCategoriesTabControl;
@@ -739,5 +757,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private ButtonTextBox localPathTextBox;
         private System.Windows.Forms.CheckBox saveCredentialsCheckBox;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox ipVersionComboBox;
+        private System.Windows.Forms.Label ipVersionLabel;
+        private nUpdate.UI.Controls.Line line1;
     }
 }
