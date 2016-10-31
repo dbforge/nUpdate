@@ -444,7 +444,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     new FtpManager(Project.FtpHost, Project.FtpPort, Project.FtpDirectory, Project.FtpUsername,
                         FtpPassword,
                         Project.Proxy, Project.FtpUsePassiveMode, Project.FtpTransferAssemblyFilePath,
-                        Project.FtpProtocol);
+                        Project.FtpProtocol, Project.FtpNetworkVersion);
                 _ftp.ProgressChanged += ProgressChanged;
                 _ftp.CancellationFinished += CancellationFinished;
             }
