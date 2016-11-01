@@ -32,7 +32,7 @@
    "RegistryNameValuePairSetValueOperationText":"\"Setting value of \"{0}\" in the registry to \"{1}\"...\"",
    "RegistryNameValuePairDeleteValueOperationText":"\"Deleting name-value-pair \"{0}\"...\"",
    "ProcessStartOperationText":"\"Starting process \"{0}\"...\"",
-   "ProcessStopOperationText":"\"Terminating process \"{1}\"...\"",
+   "ProcessStopOperationText":"\"Terminating process \"{0}\"...\"",
    "ServiceStartOperationText":"\"Starting service \"{0}\"...\"",
    "ServiceStopOperationText":"\"Stopping service \"{0}\"...\"",
    "UpdateSearchErrorCaption":"Error while searching for updates.",
