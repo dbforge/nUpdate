@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -46,7 +47,8 @@ namespace nUpdate.Updating
             UpdateManagerInstance = updateManager;
             Context = context;
             UseHiddenSearch = useHiddenSearch;
-            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManagerInstance.LanguageCulture, UpdateManagerInstance.CultureFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManagerInstance.LanguageCulture,
+                UpdateManagerInstance.CultureFilePaths);
         }
 
         /// <summary>
@@ -82,14 +84,14 @@ namespace nUpdate.Updating
                 return;
 
             _isTaskRunning = true;
-            var searchDialog = new UpdateSearchDialog { Updater = UpdateManagerInstance };
+            var searchDialog = new UpdateSearchDialog {Updater = UpdateManagerInstance};
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
-            var newUpdateDialog = new NewUpdateDialog { Updater = UpdateManagerInstance };
-            var noUpdateDialog = new NoUpdateFoundDialog { Updater = UpdateManagerInstance };
+            var newUpdateDialog = new NewUpdateDialog {Updater = UpdateManagerInstance};
+            var noUpdateDialog = new NoUpdateFoundDialog {Updater = UpdateManagerInstance};
 
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
-            var downloadDialog = new UpdateDownloadDialog { Updater = UpdateManagerInstance };
+            var downloadDialog = new UpdateDownloadDialog {Updater = UpdateManagerInstance};
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
 #if PROVIDE_TAP
@@ -283,7 +285,25 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        UpdateManagerInstance.InstallPackage();
+                    {
+                        try
+                        {
+                            UpdateManagerInstance.InstallPackage();
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            // TODO: Localize
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, "Error while starting the installer.",
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InstallerInitializingErrorCaption,
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                    }
                 });
             }
             finally
