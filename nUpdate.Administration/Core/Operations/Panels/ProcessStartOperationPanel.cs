@@ -1,9 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core.Operations;
@@ -23,10 +21,10 @@ namespace nUpdate.Administration.Core.Operations.Panels
             set { pathTextBox.Text = value; }
         }
 
-        public IEnumerable<string> Arguments
+        public string Arguments
         {
-            get { return argumentTextBox.Text.Split(','); }
-            set { argumentTextBox.Text = string.Join(",", value); }
+            get { return argumentTextBox.Text; }
+            set { argumentTextBox.Text = value; }
         }
 
         public bool IsValid
@@ -35,7 +33,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
                 pathTextBox.Text.Split(new[] {"\\"}, StringSplitOptions.RemoveEmptyEntries).Length >= 2;
 
         public Operation Operation => new Operation(OperationArea.Processes, OperationMethod.Start, pathTextBox.Text,
-            Arguments.ToList());
+            Arguments);
 
         private void environmentVariablesButton_Click(object sender, EventArgs e)
         {

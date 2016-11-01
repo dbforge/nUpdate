@@ -66,7 +66,7 @@
             // 
             // argumentTextBox
             // 
-            this.argumentTextBox.Cue = "arg1,arg2";
+            this.argumentTextBox.Cue = "-arg1 -arg2 ...";
             this.argumentTextBox.Location = new System.Drawing.Point(145, 41);
             this.argumentTextBox.Name = "argumentTextBox";
             this.argumentTextBox.Size = new System.Drawing.Size(193, 22);

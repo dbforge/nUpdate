@@ -98,7 +98,7 @@ namespace nUpdate.UpdateInstaller
                         _progressReporter.Fail(ex);
                         CleanUp();
                         _progressReporter.Terminate();
-                        if (!Program.IsHostApplicationClosed)
+                        if (!Program.IsHostApplicationClosed || !Program.RestartHostApplication)
                             return;
 
                         var process = new Process
@@ -129,7 +129,7 @@ namespace nUpdate.UpdateInstaller
                 _totalTaskCount +=
                     operationEnumerable.Count(
                         item => item.Area != OperationArea.Registry && item.Method != OperationMethod.Delete);
-
+            
             foreach (
                 var array in
                     Program.Operations.Select(entry => entry.Value)
@@ -160,7 +160,7 @@ namespace nUpdate.UpdateInstaller
             {
                 _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
             }
-
+            
             foreach (
                 var array in
                     Program.Operations.Select(entry => entry.Value)
@@ -174,9 +174,9 @@ namespace nUpdate.UpdateInstaller
                                 return entryEnumerable;
                             }))
             {
-                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
+                _totalTaskCount += array.ToObject<IEnumerable<Tuple<string, object, RegistryValueKind>>>().Count();
             }
-
+            
             foreach (
                 var packageFilePath in
                     Program.PackageFilePaths.OrderBy(item => new UpdateVersion(Path.GetFileNameWithoutExtension(item))))
@@ -204,7 +204,7 @@ namespace nUpdate.UpdateInstaller
                             break;
                     }
                 }
-
+                
                 try
                 {
                     IEnumerable<Operation> currentVersionOperations =
@@ -326,7 +326,7 @@ namespace nUpdate.UpdateInstaller
                                                 _doneTaskAmount += 1;
                                                 percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
                                                 _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.RegistryNameValuePairSetValueOperationText,
+                                                    string.Format(Program.RegistryNameValuePairDeleteValueOperationText,
                                                         valueName));
                                             }
                                         break;
@@ -342,7 +342,7 @@ namespace nUpdate.UpdateInstaller
                                             Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
                                                 string.Join("\\",
                                                     processFilePathParts.Where(item => item != processFilePathParts[0])));
-
+                                        
                                         var process = new Process
                                         {
                                             StartInfo =
@@ -384,7 +384,7 @@ namespace nUpdate.UpdateInstaller
                                 switch (operation.Method)
                                 {
                                     case OperationMethod.Start:
-                                        ServiceManager.StartService(operation.Value, (string[]) operation.Value2);
+                                        ServiceManager.StartService(operation.Value, ((JArray)operation.Value2).ToObject<string[]>());
 
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
@@ -419,7 +419,7 @@ namespace nUpdate.UpdateInstaller
                     _progressReporter.Fail(ex);
                     CleanUp();
                     _progressReporter.Terminate();
-                    if (!Program.IsHostApplicationClosed)
+                    if (!Program.IsHostApplicationClosed || !Program.RestartHostApplication)
                         return;
 
                     var process = new Process
@@ -442,7 +442,7 @@ namespace nUpdate.UpdateInstaller
             }
 
             CleanUp();
-            if (Program.IsHostApplicationClosed)
+            if (Program.IsHostApplicationClosed && Program.RestartHostApplication)
             {
                 var p = new Process
                 {
