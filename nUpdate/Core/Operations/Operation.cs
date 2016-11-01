@@ -100,6 +100,8 @@ namespace nUpdate.Core.Operations
                             return "DeleteRegistrySubKey";
                         case OperationMethod.SetValue:
                             return "SetRegistryValue";
+                        case OperationMethod.DeleteValue:
+                            return "DeleteRegistryValue";
                     }
                     break;
                 case OperationArea.Processes:
