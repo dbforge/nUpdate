@@ -1177,7 +1177,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (categoryTreeView.SelectedNode == null)
+            if (categoryTreeView.SelectedNode?.Parent == null)
                 return;
 
             if (e.Control && e.KeyCode == Keys.Up)
