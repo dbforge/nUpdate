@@ -24,21 +24,13 @@ namespace nUpdate.Administration.Core.Operations.Panels
             set
             {
                 var pathParts = value.Split('\\');
-                foreach (var pathPart in pathParts)
-                {
-                    if (pathPart == pathParts[0])
-                    {
-                        mainKeyComboBox.SelectedValue = pathParts[0];
-                    }
-                    else
-                    {
-                        subKeyTextBox.Text += $"\\{pathPart}";
-                    }
-                }
+                mainKeyComboBox.SelectedValue = pathParts[0];
+                subKeyTextBox.Text = string.Join("\\", pathParts.Skip(1));
             }
         }
 
         public BindingList<string> ItemList { get; set; } = new BindingList<string>();
+
         public bool IsValid => !string.IsNullOrEmpty(subKeyTextBox.Text) && ItemList.Any();
 
         public Operation Operation

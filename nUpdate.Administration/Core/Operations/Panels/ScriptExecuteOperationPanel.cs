@@ -47,7 +47,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     string.Join("\n",
                         codeTextBox.Lines.Except(
                             codeTextBox.Lines.Where(item => item.StartsWith("using") || item.StartsWith("//")))).Trim();
-                return newText.StartsWith("public class Program") && newText.Contains("static void Main");
+                return newText.StartsWith("public class Program") && newText.Contains("static void Main") && !_activeCompilerErrors.Any();
             }
         }
 

@@ -85,7 +85,18 @@ namespace nUpdate.UpdateInstaller.Core
                     if (subKey == null)
                         throw new Exception($"The sub key \"{subKeyPath}\" couldn't be found.");
 
-                    subKey.SetValue(valueName, value, valueKind);
+                    var newValue = value;
+                    switch (valueKind) // Special value kinds
+                    {
+                        case RegistryValueKind.Binary:
+                            var binaryValueStrings = ((string)value).Split(',');
+                            newValue = binaryValueStrings.Select(v => Convert.ToByte(v.Trim())).ToArray();
+                            break;
+                        case RegistryValueKind.MultiString:
+                            newValue = ((string)value).Split(',').Select(s => s.Trim()).ToArray();
+                            break;
+                    }
+                    subKey.SetValue(valueName, newValue, valueKind);
                 }
             }
         }

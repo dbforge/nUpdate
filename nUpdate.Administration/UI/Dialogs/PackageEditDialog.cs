@@ -370,7 +370,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             Path = operation.Value,
                             ItemList =
-                                new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
+                                ((JArray) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(deletePage);
                         break;
@@ -398,7 +398,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             KeyPath = operation.Value,
                             ItemList =
-                                new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
+                                ((JArray) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(createRegistrySubKeyPage);
                         break;
@@ -414,7 +414,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             KeyPath = operation.Value,
                             ItemList =
-                                new BindingList<string>(((JArray) operation.Value2).ToObject<BindingList<string>>())
+                                ((JArray) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(deleteRegistrySubKeyPage);
                         break;
@@ -445,7 +445,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         deleteRegistryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel
                         {
                             KeyPath = operation.Value,
-                            ItemList = ((JObject) operation.Value2).ToObject<BindingList<string>>()
+                            ItemList = ((JArray) operation.Value2).ToObject<BindingList<string>>()
                         });
                         categoryTabControl.TabPages.Add(deleteRegistryValuePage);
                         break;
@@ -457,7 +457,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         startProcessPage.Controls.Add(new ProcessStartOperationPanel
                         {
                             Path = operation.Value,
-                            Arguments = ((JArray) operation.Value2).ToObject<BindingList<string>>()
+                            Arguments = operation.Value2.ToString()
                         });
                         categoryTabControl.TabPages.Add(startProcessPage);
                         break;
@@ -479,7 +479,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
                         startServicePage.Controls.Add(new ServiceStartOperationPanel
                         {
-                            ServiceName = operation.Value
+                            ServiceName = operation.Value,
+                            Arguments = ((JArray)operation.Value2).ToObject<IEnumerable<string>>()
                         });
                         categoryTabControl.TabPages.Add(startServicePage);
                         break;
