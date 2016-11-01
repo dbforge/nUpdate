@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label2.Text" xml:space="preserve">
-    <value>Leave the arguments-field empty if you don't want to handle any arguments over.
+    <value>Leave the arguments-field empty if you don't want to handle over any arguments.
 If the process is already running it will be restarted.
 
 Important: Do not use this operation to start your application after installing the update,

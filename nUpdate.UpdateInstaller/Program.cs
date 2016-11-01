@@ -125,6 +125,11 @@ namespace nUpdate.UpdateInstaller
         public static bool IsHostApplicationClosed { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether the host application should be restarted, or not.
+        /// </summary>
+        public static bool RestartHostApplication { get; set; }
+
+        /// <summary>
         ///     The text of the error that a file is currently being used by another program.
         /// </summary>
         public static string FileInUseError { get; set; }
@@ -175,9 +180,10 @@ namespace nUpdate.UpdateInstaller
                 InitializingErrorCaption = appArguments[19];
                 Arguments = Serializer.Deserialize<List<UpdateArgument>>(
                     Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20])));
-                    // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
+                // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
                 IsHostApplicationClosed = Convert.ToBoolean(appArguments[21]);
-                FileInUseError = appArguments[22];
+                RestartHostApplication = Convert.ToBoolean(appArguments[22]);
+                FileInUseError = appArguments[23];
             }
             catch (Exception ex)
             {
@@ -195,9 +201,7 @@ namespace nUpdate.UpdateInstaller
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
             {
-                MessageBox.Show(exception.InnerException != null
-                    ? exception.InnerException.ToString()
-                    : exception.ToString());
+                MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
             }
             Application.Exit();
         }
