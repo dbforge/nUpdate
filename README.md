@@ -14,7 +14,7 @@ Features
 
 - Remote update package control and management
 - Many configuration settings
-- Operations let you access the file system (for deleting and renaming files), the registry and add the possiblity to start or stop processes and services, when installing an update. You can even execute a small C#-script.
+- Operations let you access the file system, the registry and add the possiblity to start or stop processes and services, when installing an update. You can even execute a small C#-script.
 - Automated updating for all clients
 - Secured update packages by signing with SHA512 and 8192 Bit RSA-keys
 - Interfaces, service providers and the Event-based/Task-based asynchronous pattern add a lot of flexiblity
@@ -24,7 +24,7 @@ Features
  
 Version
 ------
-v3.0-beta4 (Could contain some bugs)
+v3.0-beta6 (Could contain some bugs)
 
 Web
 ------
@@ -34,7 +34,7 @@ Web
 Installation
 ------
 
-There is currently no real installation, just download the whole solution and build it. If you are using .NET 4.0 and use the binaries located in "Provide TAP", you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5, you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start nUpdate Administration with admin privileges the first time, so that the registry key for the extension can be created.
+There is currently no real installation, just download the whole solution and build it. If you are using .NET 4.0 and the binaries located in "Provide TAP", you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5, you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start nUpdate Administration with admin privileges the first time, so that the registry key for the extension can be created.
 A documentation, on how to use nUpdate's components and how to customize it, will follow soon.
 
 Roadmap
