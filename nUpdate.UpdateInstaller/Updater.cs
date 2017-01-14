@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using System;
 using System.Collections.Generic;
@@ -129,7 +129,7 @@ namespace nUpdate.UpdateInstaller
                 _totalTaskCount +=
                     operationEnumerable.Count(
                         item => item.Area != OperationArea.Registry && item.Method != OperationMethod.Delete);
-            
+
             foreach (
                 var array in
                     Program.Operations.Select(entry => entry.Value)
@@ -160,7 +160,7 @@ namespace nUpdate.UpdateInstaller
             {
                 _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
             }
-            
+
             foreach (
                 var array in
                     Program.Operations.Select(entry => entry.Value)
@@ -176,10 +176,10 @@ namespace nUpdate.UpdateInstaller
             {
                 _totalTaskCount += array.ToObject<IEnumerable<Tuple<string, object, RegistryValueKind>>>().Count();
             }
-            
+
             foreach (
                 var packageFilePath in
-                    Program.PackageFilePaths.OrderBy(item => new UpdateVersion(Path.GetFileNameWithoutExtension(item))))
+                    Program.PackageFilePaths)
             {
                 var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
                 string extractedDirectoryPath =
@@ -204,7 +204,7 @@ namespace nUpdate.UpdateInstaller
                             break;
                     }
                 }
-                
+
                 try
                 {
                     IEnumerable<Operation> currentVersionOperations =
@@ -342,7 +342,7 @@ namespace nUpdate.UpdateInstaller
                                             Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
                                                 string.Join("\\",
                                                     processFilePathParts.Where(item => item != processFilePathParts[0])));
-                                        
+
                                         var process = new Process
                                         {
                                             StartInfo =
@@ -384,7 +384,8 @@ namespace nUpdate.UpdateInstaller
                                 switch (operation.Method)
                                 {
                                     case OperationMethod.Start:
-                                        ServiceManager.StartService(operation.Value, ((JArray)operation.Value2).ToObject<string[]>());
+                                        ServiceManager.StartService(operation.Value,
+                                            ((JArray) operation.Value2).ToObject<string[]>());
 
                                         _doneTaskAmount += 1;
                                         percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
