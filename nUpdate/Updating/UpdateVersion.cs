@@ -160,8 +160,8 @@ namespace nUpdate.Updating
         public int CompareTo(UpdateVersion version)
         {
             if (this > version)
-                return -1;
-            return this == version ? 0 : 1;
+                return 1;
+            return this == version ? 0 : -1;
         }
 
         // Overwritten Instance Methods
