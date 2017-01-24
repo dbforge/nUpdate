@@ -63,6 +63,7 @@ namespace nUpdate.Updating
                         _newUpdateConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)));
                 _newUpdateConfigurations.RemoveAll(
                     item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
+                _newUpdateConfigurations.Sort((x, y) => new UpdateVersion(x.LiteralVersion).CompareTo(new UpdateVersion(y.LiteralVersion)));
             }
 
             UpdatesFound = _newUpdateConfigurations.Count != 0;
