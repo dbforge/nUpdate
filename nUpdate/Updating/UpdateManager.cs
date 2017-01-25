@@ -199,6 +199,11 @@ namespace nUpdate.Updating
         public WebProxy Proxy { get; set; }
 
         /// <summary>
+        ///     Gets or sets the HTTP authentication credentials.
+        /// </summary>
+        public NetworkCredential HttpAuthenticationCredentials { get; set; }
+
+        /// <summary>
         ///     Gets or sets the arguments that should be handled over to the application.
         /// </summary>
         public List<UpdateArgument> Arguments { get; set; }
@@ -235,6 +240,8 @@ namespace nUpdate.Updating
             {
                 var req = WebRequest.Create(packageUri);
                 req.Method = "HEAD";
+                if (HttpAuthenticationCredentials != null)
+                    req.Credentials = HttpAuthenticationCredentials;
                 using (var resp = req.GetResponse())
                 {
                     double contentLength;
@@ -268,7 +275,7 @@ namespace nUpdate.Updating
 
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-            var configuration = UpdateConfiguration.Download(UpdateConfigurationFileUri, Proxy);
+            var configuration = UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -375,6 +382,8 @@ namespace nUpdate.Updating
                     }
 
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    if (HttpAuthenticationCredentials != null)
+                        webRequest.Credentials = HttpAuthenticationCredentials;
                     using (webResponse = webRequest.GetResponse())
                     {
                         var buffer = new byte[1024];
@@ -421,7 +430,7 @@ namespace nUpdate.Updating
                                 try
                                 {
                                     string response =
-                                        new WebClient().DownloadString(
+                                        new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(
                                             $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
                                     if (!string.IsNullOrEmpty(response))
                                     {
@@ -485,6 +494,8 @@ namespace nUpdate.Updating
                     }
 
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    if (HttpAuthenticationCredentials != null)
+                        webRequest.Credentials = HttpAuthenticationCredentials;
                     webResponse = await webRequest.GetResponseAsync();
 
                     var buffer = new byte[1024];
@@ -531,7 +542,7 @@ namespace nUpdate.Updating
                             try
                             {
                                 string response =
-                                    new WebClient().DownloadString(String.Format("{0}?versionid={1}&os={2}",
+                                    new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(String.Format("{0}?versionid={1}&os={2}",
                                         updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
                                         SystemInformation.OperatingSystemName)); // Only for calling it
                                 if (!String.IsNullOrEmpty(response))

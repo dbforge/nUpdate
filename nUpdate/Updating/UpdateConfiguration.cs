@@ -91,9 +91,26 @@ namespace nUpdate.Updating
         /// </returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy)
         {
+            return Download(configFileUri, null, proxy);
+        }
+
+        /// <summary>
+        ///     Downloads the update configurations from the server.
+        /// </summary>
+        /// <param name="configFileUri">The url of the configuration file.</param>
+        /// <param name="credentials">The HTTP authentication credentials.</param>
+        /// <param name="proxy">The optional proxy to use.</param>
+        /// <returns>
+        /// Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
+        /// configurations.
+        /// </returns>
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials, WebProxy proxy)
+        {
             using (var wc = new WebClientWrapper(10000))
             {
                 wc.Encoding = Encoding.UTF8;
+                if (credentials != null)
+                    wc.Credentials = credentials;
 
                 if (proxy != null)
                     wc.Proxy = proxy;
