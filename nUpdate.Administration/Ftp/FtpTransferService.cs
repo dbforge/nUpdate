@@ -132,7 +132,7 @@ namespace nUpdate.Administration.Ftp
 
         public async Task MoveContent(string destinationPath, IEnumerable<string> availableChannelNames)
         {
-            await InternalMoveContent(_ftpData.Directory, destinationPath, availableChannelNames);
+            await MoveContent(_ftpData.Directory, destinationPath, availableChannelNames);
         }
 
         public async Task RenameDirectory(string oldName, string newName)
@@ -228,7 +228,7 @@ namespace nUpdate.Administration.Ftp
             });
         }
 
-        public async Task InternalMoveContent(string directory, string destinationPath, IEnumerable<string> availableChannelNames)
+        public async Task MoveContent(string directory, string destinationPath, IEnumerable<string> availableChannelNames)
         {
             string[] availableChannelNamesArray = availableChannelNames.Select(x => x.ToLowerInvariant()).ToArray();
             Func<string, bool> isAdministrationRelatedDirectory = s => s == "channels" || s == "packages";
@@ -242,7 +242,7 @@ namespace nUpdate.Administration.Ftp
                 if (Guid.TryParse(fileName, out guid))
                     return true;
 
-                return s == "masterchannel.json" || availableChannelNamesArray.Contains(fileName.ToLowerInvariant());
+                return s == "masterchannel.json" || s == "statistics.php" || availableChannelNamesArray.Contains(fileName.ToLowerInvariant());
             };
 
             // TODO: Test the method implementation
@@ -259,7 +259,7 @@ namespace nUpdate.Administration.Ftp
                             ftpsClient.MakeDirectory(item.Name);
                         ftpsClient.ChangeDirectoryMultiPath(item.Name);
 
-                        await InternalMoveContent($"{directory}/{item.Name}", $"{destinationPath}/{item.Name}", availableChannelNamesArray);
+                        await MoveContent($"{directory}/{item.Name}", $"{destinationPath}/{item.Name}", availableChannelNamesArray);
                         await DeleteDirectory($"{directory}/{item.Name}");
                     }
                     else if (item.ItemType == ServerItemType.File && isAdministrationRelatedFile(item.Name))
