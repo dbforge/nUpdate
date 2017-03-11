@@ -164,12 +164,11 @@ namespace nUpdate
         ///     Gets or sets a value indicating whether the current client should be included into the statistics, or not.
         /// </summary>
         public bool CaptureStatistics { get; set; } = true;
-
+        
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be closed as soon as the nUpdate
-        ///     UpdateInstaller is started, or not.
+        ///     Gets or sets the host application options during the update installation.
         /// </summary>
-        public bool CloseHostApplication { get; set; } = true;
+        public static HostApplicationOptions HostApplicationOptions { get; set; }
 
         /// <summary>
         ///     Gets all new update packages that have been found.
@@ -485,7 +484,7 @@ namespace nUpdate
                 _lp.InstallerUpdatingErrorCaption,
                 _lp.InstallerInitializingErrorCaption,
                 $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
-                $"\"{CloseHostApplication}\"",
+                $"\"{HostApplicationOptions}\"",
                 $"\"{_lp.InstallerFileInUseError}\"",
             };
 
@@ -508,7 +507,7 @@ namespace nUpdate
                 return;
             }
 
-            if (!CloseHostApplication)
+            if (HostApplicationOptions == HostApplicationOptions.LeaveOpen)
                 return;
 
             throw new ApplicationTerminateException();

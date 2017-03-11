@@ -98,7 +98,7 @@ namespace nUpdate.UpdateInstaller
                         _progressReporter.Fail(ex);
                         CleanUp();
                         _progressReporter.Terminate();
-                        if (!Program.IsHostApplicationClosed)
+                        if (Program.HostApplicationOptions != HostApplicationOptions.CloseAndRestart)
                             return;
 
                         var process = new Process
@@ -419,7 +419,7 @@ namespace nUpdate.UpdateInstaller
                     _progressReporter.Fail(ex);
                     CleanUp();
                     _progressReporter.Terminate();
-                    if (!Program.IsHostApplicationClosed)
+                    if (Program.HostApplicationOptions != HostApplicationOptions.CloseAndRestart)
                         return;
 
                     var process = new Process
@@ -442,7 +442,7 @@ namespace nUpdate.UpdateInstaller
             }
 
             CleanUp();
-            if (Program.IsHostApplicationClosed)
+            if (Program.HostApplicationOptions == HostApplicationOptions.CloseAndRestart)
             {
                 var p = new Process
                 {
@@ -530,7 +530,7 @@ namespace nUpdate.UpdateInstaller
                 _progressReporter.Fail(ex);
                 CleanUp();
                 _progressReporter.Terminate();
-                if (!Program.IsHostApplicationClosed)
+                if (Program.HostApplicationOptions != HostApplicationOptions.CloseAndRestart)
                     return;
 
                 var process = new Process
