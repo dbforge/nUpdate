@@ -415,7 +415,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
         private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            proxyPanel.Enabled = doNotUseProxyRadioButton.Checked;
+            proxyPanel.Enabled = !doNotUseProxyRadioButton.Checked;
         }
 
         private void addParameterButton_Click(object sender, EventArgs e)
