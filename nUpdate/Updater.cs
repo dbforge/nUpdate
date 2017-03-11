@@ -486,7 +486,7 @@ namespace nUpdate
                 _lp.InstallerInitializingErrorCaption,
                 $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
                 $"\"{CloseHostApplication}\"",
-                $"\"{_lp.InstallerFileInUseError}\""
+                $"\"{_lp.InstallerFileInUseError}\"",
             };
 
             var startInfo = new ProcessStartInfo

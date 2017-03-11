@@ -496,8 +496,23 @@ namespace nUpdate.UpdateInstaller
                 var files = dir.GetFiles();
                 foreach (var file in files)
                 {
+                    bool continueCopyLoop = true;
                     var aimPath = Path.Combine(destDirName, file.Name);
-                    file.CopyTo(aimPath, true);
+                    while (continueCopyLoop)
+                    {
+                        try
+                        {
+                            file.CopyTo(aimPath, true);
+                            continueCopyLoop = false;
+                        }
+                        catch (IOException ex)
+                        {
+                            if (FileHelper.IsFileLocked(ex))
+                                _progressReporter.Fail(new Exception(string.Format(Program.FileInUseError, aimPath)));
+                            else
+                                throw;
+                        }
+                    }
 
                     _doneTaskAmount += 1;
                     var percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
