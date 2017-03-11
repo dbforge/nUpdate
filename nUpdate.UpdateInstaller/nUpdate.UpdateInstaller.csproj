@@ -66,6 +66,7 @@
     <Compile Include="Core\CodeDomHelper.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\FileHelper.cs" />
+    <Compile Include="Core\HostApplicationOptions.cs" />
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
     <Compile Include="Core\Operations\OperationMethod.cs" />
