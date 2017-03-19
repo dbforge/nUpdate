@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using nUpdate.Administration.UserInterface.Controls;
 using nUpdate.Administration.UserInterface.Popups;
 
@@ -118,7 +119,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 return;
             if (Popup.ShowPopup(this, SystemIcons.Warning, "Delete this server?",
                 "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) !=
-                DialogResult.Yes)
+                TaskDialogResult.Yes)
                 return;
 
             try

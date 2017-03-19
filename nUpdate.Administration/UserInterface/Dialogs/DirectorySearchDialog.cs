@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UserInterface.Popups;
 
@@ -179,7 +180,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (
                 Popup.ShowPopup(this, SystemIcons.Warning, "Delete the selected directory?",
                     "Are you sure that you want to delete the selected directory? It will be deleted unrecoverably.",
-                    PopupButtons.YesNo) == DialogResult.No)
+                    PopupButtons.YesNo) == TaskDialogResult.No)
                 return;
             
             directoryTextBox.Text = ForgeDirectoryPath(serverDataTreeView.SelectedNode);
