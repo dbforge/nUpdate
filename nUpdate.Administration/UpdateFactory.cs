@@ -146,10 +146,17 @@ namespace nUpdate.Administration
 
         internal async Task SynchronizeMasterChannel()
         {
+            // If the master channel is also no longer available inside the local project file, we just use the default one.
+            if (Session.ActiveProject.MasterChannel == null)
+            {
+                Session.ActiveProject.MasterChannel =
+                    UpdateChannel.GetDefaultMasterChannel(Session.ActiveProject.UpdateDirectoryUri).ToList();
+            }
+
             using (
                 var stream =
                     new MemoryStream(
-                        Encoding.UTF8.GetBytes(Serializer.Serialize(_project.MasterChannel))))
+                        Encoding.UTF8.GetBytes(Serializer.Serialize(Session.ActiveProject.MasterChannel))))
             {
                 await
                     Session.TransferManager.UploadFile(stream, "masterchannel.json", null);

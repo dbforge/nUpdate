@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UserInterface.Popups;
 
@@ -203,7 +204,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             string packageFilePath = Path.Combine(Session.PackagesPath, packageVersion.ToString());
             if (!File.Exists(packageFilePath))
             {
-                DialogResult popupResult = DialogResult.None;
+                TaskDialogResult popupResult = TaskDialogResult.None;
                 Invoke(
                     new Action(
                         () => popupResult = Popup.ShowPopup(this, SystemIcons.Error,
@@ -211,7 +212,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                             "The package file of the selected version does not exist on your computer and cannot be uploaded. Should its reference be removed from the project?",
                             PopupButtons.YesNo)));
 
-                if (popupResult == DialogResult.Yes)
+                if (popupResult == TaskDialogResult.Yes)
                 {
                     Session.ActiveProject.Packages.Remove(updatePackage);
                     Session.ActiveProject.Save();
@@ -270,11 +271,11 @@ namespace nUpdate.Administration.UserInterface.Dialogs
 
             if (masterChannel == null) // Master channel does not exist.
             {
-                masterChannel = Session.ActiveProject.MasterChannel ?? Enumerable.Empty<UpdateChannel>();
                 try
                 {
                     activeTaskLabel.Text = "Synchronizing master channel with the server...";
                     await Session.UpdateFactory.SynchronizeMasterChannel();
+                    masterChannel = Session.ActiveProject.MasterChannel;
                 }
                 catch (Exception ex)
                 {
@@ -317,7 +318,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 "Delete the selected update packages?",
                 $"Are you sure that you want to delete {(packageListView.SelectedItems.Count > 1 ? "these packages" : "this package")}?",
                 PopupButtons.YesNo);
-            if (answer != DialogResult.Yes)
+            if (answer != TaskDialogResult.Yes)
                 return;
 
             // TODO: Implement
