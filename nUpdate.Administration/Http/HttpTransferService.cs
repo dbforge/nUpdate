@@ -11,7 +11,12 @@ namespace nUpdate.Administration.Http
     {
         internal HttpData Data { get; set; }
 
-        public Task DeleteDirectory(string directoryPath)
+        public Task DeleteDirectory(string directoryName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteDirectoryWithPath(string directoryPath)
         {
             throw new NotImplementedException();
         }
@@ -21,7 +26,7 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task DeleteFile(string directoryPath, string fileName)
+        public Task DeleteFileWithPath(string filePath)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +56,12 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task MoveContent(string aimPath, IEnumerable<string> availableChannelNames)
+        public Task MakeDirectoryWithPath(string directoryPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MoveContent(string destinationPath, IEnumerable<string> availableChannelNames)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +71,7 @@ namespace nUpdate.Administration.Http
             throw new NotImplementedException();
         }
 
-        public Task TestConnection()
+        public Task<bool> TestConnection()
         {
             throw new NotImplementedException();
         }
@@ -77,11 +87,6 @@ namespace nUpdate.Administration.Http
         }
 
         public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> ITransferProvider.TestConnection()
         {
             throw new NotImplementedException();
         }

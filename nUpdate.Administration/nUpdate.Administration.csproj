@@ -465,7 +465,6 @@
     <Compile Include="TransferManager.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="ListingItem.cs" />
-    <Compile Include="Navigator.cs" />
     <Compile Include="PackageItem.cs" />
     <Compile Include="ServiceProviderHelper.cs" />
     <Compile Include="SHAManager.cs" />
