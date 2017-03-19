@@ -117,8 +117,13 @@ namespace nUpdate.Administration.Ftp
             using (var ftpsClient = GetNewFtpsClient())
             {
                 await Login(ftpsClient);
-                ftpsClient.ChangeDirectoryMultiPath(directoryPath);
-                return ftpsClient.Exists(destinationName);
+                bool exists = false;
+                await Task.Run(() =>
+                {
+                    ftpsClient.ChangeDirectoryMultiPath(directoryPath);
+                    exists = ftpsClient.Exists(destinationName);
+                });
+                return exists;
             }
         }
 
