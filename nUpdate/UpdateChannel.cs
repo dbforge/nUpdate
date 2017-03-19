@@ -87,10 +87,14 @@ namespace nUpdate
 
         public static IEnumerable<UpdateChannel> GetDefaultMasterChannel(Uri updateDirectoryUri)
         {
-            yield return new UpdateChannel("Alpha", new Uri(updateDirectoryUri, "/channels/alpha.json"), null, new[] {"alpha", "a"});
-            yield return new UpdateChannel("Beta", new Uri(updateDirectoryUri, "/channels/beta.json"), null, new[] { "beta", "b" });
-            yield return new UpdateChannel("ReleaseCandidate", new Uri(updateDirectoryUri, "/channels/releasecandidate.json"), null, new[] { "rc" });
-            yield return new UpdateChannel("Release", new Uri(updateDirectoryUri, "/channels/release.json"), null, Enumerable.Empty<string>());
+            return new[]
+            {
+                new UpdateChannel("Alpha", new Uri(updateDirectoryUri, "/channels/alpha.json"), null, new[] {"alpha", "a"}),
+                new UpdateChannel("Beta", new Uri(updateDirectoryUri, "/channels/beta.json"), null, new[] {"beta", "b"}),
+                new UpdateChannel("ReleaseCandidate", new Uri(updateDirectoryUri, "/channels/releasecandidate.json"), null,
+                    new[] {"rc"}),
+                new UpdateChannel("Release", new Uri(updateDirectoryUri, "/channels/release.json"), null, Enumerable.Empty<string>())
+            };
         }
     }
 }
