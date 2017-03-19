@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using nUpdate.Administration.UserInterface.Popups;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
@@ -120,7 +121,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     if (Popup.ShowPopup(this, SystemIcons.Warning,
                         "Possible incomplete change of project-data found.",
                         "The current name and local path don't fit in with each other. Are you sure that you want to continue?",
-                        PopupButtons.YesNo) == DialogResult.No)
+                        PopupButtons.YesNo) == TaskDialogResult.No)
                         return;
                 }
 
@@ -234,7 +235,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                    if (!ValidationManager.Validate(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
                         !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",

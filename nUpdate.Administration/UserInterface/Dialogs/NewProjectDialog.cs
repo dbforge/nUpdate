@@ -180,7 +180,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             }
             else if (informationCategoriesTabControl.SelectedTab == customTabPage)
             {
-                if (!ValidationManager.ValidateTabPage(customTabPage))
+                if (!ValidationManager.Validate(customTabPage))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
@@ -198,7 +198,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             {
                 if (useProxyRadioButton.Checked)
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
+                    if (!ValidationManager.Validate(proxyTabPage) && !String.IsNullOrEmpty(proxyUserTextBox.Text) &&
                         !String.IsNullOrEmpty(proxyPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",

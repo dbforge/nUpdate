@@ -12,34 +12,12 @@ namespace nUpdate.Administration
     {
         internal static bool Validate(Control owner)
         {
-            return (from Control control in owner.Controls
-                    where
-                        control.GetType() == typeof(TextBox) || control.GetType() == typeof(CueTextBox) ||
-                        control.GetType() == typeof(ButtonTextBox)
-                    where control.Enabled
-                    select !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray).FirstOrDefault();
-        }
-
-        internal static bool ValidateTabPage(TabPage owner)
-        {
-            foreach (Control control in owner.Controls.Cast<Control>().Where(control => (control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox) ||
-                                                                                        control.GetType() == typeof (ButtonTextBox)) && control.Enabled))
-            {
-                return !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray;
-            }
-
-            return true;
+            return owner.Controls.Cast<Control>().Where(control => (control.GetType() == typeof(TextBox) || control.GetType() == typeof(CueTextBox) || control.GetType() == typeof(ButtonTextBox)) && control.Enabled).All(control => !string.IsNullOrWhiteSpace(control.Text));
         }
 
         public static bool ValidateDialogWithIgnoring(Control owner, IEnumerable<TextBox> fieldsToIgnore)
         {
-            return (from Control control in owner.Controls
-                    where control.GetType() == typeof(TextBox) || control.GetType() == typeof(CueTextBox)
-                    where control.Enabled
-                    where fieldsToIgnore.All(item => item != control)
-                    select control).Select(
-                    control => !string.IsNullOrWhiteSpace(control.Text) && control.ForeColor != Color.Gray)
-                .FirstOrDefault();
+            return owner.Controls.Cast<Control>().Where(control => (control.GetType() == typeof (TextBox) || control.GetType() == typeof (CueTextBox) || control.GetType() == typeof (ButtonTextBox)) && control.Enabled && fieldsToIgnore.All(c => c != control)).All(control => !string.IsNullOrWhiteSpace(control.Text));
         }
     }
 }
