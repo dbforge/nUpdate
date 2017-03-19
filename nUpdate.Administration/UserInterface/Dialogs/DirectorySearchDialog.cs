@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using System;
 using System.Collections.Generic;
@@ -8,64 +8,33 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UserInterface.Popups;
-using nUpdate.Administration.Win32;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
 {
     internal partial class DirectorySearchDialog : BaseDialog
     {
-        private const int WM_NCLBUTTONDOWN = 0xA1;
-        private const int HT_CAPTION = 0x2;
-        private TransferManager _transferManager;
-        private readonly Navigator<TreeNode> _navigator = new Navigator<TreeNode>();
-        private List<IServerItem> _listedFtpItems = new List<IServerItem>();
-        private Margins _margins;
-        private bool _nodeSelectedByUser = true;
+        private readonly List<TreeNode> _handledNodes = new List<TreeNode>();
+        private readonly string _projectName;
+        private readonly TransferManager _transferManager;
 
         public DirectorySearchDialog(TransferManager transferManager, string projectName)
         {
             InitializeComponent();
             LoadingPanel = loadingPanel;
             _transferManager = transferManager;
-            ProjectName = projectName;
+            _projectName = projectName;
         }
 
-        public string ProjectName { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the selected directory.
-        /// </summary>
         public string SelectedDirectory { get; set; }
-        
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-            base.OnPaintBackground(e);
-            if (!NativeMethods.DwmIsCompositionEnabled())
-                return;
-
-            _margins.Top = 38;
-            e.Graphics.Clear(Color.Black);
-
-            var clientArea = new Rectangle(
-                _margins.Left,
-                _margins.Top,
-                ClientRectangle.Width - _margins.Left - _margins.Right,
-                ClientRectangle.Height - _margins.Top - _margins.Bottom
-                );
-            Brush b = new SolidBrush(BackColor);
-            e.Graphics.FillRectangle(b, clientArea);
-        }
 
         private async void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
-            Text = string.Format(Text, ProjectName, Program.VersionString);
-            if (NativeMethods.DwmIsCompositionEnabled())
-            {
-                _margins = new Margins {Top = 38};
-                NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
-            }
+            Text = string.Format(Text, _projectName, Program.VersionString);
 
-            await LoadListAsync();
+            var node = new TreeNode("Server", 0, 0);
+            serverDataTreeView.Nodes.Add(node);
+            await LoadListAsync("/", node); // TODO: Certificate check
+            node.Expand();
         }
 
         private void DirectorySearchForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -74,48 +43,50 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                 e.Cancel = true;
         }
 
-        private void DirectorySearchDialog_MouseDown(object sender, MouseEventArgs e)
+        private string ForgeDirectoryPath(TreeNode currentNode)
         {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            NativeMethods.ReleaseCapture();
-            NativeMethods.SendMessage(Handle, WM_NCLBUTTONDOWN, new IntPtr(HT_CAPTION), new IntPtr(0));
-        }
-
-        private void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (e.Node == serverDataTreeView.Nodes[0])
-                return;
-
-            if (_nodeSelectedByUser)
-                _navigator.Add(e.Node);
-            if (!backButton.Enabled && _navigator.CanGoBack)
-                backButton.Enabled = true;
-
             var directories = new Stack<string>();
-            var currentNode = e.Node;
             while (currentNode.Parent != null && currentNode.Parent != serverDataTreeView.Nodes[0])
             {
                 directories.Push(currentNode.Parent.Text);
                 currentNode = currentNode.Parent;
             }
 
-            var directory = $"/{string.Join("/", directories)}/{e.Node.Text}";
-            directoryTextBox.Text = directory.StartsWith("//") ? directory.Remove(0, 1) : directory;
+            return
+                $"{(directories.Count > 0 ? "/" : string.Empty)}{string.Join("/", directories)}/{serverDataTreeView.SelectedNode.Text}";
         }
 
-        private async Task LoadListAsync()
+        private async void serverDataTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node == serverDataTreeView.Nodes[0])
+            {
+                directoryTextBox.Text = "/";
+                return;
+            }
+
+            directoryTextBox.Text = ForgeDirectoryPath(e.Node);
+            if (!_handledNodes.Contains(e.Node))
+            {
+                await LoadListAsync(directoryTextBox.Text, e.Node);
+                _handledNodes.Add(e.Node);
+            }
+
+            serverDataTreeView.SelectedNode = e.Node;
+            e.Node.Expand();
+        }
+
+        private async Task LoadListAsync(string path, TreeNode node)
         {
             DisableControls(true);
             Invoke(
                 new Action(
                     () =>
-                        loadingLabel.Text = "Loading server directories..."));
+                        loadingLabel.Text = "Loading directories..."));
 
+            IEnumerable<IServerItem> directoryItems;
             try
             {
-                _listedFtpItems = (await _transferManager.List("/", true)).ToList();
+                directoryItems = await _transferManager.List(path, false);
             }
             catch (Exception ex)
             {
@@ -123,42 +94,24 @@ namespace nUpdate.Administration.UserInterface.Dialogs
                     new Action(
                         () =>
                         {
-                            Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the server data.", ex,
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while listing the directories.", ex,
                                 PopupButtons.Ok);
-                            EnableControls();
                         }));
 
+                EnableControls();
                 DialogResult = DialogResult.OK;
                 return;
             }
 
-            /*if (_listedFtpItems != null)
+            foreach (
+                var serverItem in directoryItems.Where(i => i.ItemType == ServerItemType.Directory).OrderBy(i => i.Name)
+                )
             {
-                var root = ConvertToListingItem(_listedFtpItems, "/");
-                var rootNode = new TreeNode("Server", 0, 0);
                 Invoke(new Action(() =>
-                {
-                    RecursiveAdd(root, rootNode);
-                    serverDataTreeView.Nodes.Add(rootNode);
-                    serverDataTreeView.Nodes[0].Expand();
-                    serverDataTreeView.SelectedNode = rootNode;
-                }));
-            }*/
+                    node.Nodes.Add(new TreeNode(serverItem.Name, 1, 1))));
+            }
 
             EnableControls();
-        }
-
-        private void RecursiveAdd(ListingItem item, TreeNode target)
-        {
-            foreach (var child in item.Children)
-            {
-                if (!child.IsDirectory)
-                    continue;
-
-                var childNode = new TreeNode(child.Text, 1, 1);
-                target.Nodes.Add(childNode);
-                RecursiveAdd(child, childNode);
-            }
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -167,125 +120,103 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             DialogResult = DialogResult.OK;
         }
 
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            _navigator.GoBack();
-            _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _navigator.Current;
-            _nodeSelectedByUser = true;
-            if (!_navigator.CanGoBack)
-                backButton.Enabled = false;
-            if (_navigator.CanGoForward)
-                forwardButton.Enabled = true;
-        }
-
-        private void forwardButton_Click(object sender, EventArgs e)
-        {
-            _navigator.GoForward();
-            _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _navigator.Current;
-            _nodeSelectedByUser = true;
-            if (!_navigator.CanGoForward)
-                forwardButton.Enabled = false;
-            if (_navigator.CanGoBack)
-                backButton.Enabled = true;
-        }
-
         private void addDirectoryButton_Click(object sender, EventArgs e)
         {
             var node = new TreeNode("Name", 1, 1);
-            if (serverDataTreeView.SelectedNode != null)
-            {
-                serverDataTreeView.SelectedNode.Nodes.Add(node);
-                serverDataTreeView.SelectedNode.Expand();
-            }
-            else
-                serverDataTreeView.Nodes[0].Nodes.Add(node);
+            if (serverDataTreeView.SelectedNode == null)
+                return;
 
+            serverDataTreeView.SelectedNode.Nodes.Add(node);
+            serverDataTreeView.SelectedNode.Expand();
             serverDataTreeView.LabelEdit = true;
             node.BeginEdit();
         }
 
-        private void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        private async void serverDataTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(e.Label))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                     "Please enter a name for the directory to create.", PopupButtons.Ok);
-                e.Node.BeginEdit();
+                e.Node.Remove();
                 return;
             }
 
             serverDataTreeView.LabelEdit = false;
-#pragma warning disable 4014
-            CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
-#pragma warning restore 4014
+            directoryTextBox.Text = ForgeDirectoryPath(serverDataTreeView.SelectedNode);
+            await CreateDirectory($"{directoryTextBox.Text}/{e.Label}");
+            _handledNodes.Add(e.Node);
         }
 
-        private async void CreateDirectory(string path)
+        private async Task CreateDirectory(string path)
         {
-            await Task.Factory.StartNew(async () =>
+            DisableControls(true);
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = $"Creating directory \"{path}\"..."));
+            try
             {
-                DisableControls(true);
+                await _transferManager.MakeDirectoryWithPath(path);
+            }
+            catch (Exception ex)
+            {
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = $"Creating directory \"{path}\"..."));
-                try
-                {
-                    await _transferManager.MakeDirectory(path);
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex,
-                                    PopupButtons.Ok)));
-                }
-                EnableControls();
-            });
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the directory.", ex,
+                                PopupButtons.Ok)));
+            }
+            EnableControls();
         }
 
-        private void removeDirectoryButton_Click(object sender, EventArgs e)
+        private async void removeDirectoryButton_Click(object sender, EventArgs e)
         {
             if (serverDataTreeView.SelectedNode == null ||
                 serverDataTreeView.SelectedNode == serverDataTreeView.Nodes[0])
                 return;
 
-            RemoveDirectory(directoryTextBox.Text);
+            if (
+                Popup.ShowPopup(this, SystemIcons.Warning, "Delete the selected directory?",
+                    "Are you sure that you want to delete the selected directory? It will be deleted unrecoverably.",
+                    PopupButtons.YesNo) == DialogResult.No)
+                return;
+            
+            directoryTextBox.Text = ForgeDirectoryPath(serverDataTreeView.SelectedNode);
+            await RemoveDirectory(directoryTextBox.Text);
         }
 
-        private async void RemoveDirectory(string path)
+        private async Task RemoveDirectory(string path)
         {
-            await Task.Factory.StartNew(() =>
+            DisableControls(true);
+            Invoke(
+                new Action(
+                    () =>
+                        loadingLabel.Text = $"Deleting directory \"{path}\"..."));
+            try
             {
-                DisableControls(true);
+                await _transferManager.DeleteDirectoryWithPath(path);
+            }
+            catch (Exception ex)
+            {
                 Invoke(
                     new Action(
                         () =>
-                            loadingLabel.Text = $"Deleting directory \"{path}\"..."));
-                try
-                {
-                    //_ftp.DeleteDirectory(path);
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex,
-                                    PopupButtons.Ok)));
-                    EnableControls();
-                    return;
-                }
-
-                Invoke(
-                    new Action(
-                        () =>
-                            serverDataTreeView.SelectedNode.Remove()));
+                            Popup.ShowPopup(this, SystemIcons.Error, "Error while deleting the directory.", ex,
+                                PopupButtons.Ok)));
                 EnableControls();
-            });
+                return;
+            }
+
+            Invoke(
+                new Action(
+                    () =>
+                    {
+                        var parent = serverDataTreeView.SelectedNode.Parent;
+                        serverDataTreeView.SelectedNode.Remove();
+                        directoryTextBox.Text = ForgeDirectoryPath(parent);
+                    }));
+            EnableControls();
         }
     }
 }

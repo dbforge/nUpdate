@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using System;
 using System.Collections.Generic;
@@ -17,123 +17,45 @@ namespace nUpdate.Administration
     // ReSharper disable once InconsistentNaming
     internal class TransferManager : ITransferProvider
     {
-        private bool _disposed;
+        // TODO: Certificate checks
+
         private readonly ITransferProvider _transferProvider;
+        private bool _disposed;
 
         public TransferManager(UpdateProject project)
         {
             _transferProvider = GetTransferProvider(project);
         }
-        
+
         public TransferManager(TransferProtocol protocol, ITransferData data)
         {
             _transferProvider = GetTransferProvider(protocol, data);
         }
 
-        private ITransferProvider GetTransferProvider(UpdateProject project)
+        public Task DeleteDirectory(string directoryName)
         {
-            return GetTransferProvider(project.TransferProtocol, project.TransferData, project.TransferAssemblyFilePath);
+            return _transferProvider.DeleteDirectory(directoryName);
         }
 
-        private ITransferProvider GetTransferProvider(TransferProtocol protocol, ITransferData data, string transferAssemblyFilePath = null)
+        public Task DeleteDirectoryWithPath(string directoryPath)
         {
-            switch (protocol)
-            {
-                case TransferProtocol.FTP:
-                    var ftpTransferProvider =
-                        (FtpTransferService)GetDefaultServiceProvider().GetService(typeof(FtpTransferService));
-                    ftpTransferProvider.Data = (FtpData)data;
-                    return ftpTransferProvider;
-                case TransferProtocol.HTTP:
-                    var httpTransferProvider =
-                        (HttpTransferService)GetDefaultServiceProvider().GetService(typeof(HttpTransferService));
-                    httpTransferProvider.Data = (HttpData)data;
-                    return httpTransferProvider;
-                case TransferProtocol.Custom:
-                    if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
-                        throw new TransferProtocolException("The project uses a custom transfer protocol, but the path to the file containing the transfer services is missing.");
-                    if (!transferAssemblyFilePath.IsValidPath())
-                        throw new TransferProtocolException($"The project uses a custom transfer protocol, but the path to the file containing the transfer services is invalid: \"{transferAssemblyFilePath}\"");
-
-                    var assembly = Assembly.LoadFrom(transferAssemblyFilePath);
-                    var serviceProvider = ServiceProviderHelper.CreateServiceProvider(assembly) ?? GetDefaultServiceProvider();
-                    return (ITransferProvider)serviceProvider.GetService(typeof(ITransferProvider));
-                default:
-                    var availableProtocols =
-                        Enum.GetValues(typeof(TransferProtocol)).Cast<TransferProtocol>().Select(t => t.ToString()).ToArray();
-                    throw new TransferProtocolException($"The provided transfer protocol ({protocol}) is not defined. Available protocols are {string.Join(", ", availableProtocols, 0, availableProtocols.Length - 1) + " and " + availableProtocols.LastOrDefault()}.");
-            }
+            return _transferProvider.DeleteDirectoryWithPath(directoryPath);
         }
 
-        private IServiceProvider GetDefaultServiceProvider()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            return ServiceProviderHelper.CreateServiceProvider(assembly);
-        }
-        
         public Task DeleteFile(string fileName)
         {
             return _transferProvider.DeleteFile(fileName);
         }
 
-        public Task DeleteFile(string directoryPath, string fileName)
+        public Task DeleteFileWithPath(string filePath)
         {
-            return _transferProvider.DeleteFile(directoryPath, fileName);
-        }
-
-        public Task DeleteDirectory(string directoryPath)
-        {
-            return _transferProvider.DeleteDirectory(directoryPath);
-        }
-
-        public Task RenameDirectory(string oldName, string newName)
-        {
-            return _transferProvider.RenameDirectory(oldName, newName);
-        }
-
-        public Task MakeDirectory(string name)
-        {
-            return _transferProvider.MakeDirectory(name);
-        }
-
-        public Task MoveContent(string destinationPath, IEnumerable<string> availableUpdateChannels)
-        {
-            return _transferProvider.MoveContent(destinationPath, availableUpdateChannels);
-        }
-        
-        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
-        {
-            return _transferProvider.UploadFile(filePath, progress);
-        }
-
-        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
-        {
-            return _transferProvider.UploadPackage(packagePath, guid, cancellationToken, progress);
+            return _transferProvider.DeleteFileWithPath(filePath);
         }
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _transferProvider.Dispose();
-            _disposed = true;
-        }
-
-        public Task<bool> TestConnection()
-        {
-            return _transferProvider.TestConnection();
-        }
-
-        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
-        {
-            return _transferProvider.List(path, recursive);
         }
 
         public Task<bool> Exists(string destinationName)
@@ -146,9 +68,108 @@ namespace nUpdate.Administration
             return _transferProvider.Exists(directoryPath, destinationName);
         }
 
+        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
+        {
+            return _transferProvider.List(path, recursive);
+        }
+
+        public Task MakeDirectory(string directoryName)
+        {
+            return _transferProvider.MakeDirectory(directoryName);
+        }
+
+        public Task MakeDirectoryWithPath(string directoryPath)
+        {
+            return _transferProvider.MakeDirectoryWithPath(directoryPath);
+        }
+
+        public Task MoveContent(string destinationPath, IEnumerable<string> availableUpdateChannels)
+        {
+            return _transferProvider.MoveContent(destinationPath, availableUpdateChannels);
+        }
+
+        public Task RenameDirectory(string oldName, string newName)
+        {
+            return _transferProvider.RenameDirectory(oldName, newName);
+        }
+
+        public Task<bool> TestConnection()
+        {
+            return _transferProvider.TestConnection();
+        }
+
+        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
+        {
+            return _transferProvider.UploadFile(filePath, progress);
+        }
+
         public Task UploadFile(Stream fileStream, string remotePath, IProgress<ITransferProgressData> progress)
         {
             return _transferProvider.UploadFile(fileStream, remotePath, progress);
+        }
+
+        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken,
+            IProgress<ITransferProgressData> progress)
+        {
+            return _transferProvider.UploadPackage(packagePath, guid, cancellationToken, progress);
+        }
+
+        private ITransferProvider GetTransferProvider(UpdateProject project)
+        {
+            return GetTransferProvider(project.TransferProtocol, project.TransferData, project.TransferAssemblyFilePath);
+        }
+
+        private ITransferProvider GetTransferProvider(TransferProtocol protocol, ITransferData data,
+            string transferAssemblyFilePath = null)
+        {
+            switch (protocol)
+            {
+                case TransferProtocol.FTP:
+                    var ftpTransferProvider =
+                        (FtpTransferService) GetDefaultServiceProvider().GetService(typeof (FtpTransferService));
+                    ftpTransferProvider.Data = (FtpData) data;
+                    return ftpTransferProvider;
+                case TransferProtocol.HTTP:
+                    var httpTransferProvider =
+                        (HttpTransferService) GetDefaultServiceProvider().GetService(typeof (HttpTransferService));
+                    httpTransferProvider.Data = (HttpData) data;
+                    return httpTransferProvider;
+                case TransferProtocol.Custom:
+                    if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
+                        throw new TransferProtocolException(
+                            "The project uses a custom transfer protocol, but the path to the file containing the transfer services is missing.");
+                    if (!transferAssemblyFilePath.IsValidPath())
+                        throw new TransferProtocolException(
+                            $"The project uses a custom transfer protocol, but the path to the file containing the transfer services is invalid: \"{transferAssemblyFilePath}\"");
+
+                    var assembly = Assembly.LoadFrom(transferAssemblyFilePath);
+                    var serviceProvider = ServiceProviderHelper.CreateServiceProvider(assembly) ??
+                                          GetDefaultServiceProvider();
+                    return (ITransferProvider) serviceProvider.GetService(typeof (ITransferProvider));
+                default:
+                    var availableProtocols =
+                        Enum.GetValues(typeof (TransferProtocol))
+                            .Cast<TransferProtocol>()
+                            .Select(t => t.ToString())
+                            .ToArray();
+                    throw new TransferProtocolException(
+                        $"The provided transfer protocol ({protocol}) is not defined. Available protocols are {string.Join(", ", availableProtocols, 0, availableProtocols.Length - 1) + " and " + availableProtocols.LastOrDefault()}.");
+            }
+        }
+
+        private IServiceProvider GetDefaultServiceProvider()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return ServiceProviderHelper.CreateServiceProvider(assembly);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _transferProvider.Dispose();
+            _disposed = true;
         }
     }
 }

@@ -14,26 +14,31 @@ namespace nUpdate.Administration.TransferInterface
         Task<bool> TestConnection();
 
         /// <summary>
-        ///     Deletes a file on the server.
+        ///     Deletes a file on the server which is located at the specified path.
         /// </summary>
-        /// <param name="fileName">The name of the file to delete.</param>
+        /// <param name="filePath">The path of the file to delete (including the extension).</param>
+        Task DeleteFileWithPath(string filePath);
+
+        /// <summary>
+        ///     Deletes a file on the server which is located in the current directory.
+        /// </summary>
+        /// <param name="fileName">The name of the file to delete (including the extension).</param>
         Task DeleteFile(string fileName);
 
         /// <summary>
-        ///     Deletes a file on the server which is located at the specified path.
+        ///     Deletes a directory on the server which is located at the specified path.
         /// </summary>
-        /// <param name="directoryPath">The path of the directory where the file is located.</param>
-        /// <param name="fileName">The name of the file to delete.</param>
-        Task DeleteFile(string directoryPath, string fileName);
+        /// <param name="directoryPath">The path of the directory to delete.</param>
+        Task DeleteDirectoryWithPath(string directoryPath);
 
         /// <summary>
-        ///     Deletes a directory on the server.
+        ///     Deletes a directory on the server which is located in the current directory.
         /// </summary>
-        /// <param name="directoryPath">The name of the directory to delete.</param>
-        Task DeleteDirectory(string directoryPath);
+        /// <param name="directoryName">The name of the directory to delete.</param>
+        Task DeleteDirectory(string directoryName);
 
         /// <summary>
-        ///     Lists the directories and files of the current directory as an <see cref="IEnumerable{FtpItem}"/>.
+        ///     Lists the directories and files of the directory at the specified path as an <see cref="IEnumerable{FtpItem}"/>.
         /// </summary>
         Task<IEnumerable<IServerItem>> List(string path, bool recursive);
 
@@ -45,7 +50,13 @@ namespace nUpdate.Administration.TransferInterface
         Task RenameDirectory(string oldName, string newName);
 
         /// <summary>
-        ///     Creates a new directory on the server.
+        ///     Creates a new directory on the server which is located at the specified path.
+        /// </summary>
+        /// <param name="directoryPath">The path of the directory that should be created.</param>
+        Task MakeDirectoryWithPath(string directoryPath);
+
+        /// <summary>
+        ///     Creates a new directory on the server which is located in the current directory.
         /// </summary>
         /// <param name="name">The name of the directory.</param>
         Task MakeDirectory(string name);
