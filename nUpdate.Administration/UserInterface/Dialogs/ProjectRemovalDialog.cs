@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using nUpdate.Administration.UserInterface.Popups;
 
 namespace nUpdate.Administration.UserInterface.Dialogs
@@ -54,7 +55,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             if (
                 Popup.ShowPopup(this, SystemIcons.Question, $"Delete project {e.Node.Text}?",
                     "Are you sure you want to remove the selected project from nUpdate Administration?",
-                    PopupButtons.YesNo) == DialogResult.No)
+                    PopupButtons.YesNo) == TaskDialogResult.No)
             {
                 e.Node.Checked = true;
                 return;
