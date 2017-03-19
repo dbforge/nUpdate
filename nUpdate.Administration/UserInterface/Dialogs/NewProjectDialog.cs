@@ -115,7 +115,7 @@ namespace nUpdate.Administration.UserInterface.Dialogs
             }
             else if (informationCategoriesTabControl.SelectedTab == httpTabPage)
             {
-                if (!ValidationManager.ValidateTabPage(httpTabPage))
+                if (!ValidationManager.Validate(httpTabPage))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
