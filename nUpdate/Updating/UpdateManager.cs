@@ -49,14 +49,15 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="updateConfigurationFileUri">The URI of the update configuration file.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
-        /// <param name="languageCulture">.</param>
+        /// <param name="languageCulture">The language culture to use. If no value is provided, the default one ("en") will be used.</param>
+        /// <param name="currentVersion">The current version of that should be used for the update checks. This parameter has a higher priority than the <see cref="nUpdateVersionAttribute"/> and will replace it, if specified.</param>
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
         ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture = null)
+            CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException(nameof(updateConfigurationFileUri));
@@ -72,10 +73,23 @@ namespace nUpdate.Updating
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
                 projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
-            if (nUpateVersionAttribute == null)
-                throw new ArgumentException(
-                    "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly.");
 
+            // TODO: This is just there to make sure we don't create an API-change that would require a new Major version. This will be changed/removed in v4.0.
+            // Before v3.0-beta8 it was not possible to provide the current version except using the nUpdateVersionAttribute.
+            // In order to allow specific features, e.g. updating another application and not the current one (as it's done by a launcher), there must be a way to provide this version separately.
+            // So, if an argument is specified for the "currentVersion" parameter, we will use this one instead of the nUpdateVersionAttribute.
+            if (currentVersion != null)
+                CurrentVersion = currentVersion;
+            else
+            {
+                // Neither the nUpdateVersionAttribute nor the additional parameter argument was provided.
+                if (nUpateVersionAttribute == null)
+                    throw new ArgumentException(
+                    "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly and no version was provided explicitly.");
+
+                CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
+            }
+            
             // TODO: This is just there to make sure we don't create an API-change that would require a new Major version. This will be changed/removed in v4.0.
             // Before v3.0-beta5 it was not possible to use custom languages due to a mistake in the architecture. So we can be pretty sure that nobody specifies a custom CultureInfo in the constructor.
             // We only need these two lines for those who specified one of the implemented CultureInfos here as they shouldn't have to change anything when updating to v3.0-beta5.
@@ -85,7 +99,6 @@ namespace nUpdate.Updating
             else
                 throw new ArgumentException($"The culture {languageCulture} is not defined.");
 
-            CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
