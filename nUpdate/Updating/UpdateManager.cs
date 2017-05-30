@@ -82,6 +82,8 @@ namespace nUpdate.Updating
             // Nevertheless, it's therefore possible to use custom CultureInfos just by leaving the optional parameter "null" and specifying the culture using the corresponding properties. So, both cases are covered with that solution.
             if (languageCulture != null && LocalizationHelper.IsIntegratedCulture(languageCulture, CultureFilePaths))
                 LanguageCulture = languageCulture;
+            else
+                throw new ArgumentException($"The culture {languageCulture} is not defined.");
 
             CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
