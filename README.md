@@ -24,7 +24,7 @@ Features
  
 Version
 ------
-v3.0-beta6 (Could contain some bugs)
+v3.0-beta7 (Could contain some bugs)
 
 Web
 ------
@@ -56,7 +56,7 @@ Have a look at the [v4.0]-branch for the newest changes.
 
 License
 ------
-SugarCRM
+MIT
 
 [v4.0]:https://www.github.com/ProgTrade/nUpdate/tree/v4.0
 [nUpdate]:http://www.nupdate.net/
