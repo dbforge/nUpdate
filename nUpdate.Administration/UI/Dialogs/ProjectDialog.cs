@@ -1838,7 +1838,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         }
                         catch (Exception ex)
                         {
-                            if (ex.Message.Contains("No such file or directory"))
+                            if (ex.Message.Contains("RequestedActionNotTakenFileUnavailable"))
                             {
                                 _shouldKeepErrorsSecret = true;
                             }
