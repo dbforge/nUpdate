@@ -44,10 +44,21 @@ namespace nUpdate.Updating
 
             if (!match.Groups["DevStage"].Success)
                 return;
-            var devStage = match.Groups["Type"].Value;
-            DevelopmentalStage = devStage == "a"
-                ? DevelopmentalStage.Alpha
-                : devStage == "b" ? DevelopmentalStage.Beta : DevelopmentalStage.ReleaseCandidate;
+            var developmentalStage = match.Groups["Type"].Value;
+            switch (developmentalStage)
+            {
+                case "a":
+                    DevelopmentalStage = DevelopmentalStage.Alpha;
+                    break;
+                case "b":
+                    DevelopmentalStage = DevelopmentalStage.Beta;
+                    break;
+                case "rc":
+                    DevelopmentalStage = DevelopmentalStage.ReleaseCandidate;
+                    break;
+                default:
+                    throw new ArgumentException("The specified developmental stage is not valid.");
+            }
 
             DevelopmentBuild = match.Groups["DevBuild"].Success ? int.Parse(match.Groups["DevBuild"].Value) : 0;
         }
