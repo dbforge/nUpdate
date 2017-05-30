@@ -1003,12 +1003,15 @@ namespace nUpdate.Administration.UI.Dialogs
                 try
                 {
                     var projectAssembly = Assembly.LoadFile(fileDialog.FileName);
-                    FileVersionInfo.GetVersionInfo(projectAssembly.Location);
+                    var nUpateVersionAttribute =
+                        projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
+
+                    if (nUpateVersionAttribute == null)
+                        throw new Exception("The specified assembly does not contain a valid nUpdateVersionAttribute.");
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid assembly found.",
-                        "The version of the assembly of the selected file could not be read.",
+                    Popup.ShowPopup(this, SystemIcons.Error, "Invalid assembly found.", ex,
                         PopupButtons.Ok);
                     enterVersionManuallyRadioButton.Checked = true;
                     return;
