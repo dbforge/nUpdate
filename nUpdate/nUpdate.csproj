@@ -227,14 +227,12 @@
     <None Include="Resources\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Newtonsoft.Json.pdb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate UpdateInstaller.pdb" />
     <None Include="Resources\nUpdate UpdateInstaller.exe" />
+    <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
     <Content Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
