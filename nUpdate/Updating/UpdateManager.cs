@@ -667,7 +667,7 @@ namespace nUpdate.Updating
         /// </remarks>
         public virtual void TerminateApplication()
         {
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         /// <summary>
