@@ -297,20 +297,30 @@ namespace nUpdate.Administration.UI.Dialogs
             buildNumericUpDown.Maximum = decimal.MaxValue;
             revisionNumericUpDown.Maximum = decimal.MaxValue;
 
-            if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
+            try
             {
-                var projectAssembly = Assembly.GetCallingAssembly();
-                var nUpateVersionAttribute =
-                    projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
+                if (!string.IsNullOrEmpty(Project.AssemblyVersionPath))
+                {
+                    var projectAssembly = Assembly.LoadFile(Project.AssemblyVersionPath);
+                    var nUpateVersionAttribute =
+                        projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
 
-                if (nUpateVersionAttribute == null)
-                    return;
-                var assemblyVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
-
-                majorNumericUpDown.Value = assemblyVersion.Major;
-                minorNumericUpDown.Value = assemblyVersion.Minor;
-                buildNumericUpDown.Value = assemblyVersion.Build;
-                revisionNumericUpDown.Value = assemblyVersion.Revision;
+                    if (nUpateVersionAttribute != null)
+                    {
+                        var assemblyVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
+                        majorNumericUpDown.Value = assemblyVersion.Major;
+                        minorNumericUpDown.Value = assemblyVersion.Minor;
+                        buildNumericUpDown.Value = assemblyVersion.Build;
+                        revisionNumericUpDown.Value = assemblyVersion.Revision;
+                        developmentalStageComboBox.SelectedItem = assemblyVersion.DevelopmentalStage;
+                        developmentBuildNumericUpDown.Value = assemblyVersion.DevelopmentBuild;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the version from the specified assembly.", ex,
+                    PopupButtons.Ok);
             }
 
             generalTabPage.DoubleBuffer();
