@@ -97,7 +97,7 @@ namespace nUpdate.Updating
             if (languageCulture != null && LocalizationHelper.IsIntegratedCulture(languageCulture, CultureFilePaths))
                 LanguageCulture = languageCulture;
             else
-                throw new ArgumentException($"The culture {languageCulture} is not defined.");
+                throw new ArgumentException($"The culture \"{languageCulture}\" is not defined.");
 
             if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
