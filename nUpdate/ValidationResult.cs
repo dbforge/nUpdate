@@ -8,9 +8,9 @@ namespace nUpdate
     /// </summary>
     public class ValidationResult
     {
-        internal ValidationResult(int packageCount)
+        internal ValidationResult(int packageAmount)
         {
-            InvalidPackages = new List<UpdatePackage>(packageCount);
+            InvalidPackages = new List<UpdatePackage>(packageAmount);
         }
 
         /// <summary>
