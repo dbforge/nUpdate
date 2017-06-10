@@ -10,7 +10,7 @@ namespace nUpdate
     internal class UpdateResult
     {
         private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
-
+        
         // TODO: Requirements
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -92,8 +92,8 @@ namespace nUpdate
         public bool UpdatesFound => _newUpdatePackages.Count > 0;
 
         /// <summary>
-        ///     Gets all new <see cref="UpdatePackage" />s.
+        ///     Gets all available <see cref="UpdatePackage" />s.
         /// </summary>
-        public IEnumerable<UpdatePackage> NewestPackages => _newUpdatePackages;
+        public IEnumerable<UpdatePackage> NewPackages => _newUpdatePackages;
     }
 }
