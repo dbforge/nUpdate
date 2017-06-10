@@ -23,7 +23,7 @@ namespace nUpdate
                         if (input == null)
                             throw new Exception("The response stream couldn't be read.");
 
-                        int size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                        var size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         while (size > 0) // As long as we receive bytes from the stream...
                         {
                             cancellationToken.ThrowIfCancellationRequested();
@@ -31,6 +31,7 @@ namespace nUpdate
                             await fileStream.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
                             received += size;
                             progress?.Report(new UpdateProgressData(received,
+                                // ReSharper disable once PossibleLossOfFraction
                                 totalSize, (float)(received / totalSize) * 100));
                             size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         }
