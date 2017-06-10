@@ -98,7 +98,7 @@ namespace nUpdate
             }
             catch (Exception ex)
             {
-                this.Log().Warn("The application's update directory could not be created as an exception occured.", ex);
+                this.Log().ErrorException("The application's update directory could not be created as an exception occured.", ex);
                 throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
                     ex.Message));
             }
@@ -229,7 +229,7 @@ namespace nUpdate
             }
             catch (JsonReaderException ex)
             {
-                this.Log().Info("The received master channel data is no valid JSON data.");
+                this.Log().ErrorException("The received master channel data is no valid JSON data.", ex);
                 throw new Exception(_lp.InvalidJsonExceptionText, ex);
             }
 
