@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace nUpdate
 {
-    public static class UpdateHelper
+    public static class Utility
     {
-        public async static Task<double> GetTotalPackageSize(IEnumerable<UpdatePackage> packages)
+        public static async Task<double> GetTotalPackageSize(IEnumerable<UpdatePackage> packages)
         {
             double size = 0;
             await packages.ForEachAsync(async p =>
@@ -17,10 +18,13 @@ namespace nUpdate
                     req.Method = "HEAD";
                     using (var resp = await req.GetResponseAsync())
                     {
+                        var headerValue = resp.Headers.Get("Content-Length");
                         double contentLength;
-                        size = double.TryParse(resp.Headers.Get("Content-Length"), out contentLength)
-                            ? contentLength
-                            : double.NaN;
+                        if (double.TryParse(headerValue, out contentLength))
+                            size += contentLength;
+                        else
+                            throw new Exception(
+                                $"The size of the package for version {p.Version} could not be determined due to an invalid header value for the content length: {headerValue}");
                     }
                 }
                 catch
