@@ -18,16 +18,16 @@ using nUpdate.Localization;
 using nUpdate.Operations;
 using nUpdate.Properties;
 using Newtonsoft.Json;
+using Splat;
 
 namespace nUpdate
 {
     /// <summary>
     ///     Provides the core functionality to update .NET-applications.
     /// </summary>
-    public sealed class Updater
+    public sealed class Updater : IEnableLogger
     {
-        private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
-            Application.ProductName);
+        private readonly string _applicationUpdateDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate", "Updates", Application.ProductName);
 
         private CultureInfo _languageCulture = new CultureInfo("en");
         private LocalizationProperties _lp;
@@ -41,7 +41,7 @@ namespace nUpdate
         /// </param>
         /// <param name="publicKey">The public key used to verify the signature of the update packages.</param>
         /// <param name="applicationChannel">The current channel of the application.</param>
-        /// <param name="searchChannel">The lowest update channel that should be included into the update search.</param>
+        /// <param name="lowestSearchChannel">The lowest update channel that should be included into the update search. nUpdate will check for updates inside of this channel and higher ones.</param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -51,7 +51,7 @@ namespace nUpdate
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it inside nUpdate Administration.
         /// </remarks>
-        public Updater(Uri updateDirectoryUri, string publicKey, string applicationChannel, string searchChannel)
+        public Updater(Uri updateDirectoryUri, string publicKey, string applicationChannel, string lowestSearchChannel)
         {
             if (updateDirectoryUri == null || !updateDirectoryUri.IsWellFormedOriginalString())
                 throw new ArgumentException(nameof(updateDirectoryUri));
@@ -65,9 +65,9 @@ namespace nUpdate
                 throw new ArgumentException(nameof(applicationChannel));
             ApplicationChannel = applicationChannel;
 
-            if (string.IsNullOrWhiteSpace(searchChannel))
-                throw new ArgumentException(nameof(searchChannel));
-            SearchChannel = searchChannel;
+            if (string.IsNullOrWhiteSpace(lowestSearchChannel))
+                throw new ArgumentException(nameof(lowestSearchChannel));
+            LowestSearchChannel = lowestSearchChannel;
 
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
@@ -79,15 +79,26 @@ namespace nUpdate
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _lp = LocalizationHelper.GetLocalizationProperties(new CultureInfo("en"), LocalizationFilePaths);
 
+            CreateAppUpdateDirectory();
+        }
+
+        /// <summary>
+        ///     Creates the application's update directory where the downloaded packages and other files are stored.
+        /// </summary>
+        private void CreateAppUpdateDirectory()
+        {
+            this.Log().Info("Checking existence of the application's update directory.");
             if (Directory.Exists(_applicationUpdateDirectory))
                 return;
-
+            
+            this.Log().Info("Creating the application's update directory.");
             try
             {
                 Directory.CreateDirectory(_applicationUpdateDirectory);
             }
             catch (Exception ex)
             {
+                this.Log().Warn("The application's update directory could not be created as an exception occured.", ex);
                 throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
                     ex.Message));
             }
@@ -116,7 +127,7 @@ namespace nUpdate
         /// <summary>
         ///     Gets the lowest update channel that should be used for the update search.
         /// </summary>
-        public string SearchChannel { get; }
+        public string LowestSearchChannel { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
@@ -193,7 +204,7 @@ namespace nUpdate
         public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
 
         /// <summary>
-        /// Searches for updates.
+        ///     Searches for updates.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>
@@ -202,6 +213,7 @@ namespace nUpdate
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdates(CancellationToken cancellationToken)
         {
+            this.Log().Info("Checking the network connection.");
             if (!WebConnection.IsAvailable())
                 return false;
 
@@ -211,20 +223,26 @@ namespace nUpdate
 
             try
             {
+                this.Log().Info("Loading the master channel from the server.");
                 masterChannel =
                     await UpdateChannel.GetMasterChannel(new Uri(UpdateDirectoryUri, "masterfeed.json"), Proxy);
             }
             catch (JsonReaderException ex)
             {
+                this.Log().Info("The received master channel data is no valid JSON data.");
                 throw new Exception(_lp.InvalidJsonExceptionText, ex);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            this.Log().Info("Initializing the update result for this search.");
             var result = new UpdateResult();
             await result.Initialize(masterChannel, ApplicationVersion,
-                ApplicationChannel, SearchChannel);
-            AvailablePackages = result.NewestPackages;
-            TotalSize = await UpdateHelper.GetTotalPackageSize(AvailablePackages);
+                ApplicationChannel, LowestSearchChannel);
+            AvailablePackages = result.NewPackages;
+
+            this.Log().Info("Determining the total size of all packages.");
+            TotalSize = await Utility.GetTotalPackageSize(AvailablePackages);
             return result.UpdatesFound;
         }
 
@@ -254,11 +272,13 @@ namespace nUpdate
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));
-
             var updatePackages = packages.ToArray();
-            double totalSize = await UpdateHelper.GetTotalPackageSize(updatePackages);
+
+            this.Log().Info("Determining the total size of all packages.");
+            var totalSize = await Utility.GetTotalPackageSize(updatePackages);
             await updatePackages.ForEachAsync(async p =>
             {
+                this.Log().Info($"Downloading package of version {p.Version}.");
                 await Downloader.DownloadFile(p.UpdatePackageUri, Path.Combine(_applicationUpdateDirectory,
                     $"{p.Guid}.zip"), (long) totalSize, cancellationToken, progress);
 
@@ -267,6 +287,7 @@ namespace nUpdate
 
                 try
                 {
+                    this.Log().Info($"Adding entry to the statistics for version {p.Version}.");
                     string response =
                         await new WebClient().DownloadStringTaskAsync(
                             $"{p.UpdatePhpFileUri}?versionid={p.VersionId}&os={SystemInformation.OperatingSystemName}");
@@ -314,12 +335,14 @@ namespace nUpdate
                 {
                     try
                     {
+                        this.Log().Info($"Verifying the signature for the package of version {package.Version}.");
                         using (var rsa = new RsaManager(PublicKey))
                             return rsa.VerifyData(stream, Convert.FromBase64String(package.Signature));
                     }
                     catch
                     {
                         // Don't throw an exception.
+                        this.Log().Warn($"Invalid signature found for the package of version {package.Version}.");
                         return false;
                     }
                 }
@@ -334,9 +357,9 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="ValidateUpdate" />
-        public async Task<ValidationResult> ValidateUpdates()
+        public Task<ValidationResult> ValidateUpdates()
         {
-            return await ValidateUpdates(AvailablePackages);
+            return ValidateUpdates(AvailablePackages);
         } 
 
         /// <summary>
@@ -353,7 +376,10 @@ namespace nUpdate
                 throw new ArgumentNullException(nameof(packages));
 
             var updatePackages = packages.ToArray();
-            var validationResult = new ValidationResult(updatePackages.Count());
+            if (updatePackages.Length == 0)
+                return default(ValidationResult);
+
+            var validationResult = new ValidationResult(updatePackages.Length);
             await updatePackages.ForEachAsync(async p =>
             {
                 if (!await ValidateUpdate(p))
@@ -430,7 +456,8 @@ namespace nUpdate
             var jsonNetPdbPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.pdb");
             var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
             //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
-
+            
+            this.Log().Info("Managing the installer files.");
             if (Directory.Exists(unpackerDirectory))
                 Directory.Delete(unpackerDirectory, true);
             Directory.CreateDirectory(unpackerDirectory);
@@ -487,7 +514,8 @@ namespace nUpdate
                 $"\"{HostApplicationOptions}\"",
                 $"\"{_lp.InstallerFileInUseError}\"",
             };
-
+            
+            this.Log().Info($"Starting nUpdate UpdateInstaller.");
             var startInfo = new ProcessStartInfo
             {
                 FileName = unpackerAppPath,
@@ -510,6 +538,7 @@ namespace nUpdate
             if (HostApplicationOptions == HostApplicationOptions.LeaveOpen)
                 return;
 
+            this.Log().Info("Throwing final exception for terminating the application.");
             throw new ApplicationTerminateException();
         }
 
@@ -518,7 +547,7 @@ namespace nUpdate
             if (DomainHelper.EnumerateAppDomains().Count() > 1)
                 throw new InvalidOperationException(
                     "There is more than one AppDomain active. The application cannot be terminated."); // TODO: Localize
-
+            
             if (((Exception) e.ExceptionObject).GetType() == typeof (ApplicationTerminateException))
                 Environment.Exit(0);
         }
