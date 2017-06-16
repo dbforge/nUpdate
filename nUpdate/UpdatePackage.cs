@@ -129,7 +129,7 @@ namespace nUpdate
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = await wc.DownloadStringTaskAsync(configFileUri);
                 if (!string.IsNullOrEmpty(source))
-                    return Serializer.Deserialize<IEnumerable<UpdatePackage>>(source);
+                    return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
             }
 
             return Enumerable.Empty<UpdatePackage>();
@@ -142,7 +142,7 @@ namespace nUpdate
         /// <param name="filePath">The path of the local file.</param>
         public static IEnumerable<UpdatePackage> FromFile(string filePath)
         {
-            return Serializer.Deserialize<IEnumerable<UpdatePackage>>(File.ReadAllText(filePath)) ?? Enumerable.Empty<UpdatePackage>();
+            return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(File.ReadAllText(filePath)) ?? Enumerable.Empty<UpdatePackage>();
         }
     }
 }

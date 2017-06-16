@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace nUpdate
 {
-    public class Serializer
+    public class JsonSerializer
     {
         /// <summary>
         ///     Serializes a given serializable object.
