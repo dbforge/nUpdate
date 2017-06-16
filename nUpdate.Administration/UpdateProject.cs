@@ -1,9 +1,10 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Sql;
 using Newtonsoft.Json;
@@ -18,103 +19,22 @@ namespace nUpdate.Administration
     [Serializable]
     internal class UpdateProject : PropertyChangedBase
     {
-        private int _applicationId;
         private string _assemblyVersionPath;
+        private List<UpdateChannel> _channels;
         private Guid _guid;
         private List<PackageActionLogData> _logData;
         private string _name;
         private List<UpdatePackage> _packages;
         private string _privateKey;
-        private TransferProtocol _transferProtocol;
         private ProxyData _proxyData;
         private string _publicKey;
         private SqlData _sqlData;
         private string _transferAssemblyFilePath;
         private ITransferData _transferData;
+        private TransferProtocol _transferProtocol;
         private Uri _updateDirectoryUri;
         private bool _useProxy;
         private bool _useStatistics;
-        private List<UpdateChannel> _channels;
-
-        public string ConfigVersion => "4";
-
-        /// <summary>
-        ///     Gets or sets the name of the project.
-        /// </summary>
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="System.Guid" /> of the project.
-        /// </summary>
-        public Guid Guid
-        {
-            get { return _guid; }
-            set
-            {
-                _guid = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the application ID of the project for the statistics entries.
-        /// </summary>
-        public int ApplicationID
-        {
-            get { return _applicationId; }
-            set
-            {
-                _applicationId = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="System.Uri" /> of the remote update directory of the project.
-        /// </summary>
-        public Uri UpdateDirectoryUri
-        {
-            get { return _updateDirectoryUri; }
-            set
-            {
-                _updateDirectoryUri = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the private key of the project for signing update packages.
-        /// </summary>
-        public string PrivateKey
-        {
-            get { return _privateKey; }
-            set
-            {
-                _privateKey = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the public key of the project.
-        /// </summary>
-        public string PublicKey
-        {
-            get { return _publicKey; }
-            set
-            {
-                _publicKey = value;
-                OnPropertyChanged();
-            }
-        }
 
         /// <summary>
         ///     Gets or sets the path of the file containing the <see cref="System.Reflection.Assembly" /> of the .NET project that
@@ -130,45 +50,26 @@ namespace nUpdate.Administration
             }
         }
 
+        public string ConfigVersion => "4";
+
         /// <summary>
-        ///     Gets or sets the <see cref="ITransferData" /> that carries the necessary information for data transfers.
+        ///     Gets or sets the <see cref="System.Guid" /> of the project.
         /// </summary>
-        [JsonProperty(TypeNameHandling = TypeNameHandling.Objects)]
-        public ITransferData TransferData
+        public Guid Guid
         {
-            get { return _transferData; }
+            get { return _guid; }
             set
             {
-                _transferData = value;
+                _guid = value;
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-        ///     Gets or sets the path of the file containing an assembly that implements a custom transfer protocol.
+        ///     Gets the identifier for the key database.
         /// </summary>
-        public string TransferAssemblyFilePath
-        {
-            get { return _transferAssemblyFilePath; }
-            set
-            {
-                _transferAssemblyFilePath = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="Administration.TransferProtocol" /> that should be used for data transfers.
-        /// </summary>
-        public TransferProtocol TransferProtocol
-        {
-            get { return _transferProtocol; }
-            set
-            {
-                _transferProtocol = value;
-                OnPropertyChanged();
-            }
-        }
+        [JsonIgnore]
+        public Uri Identifier => new Uri($"nupdproj://{Guid}");
 
         /// <summary>
         ///     Gets or sets the <see cref="PackageActionLogData" /> that carries information about the package history.
@@ -197,6 +98,19 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
+        ///     Gets or sets the name of the project.
+        /// </summary>
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets the available <see cref="UpdatePackage" />s of the project.
         /// </summary>
         public List<UpdatePackage> Packages
@@ -210,14 +124,41 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a statistics server should be used for the project, or not.
+        ///     Gets or sets the private key of the project for signing update packages.
         /// </summary>
-        public bool UseStatistics
+        [JsonIgnore]
+        public string PrivateKey
         {
-            get { return _useStatistics; }
+            get { return _privateKey; }
             set
             {
-                _useStatistics = value;
+                _privateKey = value;
+                KeyManager.Instance.Store(Identifier, value);
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="Administration.ProxyData" /> that carries the necessary information for proxies.
+        /// </summary>
+        public ProxyData ProxyData
+        {
+            get { return _proxyData; }
+            set
+            {
+                _proxyData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the public key of the project.
+        /// </summary>
+        public string PublicKey
+        {
+            get { return _publicKey; }
+            set
+            {
+                _publicKey = value;
                 OnPropertyChanged();
             }
         }
@@ -236,6 +177,59 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
+        ///     Gets or sets the path of the file containing an assembly that implements a custom transfer protocol.
+        /// </summary>
+        public string TransferAssemblyFilePath
+        {
+            get { return _transferAssemblyFilePath; }
+            set
+            {
+                _transferAssemblyFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="ITransferData" /> that carries the necessary information for data transfers.
+        /// </summary>
+        [JsonProperty(TypeNameHandling = TypeNameHandling.Objects)]
+        public ITransferData TransferData
+        {
+            get { return _transferData; }
+            set
+            {
+                _transferData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="Administration.TransferProtocol" /> that should be used for data transfers.
+        /// </summary>
+        public TransferProtocol TransferProtocol
+        {
+            get { return _transferProtocol; }
+            set
+            {
+                _transferProtocol = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="Uri" /> of the remote update directory of the project.
+        /// </summary>
+        public Uri UpdateDirectoryUri
+        {
+            get { return _updateDirectoryUri; }
+            set
+            {
+                _updateDirectoryUri = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets a value indicating whether a proxy should be used for data transfers, or not.
         /// </summary>
         public bool UseProxy
@@ -249,14 +243,14 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Administration.ProxyData" /> that carries the necessary information for proxies.
+        ///     Gets or sets a value indicating whether a statistics server should be used for the project, or not.
         /// </summary>
-        public ProxyData ProxyData
+        public bool UseStatistics
         {
-            get { return _proxyData; }
+            get { return _useStatistics; }
             set
             {
-                _proxyData = value;
+                _useStatistics = value;
                 OnPropertyChanged();
             }
         }
@@ -268,10 +262,13 @@ namespace nUpdate.Administration
         /// <returns>The loaded <see cref="UpdateProject" />.</returns>
         public static UpdateProject Load(string path)
         {
-            var updateProject = Serializer.Deserialize<UpdateProject>(File.ReadAllText(path));
-            var currentProjectEntry = Session.AvailableLocations.FirstOrDefault(item => item.Guid == updateProject.Guid);
+            var updateProject = JsonSerializer.Deserialize<UpdateProject>(File.ReadAllText(path));
+            var currentProjectEntry =
+                ProjectSession.AvailableLocations.FirstOrDefault(item => item.Guid == updateProject.Guid);
             if (currentProjectEntry == null)
-                Session.AvailableLocations.Add(new UpdateProjectLocation(updateProject.Guid, path));
+            {
+                ProjectSession.AvailableLocations.Add(new UpdateProjectLocation(updateProject.Guid, path));
+            }
             else
             {
                 if (currentProjectEntry.LastSeenPath != path)
@@ -281,22 +278,29 @@ namespace nUpdate.Administration
             return updateProject;
         }
 
-        /// <summary>
-        ///     Saves the current <see cref="UpdateProject" />.
-        /// </summary>
-        public void Save()
+        [OnDeserialized]
+        private void OnDeserialized()
         {
-            var updateProjectLocation = Session.AvailableLocations.FirstOrDefault(loc => loc.Guid == Guid);
-            if (updateProjectLocation != null)
-                File.WriteAllText(updateProjectLocation.LastSeenPath, Serializer.Serialize(this));
+            PrivateKey = (string) KeyManager.Instance.Load(Identifier);
         }
 
         /// <summary>
-        ///     Saves the current <see cref="UpdateProject" />.
+        ///     Saves the current <see cref="UpdateProject" /> under the last known file path.
+        /// </summary>
+        public void Save()
+        {
+            var updateProjectLocation = ProjectSession.AvailableLocations.FirstOrDefault(loc => loc.Guid == Guid);
+            if (updateProjectLocation != null)
+                File.WriteAllText(updateProjectLocation.LastSeenPath, JsonSerializer.Serialize(this));
+        }
+
+        /// <summary>
+        ///     Saves the current <see cref="UpdateProject" /> at the specified path using its name as file identifier.
         /// </summary>
         public void Save(string path)
         {
-            File.WriteAllText(path, Serializer.Serialize(this));
+            string filename = Name + ".nupdproj";
+            File.WriteAllText(Path.Combine(path, filename), JsonSerializer.Serialize(this));
         }
     }
 }

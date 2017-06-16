@@ -2,17 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using nUpdate.Administration.UserInterface.Controls;
-using nUpdate.Administration.Win32;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once IdentifierTypo
@@ -21,32 +16,6 @@ namespace nUpdate.Administration
 {
     internal static class Extensions
     {
-        private const int TVIF_STATE = 0x8;
-        private const int TVIS_STATEIMAGEMASK = 0xF000;
-        private const int TV_FIRST = 0x1100;
-        private const int TVM_SETITEM = TV_FIRST + 63;
-
-        internal static void DoubleBuffer(this Control control)
-        {
-            if (System.Windows.Forms.SystemInformation.TerminalServerSession)
-                return;
-            var dbProp = typeof (Control).GetProperty("DoubleBuffered",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            dbProp.SetValue(control, true, null);
-        }
-
-        internal static void HideCheckBox(this TreeNode node)
-        {
-            var tvi = new ExplorerTreeNode
-            {
-                HItem = node.Handle,
-                Mask = TVIF_STATE,
-                StateMask = TVIS_STATEIMAGEMASK,
-                State = 0
-            };
-            NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
-        }
-
         internal static T[] RemoveAt<T>(this T[] source, int index)
         {
             var destination = new T[source.Length - 1];
@@ -93,51 +62,7 @@ namespace nUpdate.Administration
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
-
-        internal static void MoveUp(this TreeNode node)
-        {
-            var parent = node.Parent;
-            var view = node.TreeView;
-            if (parent != null)
-            {
-                int index = node.Index;
-                if (index <= 0)
-                    return;
-                parent.Nodes.RemoveAt(index);
-                parent.Nodes.Insert(index - 1, node);
-            }
-            else if (node.TreeView.Nodes.Contains(node))
-            {
-                int index = view.Nodes.IndexOf(node);
-                if (index <= 0)
-                    return;
-                view.Nodes.RemoveAt(index);
-                view.Nodes.Insert(index - 1, node);
-            }
-        }
-
-        internal static void MoveDown(this TreeNode node)
-        {
-            var parent = node.Parent;
-            var view = node.TreeView;
-            if (parent != null)
-            {
-                int index = node.Index;
-                if (index >= parent.Nodes.Count - 1)
-                    return;
-                parent.Nodes.RemoveAt(index);
-                parent.Nodes.Insert(index + 1, node);
-            }
-            else if (view != null && view.Nodes.Contains(node))
-            {
-                int index = view.Nodes.IndexOf(node);
-                if (index >= view.Nodes.Count - 1)
-                    return;
-                view.Nodes.RemoveAt(index);
-                view.Nodes.Insert(index + 1, node);
-            }
-        }
-
+        
         internal static bool IsValidPath(this string path)
         {
             var driveCheckRegEx = new Regex(@"^[a-zA-Z]:\\$");
@@ -155,13 +80,7 @@ namespace nUpdate.Administration
                 directory.Create();
             return true;
         }
-
-        internal static void SetRowHeight(this ListView listView, int height)
-        {
-            var imageList = new ImageList {ImageSize = new Size(1, height)};
-            listView.SmallImageList = imageList;
-        }
-
+        
         internal static async Task<bool> AllAsync<T>(this IEnumerable<T> items, Func<T, Task<bool>> predicate)
         {
             var itemTaskList = items.Select(item => new { Item = item, PredTask = predicate.Invoke(item) }).ToList();

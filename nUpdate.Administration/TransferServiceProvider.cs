@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using nUpdate.Administration;
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
-using nUpdate.Administration.TransferInterface;
 
 [assembly: ServiceProvider(typeof (TransferServiceProvider))]
 
