@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using nUpdate.Administration.Exceptions;
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Http;
-using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration
 {
@@ -20,7 +19,6 @@ namespace nUpdate.Administration
         // TODO: Certificate checks
 
         private readonly ITransferProvider _transferProvider;
-        private bool _disposed;
 
         public TransferManager(UpdateProject project)
         {
@@ -50,12 +48,6 @@ namespace nUpdate.Administration
         public Task DeleteFileWithPath(string filePath)
         {
             return _transferProvider.DeleteFileWithPath(filePath);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public Task<bool> Exists(string destinationName)
@@ -161,15 +153,6 @@ namespace nUpdate.Administration
         {
             var assembly = Assembly.GetExecutingAssembly();
             return ServiceProviderHelper.CreateServiceProvider(assembly);
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _transferProvider.Dispose();
-            _disposed = true;
         }
     }
 }

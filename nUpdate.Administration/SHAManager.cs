@@ -1,13 +1,19 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace nUpdate.Administration
 {
     // ReSharper disable once InconsistentNaming
-    public class SHAManager
+    internal static class ShaManager
     {
+        internal static string Hash(string plain)
+        {
+            using (var sha = new SHA1Managed())
+                return new ByteConverter().ConvertToString(sha.ComputeHash(Encoding.UTF8.GetBytes(plain)));
+        }
+
+        /*
         public static byte[] HashDirectory(string path)
         {
             var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
@@ -40,6 +46,6 @@ namespace nUpdate.Administration
                 var sha = new SHA1Managed();
                 return sha.ComputeHash(stream);
             }
-        }
+        }*/
     }
 }

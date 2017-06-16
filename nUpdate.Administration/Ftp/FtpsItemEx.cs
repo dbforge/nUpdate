@@ -1,5 +1,4 @@
 ﻿using System;
-using nUpdate.Administration.TransferInterface;
 using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Ftp

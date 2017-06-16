@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using nUpdate.Administration.Logging;
-using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration
 {
@@ -23,12 +22,12 @@ namespace nUpdate.Administration
 
         internal async Task<bool> CheckUpdateChannels(IEnumerable<UpdateChannel> masterChannel)
         {
-            if (!await Session.TransferManager.Exists("channels"))
+            if (!await ProjectSession.TransferManager.Exists("channels"))
                 return false;
             return
                 await
                     masterChannel.AllAsync(
-                        c => Session.TransferManager.Exists($"channels/{c.Name.ToLowerInvariant()}.json"));
+                        c => ProjectSession.TransferManager.Exists($"channels/{c.Name.ToLowerInvariant()}.json"));
         }
 
         internal IEnumerable<UpdatePackage> LoadPackageData()
@@ -51,11 +50,11 @@ namespace nUpdate.Administration
                 (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
             updatePackages.Add(updatePackage);
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(updatePackages))))
             {
                 // TODO: Upload the package data
                 await
-                    Session.TransferManager.UploadFile(stream,
+                    ProjectSession.TransferManager.UploadFile(stream,
                         $"channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
             }
         }
@@ -70,7 +69,7 @@ namespace nUpdate.Administration
                 File.WriteAllText(
                     Path.Combine(FilePathProvider.Path, "Projects", _project.Guid.ToString(),
                         factoryPackage.PackageData.Guid.ToString(), "updates.json"),
-                    Serializer.Serialize(factoryPackage.PackageData));
+                    JsonSerializer.Serialize(factoryPackage.PackageData));
             });
         }
 
@@ -84,11 +83,11 @@ namespace nUpdate.Administration
 
             // Upload the package
             await
-                Session.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.Guid,
+                ProjectSession.TransferManager.UploadPackage(factoryPackage.ArchivePath, factoryPackage.PackageData.Guid,
                     cancellationToken, progress);
             await PushPackageData(factoryPackage.PackageData, cancellationToken, progress);
 
-            Session.Logger.AppendEntry(PackageActionType.UploadPackage,
+            ProjectSession.Logger.AppendEntry(PackageActionType.UploadPackage,
                 $"{factoryPackage.PackageData.Version} ({factoryPackage.PackageData.ChannelName})");
         }
 
@@ -116,11 +115,11 @@ namespace nUpdate.Administration
             if (destinationPackage != null)
                 updatePackages.Remove(destinationPackage);
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Serializer.Serialize(updatePackages))))
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(updatePackages))))
             {
                 // TODO: Upload the package data
                 await
-                    Session.TransferManager.UploadFile(stream,
+                    ProjectSession.TransferManager.UploadFile(stream,
                         $"/channels/{destinationChannel.Name.ToLowerInvariant()}.json", progress);
             }
         }
@@ -131,8 +130,8 @@ namespace nUpdate.Administration
             // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
             await RemovePackageData(updateVersion, updateChannelName, cancellationToken, progress);
 
-            if (await Session.TransferManager.Exists(updateVersion.ToString()))
-                await Session.TransferManager.DeleteDirectory(updateVersion.ToString());
+            if (await ProjectSession.TransferManager.Exists(updateVersion.ToString()))
+                await ProjectSession.TransferManager.DeleteDirectory(updateVersion.ToString());
 
             var destinationPackage =
                 _project.Packages.FirstOrDefault(
@@ -147,19 +146,19 @@ namespace nUpdate.Administration
         internal async Task SynchronizeMasterChannel()
         {
             // If the master channel is also no longer available inside the local project file, we just use the default one.
-            if (Session.ActiveProject.MasterChannel == null)
+            if (ProjectSession.ActiveProject.MasterChannel == null)
             {
-                Session.ActiveProject.MasterChannel =
-                    UpdateChannel.GetDefaultMasterChannel(Session.ActiveProject.UpdateDirectoryUri).ToList();
+                ProjectSession.ActiveProject.MasterChannel =
+                    UpdateChannel.GetDefaultMasterChannel(ProjectSession.ActiveProject.UpdateDirectoryUri).ToList();
             }
 
             using (
                 var stream =
                     new MemoryStream(
-                        Encoding.UTF8.GetBytes(Serializer.Serialize(Session.ActiveProject.MasterChannel))))
+                        Encoding.UTF8.GetBytes(JsonSerializer.Serialize(ProjectSession.ActiveProject.MasterChannel))))
             {
                 await
-                    Session.TransferManager.UploadFile(stream, "masterchannel.json", null);
+                    ProjectSession.TransferManager.UploadFile(stream, "masterchannel.json", null);
             }
         }
 
@@ -168,25 +167,25 @@ namespace nUpdate.Administration
             var masterChannelArray = masterChannel.ToArray();
 
             // Create the "channels" folder, if it does not yet exist.
-            if (!await Session.TransferManager.Exists("channels"))
-                await Session.TransferManager.MakeDirectory("channels");
+            if (!await ProjectSession.TransferManager.Exists("channels"))
+                await ProjectSession.TransferManager.MakeDirectory("channels");
 
             // Upload all the packages to the associated update channel, if it is not yet existing.
             await masterChannelArray.ForEachAsync(async channel =>
             {
                 if (
                     (await
-                        Session.TransferManager.Exists($"channels/{channel.Name.ToLowerInvariant()}.json")))
+                        ProjectSession.TransferManager.Exists($"channels/{channel.Name.ToLowerInvariant()}.json")))
                     return;
 
-                var channelPackages = Session.ActiveProject.Packages.Where(p => p.ChannelName == channel.Name);
+                var channelPackages = ProjectSession.ActiveProject.Packages.Where(p => p.ChannelName == channel.Name);
                 using (
                     var stream =
                         new MemoryStream(
-                            Encoding.UTF8.GetBytes(Serializer.Serialize(channelPackages))))
+                            Encoding.UTF8.GetBytes(JsonSerializer.Serialize(channelPackages))))
                 {
                     await
-                        Session.TransferManager.UploadFile(stream, $"channels/{channel.Name.ToLowerInvariant()}.json",
+                        ProjectSession.TransferManager.UploadFile(stream, $"channels/{channel.Name.ToLowerInvariant()}.json",
                             null);
                 }
             });

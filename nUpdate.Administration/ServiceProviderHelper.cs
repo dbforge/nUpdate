@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using nUpdate.Administration.TransferInterface;
 
 namespace nUpdate.Administration
 {
