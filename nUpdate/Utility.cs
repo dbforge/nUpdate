@@ -34,5 +34,10 @@ namespace nUpdate
             });
             return size;
         }
+
+        public static bool IsHttpUri(Uri uri)
+        {
+            return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
+        }
     }
 }

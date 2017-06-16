@@ -278,9 +278,18 @@ namespace nUpdate
             var totalSize = await Utility.GetTotalPackageSize(updatePackages);
             await updatePackages.ForEachAsync(async p =>
             {
-                this.Log().Info($"Downloading package of version {p.Version}.");
-                await Downloader.DownloadFile(p.UpdatePackageUri, Path.Combine(_applicationUpdateDirectory,
-                    $"{p.Guid}.zip"), (long) totalSize, cancellationToken, progress);
+                if (Utility.IsHttpUri(p.UpdatePackageUri))
+                {
+                    // This package is located on a server.
+                    this.Log().Info($"Downloading package of version {p.Version}.");
+                    await Downloader.DownloadFile(p.UpdatePackageUri, GetLocalPackagePath(p), (long) totalSize, cancellationToken, progress);
+                }
+                else
+                {
+                    // This package is located on a local drive.
+                    this.Log().Info($"Copying package of version {p.Version}.");
+                    File.Copy(p.UpdatePackageUri.ToString(), GetLocalPackagePath(p));
+                }
 
                 if (!p.UseStatistics || !CaptureStatistics)
                     return;
@@ -494,7 +503,7 @@ namespace nUpdate
                 $"\"{Application.StartupPath}\"",
                 $"\"{Application.ExecutablePath}\"",
                 $"\"{Application.ProductName}\"",
-                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(packageOperations)))}\"",
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(packageOperations)))}\"",
                 $"\"{installerUiAssemblyPath}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,
@@ -510,7 +519,7 @@ namespace nUpdate
                 _lp.ServiceStopOperationText,
                 _lp.InstallerUpdatingErrorCaption,
                 _lp.InstallerInitializingErrorCaption,
-                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(Arguments)))}\"",
                 $"\"{HostApplicationOptions}\"",
                 $"\"{_lp.InstallerFileInUseError}\"",
             };
