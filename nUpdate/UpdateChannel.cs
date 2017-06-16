@@ -58,7 +58,7 @@ namespace nUpdate
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
                 var source = await wc.DownloadStringTaskAsync(masterChannelUri);
                 if (!string.IsNullOrEmpty(source))
-                    return Serializer.Deserialize<IEnumerable<UpdateChannel>>(source);
+                    return JsonSerializer.Deserialize<IEnumerable<UpdateChannel>>(source);
             }
 
             return Enumerable.Empty<UpdateChannel>();
@@ -69,7 +69,7 @@ namespace nUpdate
         /// </summary>
         /// <param name="masterChannelUri">The <see cref="System.Uri"/> of the master channel file.</param>
         /// <param name="proxy">The optional <see cref="WebProxy"/> to use.</param>
-        public async static Task<IEnumerable<UpdateChannel>> TryGetMasterChannel(Uri masterChannelUri, WebProxy proxy)
+        public static async Task<IEnumerable<UpdateChannel>> TryGetMasterChannel(Uri masterChannelUri, WebProxy proxy)
         {
             try
             {

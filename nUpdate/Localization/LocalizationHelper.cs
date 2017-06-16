@@ -59,13 +59,13 @@ namespace nUpdate.Localization
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 if (stream != null)
-                    return Serializer.Deserialize<LocalizationProperties>(stream);
+                    return JsonSerializer.Deserialize<LocalizationProperties>(stream);
 
                 string localizationFilePath;
                 localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
                 if (localizationFilePath == null)
                     throw new Exception("The path of the localization file is not valid.");
-                return Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath));
+                return JsonSerializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath));
             }
         }
     }

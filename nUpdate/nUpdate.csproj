@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nUpdate</RootNamespace>
     <AssemblyName>nUpdate</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -95,7 +95,7 @@
     <Compile Include="IDeepCopy.cs" />
     <Compile Include="nUpdateVersionAttribute.cs" />
     <Compile Include="RsaManager.cs" />
-    <Compile Include="Serializer.cs" />
+    <Compile Include="JsonSerializer.cs" />
     <Compile Include="SystemInformation.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
