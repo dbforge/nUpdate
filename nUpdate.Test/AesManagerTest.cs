@@ -1,5 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
+using System.Diagnostics;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Administration;
 
@@ -11,11 +13,9 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanEncryptAndDecrypt()
         {
-            const string password = "ILikeTrains";
-            byte[] encrypted = AesManager.Encrypt(password, "testKey", "testIV");
-            var decrypted = AesManager.Decrypt(encrypted, "testKey", "testIV");
-            Assert.IsTrue(password == decrypted.ConvertToInsecureString());
-            Assert.IsFalse("NotThePassword" == decrypted.ConvertToInsecureString());
+            byte[] plain = Encoding.UTF8.GetBytes("test");
+            var cipherText = AesCryptoProvider.Encrypt(plain, "master");
+            Assert.AreEqual(AesCryptoProvider.Decrypt(cipherText, "master"), "test");
         }
     }
 }
