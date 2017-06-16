@@ -68,6 +68,7 @@ namespace nUpdate
             Revision = revision;
             SemVerSuffix = semVerSuffix;
             Build = build;
+            BuildMetadata = buildMetaData;
         }
 
         /// <summary>
