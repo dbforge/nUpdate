@@ -44,7 +44,7 @@ namespace nUpdate.Core.Localization
             }
         }
 
-        internal static CultureInfo[] IntegratedCultures => new[] { new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("en") };
+        internal static CultureInfo[] IntegratedCultures => new[] { new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("zh-CN"), new CultureInfo("en") };
 
         internal static bool IsIntegratedCulture(CultureInfo cultureInfo, Dictionary<CultureInfo, string> localizationFilePaths)
         {
@@ -65,7 +65,7 @@ namespace nUpdate.Core.Localization
                 localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
                 if (localizationFilePath == null)
                     throw new Exception("The path of the localization file is not valid.");
-                return Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath));
+                return Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath, System.Text.Encoding.Default));
             }
         }
     }
