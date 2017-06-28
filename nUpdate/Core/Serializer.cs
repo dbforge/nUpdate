@@ -37,7 +37,7 @@ namespace nUpdate.Core
         public static T Deserialize<T>(Stream stream)
         {
             string streamContent;
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, System.Text.Encoding.Default))
             {
                 streamContent = reader.ReadToEnd();
             }

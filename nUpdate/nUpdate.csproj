@@ -210,6 +210,7 @@
     <EmbeddedResource Include="Core\Localization\de-DE.json" />
     <None Include="app.config" />
     <EmbeddedResource Include="Core\Localization\en.json" />
+    <EmbeddedResource Include="Core\Localization\zh-CN.json" />
     <None Include="packages.config" />
     <None Include="Updating\UpdaterUI.cd" />
     <None Include="Updating\UpdateVersion.cd" />
