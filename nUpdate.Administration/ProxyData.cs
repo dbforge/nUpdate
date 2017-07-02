@@ -4,7 +4,7 @@ using System.Net;
 
 namespace nUpdate.Administration
 {
-    internal struct ProxyData
+    public struct ProxyData
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProxyData"/> struct.

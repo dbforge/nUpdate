@@ -1,7 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 namespace nUpdate.Administration
 {
-    internal enum StatisticsEntryMethod
+    public enum StatisticsEntryMethod
     {
         /// <summary>
         ///     Statistics entries are made over the MySQL.Data framework using external access to the database.
