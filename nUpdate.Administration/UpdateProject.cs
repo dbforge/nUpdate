@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Sql;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace nUpdate.Administration
     ///     Represents a local update project.
     /// </summary>
     [Serializable]
-    internal class UpdateProject : PropertyChangedBase
+    public class UpdateProject : Model
     {
         private string _assemblyVersionPath;
         private List<UpdateChannel> _channels;

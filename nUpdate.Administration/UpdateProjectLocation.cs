@@ -1,10 +1,11 @@
 ﻿using System;
+using nUpdate.Administration.Infrastructure;
 using Newtonsoft.Json;
 
 namespace nUpdate.Administration
 {
     [Serializable]
-    internal class UpdateProjectLocation : PropertyChangedBase
+    internal class UpdateProjectLocation : Model
     {
         [JsonConstructor]
         internal UpdateProjectLocation(Guid guid, string lastSeenPath)
