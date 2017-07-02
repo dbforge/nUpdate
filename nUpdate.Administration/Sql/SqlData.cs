@@ -4,7 +4,7 @@ using System;
 
 namespace nUpdate.Administration.Sql
 {
-    internal struct SqlData
+    public struct SqlData
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlData"/> struct.
