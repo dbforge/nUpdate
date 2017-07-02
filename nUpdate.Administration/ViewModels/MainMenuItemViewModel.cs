@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace nUpdate.Administration.ViewModels
 {
-    public class MainMenuItemViewModel
+    public class MainMenuItemViewModel : ViewModel
     {
         public MainMenuItemViewModel(string header, string description, MainMenuGroup category, ImageSource imageSource,
             ICommand command)
