@@ -6,7 +6,8 @@
         xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
         xmlns:administration="clr-namespace:nUpdate.Administration"
         mc:Ignorable="d"
-        Title="nUpdate Administration 4.0.0" Height="465.565" Width="707.325" Icon="/./Icons/nUpdate.ico">
+        Title="nUpdate Administration 4.0.0" Height="465.565" Width="707.325" Icon="/./Icons/nUpdate.ico"
+        WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
@@ -92,7 +93,7 @@
                     <Button
                         Width="Auto"
                         Margin="10,0,0,0"
-                        Padding="5">
+                        Padding="5" Command="{Binding Command}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Grid x:Name="BackgroundGrid">
