@@ -39,6 +39,10 @@
     <ApplicationIcon>nUpdate.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LoadingIndicators.WPF, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LoadingIndicators.WPF.0.0.1\lib\LoadingIndicators.WPF.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -82,7 +86,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Http\HttpData.cs" />
     <Compile Include="Http\HttpTransferService.cs" />
-    <Compile Include="Infrastructure\PropertyChangedBase.cs" />
+    <Compile Include="Infrastructure\Model.cs" />
     <Compile Include="Infrastructure\RelayCommand.cs" />
     <Compile Include="IServerItem.cs" />
     <Compile Include="ITransferData.cs" />
@@ -95,8 +99,8 @@
     <Compile Include="Logging\PackageActionLogger.cs" />
     <Compile Include="Logging\PackageActionType.cs" />
     <Compile Include="PackageItem.cs" />
+    <Compile Include="ProjectCreationData.cs" />
     <Compile Include="ProjectSession.cs" />
-    <Compile Include="PropertyChangedBase.cs" />
     <Compile Include="ProxyData.cs" />
     <Compile Include="Proxy\EventArgs\CreateConnectionAsyncCompletedEventArgs.cs" />
     <Compile Include="Proxy\Exceptions\ProxyException.cs" />
@@ -125,14 +129,21 @@
     <Compile Include="UpdateFactoryPackage.cs" />
     <Compile Include="UpdateProject.cs" />
     <Compile Include="UpdateProjectLocation.cs" />
-    <Compile Include="ViewModels\Base\ViewManagerBase.cs" />
-    <Compile Include="ViewModels\Base\WizardPageViewModelBase.cs" />
-    <Compile Include="ViewModels\Base\WizardViewModelBase.cs" />
+    <Compile Include="ViewModels\ViewManager.cs" />
+    <Compile Include="ViewModels\PageViewModel.cs" />
+    <Compile Include="ViewModels\PagedWindowViewModel.cs" />
     <Compile Include="ViewModels\MainMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="MainMenuGroup.cs" />
+    <Compile Include="ViewModels\NewProjectViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\GenerateKeyPairPageViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\NewProjectViewManager.cs" />
+    <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewProject\GenerateKeyPairPage.xaml.cs">
+      <DependentUpon>GenerateKeyPairPage.xaml</DependentUpon>
     </Compile>
     <Page Include="Icons\feedbacktoolicon_64x.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +163,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\NewProjectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\GenerateKeyPairPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -233,9 +248,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\NewProject\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
