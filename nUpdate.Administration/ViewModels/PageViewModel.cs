@@ -1,9 +1,9 @@
-﻿namespace nUpdate.Administration.ViewModels.Base
+﻿namespace nUpdate.Administration.ViewModels
 {
     /// <summary>
     ///     Represents a view model for a wizard page.
     /// </summary>
-    public abstract class WizardPageViewModelBase : PropertyChangedBase
+    public abstract class PageViewModel : ViewModel
     {
         private bool _canGoForward;
         public bool CanGoForward
