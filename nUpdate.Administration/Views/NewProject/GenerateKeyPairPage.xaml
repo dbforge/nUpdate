@@ -22,7 +22,7 @@
                     <ScaleTransform ScaleX="0.65" ScaleY="0.65" />
                 </loadingIndicators:LoadingIndicator.LayoutTransform>
             </loadingIndicators:LoadingIndicator>
-            <TextBlock Margin="10,0,0,0"
+            <TextBlock Margin="15,0,0,0"
                        VerticalAlignment="Center"
                        Text="Please wait while the keys are generated. This may take some minutes..."
                        TextWrapping="Wrap" />
