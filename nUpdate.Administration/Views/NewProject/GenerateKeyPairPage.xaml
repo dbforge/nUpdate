@@ -18,9 +18,9 @@
             <loadingIndicators:LoadingIndicator Foreground="LightGray"
                                                 SpeedRatio="1"
                                                 Style="{DynamicResource LoadingIndicatorArcsStyle}">
-                <loadingIndicators:LoadingIndicator.RenderTransform>
+                <loadingIndicators:LoadingIndicator.LayoutTransform>
                     <ScaleTransform ScaleX="0.65" ScaleY="0.65" />
-                </loadingIndicators:LoadingIndicator.RenderTransform>
+                </loadingIndicators:LoadingIndicator.LayoutTransform>
             </loadingIndicators:LoadingIndicator>
             <TextBlock Margin="10,0,0,0"
                        VerticalAlignment="Center"
