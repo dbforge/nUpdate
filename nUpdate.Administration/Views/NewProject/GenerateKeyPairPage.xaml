@@ -1,21 +1,31 @@
 ﻿<UserControl x:Class="nUpdate.Administration.Views.NewProject.GenerateKeyPairPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:nUpdate.Administration.Views.NewProject"
-      xmlns:loadingIndicators="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
-      mc:Ignorable="d" 
-      d:DesignHeight="230" d:DesignWidth="520" Background="White">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:loadingIndicators="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
+             xmlns:local="clr-namespace:nUpdate.Administration.Views.NewProject"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="230"
+             d:DesignWidth="520"
+             Background="White"
+             mc:Ignorable="d">
     <DockPanel Margin="20">
-        <TextBlock DockPanel.Dock="Top" FontSize="12pt" Foreground="#003399" Text="Key Pair Generation"/>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <loadingIndicators:LoadingIndicator Foreground="LightGray" SpeedRatio="1" Style="{DynamicResource LoadingIndicatorArcsStyle}">
+        <TextBlock DockPanel.Dock="Top"
+                   FontSize="12pt"
+                   Foreground="#003399"
+                   Text="Key Pair Generation" />
+        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <loadingIndicators:LoadingIndicator Foreground="LightGray"
+                                                SpeedRatio="1"
+                                                Style="{DynamicResource LoadingIndicatorArcsStyle}">
                 <loadingIndicators:LoadingIndicator.RenderTransform>
                     <ScaleTransform ScaleX="0.65" ScaleY="0.65" />
                 </loadingIndicators:LoadingIndicator.RenderTransform>
             </loadingIndicators:LoadingIndicator>
-            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="Please wait while the keys are generated. This may take some minutes..." TextWrapping="Wrap"/>
+            <TextBlock Margin="10,0,0,0"
+                       VerticalAlignment="Center"
+                       Text="Please wait while the keys are generated. This may take some minutes..."
+                       TextWrapping="Wrap" />
         </StackPanel>
     </DockPanel>
 </UserControl>
