@@ -54,13 +54,13 @@ I'm not happy with everything, yet. It's possible that you find some small thing
 - Better integration in company networks
 - ...
 
-###License
-SugarCRM
+### License
+MIT
 
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
 
-###Screenshots
+### Screenshots
 
 ![](https://www.nupdate.net/img/new-updates.png)
 ![](https://www.nupdate.net/img/updates-download.png)
