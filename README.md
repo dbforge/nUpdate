@@ -19,9 +19,6 @@ A small overview over some of the most important features of nUpdate:
 - Smart statistics about the downloads of your updates
 - Supports very large update packages
  
-### Version
-3.0.0.0 Beta Build 4 (Could contain some bugs)
-
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
 
