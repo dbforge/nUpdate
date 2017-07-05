@@ -24,7 +24,7 @@ Features
  
 Version
 ------
-v3.0-beta7 (Could contain some bugs)
+v3.0-beta8 (Could contain some bugs)
 
 Web
 ------
