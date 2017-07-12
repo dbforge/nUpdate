@@ -341,8 +341,20 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
-                _sender = ftpTabPage;
+                _sender = httpAuthenticationTabPage;
                 backButton.Enabled = true;
+                informationCategoriesTabControl.SelectedTab = httpAuthenticationTabPage;
+            }
+            else if (_sender == httpAuthenticationTabPage && httpAuthenticationCheckBox.Checked)
+            {
+                if (!ValidationManager.Validate(httpAuthenticationPanel))
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.Ok);
+                    return;
+                }
+
+                _sender = ftpTabPage;
                 informationCategoriesTabControl.SelectedTab = ftpTabPage;
             }
             else if (_sender == ftpTabPage)
@@ -393,15 +405,12 @@ namespace nUpdate.Administration.UI.Dialogs
             }
             else if (_sender == proxyTabPage)
             {
-                if (useProxyRadioButton.Checked)
+                if (useProxyRadioButton.Checked &&
+                    !ValidationManager.ValidateAndIgnore(proxyTabPage, new[] {proxyUserTextBox, proxyPasswordTextBox}))
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
-                            "All fields need to have a value.", PopupButtons.Ok);
-                        return;
-                    }
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.Ok);
+                    return;
                 }
 
                 try
@@ -478,6 +487,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     UpdateUrl = updateUrlTextBox.Text,
                     Packages = null,
                     SaveCredentials = saveCredentialsCheckBox.Checked,
+                    HttpAuthenticationCredentials = httpAuthenticationCheckBox.Checked
+                        ? new NetworkCredential(httpAuthenticationUserTextBox.Text,
+                            httpAuthenticationPasswordTextBox.Text)
+                        : null,
                     FtpHost = ftpHostTextBox.Text,
                     FtpPort = int.Parse(ftpPortTextBox.Text),
                     FtpUsername = ftpUserTextBox.Text,
@@ -486,7 +499,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     FtpProtocol = ftpProtocolComboBox.SelectedIndex,
                     FtpUsePassiveMode = usePassive,
                     FtpTransferAssemblyFilePath = _ftpAssemblyPath,
-                    FtpNetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex,
+                    FtpNetworkVersion = (NetworkVersion) ipVersionComboBox.SelectedIndex,
                     Proxy = proxy,
                     ProxyUsername = proxyUsername,
                     ProxyPassword = proxyPassword,
@@ -506,7 +519,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (IOException ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project file.", ex, PopupButtons.Ok);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project file.", ex,
+                        PopupButtons.Ok);
                     _mustClose = true;
                     Reset();
                 }
@@ -767,7 +781,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            if (_sender == ftpTabPage)
+            if (_sender == httpAuthenticationTabPage)
             {
                 informationCategoriesTabControl.SelectedTab = generalTabPage;
                 backButton.Enabled = false;
@@ -775,6 +789,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 if (_generalTabPassed)
                     backButton.Enabled = false;
+            }
+            else if (_sender == ftpTabPage)
+            {
+                informationCategoriesTabControl.SelectedTab = httpAuthenticationTabPage;
+                _sender = httpAuthenticationTabPage;
             }
             else if (_sender == statisticsServerTabPage)
             {
@@ -796,7 +815,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
         {
-            if (!ValidationManager.ValidateWithIgnoring(ftpPanel, ftpDirectoryTextBox))
+            if (!ValidationManager.ValidateAndIgnore(ftpPanel, new [] { ftpDirectoryTextBox }))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information.",
                     "All input fields need to have a value in order to send a request to the server.", PopupButtons.Ok);
@@ -909,6 +928,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
 
             _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
+        }
+
+        private void httpAuthenticationCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            httpAuthenticationPanel.Enabled = httpAuthenticationCheckBox.Checked;
         }
     }
 }
