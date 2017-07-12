@@ -613,7 +613,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 IEnumerable<UpdateConfiguration> updateConfiguration;
                 try
                 {
-                    updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ??
+                    updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.HttpAuthenticationCredentials, Project.Proxy) ??
                                           Enumerable.Empty<UpdateConfiguration>();
                 }
                 catch (Exception ex)
@@ -902,7 +902,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         new Action(
                             () =>
                                 loadingLabel.Text = "Getting current configuration..."));
-                    _editingUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                    _editingUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.HttpAuthenticationCredentials, Project.Proxy);
                     SetUiState(true);
                     successful = true;
                 }
@@ -1155,7 +1155,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(() => loadingLabel.Text = "Getting old configuration..."));
                 try
                 {
-                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy) ??
+                    var updateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.HttpAuthenticationCredentials, Project.Proxy) ??
                                               Enumerable.Empty<UpdateConfiguration>();
                     _backupConfiguration = updateConfiguration.ToList();
                 }
@@ -1444,7 +1444,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var configurations = new List<UpdateConfiguration>();
             try
             {
-                configurations = UpdateConfiguration.Download(configFileUri, Project.Proxy).ToList();
+                configurations = UpdateConfiguration.Download(configFileUri, Project.HttpAuthenticationCredentials, Project.Proxy).ToList();
                 _foundWithUrl = true;
             }
             catch (Exception ex)
@@ -1736,7 +1736,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 List<UpdateConfiguration> updateConfig;
                 try
                 {
-                    var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
+                    var rawUpdateConfiguration = UpdateConfiguration.Download(_configurationFileUrl, Project.HttpAuthenticationCredentials, Project.Proxy);
                     updateConfig = rawUpdateConfiguration != null
                         ? rawUpdateConfiguration.ToList()
                         : Enumerable.Empty<UpdateConfiguration>().ToList();

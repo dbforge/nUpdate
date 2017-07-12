@@ -723,6 +723,13 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             localPathTextBox.Text = Project.Path;
             localPathTextBox.Initialize();
 
+            if (Project.HttpAuthenticationCredentials != null)
+            {
+                httpAuthenticationCheckBox.Checked = true;
+                httpAuthenticationUserTextBox.Text = Project.HttpAuthenticationCredentials.UserName;
+                httpAuthenticationPasswordTextBox.Text = Project.HttpAuthenticationCredentials.Password;
+            }
+
             ftpHostTextBox.Text = Project.FtpHost;
             ftpPortTextBox.Text = Project.FtpPort.ToString(CultureInfo.InvariantCulture);
             ftpUserTextBox.Text = Project.FtpUsername;
@@ -838,8 +845,20 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     return;
                 }
 
-                _sender = ftpTabPage;
+                _sender = httpAuthenticationTabPage;
                 backButton.Enabled = true;
+                tablessTabControl1.SelectedTab = httpAuthenticationTabPage;
+            }
+            else if (_sender == httpAuthenticationTabPage)
+            {
+                if (httpAuthenticationCheckBox.Checked && !ValidationManager.Validate(httpAuthenticationTabPage))
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.Ok);
+                    return;
+                }
+
+                _sender = ftpTabPage;
                 tablessTabControl1.SelectedTab = ftpTabPage;
             }
             else if (_sender == ftpTabPage)
@@ -874,9 +893,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 if (ftpDirectoryTextBox.Text != Project.FtpDirectory && updateUrlTextBox.Text == Project.UpdateUrl)
                 {
                     if (Popup.ShowPopup(this, SystemIcons.Warning,
-                        "Possible incomplete change of project-data found.",
-                        "The current update-URL hasn't changed although the FTP-directory has. Are you sure that you want to continue?",
-                        PopupButtons.YesNo) == DialogResult.No)
+                            "Possible incomplete change of project-data found.",
+                            "The current update-URL hasn't changed although the FTP-directory has. Are you sure that you want to continue?",
+                            PopupButtons.YesNo) == DialogResult.No)
                         return;
                 }
 
@@ -901,15 +920,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
             else if (_sender == proxyTabPage)
             {
-                if (useProxyRadioButton.Checked)
+                if (useProxyRadioButton.Checked && !ValidationManager.ValidateAndIgnore(proxyTabPage, new [] {proxyUserTextBox, proxyPasswordTextBox}))
                 {
-                    if (!ValidationManager.ValidateTabPage(proxyTabPage) && !string.IsNullOrEmpty(proxyUserTextBox.Text) &&
-                        !string.IsNullOrEmpty(proxyPasswordTextBox.Text))
-                    {
-                        Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
-                            "All fields need to have a value.", PopupButtons.Ok);
-                        return;
-                    }
+                    Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
+                        "All fields need to have a value.", PopupButtons.Ok);
+                    return;
                 }
 
                 _generalTabPassed = true;
@@ -1555,6 +1570,10 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                 Invoke(new Action(() =>
                 {
                     Project.SaveCredentials = saveCredentialsCheckBox.Checked;
+                    Project.HttpAuthenticationCredentials = httpAuthenticationCheckBox.Checked
+                        ? new NetworkCredential(httpAuthenticationUserTextBox.Text,
+                            httpAuthenticationPasswordTextBox.Text)
+                        : null;
                     Project.FtpHost = ftpHostTextBox.Text;
                     Project.FtpPort = int.Parse(ftpPortTextBox.Text);
                     Project.FtpUsername = ftpUserTextBox.Text;
@@ -1660,7 +1679,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
             try
             {
                 _oldUpdateConfiguration =
-                    UpdateConfiguration.Download(UriConnector.ConnectUri(Project.UpdateUrl, "updates.json"), Project.Proxy) ??
+                    UpdateConfiguration.Download(UriConnector.ConnectUri(Project.UpdateUrl, "updates.json"), Project.HttpAuthenticationCredentials, Project.Proxy) ??
                     Enumerable.Empty<UpdateConfiguration>();
                 _newUpdateConfiguration = _oldUpdateConfiguration.ToArray();
 
@@ -1680,7 +1699,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            if (_sender == ftpTabPage)
+            if (_sender == httpAuthenticationTabPage)
             {
                 tablessTabControl1.SelectedTab = generalTabPage;
                 backButton.Enabled = false;
@@ -1688,6 +1707,11 @@ DELETE FROM Application WHERE `ID` = _APPID;";
 
                 if (_generalTabPassed)
                     backButton.Enabled = false;
+            }
+            else if (_sender == ftpTabPage)
+            {
+                tablessTabControl1.SelectedTab = httpAuthenticationTabPage;
+                _sender = httpAuthenticationTabPage;
             }
             else if (_sender == statisticsServerTabPage)
             {
@@ -1709,7 +1733,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
         {
-            if (!ValidationManager.ValidateWithIgnoring(ftpPanel, ftpDirectoryTextBox))
+            if (!ValidationManager.ValidateAndIgnore(ftpPanel, new [] { ftpDirectoryTextBox }))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information.",
                     "All input fields need to have a value in order to send a request to the server.", PopupButtons.Ok);
@@ -1840,6 +1864,11 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                 _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
 
             _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
+        }
+
+        private void httpAuthenticationCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            httpAuthenticationPanel.Enabled = httpAuthenticationCheckBox.Checked;
         }
     }
 }
