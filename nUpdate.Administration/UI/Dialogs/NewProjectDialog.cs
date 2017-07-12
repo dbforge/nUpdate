@@ -345,9 +345,9 @@ namespace nUpdate.Administration.UI.Dialogs
                 backButton.Enabled = true;
                 informationCategoriesTabControl.SelectedTab = httpAuthenticationTabPage;
             }
-            else if (_sender == httpAuthenticationTabPage && httpAuthenticationCheckBox.Checked)
+            else if (_sender == httpAuthenticationTabPage)
             {
-                if (!ValidationManager.Validate(httpAuthenticationPanel))
+                if (httpAuthenticationCheckBox.Checked && !ValidationManager.Validate(httpAuthenticationPanel))
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                         "All fields need to have a value.", PopupButtons.Ok);
