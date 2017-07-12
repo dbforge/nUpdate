@@ -626,10 +626,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 // Load the configuration
                 try
                 {
-                    var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.Proxy);
-                    configurationList = configurationEnumerable != null
-                        ? configurationEnumerable.ToList()
-                        : Enumerable.Empty<UpdateConfiguration>().ToList();
+                    var configurationEnumerable = UpdateConfiguration.Download(_configurationFileUrl, Project.HttpAuthenticationCredentials, Project.Proxy);
+                    configurationList = configurationEnumerable?.ToList() ?? Enumerable.Empty<UpdateConfiguration>().ToList();
                 }
                 catch (Exception ex)
                 {
@@ -742,7 +740,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     /* -------------- Package upload -----------------*/
                     Invoke(new Action(() =>
                     {
-                        loadingLabel.Text = $"Uploading package... {"0%"}";
+                        loadingLabel.Text = "Uploading package... 0%";
                         cancelLabel.Visible = true;
                     }));
 
@@ -1051,7 +1049,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void removeEntryButton_Click(object sender, EventArgs e)
         {
-            if (filesDataTreeView.SelectedNode != null && filesDataTreeView.SelectedNode.Parent != null)
+            if (filesDataTreeView.SelectedNode?.Parent != null)
                 filesDataTreeView.SelectedNode.Remove();
         }
 

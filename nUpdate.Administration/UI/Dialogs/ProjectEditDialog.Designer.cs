@@ -54,8 +54,18 @@
             this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.generalHeaderLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
+            this.httpAuthenticationTabPage = new System.Windows.Forms.TabPage();
+            this.httpAuthenticationPanel = new System.Windows.Forms.Panel();
+            this.httpAuthenticationPasswordTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.httpAuthenticationUserTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.httpAuthenticationCheckBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.ftpTabPage = new System.Windows.Forms.TabPage();
             this.ftpPanel = new System.Windows.Forms.Panel();
+            this.ipVersionComboBox = new System.Windows.Forms.ComboBox();
+            this.ipVersionLabel = new System.Windows.Forms.Label();
             this.ftpImportButton = new System.Windows.Forms.Button();
             this.securityInfoButton = new System.Windows.Forms.Button();
             this.searchOnServerButton = new System.Windows.Forms.Button();
@@ -99,8 +109,6 @@
             this.proxyPasswordLabel = new System.Windows.Forms.Label();
             this.proxyPasswordTextBox = new System.Windows.Forms.TextBox();
             this.proxyHostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.ipVersionComboBox = new System.Windows.Forms.ComboBox();
-            this.ipVersionLabel = new System.Windows.Forms.Label();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -108,6 +116,8 @@
             this.generalTabPage.SuspendLayout();
             this.generalPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.httpAuthenticationTabPage.SuspendLayout();
+            this.httpAuthenticationPanel.SuspendLayout();
             this.ftpTabPage.SuspendLayout();
             this.ftpPanel.SuspendLayout();
             this.statisticsServerTabPage.SuspendLayout();
@@ -196,6 +206,7 @@
             // tablessTabControl1
             // 
             this.tablessTabControl1.Controls.Add(this.generalTabPage);
+            this.tablessTabControl1.Controls.Add(this.httpAuthenticationTabPage);
             this.tablessTabControl1.Controls.Add(this.ftpTabPage);
             this.tablessTabControl1.Controls.Add(this.statisticsServerTabPage);
             this.tablessTabControl1.Controls.Add(this.proxyTabPage);
@@ -342,6 +353,93 @@
             this.nameLabel.TabIndex = 17;
             this.nameLabel.Text = "Name:";
             // 
+            // httpAuthenticationTabPage
+            // 
+            this.httpAuthenticationTabPage.Controls.Add(this.httpAuthenticationPanel);
+            this.httpAuthenticationTabPage.Controls.Add(this.httpAuthenticationCheckBox);
+            this.httpAuthenticationTabPage.Controls.Add(this.label6);
+            this.httpAuthenticationTabPage.Location = new System.Drawing.Point(4, 22);
+            this.httpAuthenticationTabPage.Name = "httpAuthenticationTabPage";
+            this.httpAuthenticationTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.httpAuthenticationTabPage.Size = new System.Drawing.Size(495, 203);
+            this.httpAuthenticationTabPage.TabIndex = 6;
+            this.httpAuthenticationTabPage.Text = "Authentication";
+            this.httpAuthenticationTabPage.UseVisualStyleBackColor = true;
+            // 
+            // httpAuthenticationPanel
+            // 
+            this.httpAuthenticationPanel.Controls.Add(this.httpAuthenticationPasswordTextBox);
+            this.httpAuthenticationPanel.Controls.Add(this.label7);
+            this.httpAuthenticationPanel.Controls.Add(this.httpAuthenticationUserTextBox);
+            this.httpAuthenticationPanel.Controls.Add(this.label9);
+            this.httpAuthenticationPanel.Enabled = false;
+            this.httpAuthenticationPanel.Location = new System.Drawing.Point(20, 75);
+            this.httpAuthenticationPanel.Name = "httpAuthenticationPanel";
+            this.httpAuthenticationPanel.Size = new System.Drawing.Size(455, 67);
+            this.httpAuthenticationPanel.TabIndex = 21;
+            // 
+            // httpAuthenticationPasswordTextBox
+            // 
+            this.httpAuthenticationPasswordTextBox.Cue = "The password to authenticate with";
+            this.httpAuthenticationPasswordTextBox.Location = new System.Drawing.Point(118, 36);
+            this.httpAuthenticationPasswordTextBox.Name = "httpAuthenticationPasswordTextBox";
+            this.httpAuthenticationPasswordTextBox.Size = new System.Drawing.Size(323, 22);
+            this.httpAuthenticationPasswordTextBox.TabIndex = 31;
+            this.httpAuthenticationPasswordTextBox.UseSystemPasswordChar = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label7.Location = new System.Drawing.Point(18, 39);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 13);
+            this.label7.TabIndex = 30;
+            this.label7.Text = "Password:";
+            // 
+            // httpAuthenticationUserTextBox
+            // 
+            this.httpAuthenticationUserTextBox.Cue = "The username to authenticate with";
+            this.httpAuthenticationUserTextBox.Location = new System.Drawing.Point(118, 8);
+            this.httpAuthenticationUserTextBox.Name = "httpAuthenticationUserTextBox";
+            this.httpAuthenticationUserTextBox.Size = new System.Drawing.Size(323, 22);
+            this.httpAuthenticationUserTextBox.TabIndex = 29;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.label9.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label9.Location = new System.Drawing.Point(18, 11);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(61, 13);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "Username:";
+            // 
+            // httpAuthenticationCheckBox
+            // 
+            this.httpAuthenticationCheckBox.AutoSize = true;
+            this.httpAuthenticationCheckBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.httpAuthenticationCheckBox.Location = new System.Drawing.Point(20, 52);
+            this.httpAuthenticationCheckBox.Name = "httpAuthenticationCheckBox";
+            this.httpAuthenticationCheckBox.Size = new System.Drawing.Size(183, 17);
+            this.httpAuthenticationCheckBox.TabIndex = 20;
+            this.httpAuthenticationCheckBox.Text = "Authenticate using credentials";
+            this.httpAuthenticationCheckBox.UseVisualStyleBackColor = true;
+            this.httpAuthenticationCheckBox.CheckedChanged += new System.EventHandler(this.httpAuthenticationCheckBox_CheckedChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label6.Location = new System.Drawing.Point(12, 9);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(163, 20);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "HTTP(S) Authentication";
+            // 
             // ftpTabPage
             // 
             this.ftpTabPage.Controls.Add(this.ftpPanel);
@@ -381,6 +479,28 @@
             this.ftpPanel.Name = "ftpPanel";
             this.ftpPanel.Size = new System.Drawing.Size(495, 203);
             this.ftpPanel.TabIndex = 24;
+            // 
+            // ipVersionComboBox
+            // 
+            this.ipVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ipVersionComboBox.FormattingEnabled = true;
+            this.ipVersionComboBox.Items.AddRange(new object[] {
+            "IPv4",
+            "IPv6"});
+            this.ipVersionComboBox.Location = new System.Drawing.Point(88, 182);
+            this.ipVersionComboBox.Name = "ipVersionComboBox";
+            this.ipVersionComboBox.Size = new System.Drawing.Size(142, 21);
+            this.ipVersionComboBox.TabIndex = 44;
+            // 
+            // ipVersionLabel
+            // 
+            this.ipVersionLabel.AutoSize = true;
+            this.ipVersionLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ipVersionLabel.Location = new System.Drawing.Point(17, 185);
+            this.ipVersionLabel.Name = "ipVersionLabel";
+            this.ipVersionLabel.Size = new System.Drawing.Size(60, 13);
+            this.ipVersionLabel.TabIndex = 43;
+            this.ipVersionLabel.Text = "IP-version:";
             // 
             // ftpImportButton
             // 
@@ -847,28 +967,6 @@
             this.proxyHostTextBox.Size = new System.Drawing.Size(348, 22);
             this.proxyHostTextBox.TabIndex = 47;
             // 
-            // ipVersionComboBox
-            // 
-            this.ipVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ipVersionComboBox.FormattingEnabled = true;
-            this.ipVersionComboBox.Items.AddRange(new object[] {
-            "IPv4",
-            "IPv6"});
-            this.ipVersionComboBox.Location = new System.Drawing.Point(88, 182);
-            this.ipVersionComboBox.Name = "ipVersionComboBox";
-            this.ipVersionComboBox.Size = new System.Drawing.Size(142, 21);
-            this.ipVersionComboBox.TabIndex = 44;
-            // 
-            // ipVersionLabel
-            // 
-            this.ipVersionLabel.AutoSize = true;
-            this.ipVersionLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ipVersionLabel.Location = new System.Drawing.Point(17, 185);
-            this.ipVersionLabel.Name = "ipVersionLabel";
-            this.ipVersionLabel.Size = new System.Drawing.Size(60, 13);
-            this.ipVersionLabel.TabIndex = 43;
-            this.ipVersionLabel.Text = "IP-version:";
-            // 
             // ProjectEditDialog
             // 
             this.AcceptButton = this.continueButton;
@@ -896,6 +994,10 @@
             this.generalPanel.ResumeLayout(false);
             this.generalPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.httpAuthenticationTabPage.ResumeLayout(false);
+            this.httpAuthenticationTabPage.PerformLayout();
+            this.httpAuthenticationPanel.ResumeLayout(false);
+            this.httpAuthenticationPanel.PerformLayout();
             this.ftpTabPage.ResumeLayout(false);
             this.ftpPanel.ResumeLayout(false);
             this.ftpPanel.PerformLayout();
@@ -981,5 +1083,13 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox ipVersionComboBox;
         private System.Windows.Forms.Label ipVersionLabel;
+        private System.Windows.Forms.TabPage httpAuthenticationTabPage;
+        private System.Windows.Forms.Panel httpAuthenticationPanel;
+        private Controls.CueTextBox httpAuthenticationPasswordTextBox;
+        private System.Windows.Forms.Label label7;
+        private Controls.CueTextBox httpAuthenticationUserTextBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox httpAuthenticationCheckBox;
+        private System.Windows.Forms.Label label6;
     }
 }

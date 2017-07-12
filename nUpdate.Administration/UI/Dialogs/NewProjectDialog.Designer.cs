@@ -56,6 +56,14 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalHeaderLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
             this.localPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
+            this.httpAuthenticationTabPage = new System.Windows.Forms.TabPage();
+            this.httpAuthenticationPanel = new System.Windows.Forms.Panel();
+            this.httpAuthenticationPasswordTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.httpAuthenticationUserTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.httpAuthenticationCheckBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.ftpTabPage = new System.Windows.Forms.TabPage();
             this.ftpPanel = new System.Windows.Forms.Panel();
             this.ipVersionComboBox = new System.Windows.Forms.ComboBox();
@@ -114,6 +122,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalTabPage.SuspendLayout();
             this.generalPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.httpAuthenticationTabPage.SuspendLayout();
+            this.httpAuthenticationPanel.SuspendLayout();
             this.ftpTabPage.SuspendLayout();
             this.ftpPanel.SuspendLayout();
             this.statisticsServerTabPage.SuspendLayout();
@@ -158,6 +168,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             this.informationCategoriesTabControl.Controls.Add(this.keyPairTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.generalTabPage);
+            this.informationCategoriesTabControl.Controls.Add(this.httpAuthenticationTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.ftpTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.statisticsServerTabPage);
             this.informationCategoriesTabControl.Controls.Add(this.proxyTabPage);
@@ -284,6 +295,58 @@ namespace nUpdate.Administration.UI.Dialogs
             this.localPathTextBox.ButtonText = "...";
             resources.ApplyResources(this.localPathTextBox, "localPathTextBox");
             this.localPathTextBox.Name = "localPathTextBox";
+            // 
+            // httpAuthenticationTabPage
+            // 
+            this.httpAuthenticationTabPage.Controls.Add(this.httpAuthenticationPanel);
+            this.httpAuthenticationTabPage.Controls.Add(this.httpAuthenticationCheckBox);
+            this.httpAuthenticationTabPage.Controls.Add(this.label6);
+            resources.ApplyResources(this.httpAuthenticationTabPage, "httpAuthenticationTabPage");
+            this.httpAuthenticationTabPage.Name = "httpAuthenticationTabPage";
+            this.httpAuthenticationTabPage.UseVisualStyleBackColor = true;
+            // 
+            // httpAuthenticationPanel
+            // 
+            this.httpAuthenticationPanel.Controls.Add(this.httpAuthenticationPasswordTextBox);
+            this.httpAuthenticationPanel.Controls.Add(this.label7);
+            this.httpAuthenticationPanel.Controls.Add(this.httpAuthenticationUserTextBox);
+            this.httpAuthenticationPanel.Controls.Add(this.label9);
+            resources.ApplyResources(this.httpAuthenticationPanel, "httpAuthenticationPanel");
+            this.httpAuthenticationPanel.Name = "httpAuthenticationPanel";
+            // 
+            // httpAuthenticationPasswordTextBox
+            // 
+            resources.ApplyResources(this.httpAuthenticationPasswordTextBox, "httpAuthenticationPasswordTextBox");
+            this.httpAuthenticationPasswordTextBox.Name = "httpAuthenticationPasswordTextBox";
+            this.httpAuthenticationPasswordTextBox.UseSystemPasswordChar = true;
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.Name = "label7";
+            // 
+            // httpAuthenticationUserTextBox
+            // 
+            resources.ApplyResources(this.httpAuthenticationUserTextBox, "httpAuthenticationUserTextBox");
+            this.httpAuthenticationUserTextBox.Name = "httpAuthenticationUserTextBox";
+            // 
+            // label9
+            // 
+            resources.ApplyResources(this.label9, "label9");
+            this.label9.Name = "label9";
+            // 
+            // httpAuthenticationCheckBox
+            // 
+            resources.ApplyResources(this.httpAuthenticationCheckBox, "httpAuthenticationCheckBox");
+            this.httpAuthenticationCheckBox.Name = "httpAuthenticationCheckBox";
+            this.httpAuthenticationCheckBox.UseVisualStyleBackColor = true;
+            this.httpAuthenticationCheckBox.CheckedChanged += new System.EventHandler(this.httpAuthenticationCheckBox_CheckedChanged);
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.label6.Name = "label6";
             // 
             // ftpTabPage
             // 
@@ -667,6 +730,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalPanel.ResumeLayout(false);
             this.generalPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.httpAuthenticationTabPage.ResumeLayout(false);
+            this.httpAuthenticationTabPage.PerformLayout();
+            this.httpAuthenticationPanel.ResumeLayout(false);
+            this.httpAuthenticationPanel.PerformLayout();
             this.ftpTabPage.ResumeLayout(false);
             this.ftpPanel.ResumeLayout(false);
             this.ftpPanel.PerformLayout();
@@ -760,5 +827,13 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ComboBox ipVersionComboBox;
         private System.Windows.Forms.Label ipVersionLabel;
         private nUpdate.UI.Controls.Line line1;
+        private System.Windows.Forms.TabPage httpAuthenticationTabPage;
+        private System.Windows.Forms.Panel httpAuthenticationPanel;
+        private CueTextBox httpAuthenticationPasswordTextBox;
+        private System.Windows.Forms.Label label7;
+        private CueTextBox httpAuthenticationUserTextBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox httpAuthenticationCheckBox;
+        private System.Windows.Forms.Label label6;
     }
 }
