@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 
 namespace nUpdate.Administration.Infrastructure
@@ -12,50 +10,22 @@ namespace nUpdate.Administration.Infrastructure
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual bool SetProperty<T>(T value, ref T field, Expression<Func<object>> property)
+        protected virtual bool SetProperty<T>(T value, ref T field, string propertyName = null)
         {
-            return SetProperty(value, ref field);
-        }
-
-        protected virtual bool SetProperty<T>(T value, ref T field, [CallerMemberName]string propertyName = null)
-        {
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
             if (field != null && field.Equals(value))
                 return false;
             field = value;
-            OnPropertyChanged();
+            OnPropertyChanged(propertyName);
             return true;
         }
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void OnPropertyChanged(string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void OnPropertyChanged(Expression<Func<object>> property)
-        {
-            OnPropertyChanged();
-        }
-
-        protected string GetPropertyName(Expression<Func<object>> property)
-        {
-            var lambda = property as LambdaExpression;
-            MemberExpression memberExpression;
-            var body = lambda.Body as UnaryExpression;
-            if (body != null)
-            {
-                var unaryExpression = body;
-                memberExpression = unaryExpression.Operand as MemberExpression;
-            }
+            if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
+                Application.Current.Dispatcher.Invoke(() => OnPropertyChanged(propertyName));
             else
-            {
-                memberExpression = lambda.Body as MemberExpression;
-            }
-
-            if (memberExpression == null)
-                return string.Empty;
-
-            var propertyInfo = memberExpression.Member as PropertyInfo;
-            return propertyInfo != null ? propertyInfo.Name : string.Empty;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
