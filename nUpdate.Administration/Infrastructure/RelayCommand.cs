@@ -6,7 +6,7 @@ namespace nUpdate.Administration.Infrastructure
     /// <summary>
     /// A relay command that does not take parameters.
     /// </summary>
-    public sealed class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         readonly Action _methodToExecute;
         readonly Func<bool> _canExecuteEvaluator;
@@ -14,11 +14,7 @@ namespace nUpdate.Administration.Infrastructure
         /// <summary>
         /// Is raised when the ability of this command to be executed changes.
         /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
+        public event EventHandler CanExecuteChanged;
 
         /// <summary>
         /// Creates a relay command.
@@ -65,6 +61,11 @@ namespace nUpdate.Administration.Infrastructure
         void ICommand.Execute(object parameter)
         {
             Execute();
+        }
+
+        public void OnCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
