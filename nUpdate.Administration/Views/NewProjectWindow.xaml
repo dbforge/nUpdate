@@ -3,48 +3,52 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
         xmlns:newProjectViewModels="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-        mc:Ignorable="d"
-        Title="New project - nUpdate Administration v4.0" Height="303.333" Width="520" Icon="/./Icons/nUpdate.ico" WindowStartupLocation="CenterOwner" SizeToContent="Height">
+        xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
+        Title="New project - nUpdate Administration v4.0"
+        Width="520"
+        Height="310"
+        Icon="/./Icons/nUpdate.ico"
+        ResizeMode="NoResize"
+        mc:Ignorable="d">
     <Window.DataContext>
         <viewModels:NewProjectViewModel />
     </Window.DataContext>
     <Window.Resources>
         <newProjectViewModels:NewProjectViewManager x:Key="NewProjectViewManager" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <SolidColorBrush x:Key="BottomPanelBrush" Color="#F0F0F0" />
         <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
     </Window.Resources>
     <DockPanel>
-        <ContentControl DockPanel.Dock="Top" Height="230" Content="{Binding CurrentPageViewModel, Converter={StaticResource NewProjectViewManager}}"/>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">
-            <Rectangle
-                Height="1"
-                VerticalAlignment="Center"
-                Fill="{StaticResource BottomPanelLineBrush}"
-                SnapsToDevicePixels="True" />
+        <ContentControl Height="230"
+                        Content="{Binding CurrentPageViewModel,
+                                          Converter={StaticResource NewProjectViewManager}}"
+                        DockPanel.Dock="Top" />
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Vertical"
+                    Visibility="{Binding CurrentPageViewModel.NeedsUserInteraction,
+                                         Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Rectangle Height="1"
+                       VerticalAlignment="Center"
+                       Fill="{StaticResource BottomPanelLineBrush}"
+                       SnapsToDevicePixels="True" />
             <Grid Background="{StaticResource BottomPanelBrush}">
-                <StackPanel
-                    Margin="10"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Button
-                        MinWidth="92"
-                        Command="{Binding GoBackCommand}"
-                        Content="Back"
-                        IsEnabled="{Binding CanGoBack}" />
-                    <Button
-                        MinWidth="92"
-                        Margin="10,0"
-                        Command="{Binding GoForwardCommand}"
-                        IsEnabled="{Binding CanGoForward}"
-                        Content="Forward" />
-                    <Button
-                        MinWidth="92"
-                        Command="{Binding CancelCommand}"
-                        Content="Cancel"
-                        IsCancel="True" />
+                <StackPanel Margin="10"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Button MinWidth="92"
+                            Command="{Binding GoBackCommand}"
+                            Content="Back" />
+                    <Button MinWidth="92"
+                            Margin="10,0"
+                            Command="{Binding GoForwardCommand}"
+                            Content="Forward" />
+                    <Button MinWidth="92"
+                            Command="{Binding CancelCommand}"
+                            Content="Cancel"
+                            IsCancel="True" />
                 </StackPanel>
             </Grid>
         </StackPanel>
