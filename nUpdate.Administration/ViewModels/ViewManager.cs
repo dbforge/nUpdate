@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace nUpdate.Administration.ViewModels.Base
+namespace nUpdate.Administration.ViewModels
 {
     /// <summary>
     ///     Provides an abstract view manager class that offers basic convertion methods for finding the corresponding view for a specified view model by using an <see cref="IValueConverter"/>. 
