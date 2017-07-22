@@ -280,7 +280,7 @@ namespace nUpdate.Administration
         }
 
         [OnDeserialized]
-        private void OnDeserialized()
+        private void OnDeserialized(StreamingContext context)
         {
             PrivateKey = (string) KeyManager.Instance.Load(Identifier);
         }
