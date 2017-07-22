@@ -19,9 +19,6 @@ A small overview over some of the most important features of nUpdate:
 - Smart statistics about the downloads of your updates
 - Supports very large update packages
  
-### Version
-3.0.0.0 Beta Build 4 (Could contain some bugs)
-
 ### Notes
 Help and tips are appreciated. Current Beta-version could contain some problems and bugs which will be fixed.
 
@@ -54,13 +51,13 @@ I'm not happy with everything, yet. It's possible that you find some small thing
 - Better integration in company networks
 - ...
 
-###License
-SugarCRM
+### License
+MIT
 
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
 
-###Screenshots
+### Screenshots
 
 ![](https://www.nupdate.net/img/new-updates.png)
 ![](https://www.nupdate.net/img/updates-download.png)
