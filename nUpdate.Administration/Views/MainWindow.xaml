@@ -1,13 +1,16 @@
 ﻿<Window x:Class="nUpdate.Administration.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:administration="clr-namespace:nUpdate.Administration"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
-        xmlns:administration="clr-namespace:nUpdate.Administration"
-        mc:Ignorable="d"
-        Title="nUpdate Administration 4.0.0" Height="465.565" Width="707.325" Icon="/./Icons/nUpdate.ico"
-        WindowStartupLocation="CenterScreen">
+        Title="nUpdate Administration 4.0.0"
+        Width="707.325"
+        Height="465.565"
+        Icon="/./Icons/nUpdate.ico"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
@@ -20,13 +23,18 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Margin="20" Orientation="Horizontal">
-            <Image Source="/./Icons/nUpdate.png" Height="64" Width="64" />
-            <StackPanel Margin="10" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock
-                FontSize="12pt"
-                Foreground="#003399"
-                Text="nUpdate Administration 4.0.0" />
-                <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Text="Welcome! Here you are able to publish your updates." />
+            <Image Width="64"
+                   Height="64"
+                   Source="/./Icons/nUpdate.png" />
+            <StackPanel Margin="10"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical">
+                <TextBlock FontSize="12pt"
+                           Foreground="#003399"
+                           Text="nUpdate Administration 4.0.0" />
+                <TextBlock Margin="0,2,0,0"
+                           Text="Welcome! Here you are able to publish your updates."
+                           TextWrapping="Wrap" />
             </StackPanel>
         </StackPanel>
         <ItemsControl Grid.Row="1" ItemsSource="{Binding CollectionView}">
@@ -49,10 +57,9 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <DockPanel>
-                                                <TextBlock
-                                                    Margin="10,0,0,0"
-                                                    FontSize="13"
-                                                    Foreground="#003399">
+                                                <TextBlock Margin="10,0,0,0"
+                                                           FontSize="13"
+                                                           Foreground="#003399">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Style.Triggers>
@@ -72,12 +79,11 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <Rectangle
-                                                    Height="1"
-                                                    Margin="10,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Fill="{StaticResource GroupSplitterBrush}"
-                                                    SnapsToDevicePixels="True" />
+                                                <Rectangle Height="1"
+                                                           Margin="10,0,0,0"
+                                                           VerticalAlignment="Center"
+                                                           Fill="{StaticResource GroupSplitterBrush}"
+                                                           SnapsToDevicePixels="True" />
                                             </DockPanel>
                                             <ItemsPresenter Grid.Row="2" />
                                         </Grid>
@@ -90,10 +96,10 @@
             </ItemsControl.GroupStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
-                    <Button
-                        Width="Auto"
-                        Margin="10,0,0,0"
-                        Padding="5" Command="{Binding Command}">
+                    <Button Width="Auto"
+                            Margin="10,0,0,0"
+                            Command="{Binding Command}"
+                            Padding="5">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Grid x:Name="BackgroundGrid">
@@ -114,20 +120,37 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image
-                                Width="24"
-                                Height="24"
-                                VerticalAlignment="Center" 
-                                Source="{Binding Image}"/>
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                Orientation="Vertical">
-                                <TextBlock FontSize="10pt" Text="{Binding Header}" />
-                                <TextBlock
-                                    Margin="0,2,0,0"
-                                    Foreground="Gray"
-                                    Text="{Binding Description}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   VerticalAlignment="Center"
+                                   Source="{Binding Image}">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <StackPanel Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Vertical">
+                                <TextBlock FontSize="10pt" Text="{Binding Header}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Foreground" Value="Gray" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Margin="0,2,0,0"
+                                           Foreground="Gray"
+                                           Text="{Binding Description}" />
                             </StackPanel>
                         </Grid>
                     </Button>
