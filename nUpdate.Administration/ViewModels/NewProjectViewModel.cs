@@ -9,9 +9,10 @@ namespace nUpdate.Administration.ViewModels
 
         public NewProjectViewModel()
         {
-            LoadPages(new List<PageViewModel>
+            InitializePages(new List<PageViewModel>
             {
-                new GenerateKeyPairPageViewModel(this)
+                new GenerateKeyPairPageViewModel(this),
+                new GeneralDataPageViewModel(this)
             });
         }
     }

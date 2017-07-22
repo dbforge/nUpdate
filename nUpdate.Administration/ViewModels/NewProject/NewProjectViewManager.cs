@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using nUpdate.Administration.ViewModels.Base;
 using nUpdate.Administration.Views.NewProject;
 
 namespace nUpdate.Administration.ViewModels.NewProject
@@ -10,7 +9,8 @@ namespace nUpdate.Administration.ViewModels.NewProject
         public NewProjectViewManager() : base(
             new Dictionary<Type, Type>
             {
-                {typeof(GenerateKeyPairPageViewModel), typeof(GenerateKeyPairPage)}
+                {typeof(GenerateKeyPairPageViewModel), typeof(GenerateKeyPairPage)},
+                {typeof(GeneralDataPageViewModel), typeof(GeneralDataPage)}
             })
         { }
     }
