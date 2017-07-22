@@ -94,6 +94,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Http\HttpData.cs" />
     <Compile Include="Http\HttpTransferService.cs" />
+    <Compile Include="Infrastructure\BoundRelayCommand.cs" />
     <Compile Include="Infrastructure\Model.cs" />
     <Compile Include="Infrastructure\RelayCommand.cs" />
     <Compile Include="IServerItem.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="UpdateFactoryPackage.cs" />
     <Compile Include="UpdateProject.cs" />
     <Compile Include="UpdateProjectLocation.cs" />
+    <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\ViewManager.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />
     <Compile Include="ViewModels\PagedWindowViewModel.cs" />
@@ -150,9 +152,13 @@
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\NewProject\GeneralDataPage.xaml.cs">
+      <DependentUpon>GeneralDataPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NewProject\GenerateKeyPairPage.xaml.cs">
       <DependentUpon>GenerateKeyPairPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WindowManager.cs" />
     <Page Include="Icons\feedbacktoolicon_64x.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -171,6 +177,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\NewProjectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\GeneralDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
