@@ -39,6 +39,6 @@ using nUpdate.Core;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 9")]
+[assembly: AssemblyInformationalVersion("v3.0.0.0 Beta 10")]
 [assembly: AssemblyFileVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguage("")]
