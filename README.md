@@ -45,13 +45,13 @@ You can get the necessary libraries and applications from the current [releases]
 If you want to use nUpdate with the Taskbased Asynchronous Pattern including `async` and `await`, then install this package:
 
 ```
-PM> Install-Package nUpdate.ProvideTAP -Version 3.0.0-beta8 -Pre
+PM> Install-Package nUpdate.ProvideTAP -Version 3.0.0-beta10 -Pre
 ```
 
 Otherwise, if you want to use the Eventbased Asynchronous Pattern only, make sure to install this package:
 
 ```
-PM> Install-Package nUpdate.WithoutTAP -Version 3.0.0-beta8 -Pre
+PM> Install-Package nUpdate.WithoutTAP -Version 3.0.0-beta10 -Pre
 ```
  
 ## Web
@@ -72,9 +72,9 @@ PM> Install-Package nUpdate.WithoutTAP -Version 3.0.0-beta8 -Pre
 - Better integration in company networks
 - ...
 
-Have a look at the [v4.0]-branch for the newest changes.
+Have a look at the [develop]-branch for the newest changes.
 
-[v4.0]:https://www.github.com/ProgTrade/nUpdate/tree/v4.0
+[develop]:https://www.github.com/ProgTrade/nUpdate/tree/develop
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
 
