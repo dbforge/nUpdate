@@ -1,9 +1,16 @@
-![](http://www.nupdate.net/titlelogo.png)
+![nUpdate Logo](https://www.nupdate.net/nupdate_header.png)
 
-What is nUpdate?
-------
+# nUpdate - .NET Update Solution
+
+[![Release](https://img.shields.io/badge/release-v3.0--beta8-blue.svg)](https://github.com/ProgTrade/nUpdate/releases)
+[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.ProvideTAP-v3.0--beta8-red.svg)](https://www.nuget.org/packages/nUpdate.ProvideTAP/3.0.0-beta8)
+[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.WithoutTAP-v3.0--beta8-red.svg)](https://www.nuget.org/packages/nUpdate.WithoutTAP/3.0.0-beta8)  
+[![Issues](https://img.shields.io/github/issues/ProgTrade/nUpdate.svg)](https://github.com/ProgTrade/nUpdate/issues)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/ProgTrade/nUpdate/master/LICENSE)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
+
 nUpdate is a modern update system for .NET applications.
-Providing high security and an easy-to-use user interface, nUpdate is the perfect solution for your software.
+Providing high security and an easy-to-use user interface, it is the perfect solution for your software.
 
 nUpdate is in a very advanced state. Its development began in autumn 2013 and the project has grown up until now. It contains a lot of features and provides you with everything you'll need to manage your updates.
 
@@ -17,25 +24,35 @@ Features
 - Operations let you access the file system, the registry and add the possiblity to start or stop processes and services, when installing an update. You can even execute a small C#-script.
 - Automated updating for all clients
 - Secured update packages by signing with SHA512 and 8192 Bit RSA-keys
+- Built-in user interface or a custom user interface can be used
 - Interfaces, service providers and the Event-based/Task-based asynchronous pattern add a lot of flexiblity
 - Smart statistics about the downloads of your published updates
 - Supports very large update packages
 - ...
  
-Version
-------
-v3.0-beta8 (Could contain some bugs)
 
+## Installation
+
+You can get the necessary libraries and applications from the current [releases](https://github.com/ProgTrade/nUpdate/releases). The nUpdate library itself can also be installed in your application using the NuGet package manager.
+
+#### Using NuGet
+
+If you want to use nUpdate with the Taskbased Asynchronous Pattern including `async` and `await`, then install this package:
+
+```
+PM> Install-Package nUpdate.ProvideTAP -Version 3.0.0-beta8 -Pre
+```
+
+Otherwise, if you want to use the Eventbased Asynchronous Pattern only, make sure to install this package:
+
+```
+PM> Install-Package nUpdate.WithoutTAP -Version 3.0.0-beta8 -Pre
+```
+ 
 Web
 ------
-* [nUpdate] - The official website of the nUpdate-project.
-* [@nUpdateLib] - The official twitter account of the nUpdate-project.
-
-Installation
-------
-
-There is currently no real installation, just download the whole solution and build it. If you are using .NET 4.0 and the binaries located in "Provide TAP", you will have to install Microsoft.Bcl (Microsoft Async) in order to use the library as it implements async-await for the TAP. With .NET 4.5, you won't have to install anything, neither in "No TAP", nor in "Providing TAP". Make sure to start nUpdate Administration with admin privileges the first time, so that the registry key for the extension can be created.
-A documentation, on how to use nUpdate's components and how to customize it, will follow soon.
+* [nUpdate] - The official website of nUpdate.
+* [@nUpdateLib] - The official twitter account of nUpdate.
 
 Roadmap
 ------
@@ -53,10 +70,6 @@ Roadmap
 - ...
 
 Have a look at the [v4.0]-branch for the newest changes.
-
-License
-------
-MIT
 
 [v4.0]:https://www.github.com/ProgTrade/nUpdate/tree/v4.0
 [nUpdate]:http://www.nupdate.net/
