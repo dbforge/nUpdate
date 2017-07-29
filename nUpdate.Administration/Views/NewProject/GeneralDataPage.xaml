@@ -1,15 +1,15 @@
-﻿<UserControl x:Class="nUpdate.Administration.Views.NewProject.GeneralDataPage"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-             d:DataContext="{d:DesignInstance newProject:GeneralDataPageViewModel}"
-             d:DesignHeight="230"
-             d:DesignWidth="520"
-             Background="White"
-             mc:Ignorable="d">
+﻿<Page x:Class="nUpdate.Administration.Views.NewProject.GeneralDataPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
+      d:DataContext="{d:DesignInstance newProject:GeneralDataPageViewModel}"
+      d:DesignHeight="230"
+      d:DesignWidth="520"
+      Background="White"
+      mc:Ignorable="d">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
@@ -133,4 +133,4 @@
             </TextBlock>
         </Grid>
     </DockPanel>
-</UserControl>
+</Page>

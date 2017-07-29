@@ -21,10 +21,11 @@
         <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
     </Window.Resources>
     <DockPanel>
-        <ContentControl Height="230"
-                        Content="{Binding CurrentPageViewModel,
-                                          Converter={StaticResource NewProjectViewManager}}"
-                        DockPanel.Dock="Top" />
+        <Frame Height="230"
+               Content="{Binding CurrentPageViewModel,
+                                 Converter={StaticResource NewProjectViewManager}}"
+               DockPanel.Dock="Top"
+               NavigationUIVisibility="Hidden" />
         <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Vertical"
                     Visibility="{Binding CurrentPageViewModel.NeedsUserInteraction,
