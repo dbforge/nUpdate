@@ -45,7 +45,8 @@
                      BorderBrush="Black"
                      Padding="5,0"
                      Text="{Binding Name,
-                                    Mode=TwoWay}" />
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="0"
                        Grid.Column="2"
                        Margin="5,5,0,5"
@@ -79,7 +80,8 @@
                      BorderBrush="Black"
                      Padding="5,0,0,0"
                      Text="{Binding UpdateDirectory,
-                                    Mode=TwoWay}" />
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="2"
                        Grid.Column="2"
                        Margin="5,5,0,5"
@@ -111,7 +113,9 @@
                      BorderBrush="Black"
                      Padding="5,0,0,0"
                      Text="{Binding Location,
-                                    Mode=TwoWay}" />
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
+
             <TextBlock Grid.Row="4"
                        Grid.Column="2"
                        Margin="5,5,0,5"

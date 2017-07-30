@@ -9,7 +9,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private string _name;
-        private Uri _updateDirectory;
+        private string _updateDirectory;
         private string _location;
         private ICommand _loadCommand;
 
@@ -17,31 +17,51 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             _newProjectViewModel = viewModel;
             CanGoBack = true;
+
+            Location = FilePathProvider.DefaultProjectsDirectory;
             LoadCommand = new RelayCommand(OnLoad);
         }
 
         public string Name
         {
             get { return _name; }
-            set { SetProperty(value, ref _name); }
+            set
+            {
+                SetProperty(value, ref _name, nameof(Name));
+                OnDataChange();
+            }
         }
 
-        public Uri UpdateDirectory
+        public string UpdateDirectory
         {
             get { return _updateDirectory; }
-            set { SetProperty(value, ref _updateDirectory); }
+            set
+            {
+                SetProperty(value, ref _updateDirectory, nameof(UpdateDirectory));
+                OnDataChange();
+            }
         }
 
         public string Location
         {
             get { return _location; }
-            set { SetProperty(value, ref _location); }
+            set
+            {
+                SetProperty(value, ref _location, nameof(Location));
+                OnDataChange();
+            }
         }
 
         public ICommand LoadCommand
         {
             get { return _loadCommand; }
-            set { SetProperty(value, ref _loadCommand); }
+            set { SetProperty(value, ref _loadCommand, nameof(LoadCommand)); }
+        }
+        
+        private void OnDataChange()
+        {
+            Uri updateDirectoryUri;
+            CanGoForward = !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Location) && Uri.TryCreate(UpdateDirectory, UriKind.Absolute, out updateDirectoryUri);
         }
 
         private void OnLoad()
@@ -61,7 +81,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             }
 
             Name = targetDirectory.Name;
-            Location = targetDirectory.FullName;
         }
     }
 }
