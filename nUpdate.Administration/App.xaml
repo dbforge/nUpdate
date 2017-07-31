@@ -1,13 +1,30 @@
 ﻿<Application x:Class="nUpdate.Administration.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:nUpdate.Administration"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
+        <!--  Converters  -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <!--  UI resources  -->
+        <SolidColorBrush x:Key="BottomPanelBrush" Color="#F0F0F0" />
+        <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
+
+        <!--  Styles  -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="LightGray" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  LoadingIndicators  -->
+        <ResourceDictionary x:Key="LoadingIndicators">
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/LoadingIndicators.WPF;component/Colors.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/LoadingIndicators.WPF;component/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/LoadingIndicators.WPF;component/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/LoadingIndicators.WPF;component/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

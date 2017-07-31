@@ -11,15 +11,15 @@
         Icon="/./Icons/nUpdate.ico"
         ResizeMode="NoResize"
         mc:Ignorable="d">
+
     <Window.DataContext>
         <viewModels:NewProjectViewModel />
     </Window.DataContext>
+
     <Window.Resources>
         <newProjectViewModels:NewProjectViewManager x:Key="NewProjectViewManager" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <SolidColorBrush x:Key="BottomPanelBrush" Color="#F0F0F0" />
-        <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
     </Window.Resources>
+
     <DockPanel>
         <Frame Height="230"
                Content="{Binding CurrentPageViewModel,
@@ -47,7 +47,6 @@
                             Command="{Binding GoForwardCommand}"
                             Content="Forward" />
                     <Button MinWidth="92"
-                            Command="{Binding CancelCommand}"
                             Content="Cancel"
                             IsCancel="True" />
                 </StackPanel>
