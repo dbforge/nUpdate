@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:administration="clr-namespace:nUpdate.Administration"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
         Title="nUpdate Administration 4.0.0"
@@ -11,6 +12,11 @@
         Icon="/./Icons/nUpdate.ico"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>

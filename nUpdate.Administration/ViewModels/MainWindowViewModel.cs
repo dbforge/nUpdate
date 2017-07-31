@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Views;
@@ -10,8 +12,11 @@ namespace nUpdate.Administration.ViewModels
 {
     public class MainWindowViewModel : ViewModel
     {
+        private ICommand _loadCommand;
+
         public MainWindowViewModel()
         {
+            LoadCommand = new RelayCommand(OnLoad);
             CollectionView =
                 new ListCollectionView(new List<MainMenuItemViewModel>
                 {
@@ -46,9 +51,29 @@ namespace nUpdate.Administration.ViewModels
 
         public ICollectionView CollectionView { get; }
 
+
+        public ICommand LoadCommand
+        {
+            get { return _loadCommand; }
+            set { SetProperty(value, ref _loadCommand); }
+        }
+
         private bool CanEditMasterPassword()
         {
             return Properties.Settings.Default.UsesEncryptedKeyDatabase;
+        }
+
+        private void OnLoad()
+        {
+            if (!Properties.Settings.Default.FirstRun)
+                return;
+
+            WindowManager.ShowDialog(new FirstRunWindow());
+
+            /*Properties.Settings.Default.ProgramPath =
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "nUpdate Administration");
+            Properties.Settings.Default.Save();*/
         }
     }
 }

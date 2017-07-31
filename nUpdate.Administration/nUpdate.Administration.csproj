@@ -138,6 +138,9 @@
     <Compile Include="UpdateFactoryPackage.cs" />
     <Compile Include="UpdateProject.cs" />
     <Compile Include="UpdateProjectLocation.cs" />
+    <Compile Include="ViewModels\FirstRunViewModel.cs" />
+    <Compile Include="ViewModels\FirstRun\FirstRunViewManager.cs" />
+    <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\ViewManager.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />
@@ -149,6 +152,22 @@
     <Compile Include="ViewModels\NewProject\GenerateKeyPairPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\NewProjectViewManager.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
+    <Compile Include="Views\Controls\PathSelectorTextBox.xaml.cs">
+      <DependentUpon>PathSelectorTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\WatermarkTextBox.xaml.cs">
+      <DependentUpon>WatermarkTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FirstRunWindow.xaml.cs">
+      <DependentUpon>FirstRunWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\FirstRun\KeyDatabaseSetupPageViewModel.cs" />
+    <Compile Include="Views\FirstRun\KeyDatabaseSetupPage.xaml.cs">
+      <DependentUpon>KeyDatabaseSetupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FirstRun\WelcomePage.xaml.cs">
+      <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
     </Compile>
@@ -163,6 +182,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\Controls\PathSelectorTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\WatermarkTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FirstRunWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FirstRun\KeyDatabaseSetupPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FirstRun\WelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -215,7 +254,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
