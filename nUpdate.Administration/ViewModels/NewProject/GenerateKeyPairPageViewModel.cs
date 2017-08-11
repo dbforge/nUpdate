@@ -38,7 +38,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             }
         }
 
-        public Task GenerateKeyPair()
+        private Task GenerateKeyPair()
         {
             return Task.Run(() =>
             {
