@@ -21,7 +21,8 @@
             <RadioButton x:Name="EncryptDatabaseRadioButton"
                          Margin="0,25,0,0"
                          Content="Encrypt the key database (recommended)"
-                         IsChecked="True" />
+                         IsChecked="{Binding EncryptKeyDatabase,
+                                             Mode=TwoWay}" />
             <StackPanel Margin="20,10,0,0">
                 <StackPanel.Style>
                     <Style TargetType="{x:Type StackPanel}">
@@ -50,12 +51,16 @@
                     <TextBlock Grid.Row="0"
                                Grid.Column="0"
                                Text="Master password:" />
-                    <PasswordBox Grid.Row="0" Grid.Column="2" />
+                    <PasswordBox Grid.Row="0"
+                                 Grid.Column="2"
+                                 PasswordChanged="PasswordChanged" />
 
                     <TextBlock Grid.Row="2"
                                Grid.Column="0"
-                               Text="Confirm password:" />
-                    <PasswordBox Grid.Row="2" Grid.Column="2" />
+                               Text="Verify password:" />
+                    <PasswordBox Grid.Row="2"
+                                 Grid.Column="2"
+                                 PasswordChanged="PasswordVerifyChanged" />
                 </Grid>
             </StackPanel>
 

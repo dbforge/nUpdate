@@ -5,12 +5,16 @@ namespace nUpdate.Administration.ViewModels
 {
     public class FirstRunViewModel : PagedWindowViewModel
     {
+        public FirstSetupData FirstSetupData { get; } = new FirstSetupData();
+
         public FirstRunViewModel()
         {
             InitializePages(new List<PageViewModel>
             {
                 new WelcomePageViewModel(),
-                new KeyDatabaseSetupPageViewModel()
+                new KeyDatabaseSetupPageViewModel(this),
+                new PathSetupPageViewModel(this),
+                new FinishSetupPageViewModel(this)
             });
         }
     }

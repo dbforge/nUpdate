@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -60,20 +59,13 @@ namespace nUpdate.Administration.ViewModels
 
         private bool CanEditMasterPassword()
         {
-            return Properties.Settings.Default.UsesEncryptedKeyDatabase;
+            return Properties.Settings.Default.UseEncryptedKeyDatabase;
         }
 
         private void OnLoad()
         {
-            if (!Properties.Settings.Default.FirstRun)
-                return;
-
-            WindowManager.ShowDialog(new FirstRunWindow());
-
-            /*Properties.Settings.Default.ProgramPath =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "nUpdate Administration");
-            Properties.Settings.Default.Save();*/
+            if (Properties.Settings.Default.FirstRun)
+                WindowManager.ShowDialog(new FirstRunWindow());
         }
     }
 }

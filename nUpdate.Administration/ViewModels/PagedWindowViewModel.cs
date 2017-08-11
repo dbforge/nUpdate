@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Views;
 
 namespace nUpdate.Administration.ViewModels
 {
@@ -164,6 +165,13 @@ namespace nUpdate.Administration.ViewModels
         public void RequestGoForward()
         {
             GoForwardCommand.Execute();
+        }
+
+        public void RequestClose()
+        {
+            var nextPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) < PageViewModels.Count - 1;
+            if (!nextPageAvailable && (bool) GetValue(PageCanGoForwardProperty))
+                WindowManager.GetCurrentWindow().Close();
         }
 
         private void SetPageBindings()

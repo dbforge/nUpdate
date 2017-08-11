@@ -17,7 +17,7 @@
                    Text="Welcome to nUpdate Administration!" />
 
         <TextBlock VerticalAlignment="Center"
-                   Text="As this is the first time that you're starting nUpdate Administration, there are some preferences that you need to customize. This concerns the project file extension, your key database and some program specific paths. Please click on &quot;Forward&quot;."
+                   Text="As this is the first time that you're starting nUpdate Administration, there are some preferences that you need to customize. This concerns the project file extension, your key database and some program specific paths. You can change these settings later again. Please click on &quot;Forward&quot; to start."
                    TextWrapping="Wrap" />
     </DockPanel>
 </Page>

@@ -10,7 +10,9 @@ namespace nUpdate.Administration.ViewModels.FirstRun
             new Dictionary<Type, Type>
             {
                 {typeof(WelcomePageViewModel), typeof(WelcomePage) },
-                {typeof(KeyDatabaseSetupPageViewModel), typeof(KeyDatabaseSetupPage) }
+                {typeof(KeyDatabaseSetupPageViewModel), typeof(KeyDatabaseSetupPage) },
+                {typeof(PathSetupPageViewModel), typeof(PathSetupPage) },
+                {typeof(FinishSetupPageViewModel), typeof(FinishSetupPage) }
             })
         { }
     }
