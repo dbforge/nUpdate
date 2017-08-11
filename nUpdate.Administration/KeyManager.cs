@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using nUpdate.Administration.Properties;
 
 namespace nUpdate.Administration
 {
@@ -15,47 +16,50 @@ namespace nUpdate.Administration
             byte[] data;
             try
             {
-                data = File.ReadAllBytes(FilePathProvider.KeyDatabaseFilePath);
+                data = File.ReadAllBytes(PathProvider.KeyDatabaseFilePath);
             }
             catch (FileNotFoundException)
             {
                 return;
             }
 
-            if (Properties.Settings.Default.UsesEncryptedKeyDatabase)
+            if (Settings.Default.UseEncryptedKeyDatabase)
                 data = AesCryptoProvider.Decrypt(data, GlobalSession.MasterPassword);
             _secrets = BinarySerializer.DeserializeType<Dictionary<Uri, object>>(data);
         }
 
-        internal object Load(Uri identifer)
+        internal object this[Uri identifier]
         {
-            if (identifer == null)
-                throw new ArgumentNullException(nameof(identifer));
-            return _secrets[identifer];
+            get
+            {
+                if (identifier == null)
+                    throw new ArgumentNullException(nameof(identifier));
+                return _secrets[identifier];
+            }
+            set
+            {
+                var secret = value;
+                if (identifier == null)
+                    throw new ArgumentNullException(nameof(identifier));
+                if (secret == null)
+                    throw new ArgumentNullException(nameof(secret));
+                if (!secret.GetType().IsSerializable)
+                    throw new ArgumentException("Must be serializable.", nameof(secret));
+
+                if (_secrets.ContainsKey(identifier))
+                    _secrets[identifier] = secret;
+                else
+                    _secrets.Add(identifier, secret);
+                Save();
+            }
         }
 
-        private void Save()
+        internal void Save()
         {
             byte[] data = BinarySerializer.Serialize(_secrets);
-            if (Properties.Settings.Default.UsesEncryptedKeyDatabase)
+            if (Settings.Default.UseEncryptedKeyDatabase)
                 data = AesCryptoProvider.Encrypt(data, GlobalSession.MasterPassword);
-            File.WriteAllBytes(FilePathProvider.KeyDatabaseFilePath, data);
-        }
-
-        internal void Store(Uri identifer, object secret)
-        {
-            if (identifer == null)
-                throw new ArgumentNullException(nameof(identifer));
-            if (secret == null)
-                throw new ArgumentNullException(nameof(secret));
-            if (!secret.GetType().IsSerializable)
-                throw new ArgumentException("Must be serializable.", nameof(secret));
-
-            if (_secrets.ContainsKey(identifer))
-                _secrets[identifer] = secret;
-            else
-                _secrets.Add(identifer, secret);
-            Save();
+            File.WriteAllBytes(PathProvider.KeyDatabaseFilePath, data);
         }
     }
 }

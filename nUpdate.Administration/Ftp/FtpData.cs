@@ -12,7 +12,7 @@ namespace nUpdate.Administration.Ftp
         [OnDeserialized]
         private void OnDeserialized()
         {
-            Secret = KeyManager.Instance.Load(Identifier);
+            Secret = KeyManager.Instance[Identifier];
         }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace nUpdate.Administration.Ftp
             get { return _secret; }
             set
             {
-                _secret = value; 
-                KeyManager.Instance.Store(Identifier, value);
+                _secret = value;
+                KeyManager.Instance[Identifier] = value;
             }
         }
     }
