@@ -12,9 +12,9 @@ namespace nUpdate.Administration
     {
         static ProjectSession()
         {
-            AvailableLocations = JsonSerializer.Deserialize<TrulyObservableCollection<UpdateProjectLocation>>(File.ReadAllText(FilePathProvider.ProjectsConfigFilePath)) ?? new TrulyObservableCollection<UpdateProjectLocation>();
+            AvailableLocations = JsonSerializer.Deserialize<TrulyObservableCollection<UpdateProjectLocation>>(File.ReadAllText(PathProvider.ProjectsConfigFilePath)) ?? new TrulyObservableCollection<UpdateProjectLocation>();
             AvailableLocations.CollectionChanged += (sender, args) => 
-                File.WriteAllText(FilePathProvider.ProjectsConfigFilePath, JsonSerializer.Serialize(AvailableLocations.ToList()));
+                File.WriteAllText(PathProvider.ProjectsConfigFilePath, JsonSerializer.Serialize(AvailableLocations.ToList()));
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace nUpdate.Administration
             TransferManager = new TransferManager(project);
             SQLManager = new SqlManager(project);
             ProxyManager = new ProxyManager();
-            PackagesPath = Path.Combine(FilePathProvider.Path, "Projects", project.Guid.ToString());
+            PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 
             ActiveProject.PropertyChanged += (sender, args) => ActiveProject.Save();
         }
