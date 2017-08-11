@@ -58,7 +58,7 @@ namespace nUpdate.Administration.Ftp
         [Newtonsoft.Json.JsonIgnore]
         public object Secret
         {
-            get { return _secret; }
+            get => _secret;
             set
             {
                 _secret = value;

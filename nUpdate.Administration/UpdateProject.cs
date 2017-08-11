@@ -43,7 +43,7 @@ namespace nUpdate.Administration
         /// </summary>
         public string AssemblyVersionPath
         {
-            get { return _assemblyVersionPath; }
+            get => _assemblyVersionPath;
             set
             {
                 _assemblyVersionPath = value;
@@ -61,7 +61,7 @@ namespace nUpdate.Administration
         /// </summary>
         public Guid Guid
         {
-            get { return _guid; }
+            get => _guid;
             set
             {
                 _guid = value;
@@ -80,7 +80,7 @@ namespace nUpdate.Administration
         /// </summary>
         public List<PackageActionLogData> LogData
         {
-            get { return _logData; }
+            get => _logData;
             set
             {
                 _logData = value;
@@ -93,7 +93,7 @@ namespace nUpdate.Administration
         /// </summary>
         public List<UpdateChannel> MasterChannel
         {
-            get { return _channels; }
+            get => _channels;
             set
             {
                 _channels = value;
@@ -106,7 +106,7 @@ namespace nUpdate.Administration
         /// </summary>
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -119,7 +119,7 @@ namespace nUpdate.Administration
         /// </summary>
         public List<UpdatePackage> Packages
         {
-            get { return _packages; }
+            get => _packages;
             set
             {
                 _packages = value;
@@ -133,7 +133,7 @@ namespace nUpdate.Administration
         [JsonIgnore]
         public string PrivateKey
         {
-            get { return _privateKey; }
+            get => _privateKey;
             set
             {
                 _privateKey = value;
@@ -146,7 +146,7 @@ namespace nUpdate.Administration
         /// </summary>
         public ProxyData ProxyData
         {
-            get { return _proxyData; }
+            get => _proxyData;
             set
             {
                 _proxyData = value;
@@ -159,7 +159,7 @@ namespace nUpdate.Administration
         /// </summary>
         public string PublicKey
         {
-            get { return _publicKey; }
+            get => _publicKey;
             set
             {
                 _publicKey = value;
@@ -172,7 +172,7 @@ namespace nUpdate.Administration
         /// </summary>
         public SqlData SqlData
         {
-            get { return _sqlData; }
+            get => _sqlData;
             set
             {
                 _sqlData = value;
@@ -185,7 +185,7 @@ namespace nUpdate.Administration
         /// </summary>
         public string TransferAssemblyFilePath
         {
-            get { return _transferAssemblyFilePath; }
+            get => _transferAssemblyFilePath;
             set
             {
                 _transferAssemblyFilePath = value;
@@ -199,7 +199,7 @@ namespace nUpdate.Administration
         [JsonProperty(TypeNameHandling = TypeNameHandling.Objects)]
         public ITransferData TransferData
         {
-            get { return _transferData; }
+            get => _transferData;
             set
             {
                 _transferData = value;
@@ -212,7 +212,7 @@ namespace nUpdate.Administration
         /// </summary>
         public TransferProtocol TransferProtocol
         {
-            get { return _transferProtocol; }
+            get => _transferProtocol;
             set
             {
                 _transferProtocol = value;
@@ -225,7 +225,7 @@ namespace nUpdate.Administration
         /// </summary>
         public Uri UpdateDirectory
         {
-            get { return _updateDirectoryUri; }
+            get => _updateDirectoryUri;
             set
             {
                 _updateDirectoryUri = value;
@@ -238,7 +238,7 @@ namespace nUpdate.Administration
         /// </summary>
         public bool UseProxy
         {
-            get { return _useProxy; }
+            get => _useProxy;
             set
             {
                 _useProxy = value;
@@ -251,7 +251,7 @@ namespace nUpdate.Administration
         /// </summary>
         public bool UseStatistics
         {
-            get { return _useStatistics; }
+            get => _useStatistics;
             set
             {
                 _useStatistics = value;

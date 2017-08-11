@@ -53,8 +53,8 @@ namespace nUpdate.Administration.ViewModels
 
         public ICommand LoadCommand
         {
-            get { return _loadCommand; }
-            set { SetProperty(value, ref _loadCommand); }
+            get => _loadCommand;
+            set => SetProperty(value, ref _loadCommand);
         }
 
         private bool CanEditMasterPassword()

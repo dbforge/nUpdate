@@ -30,7 +30,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         public ICommand LoadCommand
         {
-            get { return _loadCommand; }
+            get => _loadCommand;
             set
             {
                 _loadCommand = value;

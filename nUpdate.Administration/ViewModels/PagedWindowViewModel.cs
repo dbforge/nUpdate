@@ -120,7 +120,7 @@ namespace nUpdate.Administration.ViewModels
                 EnsureObjectState();
                 return _pageViewModels;
             }
-            private set { _pageViewModels = value; }
+            private set => _pageViewModels = value;
         }
 
         private void EnsureObjectState()

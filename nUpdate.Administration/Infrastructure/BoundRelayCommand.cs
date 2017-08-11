@@ -12,8 +12,8 @@ namespace nUpdate.Administration.Infrastructure
 
         private bool CanExecuteBinding
         {
-            get { return (bool) GetValue(CanExecuteBindingProperty); }
-            set { SetValue(CanExecuteBindingProperty, value); }
+            get => (bool) GetValue(CanExecuteBindingProperty);
+            set => SetValue(CanExecuteBindingProperty, value);
         }
 
         private readonly Action _methodToExecute;

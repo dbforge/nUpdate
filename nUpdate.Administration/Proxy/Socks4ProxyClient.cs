@@ -189,8 +189,8 @@ namespace nUpdate.Administration.Proxy
         /// </summary>
         public string ProxyUserId
         {
-            get { return _proxyUserId; }
-            set { _proxyUserId = value; }
+            get => _proxyUserId;
+            set => _proxyUserId = value;
         }
 
         public void Dispose()
@@ -204,8 +204,8 @@ namespace nUpdate.Administration.Proxy
         /// </summary>
         public string ProxyHost
         {
-            get { return _proxyHost; }
-            set { _proxyHost = value; }
+            get => _proxyHost;
+            set => _proxyHost = value;
         }
 
         /// <summary>
@@ -213,8 +213,8 @@ namespace nUpdate.Administration.Proxy
         /// </summary>
         public int ProxyPort
         {
-            get { return _proxyPort; }
-            set { _proxyPort = value; }
+            get => _proxyPort;
+            set => _proxyPort = value;
         }
 
         /// <summary>
@@ -229,8 +229,8 @@ namespace nUpdate.Administration.Proxy
         /// </summary>
         public TcpClient TcpClient
         {
-            get { return _tcpClientCached; }
-            set { _tcpClientCached = value; }
+            get => _tcpClientCached;
+            set => _tcpClientCached = value;
         }
 
         /// <summary>

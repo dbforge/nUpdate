@@ -14,26 +14,26 @@ namespace nUpdate.Administration.ViewModels
 
         public bool CanBeShown
         {
-            get { return _canBeShown; }
-            set { SetProperty(value, ref _canBeShown); }
+            get => _canBeShown;
+            set => SetProperty(value, ref _canBeShown);
         }
 
         public bool CanGoBack
         {
-            get { return _canGoBack; }
-            set { SetProperty(value, ref _canGoBack); }
+            get => _canGoBack;
+            set => SetProperty(value, ref _canGoBack);
         }
 
         public bool CanGoForward
         {
-            get { return _canGoForward; }
-            set { SetProperty(value, ref _canGoForward); }
+            get => _canGoForward;
+            set => SetProperty(value, ref _canGoForward);
         }
 
         public bool NeedsUserInteraction
         {
-            get { return _needsUserInteraction; }
-            set { SetProperty(value, ref _needsUserInteraction); }
+            get => _needsUserInteraction;
+            set => SetProperty(value, ref _needsUserInteraction);
         }
     }
 }

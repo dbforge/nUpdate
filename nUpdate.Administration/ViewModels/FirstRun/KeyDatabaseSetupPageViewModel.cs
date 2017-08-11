@@ -17,7 +17,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
 
         public bool EncryptKeyDatabase
         {
-            get { return _encryptKeyDatabase; }
+            get => _encryptKeyDatabase;
             set
             {
                 SetProperty(value, ref _encryptKeyDatabase, nameof(EncryptKeyDatabase));
@@ -27,7 +27,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
 
         public string MasterPassword
         {
-            get { return _masterPassword; }
+            get => _masterPassword;
             set
             {
                 SetProperty(value, ref _masterPassword, nameof(MasterPassword));
@@ -37,7 +37,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
 
         public string MasterPasswordVerify
         {
-            get { return _masterPasswordVerify; }
+            get => _masterPasswordVerify;
             set
             {
                 SetProperty(value, ref _masterPasswordVerify, nameof(MasterPasswordVerify));

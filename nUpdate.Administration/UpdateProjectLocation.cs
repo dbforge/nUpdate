@@ -19,7 +19,7 @@ namespace nUpdate.Administration
         [JsonProperty]
         internal Guid Guid
         {
-            get { return _guid; }
+            get => _guid;
             set
             {
                 _guid = value;
@@ -32,7 +32,7 @@ namespace nUpdate.Administration
         [JsonProperty]
         internal string LastSeenPath
         {
-            get { return _lastSeenPath; }
+            get => _lastSeenPath;
             set
             {
                 _lastSeenPath = value;

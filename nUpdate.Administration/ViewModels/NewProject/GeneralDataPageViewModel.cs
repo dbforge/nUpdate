@@ -26,13 +26,13 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         public ICommand LoadCommand
         {
-            get { return _loadCommand; }
-            set { SetProperty(value, ref _loadCommand, nameof(LoadCommand)); }
+            get => _loadCommand;
+            set => SetProperty(value, ref _loadCommand, nameof(LoadCommand));
         }
 
         public string Location
         {
-            get { return _location; }
+            get => _location;
             set
             {
                 SetProperty(value, ref _location, nameof(Location));
@@ -42,7 +42,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 SetProperty(value, ref _name, nameof(Name));
@@ -52,7 +52,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         public string UpdateDirectory
         {
-            get { return _updateDirectory; }
+            get => _updateDirectory;
             set
             {
                 SetProperty(value, ref _updateDirectory, nameof(UpdateDirectory));
