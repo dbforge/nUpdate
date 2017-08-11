@@ -51,7 +51,10 @@ namespace nUpdate.Administration
             }
         }
 
-        public string ConfigVersion => "4";
+        /// <summary>
+        ///     Gets the version of the project file.
+        /// </summary>
+        public Version Version => new Version(4, 0);
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the project.
@@ -134,7 +137,7 @@ namespace nUpdate.Administration
             set
             {
                 _privateKey = value;
-                KeyManager.Instance.Store(Identifier, value);
+                KeyManager.Instance[Identifier] = value;
             }
         }
 
@@ -218,9 +221,9 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Uri" /> of the remote update directory of the project.
+        ///     Gets or sets the <see cref="Uri" /> of the local or remote update directory of the project.
         /// </summary>
-        public Uri UpdateDirectoryUri
+        public Uri UpdateDirectory
         {
             get { return _updateDirectoryUri; }
             set
@@ -282,7 +285,7 @@ namespace nUpdate.Administration
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            PrivateKey = (string) KeyManager.Instance.Load(Identifier);
+            PrivateKey = (string) KeyManager.Instance[Identifier];
         }
 
         /// <summary>

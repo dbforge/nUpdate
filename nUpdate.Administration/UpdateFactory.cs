@@ -40,7 +40,7 @@ namespace nUpdate.Administration
         {
             var masterChannel =
                 await
-                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
+                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectory, "masterchannel.json"),
                         _project.ProxyData.Proxy);
             var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
             if (destinationChannel == null)
@@ -67,7 +67,7 @@ namespace nUpdate.Administration
                 _project.Save();
 
                 File.WriteAllText(
-                    Path.Combine(FilePathProvider.Path, "Projects", _project.Guid.ToString(),
+                    Path.Combine(PathProvider.Path, "Projects", _project.Guid.ToString(),
                         factoryPackage.PackageData.Guid.ToString(), "updates.json"),
                     JsonSerializer.Serialize(factoryPackage.PackageData));
             });
@@ -102,7 +102,7 @@ namespace nUpdate.Administration
         {
             var masterChannel =
                 await
-                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectoryUri, "masterchannel.json"),
+                    UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectory, "masterchannel.json"),
                         _project.ProxyData.Proxy);
             var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updateChannelName);
             if (destinationChannel == null)
@@ -149,7 +149,7 @@ namespace nUpdate.Administration
             if (ProjectSession.ActiveProject.MasterChannel == null)
             {
                 ProjectSession.ActiveProject.MasterChannel =
-                    UpdateChannel.GetDefaultMasterChannel(ProjectSession.ActiveProject.UpdateDirectoryUri).ToList();
+                    UpdateChannel.GetDefaultMasterChannel(ProjectSession.ActiveProject.UpdateDirectory).ToList();
             }
 
             using (
