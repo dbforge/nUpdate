@@ -26,24 +26,24 @@ namespace nUpdate.Administration.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ProgramPath {
+        public string ApplicationDataPath {
             get {
-                return ((string)(this["ProgramPath"]));
+                return ((string)(this["ApplicationDataPath"]));
             }
             set {
-                this["ProgramPath"] = value;
+                this["ApplicationDataPath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UsesEncryptedKeyDatabase {
+        public bool UseEncryptedKeyDatabase {
             get {
-                return ((bool)(this["UsesEncryptedKeyDatabase"]));
+                return ((bool)(this["UseEncryptedKeyDatabase"]));
             }
             set {
-                this["UsesEncryptedKeyDatabase"] = value;
+                this["UseEncryptedKeyDatabase"] = value;
             }
         }
         
@@ -56,6 +56,18 @@ namespace nUpdate.Administration.Properties {
             }
             set {
                 this["FirstRun"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultProjectPath {
+            get {
+                return ((string)(this["DefaultProjectPath"]));
+            }
+            set {
+                this["DefaultProjectPath"] = value;
             }
         }
     }
