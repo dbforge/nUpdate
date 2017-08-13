@@ -2,15 +2,12 @@
 
 using System;
 using System.IO;
-using System.Windows.Input;
-using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
     public class GeneralDataPageViewModel : PageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
-        private ICommand _loadCommand;
         private string _location;
         private string _name;
         private string _updateDirectory;
@@ -21,13 +18,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CanGoBack = true;
 
             Location = PathProvider.DefaultProjectDirectory;
-            LoadCommand = new RelayCommand(OnLoad);
-        }
-
-        public ICommand LoadCommand
-        {
-            get => _loadCommand;
-            set => SetProperty(value, ref _loadCommand, nameof(LoadCommand));
         }
 
         public string Location
@@ -60,11 +50,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
             }
         }
 
-        private void OnLoad()
+        public override void OnNavigated(PageViewModel fromPage, PagedWindowViewModel window)
         {
             if (!Directory.Exists(PathProvider.DefaultProjectDirectory))
                 Directory.CreateDirectory(PathProvider.DefaultProjectDirectory);
-            
+
             var nameAvailable = false;
             var targetDirectory = default(DirectoryInfo);
             while (!nameAvailable)

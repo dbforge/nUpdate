@@ -85,8 +85,11 @@ namespace nUpdate.Administration.ViewModels
                            new RelayCommand(
                                () =>
                                {
+                                   var oldPageViewModel = CurrentPageViewModel;
+                                   oldPageViewModel.OnNavigateBack(this);
                                    CurrentPageViewModel =
                                        PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
+                                   CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
                                }, () => CanGoBack));
             }
         }
@@ -103,8 +106,11 @@ namespace nUpdate.Administration.ViewModels
                            new RelayCommand(
                                () =>
                                {
+                                   var oldPageViewModel = CurrentPageViewModel;
+                                   oldPageViewModel.OnNavigateForward(this);
                                    CurrentPageViewModel =
                                        PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1];
+                                   CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
                                }, () => CanGoForward));
             }
         }
@@ -139,6 +145,7 @@ namespace nUpdate.Administration.ViewModels
         {
             PageViewModels = new ReadOnlyCollection<PageViewModel>(viewModels);
             CurrentPageViewModel = PageViewModels[0];
+            CurrentPageViewModel.OnNavigated(null, this);
         }
 
         private void PageNavigationPropertiesChanged()

@@ -35,5 +35,14 @@ namespace nUpdate.Administration.ViewModels
             get => _needsUserInteraction;
             set => SetProperty(value, ref _needsUserInteraction);
         }
+
+        public virtual void OnNavigateBack(PagedWindowViewModel window)
+        { }
+
+        public virtual void OnNavigateForward(PagedWindowViewModel window)
+        { }
+
+        public virtual void OnNavigated(PageViewModel fromPage, PagedWindowViewModel window)
+        { }
     }
 }

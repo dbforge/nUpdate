@@ -10,11 +10,6 @@
       d:DesignWidth="520"
       Background="White"
       mc:Ignorable="d">
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <DockPanel Margin="20">
         <TextBlock DockPanel.Dock="Top"
                    FontSize="12pt"
