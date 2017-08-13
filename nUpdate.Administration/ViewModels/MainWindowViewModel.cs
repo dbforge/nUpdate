@@ -5,7 +5,9 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Properties;
 using nUpdate.Administration.Views;
+// ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace nUpdate.Administration.ViewModels
 {
@@ -59,12 +61,12 @@ namespace nUpdate.Administration.ViewModels
 
         private bool CanEditMasterPassword()
         {
-            return Properties.Settings.Default.UseEncryptedKeyDatabase;
+            return Settings.Default.UseEncryptedKeyDatabase;
         }
 
         private void OnLoad()
         {
-            if (Properties.Settings.Default.FirstRun)
+            if (Settings.Default.FirstRun)
                 WindowManager.ShowDialog(new FirstRunWindow());
         }
     }

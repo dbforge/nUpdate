@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using nUpdate.Administration.Infrastructure;
@@ -13,6 +14,8 @@ namespace nUpdate.Administration.ViewModels
 {
     public abstract class PagedWindowViewModel : ViewModel
     {
+        #region NavigationDependencyProperties
+
         private static readonly DependencyProperty PageCanGoBackProperty =
             DependencyProperty.Register("PageCanGoBack", typeof(bool), typeof(PagedWindowViewModel),
                 new PropertyMetadata((obj, e) => { ((PagedWindowViewModel) obj).PageNavigationPropertiesChanged(); }));
@@ -39,20 +42,45 @@ namespace nUpdate.Administration.ViewModels
         /// </summary>
         public static readonly DependencyProperty CanGoForwardProperty = CanGoForwardPropertyKey.DependencyProperty;
 
+        #endregion
+
+        #region CloseDependencyProperties
+
+        private static readonly DependencyProperty PageAllowsClosingProperty = DependencyProperty.Register("PageAllowsClosing", typeof(bool), typeof(PagedWindowViewModel),
+            new PropertyMetadata((obj, e) => { ((PagedWindowViewModel)obj).PageAllowClosingPropertiesChanged(); }));
+
+        private static readonly DependencyPropertyKey AllowClosingPropertyKey =
+            DependencyProperty.RegisterReadOnly("AllowClosing", typeof(bool), typeof(PagedWindowViewModel),
+                new PropertyMetadata(false));
+
+        /// <summary>
+        ///     Identifies the <see cref="AllowClosing" /> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty AllowClosingProperty = AllowClosingPropertyKey.DependencyProperty;
+
+
+        #endregion
+
         private PageViewModel _currentPageViewModel;
         private RelayCommand _goBackCommand;
         private RelayCommand _goForwardCommand;
         private ReadOnlyCollection<PageViewModel> _pageViewModels;
+        private bool _allowClosing = true;
 
         /// <summary>
-        ///     Gets a value indicating whether the user is allowed to go back.
+        ///     Gets a value indicating whether the user is allowed to go back, or not.
         /// </summary>
         public bool CanGoBack => (bool) GetValue(CanGoBackProperty);
 
         /// <summary>
-        ///     Gets a value indicating whether the current view model allows to go forward.
+        ///     Gets a value indicating whether the user is allowed to go forward, or not.
         /// </summary>
         public bool CanGoForward => (bool) GetValue(CanGoForwardProperty);
+
+        /// <summary>
+        ///     Gets a value indicating whether the user is allowed to close the window, or not.
+        /// </summary>
+        public bool AllowClosing => (bool) GetValue(AllowClosingProperty);
 
         /// <summary>
         ///     Gets or sets the view model of the current page to be shown.
@@ -104,10 +132,24 @@ namespace nUpdate.Administration.ViewModels
                 EnsureObjectState();
                 return _goForwardCommand ?? (_goForwardCommand =
                            new RelayCommand(
-                               () =>
+                               async () =>
                                {
                                    var oldPageViewModel = CurrentPageViewModel;
                                    oldPageViewModel.OnNavigateForward(this);
+
+                                   // There is no further page which means we are finished with the wizard
+                                   if (PageViewModels.IndexOf(CurrentPageViewModel) == PageViewModels.Count - 1)
+                                   {
+                                       _allowClosing = false;
+                                       var finished = await Finish();
+                                       _allowClosing = true;
+
+                                       // If no errors occured and everything worked, we can now close the window if (result)
+                                       if (finished)
+                                           WindowManager.GetCurrentWindow().Close();
+                                       return;
+                                   }
+
                                    CurrentPageViewModel =
                                        PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1];
                                    CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
@@ -139,6 +181,11 @@ namespace nUpdate.Administration.ViewModels
         }
 
         /// <summary>
+        ///     Performs the final steps with the data collected among the different pages to finish the wizard.
+        /// </summary>
+        protected abstract Task<bool> Finish();
+
+        /// <summary>
         ///     Initialize the pages associated with this window.
         /// </summary>
         protected void InitializePages(IList<PageViewModel> viewModels)
@@ -146,6 +193,11 @@ namespace nUpdate.Administration.ViewModels
             PageViewModels = new ReadOnlyCollection<PageViewModel>(viewModels);
             CurrentPageViewModel = PageViewModels[0];
             CurrentPageViewModel.OnNavigated(null, this);
+        }
+
+        private void PageAllowClosingPropertiesChanged()
+        {
+            SetValue(AllowClosingPropertyKey, _allowClosing && (bool) GetValue(PageAllowsClosingProperty));
         }
 
         private void PageNavigationPropertiesChanged()
@@ -156,9 +208,10 @@ namespace nUpdate.Administration.ViewModels
                                                .CanBeShown);
 
             var nextPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) < PageViewModels.Count - 1;
-            SetValue(CanGoForwardPropertyKey, nextPageAvailable && (bool) GetValue(PageCanGoForwardProperty) &&
-                                              PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1]
-                                                  .CanBeShown);
+            SetValue(CanGoForwardPropertyKey, (bool) GetValue(PageCanGoForwardProperty) &&
+                                              (!nextPageAvailable ||
+                                               PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1]
+                                                   .CanBeShown));
 
             GoBackCommand.OnCanExecuteChanged();
             GoForwardCommand.OnCanExecuteChanged();
@@ -172,13 +225,6 @@ namespace nUpdate.Administration.ViewModels
         public void RequestGoForward()
         {
             GoForwardCommand.Execute();
-        }
-
-        public void RequestClose()
-        {
-            var nextPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) < PageViewModels.Count - 1;
-            if (!nextPageAvailable && (bool) GetValue(PageCanGoForwardProperty))
-                WindowManager.GetCurrentWindow().Close();
         }
 
         private void SetPageBindings()

@@ -11,8 +11,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
             {
                 {typeof(WelcomePageViewModel), typeof(WelcomePage) },
                 {typeof(KeyDatabaseSetupPageViewModel), typeof(KeyDatabaseSetupPage) },
-                {typeof(PathSetupPageViewModel), typeof(PathSetupPage) },
-                {typeof(FinishSetupPageViewModel), typeof(FinishSetupPage) }
+                {typeof(PathSetupPageViewModel), typeof(PathSetupPage) }
             })
         { }
     }

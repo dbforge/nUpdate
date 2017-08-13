@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using nUpdate.Administration.ViewModels.NewProject;
 
 namespace nUpdate.Administration.ViewModels
@@ -14,6 +15,11 @@ namespace nUpdate.Administration.ViewModels
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this)
             });
+        }
+
+        protected override Task<bool> Finish()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

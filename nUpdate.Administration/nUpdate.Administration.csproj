@@ -140,7 +140,6 @@
     <Compile Include="UpdateProject.cs" />
     <Compile Include="UpdateProjectLocation.cs" />
     <Compile Include="ViewModels\FirstRunViewModel.cs" />
-    <Compile Include="ViewModels\FirstRun\FinishSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
@@ -159,9 +158,6 @@
       <DependentUpon>FirstRunWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FirstRun\KeyDatabaseSetupPageViewModel.cs" />
-    <Compile Include="Views\FirstRun\FinishSetupPage.xaml.cs">
-      <DependentUpon>FinishSetupPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\FirstRun\KeyDatabaseSetupPage.xaml.cs">
       <DependentUpon>KeyDatabaseSetupPage.xaml</DependentUpon>
     </Compile>
@@ -187,10 +183,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Views\FirstRunWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\FirstRun\FinishSetupPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
