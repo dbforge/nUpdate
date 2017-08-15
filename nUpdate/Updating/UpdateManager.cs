@@ -1,4 +1,4 @@
-// Author: Dominic Beger (Trade/ProgTrade) 2016
+// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -31,8 +31,6 @@ namespace nUpdate.Updating
         private bool _disposed;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
         private CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
-        private bool _hasDownloadCancelled;
-        private bool _hasDownloadFailed;
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
 
         private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
@@ -49,8 +47,14 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="updateConfigurationFileUri">The URI of the update configuration file.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
-        /// <param name="languageCulture">The language culture to use. If no value is provided, the default one ("en") will be used.</param>
-        /// <param name="currentVersion">The current version of that should be used for the update checks. This parameter has a higher priority than the <see cref="nUpdateVersionAttribute"/> and will replace it, if specified.</param>
+        /// <param name="languageCulture">
+        ///     The language culture to use. If no value is provided, the default one ("en") will be
+        ///     used.
+        /// </param>
+        /// <param name="currentVersion">
+        ///     The current version of that should be used for the update checks. This parameter has a
+        ///     higher priority than the <see cref="nUpdateVersionAttribute" /> and will replace it, if specified.
+        /// </param>
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
@@ -85,11 +89,11 @@ namespace nUpdate.Updating
                 // Neither the nUpdateVersionAttribute nor the additional parameter argument was provided.
                 if (nUpateVersionAttribute == null)
                     throw new ArgumentException(
-                    "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly and no version was provided explicitly.");
+                        "The version string couldn't be loaded because the nUpdateVersionAttribute isn't implemented in the executing assembly and no version was provided explicitly.");
 
                 CurrentVersion = new UpdateVersion(nUpateVersionAttribute.VersionString);
             }
-            
+
             // TODO: This is just there to make sure we don't create an API-change that would require a new Major version. This will be changed/removed in v4.0.
             // Before v3.0-beta5 it was not possible to use custom languages due to a mistake in the architecture. So we can be pretty sure that nobody specifies a custom CultureInfo in the constructor.
             // We only need these two lines for those who specified one of the implemented CultureInfos here as they shouldn't have to change anything when updating to v3.0-beta5.
@@ -143,7 +147,7 @@ namespace nUpdate.Updating
         /// </remarks>
         public CultureInfo LanguageCulture
         {
-            get { return _languageCulture; }
+            get => _languageCulture;
             set
             {
                 if (!LocalizationHelper.IsIntegratedCulture(value, CultureFilePaths) &&
@@ -156,50 +160,50 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Gets or sets the paths for the file with the content relating to the cultures.
+        ///     Gets or sets the paths to the files that contain the localized strings of their corresponding <see cref="CultureInfo"/>.
         /// </summary>
         public Dictionary<CultureInfo, string> CultureFilePaths { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a custom user interface should be used for the update installer, or not.
+        ///     Gets or sets a value indicating whether the nUpdate UpdateInstaller should use a custom user interface, or not.
         /// </summary>
+        /// <remarks>This property also requires <see cref="CustomInstallerUiAssemblyPath"/> to be set, if the value is <c>true</c>.</remarks>
         public bool UseCustomInstallerUserInterface { get; set; }
 
         /// <summary>
-        ///     Gets or sets the path of the custom assembly'S location that should be used for the update installer's user
-        ///     interface.
+        ///     Gets or sets the path of the assembly file that contains the user interface data for nUpdate UpdateInstaller.
         /// </summary>
         public string CustomInstallerUiAssemblyPath { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions or not.
+        ///     Gets or sets a value indicating whether the user should be able to update to alpha versions, or not.
         /// </summary>
         public bool IncludeAlpha { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Beta-versions or not.
+        ///     Gets or sets a value indicating whether the user should be able to update to beta versions, or not.
         /// </summary>
         public bool IncludeBeta { get; set; }
 
         /// <summary>
-        ///     Gets the configurations for the update packages that should be downloaded and installed.
+        ///     Gets the package configurations for all available updates.
         /// </summary>
         public IEnumerable<UpdateConfiguration> PackageConfigurations { get; internal set; }
 
         /// <summary>
-        ///     Gets or sets if the current PC should be involved in entries made on the statistics server, if one is available.
+        ///     Gets or sets a value indicating whether the current computer should be included into the statistics, or not.
         /// </summary>
         public bool IncludeCurrentPcIntoStatistics { get; set; } = true;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be closed when the update installer begins, or
+        ///     Gets or sets a value indicating whether the host application should be closed when the nUpdate UpdateInstaller is started, or
         ///     not.
         /// </summary>
         public bool CloseHostApplication { get; set; } = true;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be restarted once the update installation has finished, or
-        ///     not.
+        ///     Gets or sets a value indicating whether the host application should be restarted once the update installation has
+        ///     completed, or not.
         /// </summary>
         public bool RestartHostApplication { get; set; } = true;
 
@@ -209,17 +213,17 @@ namespace nUpdate.Updating
         public double TotalSize { get; private set; }
 
         /// <summary>
-        ///     Gets or sets the proxy to use, if wished.
+        ///     Gets or sets the proxy to use.
         /// </summary>
         public WebProxy Proxy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the HTTP authentication credentials.
+        ///     Gets or sets the HTTP(S) authentication credentials.
         /// </summary>
         public NetworkCredential HttpAuthenticationCredentials { get; set; }
 
         /// <summary>
-        ///     Gets or sets the arguments that should be handled over to the application.
+        ///     Gets or sets the arguments that should be handled over to the application once the update installation has completed.
         /// </summary>
         public List<UpdateArgument> Arguments { get; set; }
 
@@ -289,8 +293,9 @@ namespace nUpdate.Updating
                 return false;
 
             // Check for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
-            var configuration = UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
+            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+            var configuration =
+                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -335,7 +340,7 @@ namespace nUpdate.Updating
 #if PROVIDE_TAP
             return SearchForUpdates();
 #else
-            Task.Factory.StartNew(() => SearchForUpdates()).ContinueWith(SearchTaskCompleted,
+            Task.Factory.StartNew(SearchForUpdates).ContinueWith(SearchTaskCompleted,
                 _searchCancellationTokenSource.Token,
                 TaskContinuationOptions.None, TaskScheduler.Default);
 #endif
@@ -353,7 +358,7 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Cancels the active update search.
+        ///     Cancels the update search.
         /// </summary>
         /// <remarks>If there is no search task running, nothing will happen.</remarks>
         public void CancelSearch()
@@ -377,7 +382,7 @@ namespace nUpdate.Updating
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
             long received = 0;
-            double total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+            var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                 .Where(updatePackageSize => updatePackageSize != null)
                 .Sum(updatePackageSize => updatePackageSize.Value);
 
@@ -405,10 +410,10 @@ namespace nUpdate.Updating
                         _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                             Path.Combine(_applicationUpdateDirectory,
                                 $"{updateConfiguration.LiteralVersion}.zip"));
-                        using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                        using (var fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
                             $"{updateConfiguration.LiteralVersion}.zip")))
                         {
-                            using (Stream input = webResponse.GetResponseStream())
+                            using (var input = webResponse.GetResponseStream())
                             {
                                 if (input == null)
                                     throw new Exception("The response stream couldn't be read.");
@@ -420,7 +425,7 @@ namespace nUpdate.Updating
                                     throw new OperationCanceledException();
                                 }
 
-                                int size = input.Read(buffer, 0, buffer.Length);
+                                var size = input.Read(buffer, 0, buffer.Length);
                                 while (size > 0)
                                 {
                                     if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
@@ -435,7 +440,7 @@ namespace nUpdate.Updating
                                     fileStream.Write(buffer, 0, size);
                                     received += size;
                                     OnUpdateDownloadProgressChanged(received,
-                                        (long) total, (float) (received/total)*100);
+                                        (long) total, (float) (received / total) * 100);
                                     size = input.Read(buffer, 0, buffer.Length);
                                 }
 
@@ -444,14 +449,12 @@ namespace nUpdate.Updating
 
                                 try
                                 {
-                                    string response =
+                                    var response =
                                         new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(
                                             $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
                                     if (!string.IsNullOrEmpty(response))
-                                    {
                                         throw new StatisticsException(string.Format(
                                             _lp.StatisticsScriptExceptionText, response));
-                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -468,6 +471,9 @@ namespace nUpdate.Updating
             }
         }
 
+        /// <summary>
+        ///     Downloads the available update packages from the server, asynchronously.
+        /// </summary>
         public void DownloadPackagesAsync()
         {
             Task.Factory.StartNew(DownloadPackages).ContinueWith(DownloadTaskCompleted,
@@ -476,20 +482,17 @@ namespace nUpdate.Updating
                 TaskScheduler.Default);
         }
 
-#if PROVIDE_TAP
-
-    /// <summary>
-    ///     Downloads the available update packages from the server, asynchronously.
-    /// </summary>
-    /// <seealso cref="DownloadPackages" />
+#if PROVIDE_TAP /// <summary>
+///     Downloads the available update packages from the server, asynchronously.
+/// </summary>
+/// <seealso cref="DownloadPackages" />
         public async Task DownloadPackagesAsync(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
         {
-            if (_downloadCancellationTokenSource != null)
-                _downloadCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource?.Dispose();
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
             long received = 0;
-            double total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+            var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                     .Where(updatePackageSize => updatePackageSize != null)
                     .Sum(updatePackageSize => updatePackageSize.Value);
 
@@ -516,11 +519,11 @@ namespace nUpdate.Updating
                     var buffer = new byte[1024];
                     _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                         Path.Combine(_applicationUpdateDirectory,
-                            String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
-                    using (FileStream fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
-                        String.Format("{0}.zip", updateConfiguration.LiteralVersion))))
+                            $"{updateConfiguration.LiteralVersion}.zip"));
+                    using (var fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                        $"{updateConfiguration.LiteralVersion}.zip")))
                     {
-                        using (Stream input = webResponse.GetResponseStream())
+                        using (var input = webResponse.GetResponseStream())
                         {
                             if (input == null)
                                 throw new Exception("The response stream couldn't be read.");
@@ -532,7 +535,7 @@ namespace nUpdate.Updating
                                 throw new OperationCanceledException();
                             }
 
-                            int size = await input.ReadAsync(buffer, 0, buffer.Length);
+                            var size = await input.ReadAsync(buffer, 0, buffer.Length);
                             while (size > 0)
                             {
                                 if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
@@ -556,10 +559,10 @@ namespace nUpdate.Updating
 
                             try
                             {
-                                string response =
-                                    new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(String.Format("{0}?versionid={1}&os={2}",
-                                        updateConfiguration.UpdatePhpFileUri, updateConfiguration.VersionId,
-                                        SystemInformation.OperatingSystemName)); // Only for calling it
+                                var response =
+                                    new WebClient {Credentials =
+HttpAuthenticationCredentials}.DownloadString(
+                                        $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
                                 if (!String.IsNullOrEmpty(response))
                                 {
                                     throw new StatisticsException(String.Format(
@@ -575,8 +578,7 @@ namespace nUpdate.Updating
                 }
                 finally
                 {
-                    if (webResponse != null)
-                        webResponse.Close();
+                    webResponse?.Close();
                 }
             }
         }
@@ -597,7 +599,7 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Cancels the active download.
+        ///     Cancels the download.
         /// </summary>
         /// <remarks>If there is no download task running, nothing will happen.</remarks>
         public void CancelDownload()
@@ -607,7 +609,7 @@ namespace nUpdate.Updating
 
         /// <summary>
         ///     Returns a value indicating whether the signature of each package is valid, or not. If a package contains an invalid
-        ///     signature, it will be deleted directly.
+        ///     signature, it will be deleted.
         /// </summary>
         /// <returns>Returns <c>true</c> if the package is valid; otherwise <c>false</c>.</returns>
         /// <exception cref="FileNotFoundException">The update package to check could not be found.</exception>
@@ -625,7 +627,7 @@ namespace nUpdate.Updating
                 if (configuration.Signature == null || configuration.Signature.Length <= 0)
                     throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty.");
 
-                FileStream stream = File.Open(filePathItem.Value, FileMode.Open);
+                var stream = File.Open(filePathItem.Value, FileMode.Open);
                 try
                 {
                     RsaManager rsa;
@@ -765,14 +767,12 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Deletes the downloaded update packages locally.
+        ///     Deletes the downloaded update packages.
         /// </summary>
         public void DeletePackages()
         {
             foreach (var filePathItem in _packageFilePaths.Where(item => File.Exists(item.Value)))
-            {
                 File.Delete(filePathItem.Value);
-            }
         }
 
         private void Initialize()
@@ -798,17 +798,17 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Occurs when update search is started.
+        ///     Occurs when an update search is started.
         /// </summary>
         public event EventHandler<EventArgs> UpdateSearchStarted;
 
         /// <summary>
-        ///     Occurs when the update search is finished.
+        ///     Occurs when an active update search has finished.
         /// </summary>
         public event EventHandler<UpdateSearchFinishedEventArgs> UpdateSearchFinished;
 
         /// <summary>
-        ///     Occurs when the download of the package begins.
+        ///     Occurs when an update search has failed.
         /// </summary>
         public event EventHandler<FailedEventArgs> UpdateSearchFailed;
 
@@ -818,17 +818,17 @@ namespace nUpdate.Updating
         public event EventHandler<EventArgs> PackagesDownloadStarted;
 
         /// <summary>
-        ///     Occurs when the download of the package fails.
+        ///     Occurs when the download of the packages fails.
         /// </summary>
         public event EventHandler<FailedEventArgs> PackagesDownloadFailed;
 
         /// <summary>
-        ///     Occurs when the packages download progress has changed.
+        ///     Occurs when the download progress of the packages has changed.
         /// </summary>
         public event EventHandler<UpdateDownloadProgressChangedEventArgs> PackagesDownloadProgressChanged;
 
         /// <summary>
-        ///     Occurs when the packages download is finished.
+        ///     Occurs when the download of the packages has finished.
         /// </summary>
         public event EventHandler<EventArgs> PackagesDownloadFinished;
 
@@ -836,55 +836,31 @@ namespace nUpdate.Updating
         ///     Occurs when the statistics entry failed.
         /// </summary>
         /// <remarks>
-        ///     This event is meant to provide the user with a warning if the statistic server entry fails. The update process
-        ///     shouldn't be cancelled as this doesn't cause any conflicts that could affect it.
+        ///     This event is meant to provide the user with a warning, if the statistic server entry fails. The update process
+        ///     should not be canceled as this does not cause any problems that could affect it.
         /// </remarks>
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
-
-        /// <summary>
-        ///     Called when the update search is started.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        
         protected virtual void OnUpdateSearchStarted(object sender, EventArgs e)
         {
             UpdateSearchStarted?.Invoke(sender, e);
         }
 
-        /// <summary>
-        ///     Called when the update search is finished.
-        /// </summary>
-        /// <param name="updateAvailable">if set to <c>true</c> updates are available.</param>
         protected virtual void OnUpdateSearchFinished(bool updateAvailable)
         {
             UpdateSearchFinished?.Invoke(this, new UpdateSearchFinishedEventArgs(updateAvailable));
         }
-
-        /// <summary>
-        ///     Called when the update search failed.
-        /// </summary>
-        /// <param name="exception">The exception that occured.</param>
+        
         protected virtual void OnUpdateSearchFailed(Exception exception)
         {
             UpdateSearchFailed?.Invoke(this, new FailedEventArgs(exception));
         }
-
-        /// <summary>
-        ///     Called when the download of the updates is started.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        
         protected virtual void OnUpdateDownloadStarted(object sender, EventArgs e)
         {
             PackagesDownloadStarted?.Invoke(sender, e);
         }
 
-        /// <summary>
-        ///     Called when the update download progress has changed.
-        /// </summary>
-        /// <param name="bytesReceived">The amount of bytes received.</param>
-        /// <param name="totalBytesToReceive">The total bytes to receive.</param>
-        /// <param name="percentage">The progress percentage.</param>
         protected virtual void OnUpdateDownloadProgressChanged(long bytesReceived, long totalBytesToReceive,
             float percentage)
         {
@@ -892,29 +868,16 @@ namespace nUpdate.Updating
                 new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
         }
 
-        /// <summary>
-        ///     Called when the download of the updates is finished.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected virtual void OnUpdateDownloadFinished(object sender, EventArgs e)
         {
             PackagesDownloadFinished?.Invoke(sender, e);
         }
-
-        /// <summary>
-        ///     Called when the download of the updates has failed.
-        /// </summary>
-        /// <param name="exception">The exception that occured.</param>
+        
         protected virtual void OnUpdateDownloadFailed(Exception exception)
         {
             PackagesDownloadFailed?.Invoke(this, new FailedEventArgs(exception));
         }
-
-        /// <summary>
-        ///     Called when the statistics entry failed.
-        /// </summary>
-        /// <param name="exception">The exception that occured.</param>
+        
         protected virtual void OnStatisticsEntryFailed(Exception exception)
         {
             StatisticsEntryFailed?.Invoke(this, new FailedEventArgs(exception));
