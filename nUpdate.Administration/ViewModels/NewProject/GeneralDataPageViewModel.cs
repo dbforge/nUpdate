@@ -71,9 +71,8 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void RefreshNavigation()
         {
-            Uri updateDirectoryUri;
             CanGoForward = !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Location) &&
-                           Uri.TryCreate(UpdateDirectory, UriKind.Absolute, out updateDirectoryUri);
+               Uri.TryCreate(UpdateDirectory, UriKind.Absolute, out Uri _);
 
             // If the data is okay, we will set it directly.
             if (CanGoForward)
