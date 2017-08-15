@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.ComponentModel;
@@ -56,7 +56,7 @@ namespace nUpdate.Updating
         /// </summary>
         internal SynchronizationContext Context
         {
-            get { return _context; }
+            get => _context;
             set
             {
                 _context = value;
@@ -74,6 +74,12 @@ namespace nUpdate.Updating
         ///     without informing the user, or not.
         /// </summary>
         public bool UseHiddenSearch { get; set; }
+
+        private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)
+        {
+            _updatesAvailable = e.UpdatesAvailable;
+            _searchResetEvent.Set();
+        }
 
         /// <summary>
         ///     Shows the built-in UI while the updates are managed.
@@ -242,7 +248,9 @@ namespace nUpdate.Updating
                             return;
                     }
                     else if (!_updatesAvailable && UseHiddenSearch)
+                    {
                         return;
+                    }
                     else if (!_updatesAvailable && !UseHiddenSearch)
                     {
                         _context.Send(noUpdateDialog.ShowModalDialog, null);
@@ -258,7 +266,7 @@ namespace nUpdate.Updating
                     if (downloadDialogResultReference.DialogResult == DialogResult.Cancel)
                         return;
 
-                    bool isValid = false;
+                    var isValid = false;
                     try
                     {
                         isValid = UpdateManagerInstance.ValidatePackages();
@@ -285,7 +293,6 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                    {
                         try
                         {
                             UpdateManagerInstance.InstallPackage();
@@ -303,7 +310,6 @@ namespace nUpdate.Updating
                                 ex,
                                 PopupButtons.Ok), null);
                         }
-                    }
                 });
             }
             finally
@@ -313,20 +319,14 @@ namespace nUpdate.Updating
 #endif
         }
 
-        private void SearchFinished(object sender, UpdateSearchFinishedEventArgs e)
+        private void UpdateDownloadDialogCancelButtonClick(object sender, EventArgs e)
         {
-            _updatesAvailable = e.UpdatesAvailable;
-            _searchResetEvent.Set();
+            UpdateManagerInstance.CancelDownload();
         }
 
         private void UpdateSearchDialogCancelButtonClick(object sender, EventArgs e)
         {
             UpdateManagerInstance.CancelSearch();
-        }
-
-        private void UpdateDownloadDialogCancelButtonClick(object sender, EventArgs e)
-        {
-            UpdateManagerInstance.CancelDownload();
         }
     }
 }

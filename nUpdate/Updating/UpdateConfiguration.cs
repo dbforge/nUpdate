@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -16,34 +16,30 @@ namespace nUpdate.Updating
     public class UpdateConfiguration : IDeepCopy<UpdateConfiguration>
     {
         /// <summary>
-        ///     The literal version of the package.
+        ///     The architecture settings of the update package.
         /// </summary>
-        public string LiteralVersion { get; set; }
-
-        /// <summary>
-        ///     Sets if the package should be used within the statistics.
-        /// </summary>
-        public bool UseStatistics { get; set; }
-
-        /// <summary>
-        ///     The URI of the PHP-file which does the statistic entries.
-        /// </summary>
-        public Uri UpdatePhpFileUri { get; set; }
-
-        /// <summary>
-        ///     The version ID of this package to use in the statistics, if used.
-        /// </summary>
-        public int VersionId { get; set; }
-
-        /// <summary>
-        ///     The URI of the update package.
-        /// </summary>
-        public Uri UpdatePackageUri { get; set; }
+        public Architecture Architecture { get; set; }
 
         /// <summary>
         ///     The whole changelog of the update package.
         /// </summary>
         public Dictionary<CultureInfo, string> Changelog { get; set; }
+
+        /// <summary>
+        ///     The literal version of the package.
+        /// </summary>
+        public string LiteralVersion { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have
+        ///     a higher <see cref="UpdateVersion" />.
+        /// </summary>
+        public bool NecessaryUpdate { get; set; }
+
+        /// <summary>
+        ///     The operations of the update package.
+        /// </summary>
+        public List<Operation> Operations { get; set; }
 
         /// <summary>
         ///     The signature of the update package (Base64 encoded).
@@ -56,20 +52,24 @@ namespace nUpdate.Updating
         public string[] UnsupportedVersions { get; set; }
 
         /// <summary>
-        ///     The architecture settings of the update package.
+        ///     The URI of the update package.
         /// </summary>
-        public Architecture Architecture { get; set; }
+        public Uri UpdatePackageUri { get; set; }
 
         /// <summary>
-        ///     The operations of the update package.
+        ///     The URI of the PHP-file which does the statistic entries.
         /// </summary>
-        public List<Operation> Operations { get; set; }
+        public Uri UpdatePhpFileUri { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have
-        ///     a higher <see cref="UpdateVersion" />.
+        ///     Sets if the package should be used within the statistics.
         /// </summary>
-        public bool NecessaryUpdate { get; set; }
+        public bool UseStatistics { get; set; }
+
+        /// <summary>
+        ///     The version ID of this package to use in the statistics, if used.
+        /// </summary>
+        public int VersionId { get; set; }
 
         /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
@@ -101,10 +101,11 @@ namespace nUpdate.Updating
         /// <param name="credentials">The HTTP authentication credentials.</param>
         /// <param name="proxy">The optional proxy to use.</param>
         /// <returns>
-        /// Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
-        /// configurations.
+        ///     Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
+        ///     configurations.
         /// </returns>
-        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials, WebProxy proxy)
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials,
+            WebProxy proxy)
         {
             using (var wc = new WebClientWrapper(10000))
             {
@@ -116,7 +117,7 @@ namespace nUpdate.Updating
                     wc.Proxy = proxy;
 
                 // Check for SSL and ignore it
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return (true); };
+                ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
                 var source = wc.DownloadString(configFileUri);
                 if (!string.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);

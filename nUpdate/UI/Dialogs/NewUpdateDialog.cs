@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -40,6 +40,40 @@ namespace nUpdate.UI.Dialogs
             NativeMethods.SendMessage(btn.Handle, bcmSetshield, new IntPtr(0), new IntPtr(1));
         }
 
+        private void changelogTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            Process.Start(e.LinkText);
+        }
+
+        public void CloseDialog(object state)
+        {
+            Close();
+        }
+
+        private void installButton_Click(object sender, EventArgs e)
+        {
+            double necessarySpaceToFree;
+            if (!SizeHelper.HasEnoughSpace(Updater.TotalSize, out necessarySpaceToFree))
+            {
+                var packageSizeData = SizeHelper.ConvertSize(Updater.TotalSize);
+                var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
+                Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.",
+                    $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeData.Item1} {packageSizeData.Item2}). Please free a minimum of {spaceToFreeData.Item1} {spaceToFreeData.Item2} to make sure the updates can be downloaded and installed without any problems.",
+                    PopupButtons.Ok);
+                return;
+            }
+
+            _allowCancel = true;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void NewUpdateDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_allowCancel)
+                e.Cancel = true;
+        }
+
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
             _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
@@ -56,7 +90,8 @@ namespace nUpdate.UI.Dialogs
                 Updater.PackageConfigurations.Count() <= 2
                     ? string.Join(", ", availableVersions.Select(item => item.FullText))
                     : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText}");
-            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, Updater.CurrentVersion.FullText);
+            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText,
+                Updater.CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
@@ -103,40 +138,6 @@ namespace nUpdate.UI.Dialogs
                 ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
             else
                 ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
-        }
-
-        private void installButton_Click(object sender, EventArgs e)
-        {
-            double necessarySpaceToFree;
-            if (!SizeHelper.HasEnoughSpace(Updater.TotalSize, out necessarySpaceToFree))
-            {
-                var packageSizeData = SizeHelper.ConvertSize(Updater.TotalSize);
-                var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
-                Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.",
-                    $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeData.Item1} {packageSizeData.Item2}). Please free a minimum of {spaceToFreeData.Item1} {spaceToFreeData.Item2} to make sure the updates can be downloaded and installed without any problems.",
-                    PopupButtons.Ok);
-                return;
-            }
-
-            _allowCancel = true;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        private void NewUpdateDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!_allowCancel)
-                e.Cancel = true;
-        }
-
-        private void changelogTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
-        {
-            Process.Start(e.LinkText);
         }
     }
 }

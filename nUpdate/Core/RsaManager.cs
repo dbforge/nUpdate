@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.IO;
@@ -14,7 +14,7 @@ namespace nUpdate.Core
         /// <summary>
         ///     The default key size in bits.
         /// </summary>
-        public const int DEFAULT_KEY_SIZE = 8192;
+        public const int DefaultKeySize = 8192;
 
         private readonly RSACryptoServiceProvider _rsa;
         private bool _disposed;
@@ -38,25 +38,34 @@ namespace nUpdate.Core
         /// </summary>
         public RsaManager()
         {
-            _rsa = new RSACryptoServiceProvider(DEFAULT_KEY_SIZE);
+            _rsa = new RSACryptoServiceProvider(DefaultKeySize);
             _rsa.ToXmlString(true);
             _rsa.PersistKeyInCsp = false;
         }
-
-        /// <summary>
-        ///     Returns the public key.
-        /// </summary>
-        public string PublicKey => _rsa.ToXmlString(false);
 
         /// <summary>
         ///     Returns the private key.
         /// </summary>
         public string PrivateKey => _rsa.ToXmlString(true);
 
+        /// <summary>
+        ///     Returns the public key.
+        /// </summary>
+        public string PublicKey => _rsa.ToXmlString(false);
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _rsa.Dispose();
+            _disposed = true;
         }
 
         /// <summary>
@@ -66,7 +75,7 @@ namespace nUpdate.Core
         /// <returns>The calculated signature.</returns>
         public byte[] SignData(byte[] data)
         {
-            return _rsa.SignData(data, typeof (SHA512));
+            return _rsa.SignData(data, typeof(SHA512));
         }
 
         /// <summary>
@@ -76,7 +85,7 @@ namespace nUpdate.Core
         /// <returns>The calculated signature.</returns>
         public byte[] SignData(Stream stream)
         {
-            return _rsa.SignData(stream, typeof (SHA512));
+            return _rsa.SignData(stream, typeof(SHA512));
         }
 
         /// <summary>
@@ -87,7 +96,7 @@ namespace nUpdate.Core
         /// <returns>Returns "true" if the signature is correct, otherwise "false".</returns>
         public bool VerifyData(byte[] data, byte[] signature)
         {
-            return _rsa.VerifyData(data, typeof (SHA512), signature);
+            return _rsa.VerifyData(data, typeof(SHA512), signature);
         }
 
         /// <summary>
@@ -103,19 +112,10 @@ namespace nUpdate.Core
 
         private bool VerifyDataInternal(Stream stream, object halg, byte[] signature)
         {
-            HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName((string) halg);
+            var hash = (HashAlgorithm) CryptoConfig.CreateFromName((string) halg);
             //HashAlgorithm hash = (HashAlgorithm)halg;
-            byte[] hashVal = hash.ComputeHash(stream);
+            var hashVal = hash.ComputeHash(stream);
             return _rsa.VerifyHash(hashVal, (string) halg, signature);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _rsa.Dispose();
-            _disposed = true;
         }
     }
 }

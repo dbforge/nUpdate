@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Drawing;
@@ -25,7 +25,7 @@ namespace nUpdate.UI.Dialogs
         /// </summary>
         public int ProgressPercentage
         {
-            get { return downloadProgressBar.Value; }
+            get => downloadProgressBar.Value;
             set
             {
                 try
@@ -44,15 +44,34 @@ namespace nUpdate.UI.Dialogs
             }
         }
 
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancelButtonClicked();
+            DialogResult = DialogResult.Cancel;
+        }
+
         /// <summary>
         ///     Occurs when the cancel button is clicked.
         /// </summary>
         public event EventHandler<EventArgs> CancelButtonClicked;
 
+        public void CloseDialog(object state)
+        {
+            Close();
+        }
+
         protected virtual void OnCancelButtonClicked()
         {
             if (CancelButtonClicked != null)
                 CancelButtonClicked(this, EventArgs.Empty);
+        }
+
+        public void ShowModalDialog(object dialogResultReference)
+        {
+            if (dialogResultReference != null)
+                ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
+            else
+                ShowDialog();
         }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
@@ -66,25 +85,6 @@ namespace nUpdate.UI.Dialogs
 
             Text = Application.ProductName;
             Icon = _appIcon;
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            if (dialogResultReference != null)
-                ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancelButtonClicked();
-            DialogResult = DialogResult.Cancel;
         }
 
         #region TAP

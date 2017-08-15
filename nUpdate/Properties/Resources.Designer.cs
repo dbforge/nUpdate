@@ -39,7 +39,7 @@ namespace nUpdate.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("nUpdate.Properties.Resources", typeof(Resources).Assembly);
+                    var temp = new global::System.Resources.ResourceManager("nUpdate.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -65,7 +65,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] Ionic_Zip {
             get {
-                object obj = ResourceManager.GetObject("Ionic_Zip", resourceCulture);
+                var obj = ResourceManager.GetObject("Ionic_Zip", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -75,7 +75,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] Newtonsoft_Json {
             get {
-                object obj = ResourceManager.GetObject("Newtonsoft_Json", resourceCulture);
+                var obj = ResourceManager.GetObject("Newtonsoft_Json", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -85,7 +85,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] Newtonsoft_Json_Pdb {
             get {
-                object obj = ResourceManager.GetObject("Newtonsoft_Json_Pdb", resourceCulture);
+                var obj = ResourceManager.GetObject("Newtonsoft_Json_Pdb", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -95,7 +95,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] nUpdate_UpdateInstaller {
             get {
-                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller", resourceCulture);
+                var obj = ResourceManager.GetObject("nUpdate_UpdateInstaller", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -105,7 +105,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] nUpdate_UpdateInstaller_Client_GuiInterface {
             get {
-                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_Client_GuiInterface", resourceCulture);
+                var obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_Client_GuiInterface", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -115,7 +115,7 @@ namespace nUpdate.Properties {
         /// </summary>
         internal static byte[] nUpdate_UpdateInstaller1 {
             get {
-                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller1", resourceCulture);
+                var obj = ResourceManager.GetObject("nUpdate_UpdateInstaller1", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Drawing;
@@ -16,6 +16,16 @@ namespace nUpdate.UI.Dialogs
         public NoUpdateFoundDialog()
         {
             InitializeComponent();
+        }
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
+        public void CloseDialog(object state)
+        {
+            Close();
         }
 
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
@@ -36,16 +46,6 @@ namespace nUpdate.UI.Dialogs
                 ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
             else
                 ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
-        }
-
-        private void closeButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
         }
     }
 }
