@@ -65,7 +65,7 @@ namespace nUpdate.Core.Localization
                 localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
                 if (localizationFilePath == null)
                     throw new Exception("The path of the localization file is not valid.");
-                return Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath, System.Text.Encoding.Default));
+                return Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath, System.Text.Encoding.UTF8));
             }
         }
     }
