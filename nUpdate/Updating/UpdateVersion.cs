@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace nUpdate.Updating
         /// <param name="version">The update version.</param>
         public UpdateVersion(string version)
         {
-            Match match = Regex.Match(version,
+            var match = Regex.Match(version,
                 @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$");
             if (!match.Success || !match.Groups["Version"].Success)
                 throw new ArgumentException("The specified version is not valid.");
@@ -108,24 +108,14 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     The major of the version.
+        ///     Gets the current <see cref="UpdateVersion" /> without the developmental stage and development build.
         /// </summary>
-        public int Major { get; }
-
-        /// <summary>
-        ///     The minor of the version.
-        /// </summary>
-        public int Minor { get; }
+        public string BasicVersion => $"{Major}.{Minor}.{Build}.{Revision}";
 
         /// <summary>
         ///     The build of the version.
         /// </summary>
         public int Build { get; }
-
-        /// <summary>
-        ///     The revision of the version.
-        /// </summary>
-        public int Revision { get; }
 
         /// <summary>
         ///     The developmental stage of the version.
@@ -147,9 +137,19 @@ namespace nUpdate.Updating
             : BasicVersion;
 
         /// <summary>
-        ///     Gets the current <see cref="UpdateVersion" /> without the developmental stage and development build.
+        ///     The major of the version.
         /// </summary>
-        public string BasicVersion => $"{Major}.{Minor}.{Build}.{Revision}";
+        public int Major { get; }
+
+        /// <summary>
+        ///     The minor of the version.
+        /// </summary>
+        public int Minor { get; }
+
+        /// <summary>
+        ///     The revision of the version.
+        /// </summary>
+        public int Revision { get; }
 
         /// <summary>
         ///     Gets the semantic version string of the current <see cref="UpdateVersion" />.
@@ -159,11 +159,9 @@ namespace nUpdate.Updating
             get
             {
                 if (DevelopmentalStage != DevelopmentalStage.Release)
-                {
                     return
                         $"{Major}.{Minor}.{Build}.{Revision}-{DevelopmentalStage.ToString().Substring(0, 1).ToLower()}.{DevelopmentBuild}"
                             .Replace(".0", string.Empty);
-                }
                 return BasicVersion;
             }
         }
@@ -175,32 +173,58 @@ namespace nUpdate.Updating
             return this == version ? 0 : -1;
         }
 
-        // Overwritten Instance Methods
+        /// <summary>
+        ///     Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
+        }
 
         /// <summary>
-        ///     Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a new <see cref="UpdateVersion" /> from the given full text.
         /// </summary>
-        public override string ToString()
+        /// <param name="fullText">The full text containing the version information.</param>
+        /// <returns>Returns a new <see cref="UpdateVersion" /> from the given full text.</returns>
+        /// <exception cref="System.ArgumentException">fullText</exception>
+        public static UpdateVersion FromFullText(string fullText)
         {
-            if (DevelopmentalStage != DevelopmentalStage.Release)
+            var versionSections = fullText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            if (versionSections.Length > 3)
+                throw new ArgumentException("fullText");
+
+            var versionParts = versionSections[0].Split('.');
+            var major = int.Parse(versionParts[0]);
+            var minor = int.Parse(versionParts[1]);
+            var build = int.Parse(versionParts[2]);
+            var revision = int.Parse(versionParts[3]);
+
+            if (versionSections.Length == 1)
+                return new UpdateVersion(major, minor, build, revision);
+
+            var devStage = DevelopmentalStage.Release;
+            switch (versionSections[1])
             {
-                string devStageShortcut = null;
-                switch (DevelopmentalStage)
-                {
-                    case DevelopmentalStage.Alpha:
-                        devStageShortcut = "a";
-                        break;
-                    case DevelopmentalStage.Beta:
-                        devStageShortcut = "b";
-                        break;
-                    case DevelopmentalStage.ReleaseCandidate:
-                        devStageShortcut = "rc";
-                        break;
-                }
-                return
-                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
+                case "Alpha":
+                    devStage = DevelopmentalStage.Alpha;
+                    break;
+                case "Beta":
+                    devStage = DevelopmentalStage.Beta;
+                    break;
+                case "ReleaseCandidate":
+                    devStage = DevelopmentalStage.ReleaseCandidate;
+                    break;
             }
-            return BasicVersion;
+
+            if (versionSections.Length == 2)
+                return new UpdateVersion(major, minor, build, revision, devStage, 0);
+
+            var developmentBuild = int.Parse(versionSections[2]);
+            return new UpdateVersion(major, minor, build, revision, devStage, developmentBuild);
         }
 
         /// <summary>
@@ -216,21 +240,77 @@ namespace nUpdate.Updating
             accumulator |= (Major & 0x0000000F) << 28;
             accumulator |= (Minor & 0x000000FF) << 20;
             accumulator |= (Build & 0x000000FF) << 12;
-            accumulator |= (Revision & 0x00000FFF);
+            accumulator |= Revision & 0x00000FFF;
 
             return accumulator;
         }
 
         /// <summary>
-        ///     Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        ///     Retuns the highest version in the given collection.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-        /// <returns>
-        ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj)
+        /// <param name="updateVersions">The collection of versions to check.</param>
+        /// <returns>Returns the highest version found.</returns>
+        public static UpdateVersion GetHighestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
         {
-            return obj.GetType() == typeof (UpdateVersion) && ToString() == obj.ToString();
+            var newestVersion = new UpdateVersion();
+            foreach (var i in updateVersions)
+                if (i > newestVersion)
+                    newestVersion = i;
+
+            return newestVersion;
+        }
+
+        /// <summary>
+        ///     Retuns the lowest version in the given collection.
+        /// </summary>
+        /// <param name="updateVersions">The collection of versions to check.</param>
+        /// <returns>Returns the lowest version found.</returns>
+        public static UpdateVersion GetLowestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
+        {
+            var enumerable = updateVersions as UpdateVersion[] ?? updateVersions.ToArray();
+            var lowestVersion = GetHighestUpdateVersion(enumerable);
+            foreach (var i in enumerable)
+                if (i < lowestVersion)
+                    lowestVersion = i;
+
+            return lowestVersion;
+        }
+
+        /// <summary>
+        ///     Determines whether the specified update version is valid.
+        /// </summary>
+        /// <param name="updateVersion">The update version to check.</param>
+        public static bool IsValid(UpdateVersion updateVersion)
+        {
+            return IsValid(updateVersion.ToString());
+        }
+
+        /// <summary>
+        ///     Determines whether the specified version string is valid.
+        /// </summary>
+        /// <param name="versionString">The version string to check.</param>
+        public static bool IsValid(string versionString)
+        {
+            var regex =
+                new Regex(
+                    @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$",
+                    RegexOptions.IgnoreCase);
+            return regex.IsMatch(versionString);
+        }
+
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static bool operator ==(UpdateVersion left, UpdateVersion right)
+        {
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return ReferenceEquals(left, right);
+            return left.ToString() == right.ToString();
         }
 
         // Operators
@@ -271,6 +351,61 @@ namespace nUpdate.Updating
                 return false;
 
             return left.DevelopmentBuild > right.DevelopmentBuild;
+        }
+
+        /// <summary>
+        ///     Implements the operator &gt;=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static bool operator >=(UpdateVersion left, UpdateVersion right)
+        {
+            if (left.Major > right.Major)
+                return true;
+            if (left.Major < right.Major)
+                return false;
+
+            if (left.Minor > right.Minor)
+                return true;
+            if (left.Minor < right.Minor)
+                return false;
+
+            if (left.Build > right.Build)
+                return true;
+            if (left.Build < right.Build)
+                return false;
+
+            if (left.Revision > right.Revision)
+                return true;
+            if (left.Revision < right.Revision)
+                return false;
+
+            if (left.DevelopmentalStage < right.DevelopmentalStage)
+                return true;
+            if (left.DevelopmentalStage > right.DevelopmentalStage)
+                return false;
+
+            if (left.DevelopmentBuild > right.DevelopmentBuild)
+                return true;
+            return !(left.DevelopmentBuild < right.DevelopmentBuild);
+        }
+
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static bool operator !=(UpdateVersion left, UpdateVersion right)
+        {
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return !ReferenceEquals(left, right);
+            return left.ToString() != right.ToString();
         }
 
         /// <summary>
@@ -351,177 +486,32 @@ namespace nUpdate.Updating
             return !(left.DevelopmentBuild > right.DevelopmentBuild);
         }
 
-        /// <summary>
-        ///     Implements the operator &gt;=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        ///     The result of the operator.
-        /// </returns>
-        public static bool operator >=(UpdateVersion left, UpdateVersion right)
-        {
-            if (left.Major > right.Major)
-                return true;
-            if (left.Major < right.Major)
-                return false;
-
-            if (left.Minor > right.Minor)
-                return true;
-            if (left.Minor < right.Minor)
-                return false;
-
-            if (left.Build > right.Build)
-                return true;
-            if (left.Build < right.Build)
-                return false;
-
-            if (left.Revision > right.Revision)
-                return true;
-            if (left.Revision < right.Revision)
-                return false;
-
-            if (left.DevelopmentalStage < right.DevelopmentalStage)
-                return true;
-            if (left.DevelopmentalStage > right.DevelopmentalStage)
-                return false;
-
-            if (left.DevelopmentBuild > right.DevelopmentBuild)
-                return true;
-            return !(left.DevelopmentBuild < right.DevelopmentBuild);
-        }
+        // Overwritten Instance Methods
 
         /// <summary>
-        ///     Implements the operator ==.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        ///     The result of the operator.
-        /// </returns>
-        public static bool operator ==(UpdateVersion left, UpdateVersion right)
+        public override string ToString()
         {
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-                return ReferenceEquals(left, right);
-            return left.ToString() == right.ToString();
-        }
-
-        /// <summary>
-        ///     Implements the operator !=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        ///     The result of the operator.
-        /// </returns>
-        public static bool operator !=(UpdateVersion left, UpdateVersion right)
-        {
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-                return !ReferenceEquals(left, right);
-            return left.ToString() != right.ToString();
-        }
-
-        /// <summary>
-        ///     Retuns the highest version in the given collection.
-        /// </summary>
-        /// <param name="updateVersions">The collection of versions to check.</param>
-        /// <returns>Returns the highest version found.</returns>
-        public static UpdateVersion GetHighestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
-        {
-            var newestVersion = new UpdateVersion();
-            foreach (var i in updateVersions)
+            if (DevelopmentalStage != DevelopmentalStage.Release)
             {
-                if (i > newestVersion)
+                string devStageShortcut = null;
+                switch (DevelopmentalStage)
                 {
-                    newestVersion = i;
+                    case DevelopmentalStage.Alpha:
+                        devStageShortcut = "a";
+                        break;
+                    case DevelopmentalStage.Beta:
+                        devStageShortcut = "b";
+                        break;
+                    case DevelopmentalStage.ReleaseCandidate:
+                        devStageShortcut = "rc";
+                        break;
                 }
+                return
+                    $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
             }
-
-            return newestVersion;
-        }
-
-        /// <summary>
-        ///     Retuns the lowest version in the given collection.
-        /// </summary>
-        /// <param name="updateVersions">The collection of versions to check.</param>
-        /// <returns>Returns the lowest version found.</returns>
-        public static UpdateVersion GetLowestUpdateVersion(IEnumerable<UpdateVersion> updateVersions)
-        {
-            var enumerable = updateVersions as UpdateVersion[] ?? updateVersions.ToArray();
-            var lowestVersion = GetHighestUpdateVersion(enumerable);
-            foreach (var i in enumerable)
-            {
-                if (i < lowestVersion)
-                {
-                    lowestVersion = i;
-                }
-            }
-
-            return lowestVersion;
-        }
-
-        /// <summary>
-        ///     Returns a new <see cref="UpdateVersion" /> from the given full text.
-        /// </summary>
-        /// <param name="fullText">The full text containing the version information.</param>
-        /// <returns>Returns a new <see cref="UpdateVersion" /> from the given full text.</returns>
-        /// <exception cref="System.ArgumentException">fullText</exception>
-        public static UpdateVersion FromFullText(string fullText)
-        {
-            var versionSections = fullText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-            if (versionSections.Length > 3)
-                throw new ArgumentException("fullText");
-
-            var versionParts = versionSections[0].Split('.');
-            int major = int.Parse(versionParts[0]);
-            int minor = int.Parse(versionParts[1]);
-            int build = int.Parse(versionParts[2]);
-            int revision = int.Parse(versionParts[3]);
-
-            if (versionSections.Length == 1)
-                return new UpdateVersion(major, minor, build, revision);
-
-            var devStage = DevelopmentalStage.Release;
-            switch (versionSections[1])
-            {
-                case "Alpha":
-                    devStage = DevelopmentalStage.Alpha;
-                    break;
-                case "Beta":
-                    devStage = DevelopmentalStage.Beta;
-                    break;
-                case "ReleaseCandidate":
-                    devStage = DevelopmentalStage.ReleaseCandidate;
-                    break;
-            }
-
-            if (versionSections.Length == 2)
-                return new UpdateVersion(major, minor, build, revision, devStage, 0);
-
-            int developmentBuild = int.Parse(versionSections[2]);
-            return new UpdateVersion(major, minor, build, revision, devStage, developmentBuild);
-        }
-
-        /// <summary>
-        ///     Determines whether the specified update version is valid.
-        /// </summary>
-        /// <param name="updateVersion">The update version to check.</param>
-        public static bool IsValid(UpdateVersion updateVersion)
-        {
-            return IsValid(updateVersion.ToString());
-        }
-
-        /// <summary>
-        ///     Determines whether the specified version string is valid.
-        /// </summary>
-        /// <param name="versionString">The version string to check.</param>
-        public static bool IsValid(string versionString)
-        {
-            var regex =
-                new Regex(
-                    @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$",
-                    RegexOptions.IgnoreCase);
-            return regex.IsMatch(versionString);
+            return BasicVersion;
         }
     }
 }

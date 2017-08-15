@@ -1,9 +1,7 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Core;
 using nUpdate.Core.Localization;
@@ -20,6 +18,12 @@ namespace nUpdate.UI.Dialogs
         public UpdateSearchDialog()
         {
             InitializeComponent();
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancelButtonClicked();
+            DialogResult = DialogResult.Cancel;
         }
 
         /// <summary>
@@ -42,12 +46,6 @@ namespace nUpdate.UI.Dialogs
 
             Text = Application.ProductName;
             Icon = _appIcon;
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancelButtonClicked();
-            DialogResult = DialogResult.Cancel;
         }
 
         #region TAP
