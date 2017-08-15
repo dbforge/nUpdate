@@ -154,6 +154,7 @@
     <Compile Include="ViewModels\NewProject\GenerateKeyPairPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\NewProjectViewManager.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\FirstRunWindow.xaml.cs">
       <DependentUpon>FirstRunWindow.xaml</DependentUpon>
     </Compile>

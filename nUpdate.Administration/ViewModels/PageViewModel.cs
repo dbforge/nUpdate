@@ -11,7 +11,6 @@ namespace nUpdate.Administration.ViewModels
         private bool _canGoBack;
         private bool _canGoForward;
         private bool _needsUserInteraction = true;
-        private bool _allowClose = true;
 
         public bool CanBeShown
         {
@@ -35,12 +34,6 @@ namespace nUpdate.Administration.ViewModels
         {
             get => _needsUserInteraction;
             set => SetProperty(value, ref _needsUserInteraction);
-        }
-
-        public bool AllowClose
-        {
-            get => _allowClose;
-            set => SetProperty(value, ref _allowClose);
         }
 
         public virtual void OnNavigateBack(PagedWindowViewModel window)

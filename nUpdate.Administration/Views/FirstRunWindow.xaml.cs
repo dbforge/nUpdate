@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using nUpdate.Administration.ViewModels;
-
-namespace nUpdate.Administration.Views
+﻿namespace nUpdate.Administration.Views
 {
     /// <summary>
     /// Interaction logic for FirstRunWindow.xaml
@@ -11,15 +8,6 @@ namespace nUpdate.Administration.Views
         public FirstRunWindow()
         {
             InitializeComponent();
-        }
-
-        private void WindowClosing(object sender, CancelEventArgs e)
-        {
-            if (DataContext == null || DataContext.GetType() != typeof(PagedWindowViewModel))
-                return;
-
-            if (!((dynamic) DataContext).AllowClosing)
-                e.Cancel = true;
         }
     }
 }

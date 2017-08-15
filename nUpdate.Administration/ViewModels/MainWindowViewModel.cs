@@ -11,7 +11,7 @@ using nUpdate.Administration.Views;
 
 namespace nUpdate.Administration.ViewModels
 {
-    public class MainWindowViewModel : ViewModel
+    public class MainWindowViewModel : WindowViewModel
     {
         private ICommand _loadCommand;
 
