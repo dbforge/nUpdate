@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Drawing;
@@ -23,7 +23,7 @@ namespace nUpdate.Core
         /// </remarks>
         internal static Icon ExtractAssociatedIcon(string filePath)
         {
-            int index = 0;
+            var index = 0;
 
             Uri uri;
             if (filePath == null)
@@ -47,10 +47,7 @@ namespace nUpdate.Core
                 return null;
 
             if (!File.Exists(filePath))
-            {
-                //IntSecurity.DemandReadFileIO(filePath);
                 throw new FileNotFoundException(filePath);
-            }
 
             var iconPath = new StringBuilder(260);
             iconPath.Append(filePath);

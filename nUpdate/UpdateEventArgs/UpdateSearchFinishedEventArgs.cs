@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 
@@ -21,6 +21,6 @@ namespace nUpdate.UpdateEventArgs
         /// <summary>
         ///     Gets a value indicating whether new updates are available, or not.
         /// </summary>
-        public bool UpdatesAvailable { get; private set; }
+        public bool UpdatesAvailable { get; }
     }
 }

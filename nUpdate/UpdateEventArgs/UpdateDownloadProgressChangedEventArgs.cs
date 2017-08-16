@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 
@@ -23,18 +23,18 @@ namespace nUpdate.UpdateEventArgs
         }
 
         /// <summary>
-        ///     Gets the total bytes to receive.
-        /// </summary>
-        public long TotalBytesToReceive { get; private set; }
-
-        /// <summary>
         ///     Gets the amount of received bytes.
         /// </summary>
-        public long BytesReceived { get; private set; }
+        public long BytesReceived { get; }
 
         /// <summary>
         ///     Gets the progress percentage.
         /// </summary>
-        public float Percentage { get; private set; }
+        public float Percentage { get; }
+
+        /// <summary>
+        ///     Gets the total bytes to receive.
+        /// </summary>
+        public long TotalBytesToReceive { get; }
     }
 }

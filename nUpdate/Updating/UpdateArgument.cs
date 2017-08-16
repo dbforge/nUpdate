@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 namespace nUpdate.Updating
 {
@@ -19,13 +19,13 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument" />.
-        /// </summary>
-        public UpdateArgumentExecutionOptions ExecutionOptions { get; set; }
-
-        /// <summary>
         ///     Gets or sets the argument of the current <see cref="UpdateArgument" />.
         /// </summary>
         public string Argument { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument" />.
+        /// </summary>
+        public UpdateArgumentExecutionOptions ExecutionOptions { get; set; }
     }
 }
