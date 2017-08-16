@@ -54,7 +54,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     The version string shown in all dialog titles.
         /// </summary>
-        public static string VersionString => "nUpdate Administration v3.0-beta10";
+        public static string VersionString => "nUpdate Administration v3.1";
 
         public static string AesKeyPassword => "VZh7mLRPNI";
         public static string AesIvPassword => "cOijH2vgwR";
