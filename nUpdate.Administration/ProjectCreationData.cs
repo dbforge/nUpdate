@@ -15,6 +15,11 @@ namespace nUpdate.Administration
         public string PrivateKey { get; set; }
 
         /// <summary>
+        ///     Gets or sets the transfer protocol that should be used in the project.
+        /// </summary>
+        public TransferProtocol TransferProtocol { get; set; }
+
+        /// <summary>
         ///     Gets or sets the project data.
         /// </summary>
         public UpdateProject Project { get; set; } = new UpdateProject();

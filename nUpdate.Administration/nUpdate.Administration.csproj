@@ -88,6 +88,7 @@
     <Compile Include="DistinctChannelComparer.cs" />
     <Compile Include="Exceptions\TransferProtocolException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Infrastructure\Converters\BooleanToEnumConverter.cs" />
     <Compile Include="PathProvider.cs" />
     <Compile Include="FirstSetupData.cs" />
     <Compile Include="Ftp\FtpData.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\ProtocolSelectionPageViewModel.cs" />
     <Compile Include="ViewModels\ViewManager.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />
     <Compile Include="ViewModels\PagedWindowViewModel.cs" />
@@ -179,6 +181,9 @@
     </Compile>
     <Compile Include="Views\NewProject\GenerateKeyPairPage.xaml.cs">
       <DependentUpon>GenerateKeyPairPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewProject\ProtocolSelectionPage.xaml.cs">
+      <DependentUpon>ProtocolSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowManager.cs" />
     <Page Include="Icons\feedbacktoolicon_64x.xaml">
@@ -223,6 +228,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewProject\GenerateKeyPairPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\ProtocolSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

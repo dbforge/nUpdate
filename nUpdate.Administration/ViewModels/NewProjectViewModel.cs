@@ -13,7 +13,8 @@ namespace nUpdate.Administration.ViewModels
             InitializePages(new List<PageViewModel>
             {
                 new GenerateKeyPairPageViewModel(this),
-                new GeneralDataPageViewModel(this)
+                new GeneralDataPageViewModel(this),
+                new ProtocolSelectionPageViewModel(this)
             });
         }
 

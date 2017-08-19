@@ -10,7 +10,8 @@ namespace nUpdate.Administration.ViewModels.NewProject
             new Dictionary<Type, Type>
             {
                 {typeof(GenerateKeyPairPageViewModel), typeof(GenerateKeyPairPage)},
-                {typeof(GeneralDataPageViewModel), typeof(GeneralDataPage)}
+                {typeof(GeneralDataPageViewModel), typeof(GeneralDataPage)},
+                {typeof(ProtocolSelectionPageViewModel), typeof(ProtocolSelectionPage)}
             })
         { }
     }
