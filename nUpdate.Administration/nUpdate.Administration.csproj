@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\HttpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\ProtocolSelectionPageViewModel.cs" />
     <Compile Include="ViewModels\ViewManager.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />
@@ -181,6 +182,9 @@
     </Compile>
     <Compile Include="Views\NewProject\GenerateKeyPairPage.xaml.cs">
       <DependentUpon>GenerateKeyPairPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewProject\HttpDataPage.xaml.cs">
+      <DependentUpon>HttpDataPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewProject\ProtocolSelectionPage.xaml.cs">
       <DependentUpon>ProtocolSelectionPage.xaml</DependentUpon>
@@ -228,6 +232,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewProject\GenerateKeyPairPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\HttpDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
