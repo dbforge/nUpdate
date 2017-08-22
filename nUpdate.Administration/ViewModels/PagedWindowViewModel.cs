@@ -114,7 +114,7 @@ namespace nUpdate.Administration.ViewModels
                                    // There is no further page which means we are finished with the wizard
                                    if (PageViewModels.IndexOf(CurrentPageViewModel) == PageViewModels.Count - 1)
                                    {
-                                       // If no errors occured and everything worked, we can now close the window if (result)
+                                       // If no errors occured and everything worked, we can now close the window
                                        if (await Finish())
                                            WindowManager.GetCurrentWindow().Close();
                                        return;
