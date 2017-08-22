@@ -45,7 +45,6 @@
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -62,7 +61,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -147,6 +145,7 @@
     <Compile Include="ViewModels\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\FtpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\HttpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\ProtocolSelectionPageViewModel.cs" />
@@ -176,6 +175,9 @@
     </Compile>
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewProject\FtpDataPage.xaml.cs">
+      <DependentUpon>FtpDataPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewProject\GeneralDataPage.xaml.cs">
       <DependentUpon>GeneralDataPage.xaml</DependentUpon>
@@ -224,6 +226,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\NewProjectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\FtpDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -323,7 +329,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Controls\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -14,7 +14,9 @@ namespace nUpdate.Administration.ViewModels
             {
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this),
-                new ProtocolSelectionPageViewModel(this)
+                new ProtocolSelectionPageViewModel(this),
+                new FtpDataPageViewModel(this),
+                new HttpDataPageViewModel(this)
             });
         }
 
