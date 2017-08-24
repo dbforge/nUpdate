@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     d:DataContext="{d:DesignInstance newProject:FtpDataPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
@@ -45,24 +45,47 @@
                     Padding="5"
                     Text="Host:" />
                 <TextBox
+                    x:Name="HostTextBox"
                     Grid.Row="0"
                     Grid.Column="2"
                     Padding="5,0"
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     Text="{Binding Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="5,5,0,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    IsHitTestVisible="False"
+                    Text="ftp.exmaple.com">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=HostTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="4"
                     Padding="5"
                     Text="Port:" />
-                <TextBox
+                <xctk:IntegerUpDown
                     Grid.Row="0"
                     Grid.Column="6"
                     Width="60"
                     HorizontalAlignment="Left"
-                    Text="21" />
+                    Maximum="65536"
+                    Minimum="0"
+                    Value="21" />
 
                 <TextBlock
                     Grid.Row="2"
@@ -70,25 +93,46 @@
                     Padding="5"
                     Text="User:" />
                 <TextBox
+                    x:Name="UserTextBox"
                     Grid.Row="2"
                     Grid.Column="2"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Margin="5,5,0,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    IsHitTestVisible="False"
+                    Text="user1@ftp.exmaple.com">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=UserTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="4"
                     Padding="5"
                     Text="Password:" />
-                <TextBox
+                <PasswordBox
                     Grid.Row="2"
                     Grid.Column="6"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
-                    Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    PasswordChanged="PasswordChanged" />
 
                 <TextBlock
                     Grid.Row="4"
@@ -137,12 +181,33 @@
                     Padding="5"
                     Text="Directory:" />
                 <TextBox
+                    x:Name="DirectoryTextBox"
                     Grid.Row="0"
                     Grid.Column="2"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     Text="{Binding Directory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="5,5,0,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    IsHitTestVisible="False"
+                    Text="/htdocs/updates/">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=DirectoryTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
                 <Button
                     Grid.Row="0"
                     Grid.Column="4"
