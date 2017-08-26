@@ -1,6 +1,8 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using nUpdate.Administration.Ftp;
+using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Views;
 using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.ViewModels.NewProject
@@ -9,10 +11,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private readonly FtpData _transferData;
+        private RelayCommand _directoryButtonCommand;
         private string _directory;
         private string _host;
         private string _password;
-        private int _port;
+        private int _port = 21;
         private FtpsSecurityProtocol _protocol;
         private int _selectedModeIndex;
         private string _username;
@@ -20,16 +23,41 @@ namespace nUpdate.Administration.ViewModels.NewProject
         public FtpDataPageViewModel(NewProjectViewModel viewModel)
         {
             _newProjectViewModel = viewModel;
+            _directoryButtonCommand = new RelayCommand(OnDirectoryButtonClick);
             _directory = "/";
             _transferData = new FtpData();
 
             PropertyChanged += (sender, args) => RefreshNavigation();
         }
 
+        private void OnDirectoryButtonClick()
+        {
+            var ftpData = new FtpData
+            {
+                Host = Host,
+                Port = Port,
+                FtpSpecificProtocol = Protocol,
+                UsePassiveMode = SelectedModeIndex == 0,
+                Username = Username,
+                Secret = Password
+            };
+
+            var ftpBrowseWindow = new FtpBrowseWindow(ftpData);
+            var result = WindowManager.ShowDialog(ftpBrowseWindow);
+            if (result.HasValue && result.Value)
+                Directory = ftpBrowseWindow.Directory;
+        }
+
         public string Directory
         {
             get => _directory;
             set => SetProperty(value, ref _directory, nameof(Directory));
+        }
+
+        public RelayCommand DirectoryButtonCommand
+        {
+            get => _directoryButtonCommand;
+            set => SetProperty(value, ref _directoryButtonCommand, nameof(DirectoryButtonCommand));
         }
 
         public string Host

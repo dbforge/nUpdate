@@ -236,8 +236,8 @@ namespace nUpdate.Administration.Ftp
             IEnumerable<string> availableChannelNames)
         {
             string[] availableChannelNamesArray = availableChannelNames.Select(x => x.ToLowerInvariant()).ToArray();
-            Func<string, bool> isAdministrationRelatedDirectory = s => s == "channels" || s == "packages";
-            Func<string, bool> isAdministrationRelatedFile = s =>
+            bool IsAdministrationRelatedDirectory(string s) => s == "channels" || s == "packages";
+            bool IsAdministrationRelatedFile(string s)
             {
                 string fileName = Path.GetFileNameWithoutExtension(s);
                 if (fileName == null) // wat
@@ -247,9 +247,8 @@ namespace nUpdate.Administration.Ftp
                 if (Guid.TryParse(fileName, out guid))
                     return true;
 
-                return s == "masterchannel.json" || s == "statistics.php" ||
-                       availableChannelNamesArray.Contains(fileName.ToLowerInvariant());
-            };
+                return s == "masterchannel.json" || s == "statistics.php" || availableChannelNamesArray.Contains(fileName.ToLowerInvariant());
+            }
 
             // TODO: Test the method implementation
             foreach (var item in (await List(directory, false))
@@ -260,7 +259,7 @@ namespace nUpdate.Administration.Ftp
             {
                 using (var ftpsClient = GetNewFtpsClient())
                 {
-                    if (item.ItemType == ServerItemType.Directory && isAdministrationRelatedDirectory(item.Name))
+                    if (item.ItemType == ServerItemType.Directory && IsAdministrationRelatedDirectory(item.Name))
                     {
                         ftpsClient.ChangeDirectoryMultiPath(destinationPath);
                         if (!await Exists(destinationPath, item.Name))
@@ -272,7 +271,7 @@ namespace nUpdate.Administration.Ftp
                                 availableChannelNamesArray);
                         await DeleteDirectory($"{directory}/{item.Name}");
                     }
-                    else if (item.ItemType == ServerItemType.File && isAdministrationRelatedFile(item.Name))
+                    else if (item.ItemType == ServerItemType.File && IsAdministrationRelatedFile(item.Name))
                     {
                         if (!await Exists(destinationPath, item.Name))
                         {

@@ -98,10 +98,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Infrastructure\ActionCommand.cs" />
     <Compile Include="AesCryptoProvider.cs" />
     <Compile Include="BinarySerializer.cs" />
     <Compile Include="CodeDomHelper.cs" />
     <Compile Include="DistinctChannelComparer.cs" />
+    <Compile Include="Infrastructure\EventToCommandBehaviour.cs" />
     <Compile Include="Exceptions\TransferProtocolException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Infrastructure\Converters\BooleanToEnumConverter.cs" />
@@ -163,6 +165,7 @@
     <Compile Include="ViewModels\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
+    <Compile Include="ViewModels\FtpBrowseViewModel.cs" />
     <Compile Include="ViewModels\NewProject\FtpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\HttpDataPageViewModel.cs" />
@@ -190,6 +193,9 @@
     </Compile>
     <Compile Include="Views\FirstRun\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FtpBrowseWindow.xaml.cs">
+      <DependentUpon>FtpBrowseWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
@@ -228,6 +234,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FirstRun\WelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FtpBrowseWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -347,7 +357,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Icons\Folder_16xMD.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

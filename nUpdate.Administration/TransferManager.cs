@@ -14,7 +14,7 @@ using nUpdate.Administration.Http;
 namespace nUpdate.Administration
 {
     // ReSharper disable once InconsistentNaming
-    internal class TransferManager : ITransferProvider
+    public class TransferManager : ITransferProvider
     {
         // TODO: Certificate checks
 

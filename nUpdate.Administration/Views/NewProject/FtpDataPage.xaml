@@ -85,7 +85,7 @@
                     HorizontalAlignment="Left"
                     Maximum="65536"
                     Minimum="0"
-                    Value="21" />
+                    Value="{Binding Port, Mode=TwoWay}" />
 
                 <TextBlock
                     Grid.Row="2"
@@ -211,7 +211,7 @@
                 <Button
                     Grid.Row="0"
                     Grid.Column="4"
-                    Command="{Binding DirectorySelectCommand}"
+                    Command="{Binding DirectoryButtonCommand}"
                     Content="..." />
             </Grid>
         </StackPanel>

@@ -5,7 +5,7 @@ using Starksoft.Aspen.Ftps;
 namespace nUpdate.Administration.Ftp
 {
     // ReSharper disable once InconsistentNaming
-    internal class FtpData : ITransferData
+    public class FtpData : ITransferData
     {
         private object _secret;
 
@@ -49,7 +49,7 @@ namespace nUpdate.Administration.Ftp
         ///     Gets the identifier for the key database.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
-        public Uri Identifier => new Uri($"ftp://{Username}@{Host}:{Port}/");
+        public Uri Identifier => new Uri($"ftp://{Uri.EscapeDataString(Username)}@{Host}:{Port}/");
 
         /// <summary>
         ///     Gets or sets the secret.

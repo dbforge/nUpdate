@@ -8,13 +8,9 @@ namespace nUpdate.Administration.Infrastructure
 {
     public class BoundRelayCommand : DependencyObject, ICommand
     {
-        private static DependencyProperty CanExecuteBindingProperty = DependencyProperty.Register("CanExecuteBinding", typeof(bool), typeof(BoundRelayCommand));
+        private static readonly DependencyProperty CanExecuteBindingProperty = DependencyProperty.Register("CanExecuteBinding", typeof(bool), typeof(BoundRelayCommand));
 
-        private bool CanExecuteBinding
-        {
-            get => (bool) GetValue(CanExecuteBindingProperty);
-            set => SetValue(CanExecuteBindingProperty, value);
-        }
+        private bool CanExecuteBinding => (bool) GetValue(CanExecuteBindingProperty);
 
         private readonly Action _methodToExecute;
 
