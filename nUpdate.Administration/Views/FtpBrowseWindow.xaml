@@ -1,46 +1,45 @@
-﻿<Window x:Class="nUpdate.Administration.Views.FtpBrowseWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:infrastructure="clr-namespace:nUpdate.Administration.Infrastructure"
-        mc:Ignorable="d"
-        Icon="/Icons/nUpdate.ico"
-        ShowInTaskbar="False"
-        Title="Select the directory on the FTP server..." Height="200" Width="300" ResizeMode="NoResize">
-
-    <Window.DataContext>
-        <viewModels:FtpBrowseViewModel />
-    </Window.DataContext>
-    
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
+﻿<Window
+    x:Class="nUpdate.Administration.Views.FtpBrowseWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Select the directory on the FTP server..."
+    Width="350"
+    Height="250"
+    Icon="/Icons/nUpdate.ico"
+    Loaded="FtpBrowseWindow_OnLoaded"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    mc:Ignorable="d">
 
     <StackPanel>
         <Grid Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="20" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Directory path:"/>
-            <TextBox Grid.Row="0" Grid.Column="2"/>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="Directory path:" />
+            <TextBox
+                x:Name="DirectoryTextBox"
+                Grid.Row="0"
+                Grid.Column="2" />
         </Grid>
         <Separator />
-        <TreeView Margin="10" Height="100" ItemsSource="{Binding ServerItem}">
-            <i:Interaction.Behaviors>
-                <infrastructure:EventToCommandBehavior Command="{Binding SelectedItemChangedCommand}" Event="SelectedItemChanged" PassArguments="True" />
-            </i:Interaction.Behaviors>
-            
+        <TreeView
+            x:Name="ServerTreeView"
+            Height="150"
+            Margin="10"
+            SelectedItemChanged="TreeView_OnSelectedItemChanged">
+
             <TreeView.Resources>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="HeaderTemplate">
@@ -48,7 +47,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Image Margin="2" Source="/Icons/Folder_16xMD.png" />
-                                    <TextBlock Text="{Binding}"/>
+                                    <TextBlock Text="{Binding}" />
                                 </StackPanel>
                             </DataTemplate>
                         </Setter.Value>
