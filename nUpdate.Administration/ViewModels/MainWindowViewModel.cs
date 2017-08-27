@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Cryptography;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.Views;
+using nUpdate.Administration.Views.Dialogs;
+using TaskDialogInterop;
+
 // ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace nUpdate.Administration.ViewModels
@@ -67,7 +72,45 @@ namespace nUpdate.Administration.ViewModels
         private void OnLoad()
         {
             if (Settings.Default.FirstRun)
+            {
                 WindowManager.ShowDialog(new FirstRunWindow());
+                return;
+            }
+
+            if (!Settings.Default.UseEncryptedKeyDatabase)
+                return;
+            
+            bool correctPassword = false;
+            while (!correctPassword)
+            {
+                var passwordDialog = new PasswordInputDialog();
+                var showDialog = WindowManager.ShowDialog(passwordDialog);
+                if (showDialog == null || !showDialog.Value)
+                {
+                    Application.Current.Shutdown();
+                    return;
+                }
+
+                try
+                {
+                    KeyManager.Instance.Initialize(passwordDialog.Password);
+                    correctPassword = true;
+                }
+                catch (CryptographicException)
+                {
+                    var taskDialog = new TaskDialogOptions
+                    {
+                        Owner = WindowManager.GetCurrentWindow(),
+                        Title = "nUpdate Administration v4.0",
+                        MainIcon = VistaTaskDialogIcon.Error,
+                        MainInstruction = "Decrypting the key database failed.",
+                        Content = "Invalid password."
+                    };
+
+                    TaskDialog.Show(taskDialog);
+                }
+            }
+
         }
     }
 }

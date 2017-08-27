@@ -34,12 +34,15 @@ namespace nUpdate.Administration.ViewModels
                 var encrypt =
                     FirstSetupData.EncryptKeyDatabase;
                 Settings.Default.UseEncryptedKeyDatabase = encrypt;
+
                 // Set the master password for this session, if encryption should be used
+                string password = null;
                 if (encrypt)
                     GlobalSession.MasterPassword = FirstSetupData.MasterPassword;
 
-                // Save the key database to set its password
+                // Save the key database to set its password for the first time
                 KeyManager.Instance.Save();
+                KeyManager.Instance.Initialize(GlobalSession.MasterPassword);
 
                 // Save the application specific data
                 Settings.Default.ApplicationDataPath = FirstSetupData.ApplicationDataLocation;

@@ -41,7 +41,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 Username = Username,
                 Secret = Password
             };
-
+            
             var ftpBrowseWindow = new FtpBrowseWindow(ftpData);
             var result = WindowManager.ShowDialog(ftpBrowseWindow);
             if (result.HasValue && result.Value)

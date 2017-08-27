@@ -50,8 +50,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+    <Reference Include="Splat, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Splat.2.0.0\lib\Net45\Splat.dll</HintPath>
     </Reference>
     <Reference Include="starksoft.aspen, Version=1.1.0.0, Culture=neutral, PublicKeyToken=56b8923a24d03eb3, processorArchitecture=MSIL">
       <HintPath>..\packages\starksoft.aspen.1.1.0\lib\net40\starksoft.aspen.dll</HintPath>
@@ -71,9 +71,15 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="TaskDialog, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFTaskDialog.1.7.1\lib\net40-Client\TaskDialog.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFFolderBrowser, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFFolderBrowser.1.0.2\lib\WPFFolderBrowser.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=3.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.3.1\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -165,7 +171,6 @@
     <Compile Include="ViewModels\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="ViewModels\FirstRun\PathSetupPageViewModel.cs" />
     <Compile Include="ViewModels\FirstRun\WelcomePageViewModel.cs" />
-    <Compile Include="ViewModels\FtpBrowseViewModel.cs" />
     <Compile Include="ViewModels\NewProject\FtpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\HttpDataPageViewModel.cs" />
@@ -181,6 +186,9 @@
     <Compile Include="ViewModels\NewProject\NewProjectViewManager.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
+    <Compile Include="Views\Dialogs\PasswordInputDialog.xaml.cs">
+      <DependentUpon>PasswordInputDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FirstRunWindow.xaml.cs">
       <DependentUpon>FirstRunWindow.xaml</DependentUpon>
     </Compile>
@@ -216,10 +224,15 @@
       <DependentUpon>ProtocolSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowManager.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
     <Page Include="Icons\feedbacktoolicon_64x.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\Dialogs\PasswordInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FirstRunWindow.xaml">
       <SubType>Designer</SubType>
