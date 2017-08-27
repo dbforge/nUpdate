@@ -44,7 +44,7 @@ namespace nUpdate.Administration.Views
         public static bool? ShowModalWindow<TWindowType, TDataContextType>(
             Func<TWindowType, TDataContextType> func, Action<TWindowType> action = null)
             where TWindowType : Window, new()
-            where TDataContextType : INotifyPropertyChanged, new()
+            where TDataContextType : INotifyPropertyChanged
         {
             var window = Activator.CreateInstance<TWindowType>();
             window.DataContext = func(window);
