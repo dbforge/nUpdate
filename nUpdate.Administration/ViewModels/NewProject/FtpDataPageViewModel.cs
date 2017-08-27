@@ -33,7 +33,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void OnDirectoryButtonClick()
         {
-            var ftpData = new FtpData
+            var data = new FtpData
             {
                 Host = Host,
                 Port = Port,
@@ -42,11 +42,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 Username = Username,
                 Secret = Password
             };
-            
-            var ftpBrowseWindow = new FtpBrowseDialog(ftpData);
-            var result = WindowManager.ShowDialog(ftpBrowseWindow);
+
+            var ftpBrowseDialog = new FtpBrowseDialog(data);
+            var result = WindowManager.ShowModalWindow(ftpBrowseDialog);
             if (result.HasValue && result.Value)
-                Directory = ftpBrowseWindow.Directory;
+                Directory = ftpBrowseDialog.Directory;
         }
 
         public string Directory

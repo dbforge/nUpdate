@@ -29,7 +29,7 @@ namespace nUpdate.Administration.ViewModels
                     new MainMenuItemViewModel("New project", "Creates a new project linked with your application.", MainMenuGroup.Projects, new BitmapImage(new Uri(@"/nUpdate.Administration;component/Icons/NewSolutionFolder_64x.png", UriKind.Relative)), new RelayCommand(
                         () =>
                         {
-                            WindowManager.ShowDialog(new NewProjectWindow());
+                            WindowManager.ShowModalWindow<NewProjectWindow>();
                         })),
 
                     new MainMenuItemViewModel("Open project", "Opens an existing project for managing its updates.", MainMenuGroup.Projects, new BitmapImage(new Uri(@"/nUpdate.Administration;component/Icons/ProjectFolderOpen_64x.png", UriKind.Relative)), new RelayCommand(
@@ -73,7 +73,7 @@ namespace nUpdate.Administration.ViewModels
         {
             if (Settings.Default.FirstRun)
             {
-                WindowManager.ShowDialog(new FirstRunWindow());
+                WindowManager.ShowModalWindow<FirstRunWindow>();
                 return;
             }
 
@@ -84,7 +84,7 @@ namespace nUpdate.Administration.ViewModels
             while (!correctPassword)
             {
                 var passwordDialog = new PasswordInputDialog();
-                var showDialog = WindowManager.ShowDialog(passwordDialog);
+                var showDialog = WindowManager.ShowModalWindow(passwordDialog);
                 if (showDialog == null || !showDialog.Value)
                 {
                     Application.Current.Shutdown();
