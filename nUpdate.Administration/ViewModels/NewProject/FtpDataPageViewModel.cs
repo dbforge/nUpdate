@@ -3,6 +3,7 @@
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Views;
+using nUpdate.Administration.Views.Dialogs;
 using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.ViewModels.NewProject
@@ -42,7 +43,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 Secret = Password
             };
             
-            var ftpBrowseWindow = new FtpBrowseWindow(ftpData);
+            var ftpBrowseWindow = new FtpBrowseDialog(ftpData);
             var result = WindowManager.ShowDialog(ftpBrowseWindow);
             if (result.HasValue && result.Value)
                 Directory = ftpBrowseWindow.Directory;

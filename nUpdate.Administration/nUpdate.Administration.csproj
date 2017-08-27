@@ -202,8 +202,8 @@
     <Compile Include="Views\FirstRun\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FtpBrowseWindow.xaml.cs">
-      <DependentUpon>FtpBrowseWindow.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\FtpBrowseDialog.xaml.cs">
+      <DependentUpon>FtpBrowseDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
@@ -250,7 +250,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FtpBrowseWindow.xaml">
+    <Page Include="Views\Dialogs\FtpBrowseDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

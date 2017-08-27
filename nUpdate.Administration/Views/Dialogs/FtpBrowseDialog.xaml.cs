@@ -8,15 +8,15 @@ using System.Windows;
 using System.Windows.Controls;
 using TaskDialogInterop;
 
-namespace nUpdate.Administration.Views
+namespace nUpdate.Administration.Views.Dialogs
 {
-    public partial class FtpBrowseWindow
+    public partial class FtpBrowseDialog
     {
         private readonly List<TreeViewItem> _cachedTreeViewItems = new List<TreeViewItem>();
         private readonly TransferManager _transferManager;
         private string _directory = "/";
 
-        public FtpBrowseWindow(ITransferData data)
+        public FtpBrowseDialog(ITransferData data)
         {
             InitializeComponent();
             _transferManager = new TransferManager(TransferProtocol.FTP, data);
