@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using nUpdate.Administration.Infrastructure;
-using Ookii.Dialogs.Wpf;
+using WPFFolderBrowser;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
@@ -25,30 +25,26 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _location = PathProvider.DefaultProjectDirectory;
             _locationSelectCommand = new RelayCommand(() =>
             {
-                var browseDialog = new VistaFolderBrowserDialog
+                var browseDialog = new WPFFolderBrowserDialog
                 {
-                    ShowNewFolderButton = true,
-                    Description = "Select the project location...",
-                    UseDescriptionForTitle = true
+                    Title = "Select the project location..."
                 };
 
                 var result = browseDialog.ShowDialog();
                 if (result.HasValue && result.Value)
-                    Location = browseDialog.SelectedPath;
+                    Location = browseDialog.FileName;
             });
 
             _updateDirectorySelectCommand = new RelayCommand(() =>
             {
-                var browseDialog = new VistaFolderBrowserDialog
+                var browseDialog = new WPFFolderBrowserDialog
                 {
-                    ShowNewFolderButton = true,
-                    Description = "Select the local update directory...",
-                    UseDescriptionForTitle = true
+                    Title = "Select the local update directory..."
                 };
 
                 var result = browseDialog.ShowDialog();
                 if (result.HasValue && result.Value)
-                    UpdateDirectory = browseDialog.SelectedPath;
+                    UpdateDirectory = browseDialog.FileName;
             });
         }
 
