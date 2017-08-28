@@ -52,10 +52,7 @@ namespace nUpdate.Administration
         internal void Initialize(string password)
         {
             if (!File.Exists(PathProvider.KeyDatabaseFilePath))
-            {
-                this.Log().Warn("Could not load the key database because it does not yet exist. Consider calling the \"Save\" method first to set an optional password and create it.");
-                return;
-            }
+                throw new InvalidOperationException("The key database could not be found.");
 
             byte[] data = File.ReadAllBytes(PathProvider.KeyDatabaseFilePath);
             if (Settings.Default.UseEncryptedKeyDatabase)
