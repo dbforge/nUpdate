@@ -24,17 +24,25 @@ namespace nUpdate.Administration.ViewModels
         {
             return Task.Run(() =>
             {
+                // Set the application specific data
+                Settings.Default.ApplicationDataPath = FirstSetupData.ApplicationDataLocation;
+                Settings.Default.DefaultProjectPath = FirstSetupData.DefaultProjectDirectory;
+                Settings.Default.FirstRun = false;
+                
+                // Set the encryption settings
+                var encrypt =
+                    FirstSetupData.EncryptKeyDatabase;
+                Settings.Default.UseEncryptedKeyDatabase = encrypt;
+                
+                // Save the settings that we've just set
+                Settings.Default.Save();
+
                 // Create all the folders
                 if (!Directory.Exists(FirstSetupData.ApplicationDataLocation))
                     Directory.CreateDirectory(FirstSetupData.ApplicationDataLocation);
                 if (!Directory.Exists(FirstSetupData.DefaultProjectDirectory))
                     Directory.CreateDirectory(FirstSetupData.DefaultProjectDirectory);
-
-                // Save the encryption settings
-                var encrypt =
-                    FirstSetupData.EncryptKeyDatabase;
-                Settings.Default.UseEncryptedKeyDatabase = encrypt;
-
+                
                 // Set the master password for this session, if encryption should be used
                 if (encrypt)
                     GlobalSession.MasterPassword = FirstSetupData.MasterPassword;
@@ -42,12 +50,6 @@ namespace nUpdate.Administration.ViewModels
                 // Save the key database to set its password for the first time and load it afterwards
                 KeyManager.Instance.Save();
                 KeyManager.Instance.Initialize(GlobalSession.MasterPassword);
-
-                // Save the application specific data
-                Settings.Default.ApplicationDataPath = FirstSetupData.ApplicationDataLocation;
-                Settings.Default.DefaultProjectPath = FirstSetupData.DefaultProjectDirectory;
-                Settings.Default.FirstRun = false;
-                Settings.Default.Save();
 
                 return true;
             });
