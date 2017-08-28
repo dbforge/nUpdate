@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using nUpdate.Administration.Properties;
-using Splat;
 
 namespace nUpdate.Administration
 {
-    internal sealed class KeyManager : Singleton<KeyManager>, IEnableLogger
+    internal sealed class KeyManager : Singleton<KeyManager>
     {
         private bool _initialized;
         private Dictionary<Uri, object> _secrets = new Dictionary<Uri, object>();
