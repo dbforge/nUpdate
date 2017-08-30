@@ -306,6 +306,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private bool InitializeProjectData()
         {
+            _allowCancel = false;
             try
             {
                 Invoke(new Action(() =>
@@ -357,12 +358,17 @@ namespace nUpdate.Administration.UI.Dialogs
                                 PopupButtons.Ok)));
                 return false;
             }
+            finally
+            {
+                _allowCancel = true;
+            }
 
             return true;
         }
 
         private void InitializePackageItems()
         {
+            _allowCancel = false;
             Invoke(new Action(() =>
             {
                 if (packagesList.Items.Count > 0)
@@ -428,6 +434,8 @@ namespace nUpdate.Administration.UI.Dialogs
                                     PopupButtons.Ok)));
                 }
             }
+
+            _allowCancel = true;
         }
 
         private async void ProjectDialog_Load(object sender, EventArgs e)
@@ -508,11 +516,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private async Task InitializeAsync()
         {
+            _allowCancel = false;
             await BeginUpdateConfigurationCheck();
             if (Project.UseStatistics)
-            {
                 await InitializeStatisticsData();
-            }
             else
             {
                 foreach (
@@ -526,6 +533,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 noStatisticsLabel.Visible = true;
                 _isSetByUser = true;
             }
+            _allowCancel = true;
         }
 
         private Task InitializeStatisticsData()
@@ -1038,11 +1046,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void updateStatisticsButton_Click(object sender, EventArgs e)
+        private async void updateStatisticsButton_Click(object sender, EventArgs e)
         {
-#pragma warning disable 4014
-            InitializeStatisticsData();
-#pragma warning restore 4014
+            await InitializeStatisticsData();
         }
 
         private void loadFromAssemblyRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1416,14 +1422,12 @@ namespace nUpdate.Administration.UI.Dialogs
             await Task.Factory.StartNew(() => CheckUpdateConfigurationStatus(_configurationFileUrl));
         }
 
-        private void checkUpdateConfigurationLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private async void checkUpdateConfigurationLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-#pragma warning disable 4014
-            BeginUpdateConfigurationCheck();
-#pragma warning restore 4014
+            await BeginUpdateConfigurationCheck();
         }
 
-        private void CheckUpdateConfigurationStatus(Uri configFileUri)
+        private async void CheckUpdateConfigurationStatus(Uri configFileUri)
         {
             if (!ConnectionChecker.IsConnectionAvailable())
             {
@@ -1555,12 +1559,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
             }
-            Invoke(
-                new Action(
-                    () =>
-                        checkUpdateConfigurationLinkLabel.Enabled = true));
-            SetUiState(true);
-
 
             try
             {
@@ -1692,9 +1690,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
                 _hasFinishedCheck = true;
-#pragma warning disable 4014
-                BeginUpdateConfigurationCheck();
-#pragma warning restore 4014
+                await BeginUpdateConfigurationCheck();
             }
         }
 
@@ -1721,9 +1717,9 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Initializes a new thread for deleting the package.
         /// </summary>
-        private async void DeletePackage()
+        private Task DeletePackage()
         {
-            await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(async () =>
             {
                 IEnumerator enumerator = null;
                 Invoke(
@@ -2019,11 +2015,7 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
 
                 SetUiState(true);
                 if (Project.UseStatistics)
-                {
-#pragma warning disable 4014
-                    InitializeStatisticsData();
-#pragma warning restore 4014
-                }
+                    await InitializeStatisticsData();
                 InitializePackageItems();
                 InitializeProjectData();
             });
