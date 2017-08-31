@@ -26,7 +26,8 @@ namespace nUpdate
     /// </summary>
     public class Updater
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly string _applicationUpdateDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate",
                 "Updates", ApplicationParameters.ProductName);
@@ -211,7 +212,7 @@ namespace nUpdate
             var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
             //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
 
-            _logger.Info("Managing the installer files.");
+            Logger.Info("Managing the installer files.");
             if (Directory.Exists(unpackerDirectory))
                 Directory.Delete(unpackerDirectory, true);
             Directory.CreateDirectory(unpackerDirectory);
@@ -269,7 +270,7 @@ namespace nUpdate
                 $"\"{_lp.InstallerFileInUseError}\""
             };
 
-            _logger.Info("Starting nUpdate UpdateInstaller.");
+            Logger.Info("Starting nUpdate UpdateInstaller.");
             var startInfo = new ProcessStartInfo
             {
                 FileName = unpackerAppPath,
@@ -292,7 +293,7 @@ namespace nUpdate
             if (HostApplicationOptions == HostApplicationOptions.LeaveOpen)
                 return;
 
-            _logger.Info("Calling the method for terminating the application.");
+            Logger.Info("Calling the method for terminating the application.");
             TerminateApplication();
         }
 
@@ -301,18 +302,18 @@ namespace nUpdate
         /// </summary>
         private void CreateAppUpdateDirectory()
         {
-            _logger.Info("Checking existence of the application's update directory.");
+            Logger.Info("Checking existence of the application's update directory.");
             if (Directory.Exists(_applicationUpdateDirectory))
                 return;
 
-            _logger.Info("Creating the application's update directory.");
+            Logger.Info("Creating the application's update directory.");
             try
             {
                 Directory.CreateDirectory(_applicationUpdateDirectory);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex,
+                Logger.Error(ex,
                     "The application's update directory could not be created as an exception occured.");
                 throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
                     ex.Message));
@@ -347,21 +348,21 @@ namespace nUpdate
                 throw new ArgumentNullException(nameof(packages));
             var updatePackages = packages.ToArray();
 
-            _logger.Info("Determining the total size of all packages.");
+            Logger.Info("Determining the total size of all packages.");
             var totalSize = await Utility.GetTotalPackageSize(updatePackages);
             await updatePackages.ForEachAsync(async p =>
             {
                 if (Utility.IsHttpUri(p.UpdatePackageUri))
                 {
                     // This package is located on a server.
-                    _logger.Info($"Downloading package of version {p.Version}.");
+                    Logger.Info($"Downloading package of version {p.Version}.");
                     await Downloader.DownloadFile(p.UpdatePackageUri, GetLocalPackagePath(p), (long) totalSize,
                         cancellationToken, progress);
                 }
                 else
                 {
                     // This package is located on a local drive.
-                    _logger.Info($"Copying package of version {p.Version}.");
+                    Logger.Info($"Copying package of version {p.Version}.");
                     File.Copy(p.UpdatePackageUri.ToString(), GetLocalPackagePath(p));
                 }
 
@@ -370,7 +371,7 @@ namespace nUpdate
 
                 try
                 {
-                    _logger.Info($"Adding entry to the statistics for version {p.Version}.");
+                    Logger.Info($"Adding entry to the statistics for version {p.Version}.");
                     var response =
                         await new WebClient().DownloadStringTaskAsync(
                             $"{p.UpdatePhpFileUri}?versionid={p.VersionId}&os={SystemInformation.OperatingSystemName}");
@@ -436,7 +437,7 @@ namespace nUpdate
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdates(CancellationToken cancellationToken)
         {
-            _logger.Info("Checking the network connection.");
+            Logger.Info("Checking the network connection.");
             if (!WebConnection.IsAvailable())
                 return false;
 
@@ -446,25 +447,25 @@ namespace nUpdate
 
             try
             {
-                _logger.Info("Loading the master channel from the server.");
+                Logger.Info("Loading the master channel from the server.");
                 masterChannel =
                     await UpdateChannel.GetMasterChannel(new Uri(UpdateDirectoryUri, "masterfeed.json"), Proxy);
             }
             catch (JsonReaderException ex)
             {
-                _logger.Error(ex, "The received master channel data is no valid JSON data.");
+                Logger.Error(ex, "The received master channel data is no valid JSON data.");
                 throw new Exception(_lp.InvalidJsonExceptionText, ex);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            _logger.Info("Initializing the update result for this search.");
+            Logger.Info("Initializing the update result for this search.");
             var result = new UpdateResult();
             await result.Initialize(masterChannel, ApplicationVersion,
                 ApplicationChannel, LowestSearchChannel);
             AvailablePackages = result.NewPackages;
 
-            _logger.Info("Determining the total size of all packages.");
+            Logger.Info("Determining the total size of all packages.");
             TotalSize = await Utility.GetTotalPackageSize(AvailablePackages);
             return result.UpdatesFound;
         }
@@ -475,7 +476,7 @@ namespace nUpdate
         /// <remarks>Override this method to add custom actions that should be performed.</remarks>
         public virtual void TerminateApplication()
         {
-            _logger.Info("Exiting the application with the default exit command.");
+            Logger.Info("Exiting the application with the default exit command.");
             Environment.Exit(0);
         }
 
@@ -510,7 +511,7 @@ namespace nUpdate
                 {
                     try
                     {
-                        _logger.Info($"Verifying the signature for the package of version {package.Version}.");
+                        Logger.Info($"Verifying the signature for the package of version {package.Version}.");
                         using (var rsa = new RsaManager(PublicKey))
                         {
                             return rsa.VerifyData(stream, Convert.FromBase64String(package.Signature));
@@ -519,7 +520,7 @@ namespace nUpdate
                     catch
                     {
                         // Don't throw an exception.
-                        _logger.Warn($"Invalid signature found for the package of version {package.Version}.");
+                        Logger.Warn($"Invalid signature found for the package of version {package.Version}.");
                         return false;
                     }
                 }
