@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 
 namespace nUpdate.Exceptions
 {
@@ -9,7 +11,7 @@ namespace nUpdate.Exceptions
     public class StatisticsException : Exception
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="StatisticsException"/> class.
+        ///     Initializes a new instance of the <see cref="StatisticsException" /> class.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         public StatisticsException(string message)

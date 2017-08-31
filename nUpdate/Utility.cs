@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;

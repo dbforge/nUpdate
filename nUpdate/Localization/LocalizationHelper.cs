@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,29 @@ namespace nUpdate.Localization
 {
     internal class LocalizationHelper
     {
+        internal static CultureInfo[] IntegratedCultures => new[]
+        {
+            new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("en"),
+            new CultureInfo("fr-FR")
+        };
+
+        internal static LocalizationProperties GetLocalizationProperties(CultureInfo cultureInfo,
+            Dictionary<CultureInfo, string> localizationFilePaths)
+        {
+            var resourceName = $"nUpdate.Localization.{cultureInfo.Name}.json";
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            {
+                if (stream != null)
+                    return JsonSerializer.Deserialize<LocalizationProperties>(stream);
+
+                string localizationFilePath;
+                localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
+                if (localizationFilePath == null)
+                    throw new Exception("The path of the localization file is not valid.");
+                return JsonSerializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath));
+            }
+        }
+
         /// <summary>
         ///     Returns the localized values for the given enumeration objects.
         /// </summary>
@@ -25,17 +48,17 @@ namespace nUpdate.Localization
             {
                 var fieldInfo = o.GetType().GetField(o.ToString());
                 var descriptionAttributes =
-                    (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                    (DescriptionAttribute[]) fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
 
                 if (descriptionAttributes.Length > 0)
                 {
                     var resourceId = descriptionAttributes[0].Description;
                     yield return
                         (string)
-                            properties.GetType()
-                                .GetProperties()
-                                .First(x => x.Name == resourceId)
-                                .GetValue(properties, null);
+                        properties.GetType()
+                            .GetProperties()
+                            .First(x => x.Name == resourceId)
+                            .GetValue(properties, null);
                 }
                 else
                 {
@@ -44,29 +67,12 @@ namespace nUpdate.Localization
             }
         }
 
-        internal static CultureInfo[] IntegratedCultures => new[] { new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("en"), new CultureInfo("fr-FR") };
-
-        internal static bool IsIntegratedCulture(CultureInfo cultureInfo, Dictionary<CultureInfo, string> localizationFilePaths)
+        internal static bool IsIntegratedCulture(CultureInfo cultureInfo,
+            Dictionary<CultureInfo, string> localizationFilePaths)
         {
             string localizationFilePath;
             localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
             return IntegratedCultures.Contains(cultureInfo) || localizationFilePath != null;
-        }
-
-        internal static LocalizationProperties GetLocalizationProperties(CultureInfo cultureInfo, Dictionary<CultureInfo, string> localizationFilePaths)
-        {
-            string resourceName = $"nUpdate.Localization.{cultureInfo.Name}.json";
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-            {
-                if (stream != null)
-                    return JsonSerializer.Deserialize<LocalizationProperties>(stream);
-
-                string localizationFilePath;
-                localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
-                if (localizationFilePath == null)
-                    throw new Exception("The path of the localization file is not valid.");
-                return JsonSerializer.Deserialize<LocalizationProperties>(File.ReadAllText(localizationFilePath));
-            }
         }
     }
 }

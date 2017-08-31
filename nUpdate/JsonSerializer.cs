@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System.IO;
 using Newtonsoft.Json;
@@ -7,31 +7,6 @@ namespace nUpdate
 {
     public class JsonSerializer
     {
-        /// <summary>
-        ///     Serializes a given serializable object.
-        /// </summary>
-        /// <param name="dataToSerialize">The data to serialize.</param>
-        /// <returns>Returns the serialized data as a string.</returns>
-        public static string Serialize(object dataToSerialize)
-        {
-            return JsonConvert.SerializeObject(dataToSerialize, new UriConverter());
-        }
-
-        /// <summary>
-        ///     Serializes a given serializable object with ignoring self referencing loops.
-        /// </summary>
-        /// <param name="dataToSerialize">The data to serialize.</param>
-        /// <returns>Returns the serialized data as a string.</returns>
-        public static string SerializeWithIgnoringLoops(object dataToSerialize)
-        {
-            // TODO: UriConverter
-            return JsonConvert.SerializeObject(dataToSerialize, Formatting.Indented,
-                new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-        }
-
         /// <summary>
         ///     Deserializes a given string.
         /// </summary>
@@ -58,6 +33,16 @@ namespace nUpdate
             }
 
             return JsonConvert.DeserializeObject<T>(streamContent, new UriConverter());
+        }
+
+        /// <summary>
+        ///     Serializes a given serializable object.
+        /// </summary>
+        /// <param name="dataToSerialize">The data to serialize.</param>
+        /// <returns>Returns the serialized data as a string.</returns>
+        public static string Serialize(object dataToSerialize)
+        {
+            return JsonConvert.SerializeObject(dataToSerialize, new UriConverter());
         }
     }
 }

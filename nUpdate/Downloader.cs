@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -8,7 +10,8 @@ namespace nUpdate
 {
     internal static class Downloader
     {
-        internal static async Task DownloadFile(Uri fileUri, string localFilePath, long totalSize, CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
+        internal static async Task DownloadFile(Uri fileUri, string localFilePath, long totalSize,
+            CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
         {
             long received = 0;
             WebResponse webResponse;
@@ -32,7 +35,7 @@ namespace nUpdate
                             received += size;
                             progress?.Report(new UpdateProgressData(received,
                                 // ReSharper disable once PossibleLossOfFraction
-                                totalSize, (float)(received / totalSize) * 100));
+                                totalSize, (float) (received / totalSize) * 100));
                             size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         }
                     }

@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="nUpdate.nUpdateVersionAttribute">
     <Position X="12" Y="5.25" Width="2.5" />

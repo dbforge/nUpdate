@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 
 namespace nUpdate
 {
@@ -12,7 +14,10 @@ namespace nUpdate
         /// <summary>
         ///     Initializes a new instance of the <see cref="nUpdateVersionAttribute" /> class.
         /// </summary>
-        /// <param name="nUpdateVersionString">The version string to use. All string representations of <see cref="UpdateVersion"/> can be used.</param>
+        /// <param name="nUpdateVersionString">
+        ///     The version string to use. All string representations of
+        ///     <see cref="UpdateVersion" /> can be used.
+        /// </param>
         public nUpdateVersionAttribute(string nUpdateVersionString)
         {
             VersionString = nUpdateVersionString;

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 namespace nUpdate
 {
     /// <summary>
-    ///     Provides methods and properties to sign and verify data with a <see cref="RSACryptoServiceProvider"/>.
+    ///     Provides methods and properties to sign and verify data with a <see cref="RSACryptoServiceProvider" />.
     /// </summary>
     public class RsaManager : IDisposable
     {
@@ -16,8 +16,9 @@ namespace nUpdate
         /// </summary>
         public const int DefaultKeySize = 8192;
 
-        private bool _disposed;
         private readonly RSACryptoServiceProvider _rsa;
+
+        private bool _disposed;
 
         /// <summary>
         ///     Creates a new instance of the <see cref="RsaManager" /> class.
@@ -44,14 +45,14 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Gets the public key.
-        /// </summary>
-        public string PublicKey => _rsa.ToXmlString(false);
-
-        /// <summary>
         ///     Gets the private key.
         /// </summary>
         public string PrivateKey => _rsa.ToXmlString(true);
+
+        /// <summary>
+        ///     Gets the public key.
+        /// </summary>
+        public string PublicKey => _rsa.ToXmlString(false);
 
         /// <summary>
         ///     Releases unmanaged and - optionally - managed resources.
@@ -60,6 +61,21 @@ namespace nUpdate
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _rsa.Dispose();
+            _disposed = true;
         }
 
         /// <summary>
@@ -73,7 +89,7 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Calculates the signature of the data provided in the <see cref="Stream"/>.
+        ///     Calculates the signature of the data provided in the <see cref="Stream" />.
         /// </summary>
         /// <param name="stream">The stream containing the data.</param>
         /// <returns>The calculated signature.</returns>
@@ -94,9 +110,9 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Determines whether the signature of the data provided in the <see cref="Stream"/> is valid, or not.
+        ///     Determines whether the signature of the data provided in the <see cref="Stream" /> is valid, or not.
         /// </summary>
-        /// <param name="stream">The <see cref="Stream"/> containing the data to check.</param>
+        /// <param name="stream">The <see cref="Stream" /> containing the data to check.</param>
         /// <param name="signature">The signature to check.</param>
         /// <returns>Returns <c>true</c> if the signature is valid, otherwise <c>false</c>.</returns>
         public bool VerifyData(Stream stream, byte[] signature)
@@ -104,23 +120,9 @@ namespace nUpdate
             using (var ms = new MemoryStream())
             {
                 stream.CopyTo(ms);
-                byte[] data = ms.ToArray();
+                var data = ms.ToArray();
                 return _rsa.VerifyData(data, typeof(SHA512), signature);
             }
-        }
-
-        /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///   <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _rsa.Dispose();
-            _disposed = true;
         }
     }
 }

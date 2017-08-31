@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Net;
@@ -32,10 +32,7 @@ namespace nUpdate
         {
             var request = base.GetWebRequest(address) as HttpWebRequest;
             if (request != null)
-            {
-                //request.ServicePoint.ConnectionLimit = 5;
                 request.Timeout = Timeout;
-            }
 
             return request;
         }

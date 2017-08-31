@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,12 +10,13 @@ namespace nUpdate
     public class UpdateVersion
     {
         // <Major>.<Minor>.<Revision>[[-]SemVerSuffix|.][Build][+BuildMetaData]
-        private static string _regexString =
-            @"^(?<major>\d+)(?:\.(?<minor>\d+)(?:\.(?<build>\d+)|)|)(?:(?:\-?(?<semver>[a-zA-Z]+)|\.)(?:(?<revision>\d+)|)|)(?:\+(?:(?<meta>.+)|)|)$";
+        private const string RegexString =
+                @"^(?<major>\d+)(?:\.(?<minor>\d+)(?:\.(?<build>\d+)|)|)(?:(?:\-?(?<semver>[a-zA-Z]+)|\.)(?:(?<revision>\d+)|)|)(?:\+(?:(?<meta>.+)|)|)$"
+            ;
 
         public UpdateVersion(string versionString)
         {
-            var match = Regex.Match(versionString, _regexString, RegexOptions.IgnoreCase);
+            var match = Regex.Match(versionString, RegexString, RegexOptions.IgnoreCase);
             if (!match.Success)
                 throw new ArgumentException("The specified version is not valid.");
 
@@ -33,7 +36,7 @@ namespace nUpdate
                     throw new ArgumentException("Build is not a valid version number.");
                 Build = build;
             }
-            
+
             if (match.Groups["semver"].Success)
                 SemVerSuffix = match.Groups["semver"].Captures[0].Value;
 
@@ -49,7 +52,8 @@ namespace nUpdate
                 BuildMetadata = match.Groups["meta"].Captures[0].Value;
         }
 
-        public UpdateVersion(int major, int minor, int revision, string semVerSuffix = "", int build = 0, string buildMetaData = "")
+        public UpdateVersion(int major, int minor, int revision, string semVerSuffix = "", int build = 0,
+            string buildMetaData = "")
         {
             if (major < 0)
                 throw new ArgumentOutOfRangeException(nameof(major), "Index must be 0 or higher");
@@ -72,6 +76,16 @@ namespace nUpdate
         }
 
         /// <summary>
+        ///     Gets or sets the build/patch version.
+        /// </summary>
+        public int Build { get; }
+
+        /// <summary>
+        ///     Gets or sets the build metadata (SemVer).
+        /// </summary>
+        public string BuildMetadata { get; set; }
+
+        /// <summary>
         ///     Gets or sets the major version.
         /// </summary>
         public int Major { get; }
@@ -82,9 +96,9 @@ namespace nUpdate
         public int Minor { get; }
 
         /// <summary>
-        ///     Gets or sets the build/patch version.
+        ///     Gets or sets the revision version.
         /// </summary>
-        public int Build { get; }
+        public int Revision { get; }
 
         /// <summary>
         ///     Gets or sets the semantic version suffix representing the update channel.
@@ -92,14 +106,14 @@ namespace nUpdate
         public string SemVerSuffix { get; set; }
 
         /// <summary>
-        ///     Gets or sets the revision version.
+        ///     Gets the <see cref="UpdateChannel" /> that this <see cref="UpdateVersion" /> is associated with.
         /// </summary>
-        public int Revision { get; }
-
-        /// <summary>
-        ///     Gets or sets the build metadata (SemVer).
-        /// </summary>
-        public string BuildMetadata { get; set; }
+        /// <param name="masterChannel">The master channel containing all available channels.</param>
+        /// <returns>The <see cref="UpdateChannel" /> associated with this <see cref="UpdateVersion" />.</returns>
+        public UpdateChannel GetUpdateChannel(IEnumerable<UpdateChannel> masterChannel)
+        {
+            return masterChannel.First(x => x.SupportedSuffixes.Contains(SemVerSuffix.ToLowerInvariant()));
+        }
 
         /// <summary>
         ///     Determines whether the specified update version is valid.
@@ -116,26 +130,16 @@ namespace nUpdate
         /// <param name="versionString">The version string to check.</param>
         public static bool IsValid(string versionString)
         {
-            var regex = new Regex(_regexString, RegexOptions.IgnoreCase);
+            var regex = new Regex(RegexString, RegexOptions.IgnoreCase);
             return regex.IsMatch(versionString);
         }
 
         /// <summary>
-        ///     Gets the <see cref="UpdateChannel"/> that this <see cref="UpdateVersion"/> is associated with.
+        ///     Tries to get the <see cref="UpdateChannel" /> that this <see cref="UpdateVersion" /> is associated with.
         /// </summary>
         /// <param name="masterChannel">The master channel containing all available channels.</param>
-        /// <returns>The <see cref="UpdateChannel"/> associated with this <see cref="UpdateVersion"/>.</returns>
-        public UpdateChannel GetUpdateChannel(IEnumerable<UpdateChannel> masterChannel)
-        {
-            return masterChannel.First(x => x.SupportedSuffixes.Contains(SemVerSuffix.ToLowerInvariant()));
-        }
-
-        /// <summary>
-        ///     Tries to get the <see cref="UpdateChannel"/> that this <see cref="UpdateVersion"/> is associated with.
-        /// </summary>
-        /// <param name="masterChannel">The master channel containing all available channels.</param>
-        /// <param name="updateChannel">The <see cref="UpdateChannel"/> object that should be initialized.</param>
-        /// <returns><c>true</c>, if the <see cref="UpdateChannel"/> could be determined, otherwise <c>false</c>.</returns>
+        /// <param name="updateChannel">The <see cref="UpdateChannel" /> object that should be initialized.</param>
+        /// <returns><c>true</c>, if the <see cref="UpdateChannel" /> could be determined, otherwise <c>false</c>.</returns>
         public bool TryGetUpdateChannel(IEnumerable<UpdateChannel> masterChannel, out UpdateChannel updateChannel)
         {
             updateChannel =

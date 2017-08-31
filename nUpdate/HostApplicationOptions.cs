@@ -1,4 +1,6 @@
-﻿namespace nUpdate
+﻿// Copyright © Dominic Beger 2017
+
+namespace nUpdate
 {
     /// <summary>
     ///     Represents different behaviours of the host application when the update installation is started.

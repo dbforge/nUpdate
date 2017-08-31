@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -39,7 +41,7 @@ namespace nUpdate
                 if (entryAssembly == null)
                     throw new InvalidOperationException("The entry assembly could not be specified.");
 
-                object[] attrs = entryAssembly.GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                var attrs = entryAssembly.GetCustomAttributes(typeof(AssemblyProductAttribute), false);
                 if (attrs.Length <= 0)
                     throw new InvalidOperationException(
                         $"The entry assembly does not define an {nameof(AssemblyProductAttribute)}. Its product name cannot be determined.");
@@ -60,16 +62,18 @@ namespace nUpdate
                 if (entryAssembly == null)
                     throw new InvalidOperationException("The entry assembly could not be specified.");
 
-                object[] attrs =
+                var attrs =
                     entryAssembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
                 if (attrs.Length <= 0)
                     throw new InvalidOperationException(
                         $"The entry assembly does not define an {nameof(AssemblyInformationalVersionAttribute)}. Its product version cannot be determined.");
-                
-                    string informationalVersionString = ((AssemblyInformationalVersionAttribute) attrs[0])
+
+                var informationalVersionString = ((AssemblyInformationalVersionAttribute) attrs[0])
                     .InformationalVersion;
                 if (!string.IsNullOrEmpty(informationalVersionString))
+                {
                     _productVersion = new Version(informationalVersionString);
+                }
                 else
                 {
                     var fileVersionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 namespace nUpdate.Operations
 {
@@ -8,7 +8,7 @@ namespace nUpdate.Operations
     public class Operation
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Operation"/> class.
+        ///     Initializes a new instance of the <see cref="Operation" /> class.
         /// </summary>
         public Operation(OperationArea area, OperationMethod method, string value, object value2 = null)
         {
@@ -19,12 +19,12 @@ namespace nUpdate.Operations
         }
 
         /// <summary>
-        ///     Gets or sets <see cref="OperationArea"/> of the current operation.
+        ///     Gets or sets <see cref="OperationArea" /> of the current operation.
         /// </summary>
         public OperationArea Area { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="OperationMethod"/> of the current operation.
+        ///     Gets or sets the <see cref="OperationMethod" /> of the current operation.
         /// </summary>
         public OperationMethod Method { get; set; }
 
@@ -43,7 +43,7 @@ namespace nUpdate.Operations
         /// </summary>
         /// <param name="operation">The operation to get the tag from.</param>
         /// <returns>
-        ///     Returns the tag as a <see cref="string"/>.
+        ///     Returns the tag as a <see cref="string" />.
         /// </returns>
         public static string GetOperationTag(Operation operation)
         {

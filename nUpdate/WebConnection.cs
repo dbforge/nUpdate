@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System.Net.NetworkInformation;
 using nUpdate.Win32;
@@ -24,7 +24,6 @@ namespace nUpdate
 
         public static void NetworkAvaialbilityChanged(object sender, NetworkAvailabilityEventArgs e)
         {
-
         }
     }
 }

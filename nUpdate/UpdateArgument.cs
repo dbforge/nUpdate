@@ -1,4 +1,6 @@
-﻿namespace nUpdate
+﻿// Copyright © Dominic Beger 2017
+
+namespace nUpdate
 {
     /// <summary>
     ///     Represents an argument that is handled over to the application after the installation of an update.
@@ -17,13 +19,13 @@
         }
 
         /// <summary>
-        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument" />.
-        /// </summary>
-        public UpdateArgumentExecutionOptions ExecutionOptions { get; set; }
-
-        /// <summary>
         ///     Gets or sets the argument of the current <see cref="UpdateArgument" />.
         /// </summary>
         public string Argument { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the execution options that should be used for the current <see cref="UpdateArgument" />.
+        /// </summary>
+        public UpdateArgumentExecutionOptions ExecutionOptions { get; set; }
     }
 }

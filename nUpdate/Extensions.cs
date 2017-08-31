@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2017
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,16 @@ namespace nUpdate
         {
             return Task.WhenAll(
                 from partition in Partitioner.Create(source).GetPartitions(degreeOfParallelism)
-                select Task.Run(async () => {
+                select Task.Run(async () =>
+                {
                     using (partition)
+                    {
                         while (partition.MoveNext())
                             await body(partition.Current);
+                    }
                 }));
         }
+
         public static string ToAdequateSizeString(this long fileSize)
         {
             var sb = new StringBuilder(20);

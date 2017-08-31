@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System.ComponentModel;
 
@@ -13,20 +13,20 @@ namespace nUpdate
         ///     Represents a Release version.
         /// </summary>
         Release,
+
         /// <summary>
         ///     Represents a ReleaseCandidate version.
         /// </summary>
-        [Description("rc")]        
-        ReleaseCandidate,
+        [Description("rc")] ReleaseCandidate,
+
         /// <summary>
         ///     Represents a Beta version.
         /// </summary>
-        [Description("b")]
-        Beta,
+        [Description("b")] Beta,
+
         /// <summary>
         ///     Represents an Alpha version.
         /// </summary>
-        [Description("a")]
-        Alpha
+        [Description("a")] Alpha
     }
 }

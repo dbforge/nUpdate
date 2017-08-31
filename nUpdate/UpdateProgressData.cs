@@ -1,4 +1,6 @@
-﻿namespace nUpdate
+﻿// Copyright © Dominic Beger 2017
+
+namespace nUpdate
 {
     /// <summary>
     ///     Provides data for progress updates.

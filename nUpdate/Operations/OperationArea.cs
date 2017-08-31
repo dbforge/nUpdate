@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System.ComponentModel;
 
@@ -13,6 +13,6 @@ namespace nUpdate.Operations
         [Description("NewUpdateDialogRegistryAccessText")] Registry,
         [Description("NewUpdateDialogProcessesAccessText")] Processes,
         [Description("NewUpdateDialogServicesAccessText")] Services,
-        [Description("NewUpdateDialogCodeExecutionAccessText")] Scripts,
+        [Description("NewUpdateDialogCodeExecutionAccessText")] Scripts
     }
 }

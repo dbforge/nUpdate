@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 
@@ -11,7 +11,7 @@ namespace nUpdate.Exceptions
     public class SizeCalculationException : Exception
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SizeCalculationException"/> class.
+        ///     Initializes a new instance of the <see cref="SizeCalculationException" /> class.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         public SizeCalculationException(string message)

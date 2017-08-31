@@ -8,7 +8,8 @@
   "InstallButtonText": "Installieren",
   "InstallerCopyingText": "\"Kopiere {0}...\"",
   "InstallerExtractingFilesText": "\"Entpacke Dateien...\"",
-  "InstallerFileInUseError": "Der Installer kann die Datei '{0}' nicht überschreiben, da sie von einem anderen Prozess verwendet wird. Beenden Sie alle Prozesse, die den Zugriff blockieren und drücken Sie \"OK\".",
+  "InstallerFileInUseError":
+    "Der Installer kann die Datei '{0}' nicht überschreiben, da sie von einem anderen Prozess verwendet wird. Beenden Sie alle Prozesse, die den Zugriff blockieren und drücken Sie \"OK\".",
   "InstallerInitializingErrorCaption": "\"Fehler während der Initialisierung.\"",
   "InstallerUpdatingErrorCaption": "\"Fehler beim Aktualisieren der Anwendung.\"",
   "InvalidSignatureErrorCaption": "Ungültige Signatur.",
@@ -29,9 +30,11 @@
   "NewUpdateDialogSizeText": "Gesamtpaketgröße: {0}",
   "NoUpdateDialogHeader": "Es sind keine neuen Updates verfügbar.",
   "NoUpdateDialogInfoText": "Die Anwendung ist auf dem neuesten Stand.",
-  "PackageFileNotFoundExceptionText": "Das zu überprüfende Updatepaket für Version \"{0}\" konnte nicht gefunden werden.",
+  "PackageFileNotFoundExceptionText":
+    "Das zu überprüfende Updatepaket für Version \"{0}\" konnte nicht gefunden werden.",
   "PackageNotFoundErrorText": "Das Updatepaket konnte nicht gefunden werden.",
-  "PackageSizeCalculationExceptionText": "Dies Paketgröße konnte auf Grund eines unbekannten Fehlers nicht ermittelt werden. Möglicherweise fehlt das Updatepaket auf dem Server.",
+  "PackageSizeCalculationExceptionText":
+    "Dies Paketgröße konnte auf Grund eines unbekannten Fehlers nicht ermittelt werden. Möglicherweise fehlt das Updatepaket auf dem Server.",
   "PackageValidityCheckErrorCaption": "Fehler beim Überprüfen der Signatur des Updatepakets.",
   "ProcessStartOperationText": "\"Starte Prozess \"{0}\"...\"",
   "ProcessStopOperationText": "\"Beende Prozess \"{0}\"...\"",
@@ -43,7 +46,8 @@
   "ServiceStartOperationText": "\"Starte Dienst \"{0}\"...\"",
   "ServiceStopOperationText": "\"Stoppe Dienst \"{0}\"...\"",
   "SignatureNotMatchingErrorText": "nUpdate wird die Installation abbrechen und das Paket löschen.",
-  "StatisticsScriptExceptionText": "Beim Datentrasfer mit dem Statistikserver ist ein Fehler aufgetreten. Bitte melden Sie diesen Fehler dem Entwickler, damit dieser ihn beheben kann. Antwort/Rückgabe des PHP-Scripts: {0}",
+  "StatisticsScriptExceptionText":
+    "Beim Datentrasfer mit dem Statistikserver ist ein Fehler aufgetreten. Bitte melden Sie diesen Fehler dem Entwickler, damit dieser ihn beheben kann. Antwort/Rückgabe des PHP-Scripts: {0}",
   "UpdateDownloadDialogLoadingHeader": "Updates werden heruntergeladen...",
   "UpdateDownloadDialogLoadingInfo": "Bitte warten Sie, während die Updates\nheruntergeladen werden...  ({0}%)",
   "UpdateSearchDialogHeader": "Suche nach Aktualisierungen...",
