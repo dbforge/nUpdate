@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using nUpdate.Exceptions;
 using nUpdate.Localization;
 using nUpdate.Operations;
@@ -25,9 +24,11 @@ namespace nUpdate
     /// <summary>
     ///     Provides the core functionality to update .NET-applications.
     /// </summary>
-    public sealed class Updater : IEnableLogger
+    public class Updater : IEnableLogger
     {
-        private readonly string _applicationUpdateDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate", "Updates", Application.ProductName);
+        private readonly string _applicationUpdateDirectory =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate",
+                "Updates", ApplicationParameters.ProductName);
 
         private CultureInfo _languageCulture = new CultureInfo("en");
         private LocalizationProperties _lp;
@@ -41,7 +42,10 @@ namespace nUpdate
         /// </param>
         /// <param name="publicKey">The public key used to verify the signature of the update packages.</param>
         /// <param name="applicationChannel">The current channel of the application.</param>
-        /// <param name="lowestSearchChannel">The lowest update channel that should be included into the update search. nUpdate will check for updates inside of this channel and higher ones.</param>
+        /// <param name="lowestSearchChannel">
+        ///     The lowest update channel that should be included into the update search. nUpdate
+        ///     will check for updates inside of this channel and higher ones.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -73,51 +77,13 @@ namespace nUpdate
             var nUpateVersionAttribute =
                 projectAssembly.GetCustomAttributes(false).OfType<nUpdateVersionAttribute>().SingleOrDefault();
             ApplicationVersion = nUpateVersionAttribute == null
-                ? new Version(Application.ProductVersion)
+                ? ApplicationParameters.ProductVersion
                 : new Version(nUpateVersionAttribute.VersionString);
 
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _lp = LocalizationHelper.GetLocalizationProperties(new CultureInfo("en"), LocalizationFilePaths);
 
             CreateAppUpdateDirectory();
         }
-
-        /// <summary>
-        ///     Creates the application's update directory where the downloaded packages and other files are stored.
-        /// </summary>
-        private void CreateAppUpdateDirectory()
-        {
-            this.Log().Info("Checking existence of the application's update directory.");
-            if (Directory.Exists(_applicationUpdateDirectory))
-                return;
-            
-            this.Log().Info("Creating the application's update directory.");
-            try
-            {
-                Directory.CreateDirectory(_applicationUpdateDirectory);
-            }
-            catch (Exception ex)
-            {
-                this.Log().ErrorException("The application's update directory could not be created as an exception occured.", ex);
-                throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
-                    ex.Message));
-            }
-        }
-
-        /// <summary>
-        ///     Gets the <see cref="Uri" /> of the directory on the server that contains all relating update files.
-        /// </summary>
-        public Uri UpdateDirectoryUri { get; }
-
-        /// <summary>
-        ///     Gets the public key used to verify the signature of the update packages.
-        /// </summary>
-        public string PublicKey { get; }
-
-        /// <summary>
-        ///     Gets the version of the current application.
-        /// </summary>
-        public Version ApplicationVersion { get; }
 
         /// <summary>
         ///     Gets the current channel's name.
@@ -125,9 +91,46 @@ namespace nUpdate
         public string ApplicationChannel { get; }
 
         /// <summary>
-        ///     Gets the lowest update channel that should be used for the update search.
+        ///     Gets the version of the current application.
         /// </summary>
-        public string LowestSearchChannel { get; }
+        public Version ApplicationVersion { get; }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="UpdateArgument" />s that should be handled over to the application by the nUpdate
+        ///     UpdateInstaller in order to determine whether the installation process has been successful, or not.
+        /// </summary>
+        public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
+
+        /// <summary>
+        ///     Gets all new update packages that have been found.
+        /// </summary>
+        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } =
+            Enumerable.Empty<UpdatePackage>();
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the current client should be included into the statistics, or not.
+        /// </summary>
+        public bool CaptureStatistics { get; set; } = true;
+
+        /// <summary>
+        ///     Gets or sets the host application options during the update installation.
+        /// </summary>
+        public static HostApplicationOptions HostApplicationOptions { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions, or not.
+        /// </summary>
+        public bool IncludeAlpha { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the user should be able to update to Beta-versions, or not.
+        /// </summary>
+        public bool IncludeBeta { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the path of the assembly that contains the custom user interface data for the nUpdate UpdateInstaller.
+        /// </summary>
+        public string InstallerUserInterfacePath { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
@@ -138,7 +141,7 @@ namespace nUpdate
         /// </remarks>
         public CultureInfo LanguageCulture
         {
-            get { return _languageCulture; }
+            get => _languageCulture;
             set
             {
                 if (!LocalizationHelper.IsIntegratedCulture(value, LocalizationFilePaths) &&
@@ -157,40 +160,9 @@ namespace nUpdate
             new Dictionary<CultureInfo, string>();
 
         /// <summary>
-        ///     Gets or sets the path of the assembly that contains the custom user interface data for the nUpdate UpdateInstaller.
+        ///     Gets the lowest update channel that should be used for the update search.
         /// </summary>
-        public string InstallerUserInterfacePath { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Alpha-versions, or not.
-        /// </summary>
-        public bool IncludeAlpha { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the user should be able to update to Beta-versions, or not.
-        /// </summary>
-        public bool IncludeBeta { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the current client should be included into the statistics, or not.
-        /// </summary>
-        public bool CaptureStatistics { get; set; } = true;
-        
-        /// <summary>
-        ///     Gets or sets the host application options during the update installation.
-        /// </summary>
-        public static HostApplicationOptions HostApplicationOptions { get; set; }
-
-        /// <summary>
-        ///     Gets all new update packages that have been found.
-        /// </summary>
-        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } =
-            Enumerable.Empty<UpdatePackage>();
-
-        /// <summary>
-        ///     Gets the total size of all found update packages.
-        /// </summary>
-        public double TotalSize { get; private set; } = double.NaN;
+        public string LowestSearchChannel { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="WebProxy" /> that should be used.
@@ -198,17 +170,267 @@ namespace nUpdate
         public WebProxy Proxy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="UpdateArgument" />s that should be handled over to the application by the nUpdate
-        ///     UpdateInstaller in order to determine whether the installation process has been successful, or not.
+        ///     Gets the public key used to verify the signature of the update packages.
         /// </summary>
-        public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
+        public string PublicKey { get; }
+
+        /// <summary>
+        ///     Gets the total size of all found update packages.
+        /// </summary>
+        public double TotalSize { get; private set; } = double.NaN;
+
+        /// <summary>
+        ///     Gets the <see cref="Uri" /> of the directory on the server that contains all relating update files.
+        /// </summary>
+        public Uri UpdateDirectoryUri { get; }
+
+        /// <summary>
+        ///     Prepares and installs the specified update packages.
+        /// </summary>
+        /// <seealso cref="ApplyUpdates(IEnumerable{UpdatePackage})" />
+        public void ApplyUpdates()
+        {
+            ApplyUpdates(AvailablePackages);
+        }
+
+        /// <summary>
+        ///     Prepares and installs the specified update packages.
+        /// </summary>
+        /// <seealso cref="ApplyUpdates()" />
+        public void ApplyUpdates(IEnumerable<UpdatePackage> packages)
+        {
+            if (packages == null)
+                throw new ArgumentNullException(nameof(packages));
+
+            var unpackerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
+            var unpackerZipPath = Path.Combine(unpackerDirectory, "Ionic.Zip.dll");
+            var guiInterfacePath = Path.Combine(unpackerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
+            var jsonNetPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.dll");
+            var jsonNetPdbPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.pdb");
+            var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
+            //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
+
+            this.Log().Info("Managing the installer files.");
+            if (Directory.Exists(unpackerDirectory))
+                Directory.Delete(unpackerDirectory, true);
+            Directory.CreateDirectory(unpackerDirectory);
+
+            if (!File.Exists(unpackerZipPath))
+                File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
+
+            if (!File.Exists(guiInterfacePath))
+                File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
+
+            if (!File.Exists(jsonNetPath))
+                File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
+
+            if (!File.Exists(jsonNetPdbPath))
+                File.WriteAllBytes(jsonNetPdbPath, Resources.Newtonsoft_Json_Pdb);
+
+            if (!File.Exists(unpackerAppPath))
+                File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
+
+            //if (!File.Exists(unpackerAppPdbPath))
+            //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
+
+            var updatePackages = packages.ToArray();
+            var packageOperations =
+                updatePackages.ToDictionary<UpdatePackage, Version, IEnumerable<Operation>>(
+                    package => package.Version, package => package.Operations);
+
+            var installerUiAssemblyPath = !string.IsNullOrEmpty(InstallerUserInterfacePath)
+                ? $"\"{InstallerUserInterfacePath}\""
+                : string.Empty;
+            string[] args =
+            {
+                $"\"{string.Join("%", updatePackages.Select(GetLocalPackagePath))}\"",
+                $"\"{ApplicationParameters.StartupPath}\"",
+                $"\"{ApplicationParameters.ExecutablePath}\"",
+                $"\"{ApplicationParameters.ProductName}\"",
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(packageOperations)))}\"",
+                $"\"{installerUiAssemblyPath}\"",
+                _lp.InstallerExtractingFilesText,
+                _lp.InstallerCopyingText,
+                _lp.FileDeletingOperationText,
+                _lp.FileRenamingOperationText,
+                _lp.RegistrySubKeyCreateOperationText,
+                _lp.RegistrySubKeyDeleteOperationText,
+                _lp.RegistryNameValuePairDeleteValueOperationText,
+                _lp.RegistryNameValuePairSetValueOperationText,
+                _lp.ProcessStartOperationText,
+                _lp.ProcessStopOperationText,
+                _lp.ServiceStartOperationText,
+                _lp.ServiceStopOperationText,
+                _lp.InstallerUpdatingErrorCaption,
+                _lp.InstallerInitializingErrorCaption,
+                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(Arguments)))}\"",
+                $"\"{HostApplicationOptions}\"",
+                $"\"{_lp.InstallerFileInUseError}\""
+            };
+
+            this.Log().Info("Starting nUpdate UpdateInstaller.");
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = unpackerAppPath,
+                Arguments = string.Join("|", args),
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+
+            try
+            {
+                Process.Start(startInfo);
+            }
+            catch (Win32Exception ex)
+            {
+                if (ex.NativeErrorCode != 1223)
+                    throw;
+                return;
+            }
+
+            if (HostApplicationOptions == HostApplicationOptions.LeaveOpen)
+                return;
+
+            this.Log().Info("Throwing final exception for terminating the application.");
+            TerminateApplication();
+        }
+
+        /// <summary>
+        ///     Creates the application's update directory where the downloaded packages and other files are stored.
+        /// </summary>
+        private void CreateAppUpdateDirectory()
+        {
+            this.Log().Info("Checking existence of the application's update directory.");
+            if (Directory.Exists(_applicationUpdateDirectory))
+                return;
+
+            this.Log().Info("Creating the application's update directory.");
+            try
+            {
+                Directory.CreateDirectory(_applicationUpdateDirectory);
+            }
+            catch (Exception ex)
+            {
+                this.Log().ErrorException(
+                    "The application's update directory could not be created as an exception occured.", ex);
+                throw new IOException(string.Format(_lp.MainFolderCreationExceptionText,
+                    ex.Message));
+            }
+        }
+
+        /// <summary>
+        ///     Downloads all available update packages from the server.
+        /// </summary>
+        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException" />.</exception>
+        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
+        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        public async Task DownloadUpdates(CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
+        {
+            await DownloadUpdates(AvailablePackages, cancellationToken, progress);
+        }
+
+        /// <summary>
+        ///     Downloads the specified update packages from the server.
+        /// </summary>
+        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException" />.</exception>
+        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
+        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
+        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
+        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
+        public async Task DownloadUpdates(IEnumerable<UpdatePackage> packages, CancellationToken cancellationToken,
+            IProgress<UpdateProgressData> progress)
+        {
+            if (packages == null)
+                throw new ArgumentNullException(nameof(packages));
+            var updatePackages = packages.ToArray();
+
+            this.Log().Info("Determining the total size of all packages.");
+            var totalSize = await Utility.GetTotalPackageSize(updatePackages);
+            await updatePackages.ForEachAsync(async p =>
+            {
+                if (Utility.IsHttpUri(p.UpdatePackageUri))
+                {
+                    // This package is located on a server.
+                    this.Log().Info($"Downloading package of version {p.Version}.");
+                    await Downloader.DownloadFile(p.UpdatePackageUri, GetLocalPackagePath(p), (long) totalSize,
+                        cancellationToken, progress);
+                }
+                else
+                {
+                    // This package is located on a local drive.
+                    this.Log().Info($"Copying package of version {p.Version}.");
+                    File.Copy(p.UpdatePackageUri.ToString(), GetLocalPackagePath(p));
+                }
+
+                if (!p.UseStatistics || !CaptureStatistics)
+                    return;
+
+                try
+                {
+                    this.Log().Info($"Adding entry to the statistics for version {p.Version}.");
+                    var response =
+                        await new WebClient().DownloadStringTaskAsync(
+                            $"{p.UpdatePhpFileUri}?versionid={p.VersionId}&os={SystemInformation.OperatingSystemName}");
+                    if (!string.IsNullOrEmpty(response))
+                        throw new StatisticsException(string.Format(
+                            _lp.StatisticsScriptExceptionText, response));
+                }
+                catch (Exception ex)
+                {
+                    throw new StatisticsException(ex.Message);
+                }
+            });
+        }
+
+        private string GetLocalPackagePath(UpdatePackage package)
+        {
+            return Path.Combine(_applicationUpdateDirectory,
+                $"{package.Guid}.zip");
+        }
+
+        /// <summary>
+        ///     Removes the specified update package.
+        /// </summary>
+        /// <param name="package">The update package.</param>
+        /// <seealso cref="RemoveLocalPackages()" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        public void RemoveLocalPackage(UpdatePackage package)
+        {
+            var path = GetLocalPackagePath(package);
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        /// <summary>
+        ///     Removes the specified update packages.
+        /// </summary>
+        /// <param name="packages">The update packages.</param>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="RemoveLocalPackages()" />
+        public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
+        {
+            foreach (var package in packages)
+                RemoveLocalPackage(package);
+        }
+
+        /// <summary>
+        ///     Removes all downloaded update packages.
+        /// </summary>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        public void RemoveLocalPackages()
+        {
+            RemoveLocalPackages(AvailablePackages);
+        }
 
         /// <summary>
         ///     Searches for updates.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>
-        /// Returns a <c>UpdateResult</c> object that contains the result data of the update search.
+        ///     Returns a <c>UpdateResult</c> object that contains the result data of the update search.
         /// </returns>
         /// <exception cref="OperationCanceledException">The update search was canceled.</exception>
         public async Task<bool> SearchForUpdates(CancellationToken cancellationToken)
@@ -247,70 +469,12 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Downloads all available update packages from the server.
+        ///     Terminates the application.
         /// </summary>
-        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException" />.</exception>
-        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
-        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
-        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
-        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
-        public async Task DownloadUpdates(CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
+        /// <remarks>Override this method to add custom actions that should be performed.</remarks>
+        public virtual void TerminateApplication()
         {
-            await DownloadUpdates(AvailablePackages, cancellationToken, progress);
-        } 
-
-        /// <summary>
-        ///     Downloads the specified update packages from the server.
-        /// </summary>
-        /// <exception cref="WebException">The download process has failed because of an <see cref="WebException" />.</exception>
-        /// <exception cref="ArgumentException">The URI of the update package is null.</exception>
-        /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
-        /// <exception cref="IOException">An exception occured while writing to the file.</exception>
-        /// <exception cref="OperationCanceledException">The download was canceled.</exception>
-        public async Task DownloadUpdates(IEnumerable<UpdatePackage> packages, CancellationToken cancellationToken,
-            IProgress<UpdateProgressData> progress)
-        {
-            if (packages == null)
-                throw new ArgumentNullException(nameof(packages));
-            var updatePackages = packages.ToArray();
-
-            this.Log().Info("Determining the total size of all packages.");
-            var totalSize = await Utility.GetTotalPackageSize(updatePackages);
-            await updatePackages.ForEachAsync(async p =>
-            {
-                if (Utility.IsHttpUri(p.UpdatePackageUri))
-                {
-                    // This package is located on a server.
-                    this.Log().Info($"Downloading package of version {p.Version}.");
-                    await Downloader.DownloadFile(p.UpdatePackageUri, GetLocalPackagePath(p), (long) totalSize, cancellationToken, progress);
-                }
-                else
-                {
-                    // This package is located on a local drive.
-                    this.Log().Info($"Copying package of version {p.Version}.");
-                    File.Copy(p.UpdatePackageUri.ToString(), GetLocalPackagePath(p));
-                }
-
-                if (!p.UseStatistics || !CaptureStatistics)
-                    return;
-
-                try
-                {
-                    this.Log().Info($"Adding entry to the statistics for version {p.Version}.");
-                    string response =
-                        await new WebClient().DownloadStringTaskAsync(
-                            $"{p.UpdatePhpFileUri}?versionid={p.VersionId}&os={SystemInformation.OperatingSystemName}");
-                    if (!string.IsNullOrEmpty(response))
-                    {
-                        throw new StatisticsException(string.Format(
-                            _lp.StatisticsScriptExceptionText, response));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new StatisticsException(ex.Message);
-                }
-            });
+            Environment.Exit(0);
         }
 
         /// <summary>
@@ -334,7 +498,7 @@ namespace nUpdate
                         $"The signature of version \"{package.Version}\" is empty and thus invalid.");
                 // TODO: Localize
 
-                string packagePath = GetLocalPackagePath(package);
+                var packagePath = GetLocalPackagePath(package);
                 if (!File.Exists(packagePath))
                     throw new FileNotFoundException(string.Format(_lp.PackageFileNotFoundExceptionText,
                         package.Version));
@@ -346,7 +510,9 @@ namespace nUpdate
                     {
                         this.Log().Info($"Verifying the signature for the package of version {package.Version}.");
                         using (var rsa = new RsaManager(PublicKey))
+                        {
                             return rsa.VerifyData(stream, Convert.FromBase64String(package.Signature));
+                        }
                     }
                     catch
                     {
@@ -369,7 +535,7 @@ namespace nUpdate
         public Task<ValidationResult> ValidateUpdates()
         {
             return ValidateUpdates(AvailablePackages);
-        } 
+        }
 
         /// <summary>
         ///     Determines whether all specified update packages are valid, or not.
@@ -395,176 +561,6 @@ namespace nUpdate
                     validationResult.InvalidPackages.Add(p);
             });
             return validationResult;
-        }
-
-        /// <summary>
-        ///     Removes the specified update package.
-        /// </summary>
-        /// <param name="package">The update package.</param>
-        /// <seealso cref="RemoveLocalPackages()" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
-        public void RemoveLocalPackage(UpdatePackage package)
-        {
-            string path = GetLocalPackagePath(package);
-            if (File.Exists(path))
-                File.Delete(path);
-        }
-
-        /// <summary>
-        ///     Removes the specified update packages.
-        /// </summary>
-        /// <param name="packages">The update packages.</param>
-        /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages()" />
-        public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
-        {
-            foreach (var package in packages)
-                RemoveLocalPackage(package);
-        }
-
-        /// <summary>
-        ///     Removes all downloaded update packages.
-        /// </summary>
-        /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
-        public void RemoveLocalPackages()
-        {
-            RemoveLocalPackages(AvailablePackages);
-        }
-
-        /// <summary>
-        ///     Prepares and installs the specified update packages.
-        /// </summary>
-        /// <exception cref="ApplicationTerminateException">
-        ///     The application is being terminated. To implement custom actions, catch
-        ///     this exception, execute your action(s) and rethrow it.
-        /// </exception>
-        /// <seealso cref="ApplyUpdates(IEnumerable{UpdatePackage})"/>
-        public void ApplyUpdates()
-        {
-            ApplyUpdates(AvailablePackages);
-        }
-
-        /// <summary>
-        ///     Prepares and installs the specified update packages.
-        /// </summary>
-        /// <exception cref="ApplicationTerminateException">
-        ///     The application is being terminated. To implement custom actions, catch
-        ///     this exception, execute your action(s) and rethrow it.
-        /// </exception>
-        /// <seealso cref="ApplyUpdates()"/>
-        public void ApplyUpdates(IEnumerable<UpdatePackage> packages)
-        {
-            if (packages == null)
-                throw new ArgumentNullException(nameof(packages));
-
-            var unpackerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
-            var unpackerZipPath = Path.Combine(unpackerDirectory, "Ionic.Zip.dll");
-            var guiInterfacePath = Path.Combine(unpackerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
-            var jsonNetPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.dll");
-            var jsonNetPdbPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.pdb");
-            var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
-            //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
-            
-            this.Log().Info("Managing the installer files.");
-            if (Directory.Exists(unpackerDirectory))
-                Directory.Delete(unpackerDirectory, true);
-            Directory.CreateDirectory(unpackerDirectory);
-
-            if (!File.Exists(unpackerZipPath))
-                File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
-
-            if (!File.Exists(guiInterfacePath))
-                File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
-
-            if (!File.Exists(jsonNetPath))
-                File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
-
-            if (!File.Exists(jsonNetPdbPath))
-                File.WriteAllBytes(jsonNetPdbPath, Resources.Newtonsoft_Json_Pdb);
-
-            if (!File.Exists(unpackerAppPath))
-                File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
-
-            //if (!File.Exists(unpackerAppPdbPath))
-            //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
-
-            var updatePackages = packages.ToArray();
-            var packageOperations =
-                updatePackages.ToDictionary<UpdatePackage, Version, IEnumerable<Operation>>(
-                    package => package.Version, package => package.Operations);
-
-            var installerUiAssemblyPath = !string.IsNullOrEmpty(InstallerUserInterfacePath)
-                ? $"\"{InstallerUserInterfacePath}\""
-                : string.Empty;
-            string[] args =
-            {
-                $"\"{string.Join("%", updatePackages.Select(GetLocalPackagePath))}\"",
-                $"\"{Application.StartupPath}\"",
-                $"\"{Application.ExecutablePath}\"",
-                $"\"{Application.ProductName}\"",
-                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(packageOperations)))}\"",
-                $"\"{installerUiAssemblyPath}\"",
-                _lp.InstallerExtractingFilesText,
-                _lp.InstallerCopyingText,
-                _lp.FileDeletingOperationText,
-                _lp.FileRenamingOperationText,
-                _lp.RegistrySubKeyCreateOperationText,
-                _lp.RegistrySubKeyDeleteOperationText,
-                _lp.RegistryNameValuePairDeleteValueOperationText,
-                _lp.RegistryNameValuePairSetValueOperationText,
-                _lp.ProcessStartOperationText,
-                _lp.ProcessStopOperationText,
-                _lp.ServiceStartOperationText,
-                _lp.ServiceStopOperationText,
-                _lp.InstallerUpdatingErrorCaption,
-                _lp.InstallerInitializingErrorCaption,
-                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(Arguments)))}\"",
-                $"\"{HostApplicationOptions}\"",
-                $"\"{_lp.InstallerFileInUseError}\"",
-            };
-            
-            this.Log().Info($"Starting nUpdate UpdateInstaller.");
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = unpackerAppPath,
-                Arguments = string.Join("|", args),
-                UseShellExecute = true,
-                Verb = "runas"
-            };
-
-            try
-            {
-                Process.Start(startInfo);
-            }
-            catch (Win32Exception ex)
-            {
-                if (ex.NativeErrorCode != 1223)
-                    throw;
-                return;
-            }
-
-            if (HostApplicationOptions == HostApplicationOptions.LeaveOpen)
-                return;
-
-            this.Log().Info("Throwing final exception for terminating the application.");
-            throw new ApplicationTerminateException();
-        }
-
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (DomainHelper.EnumerateAppDomains().Count() > 1)
-                throw new InvalidOperationException(
-                    "There is more than one AppDomain active. The application cannot be terminated."); // TODO: Localize
-            
-            if (((Exception) e.ExceptionObject).GetType() == typeof (ApplicationTerminateException))
-                Environment.Exit(0);
-        }
-
-        private string GetLocalPackagePath(UpdatePackage package)
-        {
-            return Path.Combine(_applicationUpdateDirectory,
-                $"{package.Guid}.zip");
         }
     }
 }

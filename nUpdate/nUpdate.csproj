@@ -58,13 +58,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationParameters.cs" />
     <Compile Include="Architecture.cs" />
-    <Compile Include="DomainHelper.cs" />
     <Compile Include="Downloader.cs" />
-    <Compile Include="Exceptions\ApplicationTerminateException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HostApplicationOptions.cs" />
-    <Compile Include="IconHelper.cs" />
     <Compile Include="ITransferData.cs" />
     <Compile Include="UpdateArgument.cs" />
     <Compile Include="UpdateArgumentExecutionOptions.cs" />
