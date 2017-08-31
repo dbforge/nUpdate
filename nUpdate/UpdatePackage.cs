@@ -88,11 +88,6 @@ namespace nUpdate
         ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have a higher <see cref="UpdateVersion"/>, or not.
         /// </summary>
         public bool NecessaryUpdate { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="UpdateRequirement"/>s that must be fullfilled in order to download and install the update package.
-        /// </summary>
-        public List<UpdateRequirement> UpdateRequirements { get; set; }
         
         /// <summary>
         ///     Gets or sets the description of the package.
@@ -117,7 +112,7 @@ namespace nUpdate
         /// </summary>
         /// <param name="configFileUri">The <see cref="Uri"/> of the <see cref="UpdatePackage"/> data file.</param>
         /// <param name="proxy">The optional <see cref="WebProxy"/> to use.</param>
-        public async static Task<IEnumerable<UpdatePackage>> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
+        public static async Task<IEnumerable<UpdatePackage>> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
         {
             using (var wc = new WebClientEx(10000))
             {
