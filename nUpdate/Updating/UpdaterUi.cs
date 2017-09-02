@@ -210,7 +210,25 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        UpdateManagerInstance.InstallPackage();
+                    {
+                        try
+                        {
+                            UpdateManagerInstance.InstallPackage();
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            // TODO: Localize
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, "Error while starting the installer.",
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InstallerInitializingErrorCaption,
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                    }
                 });
             }
             finally
@@ -299,6 +317,7 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
+                    {
                         try
                         {
                             UpdateManagerInstance.InstallPackage();
@@ -316,6 +335,7 @@ namespace nUpdate.Updating
                                 ex,
                                 PopupButtons.Ok), null);
                         }
+                    }
                 });
             }
             finally
