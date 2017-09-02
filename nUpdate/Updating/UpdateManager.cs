@@ -317,13 +317,11 @@ namespace nUpdate.Updating
             }
 
             TotalSize = updatePackageSize;
-            if (_searchCancellationTokenSource.Token.IsCancellationRequested)
-            {
-                Cleanup();
-                throw new OperationCanceledException();
-            }
+            if (!_searchCancellationTokenSource.Token.IsCancellationRequested)
+                return true;
 
-            return true;
+            Cleanup();
+            throw new OperationCanceledException();
         }
 
         /// <summary>
@@ -450,20 +448,14 @@ namespace nUpdate.Updating
                                 if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
                                     continue;
 
-                                try
-                                {
-                                    var response =
-                                        new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(
-                                            $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
-                                    if (!string.IsNullOrEmpty(response))
-                                        throw new StatisticsException(string.Format(
-                                            _lp.StatisticsScriptExceptionText, response));
-                                }
-                                catch (Exception ex)
-                                {
-                                    OnStatisticsEntryFailed(ex);
-                                    throw new StatisticsException(ex.Message);
-                                }
+                                var response =
+                                    new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(
+                                        $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
+
+                                if (string.IsNullOrEmpty(response))
+                                    return;
+                                OnStatisticsEntryFailed(new StatisticsException(string.Format(
+                                    _lp.StatisticsScriptExceptionText, response)));
                             }
                         }
                     }
@@ -486,10 +478,11 @@ namespace nUpdate.Updating
                 TaskScheduler.Default);
         }
 
-#if PROVIDE_TAP /// <summary>
-///     Downloads the available update packages from the server, asynchronously.
-/// </summary>
-/// <seealso cref="DownloadPackages" />
+#if PROVIDE_TAP
+        /// <summary>
+        ///     Downloads the available update packages from the server, asynchronously.
+        /// </summary>
+        /// <seealso cref="DownloadPackages" />
         public async Task DownloadPackagesAsync(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
         {
             _downloadCancellationTokenSource?.Dispose();
@@ -497,8 +490,8 @@ namespace nUpdate.Updating
 
             long received = 0;
             var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
-                    .Where(updatePackageSize => updatePackageSize != null)
-                    .Sum(updatePackageSize => updatePackageSize.Value);
+                .Where(updatePackageSize => updatePackageSize != null)
+                .Sum(updatePackageSize => updatePackageSize.Value);
 
             if (!Directory.Exists(_applicationUpdateDirectory))
                 Directory.CreateDirectory(_applicationUpdateDirectory);
@@ -554,28 +547,24 @@ namespace nUpdate.Updating
                                 await fileStream.WriteAsync(buffer, 0, size);
                                 received += size;
                                 progress.Report(new UpdateDownloadProgressChangedEventArgs(received,
-                                    (long) total, (float) (received/total)*100));
+                                    (long) total, (float) (received / total) * 100));
                                 size = await input.ReadAsync(buffer, 0, buffer.Length);
                             }
 
                             if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
                                 continue;
 
-                            try
-                            {
-                                var response =
-                                    new WebClient {Credentials =
-HttpAuthenticationCredentials}.DownloadString(
-                                        $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
-                                if (!String.IsNullOrEmpty(response))
+                            var response =
+                                new WebClient
                                 {
-                                    throw new StatisticsException(String.Format(
-                                        _lp.StatisticsScriptExceptionText, response));
-                                }
-                            }
-                            catch (Exception ex)
+                                    Credentials =
+                                        HttpAuthenticationCredentials
+                                }.DownloadString(
+                                    $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
+                            if (!String.IsNullOrEmpty(response))
                             {
-                                throw new StatisticsException(ex.Message);
+                                throw new StatisticsException(String.Format(
+                                    _lp.StatisticsScriptExceptionText, response));
                             }
                         }
                     }
@@ -587,7 +576,7 @@ HttpAuthenticationCredentials}.DownloadString(
             }
         }
 
-    
+
 #endif
 
         private void DownloadTaskCompleted(Task task)
@@ -764,6 +753,7 @@ HttpAuthenticationCredentials}.DownloadString(
                 Cleanup();
                 if (ex.NativeErrorCode != 1223)
                     throw;
+                return;
             }
 
             if (CloseHostApplication)

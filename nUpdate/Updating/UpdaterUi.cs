@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core.Localization;
+using nUpdate.Exceptions;
 using nUpdate.UI.Dialogs;
 using nUpdate.UI.Popups;
 using nUpdate.UpdateEventArgs;
@@ -163,12 +164,16 @@ namespace nUpdate.Updating
                     {
                         progressIndicator.ProgressChanged += (sender, args) =>
                             downloadDialog.ProgressPercentage = (int) args.Percentage;
-                        
+
                         await UpdateManagerInstance.DownloadPackagesAsync(progressIndicator);
                     }
                     catch (OperationCanceledException)
                     {
                         return;
+                    }
+                    catch (StatisticsException ex)
+                    {
+                        downloadDialog.StatisticsEntryFail(ex);
                     }
                     catch (Exception ex)
                     {
@@ -205,7 +210,25 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
-                        UpdateManagerInstance.InstallPackage();
+                    {
+                        try
+                        {
+                            UpdateManagerInstance.InstallPackage();
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            // TODO: Localize
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, "Error while starting the installer.",
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            _context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InstallerInitializingErrorCaption,
+                                ex,
+                                PopupButtons.Ok), null);
+                        }
+                    }
                 });
             }
             finally
@@ -223,6 +246,7 @@ namespace nUpdate.Updating
                 UpdateManagerInstance.PackagesDownloadProgressChanged += downloadDialog.ProgressChanged;
                 UpdateManagerInstance.PackagesDownloadFinished += downloadDialog.Finished;
                 UpdateManagerInstance.PackagesDownloadFailed += downloadDialog.Failed;
+                UpdateManagerInstance.StatisticsEntryFailed += downloadDialog.StatisticsEntryFailed;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -293,6 +317,7 @@ namespace nUpdate.Updating
                             _lp.SignatureNotMatchingErrorText,
                             PopupButtons.Ok), null);
                     else
+                    {
                         try
                         {
                             UpdateManagerInstance.InstallPackage();
@@ -310,6 +335,7 @@ namespace nUpdate.Updating
                                 ex,
                                 PopupButtons.Ok), null);
                         }
+                    }
                 });
             }
             finally
