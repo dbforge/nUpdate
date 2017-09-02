@@ -753,6 +753,7 @@ namespace nUpdate.Updating
                 Cleanup();
                 if (ex.NativeErrorCode != 1223)
                     throw;
+                return;
             }
 
             if (CloseHostApplication)
