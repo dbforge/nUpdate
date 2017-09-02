@@ -62,8 +62,7 @@ namespace nUpdate.UI.Dialogs
 
         protected virtual void OnCancelButtonClicked()
         {
-            if (CancelButtonClicked != null)
-                CancelButtonClicked(this, EventArgs.Empty);
+            CancelButtonClicked?.Invoke(this, EventArgs.Empty);
         }
 
         public void ShowModalDialog(object dialogResultReference)
@@ -131,6 +130,14 @@ namespace nUpdate.UI.Dialogs
                 "Error while downloading the update package.",
                 e.Exception.InnerException ?? e.Exception, PopupButtons.Ok)));
             DialogResult = DialogResult.Cancel;
+        }
+
+        public void StatisticsEntryFailed(object sender, FailedEventArgs e)
+        {
+            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Warning,
+                "Error while adding a new statistics entry.",
+                e.Exception, PopupButtons.Ok)));
+            DialogResult = DialogResult.OK;
         }
 
         public void Finished(object sender, EventArgs e)
