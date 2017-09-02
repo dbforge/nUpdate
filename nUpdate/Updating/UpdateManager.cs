@@ -290,7 +290,7 @@ namespace nUpdate.Updating
             _searchCancellationTokenSource = new CancellationTokenSource();
 
             OnUpdateSearchStarted(this, EventArgs.Empty);
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
                 return false;
 
             // Check for SSL and ignore it
