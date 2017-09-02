@@ -721,8 +721,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         string myConnectionString = null;
                         Invoke(new Action(() =>
                         {
-                            myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
-                                                 $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
+                            myConnectionString = $"SERVER='{SqlWebUrl}';" + $"DATABASE='{SqlDatabaseName}';" +
+                                                 $"UID='{SqlUsername}';" +
+                                                 $"PASSWORD='{sqlPasswordTextBox.Text}';";
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);
