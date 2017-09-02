@@ -155,13 +155,14 @@ namespace nUpdate.Administration.UI.Dialogs
             if (_commandsExecuted)
             {
                 Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                       $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                       $"UID='{Project.SqlUsername}';" +
+                                       $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                var myConnection = new MySqlConnection(connectionString);
+                MySqlConnection myConnection = null;
                 try
                 {
+                    myConnection = new MySqlConnection(connectionString);
                     myConnection.Open();
                 }
                 catch (MySqlException ex)
@@ -171,7 +172,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -182,7 +183,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -344,7 +345,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
             categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
             if (_packageConfiguration.UnsupportedVersions != null &&
-                _packageConfiguration.UnsupportedVersions.Count() != 0)
+                _packageConfiguration.UnsupportedVersions.Length != 0)
             {
                 someVersionsRadioButton.Checked = true;
                 unsupportedVersionsPanel.Enabled = true;
@@ -710,13 +711,14 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                    var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                           $"UID={Project.SqlUsername};" +
-                                           $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                    var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                           $"UID='{Project.SqlUsername}';" +
+                                           $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                    var myConnection = new MySqlConnection(connectionString);
+                    MySqlConnection myConnection = null;
                     try
                     {
+                        myConnection = new MySqlConnection(connectionString);
                         myConnection.Open();
                     }
                     catch (MySqlException ex)
@@ -726,7 +728,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
-                        myConnection.Close();
+                        myConnection?.Close();
                         Reset();
                         return;
                     }
@@ -737,7 +739,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
-                        myConnection.Close();
+                        myConnection?.Close();
                         Reset();
                         return;
                     }
