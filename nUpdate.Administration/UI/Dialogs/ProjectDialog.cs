@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -114,13 +113,14 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 Invoke(new Action(() => loadingLabel.Text = "Connecting to MySQL-server..."));
 
-                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                       $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                       $"UID='{Project.SqlUsername}';" +
+                                       $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                var deleteConnection = new MySqlConnection(connectionString);
+                MySqlConnection deleteConnection = null;
                 try
                 {
+                    deleteConnection = new MySqlConnection(connectionString);
                     deleteConnection.Open();
                 }
                 catch (MySqlException ex)
@@ -131,7 +131,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error,
                                     "An MySQL-exception occured when trying to undo the SQL-insertions...",
                                     ex, PopupButtons.Ok)));
-                    deleteConnection.Close();
+                    deleteConnection?.Close();
                     return;
                 }
                 catch (Exception ex)
@@ -142,7 +142,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 Popup.ShowPopup(this, SystemIcons.Error,
                                     "Error while connecting to the database when trying to undo the SQL-insertions...",
                                     ex, PopupButtons.Ok)));
-                    deleteConnection.Close();
+                    deleteConnection?.Close();
                     SetUiState(true);
                     return;
                 }
@@ -485,7 +485,7 @@ namespace nUpdate.Administration.UI.Dialogs
             packagesList.MakeCollapsable();
             statisticsDataGridView.RowHeadersVisible = false;
 
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 checkUpdateConfigurationLinkLabel.Enabled = false;
                 addButton.Enabled = false;
@@ -553,13 +553,13 @@ namespace nUpdate.Administration.UI.Dialogs
                             statisticsStatusLabel.Text = "Gathering statistics...";
                         }));
 
-                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                       $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                       $"UID='{Project.SqlUsername}';" +
+                                       $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                _queryConnection = new MySqlConnection(connectionString);
                 try
                 {
+                    _queryConnection = new MySqlConnection(connectionString);
                     _queryConnection.Open();
                 }
                 catch (MySqlException ex)
@@ -772,7 +772,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to add a package a network connection is required because the update configuration must be downloaded from the server.",
@@ -824,7 +824,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            if (!ConnectionChecker.IsConnectionAvailable() && correspondingPackage.IsReleased)
+            if (!ConnectionManager.IsConnectionAvailable() && correspondingPackage.IsReleased)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to edit a package, which is already existing on the server, a network connection is required because the update configuration must be downloaded from the server.",
@@ -1199,13 +1199,14 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                    var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                           $"UID={Project.SqlUsername};" +
-                                           $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                    var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                           $"UID='{Project.SqlUsername}';" +
+                                           $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                    var insertConnection = new MySqlConnection(connectionString);
+                    MySqlConnection insertConnection = null;
                     try
                     {
+                        insertConnection = new MySqlConnection(connectionString);
                         insertConnection.Open();
                     }
                     catch (MySqlException ex)
@@ -1215,7 +1216,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
-                        insertConnection.Close();
+                        insertConnection?.Close();
                         SetUiState(true);
                         return;
                     }
@@ -1226,7 +1227,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
-                        insertConnection.Close();
+                        insertConnection?.Close();
                         SetUiState(true);
                         return;
                     }
@@ -1429,7 +1430,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private async void CheckUpdateConfigurationStatus(Uri configFileUri)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Invoke(
                     new Action(
@@ -1700,7 +1701,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private bool _shouldKeepErrorsSecret;
 
-        private void deleteButton_Click(object sender, EventArgs e)
+        private async void deleteButton_Click(object sender, EventArgs e)
         {
             if (packagesList.SelectedItems.Count == 0)
                 return;
@@ -1711,7 +1712,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (answer != DialogResult.Yes)
                 return;
 
-            DeletePackage();
+            await DeletePackage();
         }
 
         /// <summary>
@@ -1755,7 +1756,11 @@ namespace nUpdate.Administration.UI.Dialogs
                         {
                             updateConfig.Remove(
                                 updateConfig.First(
-                                    item => item.LiteralVersion == (string) ((ListViewItem) enumerator.Current).Tag));
+                                    item =>
+                                    {
+                                        var listViewItem = (ListViewItem) enumerator.Current;
+                                        return listViewItem != null && item.LiteralVersion == (string) listViewItem.Tag;
+                                    }));
                         }
                         catch
                         {
@@ -1820,7 +1825,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     var selectedItem = (ListViewItem) enumerator.Current;
                     ListViewGroup releasedGroup = null;
                     Invoke(new Action(() => releasedGroup = packagesList.Groups[0]));
-                    if (selectedItem.Group == releasedGroup) // Must be deleted online, too.
+                    if (selectedItem != null && selectedItem.Group == releasedGroup) // Must be deleted online, too.
                     {
                         Invoke(
                             new Action(
@@ -1863,9 +1868,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
                     try
                     {
-                        Directory.Delete(
-                            Path.Combine(Program.Path, "Projects", Project.Name, selectedItem.Tag.ToString()),
-                            true);
+                        if (selectedItem != null)
+                            Directory.Delete(
+                                Path.Combine(Program.Path, "Projects", Project.Name, selectedItem.Tag.ToString()),
+                                true);
                     }
                     catch (Exception ex)
                     {
@@ -1898,7 +1904,11 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         Project.Packages.Remove(
                             Project.Packages.First(
-                                item => item.Version == (string) ((ListViewItem) enumerator.Current).Tag));
+                                item =>
+                                {
+                                    var listViewItem = (ListViewItem) enumerator.Current;
+                                    return listViewItem != null && item.Version == (string) listViewItem.Tag;
+                                }));
                         UpdateProject.SaveProject(Project.Path, Project);
                     }
                     catch (Exception ex)
@@ -1918,14 +1928,14 @@ namespace nUpdate.Administration.UI.Dialogs
                             new Action(
                                 () => loadingLabel.Text = "Connecting to SQL-server..."));
 
-                        var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                               $"UID={Project.SqlUsername};" +
-                                               $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                        var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                               $"UID='{Project.SqlUsername}';" +
+                                               $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
-                        var deleteConnection = new MySqlConnection(connectionString);
-
+                        MySqlConnection deleteConnection = null;
                         try
                         {
+                            deleteConnection = new MySqlConnection(connectionString);
                             deleteConnection.Open();
                         }
                         catch (MySqlException ex)
@@ -1935,7 +1945,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     () =>
                                         Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                             ex, PopupButtons.Ok)));
-                            deleteConnection.Close();
+                            deleteConnection?.Close();
                             SetUiState(true);
                             return;
                         }
@@ -1947,7 +1957,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                         Popup.ShowPopup(this, SystemIcons.Error,
                                             "Error while connecting to the database.",
                                             ex, PopupButtons.Ok)));
-                            deleteConnection.Close();
+                            deleteConnection?.Close();
                             SetUiState(true);
                             return;
                         }
@@ -1957,8 +1967,9 @@ namespace nUpdate.Administration.UI.Dialogs
                                 () => loadingLabel.Text = "Executing SQL-commands..."));
 
                         var queryCommand = deleteConnection.CreateCommand();
-                        queryCommand.CommandText =
-                            $"SELECT `ID` FROM `Version` WHERE `Version` = \"{selectedItem.Tag}\"";
+                        if (selectedItem != null)
+                            queryCommand.CommandText =
+                                $"SELECT `ID` FROM `Version` WHERE `Version` = \"{selectedItem.Tag}\"";
 
                         int versionId;
                         MySqlDataReader dataReader = null;
@@ -2010,7 +2021,8 @@ DELETE FROM Version WHERE `ID` = {0};", versionId);
                         }
                     }
 
-                    _updateLog.Write(LogEntry.Delete, new UpdateVersion((string) selectedItem.Tag).FullText);
+                    if (selectedItem != null)
+                        _updateLog.Write(LogEntry.Delete, new UpdateVersion((string) selectedItem.Tag).FullText);
                 }
 
                 SetUiState(true);

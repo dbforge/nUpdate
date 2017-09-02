@@ -2,9 +2,9 @@
 
 # nUpdate - .NET Update Solution
 
-[![Release](https://img.shields.io/badge/release-v3.1.2-blue.svg)](https://github.com/ProgTrade/nUpdate/releases)
-[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.ProvideTAP-v3.1.2-red.svg)](https://www.nuget.org/packages/nUpdate.ProvideTAP/)
-[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.WithoutTAP-v3.1.2-red.svg)](https://www.nuget.org/packages/nUpdate.WithoutTAP/)  
+[![Release](https://img.shields.io/badge/release-v3.1.5-blue.svg)](https://github.com/ProgTrade/nUpdate/releases)
+[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.ProvideTAP-v3.1.5-red.svg)](https://www.nuget.org/packages/nUpdate.ProvideTAP/)
+[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.WithoutTAP-v3.1.5-red.svg)](https://www.nuget.org/packages/nUpdate.WithoutTAP/)  
 [![Issues](https://img.shields.io/github/issues/ProgTrade/nUpdate.svg)](https://github.com/ProgTrade/nUpdate/issues)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/ProgTrade/nUpdate/master/LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
@@ -28,7 +28,7 @@ Also, nUpdate is designed to fit in with all operating systems since Windows Vis
 - Smart statistics about the downloads of your published updates
 - Supports very large update packages
 - ...
- 
+
 
 ## Installation
 
@@ -39,15 +39,15 @@ You can get the necessary libraries and applications from the current [releases]
 If you want to use nUpdate with the Taskbased Asynchronous Pattern including `async` and `await`, then install this package:
 
 ```
-PM> Install-Package nUpdate.ProvideTAP -Version 3.1.2 
+PM> Install-Package nUpdate.ProvideTAP -Version 3.1.5
 ```
 
 Otherwise, if you want to use the Eventbased Asynchronous Pattern only, make sure to install this package:
 
 ```
-PM> Install-Package nUpdate.WithoutTAP -Version 3.1.2
+PM> Install-Package nUpdate.WithoutTAP -Version 3.1.5
 ```
- 
+
 ## Web
 * [nUpdate] - The official website of nUpdate.
 * [@nUpdateLib] - The official twitter account of nUpdate.

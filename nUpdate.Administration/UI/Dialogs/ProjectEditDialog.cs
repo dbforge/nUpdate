@@ -460,8 +460,9 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
-                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
+                        myConnectionString = $"SERVER='{SqlWebUrl}';" + $"DATABASE='{SqlDatabaseName}';" +
+                                             $"UID='{SqlUsername}';" +
+                                             $"PASSWORD='{sqlPasswordTextBox.Text}';";
                     }));
 
                     myConnection = new MySqlConnection(myConnectionString);
@@ -474,7 +475,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -485,7 +486,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -599,8 +600,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
-                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
+                        myConnectionString = $"SERVER='{SqlWebUrl}';" + $"DATABASE='{SqlDatabaseName}';" +
+                                             $"UID='{SqlUsername}';" +
+                                             $"PASSWORD='{sqlPasswordTextBox.Text}';";
                     }));
 
                     myConnection = new MySqlConnection(myConnectionString);
@@ -613,7 +615,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -624,7 +626,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                             () =>
                                 Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                     ex, PopupButtons.Ok)));
-                    myConnection.Close();
+                    myConnection?.Close();
                     Invoke(new Action(Close));
                     return;
                 }
@@ -701,7 +703,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
         private void ProjectEditDialog_Load(object sender, EventArgs e)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to edit a project a network connection is required in order to communicate with the server.",
@@ -906,7 +908,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             {
                 if (useStatisticsServerRadioButton.Checked)
                 {
-                    if ((Project.SqlDatabaseName == null && SqlDatabaseName == null) ||
+                    if (Project.SqlDatabaseName == null && SqlDatabaseName == null ||
                         string.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
@@ -1326,13 +1328,15 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     string myConnectionString = null;
                     Invoke(new Action(() =>
                     {
-                        myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
-                                             $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
+                        myConnectionString = $"SERVER='{SqlWebUrl}';" + $"DATABASE='{SqlDatabaseName}';" +
+                                             $"UID='{SqlUsername}';" +
+                                             $"PASSWORD='{sqlPasswordTextBox.Text}';";
                     }));
 
-                    var myConnection = new MySqlConnection(myConnectionString);
+                    MySqlConnection myConnection = null;
                     try
                     {
+                        myConnection = new MySqlConnection(myConnectionString);
                         myConnection.Open();
                     }
                     catch (MySqlException ex)
@@ -1342,7 +1346,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
                                         ex, PopupButtons.Ok)));
-                        myConnection.Close();
+                        myConnection?.Close();
                         Reset();
                         return;
                     }
@@ -1353,7 +1357,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                                 () =>
                                     Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
                                         ex, PopupButtons.Ok)));
-                        myConnection.Close();
+                        myConnection?.Close();
                         Reset();
                         return;
                     }
@@ -1498,10 +1502,10 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             string myConnectionString = null;
                             Invoke(new Action(() =>
                             {
-                                myConnectionString = $"SERVER={Project.SqlWebUrl};" +
-                                                     $"DATABASE={Project.SqlDatabaseName};" +
-                                                     $"UID={Project.SqlUsername};" +
-                                                     $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                                myConnectionString =
+                                    $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                    $"UID='{Project.SqlUsername}';" +
+                                    $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
                             }));
 
                             myConnection = new MySqlConnection(myConnectionString);
@@ -1512,25 +1516,28 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             Invoke(
                                 new Action(
                                     () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                            ex, PopupButtons.Ok)));
-                            if (myConnection != null)
-                                myConnection.Close();
-                            Reset();
-                            return;
+                                    {
+                                        Popup.ShowPopup(this, SystemIcons.Warning,
+                                            "An MySQL-exception occured. The database data could not be removed automatically.",
+                                            ex, PopupButtons.Ok);
+                                    }));
+                            goto saveData;
                         }
                         catch (Exception ex)
                         {
                             Invoke(
                                 new Action(
                                     () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error,
-                                            "Error while connecting to the database.",
-                                            ex, PopupButtons.Ok)));
-                            if (myConnection != null)
-                                myConnection.Close();
-                            Reset();
-                            return;
+                                    {
+                                        Popup.ShowPopup(this, SystemIcons.Warning,
+                                            "Error while connecting to the database. The database data could not be removed automatically.",
+                                            ex, PopupButtons.Ok);
+                                    }));
+                            goto saveData;
+                        }
+                        finally
+                        {
+                            myConnection?.Close();
                         }
 
                         Invoke(
@@ -1538,11 +1545,12 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                                 () =>
                                     loadingLabel.Text = "Executing setup commands..."));
 
-                        var command = myConnection.CreateCommand();
-                        command.CommandText = setupString;
+                        MySqlCommand command = null;
 
                         try
                         {
+                            command = myConnection.CreateCommand();
+                            command.CommandText = setupString;
                             command.ExecuteNonQuery();
                             _sqlDataDeleted = true;
                         }
@@ -1551,18 +1559,21 @@ DELETE FROM Application WHERE `ID` = _APPID;";
                             Invoke(
                                 new Action(
                                     () =>
-                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        Popup.ShowPopup(this, SystemIcons.Error,
+                                            "Error while executing the commands. The database data could not be removed automatically.",
                                             ex, PopupButtons.Ok)));
-                            Reset();
-                            return;
+                            //Reset();
                         }
                         finally
                         {
                             myConnection.Close();
-                            command.Dispose();
+                            command?.Dispose();
                         }
                     }
                 }
+
+                // Save the project data
+                saveData:
 
                 Project.Name = _name;
                 Project.Path = _localPath;
@@ -1788,8 +1799,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
             if (_isSetByUser)
             {
                 var packagesToAffectDialog = new PackagesToAffectDialog();
-                if (!_useStatistics && useStatisticsServerRadioButton.Checked &&
-                    (Project.Packages != null && Project.Packages.Count != 0))
+                if (!_useStatistics && useStatisticsServerRadioButton.Checked && Project.Packages != null && Project.Packages.Count != 0)
                 {
                     foreach (var existingPackage in Project.Packages)
                     {
@@ -1855,7 +1865,7 @@ DELETE FROM Application WHERE `ID` = _APPID;";
 
         private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_isSetByUser || (ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1))
+            if (!_isSetByUser || ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1)
                 return;
             var ftpAssemblyInputDialog = new FtpAssemblyInputDialog();
             if (ftpAssemblyInputDialog.ShowDialog() == DialogResult.Cancel)

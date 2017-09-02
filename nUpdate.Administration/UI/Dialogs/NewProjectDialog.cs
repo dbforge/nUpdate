@@ -237,7 +237,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
@@ -721,8 +721,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                         string myConnectionString = null;
                         Invoke(new Action(() =>
                         {
-                            myConnectionString = $"SERVER={SqlWebUrl};" + $"DATABASE={SqlDatabaseName};" +
-                                                 $"UID={SqlUsername};" + $"PASSWORD={sqlPasswordTextBox.Text};";
+                            myConnectionString = $"SERVER='{SqlWebUrl}';" + $"DATABASE='{SqlDatabaseName}';" +
+                                                 $"UID='{SqlUsername}';" +
+                                                 $"PASSWORD='{sqlPasswordTextBox.Text}';";
                         }));
 
                         myConnection = new MySqlConnection(myConnectionString);
