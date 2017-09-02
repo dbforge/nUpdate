@@ -289,6 +289,7 @@ namespace nUpdate.Updating
             _searchCancellationTokenSource?.Dispose();
             _searchCancellationTokenSource = new CancellationTokenSource();
 
+            OnUpdateSearchStarted(this, EventArgs.Empty);
             if (!ConnectionChecker.IsConnectionAvailable())
                 return false;
 
@@ -381,6 +382,8 @@ namespace nUpdate.Updating
             _downloadCancellationTokenSource?.Dispose();
             _downloadCancellationTokenSource = new CancellationTokenSource();
 
+            OnUpdateDownloadStarted(this, EventArgs.Empty);
+
             long received = 0;
             var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
                 .Where(updatePackageSize => updatePackageSize != null)
@@ -458,6 +461,7 @@ namespace nUpdate.Updating
                                 }
                                 catch (Exception ex)
                                 {
+                                    OnStatisticsEntryFailed(ex);
                                     throw new StatisticsException(ex.Message);
                                 }
                             }
