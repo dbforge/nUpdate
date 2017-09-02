@@ -3,12 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using nUpdate.Administration.Core.History;
 using nUpdate.Core;
-using nUpdate.Updating;
-using Newtonsoft.Json.Linq;
 using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Core.Application

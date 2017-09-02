@@ -167,14 +167,15 @@ namespace nUpdate.Administration.UI.Dialogs
             if (Project.UseStatistics)
             {
                 Invoke(new Action(() => loadingLabel.Text = "Undoing SQL-entries..."));
-                var connectionString = $"SERVER={Project.SqlWebUrl};" + $"DATABASE={Project.SqlDatabaseName};" +
-                                       $"UID={Project.SqlUsername};" +
-                                       $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                       $"UID='{Project.SqlUsername}';" +
+                                       $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
                 bool connectingFailed = false;
-                var deleteConnection = new MySqlConnection(connectionString);
+                MySqlConnection deleteConnection = null;
                 try
                 {
+                    deleteConnection = new MySqlConnection(connectionString);
                     deleteConnection.Open();
                 }
                 catch (Exception ex)
@@ -208,7 +209,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
-                deleteConnection.Close();
+                deleteConnection?.Close();
                 Settings.Default.VersionID -= 1;
                 Settings.Default.Save();
                 Settings.Default.Reload();
@@ -681,10 +682,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
                         try
                         {
-                            var connectionString = $"SERVER={Project.SqlWebUrl};" +
-                                                   $"DATABASE={Project.SqlDatabaseName};" +
-                                                   $"UID={Project.SqlUsername};" +
-                                                   $"PASSWORD={SqlPassword.ConvertToInsecureString()};";
+                            var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                                   $"UID='{Project.SqlUsername}';" +
+                                                   $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
 
                             _insertConnection = new MySqlConnection(connectionString);
                             _insertConnection.Open();
