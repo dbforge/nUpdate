@@ -55,10 +55,10 @@ namespace nUpdate.UI.Dialogs
             double necessarySpaceToFree;
             if (!SizeHelper.HasEnoughSpace(Updater.TotalSize, out necessarySpaceToFree))
             {
-                var packageSizeData = SizeHelper.ConvertSize(Updater.TotalSize);
-                var spaceToFreeData = SizeHelper.ConvertSize(necessarySpaceToFree);
+                var packageSizeString = SizeHelper.ConvertSize((long)Updater.TotalSize);
+                var spaceToFreeString = SizeHelper.ConvertSize((long)necessarySpaceToFree);
                 Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.",
-                    $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeData.Item1} {packageSizeData.Item2}). Please free a minimum of {spaceToFreeData.Item1} {spaceToFreeData.Item2} to make sure the updates can be downloaded and installed without any problems.",
+                    $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeString}). Please free a minimum of {spaceToFreeString} to make sure the updates can be downloaded and installed without any problems.",
                     PopupButtons.Ok);
                 return;
             }
@@ -96,8 +96,8 @@ namespace nUpdate.UI.Dialogs
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            var size = SizeHelper.ConvertSize(Updater.TotalSize);
-            updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, size.Item1)} {size.Item2}";
+            var size = SizeHelper.ConvertSize((long)Updater.TotalSize);
+            updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, size)}";
 
             Icon = _appIcon;
             Text = Application.ProductName;

@@ -134,7 +134,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Controls\BottomPanel.cs" />
-    <Compile Include="Core\ConnectionChecker.cs" />
+    <Compile Include="Core\ConnectionManager.cs" />
     <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
       <SubType>Form</SubType>
     </Compile>

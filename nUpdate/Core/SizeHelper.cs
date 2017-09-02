@@ -2,27 +2,18 @@
 
 using System;
 using System.IO;
+using System.Text;
+using nUpdate.Core.Win32;
 
 namespace nUpdate.Core
 {
     public class SizeHelper
     {
-        private const float GB = 1073741824;
-        private const int MB = 1048576;
-        private const int KB = 1024;
-
-        public static Tuple<double, string> ConvertSize(double packageSize)
+        public static string ConvertSize(long packageSize)
         {
-            if (packageSize >= GB / 10)
-                return new Tuple<double, string>(Math.Round(packageSize / GB, 1), "GB");
-            if (packageSize >= MB / 10)
-                return new Tuple<double, string>(Math.Round(packageSize / MB, 1), "MB");
-            if (packageSize >= KB / 10)
-                return new Tuple<double, string>(Math.Round(packageSize / KB, 1), "KB");
-            if (packageSize >= 1)
-                return new Tuple<double, string>(packageSize, "B");
-
-            return new Tuple<double, string>(double.NaN, "NaN");
+            var sb = new StringBuilder(20);
+            NativeMethods.StrFormatByteSize(packageSize, sb, 20);
+            return sb.ToString();
         }
 
         public static bool HasEnoughSpace(double packageSize, out double necessaryBytesToFree)

@@ -485,7 +485,7 @@ namespace nUpdate.Administration.UI.Dialogs
             packagesList.MakeCollapsable();
             statisticsDataGridView.RowHeadersVisible = false;
 
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 checkUpdateConfigurationLinkLabel.Enabled = false;
                 addButton.Enabled = false;
@@ -772,7 +772,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to add a package a network connection is required because the update configuration must be downloaded from the server.",
@@ -824,7 +824,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
-            if (!ConnectionChecker.IsConnectionAvailable() && correspondingPackage.IsReleased)
+            if (!ConnectionManager.IsConnectionAvailable() && correspondingPackage.IsReleased)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
                     "No active network connection was found. In order to edit a package, which is already existing on the server, a network connection is required because the update configuration must be downloaded from the server.",
@@ -1430,7 +1430,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private async void CheckUpdateConfigurationStatus(Uri configFileUri)
         {
-            if (!ConnectionChecker.IsConnectionAvailable())
+            if (!ConnectionManager.IsConnectionAvailable())
             {
                 Invoke(
                     new Action(

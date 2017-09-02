@@ -14,7 +14,7 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanReturnConnectionStatus()
         {
-            Assert.IsTrue(ConnectionChecker.IsConnectionAvailable());
+            Assert.IsTrue(ConnectionManager.IsConnectionAvailable());
         }
     }
 }

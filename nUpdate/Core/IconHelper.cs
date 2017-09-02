@@ -27,7 +27,7 @@ namespace nUpdate.Core
 
             Uri uri;
             if (filePath == null)
-                throw new ArgumentException($"'{"null"}' is not valid for '{"filePath"}'", nameof(filePath));
+                throw new ArgumentException("\'null\' is not valid for \'filePath\'", nameof(filePath));
 
             try
             {

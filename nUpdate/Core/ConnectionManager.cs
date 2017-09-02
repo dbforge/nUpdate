@@ -4,12 +4,8 @@ using nUpdate.Core.Win32;
 
 namespace nUpdate.Core
 {
-    public class ConnectionChecker
+    public class ConnectionManager
     {
-        /// <summary>
-        ///     Checks if an internet connection is available.
-        /// </summary>
-        /// <returns>This function returns if a internet connection is available.</returns>
         public static bool IsConnectionAvailable()
         {
             int desc;
