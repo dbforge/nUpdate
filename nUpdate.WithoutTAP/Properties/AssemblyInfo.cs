@@ -1,12 +1,14 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿// Copyright © Dominic Beger 2017
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("nUpdate.WithoutTAP")]
-[assembly: AssemblyDescription("The nUpdate class library the provides all features used for updating based on events.")]
+[assembly:
+    AssemblyDescription("The nUpdate class library the provides all features used for updating based on events.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("nUpdate.WithoutTAP")]

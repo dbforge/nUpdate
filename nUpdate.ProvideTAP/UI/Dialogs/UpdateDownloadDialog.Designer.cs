@@ -103,6 +103,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
             this.Load += new System.EventHandler(this.UpdateDownloadDialog_Load);
+            this.Shown += new System.EventHandler(this.UpdateDownloadDialog_Shown);
             this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

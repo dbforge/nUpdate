@@ -25,8 +25,8 @@ namespace nUpdate.UI.Popups
                 Buttons = buttons,
                 StartPosition = FormStartPosition.CenterParent
             };
-
-            return popupWindow.ShowDialog();
+            
+            return popupWindow.ShowDialog(Form.ActiveForm);
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace nUpdate.UI.Popups
                 StartPosition = FormStartPosition.CenterParent,
                 Exception = ex
             };
-
-            return popupWindow.ShowDialog();
+            
+            return popupWindow.ShowDialog(Form.ActiveForm);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace nUpdate.UI.Popups
                 Exception = exception
             };
 
-            return popupWindow.ShowDialog();
+            return popupWindow.ShowDialog(owner);
         }
     }
 }

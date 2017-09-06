@@ -28,7 +28,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.ProvideTAP", "nUpda
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.WithoutTAP", "nUpdate.WithoutTAP\nUpdate.WithoutTAP.csproj", "{CE1809EE-88FD-449C-81AB-6409F9B4ECEA}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "nUpdate.Shared", "nUpdate.Shared\nUpdate.Shared.shproj", "{1FC358A3-632D-4E44-8533-057D72176220}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		nUpdate.Shared\nUpdate.Shared.projitems*{1fc358a3-632d-4e44-8533-057d72176220}*SharedItemsImports = 13
+		nUpdate.Shared\nUpdate.Shared.projitems*{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}*SharedItemsImports = 4
+		nUpdate.Shared\nUpdate.Shared.projitems*{ce1809ee-88fd-449c-81ab-6409f9b4ecea}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

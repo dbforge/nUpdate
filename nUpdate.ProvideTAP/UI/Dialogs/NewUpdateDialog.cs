@@ -15,21 +15,17 @@ using nUpdate.Updating;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class NewUpdateDialog : BaseDialog
+    internal partial class NewUpdateDialog : BaseDialog
     {
-        private const float GB = 1073741824;
         private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
         private bool _allowCancel;
         private LocalizationProperties _lp;
 
-        public NewUpdateDialog()
+        internal NewUpdateDialog()
         {
             InitializeComponent();
         }
 
-        /// <summary>
-        ///     Sets a list of areas for this update's operations.
-        /// </summary>
         public List<OperationArea> OperationAreas { get; set; }
 
         internal static void AddShieldToButton(Button btn)
@@ -45,18 +41,13 @@ namespace nUpdate.UI.Dialogs
             Process.Start(e.LinkText);
         }
 
-        public void CloseDialog(object state)
-        {
-            Close();
-        }
-
         private void installButton_Click(object sender, EventArgs e)
         {
             double necessarySpaceToFree;
-            if (!SizeHelper.HasEnoughSpace(Updater.TotalSize, out necessarySpaceToFree))
+            if (!SizeHelper.HasEnoughSpace(UpdateManager.TotalSize, out necessarySpaceToFree))
             {
-                var packageSizeString = SizeHelper.ConvertSize((long)Updater.TotalSize);
-                var spaceToFreeString = SizeHelper.ConvertSize((long)necessarySpaceToFree);
+                var packageSizeString = SizeHelper.ConvertSize((long) UpdateManager.TotalSize);
+                var spaceToFreeString = SizeHelper.ConvertSize((long) necessarySpaceToFree);
                 Popup.ShowPopup(this, SystemIcons.Warning, "Not enough disk space.",
                     $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeString}). Please free a minimum of {spaceToFreeString} to make sure the updates can be downloaded and installed without any problems.",
                     PopupButtons.Ok);
@@ -76,27 +67,28 @@ namespace nUpdate.UI.Dialogs
 
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
+                UpdateManager.CultureFilePaths);
 
             headerLabel.Text =
                 string.Format(
-                    Updater.PackageConfigurations.Count() > 1
+                    UpdateManager.PackageConfigurations.Count() > 1
                         ? _lp.NewUpdateDialogMultipleUpdatesHeader
-                        : _lp.NewUpdateDialogSingleUpdateHeader, Updater.PackageConfigurations.Count());
+                        : _lp.NewUpdateDialogSingleUpdateHeader, UpdateManager.PackageConfigurations.Count());
             infoLabel.Text = string.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
             var availableVersions =
-                Updater.PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
+                UpdateManager.PackageConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)).ToArray();
             newestVersionLabel.Text = string.Format(_lp.NewUpdateDialogAvailableVersionsText,
-                Updater.PackageConfigurations.Count() <= 2
+                UpdateManager.PackageConfigurations.Count() <= 2
                     ? string.Join(", ", availableVersions.Select(item => item.FullText))
                     : $"{UpdateVersion.GetLowestUpdateVersion(availableVersions).FullText} - {UpdateVersion.GetHighestUpdateVersion(availableVersions).FullText}");
             currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText,
-                Updater.CurrentVersion.FullText);
+                UpdateManager.CurrentVersion.FullText);
             changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
             cancelButton.Text = _lp.CancelButtonText;
             installButton.Text = _lp.InstallButtonText;
 
-            var size = SizeHelper.ConvertSize((long)Updater.TotalSize);
+            var size = SizeHelper.ConvertSize((long) UpdateManager.TotalSize);
             updateSizeLabel.Text = $"{string.Format(_lp.NewUpdateDialogSizeText, size)}";
 
             Icon = _appIcon;
@@ -104,15 +96,12 @@ namespace nUpdate.UI.Dialogs
             iconPictureBox.Image = _appIcon.ToBitmap();
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
 
-            foreach (var updateConfiguration in Updater.PackageConfigurations)
+            foreach (var updateConfiguration in UpdateManager.PackageConfigurations)
             {
                 var versionText = new UpdateVersion(updateConfiguration.LiteralVersion).FullText;
-                var changelogText = updateConfiguration.Changelog.ContainsKey(Updater.LanguageCulture)
-                    ? updateConfiguration.Changelog.First(item => Equals(item.Key, Updater.LanguageCulture)).Value
+                var changelogText = updateConfiguration.Changelog.ContainsKey(UpdateManager.LanguageCulture)
+                    ? updateConfiguration.Changelog.First(item => Equals(item.Key, UpdateManager.LanguageCulture)).Value
                     : updateConfiguration.Changelog.First(item => item.Key.Name == "en").Value;
-
-                if (Updater.TotalSize > GB)
-                    changelogTextBox.Text += _lp.NewUpdateDialogBigPackageWarning;
 
                 changelogTextBox.Text +=
                     string.Format(string.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
@@ -130,14 +119,6 @@ namespace nUpdate.UI.Dialogs
             accessLabel.Text =
                 $"{_lp.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
             _allowCancel = true;
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            if (dialogResultReference != null)
-                ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
         }
     }
 }
