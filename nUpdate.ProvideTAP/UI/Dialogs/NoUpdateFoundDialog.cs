@@ -8,12 +8,12 @@ using nUpdate.Core.Localization;
 
 namespace nUpdate.UI.Dialogs
 {
-    public partial class NoUpdateFoundDialog : BaseDialog
+    internal partial class NoUpdateFoundDialog : BaseDialog
     {
         private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
         private LocalizationProperties _lp;
 
-        public NoUpdateFoundDialog()
+        internal NoUpdateFoundDialog()
         {
             InitializeComponent();
         }
@@ -23,14 +23,10 @@ namespace nUpdate.UI.Dialogs
             DialogResult = DialogResult.OK;
         }
 
-        public void CloseDialog(object state)
-        {
-            Close();
-        }
-
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.CultureFilePaths);
+            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
+                UpdateManager.CultureFilePaths);
 
             closeButton.Text = _lp.CloseButtonText;
             headerLabel.Text = _lp.NoUpdateDialogHeader;
@@ -38,14 +34,6 @@ namespace nUpdate.UI.Dialogs
 
             Icon = _appIcon;
             Text = Application.ProductName;
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            if (dialogResultReference != null)
-                ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
-            else
-                ShowDialog();
         }
     }
 }
