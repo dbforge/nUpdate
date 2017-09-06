@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using nUpdate.Core;
 using nUpdate.Core.Operations;
 
@@ -85,10 +86,11 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
+        /// <param name="cancellationTokenSource">The optional <see cref="CancellationTokenSource"/> to use for canceling the operation.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
-        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy)
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy, CancellationTokenSource cancellationTokenSource = null)
         {
-            return Download(configFileUri, null, proxy);
+            return Download(configFileUri, null, proxy, cancellationTokenSource);
         }
 
         /// <summary>
@@ -97,9 +99,10 @@ namespace nUpdate.Updating
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="credentials">The HTTP authentication credentials.</param>
         /// <param name="proxy">The optional proxy to use.</param>
+        /// <param name="cancellationToken">The optional <see cref="CancellationTokenSource"/> to use for canceling the operation.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials,
-            WebProxy proxy)
+            WebProxy proxy, CancellationTokenSource cancellationTokenSource = null)
         {
             using (var wc = new WebClientWrapper(10000))
             {
@@ -109,6 +112,9 @@ namespace nUpdate.Updating
 
                 if (proxy != null)
                     wc.Proxy = proxy;
+
+                // Register the cancel async method of the webclient to be called
+                cancellationTokenSource?.Token.Register(wc.CancelAsync);
 
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
