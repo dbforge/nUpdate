@@ -5,7 +5,7 @@ using System;
 namespace nUpdate.UpdateEventArgs
 {
     /// <summary>
-    ///     Provides data for the <see cref="UpdateManager.UpdateDownloadProgressChanged" />-event.
+    ///     Provides event data for changing progress when downloading updates.
     /// </summary>
     public class UpdateDownloadProgressChangedEventArgs : EventArgs
     {

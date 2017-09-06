@@ -84,8 +84,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\nUpdate.ProvideTAP\nUpdate.ProvideTAP.csproj">
+      <Project>{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}</Project>
+      <Name>nUpdate.ProvideTAP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
-      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
+      <Project>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</Project>
       <Name>nUpdate</Name>
     </ProjectReference>
   </ItemGroup>

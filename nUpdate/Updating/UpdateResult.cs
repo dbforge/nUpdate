@@ -10,7 +10,6 @@ namespace nUpdate.Updating
     internal class UpdateResult
     {
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
-        private UpdateConfiguration _newestConfiguration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
