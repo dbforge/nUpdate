@@ -1,6 +1,7 @@
 ﻿// Copyright © Dominic Beger 2017
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
@@ -39,3 +40,5 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("3.1.8.0")]
 [assembly: AssemblyFileVersion("3.1.8.0")]
+[assembly: InternalsVisibleTo("nUpdate.ProvideTAP")]
+[assembly: InternalsVisibleTo("nUpdate.WithoutTAP")]

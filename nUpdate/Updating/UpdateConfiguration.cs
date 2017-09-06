@@ -85,10 +85,7 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <returns>
-        ///     Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
-        ///     configurations.
-        /// </returns>
+        /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy)
         {
             return Download(configFileUri, null, proxy);
@@ -100,10 +97,7 @@ namespace nUpdate.Updating
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="credentials">The HTTP authentication credentials.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <returns>
-        ///     Returns an <see cref="IEnumerable" /> of type <see cref="UpdateConfiguration" /> containing the package
-        ///     configurations.
-        /// </returns>
+        /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials,
             WebProxy proxy)
         {
