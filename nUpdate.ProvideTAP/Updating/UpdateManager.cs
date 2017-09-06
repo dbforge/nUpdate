@@ -1,4 +1,5 @@
 // Copyright © Dominic Beger 2017
+// PROVIDE TAP
 
 using System;
 using System.Collections.Generic;
@@ -63,9 +64,7 @@ namespace nUpdate.Updating
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
             CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
         {
-            if (updateConfigurationFileUri == null)
-                throw new ArgumentNullException(nameof(updateConfigurationFileUri));
-            UpdateConfigurationFileUri = updateConfigurationFileUri;
+            UpdateConfigurationFileUri = updateConfigurationFileUri ?? throw new ArgumentNullException(nameof(updateConfigurationFileUri));
 
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException(nameof(publicKey));
@@ -286,10 +285,7 @@ namespace nUpdate.Updating
         {
             // It may be that this is not the first search call and previously saved data needs to be disposed.
             Cleanup();
-            _searchCancellationTokenSource?.Dispose();
-            _searchCancellationTokenSource = new CancellationTokenSource();
 
-            OnUpdateSearchStarted(this, EventArgs.Empty);
             if (!ConnectionManager.IsConnectionAvailable())
                 return false;
 
@@ -317,43 +313,55 @@ namespace nUpdate.Updating
             }
 
             TotalSize = updatePackageSize;
-            if (!_searchCancellationTokenSource.Token.IsCancellationRequested)
-                return true;
-
-            Cleanup();
-            throw new OperationCanceledException();
+            return true;
         }
 
         /// <summary>
         ///     Searches for updates, asynchronously.
         /// </summary>
         /// <seealso cref="SearchForUpdates" />
-        public
-#if PROVIDE_TAP
-      async Task<bool>
-#else
-            void
-#endif
-            SearchForUpdatesAsync()
+        public Task<bool> SearchForUpdatesAsync()
         {
-#if PROVIDE_TAP
-            return SearchForUpdates();
-#else
-            Task.Factory.StartNew(SearchForUpdates).ContinueWith(SearchTaskCompleted,
-                _searchCancellationTokenSource.Token,
-                TaskContinuationOptions.None, TaskScheduler.Default);
-#endif
-        }
+            return TaskEx.Run(() =>
+            {
+                // It may be that this is not the first search call and previously saved data needs to be disposed.
+                Cleanup();
+                _searchCancellationTokenSource?.Dispose();
+                _searchCancellationTokenSource = new CancellationTokenSource();
 
-        private void SearchTaskCompleted(Task<bool> task)
-        {
-            if (_searchCancellationTokenSource.IsCancellationRequested)
-                return;
+                if (!ConnectionManager.IsConnectionAvailable())
+                    return false;
 
-            var exception = task.Exception;
-            if (exception != null)
-                OnUpdateSearchFailed(exception.InnerException ?? exception);
-            OnUpdateSearchFinished(task.Result);
+                // Check for SSL and ignore it
+                ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+                var configuration =
+                    UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
+
+                var result = new UpdateResult(configuration, CurrentVersion,
+                    IncludeAlpha, IncludeBeta);
+                if (!result.UpdatesFound)
+                    return false;
+
+                PackageConfigurations = result.NewestConfigurations;
+                double updatePackageSize = 0;
+                foreach (var updateConfiguration in PackageConfigurations)
+                {
+                    var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
+                    if (newPackageSize == null)
+                        throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
+
+                    updatePackageSize += newPackageSize.Value;
+                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        updateConfiguration.Operations);
+                }
+
+                TotalSize = updatePackageSize;
+                if (!_searchCancellationTokenSource.Token.IsCancellationRequested)
+                    return true;
+
+                Cleanup();
+                throw new OperationCanceledException();
+            });
         }
 
         /// <summary>
@@ -374,19 +382,8 @@ namespace nUpdate.Updating
         /// <exception cref="IOException">An exception occured while writing to the file.</exception>
         /// <exception cref="OperationCanceledException">The download was canceled.</exception>
         /// <seealso cref="DownloadPackagesAsync" />
-        /// <seealso cref="DownloadPackagesTask" />
         public void DownloadPackages()
         {
-            _downloadCancellationTokenSource?.Dispose();
-            _downloadCancellationTokenSource = new CancellationTokenSource();
-
-            OnUpdateDownloadStarted(this, EventArgs.Empty);
-
-            long received = 0;
-            var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
-                .Where(updatePackageSize => updatePackageSize != null)
-                .Sum(updatePackageSize => updatePackageSize.Value);
-
             if (!Directory.Exists(_applicationUpdateDirectory))
                 Directory.CreateDirectory(_applicationUpdateDirectory);
 
@@ -395,13 +392,6 @@ namespace nUpdate.Updating
                 WebResponse webResponse = null;
                 try
                 {
-                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
-                    {
-                        DeletePackages();
-                        Cleanup();
-                        throw new OperationCanceledException();
-                    }
-
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
                     if (HttpAuthenticationCredentials != null)
                         webRequest.Credentials = HttpAuthenticationCredentials;
@@ -419,29 +409,10 @@ namespace nUpdate.Updating
                                 if (input == null)
                                     throw new Exception("The response stream couldn't be read.");
 
-                                if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
-                                {
-                                    DeletePackages();
-                                    Cleanup();
-                                    throw new OperationCanceledException();
-                                }
-
                                 var size = input.Read(buffer, 0, buffer.Length);
                                 while (size > 0)
                                 {
-                                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
-                                    {
-                                        fileStream.Flush();
-                                        fileStream.Close();
-                                        DeletePackages();
-                                        Cleanup();
-                                        throw new OperationCanceledException();
-                                    }
-
                                     fileStream.Write(buffer, 0, size);
-                                    received += size;
-                                    OnUpdateDownloadProgressChanged(received,
-                                        (long) total, (float) (received / total) * 100);
                                     size = input.Read(buffer, 0, buffer.Length);
                                 }
 
@@ -454,8 +425,6 @@ namespace nUpdate.Updating
 
                                 if (string.IsNullOrEmpty(response))
                                     return;
-                                OnStatisticsEntryFailed(new StatisticsException(string.Format(
-                                    _lp.StatisticsScriptExceptionText, response)));
                             }
                         }
                     }
@@ -466,19 +435,7 @@ namespace nUpdate.Updating
                 }
             }
         }
-
-        /// <summary>
-        ///     Downloads the available update packages from the server, asynchronously.
-        /// </summary>
-        public void DownloadPackagesAsync()
-        {
-            Task.Factory.StartNew(DownloadPackages).ContinueWith(DownloadTaskCompleted,
-                _downloadCancellationTokenSource.Token,
-                TaskContinuationOptions.None,
-                TaskScheduler.Default);
-        }
-
-#if PROVIDE_TAP
+        
         /// <summary>
         ///     Downloads the available update packages from the server, asynchronously.
         /// </summary>
@@ -561,7 +518,7 @@ namespace nUpdate.Updating
                                         HttpAuthenticationCredentials
                                 }.DownloadString(
                                     $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
-                            if (!String.IsNullOrEmpty(response))
+                            if (!string.IsNullOrEmpty(response))
                             {
                                 throw new StatisticsException(String.Format(
                                     _lp.StatisticsScriptExceptionText, response));
@@ -574,21 +531,6 @@ namespace nUpdate.Updating
                     webResponse?.Close();
                 }
             }
-        }
-
-
-#endif
-
-        private void DownloadTaskCompleted(Task task)
-        {
-            if (_downloadCancellationTokenSource.IsCancellationRequested)
-                return;
-
-            var exception = task.Exception;
-            if (exception != null)
-                OnUpdateDownloadFailed(exception.InnerException ?? exception);
-            else
-                OnUpdateDownloadFinished(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -789,92 +731,6 @@ namespace nUpdate.Updating
         {
             _packageFilePaths.Clear();
             _packageOperations.Clear();
-        }
-
-        /// <summary>
-        ///     Occurs when an update search is started.
-        /// </summary>
-        public event EventHandler<EventArgs> UpdateSearchStarted;
-
-        /// <summary>
-        ///     Occurs when an active update search has finished.
-        /// </summary>
-        public event EventHandler<UpdateSearchFinishedEventArgs> UpdateSearchFinished;
-
-        /// <summary>
-        ///     Occurs when an update search has failed.
-        /// </summary>
-        public event EventHandler<FailedEventArgs> UpdateSearchFailed;
-
-        /// <summary>
-        ///     Occurs when the download of the packages begins.
-        /// </summary>
-        public event EventHandler<EventArgs> PackagesDownloadStarted;
-
-        /// <summary>
-        ///     Occurs when the download of the packages fails.
-        /// </summary>
-        public event EventHandler<FailedEventArgs> PackagesDownloadFailed;
-
-        /// <summary>
-        ///     Occurs when the download progress of the packages has changed.
-        /// </summary>
-        public event EventHandler<UpdateDownloadProgressChangedEventArgs> PackagesDownloadProgressChanged;
-
-        /// <summary>
-        ///     Occurs when the download of the packages has finished.
-        /// </summary>
-        public event EventHandler<EventArgs> PackagesDownloadFinished;
-
-        /// <summary>
-        ///     Occurs when the statistics entry failed.
-        /// </summary>
-        /// <remarks>
-        ///     This event is meant to provide the user with a warning, if the statistic server entry fails. The update process
-        ///     should not be canceled as this does not cause any problems that could affect it.
-        /// </remarks>
-        public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
-        
-        protected virtual void OnUpdateSearchStarted(object sender, EventArgs e)
-        {
-            UpdateSearchStarted?.Invoke(sender, e);
-        }
-
-        protected virtual void OnUpdateSearchFinished(bool updateAvailable)
-        {
-            UpdateSearchFinished?.Invoke(this, new UpdateSearchFinishedEventArgs(updateAvailable));
-        }
-        
-        protected virtual void OnUpdateSearchFailed(Exception exception)
-        {
-            UpdateSearchFailed?.Invoke(this, new FailedEventArgs(exception));
-        }
-        
-        protected virtual void OnUpdateDownloadStarted(object sender, EventArgs e)
-        {
-            PackagesDownloadStarted?.Invoke(sender, e);
-        }
-
-        protected virtual void OnUpdateDownloadProgressChanged(long bytesReceived, long totalBytesToReceive,
-            float percentage)
-        {
-            PackagesDownloadProgressChanged?.Invoke(this,
-                new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
-        }
-
-        protected virtual void OnUpdateDownloadFinished(object sender, EventArgs e)
-        {
-            PackagesDownloadFinished?.Invoke(sender, e);
-        }
-        
-        protected virtual void OnUpdateDownloadFailed(Exception exception)
-        {
-            PackagesDownloadFailed?.Invoke(this, new FailedEventArgs(exception));
-        }
-        
-        protected virtual void OnStatisticsEntryFailed(Exception exception)
-        {
-            StatisticsEntryFailed?.Invoke(this, new FailedEventArgs(exception));
         }
     }
 }
