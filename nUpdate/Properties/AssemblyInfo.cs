@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 // die mit einer Assembly verknüpft sind.
 
 [assembly: AssemblyTitle("nUpdate")]
-[assembly: AssemblyDescription("A class library for updating .NET-applications.")]
+[assembly: AssemblyDescription("The internal nUpdate class library that provides basic classes used for updating.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
