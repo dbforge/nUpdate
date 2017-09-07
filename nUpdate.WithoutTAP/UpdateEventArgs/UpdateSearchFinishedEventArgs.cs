@@ -1,6 +1,7 @@
 ﻿// Copyright © Dominic Beger 2017
 
 using System;
+using nUpdate.Updating;
 
 namespace nUpdate.UpdateEventArgs
 {
