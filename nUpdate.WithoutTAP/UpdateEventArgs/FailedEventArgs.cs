@@ -21,6 +21,6 @@ namespace nUpdate.UpdateEventArgs
         /// <summary>
         ///     Gets or sets a value representing the exception that occured.
         /// </summary>
-        public Exception Exception { get; set; }
+        public Exception Exception { get; }
     }
 }
