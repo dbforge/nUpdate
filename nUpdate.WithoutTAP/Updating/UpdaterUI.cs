@@ -16,7 +16,7 @@ namespace nUpdate.Updating
         private readonly ManualResetEvent _searchResetEvent = new ManualResetEvent(false);
 
         /// <summary>
-        ///     Shows the built-in UI while the updates are managed.
+        ///     Starts the complete update process and uses the integrated user interface for user interaction.
         /// </summary>
         public void ShowUserInterface()
         {
