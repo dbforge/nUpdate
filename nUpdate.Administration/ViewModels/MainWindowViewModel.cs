@@ -94,6 +94,7 @@ namespace nUpdate.Administration.ViewModels
                 try
                 {
                     KeyManager.Instance.Initialize(passwordDialog.Password);
+                    GlobalSession.MasterPassword = passwordDialog.Password;
                     correctPassword = true;
                 }
                 catch (CryptographicException)
@@ -110,7 +111,6 @@ namespace nUpdate.Administration.ViewModels
                     TaskDialog.Show(taskDialog);
                 }
             }
-
         }
     }
 }

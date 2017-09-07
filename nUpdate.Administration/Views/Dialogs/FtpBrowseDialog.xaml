@@ -12,48 +12,50 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     mc:Ignorable="d">
+    
+    <AdornerDecorator>
+        <StackPanel x:Name="MainPanel">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-    <StackPanel>
-        <Grid Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <TextBlock
+                <TextBlock
                 Grid.Row="0"
                 Grid.Column="0"
                 Text="Directory path:" />
-            <TextBox
+                <TextBox
                 x:Name="DirectoryTextBox"
                 Grid.Row="0"
                 Grid.Column="2" />
-        </Grid>
-        <Separator />
-        <TreeView
+            </Grid>
+            <Separator />
+            <TreeView
             x:Name="ServerTreeView"
             Height="150"
             Margin="10"
             SelectedItemChanged="TreeView_OnSelectedItemChanged">
 
-            <TreeView.Resources>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="HeaderTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Margin="2" Source="/Icons/Folder_16xMD.png" />
-                                    <TextBlock Text="{Binding}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TreeView.Resources>
-        </TreeView>
-    </StackPanel>
+                <TreeView.Resources>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="HeaderTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Margin="2" Source="/Icons/Folder_16xMD.png" />
+                                        <TextBlock Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TreeView.Resources>
+            </TreeView>
+        </StackPanel>
+        </AdornerDecorator>
 </Window>

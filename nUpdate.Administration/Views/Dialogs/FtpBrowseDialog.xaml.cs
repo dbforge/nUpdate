@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// Copyright © Dominic Beger 2017
 
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs
 {
     public partial class FtpBrowseDialog
     {
+        private const string ServerItemTag = "server";
         private readonly List<TreeViewItem> _cachedTreeViewItems = new List<TreeViewItem>();
         private readonly TransferManager _transferManager;
         private string _directory = "/";
@@ -20,6 +22,7 @@ namespace nUpdate.Administration.Views.Dialogs
         {
             InitializeComponent();
             _transferManager = new TransferManager(TransferProtocol.FTP, data);
+            ServerTreeView.Items.Add(new TreeViewItem {Header = "/", Tag = ServerItemTag});
         }
 
         public string Directory
@@ -41,12 +44,20 @@ namespace nUpdate.Administration.Views.Dialogs
 
         private async void FtpBrowseWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            await AddDirectoryContent("/", (TreeViewItem)ServerTreeView.Items[0]);
+            await AddDirectoryContent("/", (TreeViewItem) ServerTreeView.Items[0]);
         }
 
         private async void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             var selectedItem = (TreeViewItem) e.NewValue;
+            var parentAdorner = AdornerLayer.GetAdornerLayer(MainPanel);
+            var loadingAdorner = new LoadingAdorner(MainPanel)
+            {
+                Text = "Loading directories...",
+                Width = MainPanel.Width,
+                Height = MainPanel.Height
+            };
+            parentAdorner.Add(loadingAdorner);
 
             // Update the path
             UpdatePath(selectedItem);
@@ -72,8 +83,11 @@ namespace nUpdate.Administration.Views.Dialogs
                 };
                 TaskDialog.Show(taskDialog);
             }
-
-            ServerTreeView.IsEnabled = true;
+            finally
+            {
+                parentAdorner.Remove(loadingAdorner);
+                ServerTreeView.IsEnabled = true;
+            }
         }
 
         private void UpdatePath(TreeViewItem current)
@@ -83,6 +97,10 @@ namespace nUpdate.Administration.Views.Dialogs
             while (currentItem != null)
             {
                 itemStack.Push(currentItem);
+                if (currentItem.Parent == null
+                    || currentItem.Parent.GetType() != typeof(TreeViewItem)
+                    || ((TreeViewItem) currentItem.Parent).Tag.ToString() == ServerItemTag)
+                    break;
                 currentItem = (TreeViewItem) currentItem.Parent;
             }
 

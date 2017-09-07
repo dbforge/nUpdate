@@ -201,6 +201,7 @@
     <Compile Include="Views\Dialogs\FtpBrowseDialog.xaml.cs">
       <DependentUpon>FtpBrowseDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LoadingAdorner.cs" />
     <Compile Include="Views\NewProjectWindow.xaml.cs">
       <DependentUpon>NewProjectWindow.xaml</DependentUpon>
     </Compile>
