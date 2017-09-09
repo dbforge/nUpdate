@@ -43,7 +43,7 @@
   "PackageNotFoundErrorText": "Das Updatepaket konnte nicht gefunden werden.",
   "InvalidSignatureErrorCaption": "Ungültige Signatur.",
   "InvalidSignatureErrorText": "Die Signatur des Updatepakets ist keine gültige RSA-Signatur.",
-  "SignatureNotMatchingErrorText": "nUpdate wird die Installation abbrechen und das Paket löschen.",
+  "SignatureNotMatchingErrorText": "nUpdate wird die Installation abbrechen und die Pakete löschen.",
   "SearchProcessRunningExceptionText": "Es wird bereits eine Updatesuche ausgeführt.",
   "DownloadingProcessRunningExceptionText": "Es wird bereits ein aktiver Download ausgeführt.",
   "NetworkConnectionExceptionText": "Es ist keine Internetverbindung verfügbar.",
