@@ -228,16 +228,36 @@ namespace nUpdate.Updating
         ///     Cancels the download.
         /// </summary>
         /// <remarks>If there is no download task running, nothing will happen.</remarks>
-        public void CancelDownload()
+        [Obsolete("CancelDownload has been renamed to CancelDownloadAsync which should be used instead.")]
+        public void CancelDownload() 
+        {
+            CancelDownloadAsync();
+        }
+
+        /// <summary>
+        ///     Cancels the download, if it is running asynchronously.
+        /// </summary>
+        /// <remarks>If there is no asynchronous download task running, nothing will happen.</remarks>
+        public void CancelDownloadAsync()
         {
             _downloadCancellationTokenSource.Cancel();
+        }
+
+        /// <summary>
+        ///     Cancels the update search, if it is running asynchronously.
+        /// </summary>
+        /// <remarks>If there is no asynchronous search task running, nothing will happen.</remarks>
+        [Obsolete("CancelSearch has been renamed to CancelSearchAsync which should be used instead.")]
+        public void CancelSearch()
+        {
+            CancelSearchAsync();
         }
 
         /// <summary>
         ///     Cancels the update search.
         /// </summary>
         /// <remarks>If there is no search task running, nothing will happen.</remarks>
-        public void CancelSearch()
+        public void CancelSearchAsync()
         {
             _searchCancellationTokenSource.Cancel();
         }

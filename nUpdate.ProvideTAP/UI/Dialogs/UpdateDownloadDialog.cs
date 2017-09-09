@@ -43,7 +43,7 @@ namespace nUpdate.UI.Dialogs
 
         private void Cancel()
         {
-            UpdateManager.CancelDownload();
+            UpdateManager.CancelDownloadAsync();
             DialogResult = DialogResult.Cancel;
         }
 
