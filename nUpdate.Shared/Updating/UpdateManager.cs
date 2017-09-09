@@ -407,7 +407,7 @@ namespace nUpdate.Updating
         /// <exception cref="ArgumentException">The signature of the update package is invalid.</exception>
         public bool ValidatePackages()
         {
-            foreach (var filePathItem in _packageFilePaths)
+            bool Validate(KeyValuePair<UpdateVersion, string> filePathItem)
             {
                 if (!File.Exists(filePathItem.Value))
                     throw new FileNotFoundException(string.Format(_lp.PackageFileNotFoundExceptionText,
@@ -418,8 +418,7 @@ namespace nUpdate.Updating
                 if (configuration.Signature == null || configuration.Signature.Length <= 0)
                     throw new ArgumentException($"Signature of version \"{configuration}\" is null or empty.");
 
-                var stream = File.Open(filePathItem.Value, FileMode.Open);
-                try
+                using (var stream = File.Open(filePathItem.Value, FileMode.Open))
                 {
                     RsaManager rsa;
 
@@ -429,39 +428,27 @@ namespace nUpdate.Updating
                     }
                     catch
                     {
-                        try
-                        {
-                            DeletePackages();
-                            Cleanup();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new PackageDeleteException(ex.Message);
-                        }
                         return false;
                     }
 
-                    if (rsa.VerifyData(stream, Convert.FromBase64String(configuration.Signature)))
-                        continue;
-
-                    try
-                    {
-                        DeletePackages();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new PackageDeleteException(ex.Message);
-                    }
-
-                    Cleanup();
-                    return false;
-                }
-                finally
-                {
-                    stream.Close();
+                    return rsa.VerifyData(stream, Convert.FromBase64String(configuration.Signature));
                 }
             }
-            return true;
+
+            if (_packageFilePaths.All(Validate))
+                return true;
+            
+            try
+            {
+                DeletePackages();
+            }
+            catch (Exception ex)
+            {
+                throw new PackageDeleteException(ex.Message);
+            }
+
+            Cleanup();
+            return false;
         }
     }
 }

@@ -3,7 +3,6 @@
 using System;
 using System.Drawing;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core;

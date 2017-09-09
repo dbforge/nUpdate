@@ -59,7 +59,7 @@ namespace nUpdate.Updating
                 if (downloadDialog.ShowDialog() != DialogResult.OK)
                     return;
 
-                var valid = false;
+                bool valid;
                 try
                 {
                     valid = UpdateManager.ValidatePackages();
