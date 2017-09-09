@@ -9,6 +9,11 @@
     <Import_RootNamespace>nUpdate.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgument.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgumentExecutionOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdaterUI.cs" />
   </ItemGroup>

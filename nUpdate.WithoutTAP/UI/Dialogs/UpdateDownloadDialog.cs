@@ -44,10 +44,15 @@ namespace nUpdate.UI.Dialogs
             }
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void Cancel()
         {
             UpdateManager.CancelDownload();
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Cancel();
         }
 
         public void Failed(object sender, FailedEventArgs e)
@@ -65,19 +70,7 @@ namespace nUpdate.UI.Dialogs
 
         public void ProgressChanged(object sender, UpdateDownloadProgressChangedEventArgs e)
         {
-            try
-            {
-                Invoke(new Action(() =>
-                {
-                    downloadProgressBar.Value = (int) e.Percentage;
-                    infoLabel.Text = string.Format(
-                        _lp.UpdateDownloadDialogLoadingInfo, (int) e.Percentage);
-                }));
-            }
-            catch (InvalidOperationException)
-            {
-                // Prevent race conditions
-            }
+            ProgressPercentage = e.Percentage;
         }
 
         public void StatisticsEntryFailed(object sender, FailedEventArgs e)
@@ -86,6 +79,23 @@ namespace nUpdate.UI.Dialogs
                 "Error while adding a new statistics entry.",
                 e.Exception, PopupButtons.Ok)));
             DialogResult = DialogResult.OK;
+        }
+
+        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+            {
+                /* Important to unsubscribe the events, otherwise any calls on the UI thread (Invoke) 
+                will cause an InvalidOperationException as the window handle is no longer available. */
+
+                UpdateManager.PackagesDownloadProgressChanged -= ProgressChanged;
+                UpdateManager.PackagesDownloadFailed -= Failed;
+                UpdateManager.StatisticsEntryFailed -= StatisticsEntryFailed;
+                UpdateManager.PackagesDownloadFinished -= Finished;
+                return;
+            }
+            e.Cancel = true;
+            Cancel();
         }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)

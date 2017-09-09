@@ -70,7 +70,7 @@
             this.headerLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
             this.headerLabel.Location = new System.Drawing.Point(17, 9);
             this.headerLabel.Name = "headerLabel";
-            this.headerLabel.Size = new System.Drawing.Size(171, 21);
+            this.headerLabel.Size = new System.Drawing.Size(264, 32);
             this.headerLabel.TabIndex = 12;
             this.headerLabel.Text = "Downloading updates...";
             // 
@@ -85,7 +85,7 @@
             // 
             // UpdateDownloadDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.cancelButton;
@@ -102,6 +102,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateDownloadDialog_FormClosing);
             this.Load += new System.EventHandler(this.UpdateDownloadDialog_Load);
             this.Shown += new System.EventHandler(this.UpdateDownloadDialog_Shown);
             this.controlPanel1.ResumeLayout(false);

@@ -3,6 +3,7 @@
 using System;
 using System.Drawing;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft;
 using nUpdate.Core;
@@ -30,12 +31,9 @@ namespace nUpdate.UI.Dialogs
             {
                 try
                 {
-                    Invoke(new Action(() =>
-                    {
-                        downloadProgressBar.Value = (int) value;
-                        infoLabel.Text = string.Format(CultureInfo.CurrentCulture,
-                            _lp.UpdateDownloadDialogLoadingInfo, Math.Round(value, 1));
-                    }));
+                    downloadProgressBar.Value = (int) value;
+                    infoLabel.Text = string.Format(CultureInfo.CurrentCulture,
+                        _lp.UpdateDownloadDialogLoadingInfo, Math.Round(value, 1));
                 }
                 catch (InvalidOperationException)
                 {
@@ -44,10 +42,15 @@ namespace nUpdate.UI.Dialogs
             }
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void Cancel()
         {
             UpdateManager.CancelDownload();
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Cancel();
         }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
@@ -93,6 +96,14 @@ namespace nUpdate.UI.Dialogs
             }
 
             DialogResult = DialogResult.OK;
+        }
+
+        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+            e.Cancel = true;
+            Cancel();
         }
     }
 }

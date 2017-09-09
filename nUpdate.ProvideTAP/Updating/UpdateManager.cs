@@ -19,6 +19,32 @@ namespace nUpdate.Updating
     public partial class UpdateManager
     {
         /// <summary>
+        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        ///     unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _searchCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource.Dispose();
+            _disposed = true;
+        }
+
+        /// <summary>
         ///     Downloads the available update packages from the server.
         /// </summary>
         /// <seealso cref="DownloadPackagesAsync" />
@@ -82,95 +108,98 @@ namespace nUpdate.Updating
         /// <exception cref="OperationCanceledException" />
         /// <exception cref="StatisticsException" />
         /// <seealso cref="DownloadPackages" />
-        public async Task DownloadPackagesAsync(IProgress<UpdateDownloadProgressChangedEventArgs> progress)
+        public Task DownloadPackagesAsync(IProgress<UpdateDownloadProgressChangedEventArgs> progress = null)
         {
-            _downloadCancellationTokenSource?.Dispose();
-            _downloadCancellationTokenSource = new CancellationTokenSource();
-
-            long received = 0;
-            var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
-                .Where(updatePackageSize => updatePackageSize != null)
-                .Sum(updatePackageSize => updatePackageSize.Value);
-
-            if (!Directory.Exists(_applicationUpdateDirectory))
-                Directory.CreateDirectory(_applicationUpdateDirectory);
-
-            foreach (var updateConfiguration in PackageConfigurations)
+            return TaskEx.Run(async () =>
             {
-                WebResponse webResponse = null;
-                try
+                _downloadCancellationTokenSource?.Dispose();
+                _downloadCancellationTokenSource = new CancellationTokenSource();
+
+                long received = 0;
+                var total = PackageConfigurations.Select(config => GetUpdatePackageSize(config.UpdatePackageUri))
+                    .Where(updatePackageSize => updatePackageSize != null)
+                    .Sum(updatePackageSize => updatePackageSize.Value);
+
+                if (!Directory.Exists(_applicationUpdateDirectory))
+                    Directory.CreateDirectory(_applicationUpdateDirectory);
+
+                foreach (var updateConfiguration in PackageConfigurations)
                 {
-                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                    WebResponse webResponse = null;
+                    try
                     {
-                        DeletePackages();
-                        Cleanup();
-                        throw new OperationCanceledException();
-                    }
-
-                    var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
-                    if (HttpAuthenticationCredentials != null)
-                        webRequest.Credentials = HttpAuthenticationCredentials;
-                    webResponse = await webRequest.GetResponseAsync();
-
-                    var buffer = new byte[1024];
-                    _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                        Path.Combine(_applicationUpdateDirectory,
-                            $"{updateConfiguration.LiteralVersion}.zip"));
-                    using (var fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
-                        $"{updateConfiguration.LiteralVersion}.zip")))
-                    {
-                        using (var input = webResponse.GetResponseStream())
+                        if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                         {
-                            if (input == null)
-                                throw new Exception("The response stream couldn't be read.");
+                            DeletePackages();
+                            Cleanup();
+                            throw new OperationCanceledException();
+                        }
 
-                            if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
-                            {
-                                DeletePackages();
-                                Cleanup();
-                                throw new OperationCanceledException();
-                            }
+                        var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                        if (HttpAuthenticationCredentials != null)
+                            webRequest.Credentials = HttpAuthenticationCredentials;
+                        webResponse = await webRequest.GetResponseAsync();
 
-                            var size = await input.ReadAsync(buffer, 0, buffer.Length);
-                            while (size > 0)
+                        var buffer = new byte[1024];
+                        _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                            Path.Combine(_applicationUpdateDirectory,
+                                $"{updateConfiguration.LiteralVersion}.zip"));
+                        using (var fileStream = File.Create(Path.Combine(_applicationUpdateDirectory,
+                            $"{updateConfiguration.LiteralVersion}.zip")))
+                        {
+                            using (var input = webResponse.GetResponseStream())
                             {
+                                if (input == null)
+                                    throw new Exception("The response stream couldn't be read.");
+
                                 if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
                                 {
-                                    fileStream.Flush();
-                                    fileStream.Close();
                                     DeletePackages();
                                     Cleanup();
                                     throw new OperationCanceledException();
                                 }
 
-                                await fileStream.WriteAsync(buffer, 0, size);
-                                received += size;
-                                progress.Report(new UpdateDownloadProgressChangedEventArgs(received,
-                                    (long) total, (float) (received / total) * 100));
-                                size = await input.ReadAsync(buffer, 0, buffer.Length);
-                            }
-
-                            if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
-                                continue;
-
-                            var response =
-                                new WebClient
+                                var size = await input.ReadAsync(buffer, 0, buffer.Length);
+                                while (size > 0)
                                 {
-                                    Credentials =
-                                        HttpAuthenticationCredentials
-                                }.DownloadString(
-                                    $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
-                            if (!string.IsNullOrEmpty(response))
-                                throw new StatisticsException(string.Format(
-                                    _lp.StatisticsScriptExceptionText, response));
+                                    if (_downloadCancellationTokenSource.Token.IsCancellationRequested)
+                                    {
+                                        fileStream.Flush();
+                                        fileStream.Close();
+                                        DeletePackages();
+                                        Cleanup();
+                                        throw new OperationCanceledException();
+                                    }
+
+                                    await fileStream.WriteAsync(buffer, 0, size);
+                                    received += size;
+                                    progress?.Report(new UpdateDownloadProgressChangedEventArgs(received,
+                                        (long) total, (float) (received / total) * 100));
+                                    size = await input.ReadAsync(buffer, 0, buffer.Length);
+                                }
+
+                                if (!updateConfiguration.UseStatistics || !IncludeCurrentPcIntoStatistics)
+                                    continue;
+
+                                var response =
+                                    new WebClient
+                                    {
+                                        Credentials =
+                                            HttpAuthenticationCredentials
+                                    }.DownloadString(
+                                        $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
+                                if (!string.IsNullOrEmpty(response))
+                                    throw new StatisticsException(string.Format(
+                                        _lp.StatisticsScriptExceptionText, response));
+                            }
                         }
                     }
+                    finally
+                    {
+                        webResponse?.Close();
+                    }
                 }
-                finally
-                {
-                    webResponse?.Close();
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -221,7 +250,7 @@ namespace nUpdate.Updating
         /// <exception cref="OperationCanceledException" />
         public Task<bool> SearchForUpdatesAsync()
         {
-            return TaskEx.Run(() =>
+            return TaskEx.Run(async () =>
             {
                 // It may be that this is not the first search call and previously saved data needs to be disposed.
                 Cleanup();
@@ -230,12 +259,14 @@ namespace nUpdate.Updating
 
                 if (!ConnectionManager.IsConnectionAvailable())
                     return false;
-
+                
+                _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
                 var configuration =
-                    UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource);
+                    await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource);
 
+                _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
                     IncludeAlpha, IncludeBeta);
                 if (!result.UpdatesFound)
@@ -245,6 +276,7 @@ namespace nUpdate.Updating
                 double updatePackageSize = 0;
                 foreach (var updateConfiguration in PackageConfigurations)
                 {
+                    _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                     var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
                     if (newPackageSize == null)
                         throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
@@ -257,8 +289,6 @@ namespace nUpdate.Updating
                 TotalSize = updatePackageSize;
                 if (!_searchCancellationTokenSource.Token.IsCancellationRequested)
                     return true;
-
-                Cleanup();
                 throw new OperationCanceledException();
             });
         }

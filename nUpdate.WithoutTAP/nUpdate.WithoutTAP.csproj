@@ -43,7 +43,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +50,7 @@
     <Compile Include="UI\Dialogs\BaseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Dialogs\DialogResultWrapper.cs" />
     <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +77,7 @@
     </Compile>
     <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
+    <Compile Include="Updating\UpdateConfiguration.cs" />
     <Compile Include="Updating\UpdateManager.cs" />
     <Compile Include="Updating\UpdaterUI.cs" />
   </ItemGroup>

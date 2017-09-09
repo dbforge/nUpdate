@@ -225,15 +225,6 @@ namespace nUpdate.Updating
         public bool UseCustomInstallerUserInterface { get; set; }
 
         /// <summary>
-        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         ///     Cancels the download.
         /// </summary>
         /// <remarks>If there is no download task running, nothing will happen.</remarks>
@@ -264,23 +255,6 @@ namespace nUpdate.Updating
         {
             foreach (var filePathItem in _packageFilePaths.Where(item => File.Exists(item.Value)))
                 File.Delete(filePathItem.Value);
-        }
-
-        /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
-        ///     unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _searchCancellationTokenSource.Dispose();
-            _downloadCancellationTokenSource.Dispose();
-            _disposed = true;
         }
 
         /// <summary>
