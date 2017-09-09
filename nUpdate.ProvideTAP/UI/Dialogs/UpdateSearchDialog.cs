@@ -21,10 +21,15 @@ namespace nUpdate.UI.Dialogs
 
         internal bool UpdatesFound { get; set; }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void Cancel()
         {
             UpdateManager.CancelSearch();
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Cancel();
         }
 
         private void SearchDialog_Load(object sender, EventArgs e)
@@ -58,6 +63,14 @@ namespace nUpdate.UI.Dialogs
             }
 
             DialogResult = DialogResult.OK;
+        }
+
+        private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+            e.Cancel = true;
+            Cancel();
         }
     }
 }
