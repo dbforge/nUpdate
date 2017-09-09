@@ -1078,11 +1078,9 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 if (Project.UpdateUrl != _updateUrl)
                 {
+                    // The old configuration is not available, so we can only save the new URI
                     if (_newUpdateConfiguration == null && !LoadConfiguration())
-                    {
-                        Reset();
-                        return;
-                    }
+                        goto saveData;
 
                     Invoke(
                         new Action(
