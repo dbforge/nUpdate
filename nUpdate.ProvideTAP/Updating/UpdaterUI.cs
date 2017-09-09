@@ -69,16 +69,19 @@ namespace nUpdate.Updating
                     Context.Send(c => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
                         _lp.PackageNotFoundErrorText,
                         PopupButtons.Ok), null);
+                    return;
                 }
                 catch (ArgumentException)
                 {
                     Context.Send(c => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
                         _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
+                    return;
                 }
                 catch (Exception ex)
                 {
                     Context.Send(c => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
                         ex, PopupButtons.Ok), null);
+                    return;
                 }
 
                 if (!valid)

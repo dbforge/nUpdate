@@ -8,5 +8,10 @@ namespace nUpdate.UI.Dialogs
     internal class BaseDialog : Form
     {
         internal UpdateManager UpdateManager { get; set; }
+
+        internal void ShowDialog(DialogResultWrapper d)
+        {
+            d.DialogResult = ShowDialog();
+        }
     }
 }

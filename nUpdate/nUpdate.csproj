@@ -117,11 +117,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\UriConnector.cs" />
-    <Compile Include="Updating\UpdateArgument.cs" />
-    <Compile Include="Updating\UpdateArgumentExecutionOptions.cs" />
-    <Compile Include="Updating\UpdateConfiguration.cs" />
-    <Compile Include="Updating\UpdateResult.cs" />
-    <Compile Include="Updating\UpdateVersion.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

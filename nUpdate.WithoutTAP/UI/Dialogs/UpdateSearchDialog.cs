@@ -22,10 +22,15 @@ namespace nUpdate.UI.Dialogs
 
         internal bool UpdatesFound { get; set; }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void Cancel()
         {
             UpdateManager.CancelSearch();
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Cancel();
         }
 
         public void Failed(object sender, FailedEventArgs e)
@@ -56,6 +61,23 @@ namespace nUpdate.UI.Dialogs
 
             UpdateManager.UpdateSearchFailed += Failed;
             UpdateManager.UpdateSearchFinished += Finished;
+        }
+
+        private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+            {
+                /* Important to unsubscribe the events, otherwise any calls on the UI thread (Invoke) 
+                   will cause an InvalidOperationException as the window handle is no longer available. */
+
+                UpdateManager.UpdateSearchFailed -= Failed;
+                UpdateManager.UpdateSearchFinished -= Finished;
+
+                return;
+            }
+
+            e.Cancel = true;
+            Cancel();
         }
 
         private void UpdateSearchDialog_Shown(object sender, EventArgs e)
