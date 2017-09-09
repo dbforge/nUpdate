@@ -23,7 +23,7 @@ namespace nUpdate.UI.Dialogs
 
         private void Cancel()
         {
-            UpdateManager.CancelSearch();
+            UpdateManager.CancelSearchAsync();
             DialogResult = DialogResult.Cancel;
         }
 
