@@ -618,7 +618,7 @@
       <Project>{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}</Project>
       <Name>nUpdate.ProvideTAP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\nUpdate\nUpdate.Internal.csproj">
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
       <Project>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</Project>
       <Name>nUpdate.Internal</Name>
     </ProjectReference>
