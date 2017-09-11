@@ -98,7 +98,7 @@
     <Compile Include="Updating\UpdaterUI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate\nUpdate.Internal.csproj">
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
       <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
       <Name>nUpdate.Internal</Name>
     </ProjectReference>
