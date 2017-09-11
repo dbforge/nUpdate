@@ -3,9 +3,9 @@
 using System;
 using System.IO;
 using System.Text;
-using nUpdate.Core.Win32;
+using nUpdate.Internal.Core.Win32;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     public class SizeHelper
     {

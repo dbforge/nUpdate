@@ -1,8 +1,8 @@
 ﻿// Copyright © Dominic Beger 2017
 
-using nUpdate.Core.Win32;
+using nUpdate.Internal.Core.Win32;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     public class ConnectionManager
     {

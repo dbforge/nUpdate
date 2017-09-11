@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using nUpdate.Administration.Core.History;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Core.Application

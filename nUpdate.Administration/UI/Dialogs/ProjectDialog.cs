@@ -22,6 +22,7 @@ using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
+using nUpdate.Internal.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs

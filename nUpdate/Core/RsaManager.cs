@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     /// <summary>
     ///     Provides methods and properties to sign and verify data with the RSACryptoServiceProvider.

@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class CredentialsDialog
     {
@@ -35,7 +37,7 @@
             this.ftpPasswordLabel = new System.Windows.Forms.Label();
             this.proxyPasswordLabel = new System.Windows.Forms.Label();
             this.continueButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -148,7 +150,7 @@
 
         #endregion
 
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.TextBox usernameTextBox;

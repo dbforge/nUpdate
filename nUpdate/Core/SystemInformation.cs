@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Net.NetworkInformation;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     internal class SystemInformation
     {

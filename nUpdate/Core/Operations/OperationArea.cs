@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 
-namespace nUpdate.Core.Operations
+namespace nUpdate.Internal.Core.Operations
 {
     /// <summary>
     ///     Represents the different areas in which operations can take place.

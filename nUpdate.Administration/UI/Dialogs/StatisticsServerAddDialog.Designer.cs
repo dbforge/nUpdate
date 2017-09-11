@@ -1,4 +1,5 @@
 ﻿using nUpdate.Administration.UI.Controls;
+using nUpdate.Internal.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -33,7 +34,7 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StatisticsServerAddDialog));
             this.saveButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -41,7 +42,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label12 = new System.Windows.Forms.Label();
             this.hostTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.databaseTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.line2 = new nUpdate.UI.Controls.Line();
+            this.line2 = new Line();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.controlPanel1.SuspendLayout();
@@ -149,7 +150,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(10, 105);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(319, 10);
@@ -211,7 +212,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Label label4;
@@ -221,7 +222,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label label12;
         private CueTextBox hostTextBox;
         private CueTextBox databaseTextBox;
-        private nUpdate.UI.Controls.Line line2;
+        private Line line2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
     }

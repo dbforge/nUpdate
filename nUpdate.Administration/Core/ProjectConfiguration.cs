@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 
 namespace nUpdate.Administration.Core
 {

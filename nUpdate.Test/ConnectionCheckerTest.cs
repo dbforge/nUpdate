@@ -1,7 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 
 namespace nUpdate.Test
 {

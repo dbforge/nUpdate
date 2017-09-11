@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 
-namespace nUpdate.UI.Popups
+namespace nUpdate.Internal.UI.Popups
 {
     public partial class PopupDialog : Form
     {

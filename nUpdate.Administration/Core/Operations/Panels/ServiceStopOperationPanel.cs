@@ -1,7 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
 
 using System.Windows.Forms;
-using nUpdate.Core.Operations;
+using nUpdate.Internal.Core.Operations;
 
 namespace nUpdate.Administration.Core.Operations.Panels
 {

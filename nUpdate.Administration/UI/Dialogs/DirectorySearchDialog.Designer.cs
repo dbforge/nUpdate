@@ -1,4 +1,6 @@
 ﻿using System.Windows.Forms;
+using nUpdate.Internal.UI.Controls;
+
 namespace nUpdate.Administration.UI.Dialogs
 {
     partial class DirectorySearchDialog
@@ -34,7 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverImageList = new System.Windows.Forms.ImageList(this.components);
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
             this.serverDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
@@ -256,7 +258,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;

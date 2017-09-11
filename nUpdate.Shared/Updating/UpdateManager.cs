@@ -13,10 +13,11 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.Core;
-using nUpdate.Core.Localization;
-using nUpdate.Core.Operations;
 using nUpdate.Exceptions;
-using nUpdate.Properties;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Localization;
+using nUpdate.Internal.Core.Operations;
+using nUpdate.Internal.Properties;
 
 namespace nUpdate.Updating
 {
@@ -62,9 +63,7 @@ namespace nUpdate.Updating
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
             CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
         {
-            if (updateConfigurationFileUri == null)
-                throw new ArgumentNullException(nameof(updateConfigurationFileUri));
-            UpdateConfigurationFileUri = updateConfigurationFileUri;
+            UpdateConfigurationFileUri = updateConfigurationFileUri ?? throw new ArgumentNullException(nameof(updateConfigurationFileUri));
 
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException(nameof(publicKey));

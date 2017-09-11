@@ -2,7 +2,7 @@
 
 using System;
 
-namespace nUpdate.Core.Operations
+namespace nUpdate.Internal.Core.Operations
 {
     public class Operation
     {

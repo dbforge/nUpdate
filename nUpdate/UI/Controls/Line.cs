@@ -3,7 +3,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace nUpdate.UI.Controls
+namespace nUpdate.Internal.UI.Controls
 {
     public class Line : Control
     {

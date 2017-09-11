@@ -6,8 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using nUpdate.Core;
 using nUpdate.Exceptions;
+using nUpdate.Internal.Core;
 using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.Updating

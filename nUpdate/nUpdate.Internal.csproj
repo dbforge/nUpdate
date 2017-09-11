@@ -7,8 +7,8 @@
     <ProjectGuid>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>nUpdate</RootNamespace>
-    <AssemblyName>nUpdate</AssemblyName>
+    <RootNamespace>nUpdate.Internal</RootNamespace>
+    <AssemblyName>nUpdate.Internal</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -26,7 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\nUpdate.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\nUpdate.Internal.xml</DocumentationFile>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -82,7 +82,6 @@
     <Compile Include="Core\IDeepCopy.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
-    <Compile Include="Core\nUpdateVersionAttribute.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
@@ -93,9 +92,6 @@
     <Compile Include="Core\WebClientWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Exceptions\PackageDeleteException.cs" />
-    <Compile Include="Exceptions\SizeCalculationException.cs" />
-    <Compile Include="Exceptions\StatisticsException.cs" />
     <Compile Include="UI\Controls\BottomPanel.cs" />
     <Compile Include="UI\Controls\Line.cs">
       <SubType>Component</SubType>
@@ -108,7 +104,6 @@
     <Compile Include="UI\Popups\PopupDialog.designer.cs">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
     <Compile Include="Core\ConnectionManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

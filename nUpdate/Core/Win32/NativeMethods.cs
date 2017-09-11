@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace nUpdate.Core.Win32
+namespace nUpdate.Internal.Core.Win32
 {
     internal class NativeMethods
     {

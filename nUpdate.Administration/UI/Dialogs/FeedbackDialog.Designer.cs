@@ -1,4 +1,5 @@
 ﻿using nUpdate.Administration.UI.Controls;
+using nUpdate.Internal.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -36,7 +37,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.nameTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.emailTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.contentTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
-            this.cpnl = new nUpdate.UI.Controls.BottomPanel();
+            this.cpnl = new BottomPanel();
             this.headerLabel = new System.Windows.Forms.Label();
             this.cpnl.SuspendLayout();
             this.SuspendLayout();
@@ -142,7 +143,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         #endregion
 
-        private nUpdate.UI.Controls.BottomPanel cpnl;
+        private BottomPanel cpnl;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button sendButton;
         private CueTextBox contentTextBox;

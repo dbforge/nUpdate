@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     public class Serializer
     {

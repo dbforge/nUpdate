@@ -3,8 +3,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Localization;
 
 namespace nUpdate.UI.Dialogs
 {

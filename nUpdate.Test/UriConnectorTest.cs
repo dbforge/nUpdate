@@ -2,7 +2,7 @@
 
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 
 namespace nUpdate.Test
 {

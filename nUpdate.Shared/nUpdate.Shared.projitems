@@ -9,8 +9,13 @@
     <Import_RootNamespace>nUpdate.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\nUpdateVersionAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PackageDeleteException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SizeCalculationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\StatisticsException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgument.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgumentExecutionOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateConfiguration.cs" />

@@ -7,8 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using nUpdate.Core;
-using nUpdate.Core.Operations;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 
 namespace nUpdate.Updating
 {

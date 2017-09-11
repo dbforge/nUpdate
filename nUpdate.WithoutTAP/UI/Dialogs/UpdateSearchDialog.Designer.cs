@@ -1,4 +1,6 @@
-﻿namespace nUpdate.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.UI.Dialogs
 {
     partial class UpdateSearchDialog
     {
@@ -30,7 +32,7 @@
         {
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -104,7 +106,7 @@
 
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label headerLabel;
-        private Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
     }
 }
