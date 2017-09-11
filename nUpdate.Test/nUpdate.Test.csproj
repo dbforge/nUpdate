@@ -91,9 +91,9 @@
       <Project>{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}</Project>
       <Name>nUpdate.ProvideTAP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\nUpdate\nUpdate.csproj">
+    <ProjectReference Include="..\nUpdate\nUpdate.Internal.csproj">
       <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
-      <Name>nUpdate</Name>
+      <Name>nUpdate.Internal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

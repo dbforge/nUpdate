@@ -1,4 +1,6 @@
-﻿namespace nUpdate.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.UI.Dialogs
 {
     partial class NewUpdateDialog
     {
@@ -36,11 +38,11 @@
             this.updateSizeLabel = new System.Windows.Forms.Label();
             this.changelogLabel = new System.Windows.Forms.Label();
             this.iconPictureBox = new System.Windows.Forms.PictureBox();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.installButton = new System.Windows.Forms.Button();
             this.accessLabel = new System.Windows.Forms.Label();
-            this.line1 = new nUpdate.UI.Controls.Line();
+            this.line1 = new Line();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -163,7 +165,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 151);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(356, 10);
@@ -216,10 +218,10 @@
         private System.Windows.Forms.Label currentVersionLabel;
         private System.Windows.Forms.Label updateSizeLabel;
         private System.Windows.Forms.Label changelogLabel;
-        private UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button installButton;
         private System.Windows.Forms.Label accessLabel;
-        private UI.Controls.Line line1;
+        private Line line1;
     }
 }

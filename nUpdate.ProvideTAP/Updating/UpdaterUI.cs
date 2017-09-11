@@ -4,8 +4,8 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using nUpdate.Internal.UI.Popups;
 using nUpdate.UI.Dialogs;
-using nUpdate.UI.Popups;
 
 namespace nUpdate.Updating
 {

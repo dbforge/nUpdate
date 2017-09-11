@@ -1,7 +1,7 @@
 ﻿// Copyright © Dominic Beger 2017
 
 using System.Threading;
-using nUpdate.Core.Localization;
+using nUpdate.Internal.Core.Localization;
 
 namespace nUpdate.Updating
 {

@@ -5,10 +5,10 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using Microsoft;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
 using nUpdate.Exceptions;
-using nUpdate.UI.Popups;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Localization;
+using nUpdate.Internal.UI.Popups;
 using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.UI.Dialogs

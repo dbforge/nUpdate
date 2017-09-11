@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 // die mit einer Assembly verknüpft sind.
 
 [assembly: AssemblyTitle("nUpdate")]
-[assembly: AssemblyDescription("The internal nUpdate class library that provides basic classes used for updating.")]
+[assembly: AssemblyDescription("The internal nUpdate class library that provides basic classes used in all projects.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
@@ -40,5 +40,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("3.1.8.0")]
 [assembly: AssemblyFileVersion("3.1.8.0")]
+[assembly: InternalsVisibleTo("nUpdate.Shared")]
 [assembly: InternalsVisibleTo("nUpdate.ProvideTAP")]
 [assembly: InternalsVisibleTo("nUpdate.WithoutTAP")]

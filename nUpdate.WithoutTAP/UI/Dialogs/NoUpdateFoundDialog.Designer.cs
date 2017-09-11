@@ -1,4 +1,6 @@
-﻿namespace nUpdate.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.UI.Dialogs
 {
     partial class NoUpdateFoundDialog
     {
@@ -30,7 +32,7 @@
         {
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.closeButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -102,7 +104,7 @@
 
         private System.Windows.Forms.Label headerLabel;
         private System.Windows.Forms.Label infoLabel;
-        private UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
     }
 }

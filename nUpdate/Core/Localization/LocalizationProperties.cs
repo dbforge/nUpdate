@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2017
 
-namespace nUpdate.Core.Localization
+namespace nUpdate.Internal.Core.Localization
 {
     public class LocalizationProperties
     {

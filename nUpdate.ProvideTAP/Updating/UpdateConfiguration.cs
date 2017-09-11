@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 
 namespace nUpdate.Updating
 {

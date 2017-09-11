@@ -1,4 +1,5 @@
 ﻿using nUpdate.Administration.UI.Controls;
+using nUpdate.Internal.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -34,7 +35,7 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewProjectDialog));
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.backButton = new System.Windows.Forms.Button();
             this.informationCategoriesTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.keyPairTabPage = new System.Windows.Forms.TabPage();
@@ -71,7 +72,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpImportButton = new System.Windows.Forms.Button();
             this.securityInfoButton = new System.Windows.Forms.Button();
             this.searchOnServerButton = new System.Windows.Forms.Button();
-            this.line1 = new nUpdate.UI.Controls.Line();
+            this.line1 = new Line();
             this.ftpProtocolComboBox = new System.Windows.Forms.ComboBox();
             this.ftpProtocolLabel = new System.Windows.Forms.Label();
             this.ftpModeComboBox = new System.Windows.Forms.ComboBox();
@@ -88,7 +89,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.ftpHeaderLabel = new System.Windows.Forms.Label();
             this.statisticsServerTabPage = new System.Windows.Forms.TabPage();
-            this.line2 = new nUpdate.UI.Controls.Line();
+            this.line2 = new Line();
             this.selectServerButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.doNotUseStatisticsServerButton = new System.Windows.Forms.RadioButton();
@@ -420,7 +421,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             resources.ApplyResources(this.line1, "line1");
             this.line1.Name = "line1";
             // 
@@ -537,7 +538,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             resources.ApplyResources(this.line2, "line2");
             this.line2.Name = "line2";
             // 
@@ -768,7 +769,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label ftpHostLabel;
         private System.Windows.Forms.Label ftpHeaderLabel;
         private CueTextBox nameTextBox;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.TextBox ftpPasswordTextBox;
         private CueTextBox ftpUserTextBox;
         private CueTextBox ftpHostTextBox;
@@ -807,7 +808,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.TextBox sqlPasswordTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
-        private nUpdate.UI.Controls.Line line2;
+        private Line line2;
         private System.Windows.Forms.Button selectServerButton;
         private System.Windows.Forms.Label databaseNameLabel;
         private System.Windows.Forms.Button continueButton;
@@ -826,7 +827,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox ipVersionComboBox;
         private System.Windows.Forms.Label ipVersionLabel;
-        private nUpdate.UI.Controls.Line line1;
+        private Line line1;
         private System.Windows.Forms.TabPage httpAuthenticationTabPage;
         private System.Windows.Forms.Panel httpAuthenticationPanel;
         private CueTextBox httpAuthenticationPasswordTextBox;

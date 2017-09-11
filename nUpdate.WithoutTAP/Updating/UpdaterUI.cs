@@ -6,8 +6,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using nUpdate.Internal.UI.Popups;
 using nUpdate.UI.Dialogs;
-using nUpdate.UI.Popups;
 
 namespace nUpdate.Updating
 {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 
 namespace nUpdate.Updating
 {

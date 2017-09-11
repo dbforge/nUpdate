@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class PreferencesDialog
     {
@@ -32,7 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.languagesComboBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -145,7 +147,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button saveButton;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.ComboBox languagesComboBox;

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     public class UriConnector
     {
