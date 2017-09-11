@@ -4,7 +4,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace nUpdate.UI.Popups
+namespace nUpdate.Internal.UI.Popups
 {
     internal class Popup
     {

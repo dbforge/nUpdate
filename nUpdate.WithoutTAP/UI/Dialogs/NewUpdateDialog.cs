@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Core.Localization;
-using nUpdate.Core.Operations;
-using nUpdate.Core.Win32;
-using nUpdate.UI.Popups;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Localization;
+using nUpdate.Internal.Core.Operations;
+using nUpdate.Internal.Core.Win32;
+using nUpdate.Internal.UI.Popups;
 using nUpdate.Updating;
 
 namespace nUpdate.UI.Dialogs

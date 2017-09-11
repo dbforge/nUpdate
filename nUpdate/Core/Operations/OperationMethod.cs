@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2017
 
-namespace nUpdate.Core.Operations
+namespace nUpdate.Internal.Core.Operations
 {
     /// <summary>
     ///     Represents the different methods of the operations performed in different areas.

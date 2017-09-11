@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace nUpdate.Core.Localization
+namespace nUpdate.Internal.Core.Localization
 {
     internal class LocalizationHelper
     {
@@ -22,7 +22,7 @@ namespace nUpdate.Core.Localization
         internal static LocalizationProperties GetLocalizationProperties(CultureInfo cultureInfo,
             Dictionary<CultureInfo, string> localizationFilePaths)
         {
-            var resourceName = $"nUpdate.Core.Localization.{cultureInfo.Name}.json";
+            var resourceName = $"nUpdate.Internal.Core.Localization.{cultureInfo.Name}.json";
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 if (stream != null)

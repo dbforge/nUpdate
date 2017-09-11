@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2017
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     /// <summary>
     ///     Offers methods for cloning/copying class instances.

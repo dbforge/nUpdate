@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2017
 
-namespace nUpdate.UI.Popups
+namespace nUpdate.Internal.UI.Popups
 {
     public enum PopupButtons
     {

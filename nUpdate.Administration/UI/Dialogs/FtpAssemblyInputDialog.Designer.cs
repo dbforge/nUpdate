@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class FtpAssemblyInputDialog
     {
@@ -31,7 +33,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FtpAssemblyInputDialog));
             this.assemblyFilePathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.bottomPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.bottomPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.continueButton = new System.Windows.Forms.Button();
             this.bottomPanel1.SuspendLayout();
@@ -113,7 +115,7 @@
 
         private Controls.ButtonTextBox assemblyFilePathTextBox;
         private System.Windows.Forms.Label label1;
-        private nUpdate.UI.Controls.BottomPanel bottomPanel1;
+        private BottomPanel bottomPanel1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
     }

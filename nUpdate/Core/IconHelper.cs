@@ -5,9 +5,9 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using nUpdate.Core.Win32;
+using nUpdate.Internal.Core.Win32;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     internal class IconHelper
     {

@@ -3,7 +3,7 @@
 using System;
 using System.Net;
 
-namespace nUpdate.Core
+namespace nUpdate.Internal.Core
 {
     public class WebClientWrapper : WebClient
     {
