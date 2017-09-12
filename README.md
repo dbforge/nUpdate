@@ -2,7 +2,7 @@
 
 # nUpdate - .NET Update Solution
 
-[![Release](https://img.shields.io/badge/release-v/pseminardemo/-blue.svg)](https://github.com/ProgTrade/nUpdate/releases)
+[![Release](https://img.shields.io/badge/release-v3.2-blue.svg)](https://github.com/ProgTrade/nUpdate/releases)
 [![NuGet](https://img.shields.io/badge/nuget%20nUpdate.ProvideTAP-v3.2-red.svg)](https://www.nuget.org/packages/nUpdate.ProvideTAP/)
 [![NuGet](https://img.shields.io/badge/nuget%20nUpdate.WithoutTAP-v3.2-red.svg)](https://www.nuget.org/packages/nUpdate.WithoutTAP/)  
 [![Issues](https://img.shields.io/github/issues/ProgTrade/nUpdate.svg)](https://github.com/ProgTrade/nUpdate/issues)
@@ -34,7 +34,9 @@ Also, nUpdate is designed to fit in with all operating systems since Windows Vis
 
 You can get the necessary libraries and applications from the current [releases](https://github.com/ProgTrade/nUpdate/releases). The nUpdate library itself can also be installed in your application using the NuGet package manager.
 
-#### Using NuGet
+### Using NuGet
+
+#### nUpdate.ProvideTAP
 
 If you want to use nUpdate with the Taskbased Asynchronous Pattern including `async` and `await`, then install this package:
 
@@ -42,7 +44,13 @@ If you want to use nUpdate with the Taskbased Asynchronous Pattern including `as
 PM> Install-Package nUpdate.ProvideTAP -Version 3.2
 ```
 
-Otherwise, if you want to use the Eventbased Asynchronous Pattern only, make sure to install this package:
+##### Trouble installing nUpdate.ProvideTAP?
+
+It may be that Visual Studio shows you a warning like `The primary reference "nUpdate.ProvideTAP, Version=..., Culture=neutral, PublicKeyToken=..., processorArchitecture=MSIL" could not be resolved because it has an indirect dependency on the .NET Framework assembly "System.Runtime, Version=..., Culture=neutral, PublicKeyToken=..." which has a higher version "..." than the version "..." in the current target framework.` and won't let you compile the project. You can fix this by going to the NuGet Package Manager and updating the Microsoft.Bcl.\* packages to the newest version.
+
+#### nUpdate.WithoutTAP
+
+Otherwise, if you want to use the Eventbased Asynchronous Pattern, make sure to install this package:
 
 ```
 PM> Install-Package nUpdate.WithoutTAP -Version 3.2
