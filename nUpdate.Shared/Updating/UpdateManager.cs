@@ -328,23 +328,20 @@ namespace nUpdate.Updating
         /// </summary>
         public void InstallPackage()
         {
-            var unpackerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
-            var unpackerZipPath = Path.Combine(unpackerDirectory, "Ionic.Zip.dll");
-            var guiInterfacePath = Path.Combine(unpackerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
-            var jsonNetPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.dll");
-            var jsonNetPdbPath = Path.Combine(unpackerDirectory, "Newtonsoft.Json.pdb");
-            var unpackerAppPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.exe");
-            //var unpackerAppPdbPath = Path.Combine(unpackerDirectory, "nUpdate UpdateInstaller.pdb"); 
+            var installerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
+            var dotNetZipPath = Path.Combine(installerDirectory, "Ionic.Zip.dll");
+            var guiInterfacePath = Path.Combine(installerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
+            var jsonNetPath = Path.Combine(installerDirectory, "Newtonsoft.Json.dll");
+            var installerFilePath = Path.Combine(installerDirectory, "nUpdate UpdateInstaller.exe");
 
-            if (Directory.Exists(unpackerDirectory))
-                Directory.Delete(unpackerDirectory, true);
-            Directory.CreateDirectory(unpackerDirectory);
+            if (Directory.Exists(installerDirectory))
+                Directory.Delete(installerDirectory, true);
+            Directory.CreateDirectory(installerDirectory);
 
-            File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
+            File.WriteAllBytes(dotNetZipPath, Resources.Ionic_Zip);
             File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
             File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
-            File.WriteAllBytes(jsonNetPdbPath, Resources.Newtonsoft_Json_Pdb);
-            File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
+            File.WriteAllBytes(installerFilePath, Resources.nUpdate_UpdateInstaller);
 
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
@@ -382,7 +379,7 @@ namespace nUpdate.Updating
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = unpackerAppPath,
+                FileName = installerFilePath,
                 Arguments = string.Join("|", args),
                 UseShellExecute = true,
                 Verb = "runas"
