@@ -83,16 +83,6 @@ namespace nUpdate.Internal.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Newtonsoft_Json_Pdb {
-            get {
-                object obj = ResourceManager.GetObject("Newtonsoft_Json_Pdb", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
         internal static byte[] nUpdate_UpdateInstaller {
             get {
                 object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller", resourceCulture);
@@ -106,16 +96,6 @@ namespace nUpdate.Internal.Properties {
         internal static byte[] nUpdate_UpdateInstaller_Client_GuiInterface {
             get {
                 object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_Client_GuiInterface", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
-        internal static byte[] nUpdate_UpdateInstaller1 {
-            get {
-                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller1", resourceCulture);
                 return ((byte[])(obj));
             }
         }
