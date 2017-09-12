@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class PackageAddDialog
     {
@@ -90,18 +92,18 @@
             this.loadingLabel = new System.Windows.Forms.Label();
             this.createButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new nUpdate.UI.Controls.Line();
+            this.line2 = new Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.necessaryUpdateInfoLabel = new System.Windows.Forms.Label();
             this.necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new nUpdate.UI.Controls.Line();
-            this.line1 = new nUpdate.UI.Controls.Line();
+            this.line3 = new Line();
+            this.line1 = new Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -402,7 +404,7 @@
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 323);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -442,7 +444,7 @@
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 231);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -452,7 +454,7 @@
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 153);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -1414,18 +1416,18 @@
         private System.Windows.Forms.Panel loadingPanel;
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private nUpdate.UI.Controls.Line line1;
+        private Line line1;
         private Controls.ExplorerTreeView categoryTreeView;
         private System.Windows.Forms.ImageList categoryImageList;
         private System.Windows.Forms.Label necessaryUpdateInfoLabel;
         private System.Windows.Forms.CheckBox necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-        private nUpdate.UI.Controls.Line line3;
+        private Line line3;
         private Controls.ExplorerListView operationsListView;
         private System.Windows.Forms.ColumnHeader itemName;
         private System.Windows.Forms.ColumnHeader Description;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private Controls.ExplorerTreeView filesDataTreeView;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.NumericUpDown developmentBuildNumericUpDown;
         private Controls.TablessTabControl categoryTabControl;
         private System.Windows.Forms.TabPage generalTabPage;
@@ -1435,7 +1437,7 @@
         private System.Windows.Forms.TabPage replaceFilesTabPage;
         private System.Windows.Forms.Label includeIntoStatisticsInfoLabel;
         private System.Windows.Forms.CheckBox includeIntoStatisticsCheckBox;
-        private nUpdate.UI.Controls.Line line2;
+        private Line line2;
         private System.Windows.Forms.ToolStripComboBox changelogLanguageComboBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private Controls.TablessTabControl changelogContentTabControl;

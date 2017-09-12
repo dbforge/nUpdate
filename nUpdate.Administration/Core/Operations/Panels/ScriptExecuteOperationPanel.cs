@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core.Operations;
+using nUpdate.Internal.Core.Operations;
 
 namespace nUpdate.Administration.Core.Operations.Panels
 {

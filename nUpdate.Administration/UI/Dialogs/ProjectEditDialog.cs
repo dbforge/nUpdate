@@ -16,7 +16,7 @@ using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 using nUpdate.Updating;
 using Starksoft.Aspen.Ftps;
 
@@ -994,6 +994,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                     _useStatistics = useStatisticsServerRadioButton.Checked;
                 }));
 
+                bool synchronizeData = Popup.ShowPopup(this, SystemIcons.Question, "Automatically synchronize data?",
+                        "nUpdate Administration may encounter differences between your remote configuration and the local changes that you've made. Should nUpdate Administration try to synchronize these changes or do you want to keep them locally? Choose the latter option, if you just fixed a problem with the data (e.g. a typo due to which nUpdate Administration could not connect to the server).",
+                        PopupButtons.YesNo) == DialogResult.Yes;
+
                 if (Project.Name != _name)
                 {
                     Invoke(
@@ -1054,30 +1058,39 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
 
                 if (Project.Path != _localPath)
                 {
-                    Invoke(
-                        new Action(
-                            () =>
-                                loadingLabel.Text = "Moving project file..."));
-
-                    try
-                    {
-                        File.Move(Project.Path, _localPath);
-                        _projectFileMoved = true;
-                    }
-                    catch (IOException ex)
+                    if (Popup.ShowPopup(this, SystemIcons.Question, "Automatically move the project file?",
+                            "nUpdate Administration noticed that the path of the local project file has changed. Should nUpdate Administration move it to this new location? Choose \"No\", if the file is already located at the path that you specified.",
+                            PopupButtons.YesNo) == DialogResult.Yes)
                     {
                         Invoke(
                             new Action(
                                 () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the project file.", ex,
-                                        PopupButtons.Ok)));
-                        Reset();
-                        return;
+                                    loadingLabel.Text = "Moving project file..."));
+
+                        try
+                        {
+                            File.Move(Project.Path, _localPath);
+                            _projectFileMoved = true;
+                        }
+                        catch (IOException ex)
+                        {
+                            Invoke(
+                                new Action(
+                                    () =>
+                                        Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the project file.",
+                                            ex,
+                                            PopupButtons.Ok)));
+                            Reset();
+                            return;
+                        }
                     }
                 }
 
                 if (Project.UpdateUrl != _updateUrl)
                 {
+                    if (!synchronizeData)
+                        goto saveData;
+
                     if (_newUpdateConfiguration == null && !LoadConfiguration())
                     {
                         Reset();

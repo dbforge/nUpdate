@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Popups
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Popups
 {
     partial class PopupDialog
     {
@@ -33,7 +35,7 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyEntireMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.noButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.yesButton = new System.Windows.Forms.Button();
@@ -166,7 +168,7 @@
         private System.Windows.Forms.PictureBox iconPictureBox;
         private System.Windows.Forms.Label messageLabel;
         private System.Windows.Forms.Label headerLabel;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem copyEntireMessageToolStripMenuItem;

@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class JsonEditorDialog
     {
@@ -34,7 +36,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JsonEditorDialog));
             this.codeTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.saveLanguageButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.codeTextBox)).BeginInit();
@@ -140,7 +142,7 @@
         #endregion
 
         private FastColoredTextBoxNS.FastColoredTextBox codeTextBox;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button saveLanguageButton;
         private System.Windows.Forms.Button cancelButton;
 

@@ -10,7 +10,7 @@ using Ionic.Zip;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
+using nUpdate.Internal.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs

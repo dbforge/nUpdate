@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1fc358a3-632d-4e44-8533-057d72176220</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>nUpdate.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\nUpdateVersionAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PackageDeleteException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SizeCalculationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\StatisticsException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgument.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgumentExecutionOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdaterUI.cs" />
+  </ItemGroup>
+</Project>

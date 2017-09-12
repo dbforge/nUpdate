@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class ProjectRemovalDialog
     {
@@ -30,7 +32,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectRemovalDialog));
             this.projectsTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.line1 = new nUpdate.UI.Controls.Line();
+            this.line1 = new Line();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.noProjectsLabel = new System.Windows.Forms.Label();
@@ -51,7 +53,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(-6, 225);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 10);
@@ -116,7 +118,7 @@
         #endregion
 
         private Controls.ExplorerTreeView projectsTreeView;
-        private nUpdate.UI.Controls.Line line1;
+        private Line line1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label noProjectsLabel;

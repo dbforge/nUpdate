@@ -614,9 +614,13 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate\nUpdate.csproj">
+    <ProjectReference Include="..\nUpdate.ProvideTAP\nUpdate.ProvideTAP.csproj">
+      <Project>{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}</Project>
+      <Name>nUpdate.ProvideTAP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
       <Project>{EFB71D69-EBF9-4F60-B776-DE443730A3DD}</Project>
-      <Name>nUpdate</Name>
+      <Name>nUpdate.Internal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

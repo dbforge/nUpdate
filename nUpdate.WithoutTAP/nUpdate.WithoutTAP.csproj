@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CE1809EE-88FD-449C-81AB-6409F9B4ECEA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>nUpdate</RootNamespace>
+    <AssemblyName>nUpdate.WithoutTAP</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Dialogs\BaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\DialogResultWrapper.cs" />
+    <Compile Include="UI\Dialogs\NewUpdateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\NewUpdateDialog.Designer.cs">
+      <DependentUpon>NewUpdateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\NoUpdateFoundDialog.Designer.cs">
+      <DependentUpon>NoUpdateFoundDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateDownloadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateDownloadDialog.Designer.cs">
+      <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateSearchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\UpdateSearchDialog.Designer.cs">
+      <DependentUpon>UpdateSearchDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
+    <Compile Include="UpdateEventArgs\UpdateSearchFinishedEventArgs.cs" />
+    <Compile Include="Updating\UpdateConfiguration.cs" />
+    <Compile Include="Updating\UpdateManager.cs" />
+    <Compile Include="Updating\UpdaterUI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
+      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
+      <Name>nUpdate.Internal</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Dialogs\BaseDialog.resx">
+      <DependentUpon>BaseDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\NewUpdateDialog.resx">
+      <DependentUpon>NewUpdateDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\NoUpdateFoundDialog.resx">
+      <DependentUpon>NoUpdateFoundDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdateDownloadDialog.resx">
+      <DependentUpon>UpdateDownloadDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\UpdateSearchDialog.resx">
+      <DependentUpon>UpdateSearchDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\nUpdate.Shared\nUpdate.Shared.projitems" Label="Shared" />
+</Project>

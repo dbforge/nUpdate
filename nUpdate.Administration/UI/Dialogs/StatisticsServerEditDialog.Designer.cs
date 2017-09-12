@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class StatisticsServerEditDialog
     {
@@ -32,9 +34,9 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.label4 = new System.Windows.Forms.Label();
-            this.line2 = new nUpdate.UI.Controls.Line();
+            this.line2 = new Line();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
             this.databaseTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -100,7 +102,7 @@
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(10, 105);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(321, 12);
@@ -212,10 +214,10 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Label label1;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label4;
-        private nUpdate.UI.Controls.Line line2;
+        private Line line2;
         private System.Windows.Forms.TextBox usernameTextBox;
         private Controls.CueTextBox databaseTextBox;
         private System.Windows.Forms.Label label5;

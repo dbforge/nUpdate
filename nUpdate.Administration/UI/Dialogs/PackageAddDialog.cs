@@ -23,7 +23,8 @@ using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
 using nUpdate.Core;
-using nUpdate.Core.Operations;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.Updating;
 using Starksoft.Aspen.Ftps;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
@@ -951,7 +952,11 @@ namespace nUpdate.Administration.UI.Dialogs
                     fileNode = new TreeNode(file.Name, 1, 1) {Tag = file.FullName};
                 else
                 {
-                    if (filesImageList.Images.ContainsKey(file.Extension))
+                    if (string.IsNullOrEmpty(file.Extension))
+                    {
+                        fileNode = new TreeNode(file.Name, 1, 1) { Tag = file.FullName };
+                    }
+                    else if (filesImageList.Images.ContainsKey(file.Extension))
                     {
                         var index = filesImageList.Images.IndexOfKey(file.Extension);
                         fileNode = new TreeNode(file.Name, index, index) {Tag = file.FullName};
@@ -1020,7 +1025,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 {
                     TreeNode fileNode;
                     var fileInfo = new FileInfo(fileName);
-                    if (filesImageList.Images.ContainsKey(fileInfo.Extension))
+                    if (string.IsNullOrEmpty(fileInfo.Extension))
+                    {
+                        fileNode = new TreeNode(fileInfo.Name, 1, 1) { Tag = fileInfo.FullName };
+                    }
+                    else if (filesImageList.Images.ContainsKey(fileInfo.Extension))
                     {
                         var index = filesImageList.Images.IndexOfKey(fileInfo.Extension);
                         fileNode = new TreeNode(fileInfo.Name, index, index) {Tag = fileInfo.FullName};

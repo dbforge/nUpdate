@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.UI.Dialogs
+﻿using nUpdate.Internal.UI.Controls;
+
+namespace nUpdate.Administration.UI.Dialogs
 {
     partial class InfoDialog
     {
@@ -31,9 +33,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoDialog));
             this.closeButton = new System.Windows.Forms.Button();
             this.donatePictureBox = new System.Windows.Forms.PictureBox();
-            this.line1 = new nUpdate.UI.Controls.Line();
+            this.line1 = new Line();
             this.label13 = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UI.Controls.BottomPanel();
+            this.controlPanel1 = new BottomPanel();
             this.websiteLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label12 = new System.Windows.Forms.Label();
             this.ll_github = new System.Windows.Forms.LinkLabel();
@@ -50,7 +52,7 @@
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.line2 = new nUpdate.UI.Controls.Line();
+            this.line2 = new Line();
             this.label1 = new System.Windows.Forms.Label();
             this.dotNetZipLinkLabel = new System.Windows.Forms.LinkLabel();
             this.jsonNetLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -90,7 +92,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(17, 157);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 14);
@@ -105,7 +107,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "v3.1.8";
+            this.label13.Text = "v3.2.0";
             // 
             // controlPanel1
             // 
@@ -287,7 +289,7 @@
             // 
             // line2
             // 
-            this.line2.LineAlignment = nUpdate.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(21, 273);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(397, 10);
@@ -484,12 +486,12 @@
         private System.Windows.Forms.LinkLabel ll_github;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.LinkLabel websiteLinkLabel;
-        private nUpdate.UI.Controls.BottomPanel controlPanel1;
+        private BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Label label13;
-        private nUpdate.UI.Controls.Line line1;
+        private Line line1;
         private System.Windows.Forms.PictureBox donatePictureBox;
-        private nUpdate.UI.Controls.Line line2;
+        private Line line2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.LinkLabel dotNetZipLinkLabel;
         private System.Windows.Forms.LinkLabel jsonNetLinkLabel;

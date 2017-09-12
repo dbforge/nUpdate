@@ -82,19 +82,18 @@
   <ItemGroup>
     <Compile Include="ConnectionCheckerTest.cs" />
     <Compile Include="RsaSignatureTest.cs" />
-    <Compile Include="AesManagerTest.cs" />
     <Compile Include="UpdateVersionTest.cs" />
     <Compile Include="UriConnectorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate.Administration\nUpdate.Administration.csproj">
-      <Project>{804f7359-bd07-4c8d-a126-a863cd27aa4d}</Project>
-      <Name>nUpdate.Administration</Name>
+    <ProjectReference Include="..\nUpdate.ProvideTAP\nUpdate.ProvideTAP.csproj">
+      <Project>{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}</Project>
+      <Name>nUpdate.ProvideTAP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\nUpdate\nUpdate.csproj">
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
       <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
-      <Name>nUpdate</Name>
+      <Name>nUpdate.Internal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
