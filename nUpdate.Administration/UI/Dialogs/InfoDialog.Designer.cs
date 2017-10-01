@@ -107,7 +107,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "v3.2.0";
+            this.label13.Text = "v3.2.1";
             // 
             // controlPanel1
             // 
