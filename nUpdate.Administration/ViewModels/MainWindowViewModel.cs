@@ -56,8 +56,7 @@ namespace nUpdate.Administration.ViewModels
         }
 
         public ICollectionView CollectionView { get; }
-
-
+        
         public ICommand LoadCommand
         {
             get => _loadCommand;

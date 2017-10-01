@@ -1,20 +1,22 @@
-﻿<Page x:Class="nUpdate.Administration.Views.FirstRun.PathSetupPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:firstRun="clr-namespace:nUpdate.Administration.ViewModels.FirstRun"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      Title="Paths"
-      d:DataContext="{d:DesignInstance firstRun:PathSetupPageViewModel}"
-      d:DesignHeight="230"
-      d:DesignWidth="520"
-      mc:Ignorable="d">
+﻿<Page
+    x:Class="nUpdate.Administration.Views.FirstRun.PathSetupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:firstRun="clr-namespace:nUpdate.Administration.ViewModels.FirstRun"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Paths"
+    d:DataContext="{d:DesignInstance firstRun:PathSetupPageViewModel}"
+    d:DesignHeight="230"
+    d:DesignWidth="520"
+    mc:Ignorable="d">
 
     <DockPanel Margin="20">
-        <TextBlock DockPanel.Dock="Top"
-                   FontSize="12pt"
-                   Foreground="#003399"
-                   Text="Setup paths" />
+        <TextBlock
+            DockPanel.Dock="Top"
+            FontSize="12pt"
+            Foreground="#003399"
+            Text="Setup paths" />
 
         <StackPanel VerticalAlignment="Center">
             <TextBlock Text="Please specify the paths that should be used by nUpdate Administration for saving your application specific data. If a directory does not yet exist, it will be created." TextWrapping="Wrap" />
@@ -31,25 +33,28 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="3" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0"
-                           Grid.Column="0"
-                           Text="Application data:" />
-                <TextBox x:Name="ApplicationDirectoryTextBox"
-                         Grid.Row="0"
-                         Grid.Column="2"
-                         Text="{Binding ApplicationDataLocation,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="0"
-                           Grid.Column="2"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Foreground="Gray"
-                           IsHitTestVisible="False"
-                           Text="The path for nUpdate Administration's application data">
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Application data:" />
+                <TextBox
+                    x:Name="ApplicationDirectoryTextBox"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Text="{Binding ApplicationDataLocation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    IsHitTestVisible="False"
+                    Text="The path for nUpdate Administration's application data">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -61,23 +66,29 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Command="{Binding ApplicationDataSelectCommand}"
+                    Content="..." />
 
-                <TextBlock Grid.Row="2"
-                           Grid.Column="0"
-                           Text="Default project directory:" />
-                <TextBox x:Name="DefaultProjectDirectoryTextBox"
-                         Grid.Row="2"
-                         Grid.Column="2"
-                         Text="{Binding DefaultProjectDirectory,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="2"
-                           Grid.Column="2"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Foreground="Gray"
-                           IsHitTestVisible="False"
-                           Text="The default path to use when creating a project">
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="Default project directory:" />
+                <TextBox
+                    x:Name="DefaultProjectDirectoryTextBox"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Text="{Binding DefaultProjectDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    IsHitTestVisible="False"
+                    Text="The default path to use when creating a project">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -89,6 +100,11 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="4"
+                    Command="{Binding DefaultProjectDirectorySelectCommand}"
+                    Content="..." />
             </Grid>
         </StackPanel>
     </DockPanel>

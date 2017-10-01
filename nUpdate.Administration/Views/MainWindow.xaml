@@ -1,4 +1,4 @@
-﻿<Window
+﻿<views:ExtendedWindow
     x:Class="nUpdate.Administration.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
+    xmlns:views="clr-namespace:nUpdate.Administration.Views"
     Title="nUpdate Administration 4.0.0"
     Width="707.325"
     Height="465.565"
@@ -175,5 +176,4 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </Grid>
-</Window>
-
+</views:ExtendedWindow>

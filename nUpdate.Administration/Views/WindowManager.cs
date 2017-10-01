@@ -9,12 +9,14 @@ namespace nUpdate.Administration.Views
 {
     public static class WindowManager
     {
-        public static Window GetCurrentWindow()
+        public static ExtendedWindow GetCurrentWindow()
         {
-            return Application.Current.Windows.Cast<Window>().SingleOrDefault(w => w.IsActive);
+            return Application.Current.Windows.Cast<ExtendedWindow>().SingleOrDefault(w => w.IsActive);
         }
 
-        private static bool? InternalShowModalWindow(Window window)
+        // ReSharper disable SuggestBaseTypeForParameter
+        private static bool? InternalShowModalWindow(ExtendedWindow window)
+            // ReSharper restore SuggestBaseTypeForParameter
         {
             var currentWindow = GetCurrentWindow();
             // ReSharper disable once InvertIf
@@ -28,12 +30,12 @@ namespace nUpdate.Administration.Views
             return window.ShowDialog();
         }
 
-        public static bool? ShowModalWindow(Window window)
+        public static bool? ShowModalWindow(ExtendedWindow window)
         {
             return InternalShowModalWindow(window);
         }
 
-        public static bool? ShowModalWindow<T>(Action<T> action = null) where T : Window, new()
+        public static bool? ShowModalWindow<T>(Action<T> action = null) where T : ExtendedWindow, new()
         {
             var window = Activator.CreateInstance<T>();
             action?.Invoke(window);
@@ -43,7 +45,7 @@ namespace nUpdate.Administration.Views
 
         public static bool? ShowModalWindow<TWindowType, TDataContextType>(
             Func<TWindowType, TDataContextType> func, Action<TWindowType> action = null)
-            where TWindowType : Window, new()
+            where TWindowType : ExtendedWindow, new()
             where TDataContextType : INotifyPropertyChanged
         {
             var window = Activator.CreateInstance<TWindowType>();
@@ -53,12 +55,12 @@ namespace nUpdate.Administration.Views
             return InternalShowModalWindow(window);
         }
 
-        public static void ShowWindow(Window window)
+        public static void ShowWindow(ExtendedWindow window)
         {
             window.Show();
         }
 
-        public static void ShowWindow<T>() where T : Window, new()
+        public static void ShowWindow<T>() where T : ExtendedWindow, new()
         {
             var window = Activator.CreateInstance<T>();
             window.Show();

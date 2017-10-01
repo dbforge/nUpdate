@@ -1,16 +1,19 @@
-﻿<Window x:Class="nUpdate.Administration.Views.FirstRunWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:firstRun="clr-namespace:nUpdate.Administration.ViewModels.FirstRun"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
-        Title="First time setup - nUpdate Administration v4.0"
-        Width="520"
-        Height="310"
-        Icon="/./Icons/nUpdate.ico"
-        ResizeMode="NoResize"
-        mc:Ignorable="d">
+﻿<views:ExtendedWindow
+    x:Class="nUpdate.Administration.Views.FirstRunWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:firstRun="clr-namespace:nUpdate.Administration.ViewModels.FirstRun"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
+    xmlns:views="clr-namespace:nUpdate.Administration.Views"
+    Title="First time setup - nUpdate Administration v4.0"
+    Width="520"
+    Height="310"
+    Closing="Window_Closing"
+    Icon="/./Icons/nUpdate.ico"
+    ResizeMode="NoResize"
+    mc:Ignorable="d">
 
     <Window.DataContext>
         <viewModels:FirstRunViewModel />
@@ -21,36 +24,41 @@
     </Window.Resources>
 
     <DockPanel>
-        <Frame Height="230"
-               Content="{Binding CurrentPageViewModel,
-                                 Converter={StaticResource FirstRunViewManager}}"
-               DockPanel.Dock="Top"
-               NavigationUIVisibility="Hidden" />
-        <StackPanel DockPanel.Dock="Bottom"
-                    Orientation="Vertical"
-                    Visibility="{Binding CurrentPageViewModel.NeedsUserInteraction,
-                                         Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Rectangle Height="1"
-                       VerticalAlignment="Center"
-                       Fill="{StaticResource BottomPanelLineBrush}"
-                       SnapsToDevicePixels="True" />
+        <Frame
+            Height="230"
+            Content="{Binding CurrentPageViewModel, Converter={StaticResource FirstRunViewManager}}"
+            DockPanel.Dock="Top"
+            NavigationUIVisibility="Hidden" />
+        <StackPanel
+            DockPanel.Dock="Bottom"
+            Orientation="Vertical"
+            Visibility="{Binding CurrentPageViewModel.NeedsUserInteraction, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Rectangle
+                Height="1"
+                VerticalAlignment="Center"
+                Fill="{StaticResource BottomPanelLineBrush}"
+                SnapsToDevicePixels="True" />
             <Grid Background="{StaticResource BottomPanelBrush}">
-                <StackPanel Margin="10"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <Button MinWidth="92"
-                            Command="{Binding GoBackCommand}"
-                            Content="Back" />
-                    <Button MinWidth="92"
-                            Margin="10,0"
-                            Command="{Binding GoForwardCommand}"
-                            Content="Forward" />
-                    <Button MinWidth="92"
-                            Content="Cancel"
-                            IsCancel="True" />
+                <StackPanel
+                    Margin="10"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Button
+                        MinWidth="92"
+                        Command="{Binding GoBackCommand}"
+                        Content="Back" />
+                    <Button
+                        MinWidth="92"
+                        Margin="10,0"
+                        Command="{Binding GoForwardCommand}"
+                        Content="Forward" />
+                    <Button
+                        MinWidth="92"
+                        Content="Cancel"
+                        IsCancel="True" />
                 </StackPanel>
             </Grid>
         </StackPanel>
     </DockPanel>
-</Window>
+</views:ExtendedWindow>

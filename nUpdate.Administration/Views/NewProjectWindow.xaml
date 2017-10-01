@@ -1,4 +1,4 @@
-﻿<Window
+﻿<views:ExtendedWindow
     x:Class="nUpdate.Administration.Views.NewProjectWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProjectViewModels="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
     xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
+    xmlns:views="clr-namespace:nUpdate.Administration.Views"
     Title="New project - nUpdate Administration v4.0"
     Width="520"
     Height="310"
@@ -59,4 +60,4 @@
             </Grid>
         </StackPanel>
     </DockPanel>
-</Window>
+</views:ExtendedWindow>

@@ -220,6 +220,7 @@
     <Compile Include="Views\NewProject\ProtocolSelectionPage.xaml.cs">
       <DependentUpon>ProtocolSelectionPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ExtendedWindow.cs" />
     <Compile Include="Views\WindowManager.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Page Include="Icons\feedbacktoolicon_64x.xaml">
