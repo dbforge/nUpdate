@@ -192,3 +192,5 @@ FakesAssemblies/
 *.opt
 /Help
 /Help
+
+/.vs
