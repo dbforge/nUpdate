@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+// Copyright © Dominic Beger 2017
 
 using System;
 using System.Drawing;
@@ -43,8 +43,7 @@ namespace nUpdate.Updating
                             var noUpdateDialog = new NoUpdateFoundDialog {UpdateManager = UpdateManager};
                             var noUpdateDialogResult = new DialogResultWrapper();
                             Context.Send(d => noUpdateDialog.ShowDialog(noUpdateDialogResult), null);
-                            if (noUpdateDialogResult.DialogResult != DialogResult.OK)
-                                return;
+                            return;
                         }
                     }
                     else
@@ -89,7 +88,7 @@ namespace nUpdate.Updating
                     if (downloadDialogResult.DialogResult != DialogResult.OK)
                         return;
 
-                    var valid = false;
+                    bool valid;
                     try
                     {
                         valid = UpdateManager.ValidatePackages();
