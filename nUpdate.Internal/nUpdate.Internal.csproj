@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
+    <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\IconHelper.cs" />
     <Compile Include="Core\SizeHelper.cs" />
     <Compile Include="Core\IDeepCopy.cs" />
