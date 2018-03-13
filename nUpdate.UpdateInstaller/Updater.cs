@@ -36,12 +36,11 @@ namespace nUpdate.UpdateInstaller
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(SystemIcons.Error, "Error while initializing the graphic user interface.", ex,
+                Popup.ShowPopup(SystemIcons.Error, "Error while initializing the graphical user interface.", ex,
                     PopupButtons.Ok);
                 return;
             }
 
-            ThreadPool.QueueUserWorkItem(arg => RunUpdateAsync());
             try
             {
                 _progressReporter.Initialize();
@@ -51,21 +50,23 @@ namespace nUpdate.UpdateInstaller
                 _progressReporter.InitializingFail(ex);
                 _progressReporter.Terminate();
             }
+            
+            ThreadPool.QueueUserWorkItem(arg => RunUpdateAsync());
         }
 
         /// <summary>
-        ///     Loads the GUI either from a given external assembly, if one is set, or otherwise, from the integrated GUI.
+        ///     Loads the GUI either from a given external assembly, if one is set, or otherwise, uses the integrated GUI.
         /// </summary>
         /// <returns>
         ///     Returns a new instance of the given object that implements the
-        ///     <see cref="nUpdate.UpdateInstaller.Client.GuiInterface.IProgressReporter" />-interface.
+        ///     <see cref="IProgressReporter" />-interface.
         /// </returns>
         private IProgressReporter GetProgressReporter()
         {
-            Assembly assembly = (string.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
-                                 !File.Exists(Program.ExternalGuiAssemblyPath)
+            Assembly assembly = string.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
+                                !File.Exists(Program.ExternalGuiAssemblyPath)
                 ? Assembly.GetExecutingAssembly()
-                : Assembly.LoadFrom(Program.ExternalGuiAssemblyPath));
+                : Assembly.LoadFrom(Program.ExternalGuiAssemblyPath);
             IServiceProvider provider = ServiceProviderHelper.CreateServiceProvider(assembly);
             return (IProgressReporter) provider.GetService(typeof (IProgressReporter));
         }
@@ -96,7 +97,6 @@ namespace nUpdate.UpdateInstaller
                     catch (Exception ex)
                     {
                         _progressReporter.Fail(ex);
-                        CleanUp();
                         _progressReporter.Terminate();
                         if (!Program.IsHostApplicationClosed || !Program.RestartHostApplication)
                             return;
@@ -418,7 +418,6 @@ namespace nUpdate.UpdateInstaller
                 catch (Exception ex)
                 {
                     _progressReporter.Fail(ex);
-                    CleanUp();
                     _progressReporter.Terminate();
                     if (!Program.IsHostApplicationClosed || !Program.RestartHostApplication)
                         return;
@@ -441,8 +440,7 @@ namespace nUpdate.UpdateInstaller
                     return;
                 }
             }
-
-            CleanUp();
+            
             if (Program.IsHostApplicationClosed && Program.RestartHostApplication)
             {
                 var p = new Process
@@ -463,22 +461,7 @@ namespace nUpdate.UpdateInstaller
             }
             _progressReporter.Terminate();
         }
-
-        /// <summary>
-        ///     Cleans up all resources.
-        /// </summary>
-        private void CleanUp()
-        {
-            try
-            {
-                Directory.Delete(Directory.GetParent(Program.PackageFilePaths.First()).FullName, true);
-            }
-            catch (Exception ex)
-            {
-                _progressReporter.Fail(ex);
-            }
-        }
-
+        
         /// <summary>
         ///     Performs a recursive copy of a given directory.
         /// </summary>
@@ -529,7 +512,6 @@ namespace nUpdate.UpdateInstaller
             catch (Exception ex)
             {
                 _progressReporter.Fail(ex);
-                CleanUp();
                 _progressReporter.Terminate();
                 if (!Program.IsHostApplicationClosed)
                     return;

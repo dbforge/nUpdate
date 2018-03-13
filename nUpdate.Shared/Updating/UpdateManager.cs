@@ -25,7 +25,6 @@ namespace nUpdate.Updating
     ///     Provides functionality to update .NET-applications.
     /// </summary>
     public partial class UpdateManager : IDisposable
-
     {
         private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
             Application.ProductName);
@@ -58,7 +57,7 @@ namespace nUpdate.Updating
         /// <remarks>
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down there and follow the
-        ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
+        ///     steps of the category "Copy data" which will automatically generate the necessary code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
             CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
@@ -309,12 +308,13 @@ namespace nUpdate.Updating
 
         private void Initialize()
         {
-            if (Directory.Exists(Path.Combine(Path.GetTempPath(), "nUpdate")))
-                return;
-
             try
             {
-                Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "nUpdate", Application.ProductName));
+                var updateDirDirectoryInfo = new DirectoryInfo(_applicationUpdateDirectory);
+                if (updateDirDirectoryInfo.Exists)
+                    updateDirDirectoryInfo.Empty();
+                else
+                    updateDirDirectoryInfo.Create();
             }
             catch (Exception ex)
             {
