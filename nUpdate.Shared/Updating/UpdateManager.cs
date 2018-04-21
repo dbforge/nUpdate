@@ -293,8 +293,7 @@ namespace nUpdate.Updating
                     req.Credentials = HttpAuthenticationCredentials;
                 using (var resp = req.GetResponse())
                 {
-                    double contentLength;
-                    if (double.TryParse(resp.Headers.Get("Content-Length"), out contentLength))
+                    if (double.TryParse(resp.Headers.Get("Content-Length"), out var contentLength))
                         return contentLength;
                 }
             }
