@@ -205,6 +205,12 @@ namespace nUpdate.Updating
         public bool RestartHostApplication { get; set; } = true;
 
         /// <summary>
+        ///     Gets or sets the timeout that should be used when searching for updates. In milliseconds. 
+        ///     By default, this is set to 10000 milliseconds.
+        /// </summary>
+        public int SearchTimeout { get; set; } = 10000;
+
+        /// <summary>
         ///     Gets the total size of all update packages.
         /// </summary>
         public double TotalSize { get; private set; }
