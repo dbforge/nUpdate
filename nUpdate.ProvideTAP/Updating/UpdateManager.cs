@@ -218,7 +218,7 @@ namespace nUpdate.Updating
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             var configuration =
-                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
+                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -264,7 +264,7 @@ namespace nUpdate.Updating
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
                 var configuration =
-                    await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource);
+                    await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource, SearchTimeout);
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
