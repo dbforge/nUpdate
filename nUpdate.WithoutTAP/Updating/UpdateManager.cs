@@ -308,6 +308,9 @@ namespace nUpdate.Updating
             double updatePackageSize = 0;
             foreach (var updateConfiguration in PackageConfigurations)
             {
+                updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                 var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
                 if (newPackageSize == null)
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
@@ -372,6 +375,9 @@ namespace nUpdate.Updating
                 double updatePackageSize = 0;
                 foreach (var updateConfiguration in PackageConfigurations)
                 {
+                    updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                    updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                     if (_searchCancellationTokenSource.IsCancellationRequested)
                         return false;
 
