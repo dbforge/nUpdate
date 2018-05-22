@@ -19,7 +19,7 @@ namespace nUpdate.UserInterfaceTest
                 PUBLIC_KEY,
                 new CultureInfo("zh-CN"),
                 new UpdateVersion("0.1"))
-            { SearchTimeout = 3000 };
+            { SearchTimeout = 3000, UseDynamicUpdateUri=true };
             // manager.HttpAuthenticationCredentials = new NetworkCredential("trade", "test123");
             _updaterUI = new UpdaterUI(manager, SynchronizationContext.Current);
         }
