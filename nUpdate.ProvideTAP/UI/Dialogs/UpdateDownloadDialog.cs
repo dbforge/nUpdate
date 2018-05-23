@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -52,6 +52,14 @@ namespace nUpdate.UI.Dialogs
             Cancel();
         }
 
+        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+            e.Cancel = true;
+            Cancel();
+        }
+
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
             _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
@@ -95,14 +103,6 @@ namespace nUpdate.UI.Dialogs
             }
 
             DialogResult = DialogResult.OK;
-        }
-
-        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason != CloseReason.UserClosing)
-                return;
-            e.Cancel = true;
-            Cancel();
         }
     }
 }

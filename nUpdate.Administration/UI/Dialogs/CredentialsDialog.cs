@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -17,14 +17,9 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        public string Username { get; set; }
         public string Password { get; set; }
 
-        private void CredentialsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!_allowCancel)
-                e.Cancel = true;
-        }
+        public string Username { get; set; }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
@@ -48,6 +43,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _allowCancel = true;
             DialogResult = DialogResult.OK;
+        }
+
+        private void CredentialsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_allowCancel)
+                e.Cancel = true;
         }
     }
 }

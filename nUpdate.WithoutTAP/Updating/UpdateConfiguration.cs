@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2018
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -16,12 +18,18 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <param name="finishedCallback">The <see cref="Action"/> to invoke when the operation has finished.</param>
-        /// <param name="cancellationTokenSource">The optional <see cref="CancellationTokenSource"/> to use for canceling the operation.</param>
+        /// <param name="finishedCallback">The <see cref="Action" /> to invoke when the operation has finished.</param>
+        /// <param name="cancellationTokenSource">
+        ///     The optional <see cref="CancellationTokenSource" /> to use for canceling the
+        ///     operation.
+        /// </param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
-        public static void DownloadAsync(Uri configFileUri, WebProxy proxy, Action<IEnumerable<UpdateConfiguration>, Exception> finishedCallback, CancellationTokenSource cancellationTokenSource = null)
+        public static void DownloadAsync(Uri configFileUri, WebProxy proxy,
+            Action<IEnumerable<UpdateConfiguration>, Exception> finishedCallback,
+            CancellationTokenSource cancellationTokenSource = null, int timeout = 10000)
         {
-            DownloadAsync(configFileUri, null, proxy, finishedCallback, cancellationTokenSource);
+            DownloadAsync(configFileUri, null, proxy, finishedCallback, cancellationTokenSource, timeout);
         }
 
         /// <summary>
@@ -30,13 +38,18 @@ namespace nUpdate.Updating
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="credentials">The HTTP authentication credentials.</param>
         /// <param name="proxy">The optional proxy to use.</param>
-        /// <param name="finishedCallback">The <see cref="Action"/> to invoke when the operation has finished.</param>
-        /// <param name="cancellationTokenSource">The optional <see cref="CancellationTokenSource"/> to use for canceling the operation.</param>
+        /// <param name="finishedCallback">The <see cref="Action" /> to invoke when the operation has finished.</param>
+        /// <param name="cancellationTokenSource">
+        ///     The optional <see cref="CancellationTokenSource" /> to use for canceling the
+        ///     operation.
+        /// </param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static void DownloadAsync(Uri configFileUri, NetworkCredential credentials,
-            WebProxy proxy, Action<IEnumerable<UpdateConfiguration>, Exception> finishedCallback, CancellationTokenSource cancellationTokenSource = null)
+            WebProxy proxy, Action<IEnumerable<UpdateConfiguration>, Exception> finishedCallback,
+            CancellationTokenSource cancellationTokenSource = null, int timeout = 10000)
         {
-            using (var wc = new WebClientWrapper(10000))
+            using (var wc = new WebClientWrapper(timeout))
             {
                 var resetEvent = new ManualResetEvent(false);
                 string source = null;
@@ -52,12 +65,10 @@ namespace nUpdate.Updating
                 wc.DownloadStringCompleted += (sender, args) =>
                 {
                     if (!args.Cancelled)
-                    {
                         if (args.Error != null)
                             exception = args.Error;
                         else
                             source = args.Result;
-                    }
 
                     resetEvent.Set();
                     resetEvent.Dispose();

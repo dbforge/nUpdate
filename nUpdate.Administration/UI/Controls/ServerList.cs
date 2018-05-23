@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Drawing;
 using System.Drawing.Text;
@@ -30,17 +30,13 @@ namespace nUpdate.Administration.UI.Controls
             e.Graphics.Clear(Color.White);
 
             if (e.State.HasFlag(DrawItemState.Selected))
-            {
                 _ren =
                     new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW",
                         (int) ListViewParts.LVP_GROUPHEADER, (int) GroupHeaderStates.LVGH_OPENSELECTEDNOTFOCUSEDHOT));
-            }
             else
-            {
                 _ren =
                     new VisualStyleRenderer(VisualStyleElement.CreateElement("LISTVIEW",
                         (int) ListViewParts.LVP_GROUPHEADER, (int) GroupHeaderStates.LVGH_OPEN));
-            }
 
             _ren.DrawBackground(e.Graphics, e.Bounds);
 
@@ -57,7 +53,9 @@ namespace nUpdate.Administration.UI.Controls
                     e.Graphics.DrawImage(itm.ItemImage, 15, e.Bounds.Y + 13);
                 }
                 else
+                {
                     Items.RemoveAt(e.Index);
+                }
             }
         }
 
@@ -102,14 +100,20 @@ namespace nUpdate.Administration.UI.Controls
 
     public class ServerListItem
     {
-        public string HeaderText { get; set; }
-        public string ItemText { get; set; }
-        public Image ItemImage { get; set; }
-
         /// <summary>
         ///     Sets the header color.
         /// </summary>
         public Color HeaderColor { get; set; } = SystemColors.ControlText;
+
+        public string HeaderText { get; set; }
+        public Image ItemImage { get; set; }
+        public string ItemText { get; set; }
+
+        public static ServerListItem Parse(object source)
+        {
+            var dest = (ServerListItem) source;
+            return dest;
+        }
 
         public static bool TryParse(object source, out ServerListItem item)
         {
@@ -126,12 +130,6 @@ namespace nUpdate.Administration.UI.Controls
 
             item = dest;
             return true;
-        }
-
-        public static ServerListItem Parse(object source)
-        {
-            var dest = (ServerListItem) source;
-            return dest;
         }
     }
 }

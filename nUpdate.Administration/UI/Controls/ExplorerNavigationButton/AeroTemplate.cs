@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -51,7 +51,7 @@ namespace ExplorerNavigationButton
                 _normalUpperBackgroundBrush = new PathGradientBrush(path1);
                 var blend1 = new ColorBlend();
                 blend1.Colors = new[]
-                {Color.FromArgb(240, Color.White), Color.FromArgb(50, 110, 180), Color.FromArgb(50, 110, 180)};
+                    {Color.FromArgb(240, Color.White), Color.FromArgb(50, 110, 180), Color.FromArgb(50, 110, 180)};
                 blend1.Positions = new[] {0f, 0.3f, 1f};
                 _normalUpperBackgroundBrush.InterpolationColors = blend1;
                 _hoverUpperBackgroundBrush = new PathGradientBrush(path1);
@@ -62,7 +62,7 @@ namespace ExplorerNavigationButton
                 _hoverUpperBackgroundBrush.InterpolationColors = blend9;
                 var blend8 = new ColorBlend();
                 blend8.Colors = new[]
-                {Color.FromArgb(200, Color.White), Color.FromArgb(35, 70, 120), Color.FromArgb(35, 70, 120)};
+                    {Color.FromArgb(200, Color.White), Color.FromArgb(35, 70, 120), Color.FromArgb(35, 70, 120)};
                 blend8.Positions = new[] {0f, 0.4f, 1f};
                 _pressedUpperBackgroundBrush.InterpolationColors = blend8;
                 path1.Dispose();
@@ -72,19 +72,19 @@ namespace ExplorerNavigationButton
                 _normalLowerBackgroundBrush = new PathGradientBrush(path2);
                 var blend2 = new ColorBlend();
                 blend2.Colors = new[]
-                {Color.FromArgb(0, 35, 130), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
+                    {Color.FromArgb(0, 35, 130), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
                 blend2.Positions = new[] {0f, 0.7f, 1f};
                 _normalLowerBackgroundBrush.InterpolationColors = blend2;
                 _hoverLowerBackgroundBrush = new PathGradientBrush(path2);
                 var blend10 = new ColorBlend();
                 blend10.Colors = new[]
-                {Color.FromArgb(0, 55, 150), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
+                    {Color.FromArgb(0, 55, 150), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
                 blend10.Positions = new[] {0f, 0.7f, 1f};
                 _hoverLowerBackgroundBrush.InterpolationColors = blend10;
                 _pressedLowerBackgroundBrush = new PathGradientBrush(path2);
                 var blend7 = new ColorBlend();
                 blend7.Colors = new[]
-                {Color.FromArgb(0, 10, 50), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
+                    {Color.FromArgb(0, 10, 50), Color.FromArgb(60, 195, 235), Color.FromArgb(200, 250, 255)};
                 blend7.Positions = new[] {0f, 0.7f, 1f};
                 _pressedLowerBackgroundBrush.InterpolationColors = blend7;
                 path2.Dispose();
@@ -115,7 +115,7 @@ namespace ExplorerNavigationButton
                     LinearGradientMode.Vertical);
                 var blend4 = new ColorBlend();
                 blend4.Colors = new[]
-                {Color.FromArgb(215, 230, 250), Color.FromArgb(215, 230, 250), Color.FromArgb(165, 190, 230)};
+                    {Color.FromArgb(215, 230, 250), Color.FromArgb(215, 230, 250), Color.FromArgb(165, 190, 230)};
                 blend4.Positions = new[] {0, 0.5f, 1};
                 disabledArrowBrush.InterpolationColors = blend4;
 
@@ -145,51 +145,6 @@ namespace ExplorerNavigationButton
                 path4.Dispose();
             }
 
-            protected override void DrawNormal(Graphics g, ArrowDirection direction)
-            {
-                g.FillPath(_normalBackgrounBrush, _lowerBackgroundPath);
-                g.FillPath(_normalUpperBackgroundBrush, _upperBackgroundPath);
-                g.FillEllipse(_normalLowerBackgroundBrush, _backgroundRect);
-
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
-                g.DrawPath(_normalArrowPen, _arrowPath);
-            }
-
-            protected override void DrawHover(Graphics g, ArrowDirection direction)
-            {
-                g.FillPath(_hoverBackgrounBrush, _lowerBackgroundPath);
-                g.FillPath(_hoverUpperBackgroundBrush, _upperBackgroundPath);
-                g.FillEllipse(_hoverLowerBackgroundBrush, _backgroundRect);
-
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
-                g.DrawPath(_normalArrowPen, _arrowPath);
-            }
-
-            protected override void DrawPressed(Graphics g, ArrowDirection direction)
-            {
-                g.FillPath(_pressedBackgrounBrush, _lowerBackgroundPath);
-                g.FillPath(_pressedUpperBackgroundBrush, _upperBackgroundPath);
-                g.FillEllipse(_pressedLowerBackgroundBrush, _backgroundRect);
-
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
-                g.DrawPath(_normalArrowPen, _arrowPath);
-            }
-
-            protected override void DrawDisabled(Graphics g, ArrowDirection direction)
-            {
-                g.FillPath(_disabledUpperBackgroundBrush, _upperBackgroundPath);
-                g.FillPath(_disabledLowerBackgroundBrush, _lowerBackgroundPath);
-                g.FillPath(_disabledUpperBrush, _upperBackgroundPath);
-                g.FillPath(_disabledLowerBrush, _lowerBackgroundPath);
-
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
-                g.DrawPath(_disabledArrowPen, _arrowPath);
-            }
-
             protected override void Dispose(bool disposing)
             {
                 _upperBackgroundPath.Dispose();
@@ -213,6 +168,51 @@ namespace ExplorerNavigationButton
                 _disabledArrowPen.Dispose();
                 _disabledUpperBrush.Dispose();
                 _disabledLowerBrush.Dispose();
+            }
+
+            protected override void DrawDisabled(Graphics g, ArrowDirection direction)
+            {
+                g.FillPath(_disabledUpperBackgroundBrush, _upperBackgroundPath);
+                g.FillPath(_disabledLowerBackgroundBrush, _lowerBackgroundPath);
+                g.FillPath(_disabledUpperBrush, _upperBackgroundPath);
+                g.FillPath(_disabledLowerBrush, _lowerBackgroundPath);
+
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
+                g.DrawPath(_disabledArrowPen, _arrowPath);
+            }
+
+            protected override void DrawHover(Graphics g, ArrowDirection direction)
+            {
+                g.FillPath(_hoverBackgrounBrush, _lowerBackgroundPath);
+                g.FillPath(_hoverUpperBackgroundBrush, _upperBackgroundPath);
+                g.FillEllipse(_hoverLowerBackgroundBrush, _backgroundRect);
+
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
+                g.DrawPath(_normalArrowPen, _arrowPath);
+            }
+
+            protected override void DrawNormal(Graphics g, ArrowDirection direction)
+            {
+                g.FillPath(_normalBackgrounBrush, _lowerBackgroundPath);
+                g.FillPath(_normalUpperBackgroundBrush, _upperBackgroundPath);
+                g.FillEllipse(_normalLowerBackgroundBrush, _backgroundRect);
+
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
+                g.DrawPath(_normalArrowPen, _arrowPath);
+            }
+
+            protected override void DrawPressed(Graphics g, ArrowDirection direction)
+            {
+                g.FillPath(_pressedBackgrounBrush, _lowerBackgroundPath);
+                g.FillPath(_pressedUpperBackgroundBrush, _upperBackgroundPath);
+                g.FillEllipse(_pressedLowerBackgroundBrush, _backgroundRect);
+
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 24f, 0));
+                g.DrawPath(_normalArrowPen, _arrowPath);
             }
         }
     }

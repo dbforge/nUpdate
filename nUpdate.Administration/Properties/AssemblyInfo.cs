@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Reflection;
 using System.Resources;
@@ -38,6 +38,6 @@ using System.Runtime.InteropServices;
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("3.2.1.0")]
-[assembly: AssemblyFileVersion("3.2.1.0")]
+[assembly: AssemblyVersion("3.3.0.0")]
+[assembly: AssemblyFileVersion("3.3.0.0")]
 [assembly: NeutralResourcesLanguage("")]

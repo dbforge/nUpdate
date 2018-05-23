@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.CodeDom.Compiler;
@@ -21,7 +21,9 @@ namespace nUpdate.Administration.Core.Operations.Panels
         private readonly TextStyle _brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Italic);
         private readonly TextStyle _grayStyle = new TextStyle(Brushes.Gray, null, FontStyle.Regular);
         private readonly TextStyle _greenStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
+
         private readonly TextStyle _magentaStyle = new TextStyle(Brushes.Magenta, null, FontStyle.Regular);
+
         //private TextStyle _maroonStyle = new TextStyle(Brushes.Maroon, null, FontStyle.Regular);
         private readonly MarkerStyle _sameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
         private List<CompilerError> _activeCompilerErrors = new List<CompilerError>();
@@ -33,11 +35,9 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         public string Code
         {
-            get { return codeTextBox.Text; }
-            set { codeTextBox.Text = value; }
+            get => codeTextBox.Text;
+            set => codeTextBox.Text = value;
         }
-
-        public Operation Operation => new Operation(OperationArea.Scripts, OperationMethod.Execute, Code);
 
         public bool IsValid
         {
@@ -47,7 +47,35 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     string.Join("\n",
                         codeTextBox.Lines.Except(
                             codeTextBox.Lines.Where(item => item.StartsWith("using") || item.StartsWith("//")))).Trim();
-                return newText.StartsWith("public class Program") && newText.Contains("static void Main") && !_activeCompilerErrors.Any();
+                return newText.StartsWith("public class Program") && newText.Contains("static void Main") &&
+                       !_activeCompilerErrors.Any();
+            }
+        }
+
+        public Operation Operation => new Operation(OperationArea.Scripts, OperationMethod.Execute, Code);
+
+        private void codeTextBox_Leave(object sender, EventArgs e)
+        {
+            errorsTabPage.Text = "Errors: 0";
+            errorListView.Items.Clear();
+
+            _activeCompilerErrors = new CodeDomHelper().CompileCode(Code).ToList();
+            if (_activeCompilerErrors.Count == 0)
+                return;
+
+            Popup.ShowPopup(this, SystemIcons.Error, "Compilation failed.",
+                "The compilation of the source code failed. Please check the error list for more information.",
+                PopupButtons.Ok);
+            errorsTabPage.Text = $"Errors: ({_activeCompilerErrors.Count})";
+            errorListView.Items.Clear();
+
+            foreach (var activeError in _activeCompilerErrors)
+            {
+                var errorItem = new ListViewItem(activeError.ErrorNumber);
+                errorItem.SubItems.Add(activeError.ErrorText);
+                errorItem.SubItems.Add(activeError.Line.ToString(CultureInfo.InvariantCulture));
+                errorItem.SubItems.Add(activeError.Column.ToString(CultureInfo.InvariantCulture));
+                errorListView.Items.Add(errorItem);
             }
         }
 
@@ -84,31 +112,6 @@ namespace nUpdate.Administration.Core.Operations.Panels
             codeTextBox.AddStyle(_sameWordsStyle);
 
             codeTextBox.OnSyntaxHighlight(new TextChangedEventArgs(codeTextBox.Range));
-        }
-
-        private void codeTextBox_Leave(object sender, EventArgs e)
-        {
-            errorsTabPage.Text = "Errors: 0";
-            errorListView.Items.Clear();
-
-            _activeCompilerErrors = new CodeDomHelper().CompileCode(Code).ToList();
-            if (_activeCompilerErrors.Count == 0)
-                return;
-
-            Popup.ShowPopup(this, SystemIcons.Error, "Compilation failed.",
-                "The compilation of the source code failed. Please check the error list for more information.",
-                PopupButtons.Ok);
-            errorsTabPage.Text = $"Errors: ({_activeCompilerErrors.Count})";
-            errorListView.Items.Clear();
-
-            foreach (var activeError in _activeCompilerErrors)
-            {
-                var errorItem = new ListViewItem(activeError.ErrorNumber);
-                errorItem.SubItems.Add(activeError.ErrorText);
-                errorItem.SubItems.Add(activeError.Line.ToString(CultureInfo.InvariantCulture));
-                errorItem.SubItems.Add(activeError.Column.ToString(CultureInfo.InvariantCulture));
-                errorListView.Items.Add(errorItem);
-            }
         }
     }
 }

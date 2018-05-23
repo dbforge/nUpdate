@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden,
 // indem Sie "*" wie unten gezeigt eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.2.1.0")]
-[assembly: AssemblyFileVersion("3.2.1.0")]
+[assembly: AssemblyVersion("3.3.0.0")]
+[assembly: AssemblyFileVersion("3.3.0.0")]

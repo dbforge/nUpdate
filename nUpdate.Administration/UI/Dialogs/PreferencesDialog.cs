@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -19,26 +19,37 @@ namespace nUpdate.Administration.UI.Dialogs
     public partial class PreferencesDialog : BaseDialog
     {
         private readonly List<string> _cultureNames = new List<string>();
-        private CultureInfo[] _cultureInfos = {};
+        private CultureInfo[] _cultureInfos = { };
 
         public PreferencesDialog()
         {
             InitializeComponent();
         }
 
-        private void PreferencesDialog_Load(object sender, EventArgs e)
+        private void CopyFilesRecursively(string sourcePath, string destinationPath)
         {
-            _cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-            foreach (var info in _cultureInfos)
+            foreach (var directory in new DirectoryInfo(sourcePath).GetDirectories())
             {
-                languagesComboBox.Items.Add($"{info.EnglishName} - {info.Name}");
-                _cultureNames.Add(info.Name);
+                string destination = Path.Combine(destinationPath, directory.Name);
+                Directory.CreateDirectory(destination);
+                CopyFilesRecursively(directory.FullName, destination);
+                Directory.Delete(directory.FullName, true);
             }
 
-            Text = string.Format(Text, Program.VersionString);
-            languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);
-            programPathTextBox.Text = Settings.Default.ProgramPath;
-            programPathTextBox.Initialize();
+            foreach (var file in new DirectoryInfo(sourcePath).GetFiles())
+                File.Move(file.FullName, Path.Combine(destinationPath, file.Name));
+        }
+
+        private void editLanguageButton_Click(object sender, EventArgs e)
+        {
+            var lp = new LocalizationProperties();
+            var name =
+                new CultureInfo(
+                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim()).Name;
+
+            var jsonEditorDialog =
+                new JsonEditorDialog {LanguageContent = Serializer.Serialize(lp), CultureName = name};
+            jsonEditorDialog.ShowDialog(this);
         }
 
         private void languagesComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -63,6 +74,30 @@ namespace nUpdate.Administration.UI.Dialogs
             //    editLanguageButton.Enabled = true;
         }
 
+        private void PreferencesDialog_Load(object sender, EventArgs e)
+        {
+            _cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
+            foreach (var info in _cultureInfos)
+            {
+                languagesComboBox.Items.Add($"{info.EnglishName} - {info.Name}");
+                _cultureNames.Add(info.Name);
+            }
+
+            Text = string.Format(Text, Program.VersionString);
+            languagesComboBox.SelectedIndex = _cultureNames.FindIndex(item => item == Settings.Default.Language.Name);
+            programPathTextBox.Text = Settings.Default.ProgramPath;
+            programPathTextBox.Initialize();
+        }
+
+        private void programPathTextBox_ButtonClicked(object sender, EventArgs e)
+        {
+            using (var browserDialog = new FolderBrowserDialog())
+            {
+                if (browserDialog.ShowDialog() == DialogResult.OK)
+                    programPathTextBox.Text = browserDialog.SelectedPath;
+            }
+        }
+
         private void saveButton_Click(object sender, EventArgs e)
         {
             if (!Path.IsPathRooted(programPathTextBox.Text))
@@ -73,7 +108,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (programPathTextBox.Text != Settings.Default.ProgramPath)
-            {
                 try
                 {
                     var projectConfiguration = ProjectConfiguration.Load();
@@ -81,16 +115,14 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         foreach (
                             var project in
-                                projectConfiguration.Select(config => UpdateProject.LoadProject(config.Path))
-                                    .Where(project => project.Packages != null))
+                            projectConfiguration.Select(config => UpdateProject.LoadProject(config.Path))
+                                .Where(project => project.Packages != null))
                         {
                             foreach (var package in project.Packages)
-                            {
                                 package.LocalPackagePath = Path.Combine(programPathTextBox.Text, "Projects",
                                     project.Name,
                                     Directory.GetParent(package.LocalPackagePath).Name,
                                     Path.GetFileName(package.LocalPackagePath));
-                            }
 
                             UpdateProject.SaveProject(project.Path, project);
                         }
@@ -100,10 +132,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the program data.", ex, PopupButtons.Ok);
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while moving the program data.", ex,
+                        PopupButtons.Ok);
                     return;
                 }
-            }
 
             Settings.Default.Language =
                 new CultureInfo(
@@ -112,42 +144,6 @@ namespace nUpdate.Administration.UI.Dialogs
             Settings.Default.Save();
             Settings.Default.Reload();
             Close();
-        }
-
-        private void editLanguageButton_Click(object sender, EventArgs e)
-        {
-            var lp = new LocalizationProperties();
-            var name =
-                new CultureInfo(
-                    languagesComboBox.GetItemText(languagesComboBox.SelectedItem).Split('-')[1].Trim()).Name;
-
-            var jsonEditorDialog = new JsonEditorDialog {LanguageContent = Serializer.Serialize(lp), CultureName = name};
-            jsonEditorDialog.ShowDialog(this);
-        }
-
-        private void CopyFilesRecursively(string sourcePath, string destinationPath)
-        {
-            foreach (var directory in new DirectoryInfo(sourcePath).GetDirectories())
-            {
-                string destination = Path.Combine(destinationPath, directory.Name);
-                Directory.CreateDirectory(destination);
-                CopyFilesRecursively(directory.FullName, destination);
-                Directory.Delete(directory.FullName, true);
-            }
-
-            foreach (var file in new DirectoryInfo(sourcePath).GetFiles())
-            {
-                File.Move(file.FullName, Path.Combine(destinationPath, file.Name));
-            }
-        }
-
-        private void programPathTextBox_ButtonClicked(object sender, EventArgs e)
-        {
-            using (var browserDialog = new FolderBrowserDialog())
-            {
-                if (browserDialog.ShowDialog() == DialogResult.OK)
-                    programPathTextBox.Text = browserDialog.SelectedPath;
-            }
         }
     }
 }

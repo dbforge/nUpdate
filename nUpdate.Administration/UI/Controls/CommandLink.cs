@@ -1,4 +1,4 @@
-// Author: Dominic Beger (Trade/ProgTrade) 2016
+// Copyright © Dominic Beger 2018
 
 using System;
 using System.ComponentModel;
@@ -24,8 +24,6 @@ namespace nUpdate.Administration.UI.Controls
             FlatStyle = FlatStyle.System;
         }
 
-        protected override Size DefaultSize => new Size(180, 60);
-
         protected override CreateParams CreateParams
         {
             get
@@ -36,31 +34,28 @@ namespace nUpdate.Administration.UI.Controls
             }
         }
 
-        [Category("Command Link"),
-         Description("Gets or sets the shield icon visibility of the command link."),
-         DefaultValue(false)]
+        protected override Size DefaultSize => new Size(180, 60);
+
+        [Category("Command Link")]
+        [Description("Gets or sets the note text of the command link.")]
+        [DefaultValue("")]
+        public string Note
+        {
+            get => GetNoteText();
+            set => SetNoteText(value);
+        }
+
+        [Category("Command Link")]
+        [Description("Gets or sets the shield icon visibility of the command link.")]
+        [DefaultValue(false)]
         public bool Shield
         {
-            get { return _shield; }
+            get => _shield;
             set
             {
                 _shield = value;
                 NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETSHIELD, IntPtr.Zero, _shield);
             }
-        }
-
-        [Category("Command Link"),
-         Description("Gets or sets the note text of the command link."),
-         DefaultValue("")]
-        public string Note
-        {
-            get { return GetNoteText(); }
-            set { SetNoteText(value); }
-        }
-
-        private void SetNoteText(string value)
-        {
-            NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
         }
 
         private string GetNoteText()
@@ -72,6 +67,11 @@ namespace nUpdate.Administration.UI.Controls
             var sb = new StringBuilder(length);
             NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_GETNOTE, ref length, sb);
             return sb.ToString();
+        }
+
+        private void SetNoteText(string value)
+        {
+            NativeMethods.SendMessage(new HandleRef(this, Handle), BCM_SETNOTE, IntPtr.Zero, value);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -25,23 +25,24 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void ProjectImportDialog_Load(object sender, EventArgs e)
+        private void backButton_Click(object sender, EventArgs e)
         {
-            Text = string.Format(Text, Program.VersionString);
-            _sender = optionTabPage;
-
-            projectFilePathTextBox.Initialize();
-            projectOutputPathTextBox.Initialize();
-            projectToImportTextBox.Initialize();
-
-            _projectConfigurations = ProjectConfiguration.Load().ToList();
-            if (_projectConfigurations.Any())
+            if (_sender == importTabPage || _sender == shareTabPage)
             {
-                projectsListBox.Items.AddRange(_projectConfigurations.Select(item => item.Name).Cast<object>().ToArray());
-                projectsListBox.SelectedIndex = 0;
+                wizardTabControl.SelectedTab = optionTabPage;
+                _sender = optionTabPage;
+                backButton.Enabled = false;
             }
-            else
-                shareProjectRadioButton.Enabled = false;
+            else if (_sender == importTabPage1)
+            {
+                wizardTabControl.SelectedTab = importTabPage;
+                _sender = importTabPage;
+            }
+            else if (_sender == shareTabPage1)
+            {
+                wizardTabControl.SelectedTab = shareTabPage;
+                _sender = shareTabPage;
+            }
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -151,9 +152,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     File.Move(projectFilePath, projectFilePathTextBox.Text);
 
                     foreach (var versionDirectory in new DirectoryInfo(folderPath).GetDirectories())
-                    {
                         Directory.Move(versionDirectory.FullName, Path.Combine(projectPath, versionDirectory.Name));
-                    }
 
                     Directory.Delete(folderPath);
                     _projectConfigurations.Add(new ProjectConfiguration(projectNameTextBox.Text,
@@ -191,7 +190,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    string projectPath = Path.Combine(Program.Path, "Projects", projectsListBox.SelectedItem.ToString());
+                    string projectPath =
+                        Path.Combine(Program.Path, "Projects", projectsListBox.SelectedItem.ToString());
                     using (var zip = new ZipFile())
                     {
                         string statisticsFilePath = Path.Combine(projectPath, "statistics.php");
@@ -203,8 +203,8 @@ namespace nUpdate.Administration.UI.Dialogs
 
                         foreach (
                             var versionDirectory in
-                                new DirectoryInfo(projectPath).GetDirectories()
-                                    .Where(item => UpdateVersion.IsValid(item.Name)))
+                            new DirectoryInfo(projectPath).GetDirectories()
+                                .Where(item => UpdateVersion.IsValid(item.Name)))
                         {
                             zip.AddDirectoryByName(versionDirectory.Name);
                             zip.AddDirectory(versionDirectory.FullName, versionDirectory.Name);
@@ -234,6 +234,28 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
+        private void ProjectImportDialog_Load(object sender, EventArgs e)
+        {
+            Text = string.Format(Text, Program.VersionString);
+            _sender = optionTabPage;
+
+            projectFilePathTextBox.Initialize();
+            projectOutputPathTextBox.Initialize();
+            projectToImportTextBox.Initialize();
+
+            _projectConfigurations = ProjectConfiguration.Load().ToList();
+            if (_projectConfigurations.Any())
+            {
+                projectsListBox.Items.AddRange(
+                    _projectConfigurations.Select(item => item.Name).Cast<object>().ToArray());
+                projectsListBox.SelectedIndex = 0;
+            }
+            else
+            {
+                shareProjectRadioButton.Enabled = false;
+            }
+        }
+
         private void projectOutputPathTextBox_ButtonClicked(object sender, EventArgs e)
         {
             using (var fileDialog = new SaveFileDialog())
@@ -252,26 +274,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 fileDialog.Filter = "Shared Project Files (*.zip)|*.zip";
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                     projectToImportTextBox.Text = fileDialog.FileName;
-            }
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            if (_sender == importTabPage || _sender == shareTabPage)
-            {
-                wizardTabControl.SelectedTab = optionTabPage;
-                _sender = optionTabPage;
-                backButton.Enabled = false;
-            }
-            else if (_sender == importTabPage1)
-            {
-                wizardTabControl.SelectedTab = importTabPage;
-                _sender = importTabPage;
-            }
-            else if (_sender == shareTabPage1)
-            {
-                wizardTabControl.SelectedTab = shareTabPage;
-                _sender = shareTabPage;
             }
         }
     }

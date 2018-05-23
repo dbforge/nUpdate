@@ -1,4 +1,4 @@
-// Copyright © Dominic Beger 2017
+// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -297,7 +297,8 @@ namespace nUpdate.Updating
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             var configuration =
-                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
+                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy,
+                    SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -308,6 +309,9 @@ namespace nUpdate.Updating
             double updatePackageSize = 0;
             foreach (var updateConfiguration in PackageConfigurations)
             {
+                updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                 var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
                 if (newPackageSize == null)
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
@@ -354,7 +358,7 @@ namespace nUpdate.Updating
                         configurations = c;
                         exception = e;
                         _searchManualResetEvent.Set();
-                    }, _searchCancellationTokenSource);
+                    }, _searchCancellationTokenSource, SearchTimeout);
                 _searchManualResetEvent.WaitOne();
 
                 // Check for cancellation before throwing any errors
@@ -372,6 +376,9 @@ namespace nUpdate.Updating
                 double updatePackageSize = 0;
                 foreach (var updateConfiguration in PackageConfigurations)
                 {
+                    updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                    updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                     if (_searchCancellationTokenSource.IsCancellationRequested)
                         return false;
 

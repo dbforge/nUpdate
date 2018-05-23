@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Linq;
@@ -7,7 +7,6 @@ using Microsoft.Win32;
 
 namespace nUpdate.Administration.Core.Application.Extension
 {
-
     #region Public Enums
 
     /// <summary>
@@ -81,8 +80,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string ContentType
         {
-            get { return GetContentType(this); }
-            set { SetContentType(this, value); }
+            get => GetContentType(this);
+            set => SetContentType(this, value);
         }
 
         /// <summary>
@@ -122,8 +121,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// <example>notepad.exe, wordpad.exe, othertexteditor.exe</example>
         public string[] OpenWithList
         {
-            get { return GetOpenWithList(this); }
-            set { SetOpenWithList(this, value); }
+            get => GetOpenWithList(this);
+            set => SetOpenWithList(this, value);
         }
 
         /// <summary>
@@ -131,8 +130,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public PerceivedTypes PerceivedType
         {
-            get { return GetPerceivedType(this); }
-            set { SetPerceivedType(this, value); }
+            get => GetPerceivedType(this);
+            set => SetPerceivedType(this, value);
         }
 
         /// <summary>
@@ -141,8 +140,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public Guid PersistentHandler
         {
-            get { return GetPersistentHandler(this); }
-            set { SetPersistentHandler(this, value); }
+            get => GetPersistentHandler(this);
+            set => SetPersistentHandler(this, value);
         }
 
         /// <summary>
@@ -152,19 +151,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         [XmlAttribute]
         public string ProgId
         {
-            get { return GetProgId(this); }
-            set { SetProgId(this, value); }
-        }
-
-        /// <summary>
-        ///     Gets array containing known file extensions from HKEY_CLASSES_ROOT.
-        /// </summary>
-        /// <returns>String array containing extensions.</returns>
-        public static string[] GetExtensions()
-        {
-            var root = Registry.ClassesRoot;
-            var subKeys = root.GetSubKeyNames();
-            return subKeys.Where(subKey => subKey.StartsWith(".")).ToArray();
+            get => GetProgId(this);
+            set => SetProgId(this, value);
         }
 
         /// <summary>
@@ -173,30 +161,6 @@ namespace nUpdate.Administration.Core.Application.Extension
         public void Create()
         {
             Create(this);
-        }
-
-        /// <summary>
-        ///     Deletes the extension key.
-        /// </summary>
-        public void Delete()
-        {
-            Delete(this);
-        }
-
-        /// <summary>
-        ///     Verifies that given extension exists and is associated with given program id
-        /// </summary>
-        /// <param name="extension">Extension to be checked for.</param>
-        /// <param name="progId">progId to be checked for.</param>
-        /// <returns>True if association exists, false if it does not.</returns>
-        public bool IsValid(string extension, string progId)
-        {
-            var fai = new FileAssociationInfo(extension);
-
-            if (!fai.Exists)
-                return false;
-
-            return progId == fai.ProgId;
         }
 
         /// <summary>
@@ -217,6 +181,14 @@ namespace nUpdate.Administration.Core.Application.Extension
         }
 
         /// <summary>
+        ///     Deletes the extension key.
+        /// </summary>
+        public void Delete()
+        {
+            Delete(this);
+        }
+
+        /// <summary>
         ///     Deletes actual file extension entry in registry.
         /// </summary>
         /// <param name="file"><see cref="FileAssociationInfo" /> instance that contains specifics on extension to be deleted.</param>
@@ -227,6 +199,33 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             var root = Registry.ClassesRoot;
             root.DeleteSubKeyTree(file.Extension);
+        }
+
+        /// <summary>
+        ///     Gets array containing known file extensions from HKEY_CLASSES_ROOT.
+        /// </summary>
+        /// <returns>String array containing extensions.</returns>
+        public static string[] GetExtensions()
+        {
+            var root = Registry.ClassesRoot;
+            var subKeys = root.GetSubKeyNames();
+            return subKeys.Where(subKey => subKey.StartsWith(".")).ToArray();
+        }
+
+        /// <summary>
+        ///     Verifies that given extension exists and is associated with given program id
+        /// </summary>
+        /// <param name="extension">Extension to be checked for.</param>
+        /// <param name="progId">progId to be checked for.</param>
+        /// <returns>True if association exists, false if it does not.</returns>
+        public bool IsValid(string extension, string progId)
+        {
+            var fai = new FileAssociationInfo(extension);
+
+            if (!fai.Exists)
+                return false;
+
+            return progId == fai.ProgId;
         }
 
         #region Public Functions - Creators
@@ -346,10 +345,8 @@ namespace nUpdate.Administration.Core.Application.Extension
 
                 key = key.CreateSubKey("OpenWithList");
                 foreach (var s in programList)
-                {
                     if (key != null)
                         key.CreateSubKey(s);
-                }
             }
 
             ShellNotification.NotifyOfChange();
@@ -373,7 +370,7 @@ namespace nUpdate.Administration.Core.Application.Extension
 
             try
             {
-                actualType = (PerceivedTypes) Enum.Parse(typeof (PerceivedTypes), val.ToString(), true);
+                actualType = (PerceivedTypes) Enum.Parse(typeof(PerceivedTypes), val.ToString(), true);
             }
             catch (Exception ex)
             {

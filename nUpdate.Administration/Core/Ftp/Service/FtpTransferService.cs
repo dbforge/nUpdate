@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -17,15 +17,10 @@ namespace nUpdate.Administration.Core.Ftp.Service
     public class FtpTransferService : ITransferProvider
     {
         private readonly ManualResetEvent _uploadPackageResetEvent = new ManualResetEvent(false);
-        private bool _disposed;
-        private FtpsClient _packageFtpsClient;
-        private string _host;
         private string _directory;
-
-        /// <summary>
-        ///     Gets or sets the protocol.
-        /// </summary>
-        public FtpsSecurityProtocol Protocol { get; set; }
+        private bool _disposed;
+        private string _host;
+        private FtpsClient _packageFtpsClient;
 
         /// <summary>
         ///     Gets or sets the network version.
@@ -33,79 +28,15 @@ namespace nUpdate.Administration.Core.Ftp.Service
         public NetworkVersion NetworkVersion { get; set; }
 
         /// <summary>
-        ///     Sets if passive mode should be used.
+        ///     Gets or sets the protocol.
         /// </summary>
-        public bool UsePassiveMode { get; set; }
+        public FtpsSecurityProtocol Protocol { get; set; }
 
-        /// <summary>
-        ///     The FTP-server.
-        /// </summary>
-        public string Host
-        {
-            get { return _host; }
-            set
-            {
-                _host = value;
-                if (_host.EndsWith("/"))
-                    _host = _host.Remove(Host.Length - 1);
-            }
-        }
-
-        /// <summary>
-        ///     The port.
-        /// </summary>
-        public int Port { get; set; }
-
-        /// <summary>
-        ///     The directory.
-        /// </summary>
-        public string Directory
-        {
-            get { return _directory; }
-            set
-            {
-                _directory = value;
-                if (Directory != null && Directory.EndsWith("/") && Directory.Length > 1)
-                    Directory = Directory.Remove(Directory.Length - 1);
-            }
-        }
-
-        /// <summary>
-        ///     The username.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        ///     The password.
-        /// </summary>
-        public SecureString Password { get; set; }
-
-        /// <summary>
-        ///     The proxy to use, if wished.
-        /// </summary>
-        public WebProxy Proxy { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the exception appearing during the package upload.
-        /// </summary>
-        public Exception PackageUploadException { get; set; }
+        public event EventHandler<EventArgs> CancellationFinished;
 
         public void CancelPackageUpload()
         {
             _packageFtpsClient?.CancelAsync();
-        }
-
-        public event EventHandler<EventArgs> CancellationFinished;
-
-        private FtpsClient GetNewFtpsClient()
-        {
-            return new FtpsClient(Host, Port, Protocol)
-            {
-                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary,
-                NetworkProtocol = NetworkVersion,
-                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
-            };
         }
 
         public void DeleteDirectory(string directoryPath)
@@ -115,7 +46,6 @@ namespace nUpdate.Administration.Core.Ftp.Service
                 IEnumerable<ServerItem> items = ListDirectoriesAndFiles(directoryPath, true);
                 ftp.Open(Username, Password.ConvertToInsecureString());
                 foreach (var item in items)
-                {
                     switch (item.ItemType)
                     {
                         case ServerItemType.Directory:
@@ -125,7 +55,6 @@ namespace nUpdate.Administration.Core.Ftp.Service
                             DeleteFile(directoryPath, item.Name);
                             break;
                     }
-                }
                 ftp.DeleteDirectory(directoryPath);
             }
         }
@@ -147,6 +76,34 @@ namespace nUpdate.Administration.Core.Ftp.Service
                 ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
                 ftp.DeleteFile(fileName);
+            }
+        }
+
+        /// <summary>
+        ///     The directory.
+        /// </summary>
+        public string Directory
+        {
+            get => _directory;
+            set
+            {
+                _directory = value;
+                if (Directory != null && Directory.EndsWith("/") && Directory.Length > 1)
+                    Directory = Directory.Remove(Directory.Length - 1);
+            }
+        }
+
+        /// <summary>
+        ///     The FTP-server.
+        /// </summary>
+        public string Host
+        {
+            get => _host;
+            set
+            {
+                _host = value;
+                if (_host.EndsWith("/"))
+                    _host = _host.Remove(Host.Length - 1);
             }
         }
 
@@ -176,6 +133,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
                     if (ex.Message.Contains("No such file or directory") || ex.Message.Contains("Directory not found"))
                         return false;
                 }
+
                 return !string.IsNullOrEmpty(nameList);
             }
         }
@@ -204,48 +162,27 @@ namespace nUpdate.Administration.Core.Ftp.Service
             MoveContent(Directory, aimPath);
         }
 
-        public void MoveContent(string directory, string aimPath)
-        {
-            foreach (var item in ListDirectoriesAndFiles(directory, false)
-                .Where(
-                    item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
-            {
-                using (var ftp = GetNewFtpsClient())
-                {
-                    ftp.Open(Username, Password.ConvertToInsecureString());
+        /// <summary>
+        ///     Gets or sets the exception appearing during the package upload.
+        /// </summary>
+        public Exception PackageUploadException { get; set; }
 
-                    Guid guid; // Just for the out-reference of TryParse
-                    if (item.ItemType == ServerItemType.Directory && UpdateVersion.IsValid(item.Name))
-                    {
-                        ftp.ChangeDirectoryMultiPath(aimPath);
-                        if (!IsExisting(aimPath, item.Name))
-                            ftp.MakeDirectory(item.Name);
-                        ftp.ChangeDirectoryMultiPath(item.Name);
+        /// <summary>
+        ///     The password.
+        /// </summary>
+        public SecureString Password { get; set; }
 
-                        MoveContent(item.FullPath, $"{aimPath}/{item.Name}");
-                        DeleteDirectory(item.FullPath);
-                    }
-                    else if (item.ItemType == ServerItemType.File &&
-                             (item.Name == "updates.json" || item.Name == "statistics.php" || Guid.TryParse(item.Name.Split('.')[0], out guid)))
-                    // Second condition determines whether the item is a package-file or not
-                    {
-                        if (!IsExisting(aimPath, item.Name))
-                        {
-                            // "MoveFile"-method damages the files, so we do it manually with a work-around
-                            ftp.MoveFile(item.FullPath, $"{aimPath}/{item.Name}");
-
-                            /*string localFilePath = Path.Combine(Path.GetTempPath(), item.Name);
-                            ftp.GetFile(item.FullPath, localFilePath, FileAction.Create);
-                            ftp.PutFile(localFilePath, $"{aimPath}/{item.Name}",
-                                FileAction.Create);
-                            File.Delete(localFilePath);*/
-                        }
-                    }
-                }
-            }
-        }
+        /// <summary>
+        ///     The port.
+        /// </summary>
+        public int Port { get; set; }
 
         public event EventHandler<TransferProgressEventArgs> ProgressChanged;
+
+        /// <summary>
+        ///     The proxy to use, if wished.
+        /// </summary>
+        public WebProxy Proxy { get; set; }
 
         public void RenameDirectory(string oldName, string newName)
         {
@@ -290,36 +227,15 @@ namespace nUpdate.Administration.Core.Ftp.Service
             _uploadPackageResetEvent.Reset();
         }
 
-        public void OnProgressChanged(TransferProgressEventArgs e)
-        {
-            EventHandler<TransferProgressEventArgs> handler = ProgressChanged;
-            handler?.Invoke(this, e);
-        }
+        /// <summary>
+        ///     Sets if passive mode should be used.
+        /// </summary>
+        public bool UsePassiveMode { get; set; }
 
-        public void OnCancellationFinished(object sender, EventArgs e)
-        {
-            EventHandler<EventArgs> handler = CancellationFinished;
-            handler?.Invoke(this, e);
-        }
-
-        public void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
-        {
-            _uploadPackageResetEvent.Set();
-
-            if (e.Cancelled)
-            {
-                OnCancellationFinished(this, EventArgs.Empty);
-                return;
-            }
-
-            if (e.Error != null)
-                PackageUploadException = e.Error;
-        }
-
-        public void TransferProgressChangedEventHandler(object sender, Starksoft.Aspen.Ftps.TransferProgressEventArgs e)
-        {
-            OnProgressChanged(e.ToTransferInterfaceProgressEventArgs());
-        }
+        /// <summary>
+        ///     The username.
+        /// </summary>
+        public string Username { get; set; }
 
         public void Dispose()
         {
@@ -336,6 +252,78 @@ namespace nUpdate.Administration.Core.Ftp.Service
             _uploadPackageResetEvent.Dispose();
             Password.Dispose();
             _disposed = true;
+        }
+
+        private FtpsClient GetNewFtpsClient()
+        {
+            return new FtpsClient(Host, Port, Protocol)
+            {
+                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
+                FileTransferType = TransferType.Binary,
+                NetworkProtocol = NetworkVersion,
+                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null
+            };
+        }
+
+        public void MoveContent(string directory, string aimPath)
+        {
+            foreach (var item in ListDirectoriesAndFiles(directory, false)
+                .Where(
+                    item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
+                using (var ftp = GetNewFtpsClient())
+                {
+                    ftp.Open(Username, Password.ConvertToInsecureString());
+
+                    Guid guid; // Just for the out-reference of TryParse
+                    if (item.ItemType == ServerItemType.Directory && UpdateVersion.IsValid(item.Name))
+                    {
+                        ftp.ChangeDirectoryMultiPath(aimPath);
+                        if (!IsExisting(aimPath, item.Name))
+                            ftp.MakeDirectory(item.Name);
+                        ftp.ChangeDirectoryMultiPath(item.Name);
+
+                        MoveContent(item.FullPath, $"{aimPath}/{item.Name}");
+                        DeleteDirectory(item.FullPath);
+                    }
+                    else if (item.ItemType == ServerItemType.File &&
+                             (item.Name == "updates.json" || item.Name == "statistics.php" ||
+                              Guid.TryParse(item.Name.Split('.')[0], out guid)))
+                        // Second condition determines whether the item is a package-file or not
+                    {
+                        if (!IsExisting(aimPath, item.Name)) ftp.MoveFile(item.FullPath, $"{aimPath}/{item.Name}");
+                    }
+                }
+        }
+
+        public void OnCancellationFinished(object sender, EventArgs e)
+        {
+            EventHandler<EventArgs> handler = CancellationFinished;
+            handler?.Invoke(this, e);
+        }
+
+        public void OnProgressChanged(TransferProgressEventArgs e)
+        {
+            EventHandler<TransferProgressEventArgs> handler = ProgressChanged;
+            handler?.Invoke(this, e);
+        }
+
+        public void TransferProgressChangedEventHandler(object sender, Starksoft.Aspen.Ftps.TransferProgressEventArgs e)
+        {
+            OnProgressChanged(e.ToTransferInterfaceProgressEventArgs());
+        }
+
+        public void UploadPackageFinished(object sender, PutFileAsyncCompletedEventArgs e)
+        {
+            _uploadPackageResetEvent.Set();
+
+            if (e.Cancelled)
+            {
+                OnCancellationFinished(this, EventArgs.Empty);
+                return;
+            }
+
+            if (e.Error != null)
+                PackageUploadException = e.Error;
         }
     }
 }

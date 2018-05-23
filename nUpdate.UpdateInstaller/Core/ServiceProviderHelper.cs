@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace nUpdate.UpdateInstaller.Core
                 throw new ArgumentNullException(nameof(assembly));
 
             var attribute =
-                assembly.GetCustomAttributes(typeof (ServiceProviderAttribute), false)
+                assembly.GetCustomAttributes(typeof(ServiceProviderAttribute), false)
                     .Cast<ServiceProviderAttribute>()
                     .SingleOrDefault();
 
