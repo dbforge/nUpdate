@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 
@@ -15,11 +15,6 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     The url of the SQL-host.
-        /// </summary>
-        public string WebUrl { get; set; }
-
-        /// <summary>
         ///     The name of the database to use.
         /// </summary>
         public string DatabaseName { get; set; }
@@ -28,5 +23,10 @@ namespace nUpdate.Administration.Core
         ///     The username for the SQL-connection.
         /// </summary>
         public string Username { get; set; }
+
+        /// <summary>
+        ///     The url of the SQL-host.
+        /// </summary>
+        public string WebUrl { get; set; }
     }
 }

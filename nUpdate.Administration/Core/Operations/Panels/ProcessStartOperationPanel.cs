@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -15,16 +15,16 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public string Path
-        {
-            get { return pathTextBox.Text; }
-            set { pathTextBox.Text = value; }
-        }
-
         public string Arguments
         {
-            get { return argumentTextBox.Text; }
-            set { argumentTextBox.Text = value; }
+            get => argumentTextBox.Text;
+            set => argumentTextBox.Text = value;
+        }
+
+        public string Path
+        {
+            get => pathTextBox.Text;
+            set => pathTextBox.Text = value;
         }
 
         public bool IsValid

@@ -8,18 +8,14 @@ namespace nUpdate.UserInterfaceTest
 {
     public partial class MainDialog : Form
     {
-        const string PUBLIC_KEY = "<RSAKeyValue><Modulus>xhHXp+QCvWb8+W6TR/hkkhEy9h9WwdAMBMDJbsfn3ObF6U5K2KQCKQ6Alr4iXqlwvcYHKt2CG2M4m9So+rA/N3gg/AETbd74MYXaMRtDqLjkTQuG8EI9JqnlKAR3JS4zWkZghtPsYHtzox7J7Z94iDLAP899r+n9yeafYWwXOsRiTOxKhO9oHHQAK5JlRe9yHMM9F+WanEOGTqfI5FwvldH1Wnahs4xJMhDSB9m92D2zu9nruCmA+7l12hoQOIpsF4hKT6cm4Hm+TcZURForopS4I/lU9W+FDv+GMBrf46+tX2QfmBN9x/NUciyYJvFEAVA1JUXhYT19v+2tW1paASlHhzDGrEFpruWK/NNXPNOlEfdjpZRrvdsRGRYwt5bwt8H7+9n8MAI9ERXO627MIm9wrhvsCuZDDStJNMK05AbOfK/4KwVUUxCn0LO7/aWkhEkljz8fz+cS3lA2yX0Scl8r/z1iRyDjLQJ08bnZJrc3LsVOwQVef1/86IpBBOSkco4g6iaZzgfFSKHNpJvah5Gpa5rt9dq9omcNTANGh5KMNjD7zLM0sXQd3Te1vj5bsWXdBrqFdtWJt627/NTUIEvfKmI4V+hvc3VGnXmBIAPUyodC2pxoDrqWElIXMMgaYl2ifLVQdP7Dw6Z9lZ0CSjW5//Juq/vTANMPBjf6LazWxYto+hTQGjBUYYCaGQKNk3lHkFCBIIMvpGANPjWuLUn0Vbh2PI5KkPElHbJ0CAYRHRG2brNP8Zw95NhaZYMoec3cMLokeU31M1TgkCHeqZspnYlKcGxgQj8xCCPmSwriB1jjGJRBrhC2CK7izrn8Dq7uu0Epg2M8nKeYzhFuiBUashVB/YFUmdA9LALUihv4XN0yXQ4C8UJvsGo+vtpdfWx51smMZxSLcjgfDgnNPR2ZKlJbG7bEowUduZWGurGhRNREC+9E1BZCRylI6c0B+7pgeiOexDzWgQlNnslQWtQs7M1ctsic+8EtOYXd//a4PO1bBhpL9u+FPB+Ek8kSSaGhDUsv0ZkNFdyqKVeP+EmGY5UaQ+b0lCdYmoQjp07Yd3lEb+T7vT/AntBSDcvUITSeP4imgYE7bw5Qo3nWWv3dHz4ubGxrumqQD1I/x7X/QU9SMVfMtcswCLx8inJICaw8jJ5E/mH5lFWY8IOjI5211CkjepKc2wtoeSYxFSVw+896vG3n0dlqerddaBr6kBRSOz5gXS4cucYPXZwiHHaFOqRBdVA84yKn9YNMiVSPdbSIYZk3GEjvQTz9dizOVdQKV0c+HyjrXfXsnwOhMFN8x1iBOD0oeUSMjiV2WidETK117Wnz36lFkUmf7TwOVhaHCI0YC6w9zm9rrcpPWQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
         private readonly UpdaterUI _updaterUI;
 
         public MainDialog()
         {
             InitializeComponent();
 
-            var manager = new UpdateManager(new Uri("http://localhost:1010/Target-Updater/updates.json"),
-                PUBLIC_KEY,
-                new CultureInfo("zh-CN"),
-                new UpdateVersion("0.1"))
-            { SearchTimeout = 3000, UseDynamicUpdateUri=true };
+            var manager = new UpdateManager(new Uri("http://localhost/dyn/updates.json"), "<RSAKeyValue><Modulus>rQ7p8WZF5vafxiVfqpX+ZSxsSoAJsXk8M81d2rgO5Al5ywQmkhJh6u3rpwkiJ+1yJf8LqKj5FSjhMMOlMH0R1RRCGJIft6lGj0AuZUP5brq5uo5Yp18VqbxaAU17xeRZcatQq6hqdN0FY3t0E0dH0Vm1MBAA2WgLx9TtHCksYNaUQUbxseSHKB4tzg6Qsqfe8jk/uMmODTLlVd/8G/SJXp524cT9pJUiFrW2FxLUJPZouoOr2dcWdCvyl1cLIKVk3mQL5L4XF8DBQXZ5gkDul+CrpynoBKtgtRgxqiahyBIGV884s9Pqb4+tJ9OoEoY+4oa1lQhcsQeurFbNzyqVBtjNZt9311IuXIalG+U6PlBPCCYepASa0xKCQ+U//nGYkpEgAGFAHVPU1olYMuNbxTBImFVVqbhb45HHqZClRyxhQrYfQArWB0nVC6OjrvbVAq9VSY9sMUEeVyTJPo5nRJrnPPAsF2t7CCtEjz+GPc32ZnX3Si/wjuLVQvULMyMCXKN/ALfSxHQ1CnEkv0Ym+0IZymyaF4LZvDoO+YHj50+2shaOouvEtm+zdt7TOx7ObRpItGFkvA/b5CjXZT1vhqleN9Q+FpKBCIuuXk9CEsxTtMp5UilOP1S6p0qacp0o2HlhXtkUq+wK7A0d1w+SjcBBwVQceFcQCTWz/VmGcV9U9DXQI1tnYPSYN8iwp3d442LooWQObJdDbwOfcCFznsgR7oy0d6CLdp5oSjB8CbW7mQKvSqGhS4yQlKrBVvOOT+gpKTTjypxZ4IQjBja5/VgJQaAg1tH0wOjkV/44UU/SdUxGiEElDytIvzCaYkhqASE2n7ekeGTSR74SfhjKbsmdypFzSvCCSNfjLCG5RkkcJOiyawBwf6NT2FD3Fc4a9hMOKY8mu0JPeAuSJUEY5e0cB0peJieyaq++fE+mSAGeQOVE7MkD98IMb4P/dEruIjzSrb1Y2AJXp4PODckd5XS+OR3fcHJTP2vxyGjaUMnZFLcB5AiPcdjX2qnXGwnr8/NesOLpvIZUmrxd75io3Uo/6lX7HD3v9SLcusykzrMyVrjD5h2G0+m/yojtWwrEVNPJqU7on01/50+h0/MPBTu8K/QPL+ggV6ekVrgi8VOq2qw//fj1NXJLS0+KYmcgZM1MGs1rTGrBCRDoAySDPezCCUETv7pghrStpH+UKfPdiTf22HIfvvo6H87ht4DPmF03bfGQUqbFjMyDQjHbu2n94usllVUbrGk+fjyhtx3/BsdCu4ql7eqJExu37FFnC5+xpmRPlQWvFu/9dq37L47oFlroITJWe87vBQn6hbvVAMi7ZoptefhR/d1cdfzFZEBtIP0Ms4g4uv9QvUNNmQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", new CultureInfo("en"));
+            manager.UseDynamicUpdateUri = true;
             // manager.HttpAuthenticationCredentials = new NetworkCredential("trade", "test123");
             _updaterUI = new UpdaterUI(manager, SynchronizationContext.Current);
         }

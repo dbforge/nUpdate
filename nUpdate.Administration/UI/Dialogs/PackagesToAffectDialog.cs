@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -24,22 +24,17 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void PackagesToAffectDialog_Load(object sender, EventArgs e)
-        {
-            foreach (var packageVersion in AvailablePackageVersions)
-            {
-                checkedListBox1.Items.Add(packageVersion);
-            }
-        }
-
         private void continueButton_Click(object sender, EventArgs e)
         {
             foreach (var item in checkedListBox1.CheckedItems)
-            {
                 PackageVersionsToAffect.Add(new UpdateVersion(item.ToString()));
-            }
 
             DialogResult = DialogResult.OK;
+        }
+
+        private void PackagesToAffectDialog_Load(object sender, EventArgs e)
+        {
+            foreach (var packageVersion in AvailablePackageVersions) checkedListBox1.Items.Add(packageVersion);
         }
     }
 }

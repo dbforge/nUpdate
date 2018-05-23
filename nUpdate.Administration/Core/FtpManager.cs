@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,8 @@ namespace nUpdate.Administration.Core
         }
 
         public FtpManager(string host, int port, string directory, string username, SecureString password,
-            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol, NetworkVersion networkVersion)
+            WebProxy proxy, bool usePassiveMode, string transferAssemblyFilePath, int protcol,
+            NetworkVersion networkVersion)
         {
             TransferAssemblyPath = transferAssemblyFilePath;
             GetTransferProvider();
@@ -43,35 +44,12 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
-        ///     Sets the protocol to use, if FTP is used as protocol.
+        ///     The directory.
         /// </summary>
-        public FtpsSecurityProtocol Protocol
+        public string Directory
         {
-            get { return ((FtpTransferService) _transferProvider).Protocol; }
-            set
-            {
-                if (_transferProvider.GetType() == typeof (FtpTransferService))
-                    ((FtpTransferService) _transferProvider).Protocol = value;
-            }
-        }
-
-        public NetworkVersion NetworkVersion
-        {
-            get { return ((FtpTransferService) _transferProvider).NetworkVersion; }
-            set
-            {
-                if (_transferProvider.GetType() == typeof(FtpTransferService))
-                    ((FtpTransferService)_transferProvider).NetworkVersion = value;
-            }
-        }
-
-        /// <summary>
-        ///     Sets if passive mode should be used.
-        /// </summary>
-        public bool UsePassiveMode
-        {
-            get { return _transferProvider.UsePassiveMode; }
-            set { _transferProvider.UsePassiveMode = value; }
+            get => _transferProvider.Directory;
+            set => _transferProvider.Directory = value;
         }
 
         /// <summary>
@@ -79,53 +57,18 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public string Host
         {
-            get { return _transferProvider.Host; }
-            set { _transferProvider.Host = value; }
+            get => _transferProvider.Host;
+            set => _transferProvider.Host = value;
         }
 
-        /// <summary>
-        ///     The port.
-        /// </summary>
-        public int Port
+        public NetworkVersion NetworkVersion
         {
-            get { return _transferProvider.Port; }
-            set { _transferProvider.Port = value; }
-        }
-
-        /// <summary>
-        ///     The directory.
-        /// </summary>
-        public string Directory
-        {
-            get { return _transferProvider.Directory; }
-            set { _transferProvider.Directory = value; }
-        }
-
-        /// <summary>
-        ///     The username.
-        /// </summary>
-        public string Username
-        {
-            get { return _transferProvider.Username; }
-            set { _transferProvider.Username = value; }
-        }
-
-        /// <summary>
-        ///     The password.
-        /// </summary>
-        public SecureString Password
-        {
-            get { return _transferProvider.Password.Copy(); }
-            set { _transferProvider.Password = value; }
-        }
-
-        /// <summary>
-        ///     The proxy to use, if wished.
-        /// </summary>
-        public WebProxy Proxy
-        {
-            get { return _transferProvider.Proxy; }
-            set { _transferProvider.Proxy = value; }
+            get => ((FtpTransferService) _transferProvider).NetworkVersion;
+            set
+            {
+                if (_transferProvider.GetType() == typeof(FtpTransferService))
+                    ((FtpTransferService) _transferProvider).NetworkVersion = value;
+            }
         }
 
         /// <summary>
@@ -133,8 +76,48 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public Exception PackageUploadException
         {
-            get { return _transferProvider.PackageUploadException; }
-            set { _transferProvider.PackageUploadException = value; }
+            get => _transferProvider.PackageUploadException;
+            set => _transferProvider.PackageUploadException = value;
+        }
+
+        /// <summary>
+        ///     The password.
+        /// </summary>
+        public SecureString Password
+        {
+            get => _transferProvider.Password.Copy();
+            set => _transferProvider.Password = value;
+        }
+
+        /// <summary>
+        ///     The port.
+        /// </summary>
+        public int Port
+        {
+            get => _transferProvider.Port;
+            set => _transferProvider.Port = value;
+        }
+
+        /// <summary>
+        ///     Sets the protocol to use, if FTP is used as protocol.
+        /// </summary>
+        public FtpsSecurityProtocol Protocol
+        {
+            get => ((FtpTransferService) _transferProvider).Protocol;
+            set
+            {
+                if (_transferProvider.GetType() == typeof(FtpTransferService))
+                    ((FtpTransferService) _transferProvider).Protocol = value;
+            }
+        }
+
+        /// <summary>
+        ///     The proxy to use, if wished.
+        /// </summary>
+        public WebProxy Proxy
+        {
+            get => _transferProvider.Proxy;
+            set => _transferProvider.Proxy = value;
         }
 
         /// <summary>
@@ -142,32 +125,45 @@ namespace nUpdate.Administration.Core
         /// </summary>
         public string TransferAssemblyPath { get; set; }
 
-        private void GetTransferProvider()
+        /// <summary>
+        ///     Sets if passive mode should be used.
+        /// </summary>
+        public bool UsePassiveMode
         {
-            if (string.IsNullOrWhiteSpace(TransferAssemblyPath))
-            {
-                var provider = GetDefaultServiceProvider();
-                _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));
-                ((FtpTransferService) _transferProvider).Protocol = Protocol;
-                    // Default integrated services define a protocol as there are multiple ones available
-            }
-            else
-            {
-                var assembly = Assembly.LoadFrom(TransferAssemblyPath);
-                var provider = ServiceProviderHelper.CreateServiceProvider(assembly) ?? GetDefaultServiceProvider();
-                _transferProvider = (ITransferProvider) provider.GetService(typeof (ITransferProvider));
-            }
+            get => _transferProvider.UsePassiveMode;
+            set => _transferProvider.UsePassiveMode = value;
         }
 
-        private IServiceProvider GetDefaultServiceProvider()
+        /// <summary>
+        ///     The username.
+        /// </summary>
+        public string Username
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            return ServiceProviderHelper.CreateServiceProvider(assembly);
+            get => _transferProvider.Username;
+            set => _transferProvider.Username = value;
         }
 
-        public void TestConnection()
+        public event EventHandler<EventArgs> CancellationFinished
         {
-            _transferProvider.TestConnection();
+            add => _transferProvider.CancellationFinished += value;
+            remove => _transferProvider.CancellationFinished -= value;
+        }
+
+        /// <summary>
+        ///     Terminates the package upload process.
+        /// </summary>
+        public void CancelPackageUpload()
+        {
+            _transferProvider.CancelPackageUpload();
+        }
+
+        /// <summary>
+        ///     Deletes a directory on the server.
+        /// </summary>
+        /// <param name="directoryPath">The name of the directory to delete.</param>
+        public void DeleteDirectory(string directoryPath)
+        {
+            _transferProvider.DeleteDirectory(directoryPath);
         }
 
         /// <summary>
@@ -189,40 +185,42 @@ namespace nUpdate.Administration.Core
             _transferProvider.DeleteFile(directoryPath, fileName);
         }
 
-        /// <summary>
-        ///     Deletes a directory on the server.
-        /// </summary>
-        /// <param name="directoryPath">The name of the directory to delete.</param>
-        public void DeleteDirectory(string directoryPath)
+        public void Dispose()
         {
-            _transferProvider.DeleteDirectory(directoryPath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        ///     Lists the directories and files of the current FTP-directory.
-        /// </summary>
-        public IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive)
+        public virtual void Dispose(bool disposing)
         {
-            return _transferProvider.ListDirectoriesAndFiles(path, recursive);
+            if (!disposing || _disposed)
+                return;
+
+            Password.Dispose();
+            _disposed = true;
         }
 
-        public void RenameDirectory(string oldName, string newName)
+        private IServiceProvider GetDefaultServiceProvider()
         {
-            _transferProvider.RenameDirectory(oldName, newName);
+            var assembly = Assembly.GetExecutingAssembly();
+            return ServiceProviderHelper.CreateServiceProvider(assembly);
         }
 
-        public void MakeDirectory(string name)
+        private void GetTransferProvider()
         {
-            _transferProvider.MakeDirectory(name);
-        }
-
-        /// <summary>
-        ///     Moves all files and subdirectories from the current FTP-directory to the given aim directory.
-        /// </summary>
-        /// <param name="aimPath">The aim directory to move the files and subdirectories to.</param>
-        public void MoveContent(string aimPath)
-        {
-            _transferProvider.MoveContent(aimPath);
+            if (string.IsNullOrWhiteSpace(TransferAssemblyPath))
+            {
+                var provider = GetDefaultServiceProvider();
+                _transferProvider = (ITransferProvider) provider.GetService(typeof(ITransferProvider));
+                ((FtpTransferService) _transferProvider).Protocol = Protocol;
+                // Default integrated services define a protocol as there are multiple ones available
+            }
+            else
+            {
+                var assembly = Assembly.LoadFrom(TransferAssemblyPath);
+                var provider = ServiceProviderHelper.CreateServiceProvider(assembly) ?? GetDefaultServiceProvider();
+                _transferProvider = (ITransferProvider) provider.GetService(typeof(ITransferProvider));
+            }
         }
 
         /// <summary>
@@ -247,6 +245,44 @@ namespace nUpdate.Administration.Core
         }
 
         /// <summary>
+        ///     Lists the directories and files of the current FTP-directory.
+        /// </summary>
+        public IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive)
+        {
+            return _transferProvider.ListDirectoriesAndFiles(path, recursive);
+        }
+
+        public void MakeDirectory(string name)
+        {
+            _transferProvider.MakeDirectory(name);
+        }
+
+        /// <summary>
+        ///     Moves all files and subdirectories from the current FTP-directory to the given aim directory.
+        /// </summary>
+        /// <param name="aimPath">The aim directory to move the files and subdirectories to.</param>
+        public void MoveContent(string aimPath)
+        {
+            _transferProvider.MoveContent(aimPath);
+        }
+
+        public event EventHandler<TransferProgressEventArgs> ProgressChanged
+        {
+            add => _transferProvider.ProgressChanged += value;
+            remove => _transferProvider.ProgressChanged -= value;
+        }
+
+        public void RenameDirectory(string oldName, string newName)
+        {
+            _transferProvider.RenameDirectory(oldName, newName);
+        }
+
+        public void TestConnection()
+        {
+            _transferProvider.TestConnection();
+        }
+
+        /// <summary>
         ///     Uploads a file to the server.
         /// </summary>
         /// <param name="filePath">The local path of the file to upload.</param>
@@ -263,41 +299,6 @@ namespace nUpdate.Administration.Core
         public void UploadPackage(string packagePath, string packageVersion)
         {
             _transferProvider.UploadPackage(packagePath, packageVersion);
-        }
-
-        /// <summary>
-        ///     Terminates the package upload process.
-        /// </summary>
-        public void CancelPackageUpload()
-        {
-            _transferProvider.CancelPackageUpload();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            Password.Dispose();
-            _disposed = true;
-        }
-
-        public event EventHandler<TransferProgressEventArgs> ProgressChanged
-        {
-            add { _transferProvider.ProgressChanged += value; }
-            remove { _transferProvider.ProgressChanged -= value; }
-        }
-
-        public event EventHandler<EventArgs> CancellationFinished
-        {
-            add { _transferProvider.CancellationFinished += value; }
-            remove { _transferProvider.CancellationFinished -= value; }
         }
     }
 }

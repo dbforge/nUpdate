@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -44,6 +44,14 @@ namespace nUpdate.UI.Dialogs
             Icon = _appIcon;
         }
 
+        private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+            e.Cancel = true;
+            Cancel();
+        }
+
         private async void UpdateSearchDialog_Shown(object sender, EventArgs e)
         {
             try
@@ -63,14 +71,6 @@ namespace nUpdate.UI.Dialogs
             }
 
             DialogResult = DialogResult.OK;
-        }
-
-        private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason != CloseReason.UserClosing)
-                return;
-            e.Cancel = true;
-            Cancel();
         }
     }
 }

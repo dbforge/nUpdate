@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -13,10 +13,9 @@ namespace nUpdate.Administration.UI.Controls
         public string ButtonText { get; set; }
         public event EventHandler<EventArgs> ButtonClicked;
 
-        protected virtual void OnButtonClicked()
+        private void ButtonClickedHandler(object sender, EventArgs e)
         {
-            if (ButtonClicked != null)
-                ButtonClicked(this, EventArgs.Empty);
+            OnButtonClicked();
         }
 
         public void Initialize()
@@ -31,9 +30,10 @@ namespace nUpdate.Administration.UI.Controls
             NativeMethods.SendMessage(Handle, 0xd3, (IntPtr) 2, (IntPtr) (_button.Width << 16));
         }
 
-        private void ButtonClickedHandler(object sender, EventArgs e)
+        protected virtual void OnButtonClicked()
         {
-            OnButtonClicked();
+            if (ButtonClicked != null)
+                ButtonClicked(this, EventArgs.Empty);
         }
     }
 }

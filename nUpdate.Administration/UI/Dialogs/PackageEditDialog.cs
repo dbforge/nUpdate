@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
 
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7)
-        {Tag = "StopProcess"};
+            {Tag = "StopProcess"};
 
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
         private bool _allowCancel = true;
@@ -94,9 +94,9 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The configurations available in the file.
+        ///     The url of the configuration file.
         /// </summary>
-        public List<UpdateConfiguration> UpdateConfiguration { get; set; }
+        public Uri ConfigurationFileUrl { get; set; }
 
         /// <summary>
         ///     Gets or sets if the package is released.
@@ -109,33 +109,13 @@ namespace nUpdate.Administration.UI.Dialogs
         public UpdateVersion PackageVersion { get; set; }
 
         /// <summary>
-        ///     The url of the configuration file.
+        ///     The configurations available in the file.
         /// </summary>
-        public Uri ConfigurationFileUrl { get; set; }
-
-        /// <summary>
-        ///     Enables or disables the UI controls.
-        /// </summary>
-        /// <param name="enabled">Sets the activation state.</param>
-        public void SetUiState(bool enabled)
-        {
-            _allowCancel = enabled;
-
-            Invoke(new Action(() =>
-            {
-                foreach (var c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                loadingPanel.Visible = !enabled;
-            }));
-        }
+        public List<UpdateConfiguration> UpdateConfiguration { get; set; }
 
         public void Reset()
         {
             if (_existingVersionString != _newVersion.ToString())
-            {
                 try
                 {
                     Directory.Move(_newPackageDirectory, _oldPackageDirectoryPath);
@@ -150,7 +130,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     }));
                     return;
                 }
-            }
 
             if (_commandsExecuted)
             {
@@ -237,6 +216,507 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
+        /// <summary>
+        ///     Enables or disables the UI controls.
+        /// </summary>
+        /// <param name="enabled">Sets the activation state.</param>
+        public void SetUiState(bool enabled)
+        {
+            _allowCancel = enabled;
+
+            Invoke(new Action(() =>
+            {
+                foreach (var c in from Control c in Controls where c.Visible select c) c.Enabled = enabled;
+
+                loadingPanel.Visible = !enabled;
+            }));
+        }
+
+        private void addVersionButton_Click(object sender, EventArgs e)
+        {
+            if (
+                unsupportedMajorNumericUpDown.Value == 0 && unsupportedMinorNumericUpDown.Value == 0 &&
+                unsupportedBuildNumericUpDown.Value == 0 && unsupportedRevisionNumericUpDown.Value == 0)
+            {
+                Popup.ShowPopup(this, SystemIcons.Warning, "Invalid version.",
+                    "You can't add version \"0.0.0.0\" to the unsupported versions. Please specify a minimum version of \"0.1.0.0\"",
+                    PopupButtons.Ok);
+                return;
+            }
+
+            var version = new UpdateVersion((int) unsupportedMajorNumericUpDown.Value,
+                (int) unsupportedMinorNumericUpDown.Value, (int) unsupportedBuildNumericUpDown.Value,
+                (int) unsupportedRevisionNumericUpDown.Value);
+            _unsupportedVersionLiteralsBindingList.Add(version.ToString());
+        }
+
+        private void allRightsReservedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("®");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("®");
+            }
+        }
+
+        private void allVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            unsupportedVersionsPanel.Enabled = false;
+        }
+
+        private void apostropheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("'");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("'");
+            }
+        }
+
+        private void bulletToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("•");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("•");
+            }
+        }
+
+        private void categoryTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (categoryTreeView.SelectedNode.Parent == null) // Check whether the selected node is an operation or not
+                switch (categoryTreeView.SelectedNode.Index)
+                {
+                    case 0:
+                        categoryTabControl.SelectedTab = generalTabPage;
+                        break;
+                    case 1:
+                        categoryTabControl.SelectedTab = changelogTabPage;
+                        break;
+                    case 2:
+                        categoryTabControl.SelectedTab = availabilityTabPage;
+                        break;
+                    case 3:
+                        categoryTabControl.SelectedTab = operationsTabPage;
+                        break;
+                }
+            else
+                categoryTabControl.SelectedTab =
+                    categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index];
+        }
+
+        private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
+        {
+            var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
+            if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
+                return;
+
+            var data = e.Data.GetData(typeof(string));
+            if (data == null)
+                return;
+
+            switch (data.ToString())
+            {
+                case "DeleteFile":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteNode.Clone());
+
+                    var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
+                    deletePage.Controls.Add(new FileDeleteOperationPanel());
+                    categoryTabControl.TabPages.Add(deletePage);
+                    break;
+
+                case "RenameFile":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _renameNode.Clone());
+
+                    var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
+                    renamePage.Controls.Add(new FileRenameOperationPanel());
+                    categoryTabControl.TabPages.Add(renamePage);
+                    break;
+
+                case "CreateRegistrySubKey":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _createRegistrySubKeyNode.Clone());
+
+                    var createRegistryEntryPage =
+                        new TabPage("Create registry entry") {BackColor = SystemColors.Window};
+                    createRegistryEntryPage.Controls.Add(new RegistrySubKeyCreateOperationPanel());
+                    categoryTabControl.TabPages.Add(createRegistryEntryPage);
+                    break;
+
+                case "DeleteRegistrySubKey":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistrySubKeyNode.Clone());
+
+                    var deleteRegistryEntryPage =
+                        new TabPage("Delete registry entry") {BackColor = SystemColors.Window};
+                    deleteRegistryEntryPage.Controls.Add(new RegistrySubKeyDeleteOperationPanel());
+                    categoryTabControl.TabPages.Add(deleteRegistryEntryPage);
+                    break;
+
+                case "SetRegistryValue":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _setRegistryValueNode.Clone());
+
+                    var setRegistryEntryValuePage = new TabPage("Set registry entry value")
+                    {
+                        BackColor = SystemColors.Window
+                    };
+                    setRegistryEntryValuePage.Controls.Add(new RegistrySetValueOperationPanel());
+                    categoryTabControl.TabPages.Add(setRegistryEntryValuePage);
+                    break;
+                case "DeleteRegistryValue":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistryValueNode.Clone());
+
+                    var deleteRegistryEntryValuePage = new TabPage("Delete registry entry value")
+                    {
+                        BackColor = SystemColors.Window
+                    };
+                    deleteRegistryEntryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel());
+                    categoryTabControl.TabPages.Add(deleteRegistryEntryValuePage);
+                    break;
+                case "StartProcess":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startProcessNode.Clone());
+
+                    var startProcessPage = new TabPage("Start process") {BackColor = SystemColors.Window};
+                    startProcessPage.Controls.Add(new ProcessStartOperationPanel());
+                    categoryTabControl.TabPages.Add(startProcessPage);
+                    break;
+                case "TerminateProcess":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _terminateProcessNode.Clone());
+
+                    var terminateProcessPage = new TabPage("Terminate process") {BackColor = SystemColors.Window};
+                    terminateProcessPage.Controls.Add(new ProcessStopOperationPanel());
+                    categoryTabControl.TabPages.Add(terminateProcessPage);
+                    break;
+                case "StartService":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startServiceNode.Clone());
+
+                    var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
+                    startServicePage.Controls.Add(new ServiceStartOperationPanel());
+                    categoryTabControl.TabPages.Add(startServicePage);
+                    break;
+                case "StopService":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _stopServiceNode.Clone());
+
+                    var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
+                    stopServicePage.Controls.Add(new ServiceStopOperationPanel());
+                    categoryTabControl.TabPages.Add(stopServicePage);
+                    break;
+                case "ExecuteScript":
+                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
+
+                    var executeScriptPage = new TabPage("Execute script") {BackColor = SystemColors.Window};
+                    executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
+                    categoryTabControl.TabPages.Add(executeScriptPage);
+                    break;
+            }
+
+            categoryTreeView.Nodes[0].Toggle();
+        }
+
+        private void categoryTreeView_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (categoryTreeView.SelectedNode?.Parent == null)
+                return;
+
+            if (e.Control && e.KeyCode == Keys.Up)
+                categoryTreeView.SelectedNode.MoveUp();
+            else if (e.Control && e.KeyCode == Keys.Down)
+                categoryTreeView.SelectedNode.MoveDown();
+
+            if (e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back || categoryTreeView.SelectedNode.Parent == null)
+                return;
+
+            categoryTabControl.TabPages.Remove(
+                categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
+            categoryTreeView.SelectedNode.Remove();
+        }
+
+        private void changelogClearButton_Click(object sender, EventArgs e)
+        {
+            if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
+            {
+                ((TextBox) changelogContentTabControl.SelectedTab.Controls[0]).Clear();
+            }
+            else
+            {
+                var currentChangelogPanel = (ChangelogPanel) changelogContentTabControl.SelectedTab.Controls[0];
+                ((TextBox) currentChangelogPanel.Controls[0]).Clear();
+            }
+        }
+
+        private void changelogLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
+            {
+                changelogContentTabControl.SelectTab(changelogContentTabControl.TabPages[0]);
+                return;
+            }
+
+            if (
+                changelogContentTabControl.TabPages.Cast<TabPage>()
+                    .Any(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex])))
+            {
+                var aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
+                    .First(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex]));
+                changelogContentTabControl.SelectTab(aimPage);
+            }
+            else
+            {
+                var page = new TabPage("Changelog")
+                {
+                    BackColor = SystemColors.Window,
+                    Tag = _cultures[changelogLanguageComboBox.SelectedIndex]
+                };
+                page.Controls.Add(new ChangelogPanel());
+                changelogContentTabControl.TabPages.Add(page);
+                changelogContentTabControl.SelectTab(page);
+            }
+        }
+
+        private void changelogLoadButton_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.SupportMultiDottedExtensions = false;
+                ofd.Multiselect = false;
+
+                ofd.Filter = "Textdocument (*.txt)|*.txt|RTF-Document (*.rtf)|*.rtf";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    englishChangelogTextBox.Text = File.ReadAllText(ofd.FileName, Encoding.Default);
+            }
+        }
+
+        private void classicQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("„ “");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("„  “");
+            }
+        }
+
+        private void copyrightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("©");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("©");
+            }
+        }
+
+        private void developmentalStageComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            developmentBuildNumericUpDown.Enabled = developmentalStageComboBox.SelectedIndex != 3;
+        }
+
+        private void englishChangelogTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control & (e.KeyCode == Keys.A))
+                englishChangelogTextBox.SelectAll();
+            else if (e.Control & (e.KeyCode == Keys.Back))
+                SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
+        }
+
+        private async void InitializePackage()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                SetUiState(false);
+                if (Project.UseStatistics)
+                {
+                    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
+
+                    var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
+                                           $"UID='{Project.SqlUsername}';" +
+                                           $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
+
+                    MySqlConnection myConnection = null;
+                    try
+                    {
+                        myConnection = new MySqlConnection(connectionString);
+                        myConnection.Open();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
+                                        ex, PopupButtons.Ok)));
+                        myConnection?.Close();
+                        Reset();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
+                                        ex, PopupButtons.Ok)));
+                        myConnection?.Close();
+                        Reset();
+                        return;
+                    }
+
+                    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
+
+                    var command = myConnection.CreateCommand();
+                    command.CommandText =
+                        $"UPDATE Version SET `Version` = \"{_newVersion}\" WHERE `ID` = {_packageConfiguration.VersionId};";
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        _commandsExecuted = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
+                                        ex, PopupButtons.Ok)));
+                        Reset();
+                        return;
+                    }
+                    finally
+                    {
+                        myConnection.Close();
+                        command.Dispose();
+                    }
+                }
+
+                Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
+
+                try
+                {
+                    _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
+                    if (_newVersion != new UpdateVersion(_existingVersionString))
+                        _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
+                    _configurationUploaded = true;
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration.",
+                                    ex, PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
+                try
+                {
+                    string description = null;
+                    Invoke(new Action(() => description = descriptionTextBox.Text));
+                    Project.Packages.First(
+                            item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString))
+                        .Description = description;
+                    if (_newVersion != new UpdateVersion(_existingVersionString))
+                    {
+                        Project.Packages.First(
+                                    item => new UpdateVersion(item.Version) ==
+                                            new UpdateVersion(_existingVersionString))
+                                .LocalPackagePath
+                            = $"{_newPackageDirectory}\\{Project.Guid}.zip";
+                        Project.Packages.First(item => item.Version == _existingVersionString)
+                            .Version = _packageConfiguration.LiteralVersion;
+                    }
+
+                    UpdateProject.SaveProject(Project.Path, Project);
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project.",
+                                    ex, PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
+                SetUiState(true);
+                DialogResult = DialogResult.OK;
+            });
+        }
+
+        private void insideQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("» «");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("» «");
+            }
+        }
+
+        private void operationsListView_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void operationsListView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (operationsListView.SelectedItems.Count > 0)
+                operationsListView.DoDragDrop(operationsListView.SelectedItems[0].Tag, DragDropEffects.Move);
+        }
+
+        private void outsideQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var page = changelogContentTabControl.SelectedTab;
+            if (page.Text != "English")
+            {
+                var panel = (ChangelogPanel) page.Controls[0];
+                panel.Paste("« »");
+            }
+            else
+            {
+                englishChangelogTextBox.Paste("« »");
+            }
+        }
+
+        private void PackageEditDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_allowCancel)
+                e.Cancel = true;
+        }
+
         private void PackageEditDialog_Load(object sender, EventArgs e)
         {
             Text = string.Format(Text, PackageVersion.FullText, Program.VersionString);
@@ -296,22 +776,20 @@ namespace nUpdate.Administration.UI.Dialogs
 
             _existingVersionString = _packageConfiguration.LiteralVersion;
 
-            var devStages = Enum.GetValues(typeof (DevelopmentalStage));
+            var devStages = Enum.GetValues(typeof(DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
             developmentalStageComboBox.SelectedIndex =
                 developmentalStageComboBox.FindStringExact(packageVersion.DevelopmentalStage.ToString());
             developmentBuildNumericUpDown.Value = packageVersion.DevelopmentBuild;
-            developmentBuildNumericUpDown.Enabled = (packageVersion.DevelopmentalStage != DevelopmentalStage.Release);
+            developmentBuildNumericUpDown.Enabled = packageVersion.DevelopmentalStage != DevelopmentalStage.Release;
             architectureComboBox.SelectedIndex = (int) _packageConfiguration.Architecture;
             necessaryUpdateCheckBox.Checked = _packageConfiguration.NecessaryUpdate;
             includeIntoStatisticsCheckBox.Enabled = Project.UseStatistics;
             includeIntoStatisticsCheckBox.Checked = _packageConfiguration.UseStatistics;
             foreach (
                 var package in Project.Packages.Where(package => new UpdateVersion(package.Version) == packageVersion))
-            {
                 descriptionTextBox.Text = package.Description;
-            }
 
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
@@ -350,9 +828,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 someVersionsRadioButton.Checked = true;
                 unsupportedVersionsPanel.Enabled = true;
                 foreach (var unsupportedVersionLiteral in _packageConfiguration.UnsupportedVersions)
-                {
                     _unsupportedVersionLiteralsBindingList.Add(unsupportedVersionLiteral);
-                }
             }
             else
             {
@@ -360,7 +836,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             foreach (var operation in _packageConfiguration.Operations)
-            {
                 switch (Operation.GetOperationTag(operation))
                 {
                     case "DeleteFile":
@@ -481,7 +956,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         startServicePage.Controls.Add(new ServiceStartOperationPanel
                         {
                             ServiceName = operation.Value,
-                            Arguments = ((JArray)operation.Value2).ToObject<IEnumerable<string>>()
+                            Arguments = ((JArray) operation.Value2).ToObject<IEnumerable<string>>()
                         });
                         categoryTabControl.TabPages.Add(startServicePage);
                         break;
@@ -508,58 +983,19 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTabControl.TabPages.Add(executeScriptPage);
                         break;
                 }
-            }
         }
 
-        private void PackageEditDialog_FormClosing(object sender, FormClosingEventArgs e)
+        private void removeVersionButton_Click(object sender, EventArgs e)
         {
-            if (!_allowCancel)
-                e.Cancel = true;
-        }
-
-        private void categoryTreeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (categoryTreeView.SelectedNode.Parent == null) // Check whether the selected node is an operation or not
-            {
-                switch (categoryTreeView.SelectedNode.Index)
-                {
-                    case 0:
-                        categoryTabControl.SelectedTab = generalTabPage;
-                        break;
-                    case 1:
-                        categoryTabControl.SelectedTab = changelogTabPage;
-                        break;
-                    case 2:
-                        categoryTabControl.SelectedTab = availabilityTabPage;
-                        break;
-                    case 3:
-                        categoryTabControl.SelectedTab = operationsTabPage;
-                        break;
-                }
-            }
-            else
-            {
-                categoryTabControl.SelectedTab =
-                    categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index];
-            }
-        }
-
-        private void someVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            unsupportedVersionsPanel.Enabled = true;
-        }
-
-        private void allVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            unsupportedVersionsPanel.Enabled = false;
+            _unsupportedVersionLiteralsBindingList.RemoveAt(unsupportedVersionsListBox.SelectedIndex);
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
             _newVersion = new UpdateVersion((int) majorNumericUpDown.Value, (int) minorNumericUpDown.Value,
                 (int) buildNumericUpDown.Value, (int) revisionNumericUpDown.Value, (DevelopmentalStage)
-                    Enum.Parse(typeof (DevelopmentalStage),
-                        developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
+                Enum.Parse(typeof(DevelopmentalStage),
+                    developmentalStageComboBox.GetItemText(developmentalStageComboBox.SelectedItem)),
                 (int) developmentBuildNumericUpDown.Value);
             if (_newVersion.BasicVersion == "0.0.0.0")
             {
@@ -571,7 +1007,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (Project.Packages != null && Project.Packages.Count != 0)
-            {
                 if (PackageVersion != _newVersion &&
                     Project.Packages.Any(item => new UpdateVersion(item.Version) == _newVersion))
                 {
@@ -581,7 +1016,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     categoryTreeView.SelectedNode = categoryTreeView.Nodes[0];
                     return;
                 }
-            }
 
             if (string.IsNullOrEmpty(englishChangelogTextBox.Text))
             {
@@ -595,10 +1029,10 @@ namespace nUpdate.Administration.UI.Dialogs
 
             foreach (
                 var tabPage in
-                    from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 3)
-                    let operationPanel = tabPage.Controls[0] as IOperationPanel
-                    where operationPanel != null && !operationPanel.IsValid
-                    select tabPage)
+                from tabPage in categoryTabControl.TabPages.Cast<TabPage>().Where(item => item.TabIndex > 3)
+                let operationPanel = tabPage.Controls[0] as IOperationPanel
+                where operationPanel != null && !operationPanel.IsValid
+                select tabPage)
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "An added operation isn't valid.",
                     "Please make sure to fill out all required fields correctly.",
@@ -615,7 +1049,7 @@ namespace nUpdate.Administration.UI.Dialogs
             };
             foreach (
                 var tabPage in
-                    changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
+                changelogContentTabControl.TabPages.Cast<TabPage>().Where(tabPage => tabPage.Text != "English"))
             {
                 var panel = (ChangelogPanel) tabPage.Controls[0];
                 if (string.IsNullOrEmpty(panel.Changelog)) continue;
@@ -629,17 +1063,13 @@ namespace nUpdate.Administration.UI.Dialogs
             if (unsupportedVersionsListBox.Items.Count == 0)
                 allVersionsRadioButton.Checked = true;
             else if (unsupportedVersionsListBox.Items.Count > 0 && someVersionsRadioButton.Checked)
-            {
                 _packageConfiguration.UnsupportedVersions =
                     unsupportedVersionsListBox.Items.Cast<string>().ToArray();
-            }
 
             _packageConfiguration.Operations.Clear();
             foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[3].Nodes
                 select (IOperationPanel) categoryTabControl.TabPages[4 + node.Index].Controls[0])
-            {
                 _packageConfiguration.Operations.Add(operationPanel.Operation);
-            }
 
             _packageConfiguration.UseStatistics = includeIntoStatisticsCheckBox.Checked;
 
@@ -648,9 +1078,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (unsupportedVersionsListBox.Items.Count == 0)
                 allVersionsRadioButton.Checked = true;
             else if (unsupportedVersionsListBox.Items.Count > 0 && someVersionsRadioButton.Checked)
-            {
                 unsupportedVersionLiterals = _unsupportedVersionLiteralsBindingList.ToArray();
-            }
 
             _packageConfiguration.UnsupportedVersions = unsupportedVersionLiterals;
             _packageConfiguration.LiteralVersion = _newVersion.ToString();
@@ -678,8 +1106,8 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             UpdateConfiguration[
-                UpdateConfiguration.IndexOf(
-                    UpdateConfiguration.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
+                    UpdateConfiguration.IndexOf(
+                        UpdateConfiguration.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
                 _packageConfiguration;
             var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
             try
@@ -702,449 +1130,23 @@ namespace nUpdate.Administration.UI.Dialogs
                 DialogResult = DialogResult.OK;
         }
 
-        private async void InitializePackage()
-        {
-            await Task.Factory.StartNew(() =>
-            {
-                SetUiState(false);
-                if (Project.UseStatistics)
-                {
-                    Invoke(new Action(() => loadingLabel.Text = "Connecting to SQL-server..."));
-
-                    var connectionString = $"SERVER='{Project.SqlWebUrl}';" + $"DATABASE='{Project.SqlDatabaseName}';" +
-                                           $"UID='{Project.SqlUsername}';" +
-                                           $"PASSWORD='{SqlPassword.ConvertToInsecureString()}';";
-
-                    MySqlConnection myConnection = null;
-                    try
-                    {
-                        myConnection = new MySqlConnection(connectionString);
-                        myConnection.Open();
-                    }
-                    catch (MySqlException ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "An MySQL-exception occured.",
-                                        ex, PopupButtons.Ok)));
-                        myConnection?.Close();
-                        Reset();
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while connecting to the database.",
-                                        ex, PopupButtons.Ok)));
-                        myConnection?.Close();
-                        Reset();
-                        return;
-                    }
-
-                    Invoke(new Action(() => loadingLabel.Text = "Executing SQL-commands..."));
-
-                    var command = myConnection.CreateCommand();
-                    command.CommandText =
-                        $"UPDATE Version SET `Version` = \"{_newVersion}\" WHERE `ID` = {_packageConfiguration.VersionId};";
-
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                        _commandsExecuted = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(
-                            new Action(
-                                () =>
-                                    Popup.ShowPopup(this, SystemIcons.Error, "Error while executing the commands.",
-                                        ex, PopupButtons.Ok)));
-                        Reset();
-                        return;
-                    }
-                    finally
-                    {
-                        myConnection.Close();
-                        command.Dispose();
-                    }
-                }
-
-                Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
-
-                try
-                {
-                    _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
-                    if (_newVersion != new UpdateVersion(_existingVersionString))
-                        _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
-                    _configurationUploaded = true;
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while uploading the new configuration.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    return;
-                }
-
-                try
-                {
-                    string description = null;
-                    Invoke(new Action(() => description = descriptionTextBox.Text));
-                    Project.Packages.First(
-                        item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString)).
-                        Description = description;
-                    if (_newVersion != new UpdateVersion(_existingVersionString))
-                    {
-                        Project.Packages.First(
-                            item => new UpdateVersion(item.Version) == new UpdateVersion(_existingVersionString))
-                            .LocalPackagePath
-                            = $"{_newPackageDirectory}\\{Project.Guid}.zip";
-                        Project.Packages.First(item => item.Version == _existingVersionString)
-                            .Version = _packageConfiguration.LiteralVersion;
-                    }
-
-                    UpdateProject.SaveProject(Project.Path, Project);
-                }
-                catch (Exception ex)
-                {
-                    Invoke(
-                        new Action(
-                            () =>
-                                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the project.",
-                                    ex, PopupButtons.Ok)));
-                    Reset();
-                    return;
-                }
-
-                SetUiState(true);
-                DialogResult = DialogResult.OK;
-            });
-        }
-
-        private void categoryTreeView_DragDrop(object sender, DragEventArgs e)
-        {
-            var nodeToDropIn = categoryTreeView.GetNodeAt(categoryTreeView.PointToClient(new Point(e.X, e.Y)));
-            if (nodeToDropIn == null || nodeToDropIn.Index != 3) // Operations-node
-                return;
-
-            var data = e.Data.GetData(typeof (string));
-            if (data == null)
-                return;
-
-            switch (data.ToString())
-            {
-                case "DeleteFile":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteNode.Clone());
-
-                    var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
-                    deletePage.Controls.Add(new FileDeleteOperationPanel());
-                    categoryTabControl.TabPages.Add(deletePage);
-                    break;
-
-                case "RenameFile":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _renameNode.Clone());
-
-                    var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
-                    renamePage.Controls.Add(new FileRenameOperationPanel());
-                    categoryTabControl.TabPages.Add(renamePage);
-                    break;
-
-                case "CreateRegistrySubKey":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _createRegistrySubKeyNode.Clone());
-
-                    var createRegistryEntryPage = new TabPage("Create registry entry") {BackColor = SystemColors.Window};
-                    createRegistryEntryPage.Controls.Add(new RegistrySubKeyCreateOperationPanel());
-                    categoryTabControl.TabPages.Add(createRegistryEntryPage);
-                    break;
-
-                case "DeleteRegistrySubKey":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistrySubKeyNode.Clone());
-
-                    var deleteRegistryEntryPage = new TabPage("Delete registry entry") {BackColor = SystemColors.Window};
-                    deleteRegistryEntryPage.Controls.Add(new RegistrySubKeyDeleteOperationPanel());
-                    categoryTabControl.TabPages.Add(deleteRegistryEntryPage);
-                    break;
-
-                case "SetRegistryValue":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _setRegistryValueNode.Clone());
-
-                    var setRegistryEntryValuePage = new TabPage("Set registry entry value")
-                    {
-                        BackColor = SystemColors.Window
-                    };
-                    setRegistryEntryValuePage.Controls.Add(new RegistrySetValueOperationPanel());
-                    categoryTabControl.TabPages.Add(setRegistryEntryValuePage);
-                    break;
-                case "DeleteRegistryValue":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _deleteRegistryValueNode.Clone());
-
-                    var deleteRegistryEntryValuePage = new TabPage("Delete registry entry value")
-                    {
-                        BackColor = SystemColors.Window
-                    };
-                    deleteRegistryEntryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel());
-                    categoryTabControl.TabPages.Add(deleteRegistryEntryValuePage);
-                    break;
-                case "StartProcess":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startProcessNode.Clone());
-
-                    var startProcessPage = new TabPage("Start process") {BackColor = SystemColors.Window};
-                    startProcessPage.Controls.Add(new ProcessStartOperationPanel());
-                    categoryTabControl.TabPages.Add(startProcessPage);
-                    break;
-                case "TerminateProcess":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _terminateProcessNode.Clone());
-
-                    var terminateProcessPage = new TabPage("Terminate process") {BackColor = SystemColors.Window};
-                    terminateProcessPage.Controls.Add(new ProcessStopOperationPanel());
-                    categoryTabControl.TabPages.Add(terminateProcessPage);
-                    break;
-                case "StartService":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _startServiceNode.Clone());
-
-                    var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
-                    startServicePage.Controls.Add(new ServiceStartOperationPanel());
-                    categoryTabControl.TabPages.Add(startServicePage);
-                    break;
-                case "StopService":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _stopServiceNode.Clone());
-
-                    var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
-                    stopServicePage.Controls.Add(new ServiceStopOperationPanel());
-                    categoryTabControl.TabPages.Add(stopServicePage);
-                    break;
-                case "ExecuteScript":
-                    categoryTreeView.Nodes[3].Nodes.Add((TreeNode) _executeScriptNode.Clone());
-
-                    var executeScriptPage = new TabPage("Execute script") {BackColor = SystemColors.Window};
-                    executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
-                    categoryTabControl.TabPages.Add(executeScriptPage);
-                    break;
-            }
-
-            categoryTreeView.Nodes[0].Toggle();
-        }
-
-        private void categoryTreeView_DragEnter(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Move;
-        }
-
-        private void operationsListView_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (operationsListView.SelectedItems.Count > 0)
-                operationsListView.DoDragDrop(operationsListView.SelectedItems[0].Tag, DragDropEffects.Move);
-        }
-
-        private void operationsListView_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Move;
-        }
-
-        private void developmentalStageComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            developmentBuildNumericUpDown.Enabled = developmentalStageComboBox.SelectedIndex != 3;
-        }
-
-        private void changelogLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
-            {
-                changelogContentTabControl.SelectTab(changelogContentTabControl.TabPages[0]);
-                return;
-            }
-
-            if (
-                changelogContentTabControl.TabPages.Cast<TabPage>()
-                    .Any(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex])))
-            {
-                var aimPage = changelogContentTabControl.TabPages.Cast<TabPage>()
-                    .First(item => item.Tag.Equals(_cultures[changelogLanguageComboBox.SelectedIndex]));
-                changelogContentTabControl.SelectTab(aimPage);
-            }
-            else
-            {
-                var page = new TabPage("Changelog")
-                {
-                    BackColor = SystemColors.Window,
-                    Tag = _cultures[changelogLanguageComboBox.SelectedIndex]
-                };
-                page.Controls.Add(new ChangelogPanel());
-                changelogContentTabControl.TabPages.Add(page);
-                changelogContentTabControl.SelectTab(page);
-            }
-        }
-
-        private void changelogLoadButton_Click(object sender, EventArgs e)
-        {
-            using (var ofd = new OpenFileDialog())
-            {
-                ofd.SupportMultiDottedExtensions = false;
-                ofd.Multiselect = false;
-
-                ofd.Filter = "Textdocument (*.txt)|*.txt|RTF-Document (*.rtf)|*.rtf";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                    englishChangelogTextBox.Text = File.ReadAllText(ofd.FileName, Encoding.Default);
-            }
-        }
-
-        private void changelogClearButton_Click(object sender, EventArgs e)
-        {
-            if (changelogLanguageComboBox.SelectedIndex == changelogLanguageComboBox.FindStringExact("English - en"))
-            {
-                ((TextBox) changelogContentTabControl.SelectedTab.Controls[0]).Clear();
-            }
-            else
-            {
-                var currentChangelogPanel = (ChangelogPanel) changelogContentTabControl.SelectedTab.Controls[0];
-                ((TextBox) currentChangelogPanel.Controls[0]).Clear();
-            }
-        }
-
-        private void addVersionButton_Click(object sender, EventArgs e)
-        {
-            if (
-                unsupportedMajorNumericUpDown.Value == 0 && unsupportedMinorNumericUpDown.Value == 0 &&
-                unsupportedBuildNumericUpDown.Value == 0 && unsupportedRevisionNumericUpDown.Value == 0)
-            {
-                Popup.ShowPopup(this, SystemIcons.Warning, "Invalid version.",
-                    "You can't add version \"0.0.0.0\" to the unsupported versions. Please specify a minimum version of \"0.1.0.0\"",
-                    PopupButtons.Ok);
-                return;
-            }
-
-            var version = new UpdateVersion((int) unsupportedMajorNumericUpDown.Value,
-                (int) unsupportedMinorNumericUpDown.Value, (int) unsupportedBuildNumericUpDown.Value,
-                (int) unsupportedRevisionNumericUpDown.Value);
-            _unsupportedVersionLiteralsBindingList.Add(version.ToString());
-        }
-
-        private void removeVersionButton_Click(object sender, EventArgs e)
-        {
-            _unsupportedVersionLiteralsBindingList.RemoveAt(unsupportedVersionsListBox.SelectedIndex);
-        }
-
-        private void categoryTreeView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (categoryTreeView.SelectedNode?.Parent == null)
-                return;
-
-            if (e.Control && e.KeyCode == Keys.Up)
-                categoryTreeView.SelectedNode.MoveUp();
-            else if (e.Control && e.KeyCode == Keys.Down)
-                categoryTreeView.SelectedNode.MoveDown();
-
-            if ((e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back) || categoryTreeView.SelectedNode.Parent == null)
-                return;
-
-            categoryTabControl.TabPages.Remove(
-                categoryTabControl.TabPages[4 + categoryTreeView.SelectedNode.Index]);
-            categoryTreeView.SelectedNode.Remove();
-        }
-
-        private void bulletToolStripMenuItem_Click(object sender, EventArgs e)
+        private void serviceMarkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var page = changelogContentTabControl.SelectedTab;
             if (page.Text != "English")
             {
                 var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("•");
+                panel.Paste("℠");
             }
             else
             {
-                englishChangelogTextBox.Paste("•");
+                englishChangelogTextBox.Paste("℠");
             }
         }
 
-        private void insideQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        private void someVersionsRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("» «");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("» «");
-            }
-        }
-
-        private void classicQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("„ “");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("„  “");
-            }
-        }
-
-        private void outsideQuotationMarkToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("« »");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("« »");
-            }
-        }
-
-        private void apostropheToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("'");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("'");
-            }
-        }
-
-        private void copyrightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("©");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("©");
-            }
-        }
-
-        private void allRightsReservedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("®");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("®");
-            }
+            unsupportedVersionsPanel.Enabled = true;
         }
 
         private void soundRecordingCopyrightToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1173,28 +1175,6 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 englishChangelogTextBox.Paste("™");
             }
-        }
-
-        private void serviceMarkToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var page = changelogContentTabControl.SelectedTab;
-            if (page.Text != "English")
-            {
-                var panel = (ChangelogPanel) page.Controls[0];
-                panel.Paste("℠");
-            }
-            else
-            {
-                englishChangelogTextBox.Paste("℠");
-            }
-        }
-
-        private void englishChangelogTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control & e.KeyCode == Keys.A)
-                englishChangelogTextBox.SelectAll();
-            else if (e.Control & e.KeyCode == Keys.Back)
-                SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
         }
     }
 }

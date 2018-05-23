@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.CodeDom.Compiler;
@@ -17,7 +17,6 @@ namespace nUpdate.Administration.Core
         {
             var referencedAssemblies = sourceCode.Split('\r', '\n').Where(item => item.StartsWith("using"));
             foreach (var assembly in referencedAssemblies)
-            {
                 try
                 {
                     _compileParameters.ReferencedAssemblies.Add(
@@ -27,7 +26,6 @@ namespace nUpdate.Administration.Core
                 {
                     // Ignored, will be caught as syntax error
                 }
-            }
 
             _compileParameters.GenerateInMemory = true;
             _compileParameters.GenerateExecutable = false;

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Runtime.InteropServices;
@@ -32,12 +32,28 @@ namespace nUpdate.Administration.Core.Win32
             UseFileAttributes = 0x000000010
         }
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr SHGetFileInfo(string pszPath, int dwFileAttributes, ref Shfileinfo psfi,
-            int cbFileInfo, ShGetFileInfoFlags flags);
+        [DllImport("user32.dll")]
+        public static extern IntPtr BeginPaint(IntPtr hWnd, ref PaintStruct paintStruct);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool DestroyIcon(IntPtr hIcon);
+
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
+
+        // Not portable (bool)
+
+        [DllImport("dwmapi.dll", PreserveSig = false)]
+        public static extern bool DwmIsCompositionEnabled();
+
+        [DllImport("user32.dll")]
+        public static extern bool EndPaint(IntPtr hWnd, ref PaintStruct paintStruct);
+
+        [DllImport("wininet.dll")]
+        public static extern bool InternetGetConnectedState(out int connDescription, int reservedValue);
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, ref int wParam, StringBuilder lParam);
@@ -51,14 +67,6 @@ namespace nUpdate.Administration.Core.Win32
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(HandleRef hWnd, uint msg, IntPtr wParam, bool lParam);
 
-        // Not portable (bool)
-
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        public static extern bool DwmIsCompositionEnabled();
-
-        [DllImport("dwmapi.dll")]
-        public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref Margins margins);
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, [MarshalAs(UnmanagedType.U4)] int msg, IntPtr wParam,
             ref ExplorerTreeNode item);
@@ -69,29 +77,21 @@ namespace nUpdate.Administration.Core.Win32
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
 
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr BeginPaint(IntPtr hWnd, ref PaintStruct paintStruct);
-
-        [DllImport("user32.dll")]
-        public static extern bool EndPaint(IntPtr hWnd, ref PaintStruct paintStruct);
-
-        [DllImport("wininet.dll")]
-        public static extern bool InternetGetConnectedState(out int connDescription, int reservedValue);
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref ExplorerListViewGroup lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
         [DllImport("shell32.dll")]
         public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr SHGetFileInfo(string pszPath, int dwFileAttributes, ref Shfileinfo psfi,
+            int cbFileInfo, ShGetFileInfoFlags flags);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct Shfileinfo
@@ -99,8 +99,12 @@ namespace nUpdate.Administration.Core.Win32
             public IntPtr hIcon;
             public int iIcon;
             public uint dwAttributes;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szDisplayName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)] public string szTypeName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szDisplayName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+            public string szTypeName;
         }
     }
 }

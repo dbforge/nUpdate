@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,6 @@ namespace nUpdate.UpdateInstaller
     internal static class Program
     {
         /// <summary>
-        ///     The paths of the package files.
-        /// </summary>
-        public static string[] PackageFilePaths { get; set; }
-
-        /// <summary>
         ///     The program folder where the updated files should be copied to.
         /// </summary>
         public static string AimFolder { get; set; }
@@ -35,9 +30,14 @@ namespace nUpdate.UpdateInstaller
         public static string AppName { get; set; }
 
         /// <summary>
-        ///     The operations to perform.
+        ///     Gets or sets the arguments to handle over to the application.
         /// </summary>
-        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
+        public static List<UpdateArgument> Arguments { get; set; }
+
+        /// <summary>
+        ///     The text of the "Copying..."-label.
+        /// </summary>
+        public static string CopyingText { get; set; }
 
         /// <summary>
         ///     The path of the external GUI assembly.
@@ -50,9 +50,14 @@ namespace nUpdate.UpdateInstaller
         public static string ExtractFilesText { get; set; }
 
         /// <summary>
-        ///     The text of the "Copying..."-label.
+        ///     The text of the file delete information.
         /// </summary>
-        public static string CopyingText { get; set; }
+        public static string FileDeletingOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the error that a file is currently being used by another program.
+        /// </summary>
+        public static string FileInUseError { get; set; }
 
         /// <summary>
         ///     The text of the file rename information.
@@ -60,29 +65,24 @@ namespace nUpdate.UpdateInstaller
         public static string FileRenamingOperationText { get; set; }
 
         /// <summary>
-        ///     The text of the file delete information.
+        ///     The caption of the initializing error message.
         /// </summary>
-        public static string FileDeletingOperationText { get; set; }
+        public static string InitializingErrorCaption { get; set; }
 
         /// <summary>
-        ///     The text of the registry sub key creation information.
+        ///     Gets or sets a value indicating whether the host application has been closed, or not.
         /// </summary>
-        public static string RegistrySubKeyCreateOperationText { get; set; }
+        public static bool IsHostApplicationClosed { get; set; }
 
         /// <summary>
-        ///     The text of the registry name-value-pair value setting information.
+        ///     The operations to perform.
         /// </summary>
-        public static string RegistryNameValuePairSetValueOperationText { get; set; }
+        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
 
         /// <summary>
-        ///     The text of the registry name-value-pair value deleting information.
+        ///     The paths of the package files.
         /// </summary>
-        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry sub key deletion information.
-        /// </summary>
-        public static string RegistrySubKeyDeleteOperationText { get; set; }
+        public static string[] PackageFilePaths { get; set; }
 
         /// <summary>
         ///     The text of the process start information.
@@ -93,6 +93,31 @@ namespace nUpdate.UpdateInstaller
         ///     The text of the process stop information.
         /// </summary>
         public static string ProcessStopOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the registry name-value-pair value deleting information.
+        /// </summary>
+        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the registry name-value-pair value setting information.
+        /// </summary>
+        public static string RegistryNameValuePairSetValueOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the registry sub key creation information.
+        /// </summary>
+        public static string RegistrySubKeyCreateOperationText { get; set; }
+
+        /// <summary>
+        ///     The text of the registry sub key deletion information.
+        /// </summary>
+        public static string RegistrySubKeyDeleteOperationText { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the host application should be restarted, or not.
+        /// </summary>
+        public static bool RestartHostApplication { get; set; }
 
         /// <summary>
         ///     The text of the service start information.
@@ -109,30 +134,14 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public static string UpdatingErrorCaption { get; set; }
 
-        /// <summary>
-        ///     The caption of the initializing error message.
-        /// </summary>
-        public static string InitializingErrorCaption { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the arguments to handle over to the application.
-        /// </summary>
-        public static List<UpdateArgument> Arguments { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the host application has been closed, or not.
-        /// </summary>
-        public static bool IsHostApplicationClosed { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be restarted, or not.
-        /// </summary>
-        public static bool RestartHostApplication { get; set; }
-
-        /// <summary>
-        ///     The text of the error that a file is currently being used by another program.
-        /// </summary>
-        public static string FileInUseError { get; set; }
+        private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is ThreadAbortException)
+                return;
+            var exception = e.ExceptionObject as Exception;
+            if (exception != null) MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
+            Application.Exit();
+        }
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -192,18 +201,6 @@ namespace nUpdate.UpdateInstaller
             }
 
             new Updater().RunUpdate();
-        }
-
-        private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (e.ExceptionObject is ThreadAbortException)
-                return;
-            var exception = e.ExceptionObject as Exception;
-            if (exception != null)
-            {
-                MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
-            }
-            Application.Exit();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -34,6 +34,27 @@ namespace nUpdate.Administration.UI.Dialogs
             noProjectsLabel.Visible = true;
         }
 
+        /// <summary>
+        ///     Returns the name/description of the current exception.
+        /// </summary>
+        private string GetNameOfExceptionType(Exception ex)
+        {
+            var hrEx = Marshal.GetHRForException(ex);
+            switch (hrEx)
+            {
+                case COR_E_DIRECTORYNOTFOUND:
+                    return "DirectoryNotFound";
+                case COR_E_ENDOFSTREAM:
+                    return "EndOfStream";
+                case COR_E_FILELOAD:
+                    return "FileLoadException";
+                case COR_E_FILENOTFOUND:
+                    return "FileNotFound";
+            }
+
+            return "Unknown Exception";
+        }
+
         private void ProjectRemovalDialog_Load(object sender, EventArgs e)
         {
             Text = string.Format(Text, Program.VersionString);
@@ -54,26 +75,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             CheckProjectsAreAvailable();
-        }
-
-        /// <summary>
-        ///     Returns the name/description of the current exception.
-        /// </summary>
-        private string GetNameOfExceptionType(Exception ex)
-        {
-            var hrEx = Marshal.GetHRForException(ex);
-            switch (hrEx)
-            {
-                case COR_E_DIRECTORYNOTFOUND:
-                    return "DirectoryNotFound";
-                case COR_E_ENDOFSTREAM:
-                    return "EndOfStream";
-                case COR_E_FILELOAD:
-                    return "FileLoadException";
-                case COR_E_FILENOTFOUND:
-                    return "FileNotFound";
-            }
-            return "Unknown Exception";
         }
 
         private void projectsTreeView_AfterCheck(object sender, TreeViewEventArgs e)
