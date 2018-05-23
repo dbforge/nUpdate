@@ -218,7 +218,7 @@ namespace nUpdate.Updating
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             var configuration =
-                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy);
+                UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
@@ -229,6 +229,9 @@ namespace nUpdate.Updating
             double updatePackageSize = 0;
             foreach (var updateConfiguration in PackageConfigurations)
             {
+                updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                 var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
                 if (newPackageSize == null)
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
@@ -264,7 +267,7 @@ namespace nUpdate.Updating
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
                 var configuration =
-                    await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource);
+                    await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy, _searchCancellationTokenSource, SearchTimeout);
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
@@ -276,6 +279,9 @@ namespace nUpdate.Updating
                 double updatePackageSize = 0;
                 foreach (var updateConfiguration in PackageConfigurations)
                 {
+                    updateConfiguration.UpdatePackageUri = ConvertPackageUri(updateConfiguration.UpdatePackageUri);
+                    updateConfiguration.UpdatePhpFileUri = ConvertStatisticsUri(updateConfiguration.UpdatePhpFileUri);
+
                     _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                     var newPackageSize = GetUpdatePackageSize(updateConfiguration.UpdatePackageUri);
                     if (newPackageSize == null)

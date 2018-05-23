@@ -204,6 +204,12 @@ namespace nUpdate.Updating
         public bool RestartHostApplication { get; set; } = true;
 
         /// <summary>
+        ///     Gets or sets the timeout that should be used when searching for updates. In milliseconds. 
+        ///     By default, this is set to 10000 milliseconds.
+        /// </summary>
+        public int SearchTimeout { get; set; } = 10000;
+
+        /// <summary>
         ///     Gets the total size of all update packages.
         /// </summary>
         public double TotalSize { get; private set; }
@@ -221,6 +227,8 @@ namespace nUpdate.Updating
         ///     <c>true</c>.
         /// </remarks>
         public bool UseCustomInstallerUserInterface { get; set; }
+
+        public bool UseDynamicUpdateUri { get; set; } = false;
 
         /// <summary>
         ///     Cancels the download.
@@ -264,6 +272,37 @@ namespace nUpdate.Updating
         {
             _packageFilePaths.Clear();
             _packageOperations.Clear();
+        }
+        
+        private Uri ConvertPackageUri(Uri updatePackageUri)
+        {
+            if (!UseDynamicUpdateUri)
+                return updatePackageUri;
+            if (updatePackageUri == null)
+                throw new ArgumentNullException(nameof(updatePackageUri));
+            // The segment of the correct update package URI should include: "/", "1.0.0.0(version)/", "*.zip".
+            if (updatePackageUri.Segments.Length < 3)
+                throw new ArgumentException($"{ nameof(updatePackageUri)} is not a valid update package URI.", nameof(updatePackageUri));
+            var packageNameSegment = updatePackageUri.Segments.Last();
+            var versionSegment = updatePackageUri.Segments[updatePackageUri.Segments.Length - 2];
+            var baseUri = UpdateConfigurationFileUri.GetLeftPart(UriPartial.Authority);
+            var configLocatedPath = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0, UpdateConfigurationFileUri.Segments.Length - 1);
+            return new Uri($"{baseUri}{configLocatedPath}{versionSegment}{packageNameSegment}");
+        }
+
+        private Uri ConvertStatisticsUri(Uri statisticsUri)
+        {
+            if (!UseDynamicUpdateUri)
+                return statisticsUri;
+            if (statisticsUri == null)
+                throw new ArgumentNullException(nameof(statisticsUri));
+            // The segment of the correct update php file URI should include: "/", "*.php".
+            if (statisticsUri.Segments.Length < 2)
+                throw new ArgumentException($"{ nameof(statisticsUri)} is not a valid update php file URI.", nameof(statisticsUri));
+            var phpFileName = statisticsUri.Segments.Last();
+            var baseUri = UpdateConfigurationFileUri.GetLeftPart(UriPartial.Authority);
+            var configLocatedPath = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0, UpdateConfigurationFileUri.Segments.Length - 1);
+            return new Uri($"{baseUri}{configLocatedPath}{phpFileName}");
         }
 
         /// <summary>
