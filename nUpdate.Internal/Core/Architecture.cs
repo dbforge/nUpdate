@@ -4,8 +4,8 @@ namespace nUpdate.Internal.Core
 {
     public enum Architecture
     {
-        Independent,
         X86,
-        X64
+        X64,
+        Independent
     }
 }
