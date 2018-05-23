@@ -85,10 +85,11 @@ namespace nUpdate.Updating
         /// </summary>
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="proxy">The optional proxy to use.</param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
-        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy)
+        public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, WebProxy proxy, int timeout = 10000)
         {
-            return Download(configFileUri, null, proxy);
+            return Download(configFileUri, null, proxy, timeout);
         }
 
         /// <summary>
@@ -97,11 +98,12 @@ namespace nUpdate.Updating
         /// <param name="configFileUri">The url of the configuration file.</param>
         /// <param name="credentials">The HTTP authentication credentials.</param>
         /// <param name="proxy">The optional proxy to use.</param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static IEnumerable<UpdateConfiguration> Download(Uri configFileUri, NetworkCredential credentials,
-            WebProxy proxy)
+            WebProxy proxy, int timeout = 10000)
         {
-            using (var wc = new WebClientWrapper(10000))
+            using (var wc = new WebClientWrapper(timeout))
             {
                 wc.Encoding = Encoding.UTF8;
                 if (credentials != null)
