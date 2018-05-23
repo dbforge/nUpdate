@@ -23,11 +23,12 @@ namespace nUpdate.Updating
         ///     The optional <see cref="CancellationTokenSource" /> to use for canceling the
         ///     operation.
         /// </param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static Task<IEnumerable<UpdateConfiguration>> DownloadAsync(Uri configFileUri, WebProxy proxy,
-            CancellationTokenSource cancellationTokenSource = null)
+            CancellationTokenSource cancellationTokenSource = null, int timeout = 10000)
         {
-            return DownloadAsync(configFileUri, null, proxy, cancellationTokenSource);
+            return DownloadAsync(configFileUri, null, proxy, cancellationTokenSource, timeout);
         }
 
         /// <summary>
@@ -40,16 +41,17 @@ namespace nUpdate.Updating
         ///     The optional <see cref="CancellationTokenSource" /> to use for canceling the
         ///     operation.
         /// </param>
+        /// <param name="timeout">The timeout for the download request. In milliseconds. Default 10000.</param>
         /// <returns>Returns an <see cref="IEnumerable{UpdateConfiguration}" /> containing the package configurations.</returns>
         public static async Task<IEnumerable<UpdateConfiguration>> DownloadAsync(Uri configFileUri,
             NetworkCredential credentials,
-            WebProxy proxy, CancellationTokenSource cancellationTokenSource = null)
+            WebProxy proxy, CancellationTokenSource cancellationTokenSource = null, int timeout = 10000)
         {
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             
             var request = (HttpWebRequest) WebRequest.Create(configFileUri);
-            request.Timeout = 10000;
+            request.Timeout = timeout;
 
             if (credentials != null)
                 request.Credentials = credentials;
