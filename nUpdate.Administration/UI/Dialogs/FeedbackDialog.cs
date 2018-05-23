@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -14,6 +14,11 @@ namespace nUpdate.Administration.UI.Dialogs
         public FeedbackDialog()
         {
             InitializeComponent();
+        }
+
+        private void FeedbackDialog_Load(object sender, EventArgs e)
+        {
+            Text = string.Format(Text, Program.VersionString);
         }
 
         /// <summary>
@@ -75,11 +80,6 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Error while sending feedback.", ex, PopupButtons.Ok);
             }
-        }
-
-        private void FeedbackDialog_Load(object sender, EventArgs e)
-        {
-            Text = string.Format(Text, Program.VersionString);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,9 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _generalTabPassed;
         private bool _isSetByUser = true;
         private int _lastSelectedIndex;
+
         private bool _mustClose;
+
         //private LocalizationProperties _lp = new LocalizationProperties();
         private bool _phpFileCreated;
         private bool _phpFileUploaded;
@@ -54,11 +56,6 @@ namespace nUpdate.Administration.UI.Dialogs
         public string PublicKey { get; set; }
 
         /// <summary>
-        ///     The url of the SQL-connection.
-        /// </summary>
-        public string SqlWebUrl { get; set; }
-
-        /// <summary>
         ///     The name of the SQL-database to use.
         /// </summary>
         public string SqlDatabaseName { get; set; }
@@ -68,29 +65,10 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public string SqlUsername { get; set; }
 
-        public void SetUiState(bool enabled)
-        {
-            Invoke(new Action(() =>
-            {
-                foreach (var c in from Control c in Controls where c.Visible select c)
-                {
-                    c.Enabled = enabled;
-                }
-
-                if (!enabled)
-                {
-                    _allowCancel = false;
-                    loadingPanel.Visible = true;
-                    loadingPanel.Location = new Point(144, 72);
-                    loadingPanel.BringToFront();
-                }
-                else
-                {
-                    _allowCancel = true;
-                    loadingPanel.Visible = false;
-                }
-            }));
-        }
+        /// <summary>
+        ///     The url of the SQL-connection.
+        /// </summary>
+        public string SqlWebUrl { get; set; }
 
         public void Reset()
         {
@@ -100,7 +78,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         loadingLabel.Text = "Resetting data..."));
 
             if (_projectFileCreated)
-            {
                 try
                 {
                     string localPath = null;
@@ -117,7 +94,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                     "Error while deleting the project file.",
                                     ex, PopupButtons.Ok)));
                 }
-            }
 
             if (_projectConfigurationEdited)
             {
@@ -164,7 +140,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (_phpFileUploaded)
-            {
                 try
                 {
                     _ftp.DeleteFile("statistics.php");
@@ -179,7 +154,6 @@ namespace nUpdate.Administration.UI.Dialogs
                                     "Error while deleting \"statistics.php\" on the server again.",
                                     ex, PopupButtons.Ok)));
                 }
-            }
 
             bool useStatistics = false;
             Invoke(new Action(() => useStatistics = useStatisticsServerRadioButton.Checked));
@@ -194,96 +168,64 @@ namespace nUpdate.Administration.UI.Dialogs
                 Invoke(new Action(Close));
         }
 
-        ///// <summary>
-        /////     Sets the language
-        ///// </summary>
-        //public void SetLanguage()
-        //{
-        //    string languageFilePath = Path.Combine(Program.LanguagesDirectory,
-        //        String.Format("{0}.json", Settings.Default.Language.Name));
-        //    if (File.Exists(languageFilePath))
-        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
-        //    else
-        //    {
-        //        string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
-        //        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-        //        {
-        //            _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-        //        }
-        //    }
-
-        //    Text = _lp.NewProjectDialogTitle;
-        //    Text = String.Format(Text, _lp.ProductTitle);
-
-        //    cancelButton.Text = _lp.CancelButtonText;
-        //    continueButton.Text = _lp.ContinueButtonText;
-
-        //    keyPairHeaderLabel.Text = _lp.PanelSignatureHeader;
-        //    keyPairInfoLabel.Text = _lp.PanelSignatureInfoText;
-        //    keyPairGenerationLabel.Text = _lp.PanelSignatureWaitText;
-
-        //    generalHeaderLabel.Text = _lp.PanelGeneralHeader;
-        //    nameLabel.Text = _lp.PanelGeneralNameText;
-        //    nameTextBox.Cue = _lp.PanelGeneralNameWatermarkText;
-
-        //    ftpHeaderLabel.Text = _lp.PanelFtpHeader;
-        //    ftpHostLabel.Text = _lp.PanelFtpServerText;
-        //    ftpUserLabel.Text = _lp.PanelFtpUserText;
-        //    ftpUserTextBox.Cue = _lp.PanelFtpUserWatermarkText;
-        //    ftpPasswordLabel.Text = _lp.PanelFtpPasswordText;
-        //    ftpPortLabel.Text = _lp.PanelFtpPortText;
-        //    ftpPortTextBox.Cue = _lp.PanelFtpPortWatermarkText;
-        //}
-
-        private void NewProjectDialog_Load(object sender, EventArgs e)
+        public void SetUiState(bool enabled)
         {
-            if (!ConnectionManager.IsConnectionAvailable())
+            Invoke(new Action(() =>
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
-                    "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
-                    PopupButtons.Ok);
-                Close();
-                return;
-            }
+                foreach (var c in from Control c in Controls where c.Visible select c) c.Enabled = enabled;
 
-            ftpPortTextBox.ShortcutsEnabled = false;
-            ftpModeComboBox.SelectedIndex = 0;
-            ftpProtocolComboBox.SelectedIndex = 0;
-            ipVersionComboBox.SelectedIndex = 0;
-
-            //SetLanguage();
-            Text = string.Format(Text, Program.VersionString);
-            localPathTextBox.ButtonClicked += BrowsePathButtonClick;
-            localPathTextBox.Initialize();
-            controlPanel1.Visible = false;
-            GenerateKeyPair();
-
-            _isSetByUser = true;
-        }
-
-        private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!_allowCancel)
-                e.Cancel = true;
-        }
-
-        private async void GenerateKeyPair()
-        {
-            await Task.Factory.StartNew(() =>
-            {
-                var rsa = new RsaManager();
-                PrivateKey = rsa.PrivateKey;
-                PublicKey = rsa.PublicKey;
-
-                Invoke(new Action(() =>
+                if (!enabled)
                 {
-                    controlPanel1.Visible = true;
-                    informationCategoriesTabControl.SelectedTab = generalTabPage;
-                    _sender = generalTabPage;
-                }));
+                    _allowCancel = false;
+                    loadingPanel.Visible = true;
+                    loadingPanel.Location = new Point(144, 72);
+                    loadingPanel.BringToFront();
+                }
+                else
+                {
+                    _allowCancel = true;
+                    loadingPanel.Visible = false;
+                }
+            }));
+        }
 
-                _allowCancel = true;
-            });
+        private void backButton_Click(object sender, EventArgs e)
+        {
+            if (_sender == httpAuthenticationTabPage)
+            {
+                informationCategoriesTabControl.SelectedTab = generalTabPage;
+                backButton.Enabled = false;
+                _sender = generalTabPage;
+
+                if (_generalTabPassed)
+                    backButton.Enabled = false;
+            }
+            else if (_sender == ftpTabPage)
+            {
+                informationCategoriesTabControl.SelectedTab = httpAuthenticationTabPage;
+                _sender = httpAuthenticationTabPage;
+            }
+            else if (_sender == statisticsServerTabPage)
+            {
+                informationCategoriesTabControl.SelectedTab = ftpTabPage;
+                _sender = ftpTabPage;
+            }
+            else if (_sender == proxyTabPage)
+            {
+                informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
+                _sender = statisticsServerTabPage;
+            }
+        }
+
+        private void BrowsePathButtonClick(object sender, EventArgs e)
+        {
+            using (var fileDialog = new SaveFileDialog())
+            {
+                fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
+                fileDialog.CheckFileExists = false;
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                    localPathTextBox.Text = fileDialog.FileName;
+            }
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -372,10 +314,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _ftp.Directory = ftpDirectoryTextBox.Text;
 
                 var ftpPassword = new SecureString();
-                foreach (var c in ftpPasswordTextBox.Text)
-                {
-                    ftpPassword.AppendChar(c);
-                }
+                foreach (var c in ftpPasswordTextBox.Text) ftpPassword.AppendChar(c);
                 _ftp.Password = ftpPassword; // Same instance that FtpManager will automatically dispose
 
                 _ftp.UsePassiveMode = ftpModeComboBox.SelectedIndex == 0;
@@ -391,14 +330,12 @@ namespace nUpdate.Administration.UI.Dialogs
             else if (_sender == statisticsServerTabPage)
             {
                 if (useStatisticsServerRadioButton.Checked)
-                {
                     if (SqlDatabaseName == null || string.IsNullOrWhiteSpace(sqlPasswordTextBox.Text))
                     {
                         Popup.ShowPopup(this, SystemIcons.Error, "Missing information found.",
                             "All fields need to have a value.", PopupButtons.Ok);
                         return;
                     }
-                }
 
                 _sender = proxyTabPage;
                 informationCategoriesTabControl.SelectedTab = proxyTabPage;
@@ -418,6 +355,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     using (File.Create(localPathTextBox.Text))
                     {
                     }
+
                     _projectFileCreated = true;
                 }
                 catch (IOException ex)
@@ -452,7 +390,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 string sqlPassword = null;
                 if (useStatisticsServerRadioButton.Checked)
-                {
                     if (!saveCredentialsCheckBox.Checked)
                         sqlPassword = Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text,
                             ftpPasswordTextBox.Text,
@@ -461,7 +398,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         sqlPassword =
                             Convert.ToBase64String(AesManager.Encrypt(sqlPasswordTextBox.Text, Program.AesKeyPassword,
                                 Program.AesIvPassword));
-                }
 
                 Settings.Default.ApplicationID += 1;
                 Settings.Default.Save();
@@ -581,6 +517,82 @@ namespace nUpdate.Administration.UI.Dialogs
                 _generalTabPassed = true;
                 InitializeProject();
             }
+        }
+
+        private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            proxyPanel.Enabled = !doNotUseProxyRadioButton.Checked;
+        }
+
+        private void ftpImportButton_Click(object sender, EventArgs e)
+        {
+            using (var fileDialog = new OpenFileDialog())
+            {
+                fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
+                fileDialog.Multiselect = false;
+                if (fileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    var importProject = UpdateProject.LoadProject(fileDialog.FileName);
+                    ftpHostTextBox.Text = importProject.FtpHost;
+                    ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
+                    ftpUserTextBox.Text = importProject.FtpUsername;
+                    ftpProtocolComboBox.SelectedIndex = importProject.FtpProtocol;
+                    ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
+                    ftpDirectoryTextBox.Text = importProject.FtpDirectory;
+                    ftpPasswordTextBox.Focus();
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex,
+                        PopupButtons.Ok);
+                }
+            }
+        }
+
+        private void ftpPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ("1234567890\b".IndexOf(e.KeyChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) < 0)
+                e.Handled = true;
+        }
+
+        private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_isSetByUser || ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1)
+                return;
+            var ftpAssemblyInputDialog = new FtpAssemblyInputDialog();
+            if (ftpAssemblyInputDialog.ShowDialog() == DialogResult.Cancel)
+                ftpProtocolComboBox.SelectedIndex = _lastSelectedIndex;
+            else
+                _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
+
+            _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
+        }
+
+        private async void GenerateKeyPair()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                var rsa = new RsaManager();
+                PrivateKey = rsa.PrivateKey;
+                PublicKey = rsa.PublicKey;
+
+                Invoke(new Action(() =>
+                {
+                    controlPanel1.Visible = true;
+                    informationCategoriesTabControl.SelectedTab = generalTabPage;
+                    _sender = generalTabPage;
+                }));
+
+                _allowCancel = true;
+            });
+        }
+
+        private void httpAuthenticationCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            httpAuthenticationPanel.Enabled = httpAuthenticationCheckBox.Checked;
         }
 
         /// <summary>
@@ -780,43 +792,82 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             });
         }
 
-        private void backButton_Click(object sender, EventArgs e)
+        private void NewProjectDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_sender == httpAuthenticationTabPage)
-            {
-                informationCategoriesTabControl.SelectedTab = generalTabPage;
-                backButton.Enabled = false;
-                _sender = generalTabPage;
-
-                if (_generalTabPassed)
-                    backButton.Enabled = false;
-            }
-            else if (_sender == ftpTabPage)
-            {
-                informationCategoriesTabControl.SelectedTab = httpAuthenticationTabPage;
-                _sender = httpAuthenticationTabPage;
-            }
-            else if (_sender == statisticsServerTabPage)
-            {
-                informationCategoriesTabControl.SelectedTab = ftpTabPage;
-                _sender = ftpTabPage;
-            }
-            else if (_sender == proxyTabPage)
-            {
-                informationCategoriesTabControl.SelectedTab = statisticsServerTabPage;
-                _sender = statisticsServerTabPage;
-            }
+            if (!_allowCancel)
+                e.Cancel = true;
         }
 
-        private void ftpPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        ///// <summary>
+        /////     Sets the language
+        ///// </summary>
+        //public void SetLanguage()
+        //{
+        //    string languageFilePath = Path.Combine(Program.LanguagesDirectory,
+        //        String.Format("{0}.json", Settings.Default.Language.Name));
+        //    if (File.Exists(languageFilePath))
+        //        _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(languageFilePath));
+        //    else
+        //    {
+        //        string resourceName = "nUpdate.Administration.Core.Localization.en.xml";
+        //        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        //        {
+        //            _lp = Serializer.Deserialize<LocalizationProperties>(stream);
+        //        }
+        //    }
+
+        //    Text = _lp.NewProjectDialogTitle;
+        //    Text = String.Format(Text, _lp.ProductTitle);
+
+        //    cancelButton.Text = _lp.CancelButtonText;
+        //    continueButton.Text = _lp.ContinueButtonText;
+
+        //    keyPairHeaderLabel.Text = _lp.PanelSignatureHeader;
+        //    keyPairInfoLabel.Text = _lp.PanelSignatureInfoText;
+        //    keyPairGenerationLabel.Text = _lp.PanelSignatureWaitText;
+
+        //    generalHeaderLabel.Text = _lp.PanelGeneralHeader;
+        //    nameLabel.Text = _lp.PanelGeneralNameText;
+        //    nameTextBox.Cue = _lp.PanelGeneralNameWatermarkText;
+
+        //    ftpHeaderLabel.Text = _lp.PanelFtpHeader;
+        //    ftpHostLabel.Text = _lp.PanelFtpServerText;
+        //    ftpUserLabel.Text = _lp.PanelFtpUserText;
+        //    ftpUserTextBox.Cue = _lp.PanelFtpUserWatermarkText;
+        //    ftpPasswordLabel.Text = _lp.PanelFtpPasswordText;
+        //    ftpPortLabel.Text = _lp.PanelFtpPortText;
+        //    ftpPortTextBox.Cue = _lp.PanelFtpPortWatermarkText;
+        //}
+
+        private void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if ("1234567890\b".IndexOf(e.KeyChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) < 0)
-                e.Handled = true;
+            if (!ConnectionManager.IsConnectionAvailable())
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "No network connection available.",
+                    "No active network connection was found. In order to create a project a network connection is required in order to communicate with the server.",
+                    PopupButtons.Ok);
+                Close();
+                return;
+            }
+
+            ftpPortTextBox.ShortcutsEnabled = false;
+            ftpModeComboBox.SelectedIndex = 0;
+            ftpProtocolComboBox.SelectedIndex = 0;
+            ipVersionComboBox.SelectedIndex = 0;
+
+            //SetLanguage();
+            Text = string.Format(Text, Program.VersionString);
+            localPathTextBox.ButtonClicked += BrowsePathButtonClick;
+            localPathTextBox.Initialize();
+            controlPanel1.Visible = false;
+            GenerateKeyPair();
+
+            _isSetByUser = true;
         }
 
         private void searchOnServerButton_Click(object sender, EventArgs e)
         {
-            if (!ValidationManager.ValidateAndIgnore(ftpPanel, new [] { ftpDirectoryTextBox }))
+            if (!ValidationManager.ValidateAndIgnore(ftpPanel, new[] {ftpDirectoryTextBox}))
             {
                 Popup.ShowPopup(this, SystemIcons.Error, "Missing information.",
                     "All input fields need to have a value in order to send a request to the server.", PopupButtons.Ok);
@@ -824,10 +875,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             }
 
             var securePwd = new SecureString();
-            foreach (var sign in ftpPasswordTextBox.Text)
-            {
-                securePwd.AppendChar(sign);
-            }
+            foreach (var sign in ftpPasswordTextBox.Text) securePwd.AppendChar(sign);
 
             var searchDialog = new DirectorySearchDialog
             {
@@ -838,7 +886,7 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
                 Username = ftpUserTextBox.Text,
                 Password = securePwd,
                 Protocol = ftpProtocolComboBox.SelectedIndex,
-                NetworkVersion = (NetworkVersion)ipVersionComboBox.SelectedIndex
+                NetworkVersion = (NetworkVersion) ipVersionComboBox.SelectedIndex
             };
 
             if (searchDialog.ShowDialog() == DialogResult.OK)
@@ -848,56 +896,11 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             searchDialog.Close();
         }
 
-        private void BrowsePathButtonClick(object sender, EventArgs e)
-        {
-            using (var fileDialog = new SaveFileDialog())
-            {
-                fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
-                fileDialog.CheckFileExists = false;
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                    localPathTextBox.Text = fileDialog.FileName;
-            }
-        }
-
         private void securityInfoButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Management of sensible data.",
                 "All your passwords will be encrypted with AES 256. The key and initializing vector are your FTP-username and password, so you have to enter them each time you open the project.",
                 PopupButtons.Ok);
-        }
-
-        private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            statisticsInfoPanel.Enabled = useStatisticsServerRadioButton.Checked;
-            selectServerButton.Enabled = useStatisticsServerRadioButton.Checked;
-        }
-
-        private void ftpImportButton_Click(object sender, EventArgs e)
-        {
-            using (var fileDialog = new OpenFileDialog())
-            {
-                fileDialog.Filter = "nUpdate Project Files (*.nupdproj)|*.nupdproj";
-                fileDialog.Multiselect = false;
-                if (fileDialog.ShowDialog() != DialogResult.OK)
-                    return;
-
-                try
-                {
-                    var importProject = UpdateProject.LoadProject(fileDialog.FileName);
-                    ftpHostTextBox.Text = importProject.FtpHost;
-                    ftpPortTextBox.Text = importProject.FtpPort.ToString(CultureInfo.InvariantCulture);
-                    ftpUserTextBox.Text = importProject.FtpUsername;
-                    ftpProtocolComboBox.SelectedIndex = importProject.FtpProtocol;
-                    ftpModeComboBox.SelectedIndex = importProject.FtpUsePassiveMode ? 0 : 1;
-                    ftpDirectoryTextBox.Text = importProject.FtpDirectory;
-                    ftpPasswordTextBox.Focus();
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, "Error while importing project data.", ex,
-                        PopupButtons.Ok);
-                }
-            }
         }
 
         private void selectServerButton_Click(object sender, EventArgs e)
@@ -913,27 +916,10 @@ INSERT INTO Application (`ID`, `Name`) VALUES (_APPID, '_APPNAME');";
             databaseNameLabel.Text = sqlNameString;
         }
 
-        private void doNotUseProxyRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void useStatisticsServerRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            proxyPanel.Enabled = !doNotUseProxyRadioButton.Checked;
-        }
-
-        private void ftpProtocolComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_isSetByUser || (ftpProtocolComboBox.SelectedIndex != ftpProtocolComboBox.Items.Count - 1))
-                return;
-            var ftpAssemblyInputDialog = new FtpAssemblyInputDialog();
-            if (ftpAssemblyInputDialog.ShowDialog() == DialogResult.Cancel)
-                ftpProtocolComboBox.SelectedIndex = _lastSelectedIndex;
-            else
-                _ftpAssemblyPath = ftpAssemblyInputDialog.AssemblyPath;
-
-            _lastSelectedIndex = ftpProtocolComboBox.SelectedIndex;
-        }
-
-        private void httpAuthenticationCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            httpAuthenticationPanel.Enabled = httpAuthenticationCheckBox.Checked;
+            statisticsInfoPanel.Enabled = useStatisticsServerRadioButton.Checked;
+            selectServerButton.Enabled = useStatisticsServerRadioButton.Checked;
         }
     }
 }

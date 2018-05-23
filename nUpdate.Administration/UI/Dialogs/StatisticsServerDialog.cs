@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -23,9 +23,9 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The url of the SQL-connection.
+        ///     Sets if the dialog should react on key inputs, e. g. when a server should be selected.
         /// </summary>
-        public string SqlWebUrl { get; set; }
+        public bool ReactsOnKeyDown { get; set; }
 
         /// <summary>
         ///     The name of the SQL-database to use.
@@ -38,77 +38,9 @@ namespace nUpdate.Administration.UI.Dialogs
         public string SqlUsername { get; set; }
 
         /// <summary>
-        ///     Sets if the dialog should react on key inputs, e. g. when a server should be selected.
+        ///     The url of the SQL-connection.
         /// </summary>
-        public bool ReactsOnKeyDown { get; set; }
-
-        /// <summary>
-        ///     Initializes the statistic servers.
-        /// </summary>
-        private bool InitializeServers()
-        {
-            if (serverList.Items.Count > 0)
-                serverList.Items.Clear();
-
-            try
-            {
-                var sourceContent = File.ReadAllText(Program.StatisticServersFilePath);
-                _statisticsServers = Serializer.Deserialize<List<StatisticsServer>>(sourceContent);
-                if (_statisticsServers == null || _statisticsServers.Count == 0)
-                {
-                    _statisticsServers = new List<StatisticsServer>();
-                    noServersLabel.Visible = true;
-                }
-                else
-                {
-                    noServersLabel.Visible = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the servers.",
-                    ex, PopupButtons.Ok);
-                return false;
-            }
-
-            foreach (var server in _statisticsServers)
-            {
-                try
-                {
-                    var listItem = new ServerListItem
-                    {
-                        ItemImage = imageList1.Images[0],
-                        HeaderText = server.DatabaseName,
-                        ItemText = $"Web-URL: \"{server.WebUrl}\" - Database: \"{server.DatabaseName}\""
-                    };
-
-                    serverList.Items.Add(listItem);
-                }
-                catch (Exception ex)
-                {
-                    Popup.ShowPopup(this, SystemIcons.Error, $"Error while loading \"{server.DatabaseName}\"", ex, PopupButtons.Ok);
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private void StatisticsServerDialog_Load(object sender, EventArgs e)
-        {
-            Text = string.Format(Text, Program.VersionString);
-            if (!InitializeServers())
-            {
-                Close();
-                return;
-            }
-
-            if (ReactsOnKeyDown)
-            {
-                Popup.ShowPopup(this, SystemIcons.Information, "Selecting a statistics-server.",
-                    "To select a statistics server, select one in the list and press \"Enter\".", PopupButtons.Ok);
-            }
-        }
+        public string SqlWebUrl { get; set; }
 
         private void addServerButton_Click(object sender, EventArgs e)
         {
@@ -137,7 +69,7 @@ namespace nUpdate.Administration.UI.Dialogs
             if (serverList.SelectedItem == null)
                 return;
             if (Popup.ShowPopup(this, SystemIcons.Warning, "Delete this server?",
-                "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) !=
+                    "Are you sure that you want to delete this server from the server list?", PopupButtons.YesNo) !=
                 DialogResult.Yes)
                 return;
 
@@ -154,22 +86,6 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             InitializeServers(); // Re-initialize the servers
-        }
-
-        private void StatisticsServerDialog_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (serverList.SelectedItem == null)
-                return;
-
-            if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown)
-                return;
-
-            var statisticsServer = _statisticsServers.ElementAt(serverList.SelectedIndex);
-            SqlDatabaseName = statisticsServer.DatabaseName;
-            SqlWebUrl = statisticsServer.WebUrl;
-            SqlUsername = statisticsServer.Username;
-
-            DialogResult = DialogResult.OK;
         }
 
         private void editServerButton_Click(object sender, EventArgs e)
@@ -203,6 +119,87 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             InitializeServers(); // Re-initialize the servers again
+        }
+
+        /// <summary>
+        ///     Initializes the statistic servers.
+        /// </summary>
+        private bool InitializeServers()
+        {
+            if (serverList.Items.Count > 0)
+                serverList.Items.Clear();
+
+            try
+            {
+                var sourceContent = File.ReadAllText(Program.StatisticServersFilePath);
+                _statisticsServers = Serializer.Deserialize<List<StatisticsServer>>(sourceContent);
+                if (_statisticsServers == null || _statisticsServers.Count == 0)
+                {
+                    _statisticsServers = new List<StatisticsServer>();
+                    noServersLabel.Visible = true;
+                }
+                else
+                {
+                    noServersLabel.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while loading the servers.",
+                    ex, PopupButtons.Ok);
+                return false;
+            }
+
+            foreach (var server in _statisticsServers)
+                try
+                {
+                    var listItem = new ServerListItem
+                    {
+                        ItemImage = imageList1.Images[0],
+                        HeaderText = server.DatabaseName,
+                        ItemText = $"Web-URL: \"{server.WebUrl}\" - Database: \"{server.DatabaseName}\""
+                    };
+
+                    serverList.Items.Add(listItem);
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, $"Error while loading \"{server.DatabaseName}\"", ex,
+                        PopupButtons.Ok);
+                    return false;
+                }
+
+            return true;
+        }
+
+        private void StatisticsServerDialog_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (serverList.SelectedItem == null)
+                return;
+
+            if (e.KeyCode != Keys.Enter || !ReactsOnKeyDown)
+                return;
+
+            var statisticsServer = _statisticsServers.ElementAt(serverList.SelectedIndex);
+            SqlDatabaseName = statisticsServer.DatabaseName;
+            SqlWebUrl = statisticsServer.WebUrl;
+            SqlUsername = statisticsServer.Username;
+
+            DialogResult = DialogResult.OK;
+        }
+
+        private void StatisticsServerDialog_Load(object sender, EventArgs e)
+        {
+            Text = string.Format(Text, Program.VersionString);
+            if (!InitializeServers())
+            {
+                Close();
+                return;
+            }
+
+            if (ReactsOnKeyDown)
+                Popup.ShowPopup(this, SystemIcons.Information, "Selecting a statistics-server.",
+                    "To select a statistics server, select one in the list and press \"Enter\".", PopupButtons.Ok);
         }
     }
 }

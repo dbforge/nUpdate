@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.ComponentModel;
@@ -14,9 +14,9 @@ namespace nUpdate.Administration.UI.Controls
     /// </summary>
     [DesignerCategory("Code")]
     [Description("A simple Expander Button drawn by Windows via Visual Styles")]
-    [Designer(typeof (ExpandButtonDesigner))]
+    [Designer(typeof(ExpandButtonDesigner))]
     [DefaultProperty("ExpandedChanged")]
-    [ToolboxBitmap(typeof (Button))]
+    [ToolboxBitmap(typeof(Button))]
     public class ExpandButton
         : Control
     {
@@ -36,6 +36,8 @@ namespace nUpdate.Administration.UI.Controls
             UpdateStyles();
         }
 
+        private VisualStyleRenderer ButtonRenderer { get; set; }
+
         /// <summary>
         ///     Gets the default size.
         /// </summary>
@@ -52,18 +54,16 @@ namespace nUpdate.Administration.UI.Controls
         /// </value>
         public bool Expanded
         {
-            get { return _expanded; }
+            get => _expanded;
             set
             {
                 if (value == _expanded)
                     return;
                 _expanded = value;
-                ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (ButtonRenderer.State + 3)%6);
+                ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (ButtonRenderer.State + 3) % 6);
                 Invalidate();
             }
         }
-
-        private VisualStyleRenderer ButtonRenderer { get; set; }
 
         /// <summary>
         ///     Gets raised when the Expanded State changed.
@@ -72,76 +72,35 @@ namespace nUpdate.Administration.UI.Controls
         public event EventHandler ExpandedChanged;
 
         /// <summary>
+        ///     Raises the <see cref="E:Click" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        protected override void OnClick(EventArgs e)
+        {
+            Expanded = !Expanded;
+            Focus();
+            Invalidate();
+            base.OnClick(e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="E:EnabledChanged" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
+                (int) (Enabled ? PushButtonState.Normal : PushButtonState.Disabled) + (Expanded ? 3 : 0));
+            Invalidate();
+            base.OnEnabledChanged(e);
+        }
+
+        /// <summary>
         ///     Raises the <see cref="ExpandedChanged" /> event.
         /// </summary>
         protected virtual void OnExpandedChanged()
         {
-            if (ExpandedChanged != null)
-            {
-                ExpandedChanged(this, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="E:Paint" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="PaintEventArgs" /> instance containing the event data.</param>
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            ButtonRenderer.DrawBackground(e.Graphics, DisplayRectangle);
-            if (Focused && ShowFocusCues) ControlPaint.DrawFocusRectangle(e.Graphics, DisplayRectangle);
-
-            base.OnPaint(e);
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="E:MouseEnter" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int) PushButtonState.Hot + (Expanded ? 3 : 0));
-            Invalidate();
-            base.OnMouseEnter(e);
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="E:MouseLeave" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int) PushButtonState.Normal + (Expanded ? 3 : 0));
-            Invalidate();
-            base.OnMouseLeave(e);
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="E:MouseDown" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
-                (int) PushButtonState.Pressed + (Expanded ? 3 : 0));
-            Invalidate();
-            base.OnMouseDown(e);
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="E:MouseUp" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
-                (int)
-                    ((e.X >= 0 && e.X < Width && e.Y >= 0 && e.Y < Height)
-                        ? PushButtonState.Hot
-                        : PushButtonState.Normal) +
-                (Expanded ? 3 : 0));
-            Invalidate();
-            base.OnMouseUp(e);
+            if (ExpandedChanged != null) ExpandedChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -165,27 +124,66 @@ namespace nUpdate.Administration.UI.Controls
         }
 
         /// <summary>
-        ///     Raises the <see cref="E:EnabledChanged" /> event.
+        ///     Raises the <see cref="E:MouseDown" /> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected override void OnEnabledChanged(EventArgs e)
+        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
-                (int) (Enabled ? PushButtonState.Normal : PushButtonState.Disabled) + (Expanded ? 3 : 0));
+                (int) PushButtonState.Pressed + (Expanded ? 3 : 0));
             Invalidate();
-            base.OnEnabledChanged(e);
+            base.OnMouseDown(e);
         }
 
         /// <summary>
-        ///     Raises the <see cref="E:Click" /> event.
+        ///     Raises the <see cref="E:MouseEnter" /> event.
         /// </summary>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        protected override void OnClick(EventArgs e)
+        protected override void OnMouseEnter(EventArgs e)
         {
-            Expanded = !Expanded;
-            Focus();
+            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13, (int) PushButtonState.Hot + (Expanded ? 3 : 0));
             Invalidate();
-            base.OnClick(e);
+            base.OnMouseEnter(e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="E:MouseLeave" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            ButtonRenderer =
+                new VisualStyleRenderer("TaskDialog", 13, (int) PushButtonState.Normal + (Expanded ? 3 : 0));
+            Invalidate();
+            base.OnMouseLeave(e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="E:MouseUp" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            ButtonRenderer = new VisualStyleRenderer("TaskDialog", 13,
+                (int)
+                (e.X >= 0 && e.X < Width && e.Y >= 0 && e.Y < Height
+                    ? PushButtonState.Hot
+                    : PushButtonState.Normal) +
+                (Expanded ? 3 : 0));
+            Invalidate();
+            base.OnMouseUp(e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="E:Paint" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="PaintEventArgs" /> instance containing the event data.</param>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            ButtonRenderer.DrawBackground(e.Graphics, DisplayRectangle);
+            if (Focused && ShowFocusCues) ControlPaint.DrawFocusRectangle(e.Graphics, DisplayRectangle);
+
+            base.OnPaint(e);
         }
 
         /// <summary>

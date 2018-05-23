@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.ComponentModel;
@@ -20,7 +20,7 @@ namespace nUpdate.Administration.UI.Controls
         [Localizable(true)]
         public string Cue
         {
-            get { return _cue; }
+            get => _cue;
             set
             {
                 _cue = value;
@@ -28,16 +28,16 @@ namespace nUpdate.Administration.UI.Controls
             }
         }
 
-        private void UpdateCue()
-        {
-            if (IsHandleCreated && _cue != null)
-                NativeMethods.SendMessage(Handle, 0x1501, new IntPtr(1), _cue);
-        }
-
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
             UpdateCue();
+        }
+
+        private void UpdateCue()
+        {
+            if (IsHandleCreated && _cue != null)
+                NativeMethods.SendMessage(Handle, 0x1501, new IntPtr(1), _cue);
         }
     }
 }

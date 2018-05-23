@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using Starksoft.Aspen.Ftps;
+using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration.Core
 {
@@ -19,57 +20,6 @@ namespace nUpdate.Administration.Core
         private const int TVIS_STATEIMAGEMASK = 0xF000;
         private const int TV_FIRST = 0x1100;
         private const int TVM_SETITEM = TV_FIRST + 63;
-
-        public static void DoubleBuffer(this Control control)
-        {
-            if (SystemInformation.TerminalServerSession)
-                return;
-            var dbProp = typeof (Control).GetProperty("DoubleBuffered",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            dbProp.SetValue(control, true, null);
-        }
-
-        public static void HideCheckBox(this TreeNode node)
-        {
-            var tvi = new ExplorerTreeNode
-            {
-                HItem = node.Handle,
-                Mask = TVIF_STATE,
-                StateMask = TVIS_STATEIMAGEMASK,
-                State = 0
-            };
-            NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
-        }
-
-        public static T[] RemoveAt<T>(this T[] source, int index)
-        {
-            var dest = new T[source.Length - 1];
-            if (index > 0)
-                Array.Copy(source, 0, dest, 0, index);
-
-            if (index < source.Length - 1)
-                Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
-
-            return dest;
-        }
-
-        public static T Remove<T>(this Stack<T> stack, T element)
-        {
-            var obj = stack.Pop();
-            if (obj.Equals(element))
-                return obj;
-            T toReturn = stack.Remove(element);
-            stack.Push(obj);
-            return toReturn;
-        }
-
-        public static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
-        {
-            foreach (var i in ie)
-            {
-                action(i);
-            }
-        }
 
         public static string ConvertToInsecureString(this SecureString securePassword)
         {
@@ -85,6 +35,54 @@ namespace nUpdate.Administration.Core
             finally
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        public static void DoubleBuffer(this Control control)
+        {
+            if (SystemInformation.TerminalServerSession)
+                return;
+            var dbProp = typeof(Control).GetProperty("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            dbProp.SetValue(control, true, null);
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
+        {
+            foreach (var i in ie) action(i);
+        }
+
+        public static void HideCheckBox(this TreeNode node)
+        {
+            var tvi = new ExplorerTreeNode
+            {
+                HItem = node.Handle,
+                Mask = TVIF_STATE,
+                StateMask = TVIS_STATEIMAGEMASK,
+                State = 0
+            };
+            NativeMethods.SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
+        }
+
+        public static void MoveDown(this TreeNode node)
+        {
+            TreeNode parent = node.Parent;
+            TreeView view = node.TreeView;
+            if (parent != null)
+            {
+                int index = node.Index;
+                if (index >= parent.Nodes.Count - 1)
+                    return;
+                parent.Nodes.RemoveAt(index);
+                parent.Nodes.Insert(index + 1, node);
+            }
+            else if (view != null && view.Nodes.Contains(node))
+            {
+                int index = view.Nodes.IndexOf(node);
+                if (index >= view.Nodes.Count - 1)
+                    return;
+                view.Nodes.RemoveAt(index);
+                view.Nodes.Insert(index + 1, node);
             }
         }
 
@@ -110,26 +108,26 @@ namespace nUpdate.Administration.Core
             }
         }
 
-        public static void MoveDown(this TreeNode node)
+        public static T Remove<T>(this Stack<T> stack, T element)
         {
-            TreeNode parent = node.Parent;
-            TreeView view = node.TreeView;
-            if (parent != null)
-            {
-                int index = node.Index;
-                if (index >= parent.Nodes.Count - 1)
-                    return;
-                parent.Nodes.RemoveAt(index);
-                parent.Nodes.Insert(index + 1, node);
-            }
-            else if (view != null && view.Nodes.Contains(node))
-            {
-                int index = view.Nodes.IndexOf(node);
-                if (index >= view.Nodes.Count - 1)
-                    return;
-                view.Nodes.RemoveAt(index);
-                view.Nodes.Insert(index + 1, node);
-            }
+            var obj = stack.Pop();
+            if (obj.Equals(element))
+                return obj;
+            T toReturn = stack.Remove(element);
+            stack.Push(obj);
+            return toReturn;
+        }
+
+        public static T[] RemoveAt<T>(this T[] source, int index)
+        {
+            var dest = new T[source.Length - 1];
+            if (index > 0)
+                Array.Copy(source, 0, dest, 0, index);
+
+            if (index < source.Length - 1)
+                Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+
+            return dest;
         }
 
         public static ServerItem ToServerItem(this FtpsItem ftpsItem)
@@ -144,13 +142,18 @@ namespace nUpdate.Administration.Core
                     serverItemType = ServerItemType.File;
                     break;
             }
+
             return new ServerItem(ftpsItem.Name, ftpsItem.FullPath, ftpsItem.Size, ftpsItem.Modified, serverItemType);
         }
 
-        public static TransferInterface.TransferProgressEventArgs ToTransferInterfaceProgressEventArgs(
+        public static TransferProgressEventArgs ToTransferInterfaceProgressEventArgs(
             this Starksoft.Aspen.Ftps.TransferProgressEventArgs progressEventArgs)
         {
-            return new TransferInterface.TransferProgressEventArgs(progressEventArgs.BytesTransferred, progressEventArgs.TotalBytesTransferred, progressEventArgs.BytesPerSecond, progressEventArgs.KilobytesPerSecond, progressEventArgs.MegabytesPerSecond, progressEventArgs.GigabytesPerSecond, progressEventArgs.ElapsedTime, progressEventArgs.PercentComplete, progressEventArgs.TransferSize, progressEventArgs.BytesRemaining, progressEventArgs.TimeRemaining);
+            return new TransferProgressEventArgs(progressEventArgs.BytesTransferred,
+                progressEventArgs.TotalBytesTransferred, progressEventArgs.BytesPerSecond,
+                progressEventArgs.KilobytesPerSecond, progressEventArgs.MegabytesPerSecond,
+                progressEventArgs.GigabytesPerSecond, progressEventArgs.ElapsedTime, progressEventArgs.PercentComplete,
+                progressEventArgs.TransferSize, progressEventArgs.BytesRemaining, progressEventArgs.TimeRemaining);
         }
     }
 }

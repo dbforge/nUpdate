@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -31,7 +31,8 @@ namespace nUpdate.Administration.Core.Win32
 
             try
             {
-                hIcon = NativeMethods.SHGetFileInfo(fileExtension, 0, ref shfileinfo, Marshal.SizeOf(shfileinfo), flags);
+                hIcon = NativeMethods.SHGetFileInfo(fileExtension, 0, ref shfileinfo, Marshal.SizeOf(shfileinfo),
+                    flags);
                 if (hIcon == IntPtr.Zero)
                     return null;
 

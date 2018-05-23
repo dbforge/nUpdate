@@ -1,11 +1,11 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 
-[assembly: ServiceProvider(typeof (InstallerServiceProvider))]
+[assembly: ServiceProvider(typeof(InstallerServiceProvider))]
 
 namespace nUpdate.UpdateInstaller.Core
 {
@@ -29,7 +29,7 @@ namespace nUpdate.UpdateInstaller.Core
 
         private void InitializeServices()
         {
-            _services.Add(typeof (IProgressReporter), new ProgressReporterService());
+            _services.Add(typeof(IProgressReporter), new ProgressReporterService());
         }
     }
 }

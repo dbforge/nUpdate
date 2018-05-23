@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Windows.Forms;
 
@@ -16,21 +16,21 @@ namespace nUpdate.Administration.UI.Controls
         /// </summary>
         public string Changelog
         {
-            get { return changelogTextBox.Text; }
-            set { changelogTextBox.Text = value; }
+            get => changelogTextBox.Text;
+            set => changelogTextBox.Text = value;
+        }
+
+        private void changelogTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control & (e.KeyCode == Keys.A))
+                changelogTextBox.SelectAll();
+            else if (e.Control & (e.KeyCode == Keys.Back))
+                SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
         }
 
         public void Paste(string text)
         {
             changelogTextBox.Paste(text);
-        }
-
-        private void changelogTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control & e.KeyCode == Keys.A)
-                changelogTextBox.SelectAll();
-            else if (e.Control & e.KeyCode == Keys.Back)
-                SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
         }
     }
 }

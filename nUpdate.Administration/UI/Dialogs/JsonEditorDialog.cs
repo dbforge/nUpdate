@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -15,6 +15,7 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         private readonly Style _argumentsStyle = new TextStyle(Brushes.Red, null, FontStyle.Bold);
         private readonly Style _commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
+
         private readonly Style _keyWordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
 /*
         private Style _stringStyle = new TextStyle(Brushes.DarkRed, null, FontStyle.Regular);
@@ -26,21 +27,14 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The content of the language file.
-        /// </summary>
-        public string LanguageContent { get; set; }
-
-        /// <summary>
         ///     The name of the language/culture.
         /// </summary>
         public string CultureName { get; set; }
 
-        private void JSONEditorDialog_Load(object sender, EventArgs e)
-        {
-            Text = string.Format(Text, Program.VersionString);
-            var bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
-            codeTextBox.Text = Encoding.UTF8.GetString(bytes);
-        }
+        /// <summary>
+        ///     The content of the language file.
+        /// </summary>
+        public string LanguageContent { get; set; }
 
         private void codeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -50,6 +44,13 @@ namespace nUpdate.Administration.UI.Dialogs
             //e.ChangedRange.SetStyle(stringStyle, "(?<=(?<!\)").+?(?=(?<!\)")", RegexOptions.Global);
             e.ChangedRange.SetStyle(_commentStyle, @".*//.*$");
             e.ChangedRange.SetFoldingMarkers("{", "}");
+        }
+
+        private void JSONEditorDialog_Load(object sender, EventArgs e)
+        {
+            Text = string.Format(Text, Program.VersionString);
+            var bytes = Encoding.Default.GetBytes(JsonHelper.FormatJson(LanguageContent));
+            codeTextBox.Text = Encoding.UTF8.GetString(bytes);
         }
 
         private void saveLanguageButton_Click(object sender, EventArgs e)
@@ -70,11 +71,13 @@ namespace nUpdate.Administration.UI.Dialogs
                 using (File.Create(filePath))
                 {
                 }
+
                 File.WriteAllText(filePath, codeTextBox.Text);
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the language-file.", ex, PopupButtons.Ok);
+                Popup.ShowPopup(this, SystemIcons.Error, "Error while creating the language-file.", ex,
+                    PopupButtons.Ok);
             }
             finally
             {

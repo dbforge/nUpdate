@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 
@@ -246,26 +246,24 @@ namespace nUpdate.Administration.Core.Localization
             ListingServerDataErrorCaption = "Error while listing the server-data.";
         }
 
-        // The title in the forms
-        public string ProductTitle { get; set; }
         // The "Cancel"-button text
         public string CancelButtonText { get; set; }
+
         // The "Continue"-button text
         public string ContinueButtonText { get; set; }
-        // The "Save"-button text
-        public string SaveButtonText { get; set; }
-        // The "Done"-button text
-        public string DoneButtonText { get; set; }
+
         // The "Create package"-button text
         public string CreatePackageButtonText { get; set; }
+
+        // The "Done"-button text
+        public string DoneButtonText { get; set; }
+
         // The "Edit package"-button text
         public string EditPackageButtonText { get; set; }
-        // The "Send"-button text
-        public string SendButtonText { get; set; }
-        // The "Save language"-button text
-        public string SaveLanguageButtonText { get; set; }
+
         // The caption of an "Invalid argument"-error
         public string InvalidArgumentErrorCaption { get; set; }
+
         // The text of an "Invalid argument"-error
         public string InvalidArgumentErrorText { get; set; }
 
@@ -275,6 +273,18 @@ namespace nUpdate.Administration.Core.Localization
         public string JsonEditorDialogTitle { get; set; }
 
         #endregion
+
+        // The title in the forms
+        public string ProductTitle { get; set; }
+
+        // The "Save"-button text
+        public string SaveButtonText { get; set; }
+
+        // The "Save language"-button text
+        public string SaveLanguageButtonText { get; set; }
+
+        // The "Send"-button text
+        public string SendButtonText { get; set; }
 
         #region "CredentialsDialog"
 

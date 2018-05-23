@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Diagnostics;
@@ -13,45 +13,19 @@ namespace nUpdate.Administration.UI.Dialogs
             InitializeComponent();
         }
 
-        private void InfoForm_Load(object sender, EventArgs e)
-        {
-            Text = string.Format(Text, Program.VersionString);
-            copyrightLabel.Text += DateTime.Now.Year.ToString();
-        }
-
-        private void iconPackLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("http://p.yusukekamiyamane.com/");
-        }
-
-        private void closeButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void InfoForm_Shown(object sender, EventArgs e)
-        {
-            closeButton.Focus();
-        }
-
-        private void timSchieweLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/timmi31061");
-        }
-
         private void artentusLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Artentus");
         }
 
-        private void ll_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void bikoLibraryLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/ProgTrade/nUpdate");
+            Process.Start("https://biko.codeplex.com/");
         }
 
-        private void websiteLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void closeButton_Click(object sender, EventArgs e)
         {
-            Process.Start("http://www.nupdate.net");
+            Close();
         }
 
         private void donatePictureBox_Click(object sender, EventArgs e)
@@ -72,19 +46,9 @@ namespace nUpdate.Administration.UI.Dialogs
             Process.Start("https://dotnetzip.codeplex.com/");
         }
 
-        private void jsonNetLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("http://james.newtonking.com/json");
-        }
-
         private void fastColoredTextBoxLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://www.codeproject.com/Articles/161871/Fast-Colored-TextBox-for-syntax-highlighting");
-        }
-
-        private void bikoLibraryLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://biko.codeplex.com/");
         }
 
         private void iconLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -92,9 +56,45 @@ namespace nUpdate.Administration.UI.Dialogs
             Process.Start("https://www.github.com/stefan-baumann");
         }
 
+        private void iconPackLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://p.yusukekamiyamane.com/");
+        }
+
+        private void InfoForm_Load(object sender, EventArgs e)
+        {
+            Text = string.Format(Text, Program.VersionString);
+            copyrightLabel.Text += DateTime.Now.Year.ToString();
+        }
+
+        private void InfoForm_Shown(object sender, EventArgs e)
+        {
+            closeButton.Focus();
+        }
+
+        private void jsonNetLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://james.newtonking.com/json");
+        }
+
+        private void ll_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/ProgTrade/nUpdate");
+        }
+
         private void nafetsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://www.github.com/stefan-baumann");
+        }
+
+        private void timSchieweLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/timmi31061");
+        }
+
+        private void websiteLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://www.nupdate.net");
         }
     }
 }

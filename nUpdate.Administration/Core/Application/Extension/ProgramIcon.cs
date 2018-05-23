@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 
@@ -52,43 +52,24 @@ namespace nUpdate.Administration.Core.Application.Extension
         public string Path { get; set; }
 
         /// <summary>
-        ///     Returns string representation of current ProgramIcon.
+        ///     Determines whether the specified System.Object is equal to the current System.Object.
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        /// <param name="obj">The System.Object to compare with the current System.Object.</param>
+        /// <returns>true if the specified System.Object is equal to the current System.Object; otherwise, false.</returns>
+        public override bool Equals(object obj)
         {
-            return Path + "," + Index;
+            //Exists only to avoid compiler warning
+            return this == obj as ProgramIcon;
         }
 
         /// <summary>
-        ///     Parses string to create and instance of ProgramIcon.
+        ///     Serves as a hash function for a particular type.
         /// </summary>
-        /// <param name="regString">String specifying file path. Icon can be included as well.</param>
-        /// <returns>ProgramIcon based on input string.</returns>
-        public static ProgramIcon Parse(string regString)
+        /// <returns>A hash code for the current System.Object.</returns>
+        public override int GetHashCode()
         {
-            if (regString == string.Empty)
-                return new ProgramIcon("");
-
-            if (regString.StartsWith("\"") && regString.EndsWith("\""))
-            {
-                if (regString.Length > 3)
-                    regString = regString.Substring(1, regString.Length - 2);
-            }
-
-            var index = 0;
-
-            var commaPos = regString.IndexOf(",", StringComparison.Ordinal);
-
-            if (commaPos == -1)
-                commaPos = regString.Length;
-            else
-                index = int.Parse(regString.Substring(commaPos + 1));
-
-            var path = regString.Substring(0, commaPos);
-
-
-            return new ProgramIcon(path, index);
+            //Exists only to avoid compiler warning
+            return base.GetHashCode();
         }
 
         /// <summary>
@@ -116,24 +97,41 @@ namespace nUpdate.Administration.Core.Application.Extension
         }
 
         /// <summary>
-        ///     Determines whether the specified System.Object is equal to the current System.Object.
+        ///     Parses string to create and instance of ProgramIcon.
         /// </summary>
-        /// <param name="obj">The System.Object to compare with the current System.Object.</param>
-        /// <returns>true if the specified System.Object is equal to the current System.Object; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        /// <param name="regString">String specifying file path. Icon can be included as well.</param>
+        /// <returns>ProgramIcon based on input string.</returns>
+        public static ProgramIcon Parse(string regString)
         {
-            //Exists only to avoid compiler warning
-            return this == (obj as ProgramIcon);
+            if (regString == string.Empty)
+                return new ProgramIcon("");
+
+            if (regString.StartsWith("\"") && regString.EndsWith("\""))
+                if (regString.Length > 3)
+                    regString = regString.Substring(1, regString.Length - 2);
+
+            var index = 0;
+
+            var commaPos = regString.IndexOf(",", StringComparison.Ordinal);
+
+            if (commaPos == -1)
+                commaPos = regString.Length;
+            else
+                index = int.Parse(regString.Substring(commaPos + 1));
+
+            var path = regString.Substring(0, commaPos);
+
+
+            return new ProgramIcon(path, index);
         }
 
         /// <summary>
-        ///     Serves as a hash function for a particular type.
+        ///     Returns string representation of current ProgramIcon.
         /// </summary>
-        /// <returns>A hash code for the current System.Object.</returns>
-        public override int GetHashCode()
+        /// <returns></returns>
+        public override string ToString()
         {
-            //Exists only to avoid compiler warning
-            return base.GetHashCode();
+            return Path + "," + Index;
         }
     }
 }

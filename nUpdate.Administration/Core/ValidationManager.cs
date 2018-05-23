@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System.Collections.Generic;
 using System.Linq;

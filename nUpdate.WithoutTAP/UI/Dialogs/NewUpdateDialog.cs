@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -115,6 +115,7 @@ namespace nUpdate.UI.Dialogs
                     string.Format(string.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
                         versionText, changelogText);
             }
+
             AddShieldToButton(installButton);
 
             if (OperationAreas == null || OperationAreas.Count == 0)

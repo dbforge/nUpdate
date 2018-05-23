@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -146,8 +146,17 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public bool AlwaysShowExtension
         {
-            get { return GetAlwaysShowExt(); }
-            set { SetAlwaysShowExt(value); }
+            get => GetAlwaysShowExt();
+            set => SetAlwaysShowExt(value);
+        }
+
+        /// <summary>
+        ///     Gets or sets a value that determines the default icon for the file type.
+        /// </summary>
+        public ProgramIcon DefaultIcon
+        {
+            get => GetDefaultIcon();
+            set => SetDefaultIcon(value);
         }
 
         /// <summary>
@@ -155,8 +164,8 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public string Description
         {
-            get { return GetDescription(); }
-            set { SetDescription(value); }
+            get => GetDescription();
+            set => SetDescription(value);
         }
 
         /// <summary>
@@ -165,32 +174,9 @@ namespace nUpdate.Administration.Core.Application.Extension
         /// </summary>
         public EditFlags EditFlags
         {
-            get { return GetEditFlags(); }
-            set { SetEditFlags(value); }
+            get => GetEditFlags();
+            set => SetEditFlags(value);
         }
-
-        /// <summary>
-        ///     Gets or sets a value that determines the default icon for the file type.
-        /// </summary>
-        public ProgramIcon DefaultIcon
-        {
-            get { return GetDefaultIcon(); }
-            set { SetDefaultIcon(value); }
-        }
-
-        /// <summary>
-        ///     Gets or sets an array of <see cref="ProgramVerb" /> that define the verbs supported by this ProgID
-        /// </summary>
-        public ProgramVerb[] Verbs
-        {
-            get { return GetVerbs(); }
-            set { SetVerbs(value); }
-        }
-
-        /// <summary>
-        ///     Gets a value that is the name of the Programatic Identifier
-        /// </summary>
-        public string ProgID => ProgId;
 
         /// <summary>
         ///     Gets a value that determines of a registry key exists with this Programatic Identifier
@@ -222,6 +208,29 @@ namespace nUpdate.Administration.Core.Application.Extension
         }
 
         /// <summary>
+        ///     Gets a value that is the name of the Programatic Identifier
+        /// </summary>
+        public string ProgID => ProgId;
+
+        /// <summary>
+        ///     Gets or sets an array of <see cref="ProgramVerb" /> that define the verbs supported by this ProgID
+        /// </summary>
+        public ProgramVerb[] Verbs
+        {
+            get => GetVerbs();
+            set => SetVerbs(value);
+        }
+
+        /// <summary>
+        ///     Adds single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
+        /// </summary>
+        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
+        public void AddVerb(ProgramVerb verb)
+        {
+            AddVerbpublic(verb);
+        }
+
+        /// <summary>
         ///     Deletes the current prog id.
         /// </summary>
         public void Delete()
@@ -232,15 +241,6 @@ namespace nUpdate.Administration.Core.Application.Extension
             var root = Registry.ClassesRoot;
 
             root.DeleteSubKeyTree(ProgId);
-        }
-
-        /// <summary>
-        ///     Adds single <see cref="ProgramVerb" /> that define the verb supported by this ProgID.
-        /// </summary>
-        /// <param name="verb">Single <see cref="ProgramVerb" /> that contains supported verb.</param>
-        public void AddVerb(ProgramVerb verb)
-        {
-            AddVerbpublic(verb);
         }
 
         /// <summary>
@@ -279,6 +279,7 @@ namespace nUpdate.Administration.Core.Application.Extension
                     val = -1;
                     return false;
                 }
+
                 val = arr.Length == 1 ? arr[0] : BitConverter.ToInt32(arr, 0);
 
                 return true;
@@ -603,7 +604,6 @@ namespace nUpdate.Administration.Core.Application.Extension
 
                 tmpKey = key.CreateSubKey("shell");
                 foreach (var verb in verbs)
-                {
                     if (tmpKey != null)
                     {
                         var newVerb = tmpKey.CreateSubKey(verb.Name.ToLower());
@@ -616,10 +616,10 @@ namespace nUpdate.Administration.Core.Application.Extension
                                 command.Close();
                             }
                         }
+
                         if (newVerb != null)
                             newVerb.Close();
                     }
-                }
             }
 
             ShellNotification.NotifyOfChange();
@@ -655,14 +655,12 @@ namespace nUpdate.Administration.Core.Application.Extension
                     if (key != null)
                     {
                         tmpkey = key.OpenSubKey("command", true) ?? key.CreateSubKey("command");
-                        if (tmpkey != null)
-                        {
-                            tmpkey.Close();
-                        }
+                        if (tmpkey != null) tmpkey.Close();
                         key.Close();
                     }
                 }
             }
+
             root.Close();
 
             ShellNotification.NotifyOfChange();
@@ -683,13 +681,11 @@ namespace nUpdate.Administration.Core.Application.Extension
                     throw new RegistryException("Shell key not found");
 
                 var subkeynames = key.GetSubKeyNames();
-                if (subkeynames.Any(s => s == name))
-                {
-                    key.DeleteSubKeyTree(name);
-                }
+                if (subkeynames.Any(s => s == name)) key.DeleteSubKeyTree(name);
 
                 key.Close();
             }
+
             root.Close();
 
             ShellNotification.NotifyOfChange();

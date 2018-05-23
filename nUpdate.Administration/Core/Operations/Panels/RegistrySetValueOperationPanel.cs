@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -18,10 +18,7 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         public string KeyPath
         {
-            get
-            {
-                return $"{mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem)}\\{subKeyTextBox.Text}";
-            }
+            get => $"{mainKeyComboBox.GetItemText(mainKeyComboBox.SelectedItem)}\\{subKeyTextBox.Text}";
             set
             {
                 var pathParts = value.Split('\\');
@@ -32,15 +29,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         public List<Tuple<string, object, RegistryValueKind>> NameValuePairs
         {
-            get
-            {
-                return (from ListViewItem listViewItem in nameValuePairListView.Items
+            get => (from ListViewItem listViewItem in nameValuePairListView.Items
                     select
                         new Tuple<string, object, RegistryValueKind>(listViewItem.SubItems[0].Text,
                             listViewItem.SubItems[1].Text,
-                            (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), listViewItem.SubItems[2].Text)))
-                    .ToList();
-            }
+                            (RegistryValueKind) Enum.Parse(typeof(RegistryValueKind), listViewItem.SubItems[2].Text)))
+                .ToList();
             set
             {
                 foreach (var tupleItem in value)
@@ -58,13 +52,6 @@ namespace nUpdate.Administration.Core.Operations.Panels
         public Operation Operation
             => new Operation(OperationArea.Registry, OperationMethod.SetValue, KeyPath, NameValuePairs);
 
-        private void RegistryEntrySetValueOperationPanel_Load(object sender, EventArgs e)
-        {
-            mainKeyComboBox.SelectedIndex = 0;
-            valueKindComboBox.DataSource = Enum.GetValues(typeof (RegistryValueKind));
-            valueKindComboBox.SelectedIndex = 0;
-        }
-
         private void addButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(nameTextBox.Text) || string.IsNullOrEmpty(valueTextBox.Text))
@@ -77,12 +64,16 @@ namespace nUpdate.Administration.Core.Operations.Panels
             valueTextBox.Clear();
         }
 
+        private void RegistryEntrySetValueOperationPanel_Load(object sender, EventArgs e)
+        {
+            mainKeyComboBox.SelectedIndex = 0;
+            valueKindComboBox.DataSource = Enum.GetValues(typeof(RegistryValueKind));
+            valueKindComboBox.SelectedIndex = 0;
+        }
+
         private void removeButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in nameValuePairListView.SelectedItems)
-            {
-                nameValuePairListView.Items.Remove(item);
-            }
+            foreach (ListViewItem item in nameValuePairListView.SelectedItems) nameValuePairListView.Items.Remove(item);
         }
 
         private void subKeyTextBox_TextChanged(object sender, EventArgs e)

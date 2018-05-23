@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Windows.Forms;
@@ -13,11 +13,6 @@ namespace nUpdate.Administration.UI.Dialogs
         }
 
         /// <summary>
-        ///     The url of the SQL-host.
-        /// </summary>
-        public string WebUrl { get; set; }
-
-        /// <summary>
         ///     The name of the database to use.
         /// </summary>
         public string DatabaseName { get; set; }
@@ -26,6 +21,11 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The username for the SQL-connection.
         /// </summary>
         public string Username { get; set; }
+
+        /// <summary>
+        ///     The url of the SQL-host.
+        /// </summary>
+        public string WebUrl { get; set; }
 
         private void saveButton_Click(object sender, EventArgs e)
         {

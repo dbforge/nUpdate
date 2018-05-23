@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.ServiceProcess;
@@ -7,6 +7,26 @@ namespace nUpdate.UpdateInstaller.Core
 {
     public class ServiceManager
     {
+        /// <summary>
+        ///     Restarts a running windows service.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to restart.</param>
+        public static void RestartService(string serviceName)
+        {
+            var serviceController = new ServiceController(serviceName);
+            var millisec1 = Environment.TickCount;
+            var timeout = TimeSpan.FromMilliseconds(5000);
+
+            serviceController.Stop();
+            serviceController.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+
+            var millisec2 = Environment.TickCount;
+            timeout = TimeSpan.FromMilliseconds(5000 - (millisec2 - millisec1));
+
+            serviceController.Start();
+            serviceController.WaitForStatus(ServiceControllerStatus.Running, timeout);
+        }
+
         /// <summary>
         ///     Starts a windows service with the given name. If the service is already running, it will be restarted.
         /// </summary>
@@ -30,26 +50,6 @@ namespace nUpdate.UpdateInstaller.Core
 
                 serviceController.WaitForStatus(ServiceControllerStatus.Running, timeout);
             }
-        }
-
-        /// <summary>
-        ///     Restarts a running windows service.
-        /// </summary>
-        /// <param name="serviceName">The name of the service to restart.</param>
-        public static void RestartService(string serviceName)
-        {
-            var serviceController = new ServiceController(serviceName);
-            var millisec1 = Environment.TickCount;
-            var timeout = TimeSpan.FromMilliseconds(5000);
-
-            serviceController.Stop();
-            serviceController.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
-
-            var millisec2 = Environment.TickCount;
-            timeout = TimeSpan.FromMilliseconds(5000 - (millisec2 - millisec1));
-
-            serviceController.Start();
-            serviceController.WaitForStatus(ServiceControllerStatus.Running, timeout);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.ComponentModel;
@@ -52,7 +52,7 @@ namespace ExplorerNavigationButton
         [DefaultValue(ArrowDirection.Left)]
         public ArrowDirection ArrowDirection
         {
-            get { return _arrowDirection; }
+            get => _arrowDirection;
             set
             {
                 if (value != _arrowDirection)
@@ -73,7 +73,7 @@ namespace ExplorerNavigationButton
         [DefaultValue(ButtonTheme.Auto)]
         public ButtonTheme Theme
         {
-            get { return _theme; }
+            get => _theme;
             set
             {
                 if (value != _theme)
@@ -97,17 +97,112 @@ namespace ExplorerNavigationButton
         [Description("Is risen if the arrow direction has changed.")]
         public event EventHandler ArrowDirectionChanged;
 
-        /// <summary>
-        ///     Is risen if the theme has changed.
-        /// </summary>
-        [Category("Appearance")]
-        [Description("Is risen if the theme has changed.")]
-        public event EventHandler ThemeChanged;
+        private Template AutoSelectTemplate()
+        {
+            if (Application.RenderWithVisualStyles)
+            {
+                var metroVersion = new Version(6, 2);
+                var aeroVersion = new Version(6, 0);
+
+                var version = Environment.OSVersion.Version;
+                if (version >= metroVersion)
+                    return new MetroTemplate();
+                if (version >= aeroVersion)
+                    return new AeroTemplate();
+            }
+
+            return null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            foreach (var bmp in _arrows) bmp.Dispose();
+
+            if (_template != null)
+                _template.Dispose();
+
+            base.Dispose(disposing);
+        }
+
+        private void DrawDefault(Graphics g, ArrowDirection direction, ButtonState state)
+        {
+            var arrowIndex = (int) direction;
+            if (state == ButtonState.Disabled)
+                arrowIndex += 2;
+
+            var arrowSize = Math.Min(16, Math.Min(Width, Height));
+            var arrowRect = new Rectangle((Width - arrowSize) / 2, (Height - arrowSize) / 2, arrowSize, arrowSize);
+
+            ButtonRenderer.DrawButton(g, ClientRectangle, _arrows[arrowIndex], arrowRect, false,
+                (PushButtonState) (state + 1));
+        }
 
         protected virtual void OnArrowDirectionChanged(EventArgs e)
         {
             if (ArrowDirectionChanged != null)
                 ArrowDirectionChanged(this, e);
+        }
+
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            Invalidate();
+
+            base.OnEnabledChanged(e);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            _state = ButtonState.Pressed;
+            Invalidate();
+
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            _state = ButtonState.Hover;
+            Invalidate();
+
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            _state = ButtonState.Normal;
+            Invalidate();
+
+            base.OnMouseLeave(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            _state = ButtonState.Hover;
+            Invalidate();
+
+            base.OnMouseUp(e);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (_template != null)
+            {
+                var g = e.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                var buttonSize = Math.Min(Width, Height);
+                var sizeFactor = buttonSize / 24.0f;
+                g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (Width - buttonSize) / 2.0f,
+                    (Height - buttonSize) / 2.0f);
+
+                _template.Draw(g, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
+            }
+            else
+            {
+                DrawDefault(e.Graphics, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
+            }
+
+            base.OnPaint(e);
         }
 
         protected virtual void OnTemplateChanged(EventArgs e)
@@ -131,107 +226,11 @@ namespace ExplorerNavigationButton
             }
         }
 
-        private Template AutoSelectTemplate()
-        {
-            if (Application.RenderWithVisualStyles)
-            {
-                var metroVersion = new Version(6, 2);
-                var aeroVersion = new Version(6, 0);
-
-                var version = Environment.OSVersion.Version;
-                if (version >= metroVersion)
-                    return new MetroTemplate();
-                if (version >= aeroVersion)
-                    return new AeroTemplate();
-            }
-
-            return null;
-        }
-
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            _state = ButtonState.Hover;
-            Invalidate();
-
-            base.OnMouseEnter(e);
-        }
-
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            _state = ButtonState.Normal;
-            Invalidate();
-
-            base.OnMouseLeave(e);
-        }
-
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            _state = ButtonState.Pressed;
-            Invalidate();
-
-            base.OnMouseDown(e);
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            _state = ButtonState.Hover;
-            Invalidate();
-
-            base.OnMouseUp(e);
-        }
-
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            Invalidate();
-
-            base.OnEnabledChanged(e);
-        }
-
-        private void DrawDefault(Graphics g, ArrowDirection direction, ButtonState state)
-        {
-            var arrowIndex = (int) direction;
-            if (state == ButtonState.Disabled)
-                arrowIndex += 2;
-
-            var arrowSize = Math.Min(16, Math.Min(Width, Height));
-            var arrowRect = new Rectangle((Width - arrowSize)/2, (Height - arrowSize)/2, arrowSize, arrowSize);
-
-            ButtonRenderer.DrawButton(g, ClientRectangle, _arrows[arrowIndex], arrowRect, false,
-                (PushButtonState) (state + 1));
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            if (_template != null)
-            {
-                var g = e.Graphics;
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                var buttonSize = Math.Min(Width, Height);
-                var sizeFactor = buttonSize/24.0f;
-                g.Transform = new Matrix(sizeFactor, 0, 0, sizeFactor, (Width - buttonSize)/2.0f,
-                    (Height - buttonSize)/2.0f);
-
-                _template.Draw(g, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
-            }
-            else
-                DrawDefault(e.Graphics, _arrowDirection, Enabled ? _state : ButtonState.Disabled);
-
-            base.OnPaint(e);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            foreach (var bmp in _arrows)
-            {
-                bmp.Dispose();
-            }
-
-            if (_template != null)
-                _template.Dispose();
-
-            base.Dispose(disposing);
-        }
+        /// <summary>
+        ///     Is risen if the theme has changed.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Is risen if the theme has changed.")]
+        public event EventHandler ThemeChanged;
     }
 }

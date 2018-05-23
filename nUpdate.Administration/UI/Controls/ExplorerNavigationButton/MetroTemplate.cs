@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -41,42 +41,6 @@ namespace ExplorerNavigationButton
                 _pressedBrush = new SolidBrush(Color.FromArgb(54, 116, 178));
             }
 
-            protected override void DrawNormal(Graphics g, ArrowDirection direction)
-            {
-                g.DrawEllipse(_normalPen, _circleRect);
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
-                g.DrawPath(_normalArrowPen, _arrowPath);
-            }
-
-            protected override void DrawHover(Graphics g, ArrowDirection direction)
-            {
-                g.FillEllipse(_hoverBrush,
-                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
-                        _circleRect.Height + 1));
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
-                g.DrawPath(_hoverArrowPen, _arrowPath);
-            }
-
-            protected override void DrawPressed(Graphics g, ArrowDirection direction)
-            {
-                g.FillEllipse(_pressedBrush,
-                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
-                        _circleRect.Height + 1));
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
-                g.DrawPath(_hoverArrowPen, _arrowPath);
-            }
-
-            protected override void DrawDisabled(Graphics g, ArrowDirection direction)
-            {
-                g.DrawEllipse(_disabledPen, _circleRect);
-                if (direction == ArrowDirection.Right)
-                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
-                g.DrawPath(_disabledArrowPen, _arrowPath);
-            }
-
             protected override void Dispose(bool disposing)
             {
                 _normalPen.Dispose();
@@ -89,6 +53,42 @@ namespace ExplorerNavigationButton
                 _disabledPen.Dispose();
 
                 base.Dispose(disposing);
+            }
+
+            protected override void DrawDisabled(Graphics g, ArrowDirection direction)
+            {
+                g.DrawEllipse(_disabledPen, _circleRect);
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
+                g.DrawPath(_disabledArrowPen, _arrowPath);
+            }
+
+            protected override void DrawHover(Graphics g, ArrowDirection direction)
+            {
+                g.FillEllipse(_hoverBrush,
+                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
+                        _circleRect.Height + 1));
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
+                g.DrawPath(_hoverArrowPen, _arrowPath);
+            }
+
+            protected override void DrawNormal(Graphics g, ArrowDirection direction)
+            {
+                g.DrawEllipse(_normalPen, _circleRect);
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
+                g.DrawPath(_normalArrowPen, _arrowPath);
+            }
+
+            protected override void DrawPressed(Graphics g, ArrowDirection direction)
+            {
+                g.FillEllipse(_pressedBrush,
+                    new RectangleF(_circleRect.X - 0.5f, _circleRect.Y - 0.5f, _circleRect.Width + 1,
+                        _circleRect.Height + 1));
+                if (direction == ArrowDirection.Right)
+                    g.MultiplyTransform(new Matrix(-1, 0, 0, 1, 23, 0));
+                g.DrawPath(_hoverArrowPen, _arrowPath);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.IO;
 using Newtonsoft.Json;
@@ -7,16 +7,6 @@ namespace nUpdate.UpdateInstaller.Core
 {
     public class Serializer
     {
-        /// <summary>
-        ///     Serializes a given serializable object.
-        /// </summary>
-        /// <param name="dataToSerialize">The data to serialize.</param>
-        /// <returns>Returns the serialized data as a string.</returns>
-        public static string Serialize(object dataToSerialize)
-        {
-            return JsonConvert.SerializeObject(dataToSerialize);
-        }
-
         /// <summary>
         ///     Deserializes a given string.
         /// </summary>
@@ -43,6 +33,16 @@ namespace nUpdate.UpdateInstaller.Core
             }
 
             return JsonConvert.DeserializeObject<T>(streamContent);
+        }
+
+        /// <summary>
+        ///     Serializes a given serializable object.
+        /// </summary>
+        /// <param name="dataToSerialize">The data to serialize.</param>
+        /// <returns>Returns the serialized data as a string.</returns>
+        public static string Serialize(object dataToSerialize)
+        {
+            return JsonConvert.SerializeObject(dataToSerialize);
         }
     }
 }

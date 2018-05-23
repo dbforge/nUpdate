@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -20,6 +20,7 @@ namespace nUpdate.Administration.UI.Dialogs
     {
         private SecureString _ftpPassword = new SecureString();
         private SecureString _proxyPassword = new SecureString();
+
         private SecureString _sqlPassword = new SecureString();
         //private readonly LocalizationProperties _lp = new LocalizationProperties();
 
@@ -116,18 +117,14 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             if (!File.Exists(Program.ProjectsConfigFilePath))
-            {
                 using (File.Create(Program.ProjectsConfigFilePath))
                 {
                 }
-            }
 
             if (!File.Exists(Program.StatisticServersFilePath))
-            {
                 using (File.Create(Program.StatisticServersFilePath))
                 {
                 }
-            }
 
             var projectsPath = Path.Combine(Program.Path, "Projects");
             if (!Directory.Exists(projectsPath))
@@ -137,6 +134,30 @@ namespace nUpdate.Administration.UI.Dialogs
             sectionsListView.DoubleBuffer();
             Text = string.Format(Text, Program.VersionString);
             headerLabel.Text = string.Format(Text, Program.VersionString);
+        }
+
+        private void MainDialog_Shown(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ProjectPath))
+                return;
+
+            Project = OpenProject(ProjectPath);
+            if (Project == null)
+                return;
+
+            var projectDialog = new ProjectDialog
+            {
+                Project = Project,
+                FtpPassword = _ftpPassword.Copy(),
+                ProxyPassword = _proxyPassword.Copy(),
+                SqlPassword = _sqlPassword.Copy()
+            };
+            if (projectDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            _ftpPassword.Dispose();
+            _proxyPassword.Dispose();
+            _sqlPassword.Dispose();
         }
 
         public UpdateProject OpenProject(string projectPath)
@@ -157,7 +178,6 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var credentialsDialog = new CredentialsDialog();
                 if (credentialsDialog.ShowDialog() == DialogResult.OK)
-                {
                     try
                     {
                         _ftpPassword =
@@ -186,11 +206,8 @@ namespace nUpdate.Administration.UI.Dialogs
                             ex, PopupButtons.Ok);
                         return null;
                     }
-                }
                 else
-                {
                     return null;
-                }
 
                 if (project.FtpUsername == credentialsDialog.Username)
                     return project;
@@ -261,6 +278,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             }
                         }
                     }
+
                     break;
 
                 case 2:
@@ -294,6 +312,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             }
                         }
                     }
+
                     break;
 
                 case 4:
@@ -320,30 +339,6 @@ namespace nUpdate.Administration.UI.Dialogs
                     statisticsServerDialog.ShowDialog();
                     break;
             }
-        }
-
-        private void MainDialog_Shown(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(ProjectPath))
-                return;
-
-            Project = OpenProject(ProjectPath);
-            if (Project == null)
-                return;
-
-            var projectDialog = new ProjectDialog
-            {
-                Project = Project,
-                FtpPassword = _ftpPassword.Copy(),
-                ProxyPassword = _proxyPassword.Copy(),
-                SqlPassword = _sqlPassword.Copy()
-            };
-            if (projectDialog.ShowDialog() != DialogResult.OK)
-                return;
-
-            _ftpPassword.Dispose();
-            _proxyPassword.Dispose();
-            _sqlPassword.Dispose();
         }
     }
 }

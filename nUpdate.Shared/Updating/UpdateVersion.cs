@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -508,9 +508,11 @@ namespace nUpdate.Updating
                         devStageShortcut = "rc";
                         break;
                 }
+
                 return
                     $"{Major}.{Minor}.{Build}.{Revision}{devStageShortcut}{(DevelopmentBuild != 0 ? DevelopmentBuild.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
             }
+
             return BasicVersion;
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System.Threading;
 using nUpdate.Internal.Core.Localization;
@@ -9,7 +9,7 @@ namespace nUpdate.Updating
     {
         private readonly LocalizationProperties _lp;
         private bool _active;
-        
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdaterUI" />-class.
         /// </summary>
@@ -39,7 +39,8 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="SynchronizationContext"/> to use for mashalling the user interface specific calls to the current UI thread.
+        ///     Gets or sets the <see cref="SynchronizationContext" /> to use for mashalling the user interface specific calls to
+        ///     the current UI thread.
         /// </summary>
         internal SynchronizationContext Context { get; set; }
 

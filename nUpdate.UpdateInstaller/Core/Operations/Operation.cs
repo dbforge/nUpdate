@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.IO;
@@ -36,6 +36,28 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         public object Value2 { get; set; }
 
         /// <summary>
+        ///     Gets the full directory path for the given tag.
+        /// </summary>
+        /// <param name="tag">The tag to use.</param>
+        /// <returns>Returns the full path of the relating directory on the system.</returns>
+        public static string GetDirectory(string tag)
+        {
+            switch (tag)
+            {
+                case "%program%":
+                    return Program.AimFolder;
+                case "%appdata%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                case "%temp%":
+                    return Path.GetTempPath();
+                case "%desktop%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         ///     Gets the operation area and method from a given tag.
         /// </summary>
         /// <param name="areaTag">The tag to check.</param>
@@ -69,6 +91,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                 case "ExecuteScript":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
             }
+
             return null;
         }
 
@@ -91,6 +114,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                         case OperationMethod.Rename:
                             return "RenameFile";
                     }
+
                     break;
                 case OperationArea.Registry:
                     switch (operation.Method)
@@ -102,6 +126,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                         case OperationMethod.SetValue:
                             return "SetRegistryValue";
                     }
+
                     break;
                 case OperationArea.Processes:
                     switch (operation.Method)
@@ -111,6 +136,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                         case OperationMethod.Stop:
                             return "TerminateProcess";
                     }
+
                     break;
                 case OperationArea.Services:
                     switch (operation.Method)
@@ -120,6 +146,7 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                         case OperationMethod.Stop:
                             return "StopService";
                     }
+
                     break;
                 case OperationArea.Scripts:
                     switch (operation.Method)
@@ -127,29 +154,10 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                         case OperationMethod.Execute:
                             return "ExecuteScript";
                     }
+
                     break;
             }
-            return null;
-        }
 
-        /// <summary>
-        ///     Gets the full directory path for the given tag.
-        /// </summary>
-        /// <param name="tag">The tag to use.</param>
-        /// <returns>Returns the full path of the relating directory on the system.</returns>
-        public static string GetDirectory(string tag)
-        {
-            switch (tag)
-            {
-                case "%program%":
-                    return Program.AimFolder;
-                case "%appdata%":
-                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                case "%temp%":
-                    return Path.GetTempPath();
-                case "%desktop%":
-                    return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            }
             return null;
         }
     }

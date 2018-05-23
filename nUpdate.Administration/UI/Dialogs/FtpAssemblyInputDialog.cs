@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -18,8 +18,21 @@ namespace nUpdate.Administration.UI.Dialogs
 
         public string AssemblyPath
         {
-            get { return assemblyFilePathTextBox.Text; }
-            set { assemblyFilePathTextBox.Text = value; }
+            get => assemblyFilePathTextBox.Text;
+            set => assemblyFilePathTextBox.Text = value;
+        }
+
+        private void assemblyFilePathTextBox_ButtonClicked(object sender, EventArgs e)
+        {
+            using (var fileDialog = new OpenFileDialog())
+            {
+                fileDialog.Filter = "Executable files (*.exe)|*.exe|Dynamic link libraries (*.dll)|*.dll";
+                fileDialog.Multiselect = false;
+                if (fileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                assemblyFilePathTextBox.Text = fileDialog.FileName;
+            }
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -56,19 +69,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             Text = string.Format(Text, Program.VersionString);
             assemblyFilePathTextBox.Initialize();
-        }
-
-        private void assemblyFilePathTextBox_ButtonClicked(object sender, EventArgs e)
-        {
-            using (var fileDialog = new OpenFileDialog())
-            {
-                fileDialog.Filter = "Executable files (*.exe)|*.exe|Dynamic link libraries (*.dll)|*.dll";
-                fileDialog.Multiselect = false;
-                if (fileDialog.ShowDialog() != DialogResult.OK)
-                    return;
-
-                assemblyFilePathTextBox.Text = fileDialog.FileName;
-            }
         }
     }
 }

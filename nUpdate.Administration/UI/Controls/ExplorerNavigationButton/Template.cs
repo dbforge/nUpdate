@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -22,6 +22,10 @@ namespace ExplorerNavigationButton
                 }
             }
 
+            protected virtual void Dispose(bool disposing)
+            {
+            }
+
             public void Draw(Graphics g, ArrowDirection direction, ButtonState state)
             {
                 switch (state)
@@ -41,14 +45,11 @@ namespace ExplorerNavigationButton
                 }
             }
 
-            protected abstract void DrawNormal(Graphics g, ArrowDirection direction);
-            protected abstract void DrawHover(Graphics g, ArrowDirection direction);
-            protected abstract void DrawPressed(Graphics g, ArrowDirection direction);
             protected abstract void DrawDisabled(Graphics g, ArrowDirection direction);
+            protected abstract void DrawHover(Graphics g, ArrowDirection direction);
 
-            protected virtual void Dispose(bool disposing)
-            {
-            }
+            protected abstract void DrawNormal(Graphics g, ArrowDirection direction);
+            protected abstract void DrawPressed(Graphics g, ArrowDirection direction);
 
             ~Template()
             {

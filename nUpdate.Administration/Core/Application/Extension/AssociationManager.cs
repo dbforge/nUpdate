@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Collections.Generic;
 
@@ -9,27 +9,6 @@ namespace nUpdate.Administration.Core.Application.Extension
     /// </summary>
     public class AssociationManager
     {
-        /// <summary>
-        ///     Determines of the list of extensions are associated with the specified program id.
-        /// </summary>
-        /// <param name="progId">Program id to check against.</param>
-        /// <param name="extensions">String array of extensions to check against the program id.</param>
-        /// <returns>String array of extensions that were not associated with the program id.</returns>
-        public string[] CheckAssociation(string progId, params string[] extensions)
-        {
-            var notAssociated = new List<string>();
-
-            foreach (var s in extensions)
-            {
-                var fai = new FileAssociationInfo(s);
-
-                if (!fai.Exists || fai.ProgId != progId)
-                    notAssociated.Add(s);
-            }
-
-            return notAssociated.ToArray();
-        }
-
         /// <summary>
         ///     Associates a single executable with a list of extensions.
         /// </summary>
@@ -77,6 +56,27 @@ namespace nUpdate.Administration.Core.Application.Extension
 
                 fai.ProgId = progId;
             }
+        }
+
+        /// <summary>
+        ///     Determines of the list of extensions are associated with the specified program id.
+        /// </summary>
+        /// <param name="progId">Program id to check against.</param>
+        /// <param name="extensions">String array of extensions to check against the program id.</param>
+        /// <returns>String array of extensions that were not associated with the program id.</returns>
+        public string[] CheckAssociation(string progId, params string[] extensions)
+        {
+            var notAssociated = new List<string>();
+
+            foreach (var s in extensions)
+            {
+                var fai = new FileAssociationInfo(s);
+
+                if (!fai.Exists || fai.ProgId != progId)
+                    notAssociated.Add(s);
+            }
+
+            return notAssociated.ToArray();
         }
     }
 }

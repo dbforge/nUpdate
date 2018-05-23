@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.ComponentModel;
@@ -17,22 +17,18 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
+        public BindingList<string> ItemList { get; set; } = new BindingList<string>();
+
         public string Path
         {
-            get { return pathTextBox.Text.EndsWith("\\") ? pathTextBox.Text : pathTextBox.Text += "\\"; }
-            set { pathTextBox.Text = value; }
+            get => pathTextBox.Text.EndsWith("\\") ? pathTextBox.Text : pathTextBox.Text += "\\";
+            set => pathTextBox.Text = value;
         }
 
-        public BindingList<string> ItemList { get; set; } = new BindingList<string>();
         public bool IsValid => ItemList.Any();
 
         public Operation Operation
             => new Operation(OperationArea.Files, OperationMethod.Delete, Path, ItemList.ToList());
-
-        private void FileDeleteOperationPanel_Load(object sender, EventArgs e)
-        {
-            filesToDeleteListBox.DataSource = ItemList;
-        }
 
         private void addButton_Click(object sender, EventArgs e)
         {
@@ -42,22 +38,22 @@ namespace nUpdate.Administration.Core.Operations.Panels
             fileNameTextBox.Clear();
         }
 
-        private void fileNameTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                addButton.PerformClick();
-        }
-
-        private void removeButton_Click(object sender, EventArgs e)
-        {
-            ItemList.RemoveAt(filesToDeleteListBox.SelectedIndex);
-        }
-
         private void environmentVariablesButton_Click(object sender, EventArgs e)
         {
             Popup.ShowPopup(this, SystemIcons.Information, "Environment variables.",
                 "%appdata%: AppData\n%temp%: Temp\n%program%: Program's directory\n%desktop%: Desktop directory",
                 PopupButtons.Ok);
+        }
+
+        private void FileDeleteOperationPanel_Load(object sender, EventArgs e)
+        {
+            filesToDeleteListBox.DataSource = ItemList;
+        }
+
+        private void fileNameTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                addButton.PerformClick();
         }
 
         private void pathTextBox_TextChanged(object sender, EventArgs e)
@@ -67,6 +63,11 @@ namespace nUpdate.Administration.Core.Operations.Panels
             pathTextBox.Text = pathTextBox.Text.Replace('/', '\\');
             pathTextBox.SelectionStart = pathTextBox.Text.Length;
             pathTextBox.SelectionLength = 0;
+        }
+
+        private void removeButton_Click(object sender, EventArgs e)
+        {
+            ItemList.RemoveAt(filesToDeleteListBox.SelectedIndex);
         }
     }
 }

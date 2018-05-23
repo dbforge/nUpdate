@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Linq;
 using System.Text;
@@ -27,6 +27,7 @@ namespace nUpdate.Administration.Core
                             sb.AppendLine();
                             Enumerable.Range(0, ++indent).ForEach(item => sb.Append(INDENT_STRING));
                         }
+
                         break;
                     case '}':
                     case ']':
@@ -35,16 +36,14 @@ namespace nUpdate.Administration.Core
                             sb.AppendLine();
                             Enumerable.Range(0, --indent).ForEach(item => sb.Append(INDENT_STRING));
                         }
+
                         sb.Append(ch);
                         break;
                     case '"':
                         sb.Append(ch);
                         var escaped = false;
                         var index = i;
-                        while (index > 0 && str[--index] == '\\')
-                        {
-                            escaped = !escaped;
-                        }
+                        while (index > 0 && str[--index] == '\\') escaped = !escaped;
                         if (!escaped)
                             quoted = !quoted;
                         break;
@@ -55,6 +54,7 @@ namespace nUpdate.Administration.Core
                             sb.AppendLine();
                             Enumerable.Range(0, indent).ForEach(item => sb.Append(INDENT_STRING));
                         }
+
                         break;
                     case ':':
                         sb.Append(ch);
@@ -66,6 +66,7 @@ namespace nUpdate.Administration.Core
                         break;
                 }
             }
+
             return sb.ToString();
         }
     }

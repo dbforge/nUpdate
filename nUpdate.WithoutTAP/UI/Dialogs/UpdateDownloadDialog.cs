@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -94,6 +94,7 @@ namespace nUpdate.UI.Dialogs
                 UpdateManager.PackagesDownloadFinished -= Finished;
                 return;
             }
+
             e.Cancel = true;
             Cancel();
         }
