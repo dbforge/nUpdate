@@ -21,8 +21,7 @@ namespace nUpdate
                     using (var resp = await req.GetResponseAsync())
                     {
                         var headerValue = resp.Headers.Get("Content-Length");
-                        double contentLength;
-                        if (double.TryParse(headerValue, out contentLength))
+                        if (double.TryParse(headerValue, out var contentLength))
                             size += contentLength;
                         else
                             throw new Exception(
