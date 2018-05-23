@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -17,8 +17,8 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         public string ProcessName
         {
-            get { return processNameTextBox.Text; }
-            set { processNameTextBox.Text = value; }
+            get => processNameTextBox.Text;
+            set => processNameTextBox.Text = value;
         }
 
         public bool IsValid => !string.IsNullOrEmpty(processNameTextBox.Text);

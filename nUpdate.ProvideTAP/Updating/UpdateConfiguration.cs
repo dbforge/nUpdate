@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace nUpdate.Updating
         {
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-            
+
             var request = (HttpWebRequest) WebRequest.Create(configFileUri);
             request.Timeout = timeout;
 
@@ -59,9 +59,9 @@ namespace nUpdate.Updating
                 request.Proxy = proxy;
 
             string source;
-            var response = cancellationTokenSource != null ?
-                await request.GetResponseAsync(cancellationTokenSource.Token) 
-                : (HttpWebResponse)await request.GetResponseAsync();
+            var response = cancellationTokenSource != null
+                ? await request.GetResponseAsync(cancellationTokenSource.Token)
+                : (HttpWebResponse) await request.GetResponseAsync();
 
             using (var sr = new StreamReader(response.GetResponseStream() ??
                                              throw new InvalidOperationException(

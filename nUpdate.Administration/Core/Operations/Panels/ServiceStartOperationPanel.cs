@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +14,6 @@ namespace nUpdate.Administration.Core.Operations.Panels
             InitializeComponent();
         }
 
-        public string ServiceName
-        {
-            get { return serviceNameTextBox.Text; }
-            set { serviceNameTextBox.Text = value; }
-        }
-
         public IEnumerable<string> Arguments
         {
             get
@@ -29,6 +23,12 @@ namespace nUpdate.Administration.Core.Operations.Panels
                     : argumentTextBox.Text.Split(',').Select(t => t.Trim());
             }
             set { argumentTextBox.Text = string.Join(",", value.Select(t => t.Trim())); }
+        }
+
+        public string ServiceName
+        {
+            get => serviceNameTextBox.Text;
+            set => serviceNameTextBox.Text = value;
         }
 
         public bool IsValid

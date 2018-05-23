@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System.Windows.Forms;
 using nUpdate.Internal.Core.Operations;
@@ -14,8 +14,8 @@ namespace nUpdate.Administration.Core.Operations.Panels
 
         public string ServiceName
         {
-            get { return serviceNameTextBox.Text; }
-            set { serviceNameTextBox.Text = value; }
+            get => serviceNameTextBox.Text;
+            set => serviceNameTextBox.Text = value;
         }
 
         public bool IsValid => !string.IsNullOrEmpty(serviceNameTextBox.Text);

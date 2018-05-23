@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Drawing;
@@ -19,12 +19,37 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             InitializeComponent();
         }
 
+        public void Fail(Exception ex)
+        {
+            Invoke(
+                new Action(
+                    () =>
+                        Popup.ShowPopup(this, SystemIcons.Error, Program.UpdatingErrorCaption,
+                            ex, PopupButtons.Ok)));
+        }
+
         public void Initialize()
         {
             Icon = IconHelper.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
             Text = Program.AppName;
             copyingLabel.Text = Program.ExtractFilesText;
             ShowDialog(); // We currently only have an instance, so we show the form as a modal dialog now.
+        }
+
+        public void InitializingFail(Exception ex)
+        {
+            Popup.ShowPopup(this, SystemIcons.Error, Program.InitializingErrorCaption, ex,
+                PopupButtons.Ok);
+        }
+
+        public void ReportOperationProgress(float percentage, string currentOperation)
+        {
+            Invoke(new Action(() =>
+            {
+                extractProgressBar.Value = (int) percentage;
+                copyingLabel.Text = $"{currentOperation}";
+                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
+            }));
         }
 
         public void ReportUnpackingProgress(float percentage, string currentFile)
@@ -42,31 +67,6 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 copyingLabel.Text = string.Format(Program.CopyingText, currentFile);
                 percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
             }));
-        }
-
-        public void ReportOperationProgress(float percentage, string currentOperation)
-        {
-            Invoke(new Action(() =>
-            {
-                extractProgressBar.Value = (int) percentage;
-                copyingLabel.Text = $"{currentOperation}";
-                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
-            }));
-        }
-
-        public void Fail(Exception ex)
-        {
-            Invoke(
-                new Action(
-                    () =>
-                        Popup.ShowPopup(this, SystemIcons.Error, Program.UpdatingErrorCaption,
-                            ex, PopupButtons.Ok)));
-        }
-
-        public void InitializingFail(Exception ex)
-        {
-            Popup.ShowPopup(this, SystemIcons.Error, Program.InitializingErrorCaption, ex,
-                PopupButtons.Ok);
         }
 
         public void Terminate()

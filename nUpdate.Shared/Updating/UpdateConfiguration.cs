@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -111,7 +111,7 @@ namespace nUpdate.Updating
 
                 if (proxy != null)
                     wc.Proxy = proxy;
-                
+
                 // Check for SSL and ignore it
                 ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
                 var source = wc.DownloadString(configFileUri);

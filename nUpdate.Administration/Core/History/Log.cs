@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ namespace nUpdate.Administration.Core.History
     public class Log
     {
         /// <summary>
-        ///     The name of the project that contains the log file.
+        ///     The entry that was made.
         /// </summary>
-        public UpdateProject Project { get; set; }
+        public LogEntry Entry { get; set; }
 
         /// <summary>
         ///     The time when the entry was made.
@@ -19,14 +19,14 @@ namespace nUpdate.Administration.Core.History
         public string EntryTime { get; set; }
 
         /// <summary>
-        ///     The entry that was made.
-        /// </summary>
-        public LogEntry Entry { get; set; }
-
-        /// <summary>
         ///     The version of the package that was given in the entry.
         /// </summary>
         public string PackageVersion { get; set; }
+
+        /// <summary>
+        ///     The name of the project that contains the log file.
+        /// </summary>
+        public UpdateProject Project { get; set; }
 
         /// <summary>
         ///     Writes an entry to the log.

@@ -1,11 +1,11 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
 using nUpdate.Administration.Core.Ftp.Service;
 using nUpdate.Administration.TransferInterface;
 
-[assembly: ServiceProvider(typeof (TransferServiceProvider))]
+[assembly: ServiceProvider(typeof(TransferServiceProvider))]
 
 namespace nUpdate.Administration.Core.Ftp.Service
 {
@@ -29,7 +29,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
 
         private void InitializeServices()
         {
-            _services.Add(typeof (ITransferProvider), new FtpTransferService());
+            _services.Add(typeof(ITransferProvider), new FtpTransferService());
         }
     }
 }

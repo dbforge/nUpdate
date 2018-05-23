@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.IO;
@@ -12,6 +12,9 @@ namespace nUpdate.Administration
     public static class Program
     {
         private static Mutex _mutex;
+        public static string AesIvPassword => "cOijH2vgwR";
+
+        public static string AesKeyPassword => "VZh7mLRPNI";
 
         /// <summary>
         ///     The path of the languages directory.
@@ -56,8 +59,11 @@ namespace nUpdate.Administration
         /// </summary>
         public static string VersionString => "nUpdate Administration v3.2.1";
 
-        public static string AesKeyPassword => "VZh7mLRPNI";
-        public static string AesIvPassword => "cOijH2vgwR";
+        private static void Exit(object sender, EventArgs e)
+        {
+            if (_mutex != null)
+                _mutex.Dispose();
+        }
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -88,12 +94,6 @@ namespace nUpdate.Administration
             }
 
             Application.Run(dialog);
-        }
-
-        private static void Exit(object sender, EventArgs e)
-        {
-            if (_mutex != null)
-                _mutex.Dispose();
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

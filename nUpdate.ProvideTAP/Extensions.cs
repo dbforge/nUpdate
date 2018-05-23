@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © Dominic Beger 2018
+
+using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +16,13 @@ namespace nUpdate
                 try
                 {
                     var response = await request.GetResponseAsync();
-                    return (HttpWebResponse)response;
+                    return (HttpWebResponse) response;
                 }
                 catch (WebException ex)
                 {
                     if (token.IsCancellationRequested)
                         throw new OperationCanceledException(ex.Message, ex, token);
-                    
+
                     throw;
                 }
             }
