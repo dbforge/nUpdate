@@ -1,4 +1,4 @@
-// Copyright © Dominic Beger 2017
+// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -62,7 +62,8 @@ namespace nUpdate.Updating
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
             CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
         {
-            UpdateConfigurationFileUri = updateConfigurationFileUri ?? throw new ArgumentNullException(nameof(updateConfigurationFileUri));
+            UpdateConfigurationFileUri = updateConfigurationFileUri ??
+                                         throw new ArgumentNullException(nameof(updateConfigurationFileUri));
 
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentNullException(nameof(publicKey));
@@ -204,9 +205,9 @@ namespace nUpdate.Updating
         public bool RestartHostApplication { get; set; } = true;
 
         /// <summary>
-        ///     Gets or sets the timeout that should be used when searching for updates. In milliseconds. 
-        ///     By default, this is set to 10000 milliseconds.
+        ///     Gets or sets the timeout in milliseconds that should be used when searching for updates.
         /// </summary>
+        /// <remarks>By default, this is set to 10.000 milliseconds.</remarks>
         public int SearchTimeout { get; set; } = 10000;
 
         /// <summary>
@@ -235,7 +236,7 @@ namespace nUpdate.Updating
         /// </summary>
         /// <remarks>If there is no download task running, nothing will happen.</remarks>
         [Obsolete("CancelDownload has been renamed to CancelDownloadAsync which should be used instead.")]
-        public void CancelDownload() 
+        public void CancelDownload()
         {
             CancelDownloadAsync();
         }
@@ -273,21 +274,26 @@ namespace nUpdate.Updating
             _packageFilePaths.Clear();
             _packageOperations.Clear();
         }
-        
+
         private Uri ConvertPackageUri(Uri updatePackageUri)
         {
             if (!UseDynamicUpdateUri)
                 return updatePackageUri;
             if (updatePackageUri == null)
                 throw new ArgumentNullException(nameof(updatePackageUri));
-            // The segment of the correct update package URI should include: "/", "1.0.0.0(version)/", "*.zip".
+
+            // The segment of the correct update package URI should include: "/", "x.x.x.x/", "*.zip".
             if (updatePackageUri.Segments.Length < 3)
-                throw new ArgumentException($"{ nameof(updatePackageUri)} is not a valid update package URI.", nameof(updatePackageUri));
+                throw new ArgumentException($"\"{updatePackageUri}\" is not a valid update package URI.",
+                    nameof(updatePackageUri));
+
             var packageNameSegment = updatePackageUri.Segments.Last();
             var versionSegment = updatePackageUri.Segments[updatePackageUri.Segments.Length - 2];
             var baseUri = UpdateConfigurationFileUri.GetLeftPart(UriPartial.Authority);
-            var configLocatedPath = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0, UpdateConfigurationFileUri.Segments.Length - 1);
-            return new Uri($"{baseUri}{configLocatedPath}{versionSegment}{packageNameSegment}");
+            var path = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0,
+                UpdateConfigurationFileUri.Segments.Length - 1);
+
+            return new Uri($"{baseUri}{path}{versionSegment}{packageNameSegment}");
         }
 
         private Uri ConvertStatisticsUri(Uri statisticsUri)
@@ -296,13 +302,18 @@ namespace nUpdate.Updating
                 return statisticsUri;
             if (statisticsUri == null)
                 throw new ArgumentNullException(nameof(statisticsUri));
+
             // The segment of the correct update php file URI should include: "/", "*.php".
             if (statisticsUri.Segments.Length < 2)
-                throw new ArgumentException($"{ nameof(statisticsUri)} is not a valid update php file URI.", nameof(statisticsUri));
+                throw new ArgumentException($"\"{statisticsUri}\" is not a valid statistics file URI.",
+                    nameof(statisticsUri));
+
             var phpFileName = statisticsUri.Segments.Last();
             var baseUri = UpdateConfigurationFileUri.GetLeftPart(UriPartial.Authority);
-            var configLocatedPath = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0, UpdateConfigurationFileUri.Segments.Length - 1);
-            return new Uri($"{baseUri}{configLocatedPath}{phpFileName}");
+            var path = string.Join(string.Empty, UpdateConfigurationFileUri.Segments, 0,
+                UpdateConfigurationFileUri.Segments.Length - 1);
+
+            return new Uri($"{baseUri}{path}{phpFileName}");
         }
 
         /// <summary>
@@ -491,7 +502,7 @@ namespace nUpdate.Updating
 
             if (_packageFilePaths.All(Validate))
                 return true;
-            
+
             try
             {
                 DeletePackages();
