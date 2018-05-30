@@ -57,7 +57,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     The version string shown in all dialog titles.
         /// </summary>
-        public static string VersionString => "nUpdate Administration v3.3.0";
+        public static string VersionString => "nUpdate Administration v3.3.1";
 
         private static void Exit(object sender, EventArgs e)
         {
