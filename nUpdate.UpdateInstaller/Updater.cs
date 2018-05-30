@@ -128,6 +128,8 @@ namespace nUpdate.UpdateInstaller
                 return;
             }
 
+            ThreadPool.QueueUserWorkItem(arg => RunUpdateAsync());
+
             try
             {
                 _progressReporter.Initialize();
@@ -137,8 +139,6 @@ namespace nUpdate.UpdateInstaller
                 _progressReporter.InitializingFail(ex);
                 _progressReporter.Terminate();
             }
-
-            ThreadPool.QueueUserWorkItem(arg => RunUpdateAsync());
         }
 
         /// <summary>
