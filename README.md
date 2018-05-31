@@ -12,9 +12,8 @@
 nUpdate is a modern update system for .NET applications.
 Providing high security and an easy-to-use user interface, it is the perfect solution for your software.
 
-nUpdate is in a very advanced state. Its development began in autumn 2013 and the project has grown up until now. It contains a lot of features and provides you with everything you'll need to manage your updates.
-
-Also, nUpdate is designed to fit in with all operating systems since Windows Vista and its components can be used in a very flexible way. It offers you the possibility to completely customize the functionality and user interfaces. This flexiblity is based on interfaces, service providers and the Event-based or Task-based aynchronous pattern. nUpdate will also take care of your clients by using intelligent algorithms that will prevent your users from being stressed out by having to do a lot of work manually and repeatedly, such as installing every single update on its own. Instead, nUpdate connects all updates, installs them in one go and does still take care of the version order to avoid any conflicts between the packages and makes sure that the data is installed in exactly the way you wanted.
+![](https://www.nupdate.net/img/new-updates.png)
+![](https://www.nupdate.net/img/updates-download.png)
 
 ## Features
 
@@ -28,7 +27,6 @@ Also, nUpdate is designed to fit in with all operating systems since Windows Vis
 - Smart statistics about the downloads of your published updates
 - Supports very large update packages
 - ...
-
 
 ## Installation
 
@@ -80,7 +78,6 @@ Have a look at the [develop]-branch for the newest changes.
 [nUpdate]:http://www.nupdate.net/
 [@nUpdateLib]:http://twitter.com/nUpdateLib
 
-## Screenshots
+## Supported by
 
-![](https://www.nupdate.net/img/new-updates.png)
-![](https://www.nupdate.net/img/updates-download.png)
+<img src="https://www.nupdate.net/jetbrains.png" width="96" height="96"/>
