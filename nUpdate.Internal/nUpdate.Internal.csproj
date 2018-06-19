@@ -129,6 +129,7 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Core\Localization\en.json" />
     <EmbeddedResource Include="Core\Localization\zh-CN.json" />
+    <EmbeddedResource Include="Core\Localization\it-IT.json" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Core\Localization\de-AT.json" />
     <EmbeddedResource Include="Core\Localization\de-CH.json" />
