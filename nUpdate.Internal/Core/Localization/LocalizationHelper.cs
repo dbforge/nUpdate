@@ -15,7 +15,7 @@ namespace nUpdate.Internal.Core.Localization
     {
         internal static CultureInfo[] IntegratedCultures => new[]
         {
-            new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("zh-CN"),
+            new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("zh-CN"), new CultureInfo("it-IT"),
             new CultureInfo("en")
         };
 
@@ -72,8 +72,7 @@ namespace nUpdate.Internal.Core.Localization
         internal static bool IsIntegratedCulture(CultureInfo cultureInfo,
             Dictionary<CultureInfo, string> localizationFilePaths)
         {
-            string localizationFilePath;
-            localizationFilePaths.TryGetValue(cultureInfo, out localizationFilePath);
+            localizationFilePaths.TryGetValue(cultureInfo, out var localizationFilePath);
             return IntegratedCultures.Contains(cultureInfo) || localizationFilePath != null;
         }
     }
