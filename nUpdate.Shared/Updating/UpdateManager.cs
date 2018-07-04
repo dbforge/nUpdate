@@ -394,10 +394,7 @@ namespace nUpdate.Updating
 
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
-
-            var installerUiAssemblyPath = UseCustomInstallerUserInterface
-                ? $"\"{CustomInstallerUiAssemblyPath}\""
-                : string.Empty;
+            
             string[] args =
             {
                 $"\"{string.Join("%", _packageFilePaths.Select(item => item.Value))}\"",
@@ -405,7 +402,7 @@ namespace nUpdate.Updating
                 $"\"{Application.ExecutablePath}\"",
                 $"\"{Application.ProductName}\"",
                 $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))}\"",
-                $"\"{installerUiAssemblyPath}\"",
+                $"\"{(UseCustomInstallerUserInterface ? CustomInstallerUiAssemblyPath : string.Empty)}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,
                 _lp.FileDeletingOperationText,
