@@ -109,6 +109,8 @@ namespace nUpdate.UpdateInstaller
                 ? Assembly.GetExecutingAssembly()
                 : Assembly.LoadFrom(Program.ExternalGuiAssemblyPath);
             IServiceProvider provider = ServiceProviderHelper.CreateServiceProvider(assembly);
+            if (provider == null)
+                throw new Exception("There is no service provider available.");
             return (IProgressReporter) provider.GetService(typeof(IProgressReporter));
         }
 
