@@ -36,46 +36,47 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackageEditDialog));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Conditions", 16, 16);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Services", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Scripts", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
             "Rename file",
             "Renames a given file to the new name set."}, 10);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete file",
             "Deletes a given file."}, 9);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
             "Create sub key",
             "Creates a sub key in the registry."}, 14);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete sub key",
             "Deletes a sub key recursively in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
             "Set value",
             "Creates or edits a name-value-pair in the registry."}, 13);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
             "Delete name-value-pair",
             "Deletes a name-value-pair in the registry."}, 12);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start process",
             "Starts a given process."}, 8);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
             "Terminate process",
             "Terminates a given process if possible."}, 7);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
             "Start service.",
             "Starts a windows service. If it is already running it will be restarted. "}, 5);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
             "Stop service.",
             "Stops a running windows service."}, 6);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes a C#-script."}, 15);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
@@ -87,18 +88,18 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new Line();
+            this.line2 = new nUpdate.Internal.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.necessaryUpdateInfoLabel = new System.Windows.Forms.Label();
             this.necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new Line();
-            this.line1 = new Line();
+            this.line3 = new nUpdate.Internal.UI.Controls.Line();
+            this.line1 = new nUpdate.Internal.UI.Controls.Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -155,6 +156,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.conditionsTabPage = new System.Windows.Forms.TabPage();
+            this.conditionsDataGridView = new System.Windows.Forms.DataGridView();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -180,6 +183,8 @@ namespace nUpdate.Administration.UI.Dialogs
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
             this.operationsTabPage.SuspendLayout();
             this.operationsPanel.SuspendLayout();
+            this.conditionsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // categoryImageList
@@ -202,6 +207,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "script-code.png");
+            this.categoryImageList.Images.SetKeyName(16, "conditions.png");
             // 
             // cancelToolTip
             // 
@@ -287,27 +293,32 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTreeView.ItemHeight = 24;
             this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
             this.categoryTreeView.Name = "categoryTreeView";
-            treeNode1.ImageIndex = 2;
-            treeNode1.Name = "generalNode";
-            treeNode1.SelectedImageIndex = 2;
-            treeNode1.Text = "General";
-            treeNode2.ImageIndex = 3;
-            treeNode2.Name = "changelogNode";
-            treeNode2.SelectedImageIndex = 3;
-            treeNode2.Text = "Changelog";
-            treeNode3.ImageIndex = 0;
-            treeNode3.Name = "availabilityNode";
-            treeNode3.SelectedImageIndex = 0;
-            treeNode3.Text = "Availability";
-            treeNode4.ImageIndex = 4;
-            treeNode4.Name = "operationsNode";
-            treeNode4.SelectedImageIndex = 4;
-            treeNode4.Text = "Operations";
+            treeNode6.ImageIndex = 2;
+            treeNode6.Name = "generalNode";
+            treeNode6.SelectedImageIndex = 2;
+            treeNode6.Text = "General";
+            treeNode7.ImageIndex = 3;
+            treeNode7.Name = "changelogNode";
+            treeNode7.SelectedImageIndex = 3;
+            treeNode7.Text = "Changelog";
+            treeNode8.ImageIndex = 0;
+            treeNode8.Name = "availabilityNode";
+            treeNode8.SelectedImageIndex = 0;
+            treeNode8.Text = "Availability";
+            treeNode9.ImageIndex = 4;
+            treeNode9.Name = "operationsNode";
+            treeNode9.SelectedImageIndex = 4;
+            treeNode9.Text = "Operations";
+            treeNode10.ImageIndex = 16;
+            treeNode10.Name = "conditionsNode";
+            treeNode10.SelectedImageIndex = 16;
+            treeNode10.Text = "Conditions";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4});
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9,
+            treeNode10});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -333,10 +344,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTabControl.Controls.Add(this.changelogTabPage);
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
+            this.categoryTabControl.Controls.Add(this.conditionsTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
-            this.categoryTabControl.Size = new System.Drawing.Size(481, 262);
+            this.categoryTabControl.Size = new System.Drawing.Size(481, 242);
             this.categoryTabControl.TabIndex = 48;
             // 
             // generalTabPage
@@ -377,7 +389,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalPanel.Controls.Add(this.minorNumericUpDown);
             this.generalPanel.Location = new System.Drawing.Point(0, 0);
             this.generalPanel.Name = "generalPanel";
-            this.generalPanel.Size = new System.Drawing.Size(474, 236);
+            this.generalPanel.Size = new System.Drawing.Size(474, 220);
             this.generalPanel.TabIndex = 30;
             // 
             // includeIntoStatisticsInfoLabel
@@ -404,7 +416,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 262);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -443,7 +455,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 170);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -453,7 +465,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 92);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -466,7 +478,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.architectureInfoLabel.Location = new System.Drawing.Point(9, 137);
             this.architectureInfoLabel.Name = "architectureInfoLabel";
-            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.Size = new System.Drawing.Size(437, 26);
             this.architectureInfoLabel.TabIndex = 20;
             this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
@@ -553,7 +565,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.versionLabel.AutoSize = true;
             this.versionLabel.Location = new System.Drawing.Point(8, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(49, 13);
+            this.versionLabel.Size = new System.Drawing.Size(48, 13);
             this.versionLabel.TabIndex = 2;
             this.versionLabel.Text = "Version:";
             // 
@@ -970,58 +982,58 @@ namespace nUpdate.Administration.UI.Dialogs
             this.itemName,
             this.Description});
             this.operationsListView.FullRowSelect = true;
-            listViewGroup1.Header = "Files";
-            listViewGroup1.Name = "filesGroup";
-            listViewGroup2.Header = "Registry";
-            listViewGroup2.Name = "registryGroup";
-            listViewGroup3.Header = "Processes";
-            listViewGroup3.Name = "processGroup";
-            listViewGroup4.Header = "Services";
-            listViewGroup4.Name = "serviceGroup";
-            listViewGroup5.Header = "Scripts";
-            listViewGroup5.Name = "scriptGroup";
+            listViewGroup6.Header = "Files";
+            listViewGroup6.Name = "filesGroup";
+            listViewGroup7.Header = "Registry";
+            listViewGroup7.Name = "registryGroup";
+            listViewGroup8.Header = "Processes";
+            listViewGroup8.Name = "processGroup";
+            listViewGroup9.Header = "Services";
+            listViewGroup9.Name = "serviceGroup";
+            listViewGroup10.Header = "Scripts";
+            listViewGroup10.Name = "scriptGroup";
             this.operationsListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5});
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9,
+            listViewGroup10});
             this.operationsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.operationsListView.HoverSelection = true;
-            listViewItem1.Group = listViewGroup1;
-            listViewItem1.Tag = "RenameFile";
-            listViewItem2.Group = listViewGroup1;
-            listViewItem2.Tag = "DeleteFile";
-            listViewItem3.Group = listViewGroup2;
-            listViewItem3.Tag = "CreateRegistrySubKey";
-            listViewItem4.Group = listViewGroup2;
-            listViewItem4.Tag = "DeleteRegistrySubKey";
-            listViewItem5.Group = listViewGroup2;
-            listViewItem5.Tag = "SetRegistryValue";
-            listViewItem6.Group = listViewGroup2;
-            listViewItem6.Tag = "DeleteRegistryValue";
-            listViewItem7.Group = listViewGroup3;
-            listViewItem7.Tag = "StartProcess";
-            listViewItem8.Group = listViewGroup3;
-            listViewItem8.Tag = "TerminateProcess";
-            listViewItem9.Group = listViewGroup4;
-            listViewItem9.Tag = "StartService";
-            listViewItem10.Group = listViewGroup4;
-            listViewItem10.Tag = "StopService";
-            listViewItem11.Group = listViewGroup5;
-            listViewItem11.Tag = "ExecuteScript";
+            listViewItem12.Group = listViewGroup6;
+            listViewItem12.Tag = "RenameFile";
+            listViewItem13.Group = listViewGroup6;
+            listViewItem13.Tag = "DeleteFile";
+            listViewItem14.Group = listViewGroup7;
+            listViewItem14.Tag = "CreateRegistrySubKey";
+            listViewItem15.Group = listViewGroup7;
+            listViewItem15.Tag = "DeleteRegistrySubKey";
+            listViewItem16.Group = listViewGroup7;
+            listViewItem16.Tag = "SetRegistryValue";
+            listViewItem17.Group = listViewGroup7;
+            listViewItem17.Tag = "DeleteRegistryValue";
+            listViewItem18.Group = listViewGroup8;
+            listViewItem18.Tag = "StartProcess";
+            listViewItem19.Group = listViewGroup8;
+            listViewItem19.Tag = "TerminateProcess";
+            listViewItem20.Group = listViewGroup9;
+            listViewItem20.Tag = "StartService";
+            listViewItem21.Group = listViewGroup9;
+            listViewItem21.Tag = "StopService";
+            listViewItem22.Group = listViewGroup10;
+            listViewItem22.Tag = "ExecuteScript";
             this.operationsListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11});
+            listViewItem12,
+            listViewItem13,
+            listViewItem14,
+            listViewItem15,
+            listViewItem16,
+            listViewItem17,
+            listViewItem18,
+            listViewItem19,
+            listViewItem20,
+            listViewItem21,
+            listViewItem22});
             this.operationsListView.LargeImageList = this.categoryImageList;
             this.operationsListView.Location = new System.Drawing.Point(0, 2);
             this.operationsListView.MultiSelect = false;
@@ -1042,6 +1054,26 @@ namespace nUpdate.Administration.UI.Dialogs
             // Description
             // 
             this.Description.Width = 300;
+            // 
+            // conditionsTabPage
+            // 
+            this.conditionsTabPage.Controls.Add(this.conditionsDataGridView);
+            this.conditionsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.conditionsTabPage.Name = "conditionsTabPage";
+            this.conditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.conditionsTabPage.Size = new System.Drawing.Size(473, 216);
+            this.conditionsTabPage.TabIndex = 4;
+            this.conditionsTabPage.Text = "Conditions";
+            this.conditionsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // conditionsDataGridView
+            // 
+            this.conditionsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.conditionsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.conditionsDataGridView.Location = new System.Drawing.Point(3, 3);
+            this.conditionsDataGridView.Name = "conditionsDataGridView";
+            this.conditionsDataGridView.Size = new System.Drawing.Size(467, 210);
+            this.conditionsDataGridView.TabIndex = 0;
             // 
             // PackageEditDialog
             // 
@@ -1096,6 +1128,8 @@ namespace nUpdate.Administration.UI.Dialogs
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
             this.operationsTabPage.ResumeLayout(false);
             this.operationsPanel.ResumeLayout(false);
+            this.conditionsTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1179,8 +1213,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ListBox unsupportedVersionsListBox;
         private System.Windows.Forms.NumericUpDown unsupportedMinorNumericUpDown;
         private System.Windows.Forms.NumericUpDown unsupportedBuildNumericUpDown;
-
-
-
+        private System.Windows.Forms.TabPage conditionsTabPage;
+        private System.Windows.Forms.DataGridView conditionsDataGridView;
     }
 }

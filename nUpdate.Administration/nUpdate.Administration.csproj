@@ -208,6 +208,7 @@
     <Compile Include="Core\Operations\Panels\ServiceStopOperationPanel.Designer.cs">
       <DependentUpon>ServiceStopOperationPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Core\UpdateCondition.cs" />
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="Core\Win32\IconReader.cs" />
     <Compile Include="Core\Win32\Margins.cs" />
@@ -608,6 +609,7 @@
     <None Include="Resources\Right_Disabled.png" />
     <None Include="Resources\Right_Normal.png" />
     <None Include="Resources\question-frame.png" />
+    <None Include="Resources\conditions.png" />
     <Content Include="Trade-Updater-Logo-v3.ico" />
   </ItemGroup>
   <ItemGroup>

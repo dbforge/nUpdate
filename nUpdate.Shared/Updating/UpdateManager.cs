@@ -71,6 +71,7 @@ namespace nUpdate.Updating
 
             CultureFilePaths = new Dictionary<CultureInfo, string>();
             Arguments = new List<UpdateArgument>();
+            Conditions = new List<KeyValuePair<string, string>>();
 
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
@@ -114,6 +115,11 @@ namespace nUpdate.Updating
         ///     completed.
         /// </summary>
         public List<UpdateArgument> Arguments { get; set; }
+
+        /// <summary>
+        /// The conditions if an update should be loaded if conditions were specified in the package
+        /// </summary>
+        public List<KeyValuePair<string,string>> Conditions {get; set;}
 
         /// <summary>
         ///     Gets or sets a value indicating whether the host application should be closed when the nUpdate UpdateInstaller is
