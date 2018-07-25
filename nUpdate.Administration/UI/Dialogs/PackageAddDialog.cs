@@ -115,6 +115,8 @@ namespace nUpdate.Administration.UI.Dialogs
         /// </summary>
         public SecureString SqlPassword { get; set; }
 
+        public List<UpdateCondition> ConditionsList = new List<UpdateCondition>();
+
         /// <summary>
         ///     Resets the data set.
         /// </summary>
@@ -410,6 +412,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     case 3:
                         categoryTabControl.SelectedTab = operationsTabPage;
+                        break;
+                    case 4:
+                        categoryTabControl.SelectedTab = conditionsTabPage;
                         break;
                 }
             else
@@ -796,6 +801,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 return;
             }
 
+            
+
             SetUiState(false);
 
             loadingPanel.Location = new Point(180, 91);
@@ -1084,6 +1091,17 @@ namespace nUpdate.Administration.UI.Dialogs
                                     PopupButtons.Ok)));
                     Reset();
                     return;
+                }
+
+
+                //Save all conditions to packageconfiguration as KeyValuePair
+                _configuration.Conditions = new List<KeyValuePair<string, string>>();
+                foreach (var cond in ConditionsList)
+                {
+                    if (!string.IsNullOrEmpty(cond.Key) && !string.IsNullOrEmpty(cond.Value))
+                    {
+                        _configuration.Conditions.Add(new KeyValuePair<string, string>(cond.Key, cond.Value));
+                    }
                 }
 
                 configurationList.Add(_configuration);
@@ -1408,6 +1426,16 @@ namespace nUpdate.Administration.UI.Dialogs
             minorNumericUpDown.Maximum = decimal.MaxValue;
             buildNumericUpDown.Maximum = decimal.MaxValue;
             revisionNumericUpDown.Maximum = decimal.MaxValue;
+
+
+            //Make a Bindable of List<UpdateCondition> and bind it to DataGridView
+            ConditionsList = new List<UpdateCondition>();
+            conditionsDataGridView.AutoGenerateColumns = false;
+            var bindingList = new BindingList<UpdateCondition>(ConditionsList);
+            var source = new BindingSource(bindingList, null);
+            conditionsDataGridView.AutoGenerateColumns = true;
+            conditionsDataGridView.DataSource = source;
+
 
             try
             {

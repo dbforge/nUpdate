@@ -72,6 +72,11 @@ namespace nUpdate.Updating
         public int VersionId { get; set; }
 
         /// <summary>
+        /// The conditions if an update should be loaded
+        /// </summary>
+        public List<KeyValuePair<string,string>> Conditions { get; set; }
+
+        /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
         /// </summary>
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>

@@ -15,7 +15,7 @@ namespace nUpdate.Updating
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
         public UpdateResult(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
-            bool isAlphaWished, bool isBetaWished)
+            bool isAlphaWished, bool isBetaWished, List<KeyValuePair<string, string>> conditions = null)
         {
             if (packageConfigurations != null)
             {
@@ -46,6 +46,45 @@ namespace nUpdate.Updating
                     if (config.Architecture == Architecture.X86 && is64Bit ||
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
+
+
+
+
+
+                    if (config.Conditions != null && config.Conditions.Count() != 0)
+                        //Sind die lokalen Bedingungen null aber im Paket welche vorhanden dann nicht updaten
+                        if (conditions == null || !conditions.Any())
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            //Wenn im Paket eine Bedingung vorhanden ist muss diese gepüft werden
+                            if (config.Conditions.Any(cond => conditions.Select(s => s.Key).Contains(cond.Key)))
+                            //Dann mitgegebenen Bedingungen mit denen in der config vergleichen
+                            //Gibt es midestens eine übereinstimmung sollte das update gezogen werden
+                            {
+                                bool doUpdate = false;
+                                foreach (var localCondition in conditions)
+                                {
+                                    if (config.Conditions.Any(cond =>
+                                        cond.Key == localCondition.Key &&
+                                        cond.Value.ToLower() == localCondition.Value.ToLower()))
+                                    {
+                                        //Key und Value ist korrekt, das Update wird (was diese Bedingung angeht) gezogen
+                                        doUpdate = true;
+                                    }
+                                }
+                                if (!doUpdate) continue;
+                            }
+                        }
+                    {
+
+
+
+
+                    }
+
 
                     if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
                         continue;
