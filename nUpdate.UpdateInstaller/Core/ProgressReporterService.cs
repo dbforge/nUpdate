@@ -12,37 +12,40 @@ namespace nUpdate.UpdateInstaller.Core
 
         public ProgressReporterService()
         {
-            _mainForm = new MainForm();
+            if (Environment.UserInteractive)
+            {
+                _mainForm = new MainForm();
+            }
         }
 
         public void Fail(Exception ex)
         {
-            _mainForm.Fail(ex);
+            _mainForm?.Fail(ex);
         }
 
         public void Initialize()
         {
-            _mainForm.Initialize();
+            _mainForm?.Initialize();
         }
 
         public void InitializingFail(Exception ex)
         {
-            _mainForm.InitializingFail(ex);
+            _mainForm?.InitializingFail(ex);
         }
 
         public void ReportOperationProgress(float progress, string currentOperation)
         {
-            _mainForm.ReportOperationProgress(progress, currentOperation);
+            _mainForm?.ReportOperationProgress(progress, currentOperation);
         }
 
         public void ReportUnpackingProgress(float progress, string currentFile)
         {
-            _mainForm.ReportUnpackingProgress(progress, currentFile);
+            _mainForm?.ReportUnpackingProgress(progress, currentFile);
         }
 
         public void Terminate()
         {
-            _mainForm.Terminate();
+            _mainForm?.Terminate();
         }
     }
 }

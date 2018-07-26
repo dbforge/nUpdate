@@ -10,37 +10,40 @@ namespace nUpdate.WPFUpdateInstaller
 
         public ProgressReporterService()
         {
-            _mainWindow = new MainWindow();
+            if (Environment.UserInteractive)
+            {
+                _mainWindow = new MainWindow();
+            }
         }
 
         public void Fail(Exception ex)
         {
-            _mainWindow.Fail(ex);
+            _mainWindow?.Fail(ex);
         }
 
         public void Initialize()
         {
-            _mainWindow.Initialize();
+            _mainWindow?.Initialize();
         }
 
         public void InitializingFail(Exception ex)
         {
-            _mainWindow.InitializingFail(ex);
+            _mainWindow?.InitializingFail(ex);
         }
 
         public void ReportOperationProgress(float progress, string currentOperation)
         {
-            _mainWindow.ReportOperationProgress(progress, currentOperation);
+            _mainWindow?.ReportOperationProgress(progress, currentOperation);
         }
 
         public void ReportUnpackingProgress(float progress, string currentFile)
         {
-            _mainWindow.ReportUnpackingProgress(progress, currentFile);
+            _mainWindow?.ReportUnpackingProgress(progress, currentFile);
         }
 
         public void Terminate()
         {
-            _mainWindow.Terminate();
+            _mainWindow?.Terminate();
         }
     }
 }
