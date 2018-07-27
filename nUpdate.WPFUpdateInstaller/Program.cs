@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -129,6 +130,7 @@ namespace nUpdate.WPFUpdateInstaller
         ///     The caption of the updating error message.
         /// </summary>
         public static string UpdatingErrorCaption { get; set; }
+
 
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {

@@ -1,4 +1,5 @@
-﻿using nUpdate.UpdateInstaller.Client.GuiInterface;
+﻿using nUpdate.UpdateInstaller;
+using nUpdate.UpdateInstaller.Client.GuiInterface;
 using System;
 
 
@@ -7,10 +8,11 @@ namespace nUpdate.WPFUpdateInstaller
     public class ProgressReporterService : IProgressReporter
     {
         private readonly MainWindow _mainWindow;
+        private bool shouldRun = true;
 
         public ProgressReporterService()
         {
-            if (Environment.UserInteractive)
+            if (!WindowsServiceHelper.IsRunningInServiceContext)
             {
                 _mainWindow = new MainWindow();
             }
@@ -24,6 +26,14 @@ namespace nUpdate.WPFUpdateInstaller
         public void Initialize()
         {
             _mainWindow?.Initialize();
+
+            if (WindowsServiceHelper.IsRunningInServiceContext)
+            {
+                while (shouldRun)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                }
+            }
         }
 
         public void InitializingFail(Exception ex)
@@ -44,6 +54,7 @@ namespace nUpdate.WPFUpdateInstaller
         public void Terminate()
         {
             _mainWindow?.Terminate();
+            shouldRun = false;
         }
     }
 }
