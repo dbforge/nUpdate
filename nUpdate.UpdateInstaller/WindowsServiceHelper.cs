@@ -8,12 +8,12 @@ namespace nUpdate.UpdateInstaller
 {
     public static class WindowsServiceHelper
     {
-        private static bool? _IsRunningInServiceContext;
+        private static bool? _isRunningInServiceContext;
 
         /// <summary>
-        /// Indicates if the application runs in service context
+        /// Gets a value indicating, if the application runs in service context
         /// </summary>
-        public static bool IsRunningInServiceContext => _IsRunningInServiceContext ?? (_IsRunningInServiceContext = DetermineIfRunningInServiceContext()).Value; 
+        public static bool IsRunningInServiceContext => _isRunningInServiceContext ?? (_isRunningInServiceContext = DetermineIfRunningInServiceContext()).Value; 
 
 
 
