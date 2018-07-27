@@ -11,8 +11,8 @@ namespace nUpdate.UpdateInstaller
 {
     public static class WindowsEventLog
     {
-        private const string DefaultSource = "nUpdate";
-        private static string _Source;
+        private const string defaultSource = "nUpdate";
+        private static string _source;
 
         /// <summary>
         /// Gets or sets the source/caller.
@@ -21,23 +21,23 @@ namespace nUpdate.UpdateInstaller
         {
             get
             {
-                if (string.IsNullOrEmpty(_Source))
+                if (string.IsNullOrEmpty(_source))
                 {
-                    _Source = DefaultSource;
-                    CreateEventSourceIfnotExsists();
+                    _source = defaultSource;
+                    CreateEventSource();
                 }
 
-                return _Source;
+                return _source;
             }
             set
             {
-                _Source = value;
-                if (string.IsNullOrEmpty(_Source))
+                _source = value;
+                if (string.IsNullOrEmpty(_source))
                 {
-                    _Source = DefaultSource;
+                    _source = defaultSource;
                 }
 
-                CreateEventSourceIfnotExsists();
+                CreateEventSource();
             }
         }
         // https://stackoverflow.com/questions/25725151/write-to-windows-application-event-log
@@ -45,20 +45,20 @@ namespace nUpdate.UpdateInstaller
         private const int MaxEventLogEntryLength = 30000;
 
 
-        private static void CreateEventSourceIfnotExsists()
+        private static void CreateEventSource()
         {
 
             try
             {
                 // searching the source throws a security exception ONLY if not exists!
-                if (!EventLog.SourceExists(_Source))
+                if (!EventLog.SourceExists(_source))
                 {   // no exception until yet means the user as admin privilege
-                    EventLog.CreateEventSource(_Source, "Application");
+                    EventLog.CreateEventSource(_source, "Application");
                 }
             }
             catch (SecurityException)
             {
-                _Source = "Application";
+                _source = "Application";
             }
         }
 
