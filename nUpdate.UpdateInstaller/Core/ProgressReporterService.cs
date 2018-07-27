@@ -9,10 +9,11 @@ namespace nUpdate.UpdateInstaller.Core
     public class ProgressReporterService : IProgressReporter
     {
         private readonly MainForm _mainForm;
+        private bool shouldRun = true;
 
         public ProgressReporterService()
         {
-            if (Environment.UserInteractive)
+            if (!WindowsServiceHelper.IsRunningInServiceContext)
             {
                 _mainForm = new MainForm();
             }
@@ -26,6 +27,14 @@ namespace nUpdate.UpdateInstaller.Core
         public void Initialize()
         {
             _mainForm?.Initialize();
+
+            if(WindowsServiceHelper.IsRunningInServiceContext)
+            {
+                while (shouldRun)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                }
+            }
         }
 
         public void InitializingFail(Exception ex)
@@ -46,6 +55,7 @@ namespace nUpdate.UpdateInstaller.Core
         public void Terminate()
         {
             _mainForm?.Terminate();
+            shouldRun = false;
         }
     }
 }
