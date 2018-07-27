@@ -109,6 +109,12 @@ namespace nUpdate.Administration.UI.Dialogs
         public UpdateVersion PackageVersion { get; set; }
 
         /// <summary>
+        /// Holds the Keys/Values ​​which determine whether an update should be rolled out or not.
+        /// </summary>
+        public List<RolloutCondition> Conditions { get; set; }
+    
+
+        /// <summary>
         ///     The configurations available in the file.
         /// </summary>
         public List<UpdateConfiguration> UpdateConfiguration { get; set; }
@@ -313,6 +319,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     case 3:
                         categoryTabControl.SelectedTab = operationsTabPage;
+                        break;
+                    case 4:
+                        categoryTabControl.SelectedTab = conditionsTabPage;
                         break;
                 }
             else
@@ -983,6 +992,18 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTabControl.TabPages.Add(executeScriptPage);
                         break;
                 }
+
+
+            if (_packageConfiguration.Rolloutconditions == null)
+                _packageConfiguration.Rolloutconditions = new List<RolloutCondition>();
+            
+            //Add conditions to DataGridView as BindableList of RolloutCondition
+            Conditions = _packageConfiguration.Rolloutconditions;
+            conditionsDataGridView.AutoGenerateColumns = false;
+            var source = new BindingSource(new BindingList<RolloutCondition>(Conditions) {AllowNew = true}, null);
+            conditionsDataGridView.DataSource = source;
+
+
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)

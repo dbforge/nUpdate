@@ -159,6 +159,11 @@ namespace nUpdate.Updating
         public bool IncludeCurrentPcIntoStatistics { get; set; } = true;
 
         /// <summary>
+                /// The conditions if an update should be loaded if conditions were specified in the package
+                /// </summary>
+                public List<KeyValuePair<string,string>> Conditions {get; set;}
+
+        /// <summary>
         ///     Gets or sets the culture of the language to use.
         /// </summary>
         /// <remarks>
