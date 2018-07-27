@@ -29,7 +29,14 @@ namespace nUpdate.UpdateInstaller.Core
 
         private void InitializeServices()
         {
-            _services.Add(typeof(IProgressReporter), new ProgressReporterService());
+            if (WindowsServiceHelper.IsRunningInServiceContext)
+            {
+                _services.Add(typeof(IProgressReporter), new ProgressReporterServiceEventLog());
+            }
+            else
+            {
+                _services.Add(typeof(IProgressReporter), new ProgressReporterService());
+            }
         }
     }
 }
