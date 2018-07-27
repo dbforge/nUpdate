@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using nUpdate.Updating;
 using System.Threading;
@@ -27,8 +28,8 @@ namespace nUpdate.WPFUserInterface.Test
                     "C:\\Workspace\\nUpdate\\nUpdate.WPFUpdateInstaller\\bin\\Debug\\nUpdate.WPFUpdateInstaller.dll",
                 UseCustomInstallerUserInterface = true
             };
-            
-            _updaterUI = new UpdaterUI(manager, SynchronizationContext.Current);
+
+           _updaterUI = new UpdaterUI(manager, SynchronizationContext.Current);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

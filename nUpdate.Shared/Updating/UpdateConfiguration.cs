@@ -72,12 +72,17 @@ namespace nUpdate.Updating
         public int VersionId { get; set; }
 
         /// <summary>
+        /// The conditions over which can be controlled whether an update may be rolled out
+        /// </summary>
+        public List<RolloutCondition> Rolloutconditions { get; set; }
+
+        /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
         /// </summary>
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
         public UpdateConfiguration DeepCopy()
         {
-            return (UpdateConfiguration) MemberwiseClone();
+            return (UpdateConfiguration)MemberwiseClone();
         }
 
         /// <summary>

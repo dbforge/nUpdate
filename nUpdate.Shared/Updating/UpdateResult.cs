@@ -15,7 +15,7 @@ namespace nUpdate.Updating
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
         public UpdateResult(IEnumerable<UpdateConfiguration> packageConfigurations, UpdateVersion currentVersion,
-            bool isAlphaWished, bool isBetaWished)
+            bool isAlphaWished, bool isBetaWished, List<KeyValuePair<string,string>> conditions = null)
         {
             if (packageConfigurations != null)
             {
@@ -46,6 +46,48 @@ namespace nUpdate.Updating
                     if (config.Architecture == Architecture.X86 && is64Bit ||
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
+
+
+                    //Only check conditions if the remote conditions are not null or collection is empty
+                    if (config.Rolloutconditions != null && config.Rolloutconditions.Count != 0)
+                        //If the local conditions are null or the collection is empty then continue
+                        if (conditions == null || !conditions.Any())
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            //Check if key exist
+                            if (config.Rolloutconditions.Any(cond => conditions.Select(s => s.Key).Contains(cond.Key)))
+
+                            {
+                                bool doUpdate = false;
+                                foreach (var localCondition in conditions)
+                                {
+                                    //If a positive condition exist then do update
+                                    doUpdate = config.Rolloutconditions.Where(n => !n.IsNegativeCondition).Any(c =>
+                                        c.Key == localCondition.Key &&
+                                        String.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
+                                    if (doUpdate) break;
+                                }
+
+                                foreach (var localCondition in conditions)
+                                {
+                                    //If a negative condition exist then refuse update
+                                    doUpdate = !config.Rolloutconditions.Where(n => n.IsNegativeCondition).Any(c =>
+                                        c.Key == localCondition.Key &&
+                                        String.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
+                                    if (!doUpdate) break;
+                                }
+
+                                if (!doUpdate) continue;
+                            }
+                        }
+                    {
+
+
+                    }
+
 
                     if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
                         continue;
