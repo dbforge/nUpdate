@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
@@ -72,6 +73,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private UpdateVersion _newVersion;
         private string _oldPackageDirectoryPath;
         private UpdateConfiguration _packageConfiguration;
+        private readonly Log _updateLog = new Log();
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -625,6 +627,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
+                
                 Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
 
                 try
@@ -662,6 +665,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         Project.Packages.First(item => item.Version == _existingVersionString)
                             .Version = _packageConfiguration.LiteralVersion;
                     }
+
+                    _updateLog.Write(LogEntry.Edit, _newVersion.FullText);
 
                     UpdateProject.SaveProject(Project.Path, Project);
                 }
@@ -1002,6 +1007,8 @@ namespace nUpdate.Administration.UI.Dialogs
             conditionsDataGridView.AutoGenerateColumns = false;
             var source = new BindingSource(new BindingList<RolloutCondition>(Conditions) {AllowNew = true}, null);
             conditionsDataGridView.DataSource = source;
+
+            _updateLog.Project = Project;
 
 
         }
