@@ -6,6 +6,7 @@ namespace nUpdate.Administration.Core.History
     {
         Create,
         Delete,
-        Upload
+        Upload,
+        Edit
     }
 }

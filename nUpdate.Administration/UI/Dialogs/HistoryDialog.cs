@@ -58,7 +58,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}"
+                    
+                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}" +  (logEntry.Username == null ? "" : $" by {logEntry.Username}")
                 };
 
                 switch (logEntry.Entry)
@@ -74,6 +75,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     case LogEntry.Upload:
                         item.HeaderText = "Uploaded package";
                         item.ItemImage = Resources.Upload;
+                        break;
+                    case LogEntry.Edit:
+                        item.HeaderText = "Edit package";
+                        item.ItemImage = Resources.Edit;
                         break;
                 }
 
