@@ -74,7 +74,7 @@ namespace nUpdate.Updating
         /// <summary>
         /// The conditions over which can be controlled whether an update may be rolled out
         /// </summary>
-        public List<RolloutCondition> Rolloutconditions { get; set; }
+        public List<RolloutCondition> RolloutConditions { get; set; }
 
         /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
