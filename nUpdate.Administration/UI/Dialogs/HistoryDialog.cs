@@ -131,7 +131,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 var logEntryList =
                     Project.Log.Select(
                             logEntry =>
-                                $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}")
+                                $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}" + (logEntry.Username == null ? "" : $" by {logEntry.Username}"))
                         .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }
