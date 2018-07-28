@@ -117,7 +117,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
 
         /// <summary>
-        /// Holds the Keys/Values ​​which determine whether an update should be rolled out or not.
+        /// Gets or sets the rollout conditions
         /// </summary>
         public List<RolloutCondition> Conditions = new List<RolloutCondition>();
 
@@ -1097,12 +1097,12 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 
                 //Save all conditions to packageconfiguration as KeyValuePair
-                _configuration.Rolloutconditions = new List<RolloutCondition>();
+                _configuration.RolloutConditions = new List<RolloutCondition>();
                 foreach (var conditionItem in Conditions)
                 {
                     if (!string.IsNullOrEmpty(conditionItem.Key) && !string.IsNullOrEmpty(conditionItem.Value))
                     {
-                        _configuration.Rolloutconditions.Add(new RolloutCondition(conditionItem.Key, conditionItem.Value, conditionItem.IsNegativeCondition));
+                        _configuration.RolloutConditions.Add(new RolloutCondition(conditionItem.Key, conditionItem.Value, conditionItem.IsNegativeCondition));
                     }
                 }
 

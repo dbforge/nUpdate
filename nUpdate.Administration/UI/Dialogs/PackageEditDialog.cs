@@ -109,7 +109,7 @@ namespace nUpdate.Administration.UI.Dialogs
         public UpdateVersion PackageVersion { get; set; }
 
         /// <summary>
-        /// Holds the Keys/Values ​​which determine whether an update should be rolled out or not.
+        /// Gets or sets the rollout conditions
         /// </summary>
         public List<RolloutCondition> Conditions { get; set; }
     
@@ -994,11 +994,11 @@ namespace nUpdate.Administration.UI.Dialogs
                 }
 
 
-            if (_packageConfiguration.Rolloutconditions == null)
-                _packageConfiguration.Rolloutconditions = new List<RolloutCondition>();
+            if (_packageConfiguration.RolloutConditions == null)
+                _packageConfiguration.RolloutConditions = new List<RolloutCondition>();
             
             //Add conditions to DataGridView as BindableList of RolloutCondition
-            Conditions = _packageConfiguration.Rolloutconditions;
+            Conditions = _packageConfiguration.RolloutConditions;
             conditionsDataGridView.AutoGenerateColumns = false;
             var source = new BindingSource(new BindingList<RolloutCondition>(Conditions) {AllowNew = true}, null);
             conditionsDataGridView.DataSource = source;
