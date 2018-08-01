@@ -130,6 +130,7 @@ namespace nUpdate.WPFUpdateInstaller
         /// </summary>
         public static string UpdatingErrorCaption { get; set; }
 
+
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is ThreadAbortException)

@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="ProgressReporterService.cs" />
+    <Compile Include="ProgressReporterServiceEventLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

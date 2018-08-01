@@ -17,6 +17,12 @@ namespace nUpdate.UpdateInstaller.UI.Popups
         /// <param name="buttons">The buttons to show for the user-interaction.</param>
         public static DialogResult ShowPopup(Icon popupIcon, string title, string infoMessage, PopupButtons buttons)
         {
+            if (LoggedIntoEventlog(popupIcon, infoMessage))
+            {
+                return DialogResult.OK;
+            }
+
+
             var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
@@ -38,6 +44,10 @@ namespace nUpdate.UpdateInstaller.UI.Popups
         /// <param name="buttons">The buttons to show for the user-interaction.</param>
         public static DialogResult ShowPopup(Icon popupIcon, string title, Exception ex, PopupButtons buttons)
         {
+            if (LoggedIntoEventlog(popupIcon, ex.ToString()))
+            {
+                return DialogResult.OK;
+            }
             var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
@@ -62,6 +72,10 @@ namespace nUpdate.UpdateInstaller.UI.Popups
         public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, string infoMessage,
             PopupButtons buttons)
         {
+            if (LoggedIntoEventlog(popupIcon, infoMessage))
+            {
+                return DialogResult.OK;
+            }
             var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
@@ -85,6 +99,10 @@ namespace nUpdate.UpdateInstaller.UI.Popups
         public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, Exception exception,
             PopupButtons buttons)
         {
+            if (LoggedIntoEventlog(popupIcon, exception.ToString()))
+            {
+                return DialogResult.OK;
+            }
             var popupWindow = new PopupDialog
             {
                 PopupIcon = popupIcon,
@@ -96,6 +114,28 @@ namespace nUpdate.UpdateInstaller.UI.Popups
             };
 
             return popupWindow.ShowDialog();
+        }
+
+
+        private static bool LoggedIntoEventlog(Icon popupIcon, string infoMessage)
+        {
+            if (WindowsServiceHelper.IsRunningInServiceContext)
+            {
+                if (popupIcon == SystemIcons.Error)
+                {
+                    WindowsEventLog.LogError(infoMessage);
+                }
+                else if (popupIcon == SystemIcons.Warning)
+                {
+                    WindowsEventLog.LogWarning(infoMessage);
+                }
+                else
+                {
+                    WindowsEventLog.LogInformation(infoMessage);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

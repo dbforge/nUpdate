@@ -134,6 +134,7 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public static string UpdatingErrorCaption { get; set; }
 
+
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is ThreadAbortException)
@@ -202,5 +203,6 @@ namespace nUpdate.UpdateInstaller
 
             new Updater().RunUpdate();
         }
+
     }
 }

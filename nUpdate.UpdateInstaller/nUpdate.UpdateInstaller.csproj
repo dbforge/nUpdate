@@ -70,6 +70,7 @@
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
     <Compile Include="Core\Operations\OperationMethod.cs" />
+    <Compile Include="Core\ProgressReporterServiceEventLog.cs" />
     <Compile Include="Core\RegistryManager.cs" />
     <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\ServiceManager.cs" />
@@ -101,6 +102,8 @@
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Updater.cs" />
+    <Compile Include="WindowsEventLog.cs" />
+    <Compile Include="WindowsServiceHelper.cs" />
     <EmbeddedResource Include="UI\Dialogs\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>

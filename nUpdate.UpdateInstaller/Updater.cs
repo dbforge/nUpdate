@@ -32,15 +32,23 @@ namespace nUpdate.UpdateInstaller
         /// <param name="destDirName">The path of the destination directory.</param>
         private void CopyDirectoryRecursively(string sourceDirName, string destDirName)
         {
+            
             try
             {
+                if (string.IsNullOrEmpty(sourceDirName)) throw new ArgumentException("sourceDirName");
+                if (string.IsNullOrEmpty(destDirName)) throw new ArgumentException("destDirName");
+
                 var dir = new DirectoryInfo(sourceDirName);
                 var sourceDirectories = dir.GetDirectories();
+
+                var files = dir.GetFiles();
+
+                if (files.Length == 0 && sourceDirectories.Length == 0) return;
 
                 if (!Directory.Exists(destDirName))
                     Directory.CreateDirectory(destDirName);
 
-                var files = dir.GetFiles();
+
                 foreach (var file in files)
                 {
                     bool continueCopyLoop = true;
@@ -261,6 +269,7 @@ namespace nUpdate.UpdateInstaller
                             CopyDirectoryRecursively(directory.FullName, Path.GetTempPath());
                             break;
                         case "Desktop":
+                            if (WindowsServiceHelper.IsRunningInServiceContext) continue;
                             CopyDirectoryRecursively(directory.FullName,
                                 Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
                             break;

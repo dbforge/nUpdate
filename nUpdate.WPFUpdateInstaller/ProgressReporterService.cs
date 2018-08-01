@@ -1,4 +1,5 @@
-﻿using nUpdate.UpdateInstaller.Client.GuiInterface;
+﻿using nUpdate.UpdateInstaller;
+using nUpdate.UpdateInstaller.Client.GuiInterface;
 using System;
 
 
@@ -7,7 +8,7 @@ namespace nUpdate.WPFUpdateInstaller
     public class ProgressReporterService : IProgressReporter
     {
         private readonly MainWindow _mainWindow;
-
+        
         public ProgressReporterService()
         {
             _mainWindow = new MainWindow();
