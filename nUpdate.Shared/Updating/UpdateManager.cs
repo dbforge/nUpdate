@@ -106,6 +106,16 @@ namespace nUpdate.Updating
             if (UseCustomInstallerUserInterface && string.IsNullOrEmpty(CustomInstallerUiAssemblyPath))
                 throw new ArgumentException(
                     "The property \"CustomInstallerUiAssemblyPath\" is not initialized although \"UseCustomInstallerUserInterface\" is set to \"true\"");
+
+            if (StatisticService != null)
+            {
+                //Wenn ein Service reingereicht wird prüfen ob die GUID ausgefüllt ist
+                if (StatisticService.ClientToken  == Guid.Empty)
+                {
+                    throw new Exception("You must specifie the guid to identifie the current client!");
+                }
+            }
+
             Initialize();
         }
 
@@ -162,6 +172,8 @@ namespace nUpdate.Updating
         /// Gets or sets the additional conditions that determine whether an update should be loaded or not.
         /// </summary>
         public List<KeyValuePair<string,string>> Conditions {get; set;}
+
+        public IStatisticUploadService StatisticService {get; set;}
 
         /// <summary>
         ///     Gets or sets the culture of the language to use.

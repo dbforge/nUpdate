@@ -45,6 +45,7 @@ namespace nUpdate.WPFUserInterface.Test
                                 "C:\\Workspace\\nUpdate\\nUpdate.WPFUpdateInstaller\\bin\\Debug\\nUpdate.WPFUpdateInstaller.dll",
                 UseCustomInstallerUserInterface = true
             };
+            _manager.StatisticService = new MyStatisticService();
 
             _manager.Conditions = new List<KeyValuePair<string, string>>();
             foreach (KeyValueHelper pair in ConditionValues)
@@ -76,6 +77,32 @@ namespace nUpdate.WPFUserInterface.Test
 
     }
 
+    public class MyStatisticService : IStatisticUploadService
+    {
+        internal MyStatisticService()
+        {
+            ClientToken = Guid.Parse("{575F178A-435D-4BB5-9DE7-57C6D08A6FAD}");
+        }
+        public Guid ClientToken { get; set; }
+        public void UpdateRequested()
+        {
+            throw new NotImplementedException();
+        }
 
+        public void UpdateCheckResult(ICollection<UpdateConfiguration> results)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DownloadStarted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DownloadFinished()
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 }
