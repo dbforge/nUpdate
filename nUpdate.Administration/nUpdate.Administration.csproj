@@ -608,6 +608,7 @@
     <None Include="Resources\Right_Disabled.png" />
     <None Include="Resources\Right_Normal.png" />
     <None Include="Resources\question-frame.png" />
+    <None Include="Resources\conditions.png" />
     <Content Include="Trade-Updater-Logo-v3.ico" />
   </ItemGroup>
   <ItemGroup>
