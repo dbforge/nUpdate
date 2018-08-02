@@ -23,7 +23,7 @@ namespace nUpdate.Updating
                 foreach (
                     var config in
                     packageConfigurations.Where(
-                            item => new UpdateVersion(item.LiteralVersion) > currentVersion || item.NecessaryUpdate)
+                            item => new UpdateVersion(item.LiteralVersion) > currentVersion)
                         .Where(
                             config =>
                                 new UpdateVersion(config.LiteralVersion).DevelopmentalStage ==
@@ -47,62 +47,48 @@ namespace nUpdate.Updating
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
 
-
-
-                    if (config.RolloutConditions != null && config.RolloutConditions.Count != 0)
-                        if (conditions == null || !conditions.Any())
+                    if (config.RolloutConditions != null && config.RolloutConditions?.Count != 0)
+                    {
+                        if (conditions != null && conditions.Any())
                         {
-                            if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
-                            {
+                            // If any negative condition is met, this update does not interest us.
+                            if (conditions.Any(x => config.RolloutConditions.Where(n => n.IsNegativeCondition)
+                                .Any(c =>
+                                    c.Key == x.Key &&
+                                    string.Equals(c.Value, x.Value,
+                                        StringComparison.CurrentCultureIgnoreCase))))
                                 continue;
-                            } 
+
+                            // If no positive condition is met, this update does not interest us.
+                            // Only one condition must be met at the moment.
+                            if (conditions.All(x => !config.RolloutConditions.Where(n => !n.IsNegativeCondition)
+                                .Any(c =>
+                                    c.Key == x.Key &&
+                                    string.Equals(c.Value, x.Value,
+                                        StringComparison.CurrentCultureIgnoreCase))))
+                                continue;
                         }
                         else
                         {
-                            if (config.RolloutConditions.Any(cond => conditions.Select(s => s.Key).Contains(cond.Key)))
-
-                            {
-                                bool doUpdate = false;
-                                foreach (var localCondition in conditions)
-                                {
-                                    doUpdate = config.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(c =>
-                                        c.Key == localCondition.Key &&
-                                        string.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
-                                    if (doUpdate) break;
-                                }
-
-                                if (doUpdate)
-                                {
-                                    foreach (var localCondition in conditions)
-                                    {
-                                        doUpdate = !config.RolloutConditions.Where(n => n.IsNegativeCondition).Any(c =>
-                                            c.Key == localCondition.Key &&
-                                            string.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
-                                        if (!doUpdate) break;
-                                    }
-                                }
-                                
-                                if (!doUpdate) continue;
-                            }
+                            // This should be discussed again as it may be senseful that a user with no local key for a positive condition may eventually also receive the update.
+                            if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
+                                continue;
                         }
 
-                    
-
-                    if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
-                        continue;
+                    }
 
                     _newUpdateConfigurations.Add(config);
                 }
-
-                var highestVersion =
-                    UpdateVersion.GetHighestUpdateVersion(
-                        _newUpdateConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)));
-                _newUpdateConfigurations.RemoveAll(
-                    item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
-                _newUpdateConfigurations.Sort(
-                    (x, y) => new UpdateVersion(x.LiteralVersion).CompareTo(new UpdateVersion(y.LiteralVersion)));
             }
 
+            var highestVersion =
+                UpdateVersion.GetHighestUpdateVersion(
+                    _newUpdateConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)));
+            _newUpdateConfigurations.RemoveAll(
+                item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
+            _newUpdateConfigurations.Sort(
+                (x, y) => new UpdateVersion(x.LiteralVersion).CompareTo(new UpdateVersion(y.LiteralVersion)));
+            
             UpdatesFound = _newUpdateConfigurations.Count != 0;
         }
 
