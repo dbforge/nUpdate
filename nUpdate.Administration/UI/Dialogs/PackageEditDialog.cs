@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.Core.History;
 using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
@@ -72,6 +73,7 @@ namespace nUpdate.Administration.UI.Dialogs
         private UpdateVersion _newVersion;
         private string _oldPackageDirectoryPath;
         private UpdateConfiguration _packageConfiguration;
+        private readonly Log _updateLog = new Log();
 
         /// <summary>
         ///     The FTP-password. Set as SecureString for deleting it out of the memory after runtime.
@@ -107,6 +109,12 @@ namespace nUpdate.Administration.UI.Dialogs
         ///     The version of the package to edit.
         /// </summary>
         public UpdateVersion PackageVersion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rollout conditions
+        /// </summary>
+        public List<RolloutCondition> Conditions { get; set; }
+    
 
         /// <summary>
         ///     The configurations available in the file.
@@ -313,6 +321,9 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     case 3:
                         categoryTabControl.SelectedTab = operationsTabPage;
+                        break;
+                    case 4:
+                        categoryTabControl.SelectedTab = conditionsTabPage;
                         break;
                 }
             else
@@ -616,6 +627,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     }
                 }
 
+                
                 Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
 
                 try
@@ -653,6 +665,8 @@ namespace nUpdate.Administration.UI.Dialogs
                         Project.Packages.First(item => item.Version == _existingVersionString)
                             .Version = _packageConfiguration.LiteralVersion;
                     }
+
+                    _updateLog.Write(LogEntry.Edit, _newVersion.FullText);
 
                     UpdateProject.SaveProject(Project.Path, Project);
                 }
@@ -983,6 +997,20 @@ namespace nUpdate.Administration.UI.Dialogs
                         categoryTabControl.TabPages.Add(executeScriptPage);
                         break;
                 }
+
+
+            if (_packageConfiguration.RolloutConditions == null)
+                _packageConfiguration.RolloutConditions = new List<RolloutCondition>();
+            
+            //Add conditions to DataGridView as BindableList of RolloutCondition
+            Conditions = _packageConfiguration.RolloutConditions;
+            conditionsDataGridView.AutoGenerateColumns = false;
+            var source = new BindingSource(new BindingList<RolloutCondition>(Conditions) {AllowNew = true}, null);
+            conditionsDataGridView.DataSource = source;
+
+            _updateLog.Project = Project;
+
+
         }
 
         private void removeVersionButton_Click(object sender, EventArgs e)

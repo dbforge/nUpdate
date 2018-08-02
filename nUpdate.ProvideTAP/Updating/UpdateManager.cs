@@ -222,7 +222,7 @@ namespace nUpdate.Updating
                     SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
-                IncludeAlpha, IncludeBeta);
+                IncludeAlpha, IncludeBeta,Conditions);
             if (!result.UpdatesFound)
                 return false;
 
@@ -273,7 +273,7 @@ namespace nUpdate.Updating
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
-                    IncludeAlpha, IncludeBeta);
+                    IncludeAlpha, IncludeBeta,Conditions);
                 if (!result.UpdatesFound)
                     return false;
 
