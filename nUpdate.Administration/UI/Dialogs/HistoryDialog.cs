@@ -58,8 +58,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    
-                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}" +  (logEntry.Username == null ? "" : $" by {logEntry.Username}")
+                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}" +  (logEntry.Username == null ? string.Empty : $" by {logEntry.Username}")
                 };
 
                 switch (logEntry.Entry)
