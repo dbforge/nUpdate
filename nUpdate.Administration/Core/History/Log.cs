@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Popups;
 
@@ -43,7 +44,7 @@ namespace nUpdate.Administration.Core.History
         public void Write(LogEntry entry, string packageVersionString)
         {
             var log = new Log();
-            log.EntryTime = DateTime.Now.ToString();
+            log.EntryTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             log.Entry = entry;
             log.PackageVersion = packageVersionString;
 
@@ -64,7 +65,7 @@ namespace nUpdate.Administration.Core.History
                 Popup.ShowPopup(null, SystemIcons.Error, "Error while get the current domainname.", ex, PopupButtons.Ok);
             }
 
-            log.Username = userDomainName == null ? $"{Environment.UserName}" : $"{userDomainName}\\{Environment.UserName}";
+            log.Username = userDomainName == null ? Environment.UserName : $"{userDomainName}\\{Environment.UserName}";
 
             if (Project.Log == null)
                 Project.Log = new List<Log>();

@@ -52,7 +52,10 @@ namespace nUpdate.Updating
                     if (config.RolloutConditions != null && config.RolloutConditions.Count != 0)
                         if (conditions == null || !conditions.Any())
                         {
-                            continue;
+                            if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
+                            {
+                                continue;
+                            } 
                         }
                         else
                         {
@@ -64,7 +67,7 @@ namespace nUpdate.Updating
                                 {
                                     doUpdate = config.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(c =>
                                         c.Key == localCondition.Key &&
-                                        String.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
+                                        string.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
                                     if (doUpdate) break;
                                 }
 
@@ -74,7 +77,7 @@ namespace nUpdate.Updating
                                     {
                                         doUpdate = !config.RolloutConditions.Where(n => n.IsNegativeCondition).Any(c =>
                                             c.Key == localCondition.Key &&
-                                            String.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
+                                            string.Equals(c.Value, localCondition.Value, StringComparison.CurrentCultureIgnoreCase));
                                         if (!doUpdate) break;
                                     }
                                 }
