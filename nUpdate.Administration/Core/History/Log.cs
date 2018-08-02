@@ -2,7 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using nUpdate.Administration.Core.Application;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.Core.History
 {
@@ -29,6 +32,11 @@ namespace nUpdate.Administration.Core.History
         public UpdateProject Project { get; set; }
 
         /// <summary>
+        ///     Gets or Set the Username that contains in the entry.
+        /// </summary>
+        public string Username { get; set; }
+
+        /// <summary>
         ///     Writes an entry to the log.
         /// </summary>
         /// <param name="entry">The entry to set.</param>
@@ -36,9 +44,28 @@ namespace nUpdate.Administration.Core.History
         public void Write(LogEntry entry, string packageVersionString)
         {
             var log = new Log();
-            log.EntryTime = DateTime.Now.ToString();
+            log.EntryTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             log.Entry = entry;
             log.PackageVersion = packageVersionString;
+
+            string userDomainName;
+
+            try
+            {
+                userDomainName = Environment.UserDomainName;
+            }
+            catch (NotSupportedException e1)
+            {
+                userDomainName = null;
+                Console.WriteLine(e1);
+            }
+            catch (Exception ex)
+            {
+                userDomainName = null;
+                Popup.ShowPopup(null, SystemIcons.Error, "Error while get the current domainname.", ex, PopupButtons.Ok);
+            }
+
+            log.Username = userDomainName == null ? Environment.UserName : $"{userDomainName}\\{Environment.UserName}";
 
             if (Project.Log == null)
                 Project.Log = new List<Log>();
