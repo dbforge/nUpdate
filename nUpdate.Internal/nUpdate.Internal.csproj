@@ -79,6 +79,8 @@
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\IconHelper.cs" />
+    <Compile Include="Core\RolloutCondition.cs" />
+    <Compile Include="Core\RolloutConditionMode.cs" />
     <Compile Include="Core\SizeHelper.cs" />
     <Compile Include="Core\IDeepCopy.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />

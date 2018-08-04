@@ -47,7 +47,7 @@ namespace nUpdate.Updating
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
 
-                    if (config.RolloutConditions != null && config.RolloutConditions?.Count != 0)
+                    if (config.RolloutConditions != null && config.RolloutConditions.Any())
                     {
                         if (conditions != null && conditions.Any())
                         {
@@ -59,14 +59,33 @@ namespace nUpdate.Updating
                                         StringComparison.CurrentCultureIgnoreCase))))
                                 continue;
 
-                            // If no positive condition is met, this update does not interest us.
-                            // Only one condition must be met at the moment.
-                            if (conditions.All(x => !config.RolloutConditions.Where(n => !n.IsNegativeCondition)
-                                .Any(c =>
-                                    c.Key == x.Key &&
-                                    string.Equals(c.Value, x.Value,
-                                        StringComparison.CurrentCultureIgnoreCase))))
-                                continue;
+                            switch (config.RolloutConditionMode)
+                            {
+                                // If no positive condition is met, this update does not interest us.
+                                case RolloutConditionMode.AtLeastOne:
+                                    if (conditions.All(x => !config.RolloutConditions
+                                        .Where(n => !n.IsNegativeCondition)
+                                        .Any(c =>
+                                            c.Key == x.Key &&
+                                            string.Equals(c.Value, x.Value,
+                                                StringComparison.CurrentCultureIgnoreCase))))
+                                        continue;
+                                    break;
+
+                                // If not all positive conditions are met, this update does not interest us.
+                                case RolloutConditionMode.All:
+                                    if (conditions.Any(x => !config.RolloutConditions
+                                        .Where(n => !n.IsNegativeCondition)
+                                        .All(c =>
+                                            c.Key == x.Key &&
+                                            string.Equals(c.Value, x.Value,
+                                                StringComparison.CurrentCultureIgnoreCase))))
+                                        continue;
+                                    break;
+
+                                default:
+                                    throw new ArgumentOutOfRangeException(nameof(packageConfigurations), "Invalid rollout condition mode.");
+                            }
                         }
                         else
                         {
