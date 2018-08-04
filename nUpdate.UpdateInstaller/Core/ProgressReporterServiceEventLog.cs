@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Threading;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 
 namespace nUpdate.UpdateInstaller.Core
 {
     public class ProgressReporterServiceEventLog : IProgressReporter
     {
-        private bool shouldRun = true;
+        private bool _shouldRun = true;
 
- 
         public void Fail(Exception ex)
         {
             WindowsEventLog.LogException(ex);
@@ -15,13 +15,9 @@ namespace nUpdate.UpdateInstaller.Core
 
         public void Initialize()
         {
-            if(WindowsServiceHelper.IsRunningInServiceContext)
-            {
-                while (shouldRun)
-                {
-                    System.Threading.Thread.Sleep(2000);
-                }
-            }
+            if (!WindowsServiceHelper.IsRunningInServiceContext) return;
+            while (_shouldRun)
+                Thread.Sleep(2000);
         }
 
         public void InitializingFail(Exception ex)
@@ -39,7 +35,7 @@ namespace nUpdate.UpdateInstaller.Core
 
         public void Terminate()
         {
-            shouldRun = false;
+            _shouldRun = false;
         }
     }
 }

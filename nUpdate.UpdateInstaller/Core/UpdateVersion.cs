@@ -24,7 +24,7 @@ namespace nUpdate.UpdateInstaller.Core
         /// <param name="version">The update version.</param>
         public UpdateVersion(string version)
         {
-            Match match = Regex.Match(version,
+            var match = Regex.Match(version,
                 @"^(?<Version>((?<VersionNumber>\d+)\.){0,3}(?<VersionNumber>\d+))((-| )?(?<DevStage>(?<Type>[ab]|rc)(\.?(?<DevBuild>\d+))?))?$");
             if (!match.Success || !match.Groups["Version"].Success)
                 throw new ArgumentException("The specified version is not valid.");
@@ -188,10 +188,10 @@ namespace nUpdate.UpdateInstaller.Core
                 throw new ArgumentException("fullText");
 
             var versionParts = versionSections[0].Split('.');
-            int major = int.Parse(versionParts[0]);
-            int minor = int.Parse(versionParts[1]);
-            int build = int.Parse(versionParts[2]);
-            int revision = int.Parse(versionParts[3]);
+            var major = int.Parse(versionParts[0]);
+            var minor = int.Parse(versionParts[1]);
+            var build = int.Parse(versionParts[2]);
+            var revision = int.Parse(versionParts[3]);
 
             if (versionSections.Length == 1)
                 return new UpdateVersion(major, minor, build, revision);
@@ -213,7 +213,7 @@ namespace nUpdate.UpdateInstaller.Core
             if (versionSections.Length == 2)
                 return new UpdateVersion(major, minor, build, revision, devStage, 0);
 
-            int developmentBuild = int.Parse(versionSections[2]);
+            var developmentBuild = int.Parse(versionSections[2]);
             return new UpdateVersion(major, minor, build, revision, devStage, developmentBuild);
         }
 

@@ -135,7 +135,8 @@ namespace nUpdate.WPFUpdateInstaller
         {
             if (e.ExceptionObject is ThreadAbortException)
                 return;
-            if (e.ExceptionObject is Exception exception) MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
+            if (e.ExceptionObject is Exception exception)
+                MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
             Application.Current.Shutdown();
         }
 
@@ -145,7 +146,7 @@ namespace nUpdate.WPFUpdateInstaller
         [STAThread]
         internal static void Main(string[] args)
         {
-           AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
+            AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
 
             if (args.Length != 1)
             {
@@ -188,10 +189,8 @@ namespace nUpdate.WPFUpdateInstaller
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(),"Error",MessageBoxButton.OK,MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            
         }
     }
 }

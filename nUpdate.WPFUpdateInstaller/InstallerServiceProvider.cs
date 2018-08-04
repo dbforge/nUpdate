@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.WPFUpdateInstaller;
 
-
 [assembly: ServiceProvider(typeof(InstallerServiceProvider))]
 
 namespace nUpdate.WPFUpdateInstaller
@@ -29,7 +28,7 @@ namespace nUpdate.WPFUpdateInstaller
         {
             var application = new App();
             application.InitializeComponent();
-            
+
             _services.Add(typeof(IProgressReporter), new ProgressReporterService());
         }
     }

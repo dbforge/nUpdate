@@ -12,7 +12,7 @@ namespace nUpdate.UpdateInstaller.Core
 
         public static bool IsFileLocked(Exception exception)
         {
-            int errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
+            var errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
             return errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION;
         }
     }

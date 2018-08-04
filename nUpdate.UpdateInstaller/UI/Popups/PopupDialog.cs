@@ -65,7 +65,7 @@ namespace nUpdate.UpdateInstaller.UI.Popups
 
             if (messageLabel.Height > 41)
             {
-                int difference = messageLabel.Height - 41;
+                var difference = messageLabel.Height - 41;
                 messageLabel.Height += difference;
                 Height += difference;
                 controlPanel1.Location = new Point(controlPanel1.Location.X, controlPanel1.Location.Y + difference);
