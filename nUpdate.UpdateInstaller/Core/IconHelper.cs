@@ -23,7 +23,7 @@ namespace nUpdate.UpdateInstaller.Core
         /// </remarks>
         internal static Icon ExtractAssociatedIcon(string filePath)
         {
-            int index = 0;
+            var index = 0;
 
             Uri uri;
             if (filePath == null)

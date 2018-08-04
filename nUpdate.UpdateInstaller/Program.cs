@@ -203,6 +203,5 @@ namespace nUpdate.UpdateInstaller
 
             new Updater().RunUpdate();
         }
-
     }
 }
