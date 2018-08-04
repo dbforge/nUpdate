@@ -32,7 +32,6 @@ namespace nUpdate.UpdateInstaller
         /// <param name="destDirName">The path of the destination directory.</param>
         private void CopyDirectoryRecursively(string sourceDirName, string destDirName)
         {
-            
             try
             {
                 if (string.IsNullOrEmpty(sourceDirName)) throw new ArgumentException("sourceDirName");
@@ -43,15 +42,15 @@ namespace nUpdate.UpdateInstaller
 
                 var files = dir.GetFiles();
 
-                if (files.Length == 0 && sourceDirectories.Length == 0) return;
+                if (files.Length == 0 && sourceDirectories.Length == 0)
+                    return;
 
                 if (!Directory.Exists(destDirName))
                     Directory.CreateDirectory(destDirName);
 
-
                 foreach (var file in files)
                 {
-                    bool continueCopyLoop = true;
+                    var continueCopyLoop = true;
                     var aimPath = Path.Combine(destDirName, file.Name);
                     while (continueCopyLoop)
                         try
@@ -112,11 +111,11 @@ namespace nUpdate.UpdateInstaller
         /// </returns>
         private IProgressReporter GetProgressReporter()
         {
-            Assembly assembly = string.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
-                                !File.Exists(Program.ExternalGuiAssemblyPath)
+            var assembly = string.IsNullOrEmpty(Program.ExternalGuiAssemblyPath) ||
+                           !File.Exists(Program.ExternalGuiAssemblyPath)
                 ? Assembly.GetExecutingAssembly()
                 : Assembly.LoadFrom(Program.ExternalGuiAssemblyPath);
-            IServiceProvider provider = ServiceProviderHelper.CreateServiceProvider(assembly);
+            var provider = ServiceProviderHelper.CreateServiceProvider(assembly);
             if (provider == null)
                 throw new Exception("There is no service provider available.");
             return (IProgressReporter) provider.GetService(typeof(IProgressReporter));
@@ -156,12 +155,12 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         private void RunUpdateAsync()
         {
-            string parentPath = Directory.GetParent(Program.PackageFilePaths.First()).FullName;
+            var parentPath = Directory.GetParent(Program.PackageFilePaths.First()).FullName;
             /* Extract and count for the progress */
             foreach (var packageFilePath in Program.PackageFilePaths)
             {
                 var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
-                string extractedDirectoryPath =
+                var extractedDirectoryPath =
                     Path.Combine(parentPath, version.ToString());
                 Directory.CreateDirectory(extractedDirectoryPath);
                 using (var zf = ZipFile.Read(packageFilePath))
@@ -253,7 +252,7 @@ namespace nUpdate.UpdateInstaller
                 Program.PackageFilePaths)
             {
                 var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
-                string extractedDirectoryPath =
+                var extractedDirectoryPath =
                     Path.Combine(parentPath, version.ToString());
                 foreach (var directory in new DirectoryInfo(extractedDirectoryPath).GetDirectories())
                     switch (directory.Name)
@@ -277,7 +276,7 @@ namespace nUpdate.UpdateInstaller
 
                 try
                 {
-                    IEnumerable<Operation> currentVersionOperations =
+                    var currentVersionOperations =
                         Program.Operations.Any(item => new UpdateVersion(item.Key) == version)
                             ? Program.Operations.First(item => new UpdateVersion(item.Key) == version).Value
                             : Enumerable.Empty<Operation>();
@@ -301,7 +300,7 @@ namespace nUpdate.UpdateInstaller
                                             foreach (
                                                 var fileToDelete in secondValueAsArray.ToObject<IEnumerable<string>>())
                                             {
-                                                string path = Path.Combine(deleteFileFullPath, fileToDelete);
+                                                var path = Path.Combine(deleteFileFullPath, fileToDelete);
                                                 if (File.Exists(path))
                                                     File.Delete(path);
 
