@@ -42,6 +42,16 @@ namespace nUpdate.Updating
         public List<Operation> Operations { get; set; }
 
         /// <summary>
+        ///     Gets or sets the rollout condition mode used for selecting the updates.
+        /// </summary>
+        public RolloutConditionMode RolloutConditionMode { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the rollout conditions which contain additional specifications that the client must meet in order to receive an update.
+        /// </summary>
+        public List<RolloutCondition> RolloutConditions { get; set; }
+
+        /// <summary>
         ///     The signature of the update package (Base64 encoded).
         /// </summary>
         public string Signature { get; set; }
@@ -70,11 +80,6 @@ namespace nUpdate.Updating
         ///     The version ID of this package to use in the statistics, if used.
         /// </summary>
         public int VersionId { get; set; }
-
-        /// <summary>
-        /// The conditions over which can be controlled whether an update may be rolled out
-        /// </summary>
-        public List<RolloutCondition> RolloutConditions { get; set; }
 
         /// <summary>
         ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.

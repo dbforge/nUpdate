@@ -75,15 +75,15 @@ namespace nUpdate.Administration.UI.Dialogs
             System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes C#-code."}, 16);
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("General", 2, 2);
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Conditions", 17, 17);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Conditions", 4, 4);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Operations", 17, 17);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -183,11 +183,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.conditionsTabPage = new System.Windows.Forms.TabPage();
-            this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
+            this.conditionHelpLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.line4 = new nUpdate.Internal.UI.Controls.Line();
+            this.rolloutConditionModeComboBox = new System.Windows.Forms.ComboBox();
+            this.rolloutConditionModeLabel = new System.Windows.Forms.Label();
             this.conditionsDataGridView = new System.Windows.Forms.DataGridView();
             this.Key = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Inverted = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Negative = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -235,7 +239,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(1, "blue-documents-stack.png");
             this.categoryImageList.Images.SetKeyName(2, "property.png");
             this.categoryImageList.Images.SetKeyName(3, "document--pencil.png");
-            this.categoryImageList.Images.SetKeyName(4, "node-delete-previous.png");
+            this.categoryImageList.Images.SetKeyName(4, "node-select.png");
             this.categoryImageList.Images.SetKeyName(5, "sofa--arrow.png");
             this.categoryImageList.Images.SetKeyName(6, "sofa--minus.png");
             this.categoryImageList.Images.SetKeyName(7, "system-monitor--minus.png");
@@ -248,7 +252,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "application--arrow.png");
             this.categoryImageList.Images.SetKeyName(16, "script-code.png");
-            this.categoryImageList.Images.SetKeyName(17, "conditions.png");
+            this.categoryImageList.Images.SetKeyName(17, "toolbox.png");
             // 
             // cancelToolTip
             // 
@@ -343,7 +347,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
-            this.categoryTabControl.Size = new System.Drawing.Size(481, 262);
+            this.categoryTabControl.Size = new System.Drawing.Size(481, 257);
             this.categoryTabControl.TabIndex = 44;
             // 
             // generalTabPage
@@ -352,7 +356,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalTabPage.Location = new System.Drawing.Point(4, 22);
             this.generalTabPage.Name = "generalTabPage";
             this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalTabPage.Size = new System.Drawing.Size(473, 236);
+            this.generalTabPage.Size = new System.Drawing.Size(473, 231);
             this.generalTabPage.TabIndex = 0;
             this.generalTabPage.Text = "General";
             this.generalTabPage.UseVisualStyleBackColor = true;
@@ -632,7 +636,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.changelogTabPage.Location = new System.Drawing.Point(4, 22);
             this.changelogTabPage.Name = "changelogTabPage";
             this.changelogTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.changelogTabPage.Size = new System.Drawing.Size(473, 236);
+            this.changelogTabPage.Size = new System.Drawing.Size(473, 231);
             this.changelogTabPage.TabIndex = 1;
             this.changelogTabPage.Text = "Changelog";
             this.changelogTabPage.UseVisualStyleBackColor = true;
@@ -846,7 +850,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.availabilityTabPage.Location = new System.Drawing.Point(4, 22);
             this.availabilityTabPage.Name = "availabilityTabPage";
             this.availabilityTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.availabilityTabPage.Size = new System.Drawing.Size(473, 236);
+            this.availabilityTabPage.Size = new System.Drawing.Size(473, 231);
             this.availabilityTabPage.TabIndex = 2;
             this.availabilityTabPage.Text = "Availability";
             this.availabilityTabPage.UseVisualStyleBackColor = true;
@@ -983,7 +987,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsTabPage.Location = new System.Drawing.Point(4, 22);
             this.operationsTabPage.Name = "operationsTabPage";
             this.operationsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.operationsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.operationsTabPage.Size = new System.Drawing.Size(473, 231);
             this.operationsTabPage.TabIndex = 3;
             this.operationsTabPage.Text = "Operations";
             this.operationsTabPage.UseVisualStyleBackColor = true;
@@ -1085,7 +1089,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.replaceFilesTabPage.Location = new System.Drawing.Point(4, 22);
             this.replaceFilesTabPage.Name = "replaceFilesTabPage";
             this.replaceFilesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replaceFilesTabPage.Size = new System.Drawing.Size(473, 236);
+            this.replaceFilesTabPage.Size = new System.Drawing.Size(473, 231);
             this.replaceFilesTabPage.TabIndex = 4;
             this.replaceFilesTabPage.Text = "ReplaceFiles";
             this.replaceFilesTabPage.UseVisualStyleBackColor = true;
@@ -1122,27 +1126,27 @@ namespace nUpdate.Administration.UI.Dialogs
             this.filesDataTreeView.LabelEdit = true;
             this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
             this.filesDataTreeView.Name = "filesDataTreeView";
-            treeNode5.ImageIndex = 0;
-            treeNode5.Name = "Knoten0";
-            treeNode5.SelectedImageIndex = 0;
-            treeNode5.Text = "Program directory";
-            treeNode6.ImageIndex = 0;
-            treeNode6.Name = "Knoten1";
-            treeNode6.SelectedImageIndex = 0;
-            treeNode6.Text = "AppData";
-            treeNode7.ImageIndex = 0;
-            treeNode7.Name = "Knoten2";
-            treeNode7.SelectedImageIndex = 0;
-            treeNode7.Text = "Temp directory";
-            treeNode8.ImageIndex = 0;
-            treeNode8.Name = "Knoten3";
-            treeNode8.SelectedImageIndex = 0;
-            treeNode8.Text = "Desktop";
+            treeNode1.ImageIndex = 0;
+            treeNode1.Name = "Knoten0";
+            treeNode1.SelectedImageIndex = 0;
+            treeNode1.Text = "Program directory";
+            treeNode2.ImageIndex = 0;
+            treeNode2.Name = "Knoten1";
+            treeNode2.SelectedImageIndex = 0;
+            treeNode2.Text = "AppData";
+            treeNode3.ImageIndex = 0;
+            treeNode3.Name = "Knoten2";
+            treeNode3.SelectedImageIndex = 0;
+            treeNode3.Text = "Temp directory";
+            treeNode4.ImageIndex = 0;
+            treeNode4.Name = "Knoten3";
+            treeNode4.SelectedImageIndex = 0;
+            treeNode4.Text = "Desktop";
             this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
             this.filesDataTreeView.SelectedImageIndex = 0;
             this.filesDataTreeView.ShowLines = false;
             this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
@@ -1280,14 +1284,98 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // conditionsTabPage
             // 
+            this.conditionsTabPage.Controls.Add(this.conditionHelpLinkLabel);
+            this.conditionsTabPage.Controls.Add(this.line4);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeComboBox);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeLabel);
             this.conditionsTabPage.Controls.Add(this.conditionsDataGridView);
             this.conditionsTabPage.Location = new System.Drawing.Point(4, 22);
             this.conditionsTabPage.Name = "conditionsTabPage";
             this.conditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.conditionsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.conditionsTabPage.Size = new System.Drawing.Size(473, 231);
             this.conditionsTabPage.TabIndex = 5;
             this.conditionsTabPage.Text = "Rollout conditions";
             this.conditionsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // conditionHelpLinkLabel
+            // 
+            this.conditionHelpLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.conditionHelpLinkLabel.AutoSize = true;
+            this.conditionHelpLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
+            this.conditionHelpLinkLabel.Location = new System.Drawing.Point(433, 14);
+            this.conditionHelpLinkLabel.Name = "conditionHelpLinkLabel";
+            this.conditionHelpLinkLabel.Size = new System.Drawing.Size(31, 13);
+            this.conditionHelpLinkLabel.TabIndex = 6;
+            this.conditionHelpLinkLabel.TabStop = true;
+            this.conditionHelpLinkLabel.Text = "Help";
+            this.conditionHelpLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.conditionHelpLinkLabel_LinkClicked);
+            // 
+            // line4
+            // 
+            this.line4.BackColor = System.Drawing.SystemColors.Window;
+            this.line4.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Vertical;
+            this.line4.Location = new System.Drawing.Point(420, 7);
+            this.line4.Name = "line4";
+            this.line4.Size = new System.Drawing.Size(10, 23);
+            this.line4.TabIndex = 3;
+            this.line4.Text = "line4";
+            // 
+            // rolloutConditionModeComboBox
+            // 
+            this.rolloutConditionModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.rolloutConditionModeComboBox.FormattingEnabled = true;
+            this.rolloutConditionModeComboBox.Items.AddRange(new object[] {
+            "One positive condition must be met for different keys",
+            "All positive conditions must be met for different keys"});
+            this.rolloutConditionModeComboBox.Location = new System.Drawing.Point(106, 11);
+            this.rolloutConditionModeComboBox.Name = "rolloutConditionModeComboBox";
+            this.rolloutConditionModeComboBox.Size = new System.Drawing.Size(305, 21);
+            this.rolloutConditionModeComboBox.TabIndex = 2;
+            // 
+            // rolloutConditionModeLabel
+            // 
+            this.rolloutConditionModeLabel.AutoSize = true;
+            this.rolloutConditionModeLabel.Location = new System.Drawing.Point(6, 14);
+            this.rolloutConditionModeLabel.Name = "rolloutConditionModeLabel";
+            this.rolloutConditionModeLabel.Size = new System.Drawing.Size(94, 13);
+            this.rolloutConditionModeLabel.TabIndex = 1;
+            this.rolloutConditionModeLabel.Text = "Condition mode:";
+            // 
+            // conditionsDataGridView
+            // 
+            this.conditionsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.conditionsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.conditionsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Key,
+            this.Value,
+            this.Negative});
+            this.conditionsDataGridView.Location = new System.Drawing.Point(9, 40);
+            this.conditionsDataGridView.Name = "conditionsDataGridView";
+            this.conditionsDataGridView.RowHeadersVisible = false;
+            this.conditionsDataGridView.Size = new System.Drawing.Size(455, 178);
+            this.conditionsDataGridView.TabIndex = 0;
+            // 
+            // Key
+            // 
+            this.Key.DataPropertyName = "Key";
+            this.Key.HeaderText = "Key";
+            this.Key.Name = "Key";
+            this.Key.Width = 152;
+            // 
+            // Value
+            // 
+            this.Value.DataPropertyName = "Value";
+            this.Value.HeaderText = "Value";
+            this.Value.Name = "Value";
+            this.Value.Width = 152;
+            // 
+            // Negative
+            // 
+            this.Negative.DataPropertyName = "IsNegativeCondition";
+            this.Negative.HeaderText = "Negative";
+            this.Negative.Name = "Negative";
+            this.Negative.ToolTipText = "When checked, this conditions must not be met.";
+            this.Negative.Width = 152;
             // 
             // categoryTreeView
             // 
@@ -1302,32 +1390,32 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTreeView.ItemHeight = 24;
             this.categoryTreeView.Location = new System.Drawing.Point(8, 24);
             this.categoryTreeView.Name = "categoryTreeView";
-            treeNode9.ImageIndex = 2;
-            treeNode9.Name = "generalNode";
-            treeNode9.SelectedImageIndex = 2;
-            treeNode9.Text = "General";
-            treeNode10.ImageIndex = 3;
-            treeNode10.Name = "changelogNode";
-            treeNode10.SelectedImageIndex = 3;
-            treeNode10.Text = "Changelog";
-            treeNode11.ImageIndex = 0;
-            treeNode11.Name = "availabilityNode";
-            treeNode11.SelectedImageIndex = 0;
-            treeNode11.Text = "Availability";
-            treeNode12.ImageIndex = 4;
-            treeNode12.Name = "operationsNode";
-            treeNode12.SelectedImageIndex = 4;
-            treeNode12.Text = "Operations";
-            treeNode13.ImageIndex = 17;
-            treeNode13.Name = "conditionNode";
-            treeNode13.SelectedImageIndex = 17;
-            treeNode13.Text = "Conditions";
+            treeNode5.ImageIndex = 2;
+            treeNode5.Name = "generalNode";
+            treeNode5.SelectedImageIndex = 2;
+            treeNode5.Text = "General";
+            treeNode6.ImageIndex = 3;
+            treeNode6.Name = "changelogNode";
+            treeNode6.SelectedImageIndex = 3;
+            treeNode6.Text = "Changelog";
+            treeNode7.ImageIndex = 0;
+            treeNode7.Name = "availabilityNode";
+            treeNode7.SelectedImageIndex = 0;
+            treeNode7.Text = "Availability";
+            treeNode8.ImageIndex = 4;
+            treeNode8.Name = "conditionNode";
+            treeNode8.SelectedImageIndex = 4;
+            treeNode8.Text = "Conditions";
+            treeNode9.ImageIndex = 17;
+            treeNode9.Name = "operationsNode";
+            treeNode9.SelectedImageIndex = 17;
+            treeNode9.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12,
-            treeNode13});
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1336,37 +1424,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragDrop);
             this.categoryTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragEnter);
             this.categoryTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.categoryTreeView_KeyDown);
-            // 
-            // conditionsDataGridView
-            // 
-            this.conditionsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.conditionsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Key,
-            this.Value,
-            this.Inverted});
-            this.conditionsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.conditionsDataGridView.Location = new System.Drawing.Point(3, 3);
-            this.conditionsDataGridView.Name = "conditionsDataGridView";
-            this.conditionsDataGridView.Size = new System.Drawing.Size(467, 230);
-            this.conditionsDataGridView.TabIndex = 0;
-            // 
-            // Key
-            // 
-            this.Key.DataPropertyName = "Key";
-            this.Key.HeaderText = "Key";
-            this.Key.Name = "Key";
-            // 
-            // Value
-            // 
-            this.Value.DataPropertyName = "Value";
-            this.Value.HeaderText = "Value";
-            this.Value.Name = "Value";
-            // 
-            // Inverted
-            // 
-            this.Inverted.DataPropertyName = "IsNegativeCondition";
-            this.Inverted.HeaderText = "Inverted";
-            this.Inverted.Name = "Inverted";
             // 
             // PackageAddDialog
             // 
@@ -1427,6 +1484,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.replaceFilesToolStrip.ResumeLayout(false);
             this.replaceFilesToolStrip.PerformLayout();
             this.conditionsTabPage.ResumeLayout(false);
+            this.conditionsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).EndInit();
             this.ResumeLayout(false);
 
@@ -1535,8 +1593,12 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TabPage conditionsTabPage;
         private System.Windows.Forms.DataGridView conditionsDataGridView;
+        private System.Windows.Forms.ComboBox rolloutConditionModeComboBox;
+        private System.Windows.Forms.Label rolloutConditionModeLabel;
         private System.Windows.Forms.DataGridViewTextBoxColumn Key;
         private System.Windows.Forms.DataGridViewTextBoxColumn Value;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Inverted;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Negative;
+        private Line line4;
+        private System.Windows.Forms.LinkLabel conditionHelpLinkLabel;
     }
 }

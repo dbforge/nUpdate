@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PackageDeleteException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SizeCalculationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\StatisticsException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Updating\RolloutCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgument.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Updating\UpdateArgumentExecutionOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
