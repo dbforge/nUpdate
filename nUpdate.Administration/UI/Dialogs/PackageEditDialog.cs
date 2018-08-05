@@ -113,7 +113,7 @@ namespace nUpdate.Administration.UI.Dialogs
         /// <summary>
         ///     Gets or sets the rollout conditions.
         /// </summary>
-        public List<RolloutCondition> Conditions { get; set; } = new List<RolloutCondition>();
+        public List<RolloutCondition> Conditions { get; set; }
 
         /// <summary>
         ///     The configurations available in the file.
@@ -804,7 +804,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 var package in Project.Packages.Where(package => new UpdateVersion(package.Version) == packageVersion))
                 descriptionTextBox.Text = package.Description;
 
-            rolloutConditionModeComboBox.SelectedIndex = 0;
             unsupportedVersionsListBox.DataSource = _unsupportedVersionLiteralsBindingList;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
             foreach (var info in cultureInfos)
@@ -1006,6 +1005,7 @@ namespace nUpdate.Administration.UI.Dialogs
             conditionsDataGridView.AutoGenerateColumns = false;
             var source = new BindingSource(new BindingList<RolloutCondition>(Conditions) {AllowNew = true}, null);
             conditionsDataGridView.DataSource = source;
+            rolloutConditionModeComboBox.SelectedIndex = (int)_packageConfiguration.RolloutConditionMode;
 
             _updateLog.Project = Project;
         }
@@ -1084,6 +1084,8 @@ namespace nUpdate.Administration.UI.Dialogs
             _packageConfiguration.NecessaryUpdate = necessaryUpdateCheckBox.Checked;
             _packageConfiguration.Architecture = (Architecture) architectureComboBox.SelectedIndex;
             _packageConfiguration.Changelog = changelog;
+            _packageConfiguration.RolloutConditionMode =
+                (RolloutConditionMode) rolloutConditionModeComboBox.SelectedIndex;
 
             if (unsupportedVersionsListBox.Items.Count == 0)
                 allVersionsRadioButton.Checked = true;
