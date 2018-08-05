@@ -63,28 +63,24 @@ namespace nUpdate.Updating
                             {
                                 // If no positive condition is met, this update does not interest us.
                                 case RolloutConditionMode.AtLeastOne:
-                                    if (conditions.All(x => !config.RolloutConditions
-                                        .Where(n => !n.IsNegativeCondition)
-                                        .Any(c =>
-                                            c.Key == x.Key &&
-                                            string.Equals(c.Value, x.Value,
-                                                StringComparison.CurrentCultureIgnoreCase))))
+                                    if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).All(x =>
+                                        !conditions.Any(c => c.Key == x.Key &&
+                                                             string.Equals(c.Value, x.Value,
+                                                                 StringComparison.CurrentCultureIgnoreCase))))
                                         continue;
                                     break;
 
                                 // If not all positive conditions are met, this update does not interest us.
                                 case RolloutConditionMode.All:
-                                    if (conditions.Any(x => !config.RolloutConditions
-                                        .Where(n => !n.IsNegativeCondition)
-                                        .All(c =>
-                                            c.Key == x.Key &&
-                                            string.Equals(c.Value, x.Value,
-                                                StringComparison.CurrentCultureIgnoreCase))))
+                                    if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(x =>
+                                        !conditions.Any(c => c.Key == x.Key && string.Equals(c.Value, x.Value,
+                                                                 StringComparison.CurrentCultureIgnoreCase))))
                                         continue;
                                     break;
 
                                 default:
-                                    throw new ArgumentOutOfRangeException(nameof(packageConfigurations), "Invalid rollout condition mode.");
+                                    throw new ArgumentOutOfRangeException(nameof(packageConfigurations),
+                                        "Invalid rollout condition mode.");
                             }
                         }
                         else
@@ -93,7 +89,6 @@ namespace nUpdate.Updating
                             if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
                                 continue;
                         }
-
                     }
 
                     _newUpdateConfigurations.Add(config);
@@ -107,7 +102,7 @@ namespace nUpdate.Updating
                 item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
             _newUpdateConfigurations.Sort(
                 (x, y) => new UpdateVersion(x.LiteralVersion).CompareTo(new UpdateVersion(y.LiteralVersion)));
-            
+
             UpdatesFound = _newUpdateConfigurations.Count != 0;
         }
 
