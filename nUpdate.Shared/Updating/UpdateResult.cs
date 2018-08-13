@@ -3,10 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using nUpdate.Internal.Core;
 
+[assembly: InternalsVisibleTo("nUpdate.Test")]  
 namespace nUpdate.Updating
 {
+    
     internal class UpdateResult
     {
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
@@ -47,51 +50,14 @@ namespace nUpdate.Updating
                         config.Architecture == Architecture.X64 && !is64Bit)
                         continue;
 
-                    if (config.RolloutConditions != null && config.RolloutConditions.Any())
+                    if (!CheckConditions(conditions, config))
                     {
-                        if (conditions != null && conditions.Any())
-                        {
-                            // If any negative condition is met, this update does not interest us.
-                            if (conditions.Any(x => config.RolloutConditions.Where(n => n.IsNegativeCondition)
-                                .Any(c =>
-                                    c.Key == x.Key &&
-                                    string.Equals(c.Value, x.Value,
-                                        StringComparison.CurrentCultureIgnoreCase))))
-                                continue;
-
-                            switch (config.RolloutConditionMode)
-                            {
-                                // If no positive condition is met, this update does not interest us.
-                                case RolloutConditionMode.AtLeastOne:
-                                    if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).All(x =>
-                                        !conditions.Any(c => c.Key == x.Key &&
-                                                             string.Equals(c.Value, x.Value,
-                                                                 StringComparison.CurrentCultureIgnoreCase))))
-                                        continue;
-                                    break;
-
-                                // If not all positive conditions are met, this update does not interest us.
-                                case RolloutConditionMode.All:
-                                    if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(x =>
-                                        !conditions.Any(c => c.Key == x.Key && string.Equals(c.Value, x.Value,
-                                                                 StringComparison.CurrentCultureIgnoreCase))))
-                                        continue;
-                                    break;
-
-                                default:
-                                    throw new ArgumentOutOfRangeException(nameof(packageConfigurations),
-                                        "Invalid rollout condition mode.");
-                            }
-                        }
-                        else
-                        {
-                            // This should be discussed again as it may be senseful that a user with no local key for a positive condition may eventually also receive the update.
-                            if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
-                                continue;
-                        }
+                        continue;
                     }
 
-                    _newUpdateConfigurations.Add(config);
+
+
+                     _newUpdateConfigurations.Add(config);
                 }
             }
 
@@ -104,6 +70,56 @@ namespace nUpdate.Updating
                 (x, y) => new UpdateVersion(x.LiteralVersion).CompareTo(new UpdateVersion(y.LiteralVersion)));
 
             UpdatesFound = _newUpdateConfigurations.Count != 0;
+        }
+
+        internal bool CheckConditions(List<KeyValuePair<string, string>> clientConditions,
+            UpdateConfiguration config)
+        {
+            if (config.RolloutConditions != null && config.RolloutConditions.Any())
+            {
+                if (clientConditions != null && clientConditions.Any())
+                {
+                    // If any negative condition is met, this update does not interest us.
+                    if (clientConditions.Any(x => config.RolloutConditions.Where(n => n.IsNegativeCondition)
+                        .Any(c =>
+                            c.Key == x.Key &&
+                            string.Equals(c.Value, x.Value,
+                                StringComparison.CurrentCultureIgnoreCase))))
+                        return false;
+
+                        switch (config.RolloutConditionMode)
+                        {
+                            // If no positive condition is met, this update does not interest us.
+                            case RolloutConditionMode.AtLeastOne:
+                                if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).All(x =>
+                                    !clientConditions.Any(c => c.Key == x.Key &&
+                                                               string.Equals(c.Value, x.Value,
+                                                                   StringComparison.CurrentCultureIgnoreCase))))
+                                    return false;
+                                break;
+
+                            // If not all positive conditions are met, this update does not interest us.
+                            case RolloutConditionMode.All:
+                                if (config.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(x =>
+                                    !clientConditions.Any(c => c.Key == x.Key && string.Equals(c.Value, x.Value,
+                                                                   StringComparison.CurrentCultureIgnoreCase))))
+                                    return false;
+                                break;
+
+                                default:
+                                  throw new ArgumentOutOfRangeException(nameof(config),
+                                    "Invalid rollout condition mode.");
+                        }
+                }
+                else
+                {
+                    // This should be discussed again as it may be senseful that a user with no local key for a positive condition may eventually also receive the update.
+                    if (config.RolloutConditions.Any(c => !c.IsNegativeCondition))
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
