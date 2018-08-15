@@ -83,8 +83,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConditionsAllTest.cs" />
     <Compile Include="ConnectionCheckerTest.cs" />
     <Compile Include="RsaSignatureTest.cs" />
+    <Compile Include="ConditionsAtLeastOneTest.cs" />
     <Compile Include="UpdateVersionTest.cs" />
     <Compile Include="UriConnectorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
