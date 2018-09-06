@@ -26,15 +26,15 @@
                 Text="Please select the protocol that you want to use for exchanging data with the server."
                 TextWrapping="Wrap" />
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-                <RadioButton Content="HTTP(S) + PHP (recommended)" IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource BooleanToEnumConverter}, ConverterParameter={x:Static administration:TransferProtocol.HTTP}}" />
+                <RadioButton Content="HTTP(S) + PHP (recommended)" IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.HTTP}}" />
                 <RadioButton
                     Margin="10,0,0,0"
                     Content="FTP(S)"
-                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource BooleanToEnumConverter}, ConverterParameter={x:Static administration:TransferProtocol.FTP}}" />
+                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.FTP}}" />
                 <RadioButton
                     Margin="10,0,0,0"
                     Content="Custom"
-                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource BooleanToEnumConverter}, ConverterParameter={x:Static administration:TransferProtocol.Custom}}" />
+                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.Custom}}" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

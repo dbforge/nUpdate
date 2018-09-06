@@ -1,5 +1,8 @@
-﻿namespace nUpdate.Administration.ViewModels.NewProject
+﻿using System.ComponentModel;
+
+namespace nUpdate.Administration.ViewModels.NewProject
 {
+    [Description("ProtocolSelectionPageViewModel")]
     public class ProtocolSelectionPageViewModel : PageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
@@ -11,7 +14,7 @@
             CanGoBack = true;
             CanGoForward = true;
 
-            _transferProtocol = TransferProtocol.HTTP;
+            TransferProtocol = TransferProtocol.HTTP;
         }
 
         public TransferProtocol TransferProtocol

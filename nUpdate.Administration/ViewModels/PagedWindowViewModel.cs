@@ -1,4 +1,4 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// Copyright © Dominic Beger 2018
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace nUpdate.Administration.ViewModels
         private static readonly DependencyProperty PageCanGoForwardProperty =
             DependencyProperty.Register("PageCanGoForward", typeof(bool), typeof(PagedWindowViewModel),
                 new PropertyMetadata((obj, e) => { ((PagedWindowViewModel) obj).DependencyPropertiesChanged(); }));
-        
+
         private static readonly DependencyPropertyKey CanGoBackPropertyKey =
             DependencyProperty.RegisterReadOnly("CanGoBack", typeof(bool), typeof(PagedWindowViewModel),
                 new PropertyMetadata(false));
@@ -30,7 +30,7 @@ namespace nUpdate.Administration.ViewModels
         ///     Identifies the <see cref="CanGoBack" /> dependency property.
         /// </summary>
         public static readonly DependencyProperty CanGoBackProperty = CanGoBackPropertyKey.DependencyProperty;
-        
+
         // CanGoForward
         private static readonly DependencyPropertyKey CanGoForwardPropertyKey =
             DependencyProperty.RegisterReadOnly("CanGoForward", typeof(bool), typeof(PagedWindowViewModel),
@@ -55,7 +55,7 @@ namespace nUpdate.Administration.ViewModels
         ///     Gets a value indicating whether the user is allowed to go forward, or not.
         /// </summary>
         public bool CanGoForward => (bool) GetValue(CanGoForwardProperty);
-        
+
         /// <summary>
         ///     Gets or sets the view model of the current page to be shown.
         /// </summary>
@@ -84,15 +84,7 @@ namespace nUpdate.Administration.ViewModels
             {
                 EnsureObjectState();
                 return _goBackCommand ?? (_goBackCommand =
-                           new RelayCommand(
-                               () =>
-                               {
-                                   var oldPageViewModel = CurrentPageViewModel;
-                                   oldPageViewModel.OnNavigateBack(this);
-                                   CurrentPageViewModel =
-                                       PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
-                                   CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
-                               }, () => CanGoBack));
+                           new RelayCommand(async () => { await GoBack(); }, () => CanGoBack));
             }
         }
 
@@ -106,27 +98,9 @@ namespace nUpdate.Administration.ViewModels
                 EnsureObjectState();
                 return _goForwardCommand ?? (_goForwardCommand =
                            new RelayCommand(
-                               async () =>
-                               {
-                                   var oldPageViewModel = CurrentPageViewModel;
-                                   oldPageViewModel.OnNavigateForward(this);
-
-                                   // There is no further page which means we are finished with the wizard
-                                   if (PageViewModels.IndexOf(CurrentPageViewModel) == PageViewModels.Count - 1)
-                                   {
-                                       // If no errors occured and everything worked, we can now close the window
-                                       if (await Finish())
-                                           WindowManager.GetCurrentWindow().RequestClose();
-                                       return;
-                                   }
-
-                                   CurrentPageViewModel =
-                                       PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1];
-                                   CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
-                               }, () => CanGoForward));
+                               async () => { await GoForward(); }, () => CanGoForward));
             }
         }
-
 
         /// <summary>
         ///     Gets the view models of the pages to be shown.
@@ -139,6 +113,23 @@ namespace nUpdate.Administration.ViewModels
                 return _pageViewModels;
             }
             private set => _pageViewModels = value;
+        }
+
+        private void DependencyPropertiesChanged()
+        {
+            var previousPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) > 0;
+            SetValue(CanGoBackPropertyKey, previousPageAvailable && (bool) GetValue(PageCanGoBackProperty) &&
+                                           PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1]
+                                               .CanBeShown);
+
+            var nextPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) < PageViewModels.Count - 1;
+            SetValue(CanGoForwardPropertyKey, (bool) GetValue(PageCanGoForwardProperty) &&
+                                              (!nextPageAvailable ||
+                                               PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1]
+                                                   .CanBeShown));
+
+            GoBackCommand.OnCanExecuteChanged();
+            GoForwardCommand.OnCanExecuteChanged();
         }
 
         private void EnsureObjectState()
@@ -155,6 +146,37 @@ namespace nUpdate.Administration.ViewModels
         /// </summary>
         protected abstract Task<bool> Finish();
 
+        protected virtual Task GoBack()
+        {
+            return new Task(() =>
+            {
+                var oldPageViewModel = CurrentPageViewModel;
+                oldPageViewModel.OnNavigateBack(this);
+                CurrentPageViewModel =
+                    PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
+                CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
+            });
+        }
+
+        protected virtual async Task GoForward()
+        {
+            var oldPageViewModel = CurrentPageViewModel;
+            oldPageViewModel.OnNavigateForward(this);
+
+            // There is no further page which means we are finished with the wizard
+            if (PageViewModels.IndexOf(CurrentPageViewModel) == PageViewModels.Count - 1)
+            {
+                // If no errors occured and everything worked, we can now close the window
+                if (await Finish())
+                    WindowManager.GetCurrentWindow().RequestClose();
+                return;
+            }
+
+            CurrentPageViewModel =
+                PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1];
+            CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
+        }
+
         /// <summary>
         ///     Initialize the pages associated with this window.
         /// </summary>
@@ -163,23 +185,6 @@ namespace nUpdate.Administration.ViewModels
             PageViewModels = new ReadOnlyCollection<PageViewModel>(viewModels);
             CurrentPageViewModel = PageViewModels[0];
             CurrentPageViewModel.OnNavigated(null, this);
-        }
-
-        private void DependencyPropertiesChanged()
-        {
-            var previousPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) > 0;
-            SetValue(CanGoBackPropertyKey, previousPageAvailable && (bool) GetValue(PageCanGoBackProperty) &&
-                                           PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1]
-                                               .CanBeShown);
-
-            var nextPageAvailable = PageViewModels.IndexOf(CurrentPageViewModel) < PageViewModels.Count - 1;
-            SetValue(CanGoForwardPropertyKey, (bool) GetValue(PageCanGoForwardProperty) &&
-                                              (!nextPageAvailable ||
-                                               PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1]
-                                                   .CanBeShown));
-            
-            GoBackCommand.OnCanExecuteChanged();
-            GoForwardCommand.OnCanExecuteChanged();
         }
 
         public void RequestGoBack()

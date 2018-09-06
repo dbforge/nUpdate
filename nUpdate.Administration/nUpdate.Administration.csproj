@@ -100,6 +100,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AttributeHelper.cs" />
     <Compile Include="Infrastructure\ActionCommand.cs" />
     <Compile Include="AesCryptoProvider.cs" />
     <Compile Include="BinarySerializer.cs" />
@@ -108,7 +109,7 @@
     <Compile Include="Infrastructure\EventToCommandBehaviour.cs" />
     <Compile Include="Exceptions\TransferProtocolException.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Infrastructure\Converters\BooleanToEnumConverter.cs" />
+    <Compile Include="Infrastructure\Converters\EnumToBooleanConverter.cs" />
     <Compile Include="PathProvider.cs" />
     <Compile Include="FirstSetupData.cs" />
     <Compile Include="Ftp\FtpData.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="ViewModels\NewProject\FtpDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\GeneralDataPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\HttpDataPageViewModel.cs" />
+    <Compile Include="ViewModels\NewProject\IProtocolPageViewModel.cs" />
     <Compile Include="ViewModels\NewProject\ProtocolSelectionPageViewModel.cs" />
     <Compile Include="ViewModels\ViewManager.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />

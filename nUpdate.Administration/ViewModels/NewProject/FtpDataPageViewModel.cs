@@ -1,5 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System.ComponentModel;
 using nUpdate.Administration.Ftp;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Views;
@@ -8,7 +9,8 @@ using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class FtpDataPageViewModel : PageViewModel
+    [Description("FtpDataPageViewModel")]
+    public class FtpDataPageViewModel : PageViewModel, IProtocolPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private readonly FtpData _transferData;

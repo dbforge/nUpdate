@@ -1,5 +1,8 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System;
+using System.ComponentModel;
+
 namespace nUpdate.Administration.ViewModels
 {
     /// <summary>
@@ -11,6 +14,13 @@ namespace nUpdate.Administration.ViewModels
         private bool _canGoBack;
         private bool _canGoForward;
         private bool _needsUserInteraction = true;
+
+        // TODO: Check the attribute implementation
+        protected PageViewModel()
+        {
+            if (!GetType().IsDefined(typeof(DescriptionAttribute), false))
+                throw new InvalidOperationException("The derived page view model class does not define a DescriptionAttribute.");
+        }
 
         public bool CanBeShown
         {

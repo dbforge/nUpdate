@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Threading.Tasks;
 namespace nUpdate.Administration.ViewModels.NewProject
 {
+    [Description("GenerateKeyPairPageViewModel")]
     public class GenerateKeyPairPageViewModel : PageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;

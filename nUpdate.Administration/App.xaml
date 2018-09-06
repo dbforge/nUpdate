@@ -13,7 +13,7 @@
 
             <!--  Converters  -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:BooleanToEnumConverter x:Key="BooleanToEnumConverter" />
+            <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
 
             <!--  UI resources  -->
             <SolidColorBrush x:Key="BottomPanelBrush" Color="#F0F0F0" />

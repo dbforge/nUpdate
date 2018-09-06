@@ -1,6 +1,9 @@
-﻿namespace nUpdate.Administration.ViewModels.NewProject
+﻿using System.ComponentModel;
+
+namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class HttpDataPageViewModel : PageViewModel
+    [Description("HttpDataPageViewModel")]
+    public class HttpDataPageViewModel : PageViewModel, IProtocolPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
 

@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
 using nUpdate.Administration.Infrastructure;
@@ -8,6 +9,7 @@ using WPFFolderBrowser;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
+    [Description("GeneralDataPageViewModel")]
     public class GeneralDataPageViewModel : PageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
@@ -97,9 +99,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
             var nameAvailable = false;
             var targetDirectory = default(DirectoryInfo);
+            int i = 0;
             while (!nameAvailable)
             {
-                var i = 0;
                 targetDirectory = new DirectoryInfo(Path.Combine(PathProvider.DefaultProjectDirectory,
                     $"NewProject{(i > 0 ? i.ToString() : string.Empty)}"));
                 if (!(nameAvailable = !targetDirectory.Exists))
