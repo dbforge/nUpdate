@@ -44,6 +44,7 @@ namespace nUpdate.Administration.Views.Dialogs
             var hwnd = new WindowInteropHelper(this).Handle;
             NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE,
                 NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE) & ~NativeMethods.WS_SYSMENU);
+            PasswordBox.Focus();
         }
     }
 }
