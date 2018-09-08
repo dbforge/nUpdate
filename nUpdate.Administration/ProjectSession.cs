@@ -2,7 +2,6 @@
 using System.Linq;
 using nUpdate.Administration.Logging;
 using nUpdate.Administration.Proxy;
-using nUpdate.Administration.Sql;
 
 // ReSharper disable InconsistentNaming
 
@@ -49,11 +48,6 @@ namespace nUpdate.Administration
             => AvailableLocations.First(x => x.Guid == ActiveProject.Guid).LastSeenPath;
 
         /// <summary>
-        ///     Gets the <see cref="SqlManager"/> of the <see cref="ProjectSession"/> for managing statistics entries.
-        /// </summary>
-        internal static SqlManager SQLManager { get; private set; }
-
-        /// <summary>
         ///     Gets the <see cref="Proxy.ProxyManager"/> of the <see cref="ProjectSession"/> for managing proxies.
         /// </summary>
         internal static ProxyManager ProxyManager { get; set; }
@@ -75,7 +69,6 @@ namespace nUpdate.Administration
             UpdateFactory = new UpdateFactory(project);
             Logger = new PackageActionLogger(project);
             TransferManager = new TransferManager(project);
-            SQLManager = new SqlManager(project);
             ProxyManager = new ProxyManager();
             PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 

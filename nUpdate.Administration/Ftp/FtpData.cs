@@ -10,7 +10,7 @@ namespace nUpdate.Administration.Ftp
         private object _secret;
 
         [OnDeserialized]
-        private void OnDeserialized()
+        private void OnDeserialized(StreamingContext context)
         {
             Secret = KeyManager.Instance[Identifier];
         }

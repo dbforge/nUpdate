@@ -31,6 +31,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _transferData = new FtpData();
 
             PropertyChanged += (sender, args) => RefreshNavigation();
+            CanGoBack = true;
         }
 
         private void OnDirectoryButtonClick()

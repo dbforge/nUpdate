@@ -152,8 +152,6 @@
     <Compile Include="ServiceProviderHelper.cs" />
     <Compile Include="ShaManager.cs" />
     <Compile Include="Singleton.cs" />
-    <Compile Include="Sql\SqlData.cs" />
-    <Compile Include="Sql\SqlManager.cs" />
     <Compile Include="StatisticsEntryMethod.cs" />
     <Compile Include="StatisticsServer.cs" />
     <Compile Include="TransferManager.cs" />

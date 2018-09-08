@@ -84,7 +84,7 @@ namespace nUpdate.Administration.ViewModels
             {
                 EnsureObjectState();
                 return _goBackCommand ?? (_goBackCommand =
-                           new RelayCommand(async () => { await GoBack(); }, () => CanGoBack));
+                           new RelayCommand(GoBack, () => CanGoBack));
             }
         }
 
@@ -146,16 +146,13 @@ namespace nUpdate.Administration.ViewModels
         /// </summary>
         protected abstract Task<bool> Finish();
 
-        protected virtual Task GoBack()
+        protected virtual void GoBack()
         {
-            return new Task(() =>
-            {
-                var oldPageViewModel = CurrentPageViewModel;
-                oldPageViewModel.OnNavigateBack(this);
-                CurrentPageViewModel =
-                    PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
-                CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
-            });
+            var oldPageViewModel = CurrentPageViewModel;
+            oldPageViewModel.OnNavigateBack(this);
+            CurrentPageViewModel =
+                PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
+            CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
 
         protected virtual async Task GoForward()

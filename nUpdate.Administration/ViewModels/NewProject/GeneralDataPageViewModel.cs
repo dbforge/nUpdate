@@ -125,6 +125,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             _newProjectViewModel.ProjectCreationData.Project.Name = Name;
             _newProjectViewModel.ProjectCreationData.Project.UpdateDirectory = new Uri(UpdateDirectory);
+            _newProjectViewModel.ProjectCreationData.Project.Guid = Guid.NewGuid();
             _newProjectViewModel.ProjectCreationData.Location = Location;
         }
     }

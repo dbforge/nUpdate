@@ -10,6 +10,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
         public HttpDataPageViewModel(NewProjectViewModel viewModel)
         {
             _newProjectViewModel = viewModel;
+            CanGoBack = true;
         }
     }
 }

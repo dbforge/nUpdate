@@ -9,5 +9,10 @@
         {
             InitializeComponent();
         }
+
+        public override void RequestClose()
+        {
+            Close();
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using nUpdate.Administration.ViewModels.NewProject;
@@ -27,20 +28,23 @@ namespace nUpdate.Administration.ViewModels
 
         protected override Task<bool> Finish()
         {
-            throw new NotImplementedException();
+            return new Task<bool>(() =>
+            {
+                ProjectCreationData.Project.PrivateKey = ProjectCreationData.PrivateKey;
+                ProjectCreationData.Project.Save(Path.Combine(ProjectCreationData.Location,
+                    ProjectCreationData.Project.Name + ".nupdproj"));
+                return true;
+            });
         }
 
-        protected override Task GoBack()
+        protected override void GoBack()
         {
-            return new Task(() =>
-            {
-                var oldPageViewModel = CurrentPageViewModel;
-                oldPageViewModel.OnNavigateBack(this);
-                CurrentPageViewModel = oldPageViewModel.GetType() == typeof(IProtocolPageViewModel)
-                    ? PageViewModels.First(x => x.GetType() == typeof(ProtocolSelectionPageViewModel))
-                    : PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
-                CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
-            });
+            var oldPageViewModel = CurrentPageViewModel;
+            oldPageViewModel.OnNavigateBack(this);
+            CurrentPageViewModel = oldPageViewModel is IProtocolPageViewModel
+                ? PageViewModels.First(x => x.GetType() == typeof(ProtocolSelectionPageViewModel))
+                : PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
+            CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
 
         protected override async Task GoForward()
@@ -67,9 +71,15 @@ namespace nUpdate.Administration.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            else if (oldPageViewModel.GetType() == typeof(IProtocolPageViewModel))
+            else if (oldPageViewModel is IProtocolPageViewModel)
             {
                 // TODO: Add page after protocol-specific pages
+                // If no errors occured and everything worked, we can now close the window
+                var t = Finish();
+                t.RunSynchronously();
+                if (t.Result)
+                    WindowManager.GetCurrentWindow().RequestClose();
+                return;
             }
             else
             {
@@ -77,7 +87,9 @@ namespace nUpdate.Administration.ViewModels
                 if (PageViewModels.IndexOf(CurrentPageViewModel) == PageViewModels.Count - 1)
                 {
                     // If no errors occured and everything worked, we can now close the window
-                    if (await Finish())
+                    var t = Finish();
+                    t.RunSynchronously();
+                    if (t.Result)
                         WindowManager.GetCurrentWindow().RequestClose();
                     return;
                 }

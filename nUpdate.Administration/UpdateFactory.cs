@@ -41,13 +41,13 @@ namespace nUpdate.Administration
             var masterChannel =
                 await
                     UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectory, "masterchannel.json"),
-                        _project.ProxyData.Proxy);
+                        null);
             var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
             if (destinationChannel == null)
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, null)).ToList();
             updatePackages.Add(updatePackage);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(updatePackages))))
@@ -103,13 +103,13 @@ namespace nUpdate.Administration
             var masterChannel =
                 await
                     UpdateChannel.GetMasterChannel(new Uri(_project.UpdateDirectory, "masterchannel.json"),
-                        _project.ProxyData.Proxy);
+                        null);
             var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updateChannelName);
             if (destinationChannel == null)
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, null)).ToList();
             var destinationPackage =
                 updatePackages.FirstOrDefault(item => item.Version.Equals(updateVersion));
             if (destinationPackage != null)

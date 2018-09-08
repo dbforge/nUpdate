@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Logging;
-using nUpdate.Administration.Sql;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
@@ -18,47 +17,25 @@ namespace nUpdate.Administration
     ///     Represents a local update project.
     /// </summary>
     [Serializable]
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class UpdateProject : Model
     {
-        private string _assemblyVersionPath;
         private List<UpdateChannel> _channels;
         private Guid _guid;
         private List<PackageActionLogData> _logData;
         private string _name;
         private List<UpdatePackage> _packages;
         private string _privateKey;
-        private ProxyData _proxyData;
         private string _publicKey;
-        private SqlData _sqlData;
         private string _transferAssemblyFilePath;
         private ITransferData _transferData;
         private TransferProtocol _transferProtocol;
         private Uri _updateDirectoryUri;
-        private bool _useProxy;
-        private bool _useStatistics;
-
-        /// <summary>
-        ///     Gets or sets the path of the file containing the <see cref="System.Reflection.Assembly" /> of the .NET project that
-        ///     should be updated.
-        /// </summary>
-        public string AssemblyVersionPath
-        {
-            get => _assemblyVersionPath;
-            set
-            {
-                _assemblyVersionPath = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the version of the project file.
-        /// </summary>
-        public Version Version => new Version(4, 0);
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the project.
         /// </summary>
+        [JsonProperty]
         public Guid Guid
         {
             get => _guid;
@@ -78,6 +55,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the <see cref="PackageActionLogData" /> that carries information about the package history.
         /// </summary>
+        [JsonProperty]
         public List<PackageActionLogData> LogData
         {
             get => _logData;
@@ -91,6 +69,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the master channel of the project.
         /// </summary>
+        [JsonProperty]
         public List<UpdateChannel> MasterChannel
         {
             get => _channels;
@@ -104,6 +83,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the name of the project.
         /// </summary>
+        [JsonProperty]
         public string Name
         {
             get => _name;
@@ -117,6 +97,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the available <see cref="UpdatePackage" />s of the project.
         /// </summary>
+        [JsonProperty]
         public List<UpdatePackage> Packages
         {
             get => _packages;
@@ -142,21 +123,9 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Administration.ProxyData" /> that carries the necessary information for proxies.
-        /// </summary>
-        public ProxyData ProxyData
-        {
-            get => _proxyData;
-            set
-            {
-                _proxyData = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         ///     Gets or sets the public key of the project.
         /// </summary>
+        [JsonProperty]
         public string PublicKey
         {
             get => _publicKey;
@@ -168,21 +137,9 @@ namespace nUpdate.Administration
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Sql.SqlData" /> that carries the necessary information for statistics entries.
-        /// </summary>
-        public SqlData SqlData
-        {
-            get => _sqlData;
-            set
-            {
-                _sqlData = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         ///     Gets or sets the path of the file containing an assembly that implements a custom transfer protocol.
         /// </summary>
+        [JsonProperty]
         public string TransferAssemblyFilePath
         {
             get => _transferAssemblyFilePath;
@@ -210,6 +167,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the <see cref="Administration.TransferProtocol" /> that should be used for data transfers.
         /// </summary>
+        [JsonProperty]
         public TransferProtocol TransferProtocol
         {
             get => _transferProtocol;
@@ -223,38 +181,13 @@ namespace nUpdate.Administration
         /// <summary>
         ///     Gets or sets the <see cref="Uri" /> of the local or remote update directory of the project.
         /// </summary>
+        [JsonProperty]
         public Uri UpdateDirectory
         {
             get => _updateDirectoryUri;
             set
             {
                 _updateDirectoryUri = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether a proxy should be used for data transfers, or not.
-        /// </summary>
-        public bool UseProxy
-        {
-            get => _useProxy;
-            set
-            {
-                _useProxy = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether a statistics server should be used for the project, or not.
-        /// </summary>
-        public bool UseStatistics
-        {
-            get => _useStatistics;
-            set
-            {
-                _useStatistics = value;
                 OnPropertyChanged();
             }
         }
@@ -270,9 +203,7 @@ namespace nUpdate.Administration
             var currentProjectEntry =
                 ProjectSession.AvailableLocations.FirstOrDefault(item => item.Guid == updateProject.Guid);
             if (currentProjectEntry == null)
-            {
                 ProjectSession.AvailableLocations.Add(new UpdateProjectLocation(updateProject.Guid, path));
-            }
             else
             {
                 if (currentProjectEntry.LastSeenPath != path)
@@ -296,15 +227,12 @@ namespace nUpdate.Administration
             var updateProjectLocation = ProjectSession.AvailableLocations.FirstOrDefault(loc => loc.Guid == Guid);
             if (updateProjectLocation != null)
                 File.WriteAllText(updateProjectLocation.LastSeenPath, JsonSerializer.Serialize(this));
+            // TODO: Handle case that path is null
         }
 
-        /// <summary>
-        ///     Saves the current <see cref="UpdateProject" /> at the specified path using its name as file identifier.
-        /// </summary>
         public void Save(string path)
         {
-            string filename = Name + ".nupdproj";
-            File.WriteAllText(Path.Combine(path, filename), JsonSerializer.Serialize(this));
+            File.WriteAllText(path, JsonSerializer.Serialize(this));
         }
     }
 }

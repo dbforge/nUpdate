@@ -14,7 +14,13 @@ namespace nUpdate
         /// <summary>
         ///     The default key size in bits.
         /// </summary>
-        public const int DefaultKeySize = 8192;
+        public const int DefaultKeySize =
+#if DEBUG
+            8192
+#else
+            1024
+#endif
+        ;
 
         private readonly RSACryptoServiceProvider _rsa;
 
