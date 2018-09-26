@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nUpdate.Test</RootNamespace>
     <AssemblyName>nUpdate.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -89,7 +89,7 @@
       <Name>nUpdate.Administration</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
-      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
+      <Project>{e68dd6c6-82dd-4837-bc94-431e6c41b6fe}</Project>
       <Name>nUpdate</Name>
     </ProjectReference>
   </ItemGroup>

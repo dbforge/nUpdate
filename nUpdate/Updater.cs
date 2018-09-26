@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using nUpdate.Exceptions;
 using nUpdate.Localization;
 using nUpdate.Operations;
-using nUpdate.Properties;
 using Newtonsoft.Json;
 using NLog;
 
@@ -217,20 +216,21 @@ namespace nUpdate
                 Directory.Delete(unpackerDirectory, true);
             Directory.CreateDirectory(unpackerDirectory);
 
-            if (!File.Exists(unpackerZipPath))
-                File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
+            //TODO: Fix this code
+            //if (!File.Exists(unpackerZipPath))
+            //    File.WriteAllBytes(unpackerZipPath, Resources.Ionic_Zip);
 
-            if (!File.Exists(guiInterfacePath))
-                File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
+            //if (!File.Exists(guiInterfacePath))
+            //    File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
 
-            if (!File.Exists(jsonNetPath))
-                File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
+            //if (!File.Exists(jsonNetPath))
+            //    File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
 
-            if (!File.Exists(jsonNetPdbPath))
-                File.WriteAllBytes(jsonNetPdbPath, Resources.Newtonsoft_Json_Pdb);
+            //if (!File.Exists(jsonNetPdbPath))
+            //    File.WriteAllBytes(jsonNetPdbPath, Resources.Newtonsoft_Json_Pdb);
 
-            if (!File.Exists(unpackerAppPath))
-                File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
+            //if (!File.Exists(unpackerAppPath))
+            //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller);
 
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
