@@ -84,6 +84,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj">
+      <Project>{0a1f6926-5b7b-4240-a539-951acfdc980c}</Project>
+      <Name>nUpdate.Administration.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\nUpdate.Administration\nUpdate.Administration.csproj">
       <Project>{5a553cc2-3f8a-45a7-94ce-0771f3f041e1}</Project>
       <Name>nUpdate.Administration</Name>

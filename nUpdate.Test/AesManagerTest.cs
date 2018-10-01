@@ -1,9 +1,8 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using System.Diagnostics;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Administration;
+using nUpdate.Administration.Common;
 
 namespace nUpdate.Test
 {

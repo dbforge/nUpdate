@@ -1,7 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace nUpdate.Test

@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using nUpdate.Administration.ViewModels;
+using nUpdate.Administration.ViewModels.Providers;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views
@@ -13,6 +15,7 @@ namespace nUpdate.Administration.Views
         public FirstRunWindow()
         {
             InitializeComponent();
+            DataContext = new FirstRunViewModel(FirstRunProvider.Instance);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

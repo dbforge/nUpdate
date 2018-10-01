@@ -16,9 +16,9 @@ namespace nUpdate
         /// </summary>
         public const int DefaultKeySize =
 #if DEBUG
-            8192
-#else
             1024
+#else
+            8192
 #endif
         ;
 

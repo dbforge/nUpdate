@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using nUpdate.Win32;
 
-namespace nUpdate
+namespace nUpdate.UI.WinForms
 {
     internal class IconHelper
     {

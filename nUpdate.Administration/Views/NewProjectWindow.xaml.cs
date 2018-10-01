@@ -1,4 +1,7 @@
-﻿namespace nUpdate.Administration.Views
+﻿using nUpdate.Administration.ViewModels;
+using nUpdate.Administration.ViewModels.Providers;
+
+namespace nUpdate.Administration.Views
 {
     /// <summary>
     /// Interaction logic for NewProjectWindow.xaml
@@ -8,6 +11,7 @@
         public NewProjectWindow()
         {
             InitializeComponent();
+            DataContext = new NewProjectViewModel(NewProjectProvider.Instance);
         }
 
         public override void RequestClose()

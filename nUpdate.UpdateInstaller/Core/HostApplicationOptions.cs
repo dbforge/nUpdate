@@ -1,4 +1,4 @@
-﻿namespace nUpdate
+﻿namespace nUpdate.UpdateInstaller.Core
 {
     /// <summary>
     ///     Represents different behaviours of the host application when the update installation is started.

@@ -2,12 +2,11 @@
     x:Class="nUpdate.Administration.Views.NewProject.ProtocolSelectionPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:administration="clr-namespace:nUpdate.Administration"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:nUpdate.Administration.Views.NewProject"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-    d:DataContext="{d:DesignInstance newProject:ProtocolSelectionPageViewModel}"
+    xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
+    xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+    d:DataContext="{d:DesignInstance newProject1:ProtocolSelectionPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
     Background="White"
@@ -26,15 +25,15 @@
                 Text="Please select the protocol that you want to use for exchanging data with the server."
                 TextWrapping="Wrap" />
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-                <RadioButton Content="HTTP(S) + PHP (recommended)" IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.HTTP}}" />
+                <RadioButton Content="HTTP(S) + PHP (recommended)" IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:TransferProtocol.HTTP}}" />
                 <RadioButton
                     Margin="10,0,0,0"
                     Content="FTP(S)"
-                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.FTP}}" />
+                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:TransferProtocol.FTP}}" />
                 <RadioButton
                     Margin="10,0,0,0"
                     Content="Custom"
-                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static administration:TransferProtocol.Custom}}" />
+                    IsChecked="{Binding Path=TransferProtocol, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:TransferProtocol.Custom}}" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

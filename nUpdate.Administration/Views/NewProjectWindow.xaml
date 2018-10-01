@@ -5,18 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProjectViewModels="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-    xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
+    xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels;assembly=nUpdate.Administration.ViewModels"
     Title="New project - nUpdate Administration v4.0"
     Width="520"
     Height="310"
+    d:DataContext="{d:DesignInstance newProject:NewProjectViewModel}"
     Icon="/./Icons/nUpdate.ico"
     ResizeMode="NoResize"
     mc:Ignorable="d">
-
-    <Window.DataContext>
-        <viewModels:NewProjectViewModel />
-    </Window.DataContext>
 
     <Window.Resources>
         <newProjectViewModels:NewProjectViewManager x:Key="NewProjectViewManager" />

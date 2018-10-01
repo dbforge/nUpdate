@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using nUpdate.Administration.Common;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs

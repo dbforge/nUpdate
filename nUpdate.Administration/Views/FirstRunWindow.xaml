@@ -15,10 +15,6 @@
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
-    <Window.DataContext>
-        <viewModels:FirstRunViewModel />
-    </Window.DataContext>
-
     <Window.Resources>
         <firstRun:FirstRunViewManager x:Key="FirstRunViewManager" />
     </Window.Resources>

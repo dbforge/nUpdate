@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
+﻿using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace nUpdate.Test

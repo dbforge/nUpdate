@@ -3,10 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-      d:DataContext="{d:DesignInstance newProject:HttpDataPageViewModel}"
+      xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+      d:DataContext="{d:DesignInstance newProject1:HttpDataPageViewModel}"
       mc:Ignorable="d" 
       d:DesignHeight="230" d:DesignWidth="520"
+      Background="White"
       Title="HttpDataPage">
 
     <DockPanel Margin="20">
@@ -51,6 +52,39 @@
                        Foreground="Gray"
                        IsHitTestVisible="False"
                        Text="https://www.example.com/updates/transfer.php">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=ScriptUriTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       Padding="5"
+                       Text="Username:" />
+            <TextBox x:Name="UsernameTextBox"
+                     Grid.Row="2"
+                     Grid.Column="2"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="Black"
+                     Padding="5,0"
+                     Text="{Binding Name,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="2"
+                       Grid.Column="2"
+                       Margin="5,5,0,5"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="Gray"
+                       IsHitTestVisible="False"
+                       Text="user1">
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                         <Setter Property="Visibility" Value="Collapsed" />

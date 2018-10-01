@@ -2,12 +2,11 @@
     x:Class="nUpdate.Administration.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:administration="clr-namespace:nUpdate.Administration"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
+    xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
     Title="nUpdate Administration 4.0.0"
     Width="707.325"
     Height="465.565"
@@ -19,9 +18,6 @@
             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Window.DataContext>
-        <viewModels:MainWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <SolidColorBrush x:Key="GroupSplitterBrush" Color="Gainsboro" />
     </Window.Resources>
@@ -76,16 +72,16 @@
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static administration:MainMenuGroup.Projects}">
+                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Projects}">
                                                                     <Setter Property="Text" Value="Projects" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static administration:MainMenuGroup.KeyDatabase}">
+                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.KeyDatabase}">
                                                                     <Setter Property="Text" Value="Key database" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static administration:MainMenuGroup.Statistics}">
+                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Statistics}">
                                                                     <Setter Property="Text" Value="Statistics" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static administration:MainMenuGroup.Application}">
+                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Application}">
                                                                     <Setter Property="Text" Value="Application" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -109,7 +105,7 @@
                 </GroupStyle>
             </ItemsControl.GroupStyle>
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
+                <DataTemplate DataType="{x:Type common:MainMenuItem}">
                     <Button
                         Width="Auto"
                         Margin="10,0,0,0"
@@ -135,7 +131,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image
+                            <!--<Image
                                 Width="24"
                                 Height="24"
                                 VerticalAlignment="Center"
@@ -149,7 +145,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Image.Style>
-                            </Image>
+                            </Image>-->
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
