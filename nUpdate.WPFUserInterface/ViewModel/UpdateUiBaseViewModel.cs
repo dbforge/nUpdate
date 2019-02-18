@@ -11,24 +11,23 @@ namespace nUpdate.WPFUserInterface.ViewModel
     {
         internal UpdateManager UpdateManager { get; set; }
 
-        public BitmapImage WindowIcon { get; set;}
+        public BitmapImage WindowIcon { get; set; }
 
 
         internal BitmapImage GetIcon(Icon icon)
         {
-            using(MemoryStream memory = new MemoryStream())
+            using (var memory = new MemoryStream())
             {
                 var bitmap = icon.ToBitmap();
                 bitmap.Save(memory, ImageFormat.Png);
                 memory.Position = 0;
-                BitmapImage bitmapImage = new BitmapImage();
+                var bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();
                 bitmapImage.StreamSource = memory;
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.EndInit();
-                return  bitmapImage;
+                return bitmapImage;
             }
         }
-
     }
 }

@@ -5,23 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:nUpdate.UI.Windows"
         xmlns:viewModel="clr-namespace:nUpdate.WPFUserInterface.ViewModel"
-        
+
         xmlns:userControls="clr-namespace:nUpdate.WPFUserInterface.UI.UserControls"
         mc:Ignorable="d" WindowStyle="ToolWindow"
         Title="DialogWindow" Height="450" Width="800">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:UpdateSearchViewModel}">
-            <userControls:uclUpdateSearch DataContext="{Binding}"/>
+            <userControls:uclUpdateSearch DataContext="{Binding}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:ChangelogViewModel}">
-            <userControls:uclChangelogView DataContext="{Binding}"/>
+            <userControls:uclChangelogView DataContext="{Binding}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:DownloadUpdateViewModel}">
-            <userControls:uclDownloadUpdate DataContext="{Binding}"/>
+            <userControls:uclDownloadUpdate DataContext="{Binding}" />
         </DataTemplate>
-        
+
     </Window.Resources>
     <Grid>
-        <ContentPresenter Content="{Binding}"/>
+        <ContentPresenter Content="{Binding}" />
     </Grid>
 </Window>

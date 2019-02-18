@@ -10,13 +10,13 @@ using nUpdate.Exceptions;
 using nUpdate.Internal.Core;
 using nUpdate.UpdateEventArgs;
 
+// ReSharper disable once CheckNamespace
 namespace nUpdate.Updating
 {
-   
     /// <summary>
     ///     Provides functionality to update .NET-applications.
     /// </summary>
-    public partial class UpdateManager 
+    public partial class UpdateManager
     {
         /// <summary>
         ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
@@ -86,7 +86,7 @@ namespace nUpdate.Updating
                                     continue;
 
                                 var response =
-                                    new WebClient { Credentials = HttpAuthenticationCredentials }.DownloadString(
+                                    new WebClient {Credentials = HttpAuthenticationCredentials}.DownloadString(
                                         $"{updateConfiguration.UpdatePhpFileUri}?versionid={updateConfiguration.VersionId}&os={SystemInformation.OperatingSystemName}"); // Only for calling it
 
                                 if (string.IsNullOrEmpty(response))
@@ -222,7 +222,7 @@ namespace nUpdate.Updating
                     SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
-                IncludeAlpha, IncludeBeta,Conditions);
+                IncludeAlpha, IncludeBeta, Conditions);
             if (!result.UpdatesFound)
                 return false;
 
@@ -273,7 +273,7 @@ namespace nUpdate.Updating
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
-                    IncludeAlpha, IncludeBeta,Conditions);
+                    IncludeAlpha, IncludeBeta, Conditions);
                 if (!result.UpdatesFound)
                     return false;
 

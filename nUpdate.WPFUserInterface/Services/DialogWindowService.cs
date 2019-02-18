@@ -6,9 +6,10 @@ using nUpdate.WPFUserInterface.ViewModel.Interfaces;
 // ReSharper disable once CheckNamespace
 namespace nUpdate.WPFUserInterface.Services
 {
-    class DialogWindowService : IDialogWindowService
+    internal class DialogWindowService : IDialogWindowService
     {
         private DialogWindow _currentWindow;
+
         public void ShowDialog(string windowname, IDialogViewModel datacontext)
         {
             _currentWindow = new DialogWindow(datacontext)
@@ -18,7 +19,7 @@ namespace nUpdate.WPFUserInterface.Services
                 WindowStyle = WindowStyle.SingleBorderWindow,
                 ResizeMode = ResizeMode.NoResize,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen
-                };
+            };
             _currentWindow.ShowDialog();
         }
 
@@ -26,7 +27,5 @@ namespace nUpdate.WPFUserInterface.Services
         {
             _currentWindow.Close();
         }
-
-       
     }
 }

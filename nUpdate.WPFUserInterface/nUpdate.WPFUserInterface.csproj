@@ -71,9 +71,6 @@
     <Compile Include="UI\UserControls\uclDownloadUpdate.xaml.cs">
       <DependentUpon>uclDownloadUpdate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\UserControls\uclInstallUpdates.xaml.cs">
-      <DependentUpon>uclInstallUpdates.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\UserControls\uclUpdateSearch.xaml.cs">
       <DependentUpon>uclUpdateSearch.xaml</DependentUpon>
     </Compile>
@@ -104,10 +101,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\UserControls\uclDownloadUpdate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\UserControls\uclInstallUpdates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

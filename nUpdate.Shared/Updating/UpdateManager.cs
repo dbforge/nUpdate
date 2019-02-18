@@ -159,9 +159,9 @@ namespace nUpdate.Updating
         public bool IncludeCurrentPcIntoStatistics { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the additional conditions that determine whether an update should be loaded or not.
+        ///     Gets or sets the additional conditions that determine whether an update should be loaded or not.
         /// </summary>
-        public List<KeyValuePair<string,string>> Conditions {get; set;}
+        public List<KeyValuePair<string, string>> Conditions { get; set; }
 
         /// <summary>
         ///     Gets or sets the culture of the language to use.
@@ -399,7 +399,7 @@ namespace nUpdate.Updating
 
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
-            
+
             string[] args =
             {
                 $"\"{string.Join("%", _packageFilePaths.Select(item => item.Value))}\"",
