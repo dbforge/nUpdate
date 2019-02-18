@@ -7,6 +7,5 @@ namespace nUpdate.WPFUserInterface.ServiceInterfaces
     {
         void ShowDialog(string windowname, IDialogViewModel datacontext);
         void CloseDialog();
-        
     }
 }

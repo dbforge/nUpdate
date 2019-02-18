@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using nUpdate.Exceptions;
@@ -8,15 +9,19 @@ using nUpdate.UpdateEventArgs;
 using nUpdate.Updating;
 using nUpdate.WPFUserInterface.ServiceInterfaces;
 using nUpdate.WPFUserInterface.ViewModel.Interfaces;
-using Application = System.Windows.Forms.Application;
 
 // ReSharper disable once CheckNamespace
 namespace nUpdate.WPFUserInterface.ViewModel
 {
     public class DownloadUpdateViewModel : UpdateUiBaseViewModel, IDialogViewModel
     {
+        private string _infoText;
+        private float _progressPercentage;
 
-        
+
+        private bool _refreshProgress;
+
+
         public DownloadUpdateViewModel(UpdateManager manager)
         {
             UpdateManager = manager;
@@ -33,17 +38,11 @@ namespace nUpdate.WPFUserInterface.ViewModel
                 LocProperties.UpdateDownloadDialogLoadingInfo, "0");
         }
 
-        
-        
-        public bool DialogResult { get; set; }
-        public string WindowTitle { get; set; }
-        public Dispatcher CurrentDispatcher { get; set; }
         public LocalizationProperties LocProperties { get; }
 
-        private string _infoText;
         public string InfoText
         {
-            get { return _infoText; }
+            get => _infoText;
             set
             {
                 _infoText = value;
@@ -51,9 +50,6 @@ namespace nUpdate.WPFUserInterface.ViewModel
             }
         }
 
-
-        private bool _refreshProgress;
-        private float _progressPercentage;
         public float ProgressPercentage
         {
             get => _progressPercentage;
@@ -61,15 +57,23 @@ namespace nUpdate.WPFUserInterface.ViewModel
             {
                 if (_refreshProgress)
                 {
-                    _progressPercentage = (int)value;
+                    _progressPercentage = (int) value;
                     InfoText = string.Format(UpdateManager.LanguageCulture,
                         LocProperties.UpdateDownloadDialogLoadingInfo, Math.Round(value, 1));
                     RaisePropertyChanged();
                 }
+
                 _refreshProgress = !_refreshProgress;
             }
         }
 
+
+        public ICommand Abort { get; }
+
+
+        public bool DialogResult { get; set; }
+        public string WindowTitle { get; set; }
+        public Dispatcher CurrentDispatcher { get; set; }
 
 
         public async void DialogLoaded()
@@ -88,13 +92,15 @@ namespace nUpdate.WPFUserInterface.ViewModel
             catch (StatisticsException ex)
             {
                 var msgService = ServiceContainer.Instance.GetService<IMessageboxService>();
-                msgService.Show($"Error while adding a new statistics entry.  {ex.Message}", "Error", EnuMessageBoxButton.Ok,
+                msgService.Show($"Error while adding a new statistics entry.  {ex.Message}", "Error",
+                    EnuMessageBoxButton.Ok,
                     EnuMessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
                 var msgService = ServiceContainer.Instance.GetService<IMessageboxService>();
-                msgService.Show($"Error while downloading the update package. {ex.Message}", "Error", EnuMessageBoxButton.Ok,
+                msgService.Show($"Error while downloading the update package. {ex.Message}", "Error",
+                    EnuMessageBoxButton.Ok,
                     EnuMessageBoxImage.Error);
                 DialogResult = false;
                 return;
@@ -111,9 +117,6 @@ namespace nUpdate.WPFUserInterface.ViewModel
             if (!DialogResult) UpdateManager.CancelDownloadAsync();
         }
 
-        
-        public ICommand Abort { get; }
-
         private void Abort_Execute()
         {
             DialogResult = false;
@@ -121,6 +124,5 @@ namespace nUpdate.WPFUserInterface.ViewModel
                 .GetService<IDialogWindowService>();
             dialogService.CloseDialog();
         }
-
     }
 }

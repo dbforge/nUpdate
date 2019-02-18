@@ -10,7 +10,6 @@ using nUpdate.WPFUserInterface.ViewModel;
 // ReSharper disable once CheckNamespace
 namespace nUpdate.Updating
 {
-
     public sealed partial class UpdaterUI
     {
         /// <summary>
@@ -27,7 +26,7 @@ namespace nUpdate.Updating
             var dialogService = ServiceContainer.Instance.GetService<IDialogWindowService>();
             var messageboxService = ServiceContainer.Instance.GetService<IMessageboxService>();
 
-            LocalizationProperties lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
+            var lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
                 UpdateManager.CultureFilePaths);
 
 
@@ -42,7 +41,8 @@ namespace nUpdate.Updating
 
                     if (!vmUpdateSearch.UpdatesFound)
                     {
-                        messageboxService.Show(lp.NoUpdateDialogInfoText, lp.NoUpdateDialogHeader, EnuMessageBoxButton.Ok,
+                        messageboxService.Show(lp.NoUpdateDialogInfoText, lp.NoUpdateDialogHeader,
+                            EnuMessageBoxButton.Ok,
                             EnuMessageBoxImage.Information);
                         return;
                     }
@@ -61,12 +61,12 @@ namespace nUpdate.Updating
                     }
                 }
 
-                var vmChangelog = new WPFUserInterface.ViewModel.ChangelogViewModel(UpdateManager);
+                var vmChangelog = new ChangelogViewModel(UpdateManager);
                 dialogService.ShowDialog("showChangelog", vmChangelog);
 
                 if (!vmChangelog.DialogResult) return;
 
-                var vmDownload = new WPFUserInterface.ViewModel.DownloadUpdateViewModel(UpdateManager);
+                var vmDownload = new DownloadUpdateViewModel(UpdateManager);
                 dialogService.ShowDialog("downloadUpdates", vmDownload);
 
                 if (!vmDownload.DialogResult) return;
@@ -78,13 +78,15 @@ namespace nUpdate.Updating
                 }
                 catch (FileNotFoundException)
                 {
-                    messageboxService.Show(lp.PackageNotFoundErrorText, lp.PackageValidityCheckErrorCaption, EnuMessageBoxButton.Ok,
+                    messageboxService.Show(lp.PackageNotFoundErrorText, lp.PackageValidityCheckErrorCaption,
+                        EnuMessageBoxButton.Ok,
                         EnuMessageBoxImage.Error);
                     return;
                 }
                 catch (ArgumentException)
                 {
-                    messageboxService.Show(lp.InvalidSignatureErrorText, lp.PackageValidityCheckErrorCaption, EnuMessageBoxButton.Ok,
+                    messageboxService.Show(lp.InvalidSignatureErrorText, lp.PackageValidityCheckErrorCaption,
+                        EnuMessageBoxButton.Ok,
                         EnuMessageBoxImage.Error);
                     return;
                 }
@@ -96,10 +98,9 @@ namespace nUpdate.Updating
                 }
 
                 if (!valid)
-                {
-                    messageboxService.Show(lp.SignatureNotMatchingErrorText, lp.InvalidSignatureErrorCaption, EnuMessageBoxButton.Ok,
+                    messageboxService.Show(lp.SignatureNotMatchingErrorText, lp.InvalidSignatureErrorCaption,
+                        EnuMessageBoxButton.Ok,
                         EnuMessageBoxImage.Error);
-                }
 
                 else
                     try
@@ -108,7 +109,8 @@ namespace nUpdate.Updating
                     }
                     catch (Exception ex)
                     {
-                        messageboxService.Show($"{lp.SignatureNotMatchingErrorText} Error: {ex}", lp.InvalidSignatureErrorCaption, EnuMessageBoxButton.Ok,
+                        messageboxService.Show($"{lp.SignatureNotMatchingErrorText} Error: {ex}",
+                            lp.InvalidSignatureErrorCaption, EnuMessageBoxButton.Ok,
                             EnuMessageBoxImage.Error);
                     }
             }

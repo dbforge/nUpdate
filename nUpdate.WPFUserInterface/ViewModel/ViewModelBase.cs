@@ -10,16 +10,23 @@ namespace nUpdate.WPFUserInterface.ViewModel
 {
     public class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
+        private static readonly List<string> HostProcesses = new List<string> {"XDesProc", "devenv", "WDExpress"};
 
-        private static readonly List<String> HostProcesses = new List<string>{"XDesProc", "devenv", "WDExpress"};
+        private bool _disposedValue;
 
         public bool IsInDesignMode
         {
             get
             {
-                bool ret = HostProcesses.Contains(Process.GetCurrentProcess().ProcessName);
+                var ret = HostProcesses.Contains(Process.GetCurrentProcess().ProcessName);
                 return ret;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
 
@@ -31,28 +38,19 @@ namespace nUpdate.WPFUserInterface.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
+        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        bool _disposedValue;
 
         public virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
-            {
                 if (disposing)
                 {
-
                 }
-            }
-            _disposedValue = true;
-        }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _disposedValue = true;
         }
     }
 }

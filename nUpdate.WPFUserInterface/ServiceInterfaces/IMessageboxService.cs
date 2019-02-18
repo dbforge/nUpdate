@@ -1,11 +1,12 @@
 ﻿// ReSharper disable once CheckNamespace
+
 namespace nUpdate.WPFUserInterface.ServiceInterfaces
 {
     public interface IMessageboxService
     {
         EnuMessageBoxResult Show(string message, string title, EnuMessageBoxButton buttons = 0,
             EnuMessageBoxImage image = 0);
-        }
+    }
 
     public enum EnuMessageBoxResult
     {
@@ -32,5 +33,4 @@ namespace nUpdate.WPFUserInterface.ServiceInterfaces
         Warning = 48,
         Information = 64
     }
-
 }

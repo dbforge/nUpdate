@@ -13,7 +13,7 @@ namespace nUpdate.Updating
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdaterUI" />-class.
         /// </summary>
-        /// <param name="updateManager">The instance of the <see cref="Updating.UpdateManager" /> to handle over.</param>
+        /// <param name="updateManager">The instance of the <see cref="UpdateManager" /> to handle over.</param>
         /// <param name="context">The synchronization context to use.</param>
         public UpdaterUI(UpdateManager updateManager, SynchronizationContext context)
             : this(updateManager, context, false)
@@ -45,7 +45,7 @@ namespace nUpdate.Updating
         internal SynchronizationContext Context { get; set; }
 
         /// <summary>
-        ///     Gets or sets the given instance of the <see cref="Updating.UpdateManager" />-class.
+        ///     Gets or sets the given instance of the <see cref="UpdateManager" />-class.
         /// </summary>
         internal UpdateManager UpdateManager { get; set; }
 

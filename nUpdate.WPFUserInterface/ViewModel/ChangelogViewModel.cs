@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -20,10 +19,8 @@ namespace nUpdate.WPFUserInterface.ViewModel
         private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
 
 
-
         public ChangelogViewModel(UpdateManager manager)
         {
-
             UpdateManager = manager;
 
             DoInstall = new RelayCommand(o => DoInstall_Execute(), o => true);
@@ -39,7 +36,8 @@ namespace nUpdate.WPFUserInterface.ViewModel
                     : LocProperties.NewUpdateDialogSingleUpdateHeader, UpdateManager.PackageConfigurations.Count());
 
             WindowIcon = GetIcon(_appIcon);
-            WindowTitle = string.Format(LocProperties.NewUpdateDialogSingleUpdateHeader, UpdateManager.PackageConfigurations.Count());
+            WindowTitle = string.Format(LocProperties.NewUpdateDialogSingleUpdateHeader,
+                UpdateManager.PackageConfigurations.Count());
 
             InfoText = string.Format(LocProperties.NewUpdateDialogInfoText, Application.ProductName);
             var availableVersions =
@@ -51,7 +49,7 @@ namespace nUpdate.WPFUserInterface.ViewModel
             CurrentVersionText = string.Format(LocProperties.NewUpdateDialogCurrentVersionText,
                 UpdateManager.CurrentVersion.FullText);
 
-            var size = SizeHelper.ConvertSize((long)UpdateManager.TotalSize);
+            var size = SizeHelper.ConvertSize((long) UpdateManager.TotalSize);
             UpdateSizeText = $"{string.Format(LocProperties.NewUpdateDialogSizeText, size)}";
 
             foreach (var updateConfiguration in UpdateManager.PackageConfigurations)
@@ -65,6 +63,7 @@ namespace nUpdate.WPFUserInterface.ViewModel
                     string.Format(string.IsNullOrEmpty(ChangelogText) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
                         versionText, changelogText);
             }
+
             if (OperationAreas == null || OperationAreas.Count == 0)
             {
                 AccessesText = $"{LocProperties.NewUpdateDialogAccessText} -";
@@ -74,14 +73,6 @@ namespace nUpdate.WPFUserInterface.ViewModel
             AccessesText =
                 $"{LocProperties.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(LocProperties, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
         }
-
-
-
-        public bool DialogResult { get; set; }
-        public string WindowTitle { get; set; }
-        public Dispatcher CurrentDispatcher { get; set; }
-        public void DialogLoaded() { }
-        public void DialogClosing() { }
 
         public LocalizationProperties LocProperties { get; }
         public List<OperationArea> OperationAreas { get; set; }
@@ -94,32 +85,44 @@ namespace nUpdate.WPFUserInterface.ViewModel
         public string UpdateSizeText { get; }
 
 
-
         public ICommand DoInstall { get; }
+
+
+        public ICommand Abort { get; }
+
+
+        public bool DialogResult { get; set; }
+        public string WindowTitle { get; set; }
+        public Dispatcher CurrentDispatcher { get; set; }
+
+        public void DialogLoaded()
+        {
+        }
+
+        public void DialogClosing()
+        {
+        }
 
         private void DoInstall_Execute()
         {
             if (!SizeHelper.HasEnoughSpace(UpdateManager.TotalSize, out var necessarySpaceToFree))
             {
-                var packageSizeString = SizeHelper.ConvertSize((long)UpdateManager.TotalSize);
-                var spaceToFreeString = SizeHelper.ConvertSize((long)necessarySpaceToFree);
+                var packageSizeString = SizeHelper.ConvertSize((long) UpdateManager.TotalSize);
+                var spaceToFreeString = SizeHelper.ConvertSize((long) necessarySpaceToFree);
 
                 var msgService = ServiceContainer.Instance.GetService<IMessageboxService>();
-                msgService.Show($"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeString}). Please free a minimum of {spaceToFreeString} to make sure the updates can be downloaded and installed without any problems."
+                msgService.Show(
+                    $"You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({packageSizeString}). Please free a minimum of {spaceToFreeString} to make sure the updates can be downloaded and installed without any problems."
                     , "Not enough disk space.", EnuMessageBoxButton.Ok,
                     EnuMessageBoxImage.Warning);
                 return;
             }
+
             DialogResult = true;
             var dialogService = ServiceContainer.Instance
                 .GetService<IDialogWindowService>();
             dialogService.CloseDialog();
         }
-
-
-
-
-        public ICommand Abort { get; }
 
         private void Abort_Execute()
         {
@@ -128,6 +131,5 @@ namespace nUpdate.WPFUserInterface.ViewModel
                 .GetService<IDialogWindowService>();
             dialogService.CloseDialog();
         }
-
     }
 }

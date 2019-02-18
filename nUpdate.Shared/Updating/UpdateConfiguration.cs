@@ -47,7 +47,8 @@ namespace nUpdate.Updating
         public RolloutConditionMode RolloutConditionMode { get; set; }
 
         /// <summary>
-        ///     Gets or sets the rollout conditions which contain additional specifications that the client must meet in order to receive an update.
+        ///     Gets or sets the rollout conditions which contain additional specifications that the client must meet in order to
+        ///     receive an update.
         /// </summary>
         public List<RolloutCondition> RolloutConditions { get; set; }
 
@@ -87,7 +88,7 @@ namespace nUpdate.Updating
         /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
         public UpdateConfiguration DeepCopy()
         {
-            return (UpdateConfiguration)MemberwiseClone();
+            return (UpdateConfiguration) MemberwiseClone();
         }
 
         /// <summary>

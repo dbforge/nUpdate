@@ -8,6 +8,9 @@ namespace nUpdate.WPFUserInterface.ServiceInterfaces
     {
         public static readonly ServiceContainer Instance = new ServiceContainer();
 
+        private readonly Dictionary<Type, object> _serviceMap;
+        private readonly object _serviceMapLock;
+
         private ServiceContainer()
         {
             _serviceMap = new Dictionary<Type, object>();
@@ -31,10 +34,8 @@ namespace nUpdate.WPFUserInterface.ServiceInterfaces
             {
                 _serviceMap.TryGetValue(typeof(TServiceContract), out service);
             }
+
             return service as TServiceContract;
         }
-
-        readonly Dictionary<Type, object> _serviceMap;
-        readonly object _serviceMapLock;
     }
 }
