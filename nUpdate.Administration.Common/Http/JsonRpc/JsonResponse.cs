@@ -17,10 +17,7 @@ namespace nUpdate.Administration.Common.Http.JsonRpc
         [JsonProperty(PropertyName = "id")]
         public object Id { get; set; }
     }
-
-    /// <summary>
-    /// Represents a Json Rpc Response
-    /// </summary>
+    
     [JsonObject(MemberSerialization.OptIn)]
     public class JsonResponse<T>
     {
