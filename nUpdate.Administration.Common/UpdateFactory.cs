@@ -47,7 +47,7 @@ namespace nUpdate.Administration.Common
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, null)).ToList();
+                (await UpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
             updatePackages.Add(updatePackage);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes((string) JsonSerializer.Serialize(updatePackages))))
@@ -109,7 +109,7 @@ namespace nUpdate.Administration.Common
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, null)).ToList();
+                (await UpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
             var destinationPackage =
                 updatePackages.FirstOrDefault(item => item.Version.Equals(updateVersion));
             if (destinationPackage != null)

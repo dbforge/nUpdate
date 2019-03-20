@@ -7,7 +7,7 @@ namespace nUpdate.UI.WinForms.Dialogs
 {
     internal class BaseDialog : Form
     {
-        public Updater Updater { get; set; }
+        public IUpdateProvider UpdateProvider { get; set; }
 
         public void InitializeComponent()
         {

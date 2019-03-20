@@ -2,15 +2,15 @@
 
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
-using nUpdate.Localization;
 using nUpdate.UI.WinForms.Popups;
 
 namespace nUpdate.UI.WinForms.Dialogs
 {
     internal partial class UpdateDownloadDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
+        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
         public UpdateDownloadDialog()
         {
@@ -20,18 +20,18 @@ namespace nUpdate.UI.WinForms.Dialogs
         /// <summary>
         ///     Gets or sets the progress percentage.
         /// </summary>
-        public int ProgressPercentage
+        public float ProgressPercentage
         {
-            get { return downloadProgressBar.Value; }
+            get => downloadProgressBar.Value;
             set
             {
                 try
                 {
                     Invoke(new Action(() =>
                     {
-                        downloadProgressBar.Value = value;
+                        downloadProgressBar.Value = (int)value;
                         infoLabel.Text = string.Format(
-                            _lp.UpdateDownloadDialogLoadingInfo, value);
+                            Properties.strings.UpdateDownloadDialogLoadingInfo, value);
                     }));
                 }
                 catch (InvalidOperationException)
@@ -41,47 +41,61 @@ namespace nUpdate.UI.WinForms.Dialogs
             }
         }
 
-        private void UpdateDownloadDialog_Load(object sender, EventArgs e)
+        private void Cancel()
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
-
-            headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
-            infoLabel.Text = string.Format(
-                _lp.UpdateDownloadDialogLoadingInfo, "0");
-            cancelButton.Text = _lp.CancelButtonText;
-
-            Text = Application.ProductName;
-            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
+            UpdateProvider.CancelDownload();
+            DialogResult = DialogResult.Cancel;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-        }
-        
-        public void Fail(Exception ex)
-        {
-            Invoke(new Action(() => Popup.ShowPopup(this, SystemIcons.Error,
-                "Error while downloading the update package.",
-                ex.InnerException ?? ex, PopupButtons.Ok)));
+            Cancel();
         }
 
-        public void StatisticsEntryFail(Exception ex)
+        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Invoke(new Action(() =>
-                Popup.ShowPopup(this, SystemIcons.Warning,
-                    "Error while adding a new statistics entry.",
-                    ex, PopupButtons.Ok)));
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+            e.Cancel = true;
+            Cancel();
+        }
+
+        private void UpdateDownloadDialog_Load(object sender, EventArgs e)
+        {
+            Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
+
+            headerLabel.Text = Properties.strings.UpdateDownloadDialogLoadingHeader;
+            infoLabel.Text = string.Format(
+                Properties.strings.UpdateDownloadDialogLoadingInfo, "0");
+            cancelButton.Text = Properties.strings.CancelButtonText;
+
+            Text = Application.ProductName;
+            Icon = _appIcon;
+        }
+
+        private async void UpdateDownloadDialog_Shown(object sender, EventArgs e)
+        {
+            var progress = new Progress<UpdateProgressData>();
+            progress.ProgressChanged += (o, value) => ProgressPercentage = value.Percentage;
+
+            try
+            {
+                await UpdateProvider.DownloadUpdates(progress);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                Popup.ShowPopup(this, SystemIcons.Error,
+                    "Error while downloading the update package.",
+                    ex.InnerException ?? ex, PopupButtons.Ok);
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
+
+            DialogResult = DialogResult.OK;
         }
     }
 }

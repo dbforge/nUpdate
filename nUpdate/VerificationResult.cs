@@ -6,11 +6,11 @@ using System.Linq;
 namespace nUpdate
 {
     /// <summary>
-    ///     Represents the result of an update package validation.
+    ///     Represents the result of an update package verification.
     /// </summary>
-    public class ValidationResult
+    public class VerificationResult
     {
-        internal ValidationResult(int packageAmount)
+        internal VerificationResult(int packageAmount)
         {
             InvalidPackages = new List<UpdatePackage>(packageAmount);
         }

@@ -1,15 +1,13 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.Threading;
 using System.Windows.Forms;
-using nUpdate.Localization;
 
 namespace nUpdate.UI.WinForms.Dialogs
 {
     internal partial class NoUpdateFoundDialog : BaseDialog
     {
-        private LocalizationProperties _lp;
-
         public NoUpdateFoundDialog()
         {
             InitializeComponent();
@@ -17,24 +15,14 @@ namespace nUpdate.UI.WinForms.Dialogs
 
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
+            Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
 
-            closeButton.Text = _lp.CloseButtonText;
-            headerLabel.Text = _lp.NoUpdateDialogHeader;
-            infoLabel.Text = _lp.NoUpdateDialogInfoText;
+            closeButton.Text = Properties.strings.CloseButtonText;
+            headerLabel.Text = Properties.strings.NoUpdateDialogHeader;
+            infoLabel.Text = Properties.strings.NoUpdateDialogInfoText;
 
-            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
         }
 
         private void closeButton_Click(object sender, EventArgs e)
