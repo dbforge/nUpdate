@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="CancelButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ContinueButtonText" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="InstallButtonText" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="UpdateSearchDialogHeader" xml:space="preserve">
+    <value>Searching for updates...</value>
+  </data>
+  <data name="NewUpdateDialogMultipleUpdatesHeader" xml:space="preserve">
+    <value>{0} new updates available.</value>
+  </data>
+  <data name="NewUpdateDialogSingleUpdateHeader" xml:space="preserve">
+    <value>{0} new update available.</value>
+  </data>
+  <data name="NewUpdateDialogInfoText" xml:space="preserve">
+    <value>New updates can be downloaded for {0}.</value>
+  </data>
+  <data name="NewUpdateDialogAvailableVersionsText" xml:space="preserve">
+    <value>Available versions: {0}</value>
+  </data>
+  <data name="NewUpdateDialogCurrentVersionText" xml:space="preserve">
+    <value>Current version: {0}</value>
+  </data>
+  <data name="NewUpdateDialogSizeText" xml:space="preserve">
+    <value>Total package size: {0}</value>
+  </data>
+  <data name="NewUpdateDialogChangelogText" xml:space="preserve">
+    <value>Changelog:</value>
+  </data>
+  <data name="NewUpdateDialogAccessText" xml:space="preserve">
+    <value>Accesses:</value>
+  </data>
+  <data name="NewUpdateDialogRegistryAccessText" xml:space="preserve">
+    <value>Registry</value>
+  </data>
+  <data name="NewUpdateDialogFilesAccessText" xml:space="preserve">
+    <value>File system</value>
+  </data>
+  <data name="NewUpdateDialogProcessesAccessText" xml:space="preserve">
+    <value>Processes</value>
+  </data>
+  <data name="NewUpdateDialogServicesAccessText" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="NoUpdateDialogHeader" xml:space="preserve">
+    <value>There are no new updates available.</value>
+  </data>
+  <data name="NoUpdateDialogInfoText" xml:space="preserve">
+    <value>The application is currently up-to-date.</value>
+  </data>
+  <data name="UpdateDownloadDialogLoadingHeader" xml:space="preserve">
+    <value>Downloading updates...</value>
+  </data>
+  <data name="UpdateDownloadDialogLoadingInfo" xml:space="preserve">
+    <value>Please wait while the available updates are
+downloaded...  ({0}%)</value>
+  </data>
+  <data name="InstallerExtractingFilesText" xml:space="preserve">
+    <value>&quot;Extracting files...&quot;</value>
+  </data>
+  <data name="InstallerCopyingText" xml:space="preserve">
+    <value>&quot;Copying {0}...&quot;</value>
+  </data>
+  <data name="InstallerInitializingErrorCaption" xml:space="preserve">
+    <value>&quot;Error while iniaitializing the data.&quot;</value>
+  </data>
+  <data name="InstallerUpdatingErrorCaption" xml:space="preserve">
+    <value>&quot;Error while updating the application&quot;</value>
+  </data>
+  <data name="InstallerFileInUseError" xml:space="preserve">
+    <value>The installer cannot overwrite the file &#39;{0}&#39; because it is being used by another process. Terminate all applications that block the access and try again by pressing &quot;OK&quot;.</value>
+  </data>
+  <data name="FileRenamingOperationText" xml:space="preserve">
+    <value>&quot;Renaming file &quot;{0}&quot; to &quot;{1}&quot;...&quot;</value>
+  </data>
+  <data name="FileDeletingOperationText" xml:space="preserve">
+    <value>&quot;Deleting file &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="RegistrySubKeyCreateOperationText" xml:space="preserve">
+    <value>&quot;Creating registry subkey &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="RegistrySubKeyDeleteOperationText" xml:space="preserve">
+    <value>&quot;Deleting registry subkey &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="RegistryNameValuePairSetValueOperationText" xml:space="preserve">
+    <value>&quot;Setting value of &quot;{0}&quot; in the registry to &quot;{1}&quot;...&quot;</value>
+  </data>
+  <data name="RegistryNameValuePairDeleteValueOperationText" xml:space="preserve">
+    <value>&quot;Deleting name-value-pair &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="ProcessStartOperationText" xml:space="preserve">
+    <value>&quot;Starting process &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="ProcessStopOperationText" xml:space="preserve">
+    <value>&quot;Terminating process &quot;{1}&quot;...&quot;</value>
+  </data>
+  <data name="ServiceStartOperationText" xml:space="preserve">
+    <value>&quot;Starting service &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="ServiceStopOperationText" xml:space="preserve">
+    <value>&quot;Stopping service &quot;{0}&quot;...&quot;</value>
+  </data>
+  <data name="UpdateSearchErrorCaption" xml:space="preserve">
+    <value>Error while searching for updates.</value>
+  </data>
+  <data name="UnfulfilledRequirementErrorCaption" xml:space="preserve">
+    <value>Missing requirements.</value>
+  </data>
+  <data name="UnfulfilledRequirementErrorText" xml:space="preserve">
+    <value>The installation of some updates can&#39;t be completed because the following requirements are unfulfilled:</value>
+  </data>
+  <data name="OperatingSystemText" xml:space="preserve">
+    <value>Operating system:</value>
+  </data>
+  <data name="DotNetFrameworkText" xml:space="preserve">
+    <value>.NET Framework:</value>
+  </data>
+  <data name="RequiredVersionText" xml:space="preserve">
+    <value>Required version:</value>
+  </data>
+  <data name="PackageValidityCheckErrorCaption" xml:space="preserve">
+    <value>Error while checking the package&#39;s signature.</value>
+  </data>
+  <data name="PackageNotFoundErrorText" xml:space="preserve">
+    <value>The package file couldn&#39;t be found.</value>
+  </data>
+  <data name="InvalidSignatureErrorCaption" xml:space="preserve">
+    <value>Invalid signature data found.</value>
+  </data>
+  <data name="SignatureNotMatchingErrorText" xml:space="preserve">
+    <value>nUpdate will cancel the installation of the update packages and delete them unrecoverably.</value>
+  </data>
+  <data name="InvalidSignatureErrorText" xml:space="preserve">
+    <value>The signature of the update package is not a valid RSA-signature.</value>
+  </data>
+  <data name="SearchProcessRunningExceptionText" xml:space="preserve">
+    <value>There is already a search process running.</value>
+  </data>
+  <data name="DownloadingProcessRunningExceptionText" xml:space="preserve">
+    <value>There is already a download process running.</value>
+  </data>
+  <data name="NetworkConnectionExceptionText" xml:space="preserve">
+    <value>No network connection available.</value>
+  </data>
+  <data name="PackageSizeCalculationExceptionText" xml:space="preserve">
+    <value>The package size couldn&#39;t be calculated because an unknown error appeared. Possibly the package file does not exist.</value>
+  </data>
+  <data name="InvalidJsonExceptionText" xml:space="preserve">
+    <value>The file containing the update configuration is not a valid JSON-file and/or no data could be processed.</value>
+  </data>
+  <data name="StatisticsScriptExceptionText" xml:space="preserve">
+    <value>An error occured while trying to transfer data for the statistics. Please report this problem to the developer of the program in order to make him capable of fixing it. Response from the PHP-script: {0}</value>
+  </data>
+  <data name="PackageFileNotFoundExceptionText" xml:space="preserve">
+    <value>The update package of version &quot;{0}&quot; could not be found.</value>
+  </data>
+  <data name="MainFolderCreationExceptionText" xml:space="preserve">
+    <value>The application&#39;s main folder could not be created. {0}</value>
+  </data>
+</root>

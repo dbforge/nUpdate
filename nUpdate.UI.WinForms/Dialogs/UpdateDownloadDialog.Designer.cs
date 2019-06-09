@@ -31,7 +31,7 @@ namespace nUpdate.UI.WinForms.Dialogs
         private new void InitializeComponent()
         {
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.UI.WinForms.Controls.BottomPanel();
             this.downloadProgressBar = new System.Windows.Forms.ProgressBar();
             this.headerLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
@@ -104,7 +104,9 @@ namespace nUpdate.UI.WinForms.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateDownloadDialog_FormClosing);
             this.Load += new System.EventHandler(this.UpdateDownloadDialog_Load);
+            this.Shown += new System.EventHandler(this.UpdateDownloadDialog_Shown);
             this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

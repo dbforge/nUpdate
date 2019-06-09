@@ -4,17 +4,15 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Windows.Forms;
-using nUpdate.Localization;
-using nUpdate.Win32;
+using nUpdate.UI.WinForms.Win32;
 
 namespace nUpdate.UI.WinForms.Dialogs
 {
     internal partial class NewUpdateDialog : BaseDialog
     {
         private bool _allowCancel;
-        private LocalizationProperties _lp;
 
         public NewUpdateDialog()
         {
@@ -29,69 +27,50 @@ namespace nUpdate.UI.WinForms.Dialogs
             NativeMethods.SendMessage(button.Handle, bcmSetshield, new IntPtr(0), new IntPtr(1));
         }
 
+        internal UpdateResult UpdateResult { get; set; }
+
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(Updater.LanguageCulture, Updater.LocalizationFilePaths);
+            Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
 
             headerLabel.Text =
                 string.Format(
-                    Updater.AvailablePackages.Count() > 1
-                        ? _lp.NewUpdateDialogMultipleUpdatesHeader
-                        : _lp.NewUpdateDialogSingleUpdateHeader, Updater.AvailablePackages.Count());
-            infoLabel.Text = string.Format(_lp.NewUpdateDialogInfoText, Application.ProductName);
+                    UpdateResult.Packages.Count() > 1
+                        ? Properties.strings.NewUpdateDialogMultipleUpdatesHeader
+                        : Properties.strings.NewUpdateDialogSingleUpdateHeader, UpdateResult.Packages.Count());
+            infoLabel.Text = string.Format(Properties.strings.NewUpdateDialogInfoText, Application.ProductName);
 
             var availablePackages =
-                Updater.AvailablePackages.ToArray();
-            newestVersionLabel.Text = string.Format(_lp.NewUpdateDialogAvailableVersionsText,
-                Updater.AvailablePackages.Count() <= 2
-                    ? string.Join(", ", availablePackages.Select(GetVersionDescription))
-                    : $"{GetVersionDescription(availablePackages.First())} - {GetVersionDescription(availablePackages.Last())}");
-            currentVersionLabel.Text = string.Format(_lp.NewUpdateDialogCurrentVersionText, Updater.ApplicationVersion);
-            changelogLabel.Text = _lp.NewUpdateDialogChangelogText;
-            cancelButton.Text = _lp.CancelButtonText;
-            installButton.Text = _lp.InstallButtonText;
-            updateSizeLabel.Text = string.Format(_lp.NewUpdateDialogSizeText, ((long)Updater.TotalSize).ToAdequateSizeString());
+                UpdateResult.Packages.ToArray();
+            newestVersionLabel.Text = string.Format(Properties.strings.NewUpdateDialogAvailableVersionsText,
+                UpdateResult.Packages.Count() <= 2
+                    ? string.Join(", ", availablePackages.Select(x => x.Version))
+                    : $"{availablePackages.First().Version} - {availablePackages.Last().Version}");
+            currentVersionLabel.Text = string.Format(Properties.strings.NewUpdateDialogCurrentVersionText, UpdateProvider.ApplicationVersion);
+            changelogLabel.Text = Properties.strings.NewUpdateDialogChangelogText;
+            cancelButton.Text = Properties.strings.CancelButtonText;
+            installButton.Text = Properties.strings.InstallButtonText;
+            updateSizeLabel.Text = string.Format(Properties.strings.NewUpdateDialogSizeText, UpdateResult.Packages.Sum(x => x.Size).ToAdequateSizeString());
             
-            Icon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
             if (Icon != null)
                 iconPictureBox.Image = Icon.ToBitmap();
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
             AddShieldToButton(installButton);
 
-            foreach (var updatePackage in Updater.AvailablePackages)
+            foreach (var updatePackage in UpdateResult.Packages)
             {
-                var changelogText = updatePackage.Changelog.ContainsKey(Updater.LanguageCulture)
-                    ? updatePackage.Changelog.First(item => Equals(item.Key, Updater.LanguageCulture)).Value
+                var changelogText = updatePackage.Changelog.ContainsKey(UpdateProvider.LanguageCulture)
+                    ? updatePackage.Changelog.First(item => Equals(item.Key, UpdateProvider.LanguageCulture)).Value
                     : updatePackage.Changelog.First(item => Equals(item.Key, new CultureInfo("en"))).Value;
 
                 changelogTextBox.Text +=
                     string.Format(string.IsNullOrEmpty(changelogTextBox.Text) ? "{0}:\n{1}" : "\n\n{0}:\n{1}",
-                        GetVersionDescription(updatePackage), changelogText);
+                        updatePackage.Version, changelogText);
             }
-
-            var operationAreas =
-                Updater.AvailablePackages.Select(item => item.Operations.Select(op => op.Area)).ToList();
-            if (!operationAreas.Any())
-            {
-                accessLabel.Text = $"{_lp.NewUpdateDialogAccessText} -";
-                _allowCancel = true;
-                return;
-            }
-
-            accessLabel.Text =
-                $"{_lp.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, operationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
+            
             _allowCancel = true;
-        }
-
-        public void ShowModalDialog(object dialogResultReference)
-        {
-            ((DialogResultReference) dialogResultReference).DialogResult = ShowDialog();
-        }
-
-        public void CloseDialog(object state)
-        {
-            Close();
         }
 
         private void installButton_Click(object sender, EventArgs e)

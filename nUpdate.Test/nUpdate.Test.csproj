@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nUpdate.Test</RootNamespace>
     <AssemblyName>nUpdate.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -72,7 +72,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ConnectionCheckerTest.cs" />
     <Compile Include="RsaSignatureTest.cs" />
     <Compile Include="AesManagerTest.cs" />
     <Compile Include="UpdaterTest.cs" />
@@ -84,12 +83,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj">
+      <Project>{0a1f6926-5b7b-4240-a539-951acfdc980c}</Project>
+      <Name>nUpdate.Administration.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\nUpdate.Administration\nUpdate.Administration.csproj">
       <Project>{5a553cc2-3f8a-45a7-94ce-0771f3f041e1}</Project>
       <Name>nUpdate.Administration</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
-      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
+      <Project>{e68dd6c6-82dd-4837-bc94-431e6c41b6fe}</Project>
       <Name>nUpdate</Name>
     </ProjectReference>
   </ItemGroup>

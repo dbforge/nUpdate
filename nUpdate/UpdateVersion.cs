@@ -11,8 +11,10 @@ namespace nUpdate
     {
         // <Major>.<Minor>.<Revision>[[-]SemVerSuffix|.][Build][+BuildMetaData]
         private const string RegexString =
-                @"^(?<major>\d+)(?:\.(?<minor>\d+)(?:\.(?<build>\d+)|)|)(?:(?:\-?(?<semver>[a-zA-Z]+)|\.)(?:(?<revision>\d+)|)|)(?:\+(?:(?<meta>.+)|)|)$"
+                @"^(?<major>\d+)(?:\.(?<minor>\d+)(?:\.(?<revision>\d+)|)|)(?:(?:\-?(?<semver>[a-zA-Z]+)|\.)(?:(?<build>\d+)|)|)(?:\+(?:(?<meta>.+)|)|)$"
             ;
+
+        public UpdateVersion(Version version) : this(version.ToString()) { }
 
         public UpdateVersion(string versionString)
         {
@@ -23,67 +25,31 @@ namespace nUpdate
             Major = int.Parse(match.Groups["major"].Captures[0].Value);
             if (match.Groups["minor"].Success)
             {
-                int minor;
-                if (!int.TryParse(match.Groups["minor"].Captures[0].Value, out minor))
+                if (!int.TryParse(match.Groups["minor"].Captures[0].Value, out var minor))
                     throw new ArgumentException("Minor is not a valid version number.");
                 Minor = minor;
             }
 
-            if (match.Groups["build"].Success)
+            if (match.Groups["revision"].Success)
             {
-                int build;
-                if (!int.TryParse(match.Groups["build"].Captures[0].Value, out build))
-                    throw new ArgumentException("Build is not a valid version number.");
-                Build = build;
+                if (!int.TryParse(match.Groups["revision"].Captures[0].Value, out var revision))
+                    throw new ArgumentException("Revision is not a valid version number.");
+                Revision = revision;
             }
 
             if (match.Groups["semver"].Success)
                 SemVerSuffix = match.Groups["semver"].Captures[0].Value;
 
-            if (match.Groups["revision"].Success)
+            if (match.Groups["build"].Success)
             {
-                int revision;
-                if (!int.TryParse(match.Groups["revision"].Captures[0].Value, out revision))
-                    throw new ArgumentException("Revision is not a valid version number.");
-                Revision = revision;
+                if (!int.TryParse(match.Groups["build"].Captures[0].Value, out var build))
+                    throw new ArgumentException("Build is not a valid version number.");
+                Build = build;
             }
 
             if (match.Groups["meta"].Success)
                 BuildMetadata = match.Groups["meta"].Captures[0].Value;
         }
-
-        public UpdateVersion(int major, int minor, int revision, string semVerSuffix = "", int build = 0,
-            string buildMetaData = "")
-        {
-            if (major < 0)
-                throw new ArgumentOutOfRangeException(nameof(major), "Index must be 0 or higher");
-
-            if (minor < 0)
-                throw new ArgumentOutOfRangeException(nameof(minor), "Index must be 0 or higher");
-
-            if (build < 0)
-                throw new ArgumentOutOfRangeException(nameof(build), "Index must be 0 or higher");
-
-            if (revision < 0)
-                throw new ArgumentOutOfRangeException(nameof(revision), "Index must be 0 or higher");
-
-            Major = major;
-            Minor = minor;
-            Revision = revision;
-            SemVerSuffix = semVerSuffix;
-            Build = build;
-            BuildMetadata = buildMetaData;
-        }
-
-        /// <summary>
-        ///     Gets or sets the build/patch version.
-        /// </summary>
-        public int Build { get; }
-
-        /// <summary>
-        ///     Gets or sets the build metadata (SemVer).
-        /// </summary>
-        public string BuildMetadata { get; set; }
 
         /// <summary>
         ///     Gets or sets the major version.
@@ -104,6 +70,16 @@ namespace nUpdate
         ///     Gets or sets the semantic version suffix representing the update channel.
         /// </summary>
         public string SemVerSuffix { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the build/patch version.
+        /// </summary>
+        public int Build { get; }
+
+        /// <summary>
+        ///     Gets or sets the build metadata (for semantic versions only, otherwise <c>null</c>).
+        /// </summary>
+        public string BuildMetadata { get; set; }
 
         /// <summary>
         ///     Gets the <see cref="UpdateChannel" /> that this <see cref="UpdateVersion" /> is associated with.

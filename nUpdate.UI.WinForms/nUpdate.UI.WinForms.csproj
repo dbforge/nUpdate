@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nUpdate.UI.WinForms</RootNamespace>
     <AssemblyName>nUpdate.UI.WinForms</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultInteractionUpdater.cs" />
-    <Compile Include="IconHelper.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controls\BottomPanel.cs" />
     <Compile Include="Controls\Line.cs">
@@ -58,7 +58,6 @@
     <Compile Include="Dialogs\BaseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\DialogResultReference.cs" />
     <Compile Include="Dialogs\NewUpdateDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +90,7 @@
     <Compile Include="Popups\PopupDialog.designer.cs">
       <DependentUpon>PopupDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Win32\NativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Dialogs\BaseDialog.resx">
@@ -116,13 +116,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate\nUpdate.csproj">
-      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
-      <Name>nUpdate</Name>
-    </ProjectReference>
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <ProjectReference Include="..\nUpdate\nUpdate.csproj">
+      <Project>{e68dd6c6-82dd-4837-bc94-431e6c41b6fe}</Project>
+      <Name>nUpdate</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

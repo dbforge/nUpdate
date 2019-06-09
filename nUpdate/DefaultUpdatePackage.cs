@@ -19,7 +19,7 @@ namespace nUpdate
         public Architecture Architecture { get; set; }
 
         /// <summary>
-        ///     Gets or sets the changelogs of the update package accessed by their relating <see cref="CultureInfo" />.
+        ///     Gets or sets the changelog of the update package.
         /// </summary>
         public Dictionary<CultureInfo, string> Changelog { get; set; }
 
@@ -27,11 +27,6 @@ namespace nUpdate
         ///     Gets or sets the name of the channel that the update package is located in.
         /// </summary>
         public string ChannelName { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the description of the package.
-        /// </summary>
-        public string Description { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the package.
@@ -44,10 +39,9 @@ namespace nUpdate
         public bool IsReleased { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the update package should be favored over other packages, even if they have
-        ///     a higher <see cref="UpdateVersion" />, or not.
+        ///     Gets or sets a value indicating whether the update package should be installed, even if there are newer versions available (follows <see cref="UpdateStrategy.AllNewest"/>), or not (follows <see cref="UpdateStrategy.OnlyLatest"/>).
         /// </summary>
-        public bool NecessaryUpdate { get; set; }
+        public bool Compulsory { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="Operation" />s of the update package that should be executed during the installation
@@ -66,31 +60,80 @@ namespace nUpdate
         public string Signature { get; set; }
 
         /// <summary>
-        ///     Gets or sets the literal versions of the update package that shouldn't be able to install this update package.
+        ///     Gets or sets the versions that shouldn't be able to install this update package.
         /// </summary>
-        public string[] UnsupportedVersions { get; set; }
+        public IEnumerable<UpdateVersion> UnsupportedVersions { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="Uri" /> of the update package.
         /// </summary>
-        public Uri UpdatePackageUri { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="Uri" /> of the remote file that creates the statistics entries using the parameters
-        ///     that are handled over.
-        /// </summary>
-        public Uri UpdatePhpFileUri { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the package should be included into the statistics, or not.
-        /// </summary>
-        public bool UseStatistics { get; set; }
+        public Uri PackageUri { get; set; }
 
         /// <summary>
         ///     Gets or sets the version of the package.
         /// </summary>
-        public Version Version { get; set; }
+        public UpdateVersion Version { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the size of the package.
+        /// </summary>
+        public long Size { get; set; }
+
+        public static async Task<IEnumerable<UpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
+            WebProxy proxy)
+        {
+            if (Utility.IsHttpUri(packageDataFileUri))
+            {
+                using (var wc = new WebClientEx(10000))
+                {
+                    wc.Encoding = Encoding.UTF8;
+                    if (proxy != null)
+                        wc.Proxy = proxy;
+
+                    var source = await wc.DownloadStringTaskAsync(packageDataFileUri);
+                    if (!string.IsNullOrEmpty(source))
+                        return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
+                }
+            }
+            else
+            {
+                using (var reader = File.OpenText(packageDataFileUri.ToString()))
+                {
+                    var content = await reader.ReadToEndAsync();
+                    return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(content);
+                }
+            }
+
+            return Enumerable.Empty<UpdatePackage>();
+        }
+
+        public static async Task<UpdatePackage> GetPackage(Uri packageFileUri,
+            WebProxy proxy)
+        {
+            if (Utility.IsHttpUri(packageFileUri))
+            {
+                using (var wc = new WebClientEx(10000))
+                {
+                    wc.Encoding = Encoding.UTF8;
+                    if (proxy != null)
+                        wc.Proxy = proxy;
+
+                    var source = await wc.DownloadStringTaskAsync(packageFileUri);
+                    if (!string.IsNullOrEmpty(source))
+                        return JsonSerializer.Deserialize<UpdatePackage>(source);
+                }
+            }
+            else
+            {
+                using (var reader = File.OpenText(packageFileUri.ToString()))
+                {
+                    var content = await reader.ReadToEndAsync();
+                    return JsonSerializer.Deserialize<UpdatePackage>(content);
+                }
+            }
+
+            return default(UpdatePackage);
+        }
         /// <summary>
         ///     Gets or sets the version ID of this package in the statistics database.
         /// </summary>

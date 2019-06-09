@@ -16,7 +16,7 @@ namespace nUpdate
             {
                 try
                 {
-                    var req = WebRequest.Create(p.UpdatePackageUri);
+                    var req = WebRequest.Create(p.PackageUri);
                     req.Method = "HEAD";
                     using (var resp = await req.GetResponseAsync())
                     {

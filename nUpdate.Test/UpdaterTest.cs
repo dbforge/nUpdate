@@ -1,14 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace nUpdate.Test
 {
     [TestClass]
     public class UpdaterTest
     {
-        private Updater _updater;
+        private HttpUpdateProvider _updater;
 
         [TestInitialize]
         public void Initialize()
@@ -19,8 +16,7 @@ namespace nUpdate.Test
         [TestMethod]
         public async void CanSearchForUpdates()
         {
-            var searchCancellationToken = new CancellationToken();
-            bool updatesFound = await _updater.SearchForUpdates(searchCancellationToken);
+            bool updatesFound = (await _updater.BeginUpdateCheck()).UpdatesFound;
             Assert.AreEqual(false, updatesFound);
         }
     }

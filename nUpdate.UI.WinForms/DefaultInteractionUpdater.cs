@@ -4,9 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate.Localization;
 using nUpdate.UI.WinForms.Dialogs;
 using nUpdate.UI.WinForms.Popups;
 
@@ -19,21 +17,21 @@ namespace nUpdate.UI.WinForms
     /// </summary>
     public class DefaultInteractionUpdater
     {
-        private readonly LocalizationProperties _lp = new LocalizationProperties();
-        private bool _isTaskRunning;
-        private readonly Updater _updater;
+        private bool _updateProcessActive;
+        private readonly IUpdateProvider _updateProvider;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultInteractionUpdater"/> class.
         /// </summary>
-        /// <param name="updater">The <see cref="Updater"/> instance that has been initialized and will be used for the updating process.</param>
+        /// <param name="updateProvider">The <see cref="IUpdateProvider"/> instance that has been initialized and will be used for the updating process.</param>
         /// <param name="context">The <see cref="SynchronizationContext"/> that should be used to invoke the methods that show the dialogs.</param>
         /// <param name="useHiddenSearch">If set to <c>true</c>, nUpdate will search for updates in the background without showing a search dialog.</param>
-        public DefaultInteractionUpdater(Updater updater, SynchronizationContext context, bool useHiddenSearch = false)
+        public DefaultInteractionUpdater(IUpdateProvider updateProvider, SynchronizationContext context,
+            bool useHiddenSearch = false)
         {
             Context = context;
             UseBackgroundSearch = useHiddenSearch;
-            _updater = updater;
+            _updateProvider = updateProvider;
         }
 
         /// <summary>
@@ -49,134 +47,99 @@ namespace nUpdate.UI.WinForms
         /// <summary>
         ///     Executes the integrated update process.
         /// </summary>
-        public void Execute()
+        public async void Execute()
         {
-            if (_isTaskRunning)
+            if (_updateProcessActive)
                 return;
-
-            _isTaskRunning = true;
-
-            var searchCancellationToken = new CancellationToken();
-            var downloadCancellationToken = new CancellationToken();
-            
-            var searchDialog = new UpdateSearchDialog { Updater = _updater };
-
-            var newUpdateDialog = new NewUpdateDialog { Updater = _updater };
-            var noUpdateDialog = new NoUpdateFoundDialog { Updater = _updater };
-
-            // ReSharper disable once UnusedVariable
-            var progressIndicator = new Progress<UpdateProgressData>();
-            var downloadDialog = new UpdateDownloadDialog { Updater = _updater };
+            _updateProcessActive = true;
 
             try
             {
-                // ReSharper disable once MethodSupportsCancellation
-                Task.Run(async delegate
+                UpdateResult updateResult;
+                if (!UseBackgroundSearch)
                 {
-                    if (!UseBackgroundSearch)
-                        Context.Post(searchDialog.ShowModalDialog, null);
+                    var searchDialog = new UpdateSearchDialog { UpdateProvider = _updateProvider };
+                    if (searchDialog.ShowDialog() != DialogResult.OK)
+                        return;
 
-                    bool updatesFound;
+                    if (!(updateResult = searchDialog.Result).UpdatesFound)
+                    {
+                        var noUpdateDialog = new NoUpdateFoundDialog {UpdateProvider = _updateProvider};
+                        noUpdateDialog.ShowDialog();
+                        return;
+                    }
+                }
+                else
+                {
                     try
                     {
-                        updatesFound = await _updater.SearchForUpdates(searchCancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (UseBackgroundSearch)
-                            Context.Send(
-                                o =>
-                                    Popup.ShowPopup(SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
-                                        PopupButtons.Ok), null);
-                        else
-                        {
-                            searchDialog.Fail(ex);
-                            Context.Post(searchDialog.CloseDialog, null);
-                        }
-                        return;
-                    }
-
-                    if (!UseBackgroundSearch)
-                    {
-                        Context.Post(searchDialog.CloseDialog, null);
-                        await Task.Delay(100); // Prevents race conditions that cause that the UpdateSearchDialog can't be closed before further actions are done
-                    }
-
-                    if (updatesFound)
-                    {
-                        var newUpdateDialogReference = new DialogResultReference();
-                        Context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogReference);
-                        if (newUpdateDialogReference.DialogResult == DialogResult.Cancel)
+                        if (!(updateResult = await _updateProvider.BeginUpdateCheck()).UpdatesFound)
                             return;
                     }
-                    else if (UseBackgroundSearch)
-                        return;
-                    else if (!UseBackgroundSearch)
-                    {
-                        var noUpdateDialogResultReference = new DialogResultReference();
-                        if (!UseBackgroundSearch)
-                            Context.Send(noUpdateDialog.ShowModalDialog, noUpdateDialogResultReference);
-                        return;
-                    }
-                    
-                    Context.Post(downloadDialog.ShowModalDialog, null);
-
-                    try
-                    {
-                        progressIndicator.ProgressChanged += (sender, args) =>
-                            downloadDialog.ProgressPercentage = (int) args.Percentage;
-                        
-                        await _updater.DownloadUpdates(downloadCancellationToken, progressIndicator);
-                    }
                     catch (OperationCanceledException)
                     {
                         return;
                     }
                     catch (Exception ex)
                     {
-                        downloadDialog.Fail(ex);
-                        Context.Send(downloadDialog.CloseDialog, null);
+                        Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.UpdateSearchErrorCaption, ex,
+                            PopupButtons.Ok), null);
                         return;
                     }
-                    Context.Send(downloadDialog.CloseDialog, null);
+                }
 
-                    ValidationResult result = null;
+                var newUpdateDialog = new NewUpdateDialog { UpdateProvider = _updateProvider, UpdateResult = updateResult };
+                if (newUpdateDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                var downloadDialog = new UpdateDownloadDialog { UpdateProvider = _updateProvider };
+                if (downloadDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                bool valid;
+                try
+                {
+                    valid = (await _updateProvider.VerifyUpdates()).AreValid;
+                }
+                catch (FileNotFoundException)
+                {
+                    Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.PackageValidityCheckErrorCaption,
+                        Properties.strings.PackageNotFoundErrorText,
+                        PopupButtons.Ok), null);
+                    return;
+                }
+                catch (ArgumentException)
+                {
+                    Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.PackageValidityCheckErrorCaption,
+                        Properties.strings.InvalidSignatureErrorText, PopupButtons.Ok), null);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.PackageValidityCheckErrorCaption,
+                        ex, PopupButtons.Ok), null);
+                    return;
+                }
+
+                if (!valid)
+                    Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.InvalidSignatureErrorCaption,
+                        Properties.strings.SignatureNotMatchingErrorText,
+                        PopupButtons.Ok), null);
+                else
                     try
                     {
-                        result = await _updater.ValidateUpdates();
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        Context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                            _lp.PackageNotFoundErrorText,
-                            PopupButtons.Ok), null);
-                    }
-                    catch (ArgumentException)
-                    {
-                        Context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                            _lp.InvalidSignatureErrorText, PopupButtons.Ok), null);
+                        await _updateProvider.InstallUpdates();
                     }
                     catch (Exception ex)
                     {
-                        Context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.PackageValidityCheckErrorCaption,
-                            ex, PopupButtons.Ok), null);
-                    }
-
-                    if (result != null && !result.AreValid)
-                        Context.Send(o => Popup.ShowPopup(SystemIcons.Error, _lp.InvalidSignatureErrorCaption,
-                            _lp.SignatureNotMatchingErrorText,
+                        Context.Send(c => Popup.ShowPopup(SystemIcons.Error, Properties.strings.InstallerInitializingErrorCaption,
+                            ex,
                             PopupButtons.Ok), null);
-                    else
-                        _updater.ApplyUpdates();
-                });
+                    }
             }
             finally
             {
-                _isTaskRunning = false;
+                _updateProcessActive = false;
             }
         }
     }

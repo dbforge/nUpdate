@@ -1,4 +1,7 @@
-﻿namespace nUpdate.Administration.Views
+﻿using nUpdate.Administration.ViewModels;
+using nUpdate.Administration.ViewModels.Providers;
+
+namespace nUpdate.Administration.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -8,6 +11,7 @@
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel(MainWindowActionProvider.Instance);
         }
     }
 }

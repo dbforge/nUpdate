@@ -32,7 +32,7 @@ namespace nUpdate.UI.WinForms.Dialogs
         {
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.UI.WinForms.Controls.BottomPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.controlPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -93,7 +93,9 @@ namespace nUpdate.UI.WinForms.Dialogs
             this.Name = "UpdateSearchDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateSearchDialog_FormClosing);
             this.Load += new System.EventHandler(this.SearchDialog_Load);
+            this.Shown += new System.EventHandler(this.SearchDialog_Shown);
             this.controlPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
