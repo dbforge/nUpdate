@@ -9,12 +9,12 @@ namespace nUpdate
 {
     internal class UpdateResult
     {
-        private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
+        private readonly List<DefaultUpdatePackage> _newUpdatePackages = new List<DefaultUpdatePackage>();
 
         /// <summary>
-        ///     Gets all available <see cref="UpdatePackage" />s.
+        ///     Gets all available <see cref="DefaultUpdatePackage" />s.
         /// </summary>
-        public IEnumerable<UpdatePackage> NewPackages => _newUpdatePackages;
+        public IEnumerable<DefaultUpdatePackage> NewPackages => _newUpdatePackages;
 
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
@@ -46,7 +46,7 @@ namespace nUpdate
                 return new Version(version.Major, version.Minor, version.Build);
             }
 
-            bool IsSuitablePackage(UpdatePackage package)
+            bool IsSuitablePackage(DefaultUpdatePackage package)
             {
                 var is64Bit = Environment.Is64BitOperatingSystem;
                 if (package.UnsupportedVersions != null &&
@@ -58,12 +58,12 @@ namespace nUpdate
                        (package.Architecture != Architecture.X64 || is64Bit);
             }
 
-            var latestPackage = default(UpdatePackage);
+            var latestPackage = default(DefaultUpdatePackage);
             var latestVersion = applicationVersion;
             var latestChannelName = applicationChannelName;
             foreach (var channel in filteredChannels)
             {
-                var packageData = await UpdatePackage.GetRemotePackageData(channel.Uri, null);
+                var packageData = await DefaultUpdatePackage.GetRemotePackageData(channel.Uri, null);
                 foreach (var package in packageData.Where(IsSuitablePackage))
                 {
                     // Check if the version is greater than the current one of the application and if it's a necessary update...

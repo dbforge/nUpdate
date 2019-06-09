@@ -111,7 +111,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             Process.Start(e.LinkText);
         }
 
-        private static string GetVersionDescription(UpdatePackage package)
+        private static string GetVersionDescription(DefaultUpdatePackage package)
         {
             var versionStringBuilder = new StringBuilder(package.Version.ToString());
             if (package.ChannelName.ToLowerInvariant() != "release")

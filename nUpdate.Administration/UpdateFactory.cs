@@ -30,12 +30,12 @@ namespace nUpdate.Administration
                         c => ProjectSession.TransferManager.Exists($"channels/{c.Name.ToLowerInvariant()}.json"));
         }
 
-        internal IEnumerable<UpdatePackage> LoadPackageData()
+        internal IEnumerable<DefaultUpdatePackage> LoadPackageData()
         {
             return _project.Packages;
         }
 
-        internal async Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
+        internal async Task PushPackageData(DefaultUpdatePackage updatePackage, CancellationToken cancellationToken,
             IProgress<ITransferProgressData> progress)
         {
             var masterChannel =
@@ -47,7 +47,7 @@ namespace nUpdate.Administration
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+                (await DefaultUpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
             updatePackages.Add(updatePackage);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(updatePackages))))
@@ -109,7 +109,7 @@ namespace nUpdate.Administration
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await UpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
+                (await DefaultUpdatePackage.GetRemotePackageData(destinationChannel.Uri, _project.ProxyData.Proxy)).ToList();
             var destinationPackage =
                 updatePackages.FirstOrDefault(item => item.Version.Equals(updateVersion));
             if (destinationPackage != null)

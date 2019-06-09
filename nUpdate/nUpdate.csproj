@@ -41,6 +41,9 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DeltaCompressionDotNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeltaCompressionDotNet.2.0.0.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -64,15 +67,18 @@
   <ItemGroup>
     <Compile Include="ApplicationParameters.cs" />
     <Compile Include="Architecture.cs" />
+    <Compile Include="DeltaPackageBuilder.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="GitHubUpdateDeliveryEndpoint.cs" />
     <Compile Include="HostApplicationOptions.cs" />
     <Compile Include="ITransferData.cs" />
+    <Compile Include="IUpdateDeliveryEndpoint.cs" />
     <Compile Include="UpdateArgument.cs" />
     <Compile Include="UpdateArgumentExecutionOptions.cs" />
     <Compile Include="UpdateChannel.cs" />
     <Compile Include="Utility.cs" />
-    <Compile Include="UpdatePackage.cs" />
+    <Compile Include="DefaultUpdatePackage.cs" />
     <Compile Include="UpdateProgressData.cs" />
     <Compile Include="Updater.cs" />
     <Compile Include="UpdateResult.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="WebConnection.cs" />
     <Compile Include="Localization\LocalizationHelper.cs" />
     <Compile Include="Localization\LocalizationProperties.cs" />
+    <Compile Include="WebserverUpdateDeliveryEndpoint.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\OperationArea.cs" />
@@ -92,7 +99,6 @@
     <Compile Include="DevelopmentalStage.cs" />
     <Compile Include="Exceptions\SizeCalculationException.cs" />
     <Compile Include="Exceptions\StatisticsException.cs" />
-    <Compile Include="IDeepCopy.cs" />
     <Compile Include="nUpdateVersionAttribute.cs" />
     <Compile Include="RsaManager.cs" />
     <Compile Include="JsonSerializer.cs" />

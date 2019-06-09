@@ -106,8 +106,8 @@ namespace nUpdate
         /// <summary>
         ///     Gets all new update packages that have been found.
         /// </summary>
-        public IEnumerable<UpdatePackage> AvailablePackages { get; private set; } =
-            Enumerable.Empty<UpdatePackage>();
+        public IEnumerable<DefaultUpdatePackage> AvailablePackages { get; private set; } =
+            Enumerable.Empty<DefaultUpdatePackage>();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the current client should be included into the statistics, or not.
@@ -189,7 +189,7 @@ namespace nUpdate
         /// <summary>
         ///     Prepares and installs the specified update packages.
         /// </summary>
-        /// <seealso cref="ApplyUpdates(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="ApplyUpdates(IEnumerable{DefaultUpdatePackage})" />
         public void ApplyUpdates()
         {
             ApplyUpdates(AvailablePackages);
@@ -199,7 +199,7 @@ namespace nUpdate
         ///     Prepares and installs the specified update packages.
         /// </summary>
         /// <seealso cref="ApplyUpdates()" />
-        public void ApplyUpdates(IEnumerable<UpdatePackage> packages)
+        public void ApplyUpdates(IEnumerable<DefaultUpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));
@@ -237,7 +237,7 @@ namespace nUpdate
 
             var updatePackages = packages.ToArray();
             var packageOperations =
-                updatePackages.ToDictionary<UpdatePackage, Version, IEnumerable<Operation>>(
+                updatePackages.ToDictionary<DefaultUpdatePackage, Version, IEnumerable<Operation>>(
                     package => package.Version, package => package.Operations);
 
             var installerUiAssemblyPath = !string.IsNullOrEmpty(InstallerUserInterfacePath)
@@ -341,7 +341,7 @@ namespace nUpdate
         /// <exception cref="IOException">The creation of the directory, where the update packages should be saved in, failed.</exception>
         /// <exception cref="IOException">An exception occured while writing to the file.</exception>
         /// <exception cref="OperationCanceledException">The download was canceled.</exception>
-        public async Task DownloadUpdates(IEnumerable<UpdatePackage> packages, CancellationToken cancellationToken,
+        public async Task DownloadUpdates(IEnumerable<DefaultUpdatePackage> packages, CancellationToken cancellationToken,
             IProgress<UpdateProgressData> progress)
         {
             if (packages == null)
@@ -386,7 +386,7 @@ namespace nUpdate
             });
         }
 
-        private string GetLocalPackagePath(UpdatePackage package)
+        private string GetLocalPackagePath(DefaultUpdatePackage package)
         {
             return Path.Combine(_applicationUpdateDirectory,
                 $"{package.Guid}.zip");
@@ -397,8 +397,8 @@ namespace nUpdate
         /// </summary>
         /// <param name="package">The update package.</param>
         /// <seealso cref="RemoveLocalPackages()" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
-        public void RemoveLocalPackage(UpdatePackage package)
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{DefaultUpdatePackage})" />
+        public void RemoveLocalPackage(DefaultUpdatePackage package)
         {
             var path = GetLocalPackagePath(package);
             if (File.Exists(path))
@@ -411,7 +411,7 @@ namespace nUpdate
         /// <param name="packages">The update packages.</param>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="RemoveLocalPackages()" />
-        public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
+        public void RemoveLocalPackages(IEnumerable<DefaultUpdatePackage> packages)
         {
             foreach (var package in packages)
                 RemoveLocalPackage(package);
@@ -421,7 +421,7 @@ namespace nUpdate
         ///     Removes all downloaded update packages.
         /// </summary>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{DefaultUpdatePackage})" />
         public void RemoveLocalPackages()
         {
             RemoveLocalPackages(AvailablePackages);
@@ -488,8 +488,8 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="ValidateUpdates()" />
-        /// <seealso cref="ValidateUpdates(IEnumerable{UpdatePackage})" />
-        public Task<bool> ValidateUpdate(UpdatePackage package)
+        /// <seealso cref="ValidateUpdates(IEnumerable{DefaultUpdatePackage})" />
+        public Task<bool> ValidateUpdate(DefaultUpdatePackage package)
         {
             if (package == null)
                 throw new ArgumentNullException(nameof(package));
@@ -548,7 +548,7 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="ValidateUpdate" />
-        public async Task<ValidationResult> ValidateUpdates(IEnumerable<UpdatePackage> packages)
+        public async Task<ValidationResult> ValidateUpdates(IEnumerable<DefaultUpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));

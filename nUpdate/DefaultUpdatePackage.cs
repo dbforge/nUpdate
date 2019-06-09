@@ -3,11 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using nUpdate.Operations;
 
 namespace nUpdate
@@ -16,7 +11,7 @@ namespace nUpdate
     ///     Represents an update package.
     /// </summary>
     [Serializable]
-    public class UpdatePackage : IDeepCopy<UpdatePackage>
+    public class DefaultUpdatePackage
     {
         /// <summary>
         ///     Gets or sets the supported <see cref="nUpdate.Architecture" />s of the update package.
@@ -100,47 +95,5 @@ namespace nUpdate
         ///     Gets or sets the version ID of this package in the statistics database.
         /// </summary>
         public int VersionId { get; set; }
-
-        /// <summary>
-        ///     Performs a deep copy of the current <see cref="UpdatePackage" /> instance.
-        /// </summary>
-        public UpdatePackage DeepCopy()
-        {
-            return (UpdatePackage) MemberwiseClone();
-        }
-
-        // TODO: Change within changes in the versioning system
-        /// <summary>
-        ///     Loads all available <see cref="UpdatePackage" />s from a local file at the specified path.
-        /// </summary>
-        /// <param name="filePath">The path of the local file.</param>
-        public static IEnumerable<UpdatePackage> FromFile(string filePath)
-        {
-            return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(File.ReadAllText(filePath)) ??
-                   Enumerable.Empty<UpdatePackage>();
-        }
-
-        /// <summary>
-        ///     Gathers the available <see cref="UpdatePackage" /> data from the file located at the specified <see cref="Uri" />.
-        /// </summary>
-        /// <param name="configFileUri">The <see cref="Uri" /> of the <see cref="UpdatePackage" /> data file.</param>
-        /// <param name="proxy">The optional <see cref="WebProxy" /> to use.</param>
-        public static async Task<IEnumerable<UpdatePackage>> GetRemotePackageData(Uri configFileUri, WebProxy proxy)
-        {
-            using (var wc = new WebClientEx(10000))
-            {
-                wc.Encoding = Encoding.UTF8;
-                if (proxy != null)
-                    wc.Proxy = proxy;
-
-                // Check for SSL and ignore it
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-                var source = await wc.DownloadStringTaskAsync(configFileUri);
-                if (!string.IsNullOrEmpty(source))
-                    return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
-            }
-
-            return Enumerable.Empty<UpdatePackage>();
-        }
     }
 }
