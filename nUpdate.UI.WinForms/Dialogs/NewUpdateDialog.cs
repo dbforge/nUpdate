@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.UI.WinForms.Win32;
@@ -88,6 +89,14 @@ namespace nUpdate.UI.WinForms.Dialogs
         private void changelogTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             Process.Start(e.LinkText);
+        }
+
+        private static string GetVersionDescription(DefaultUpdatePackage package)
+        {
+            var versionStringBuilder = new StringBuilder(package.Version.ToString());
+            if (package.ChannelName.ToLowerInvariant() != "release")
+                versionStringBuilder.Append($" {package.ChannelName}");
+            return versionStringBuilder.ToString();
         }
     }
 }

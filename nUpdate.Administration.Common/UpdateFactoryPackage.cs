@@ -2,13 +2,13 @@
 {
     internal struct UpdateFactoryPackage
     {
-        public UpdateFactoryPackage(string archivePath, UpdatePackage packageData)
+        public UpdateFactoryPackage(string archivePath, DefaultUpdatePackage packageData)
         {
             ArchivePath = archivePath;
             PackageData = packageData;
         }
 
         internal string ArchivePath { get; set; }
-        internal UpdatePackage PackageData { get; set; }
+        internal DefaultUpdatePackage PackageData { get; set; }
     }
 }

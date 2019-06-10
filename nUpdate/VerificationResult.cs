@@ -12,7 +12,7 @@ namespace nUpdate
     {
         internal VerificationResult(int packageAmount)
         {
-            InvalidPackages = new List<UpdatePackage>(packageAmount);
+            InvalidPackages = new List<DefaultUpdatePackage>(packageAmount);
         }
 
         /// <summary>
@@ -23,6 +23,6 @@ namespace nUpdate
         /// <summary>
         ///     Gets the invalid packages that have been found.
         /// </summary>
-        public List<UpdatePackage> InvalidPackages { get; }
+        public List<DefaultUpdatePackage> InvalidPackages { get; }
     }
 }

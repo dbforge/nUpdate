@@ -23,7 +23,7 @@ namespace nUpdate.Administration.Common
         private Guid _guid;
         private List<PackageActionLogData> _logData;
         private string _name;
-        private List<UpdatePackage> _packages;
+        private List<DefaultUpdatePackage> _packages;
         private string _privateKey;
         private string _publicKey;
         private string _transferAssemblyFilePath;
@@ -94,10 +94,9 @@ namespace nUpdate.Administration.Common
         }
 
         /// <summary>
-        ///     Gets or sets the available <see cref="nUpdate.UpdatePackage" />s of the project.
+        ///     Gets or sets the available <see cref="DefaultUpdatePackage" />s of the project.
         /// </summary>
-        [JsonProperty]
-        public List<UpdatePackage> Packages
+        public List<DefaultUpdatePackage> Packages
         {
             get => _packages;
             set
