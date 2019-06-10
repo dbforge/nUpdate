@@ -46,10 +46,6 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="nUpdate.UpdateInstaller.Client.GuiInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\nUpdate.Client.GuiInterface\bin\nUpdate.UpdateInstaller.Client.GuiInterface.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Drawing" />
@@ -90,6 +86,10 @@
     <ProjectReference Include="..\nUpdate.Client.GuiInterface\nUpdate.UpdateInstaller.UserInterface.csproj">
       <Project>{5e63208a-8f06-4b99-a41d-f469be4cfd00}</Project>
       <Name>nUpdate.UpdateInstaller.UserInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.UI.WinForms\nUpdate.UI.WinForms.csproj">
+      <Project>{e57f6f42-7f87-4bd0-a055-33d13c81ec8f}</Project>
+      <Name>nUpdate.UI.WinForms</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
       <Project>{e68dd6c6-82dd-4837-bc94-431e6c41b6fe}</Project>

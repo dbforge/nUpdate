@@ -1,122 +1,15 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller.Core;
-using nUpdate.UpdateInstaller.UI.Popups;
 
 namespace nUpdate.UpdateInstaller
 {
     internal static class Program
     {
-        /// <summary>
-        ///     The paths of the package files.
-        /// </summary>
-        public static string[] PackageFilePaths { get; set; }
-
-        /// <summary>
-        ///     The program folder where the updated files should be copied to.
-        /// </summary>
-        public static string AimFolder { get; set; }
-
-        /// <summary>
-        ///     The path of the program's executable file.
-        /// </summary>
-        public static string ApplicationExecutablePath { get; set; }
-
-        /// <summary>
-        ///     The name of the program.
-        /// </summary>
-        public static string AppName { get; set; }
-
-        /// <summary>
-        ///     The path of the external GUI assembly.
-        /// </summary>
-        public static string ExternalGuiAssemblyPath { get; set; }
-
-        /// <summary>
-        ///     The text of the "Extracting files..."-label.
-        /// </summary>
-        public static string ExtractFilesText { get; set; }
-
-        /// <summary>
-        ///     The text of the "Copying..."-label.
-        /// </summary>
-        public static string CopyingText { get; set; }
-
-        /// <summary>
-        ///     The text of the file rename information.
-        /// </summary>
-        public static string FileRenamingOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the file delete information.
-        /// </summary>
-        public static string FileDeletingOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry sub key creation information.
-        /// </summary>
-        public static string RegistrySubKeyCreateOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry name-value-pair value setting information.
-        /// </summary>
-        public static string RegistryNameValuePairSetValueOperationText { get; set; }
-
-        /// <summary>
-        ///     The paths of the package files.
-        /// </summary>
-        public static string RegistrySubKeyDeleteOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the process start information.
-        /// </summary>
-        public static string ProcessStartOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the process stop information.
-        /// </summary>
-        public static string ProcessStopOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the service start information.
-        /// </summary>
-        public static string ServiceStartOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the service stop information.
-        /// </summary>
-        public static string ServiceStopOperationText { get; set; }
-
-        /// <summary>
-        ///     The caption of the updating error message.
-        /// </summary>
-        public static string UpdatingErrorCaption { get; set; }
-
-        /// <summary>
-        ///     The caption of the initializing error message.
-        /// </summary>
-        public static string InitializingErrorCaption { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the arguments to handle over to the application.
-        /// </summary>
-        public static List<UpdateArgument> Arguments { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the host application options after the update installation.
-        /// </summary>
-        public static HostApplicationOptions HostApplicationOptions { get; set; }
-
-        /// <summary>
-        ///     The text of the error that a file is currently being used by another program.
-        /// </summary>
-        public static string FileInUseError { get; set; }
+        public static string PackageDirectory { get; set; }
+        public static object NewUpdatePackages { get; internal set; }
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -129,51 +22,10 @@ namespace nUpdate.UpdateInstaller
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
 
             if (args.Length != 1)
-            {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
-                    $"Invalid arguments count ({args.Length}) where 1 argument was expected.",
-                    PopupButtons.Ok);
                 return;
-            }
 
             var appArguments = args[0].Split('|');
-
-            try
-            {
-                PackageFilePaths = appArguments[0].Split('%');
-                AimFolder = appArguments[1];
-                ApplicationExecutablePath = appArguments[2];
-                AppName = appArguments[3];
-                // Argument 4 became deprecated and is ignored
-                ExternalGuiAssemblyPath = appArguments[5];
-                ExtractFilesText = appArguments[6];
-                CopyingText = appArguments[7];
-                FileDeletingOperationText = appArguments[8];
-                FileRenamingOperationText = appArguments[9];
-                RegistrySubKeyCreateOperationText = appArguments[10];
-                RegistrySubKeyDeleteOperationText = appArguments[11];
-                RegistryNameValuePairDeleteValueOperationText = appArguments[12];
-                RegistryNameValuePairSetValueOperationText = appArguments[13];
-                ProcessStartOperationText = appArguments[14];
-                ProcessStopOperationText = appArguments[15];
-                ServiceStartOperationText = appArguments[16];
-                ServiceStopOperationText = appArguments[17];
-                UpdatingErrorCaption = appArguments[18];
-                InitializingErrorCaption = appArguments[19];
-                Arguments = Serializer.Deserialize<List<UpdateArgument>>(
-                    Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20])));
-                    // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
-                HostApplicationOptions =
-                    (HostApplicationOptions) Enum.Parse(typeof (HostApplicationOptions), appArguments[21]);
-                FileInUseError = appArguments[22];
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
-                return;
-            }
-
-            new Updater().RunUpdate();
+            // ...
         }
 
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
