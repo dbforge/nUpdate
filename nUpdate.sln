@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.Internal", "nUpdate.Internal\nUpdate.Internal.csproj", "{EFB71D69-EBF9-4F60-B776-DE443730A3DD}"
 EndProject
@@ -39,6 +39,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		nUpdate.Shared\nUpdate.Shared.projitems*{1fc358a3-632d-4e44-8533-057d72176220}*SharedItemsImports = 13
+		nUpdate.Shared\nUpdate.Shared.projitems*{2bbc927a-b18c-4bfe-8325-d9387f217095}*SharedItemsImports = 4
 		nUpdate.Shared\nUpdate.Shared.projitems*{b60f0aee-f710-44ff-9c64-7bc4fcbd1bf5}*SharedItemsImports = 4
 		nUpdate.Shared\nUpdate.Shared.projitems*{ce1809ee-88fd-449c-81ab-6409f9b4ecea}*SharedItemsImports = 4
 		nUpdate.Shared\nUpdate.Shared.projitems*{ef0aa5c9-ffef-440d-975a-4e78c3bbba17}*SharedItemsImports = 4

@@ -965,6 +965,20 @@ namespace nUpdate.Administration.UI.Dialogs
                 InitializeArchiveContents(filesDataTreeView.Nodes[2], "Temp");
                 InitializeArchiveContents(filesDataTreeView.Nodes[3], "Desktop");
 
+                string operationFile = Path.Combine(_packageFolder, "operations.json");
+                var operations = new List<Operation>();
+
+                Invoke(new Action(() =>
+                {
+                    operations.AddRange(from operationPanel in from TreeNode node in categoryTreeView.Nodes[4].Nodes
+                            where node.Index != 0
+                            select (IOperationPanel) categoryTabControl.TabPages[5 + node.Index].Controls[0]
+                        select operationPanel.Operation);
+                }));
+
+                File.WriteAllText(operationFile, Serializer.Serialize(operations));
+                _zip.AddFile(operationFile);
+
                 //Invoke(new Action(() => loadingLabel.Text = "Initializing hash file..."));
 
                 //try
@@ -1026,15 +1040,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.Changelog = changelog;
                 _configuration.NecessaryUpdate = _necessaryUpdate;
                 _configuration.Architecture = (Architecture) _architectureIndex;
-
-                _configuration.Operations = new List<Operation>();
-                Invoke(new Action(() =>
-                {
-                    foreach (var operationPanel in from TreeNode node in categoryTreeView.Nodes[4].Nodes
-                        where node.Index != 0
-                        select (IOperationPanel) categoryTabControl.TabPages[5 + node.Index].Controls[0])
-                        _configuration.Operations.Add(operationPanel.Operation);
-                }));
 
                 Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
 
