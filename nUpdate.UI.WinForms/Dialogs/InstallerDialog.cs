@@ -3,27 +3,27 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
-using nUpdate.UpdateInstaller.UI.Popups;
+using nUpdate.UI.WinForms.Popups;
+using nUpdate.UpdateInstaller.UserInterface;
 
-namespace nUpdate.UpdateInstaller.UI.Dialogs
+namespace nUpdate.UI.WinForms.Dialogs
 {
-    public partial class MainForm : Form, IProgressReporter
+    public partial class InstallerDialog : Form, IProgressReporter
     {
         private bool _allowCancel;
         private bool _dataSet;
 
-        public MainForm()
+        public InstallerDialog()
         {
             InitializeComponent();
         }
 
-        public void Initialize()
+        public void Initialize(string appExecutablePath, string appName)
         {
-            Icon = IconHelper.ExtractAssociatedIcon(Program.ApplicationExecutablePath);
-            Text = Program.AppName;
-            copyingLabel.Text = Program.ExtractFilesText;
-            ShowDialog(); // We currently only have an instance, so we show the form as a modal dialog now.
+            Icon = Icon.ExtractAssociatedIcon(appExecutablePath);
+            Text = appName;
+            copyingLabel.Text = Properties.strings.InstallerExtractingFilesText;
+            ShowDialog();
         }
 
         public void ReportUnpackingProgress(float percentage, string currentFile)
@@ -38,8 +38,8 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
                 }
 
                 extractProgressBar.Value = (int) percentage;
-                copyingLabel.Text = string.Format(Program.CopyingText, currentFile);
-                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
+                copyingLabel.Text = string.Format(Properties.strings.InstallerCopyingText, currentFile);
+                percentageLabel.Text = $@"{Math.Round(percentage, 1)}%";
             }));
         }
 
@@ -48,8 +48,8 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(new Action(() =>
             {
                 extractProgressBar.Value = (int) percentage;
-                copyingLabel.Text = $"{currentOperation}";
-                percentageLabel.Text = $"{Math.Round(percentage, 1)}%";
+                copyingLabel.Text = $@"{currentOperation}";
+                percentageLabel.Text = $@"{Math.Round(percentage, 1)}%";
             }));
         }
 
@@ -58,13 +58,13 @@ namespace nUpdate.UpdateInstaller.UI.Dialogs
             Invoke(
                 new Action(
                     () =>
-                        Popup.ShowPopup(this, SystemIcons.Error, Program.UpdatingErrorCaption,
+                        Popup.ShowPopup(this, SystemIcons.Error, Properties.strings.InstallerUpdatingErrorCaption,
                             ex, PopupButtons.Ok)));
         }
 
         public void InitializingFail(Exception ex)
         {
-            Popup.ShowPopup(this, SystemIcons.Error, Program.InitializingErrorCaption, ex,
+            Popup.ShowPopup(this, SystemIcons.Error, Properties.strings.InstallerInitializingErrorCaption, ex,
                 PopupButtons.Ok);
         }
 

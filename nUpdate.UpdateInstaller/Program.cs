@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Core;
-using nUpdate.UpdateInstaller.Core.Operations;
 using nUpdate.UpdateInstaller.UI.Popups;
 
 namespace nUpdate.UpdateInstaller
@@ -33,11 +32,6 @@ namespace nUpdate.UpdateInstaller
         ///     The name of the program.
         /// </summary>
         public static string AppName { get; set; }
-
-        /// <summary>
-        ///     The operations to perform.
-        /// </summary>
-        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
 
         /// <summary>
         ///     The path of the external GUI assembly.
@@ -75,12 +69,7 @@ namespace nUpdate.UpdateInstaller
         public static string RegistryNameValuePairSetValueOperationText { get; set; }
 
         /// <summary>
-        ///     The text of the registry name-value-pair value deleting information.
-        /// </summary>
-        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry sub key deletion information.
+        ///     The paths of the package files.
         /// </summary>
         public static string RegistrySubKeyDeleteOperationText { get; set; }
 
@@ -155,9 +144,7 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                Operations =
-                    Serializer.Deserialize<Dictionary<string, IEnumerable<Operation>>>(
-                        Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
+                // Argument 4 became deprecated and is ignored
                 ExternalGuiAssemblyPath = appArguments[5];
                 ExtractFilesText = appArguments[6];
                 CopyingText = appArguments[7];

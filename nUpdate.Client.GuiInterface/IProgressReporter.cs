@@ -2,14 +2,14 @@
 
 using System;
 
-namespace nUpdate.UpdateInstaller.Client.GuiInterface
+namespace nUpdate.UpdateInstaller.UserInterface
 {
     public interface IProgressReporter
     {
         /// <summary>
         ///     Initializes the user interface and loads the necessary resources.
         /// </summary>
-        void Initialize();
+        void Initialize(string appExecutablePath, string appName);
 
         /// <summary>
         ///     Reports the progress of the updating process.

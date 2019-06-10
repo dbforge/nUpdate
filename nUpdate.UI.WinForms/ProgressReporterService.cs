@@ -1,46 +1,46 @@
 ﻿using System;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
-using nUpdate.UpdateInstaller.UI.Dialogs;
+using nUpdate.UI.WinForms.Dialogs;
+using nUpdate.UpdateInstaller.UserInterface;
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.UI.WinForms
 {
     public class ProgressReporterService : IProgressReporter
     {
-        private readonly MainForm _mainForm;
+        private readonly InstallerDialog _installerDialog;
 
         public ProgressReporterService()
         {
-            _mainForm = new MainForm();
+            _installerDialog = new InstallerDialog();
         }
 
         public void Fail(Exception ex)
         {
-            _mainForm.Fail(ex);
+            _installerDialog.Fail(ex);
         }
 
         public void Initialize()
         {
-            _mainForm.Initialize();
+            _installerDialog.Initialize();
         }
 
         public void InitializingFail(Exception ex)
         {
-            _mainForm.InitializingFail(ex);
+            _installerDialog.InitializingFail(ex);
         }
 
         public void ReportOperationProgress(float progress, string currentOperation)
         {
-            _mainForm.ReportOperationProgress(progress, currentOperation);
+            _installerDialog.ReportOperationProgress(progress, currentOperation);
         }
 
         public void ReportUnpackingProgress(float progress, string currentFile)
         {
-            _mainForm.ReportUnpackingProgress(progress, currentFile);
+            _installerDialog.ReportUnpackingProgress(progress, currentFile);
         }
 
         public void Terminate()
         {
-            _mainForm.Terminate();
+            _installerDialog.Terminate();
         }
     }
 }

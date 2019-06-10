@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
-using nUpdate.UpdateInstaller.Core;
+using nUpdate.UI.WinForms;
+using nUpdate.UpdateInstaller.UserInterface;
 
 [assembly: ServiceProvider(typeof (InstallerServiceProvider))]
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.UI.WinForms
 {
     public class InstallerServiceProvider : IServiceProvider
     {
@@ -21,8 +21,7 @@ namespace nUpdate.UpdateInstaller.Core
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            object service;
-            return !_services.TryGetValue(serviceType, out service) ? null : service;
+            return !_services.TryGetValue(serviceType, out var service) ? null : service;
         }
 
         private void InitializeServices()

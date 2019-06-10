@@ -1,6 +1,6 @@
-﻿namespace nUpdate.UpdateInstaller.UI.Dialogs
+﻿namespace nUpdate.UI.WinForms.Dialogs
 {
-    partial class MainForm
+    partial class InstallerDialog
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallerDialog));
             this.extractProgressBar = new System.Windows.Forms.ProgressBar();
             this.copyingLabel = new System.Windows.Forms.Label();
             this.percentageLabel = new System.Windows.Forms.Label();
@@ -76,7 +76,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "MainForm";
+            this.Name = "InstallerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.ResumeLayout(false);

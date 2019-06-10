@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace nUpdate
 {
-    internal static class Extensions
+    public static class Extensions
     {
         public static Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> body, int degreeOfParallelism = 4)
         {

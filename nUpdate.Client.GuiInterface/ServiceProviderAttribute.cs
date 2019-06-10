@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace nUpdate.UpdateInstaller.Client.GuiInterface
+namespace nUpdate.UpdateInstaller.UserInterface
 {
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Assembly)]
     public class ServiceProviderAttribute : Attribute
     {
         /// <summary>
@@ -14,9 +14,9 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
         public ServiceProviderAttribute(Type serviceType)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
             if (!typeof (IServiceProvider).IsAssignableFrom(serviceType))
-                throw new ArgumentException("Implementation of IServiceProvider is missing.", "serviceType");
+                throw new ArgumentException("Implementation of IServiceProvider is missing.", nameof(serviceType));
             ServiceType = serviceType;
         }
 

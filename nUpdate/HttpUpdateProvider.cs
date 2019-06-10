@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -145,10 +146,17 @@ namespace nUpdate
             });
         }
 
-        public Task InstallUpdates(Action terminateAction = null)
+        public async Task InstallUpdates(Action terminateAction = null)
         {
-            // TODO: Implement this completely new
-            return null;
+            var updatePackages =_updateResult.Packages.ToArray();
+            await updatePackages.ForEachAsync(p =>
+            {
+                return Task.Run(() =>
+                {
+                    ZipFile.ExtractToDirectory(GetLocalPackagePath(p),
+                        Path.Combine(_applicationUpdateDirectory, p.Guid.ToString()));
+                });
+            });
         }
 
         public void CancelUpdateCheck()

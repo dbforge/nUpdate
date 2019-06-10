@@ -7,8 +7,8 @@
     <ProjectGuid>{5E63208A-8F06-4B99-A41D-F469BE4CFD00}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>nUpdate.UpdateInstaller.Client.GuiInterface</RootNamespace>
-    <AssemblyName>nUpdate.UpdateInstaller.Client.GuiInterface</AssemblyName>
+    <RootNamespace>nUpdate.UpdateInstaller.UserInterface</RootNamespace>
+    <AssemblyName>nUpdate.UpdateInstaller.UserInterface</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
