@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Operations;
 
 namespace nUpdate.Updating
 {
@@ -35,11 +34,6 @@ namespace nUpdate.Updating
         ///     a higher <see cref="UpdateVersion" />.
         /// </summary>
         public bool NecessaryUpdate { get; set; }
-
-        /// <summary>
-        ///     The operations of the update package.
-        /// </summary>
-        public List<Operation> Operations { get; set; }
 
         /// <summary>
         ///     Gets or sets the rollout condition mode used for selecting the updates.
