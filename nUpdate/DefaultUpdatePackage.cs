@@ -3,7 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using nUpdate.Operations;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace nUpdate
 {
@@ -44,12 +48,6 @@ namespace nUpdate
         public bool Compulsory { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Operation" />s of the update package that should be executed during the installation
-        ///     process.
-        /// </summary>
-        public List<Operation> Operations { get; set; }
-
-        /// <summary>
         ///     Gets or sets the release date of the package.
         /// </summary>
         public DateTime ReleaseDate { get; set; }
@@ -79,7 +77,7 @@ namespace nUpdate
         /// </summary>
         public long Size { get; set; }
 
-        public static async Task<IEnumerable<UpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
+        public static async Task<IEnumerable<DefaultUpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
             WebProxy proxy)
         {
             if (Utility.IsHttpUri(packageDataFileUri))
@@ -92,7 +90,7 @@ namespace nUpdate
 
                     var source = await wc.DownloadStringTaskAsync(packageDataFileUri);
                     if (!string.IsNullOrEmpty(source))
-                        return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
+                        return JsonSerializer.Deserialize<IEnumerable<DefaultUpdatePackage>>(source);
                 }
             }
             else
@@ -100,43 +98,11 @@ namespace nUpdate
                 using (var reader = File.OpenText(packageDataFileUri.ToString()))
                 {
                     var content = await reader.ReadToEndAsync();
-                    return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(content);
+                    return JsonSerializer.Deserialize<IEnumerable<DefaultUpdatePackage>>(content);
                 }
             }
 
-            return Enumerable.Empty<UpdatePackage>();
+            return Enumerable.Empty<DefaultUpdatePackage>();
         }
-
-        public static async Task<UpdatePackage> GetPackage(Uri packageFileUri,
-            WebProxy proxy)
-        {
-            if (Utility.IsHttpUri(packageFileUri))
-            {
-                using (var wc = new WebClientEx(10000))
-                {
-                    wc.Encoding = Encoding.UTF8;
-                    if (proxy != null)
-                        wc.Proxy = proxy;
-
-                    var source = await wc.DownloadStringTaskAsync(packageFileUri);
-                    if (!string.IsNullOrEmpty(source))
-                        return JsonSerializer.Deserialize<UpdatePackage>(source);
-                }
-            }
-            else
-            {
-                using (var reader = File.OpenText(packageFileUri.ToString()))
-                {
-                    var content = await reader.ReadToEndAsync();
-                    return JsonSerializer.Deserialize<UpdatePackage>(content);
-                }
-            }
-
-            return default(UpdatePackage);
-        }
-        /// <summary>
-        ///     Gets or sets the version ID of this package in the statistics database.
-        /// </summary>
-        public int VersionId { get; set; }
     }
 }

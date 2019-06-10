@@ -174,7 +174,7 @@ namespace nUpdate
             return VerifyUpdates(_updateResult.Packages);
         }
 
-        private string GetLocalPackagePath(UpdatePackage package)
+        private string GetLocalPackagePath(DefaultUpdatePackage package)
         {
             return Path.Combine(_applicationUpdateDirectory,
                 $"{package.Guid}.zip");
@@ -186,7 +186,7 @@ namespace nUpdate
         /// <param name="package">The update package.</param>
         /// <seealso cref="RemoveLocalPackages()" />
         /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
-        public void RemoveLocalPackage(UpdatePackage package)
+        public void RemoveLocalPackage(DefaultUpdatePackage package)
         {
             var path = GetLocalPackagePath(package);
             if (File.Exists(path))
@@ -199,7 +199,7 @@ namespace nUpdate
         /// <param name="packages">The update packages.</param>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="RemoveLocalPackages()" />
-        public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
+        public void RemoveLocalPackages(IEnumerable<DefaultUpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));
@@ -249,7 +249,7 @@ namespace nUpdate
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="VerifyUpdates()" />
         /// <seealso cref="VerifyUpdates(IEnumerable{UpdatePackage})" />
-        public Task<bool> VerifyUpdate(UpdatePackage package)
+        public Task<bool> VerifyUpdate(DefaultUpdatePackage package)
         {
             if (package == null)
                 throw new ArgumentNullException(nameof(package));
@@ -295,7 +295,7 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="VerifyUpdate" />
-        public async Task<VerificationResult> VerifyUpdates(IEnumerable<UpdatePackage> packages)
+        public async Task<VerificationResult> VerifyUpdates(IEnumerable<DefaultUpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));

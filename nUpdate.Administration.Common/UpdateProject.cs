@@ -96,7 +96,7 @@ namespace nUpdate.Administration.Common
         /// <summary>
         ///     Gets or sets the available <see cref="DefaultUpdatePackage" />s of the project.
         /// </summary>
-        public List<UpdatePackage> Packages
+        public List<DefaultUpdatePackage> Packages
         {
             get => _packages;
             set
