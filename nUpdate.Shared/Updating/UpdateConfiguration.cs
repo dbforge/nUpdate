@@ -12,7 +12,7 @@ using nUpdate.Internal.Core;
 namespace nUpdate.Updating
 {
     [Serializable]
-    public partial class UpdateConfiguration : IDeepCopy<UpdateConfiguration>
+    public partial class UpdateConfiguration
     {
         /// <summary>
         ///     The architecture settings of the update package.
@@ -75,15 +75,6 @@ namespace nUpdate.Updating
         ///     The version ID of this package to use in the statistics, if used.
         /// </summary>
         public int VersionId { get; set; }
-
-        /// <summary>
-        ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
-        /// </summary>
-        /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
-        public UpdateConfiguration DeepCopy()
-        {
-            return (UpdateConfiguration) MemberwiseClone();
-        }
 
         /// <summary>
         ///     Downloads the update configurations from the server.

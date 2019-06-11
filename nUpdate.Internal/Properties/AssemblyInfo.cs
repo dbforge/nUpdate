@@ -43,5 +43,6 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("nUpdate.Shared")]
 [assembly: InternalsVisibleTo("nUpdate.ProvideTAP")]
 [assembly: InternalsVisibleTo("nUpdate.WithoutTAP")]
+[assembly: InternalsVisibleTo("nUpdate.UpdateInstaller")]
 [assembly: InternalsVisibleTo("nUpdate.WPFUserInterface")]
 [assembly: InternalsVisibleTo("nUpdate.WPFUpdateInstaller")]

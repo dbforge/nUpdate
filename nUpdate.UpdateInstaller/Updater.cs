@@ -12,10 +12,10 @@ using System.Threading;
 using Ionic.Zip;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.Shared.Core;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
-using nUpdate.UpdateInstaller.Core.Operations;
 using nUpdate.UpdateInstaller.UI.Popups;
 
 namespace nUpdate.UpdateInstaller
@@ -127,61 +127,24 @@ namespace nUpdate.UpdateInstaller
                     var currentVersionOperations =
                         Serializer.Deserialize<IEnumerable<Operation>>(
                             File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToArray();
+
+                    // Multiple entries for:
+                    /* 
+                     * Files: Delete operation
+                     * Registry: All operations
+                     */
+
                     _totalTaskCount +=
                         currentVersionOperations.Count(
-                            item => item.Area != OperationArea.Registry && item.Method != OperationMethod.Delete);
-                    _totalTaskCount += currentVersionOperations.Where(
-                            item =>
-                                item.Area == OperationArea.Registry && item.Method != OperationMethod.SetValue)
-                        .Select(registryOperation => registryOperation.Value2).Count();
+                            item => item.Area != OperationArea.Registry &&
+                                (item.Area != OperationArea.Files || item.Method != OperationMethod.Delete));
+
+                    foreach (var op in currentVersionOperations.Where(o => o.Area == OperationArea.Registry
+                        || (o.Area == OperationArea.Files && o.Method == OperationMethod.Delete)))
+                    {
+                        _totalTaskCount += ((JArray)op.Value2).Count;
+                    }
                 }
-            }
-
-            foreach (
-                var array in
-                    Program.Operations.Select(entry => entry.Value)
-                        .Select(operationEnumerable => operationEnumerable.Where(
-                            item =>
-                                item.Area == OperationArea.Registry && item.Method != OperationMethod.SetValue)
-                            .Select(registryOperation => registryOperation.Value2)
-                            .OfType<JArray>()).SelectMany(entries =>
-                            {
-                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                return entryEnumerable;
-                            }))
-            {
-                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
-            }
-
-            foreach (
-                var array in
-                    Program.Operations.Select(entry => entry.Value)
-                        .Select(operationEnumerable => operationEnumerable.Where(
-                            item => item.Area == OperationArea.Files && item.Method == OperationMethod.Delete)
-                            .Select(registryOperation => registryOperation.Value2)
-                            .OfType<JArray>()).SelectMany(entries =>
-                            {
-                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                return entryEnumerable;
-                            }))
-            {
-                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
-            }
-
-            foreach (
-                var array in
-                    Program.Operations.Select(entry => entry.Value)
-                        .Select(operationEnumerable => operationEnumerable.Where(
-                            item =>
-                                item.Area == OperationArea.Registry && item.Method == OperationMethod.SetValue)
-                            .Select(registryOperation => registryOperation.Value2)
-                            .OfType<JArray>()).SelectMany(entries =>
-                            {
-                                var entryEnumerable = entries as JArray[] ?? entries.ToArray();
-                                return entryEnumerable;
-                            }))
-            {
-                _totalTaskCount += array.ToObject<IEnumerable<string>>().Count();
             }
 
             foreach (
@@ -191,6 +154,41 @@ namespace nUpdate.UpdateInstaller
                 var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
                 string extractedDirectoryPath =
                     Path.Combine(parentPath, version.ToString());
+
+                IEnumerable<Operation> currentVersionOperations;
+                try
+                {
+                    currentVersionOperations =
+                        Serializer.Deserialize<IEnumerable<Operation>>(
+                            File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json")));
+                    ExecuteOperations(currentVersionOperations.Where(o => o.ExecuteBeforeReplacingFiles));
+                }
+                catch (Exception ex)
+                {
+                    _progressReporter.Fail(ex);
+                    CleanUp();
+                    _progressReporter.Terminate();
+                    if (Program.HostApplicationOptions != HostApplicationOptions.CloseAndRestart)
+                        return;
+
+                    var process = new Process
+                    {
+                        StartInfo =
+                        {
+                            UseShellExecute = true,
+                            FileName = Program.ApplicationExecutablePath,
+                            Arguments =
+                                string.Join("|",
+                                    Program.Arguments.Where(
+                                        item =>
+                                            item.ExecutionOptions ==
+                                            UpdateArgumentExecutionOptions.OnlyOnFaulted).Select(item => item.Argument))
+                        }
+                    };
+                    process.Start();
+                    return;
+                }
+
                 foreach (var directory in new DirectoryInfo(extractedDirectoryPath).GetDirectories())
                 {
                     switch (directory.Name)
@@ -214,211 +212,7 @@ namespace nUpdate.UpdateInstaller
 
                 try
                 {
-                    var currentVersionOperations =
-                        Serializer.Deserialize<IEnumerable<Operation>>(
-                            File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json")));
-                    foreach (var operation in currentVersionOperations)
-                    {
-                        float percentage;
-                        JArray secondValueAsArray;
-                        switch (operation.Area)
-                        {
-                            case OperationArea.Files:
-                                switch (operation.Method)
-                                {
-                                    case OperationMethod.Delete:
-                                        var deleteFilePathParts = operation.Value.Split('\\');
-                                        var deleteFileFullPath = Path.Combine(
-                                            Operation.GetDirectory(deleteFilePathParts[0]),
-                                            string.Join("\\",
-                                                deleteFilePathParts.Where(item => item != deleteFilePathParts[0])));
-                                        secondValueAsArray = operation.Value2 as JArray;
-                                        if (secondValueAsArray != null)
-                                            foreach (
-                                                var fileToDelete in secondValueAsArray.ToObject<IEnumerable<string>>())
-                                            {
-                                                string path = Path.Combine(deleteFileFullPath, fileToDelete);
-                                                if (File.Exists(path))
-                                                    File.Delete(path);
-
-                                                _doneTaskAmount += 1;
-                                                percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                                _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.FileDeletingOperationText, fileToDelete));
-                                            }
-                                        break;
-
-                                    case OperationMethod.Rename:
-                                        var renameFilePathParts = operation.Value.Split('\\');
-                                        var renameFileFullPath = Path.Combine(
-                                            Operation.GetDirectory(renameFilePathParts[0]),
-                                            string.Join("\\",
-                                                renameFilePathParts.Where(item => item != renameFilePathParts[0])));
-                                        if (File.Exists(renameFileFullPath))
-                                            File.Move(renameFileFullPath,
-                                                Path.Combine(Directory.GetParent(renameFileFullPath).FullName,
-                                                    operation.Value2.ToString()));
-
-                                        _doneTaskAmount += 1;
-                                        percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                        _progressReporter.ReportOperationProgress(percentage,
-                                            string.Format(Program.FileRenamingOperationText,
-                                                Path.GetFileName(operation.Value),
-                                                operation.Value2));
-                                        break;
-                                }
-                                break;
-                            case OperationArea.Registry:
-                                switch (operation.Method)
-                                {
-                                    case OperationMethod.Create:
-                                        secondValueAsArray = operation.Value2 as JArray;
-                                        if (secondValueAsArray != null)
-                                            foreach (
-                                                var registryKey in secondValueAsArray.ToObject<IEnumerable<string>>())
-                                            {
-                                                RegistryManager.CreateSubKey(operation.Value, registryKey);
-
-                                                _doneTaskAmount += 1;
-                                                percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                                _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.RegistrySubKeyCreateOperationText, registryKey));
-                                            }
-                                        break;
-
-                                    case OperationMethod.Delete:
-                                        secondValueAsArray = operation.Value2 as JArray;
-                                        if (secondValueAsArray != null)
-                                            foreach (
-                                                var registryKey in secondValueAsArray.ToObject<IEnumerable<string>>())
-                                            {
-                                                RegistryManager.DeleteSubKey(operation.Value, registryKey);
-
-                                                _doneTaskAmount += 1;
-                                                percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                                _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.RegistrySubKeyDeleteOperationText, registryKey));
-                                            }
-                                        break;
-
-                                    case OperationMethod.SetValue:
-                                        secondValueAsArray = operation.Value2 as JArray;
-                                        if (secondValueAsArray != null)
-                                            foreach (
-                                                var nameValuePair in
-                                                    secondValueAsArray
-                                                        .ToObject<IEnumerable<Tuple<string, object, RegistryValueKind>>>
-                                                        ())
-                                            {
-                                                RegistryManager.SetValue(operation.Value, nameValuePair.Item1,
-                                                    nameValuePair.Item2, nameValuePair.Item3);
-
-                                                _doneTaskAmount += 1;
-                                                percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                                _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.RegistryNameValuePairSetValueOperationText,
-                                                        nameValuePair.Item1, nameValuePair.Item2));
-                                            }
-                                        break;
-
-                                    case OperationMethod.DeleteValue:
-                                        secondValueAsArray = operation.Value2 as JArray;
-                                        if (secondValueAsArray != null)
-                                            foreach (var valueName in secondValueAsArray.ToObject<IEnumerable<string>>()
-                                                )
-                                            {
-                                                RegistryManager.DeleteValue(operation.Value, valueName);
-
-                                                _doneTaskAmount += 1;
-                                                percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                                _progressReporter.ReportOperationProgress(percentage,
-                                                    string.Format(Program.RegistryNameValuePairSetValueOperationText,
-                                                        valueName));
-                                            }
-                                        break;
-                                }
-                                break;
-
-                            case OperationArea.Processes:
-                                switch (operation.Method)
-                                {
-                                    case OperationMethod.Start:
-                                        var processFilePathParts = operation.Value.Split('\\');
-                                        var processFileFullPath =
-                                            Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
-                                                string.Join("\\",
-                                                    processFilePathParts.Where(item => item != processFilePathParts[0])));
-
-                                        var process = new Process
-                                        {
-                                            StartInfo =
-                                            {
-                                                FileName = processFileFullPath,
-                                                Arguments = operation.Value2.ToString()
-                                            }
-                                        };
-                                        try
-                                        {
-                                            process.Start();
-                                        }
-                                        catch (Win32Exception ex)
-                                        {
-                                            if (ex.NativeErrorCode != 1223)
-                                                throw;
-                                        }
-
-                                        _doneTaskAmount += 1;
-                                        percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                        _progressReporter.ReportOperationProgress(percentage,
-                                            string.Format(Program.ProcessStartOperationText, operation.Value));
-                                        break;
-
-                                    case OperationMethod.Stop:
-                                        var processes = Process.GetProcessesByName(operation.Value);
-                                        foreach (var foundProcess in processes)
-                                            foundProcess.Kill();
-
-                                        _doneTaskAmount += 1;
-                                        percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                        _progressReporter.ReportOperationProgress(percentage,
-                                            string.Format(Program.ProcessStopOperationText, operation.Value));
-                                        break;
-                                }
-                                break;
-
-                            case OperationArea.Services:
-                                switch (operation.Method)
-                                {
-                                    case OperationMethod.Start:
-                                        ServiceManager.StartService(operation.Value, (string[]) operation.Value2);
-
-                                        _doneTaskAmount += 1;
-                                        percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                        _progressReporter.ReportOperationProgress(percentage,
-                                            string.Format(Program.ServiceStartOperationText, operation.Value));
-                                        break;
-
-                                    case OperationMethod.Stop:
-                                        ServiceManager.StopService(operation.Value);
-
-                                        _doneTaskAmount += 1;
-                                        percentage = ((float) _doneTaskAmount/_totalTaskCount)*100f;
-                                        _progressReporter.ReportOperationProgress(percentage,
-                                            string.Format(Program.ServiceStopOperationText, operation.Value));
-                                        break;
-                                }
-                                break;
-                            case OperationArea.Scripts:
-                                switch (operation.Method)
-                                {
-                                    case OperationMethod.Execute:
-                                        var helper = new CodeDomHelper();
-                                        helper.ExecuteScript(operation.Value);
-                                        break;
-                                }
-                                break;
-                        }
-                    }
+                    ExecuteOperations(currentVersionOperations.Where(o => !o.ExecuteBeforeReplacingFiles));
                 }
                 catch (Exception ex)
                 {
@@ -467,6 +261,212 @@ namespace nUpdate.UpdateInstaller
                 p.Start();
             }
             _progressReporter.Terminate();
+        }
+
+        private void ExecuteOperations(IEnumerable<Operation> operations)
+        {
+            foreach (var operation in operations)
+            {
+                float percentage;
+                JArray secondValueAsArray;
+                switch (operation.Area)
+                {
+                    case OperationArea.Files:
+                        switch (operation.Method)
+                        {
+                            case OperationMethod.Delete:
+                                var deleteFilePathParts = operation.Value.Split('\\');
+                                var deleteFileFullPath = Path.Combine(
+                                    Operation.GetDirectory(deleteFilePathParts[0], Program.AimFolder),
+                                    string.Join("\\",
+                                        deleteFilePathParts.Where(item => item != deleteFilePathParts[0])));
+                                secondValueAsArray = operation.Value2 as JArray;
+                                if (secondValueAsArray != null)
+                                    foreach (
+                                        var fileToDelete in secondValueAsArray.ToObject<IEnumerable<string>>())
+                                    {
+                                        string path = Path.Combine(deleteFileFullPath, fileToDelete);
+                                        if (File.Exists(path))
+                                            File.Delete(path);
+
+                                        _doneTaskAmount += 1;
+                                        percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                        _progressReporter.ReportOperationProgress(percentage,
+                                            string.Format(Program.FileDeletingOperationText, fileToDelete));
+                                    }
+                                break;
+
+                            case OperationMethod.Rename:
+                                var renameFilePathParts = operation.Value.Split('\\');
+                                var renameFileFullPath = Path.Combine(
+                                    Operation.GetDirectory(renameFilePathParts[0], Program.AimFolder),
+                                    string.Join("\\",
+                                        renameFilePathParts.Where(item => item != renameFilePathParts[0])));
+                                if (File.Exists(renameFileFullPath))
+                                    File.Move(renameFileFullPath,
+                                        Path.Combine(Directory.GetParent(renameFileFullPath).FullName,
+                                            operation.Value2.ToString()));
+
+                                _doneTaskAmount += 1;
+                                percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                _progressReporter.ReportOperationProgress(percentage,
+                                    string.Format(Program.FileRenamingOperationText,
+                                        Path.GetFileName(operation.Value),
+                                        operation.Value2));
+                                break;
+                        }
+                        break;
+                    case OperationArea.Registry:
+                        switch (operation.Method)
+                        {
+                            case OperationMethod.Create:
+                                secondValueAsArray = operation.Value2 as JArray;
+                                if (secondValueAsArray != null)
+                                    foreach (
+                                        var registryKey in secondValueAsArray.ToObject<IEnumerable<string>>())
+                                    {
+                                        RegistryManager.CreateSubKey(operation.Value, registryKey);
+
+                                        _doneTaskAmount += 1;
+                                        percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                        _progressReporter.ReportOperationProgress(percentage,
+                                            string.Format(Program.RegistrySubKeyCreateOperationText, registryKey));
+                                    }
+                                break;
+
+                            case OperationMethod.Delete:
+                                secondValueAsArray = operation.Value2 as JArray;
+                                if (secondValueAsArray != null)
+                                    foreach (
+                                        var registryKey in secondValueAsArray.ToObject<IEnumerable<string>>())
+                                    {
+                                        RegistryManager.DeleteSubKey(operation.Value, registryKey);
+
+                                        _doneTaskAmount += 1;
+                                        percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                        _progressReporter.ReportOperationProgress(percentage,
+                                            string.Format(Program.RegistrySubKeyDeleteOperationText, registryKey));
+                                    }
+                                break;
+
+                            case OperationMethod.SetValue:
+                                secondValueAsArray = operation.Value2 as JArray;
+                                if (secondValueAsArray != null)
+                                    foreach (
+                                        var nameValuePair in
+                                            secondValueAsArray
+                                                .ToObject<IEnumerable<Tuple<string, object, RegistryValueKind>>>
+                                                ())
+                                    {
+                                        RegistryManager.SetValue(operation.Value, nameValuePair.Item1,
+                                            nameValuePair.Item2, nameValuePair.Item3);
+
+                                        _doneTaskAmount += 1;
+                                        percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                        _progressReporter.ReportOperationProgress(percentage,
+                                            string.Format(Program.RegistryNameValuePairSetValueOperationText,
+                                                nameValuePair.Item1, nameValuePair.Item2));
+                                    }
+                                break;
+
+                            case OperationMethod.DeleteValue:
+                                secondValueAsArray = operation.Value2 as JArray;
+                                if (secondValueAsArray != null)
+                                    foreach (var valueName in secondValueAsArray.ToObject<IEnumerable<string>>()
+                                        )
+                                    {
+                                        RegistryManager.DeleteValue(operation.Value, valueName);
+
+                                        _doneTaskAmount += 1;
+                                        percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                        _progressReporter.ReportOperationProgress(percentage,
+                                            string.Format(Program.RegistryNameValuePairSetValueOperationText,
+                                                valueName));
+                                    }
+                                break;
+                        }
+                        break;
+
+                    case OperationArea.Processes:
+                        switch (operation.Method)
+                        {
+                            case OperationMethod.Start:
+                                var processFilePathParts = operation.Value.Split('\\');
+                                var processFileFullPath =
+                                    Path.Combine(Operation.GetDirectory(processFilePathParts[0], Program.AimFolder),
+                                        string.Join("\\",
+                                            processFilePathParts.Where(item => item != processFilePathParts[0])));
+
+                                var process = new Process
+                                {
+                                    StartInfo =
+                                            {
+                                                FileName = processFileFullPath,
+                                                Arguments = operation.Value2.ToString()
+                                            }
+                                };
+                                try
+                                {
+                                    process.Start();
+                                }
+                                catch (Win32Exception ex)
+                                {
+                                    if (ex.NativeErrorCode != 1223)
+                                        throw;
+                                }
+
+                                _doneTaskAmount += 1;
+                                percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                _progressReporter.ReportOperationProgress(percentage,
+                                    string.Format(Program.ProcessStartOperationText, operation.Value));
+                                break;
+
+                            case OperationMethod.Stop:
+                                var processes = Process.GetProcessesByName(operation.Value);
+                                foreach (var foundProcess in processes)
+                                    foundProcess.Kill();
+
+                                _doneTaskAmount += 1;
+                                percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                _progressReporter.ReportOperationProgress(percentage,
+                                    string.Format(Program.ProcessStopOperationText, operation.Value));
+                                break;
+                        }
+                        break;
+
+                    case OperationArea.Services:
+                        switch (operation.Method)
+                        {
+                            case OperationMethod.Start:
+                                ServiceManager.StartService(operation.Value, (string[])operation.Value2);
+
+                                _doneTaskAmount += 1;
+                                percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                _progressReporter.ReportOperationProgress(percentage,
+                                    string.Format(Program.ServiceStartOperationText, operation.Value));
+                                break;
+
+                            case OperationMethod.Stop:
+                                ServiceManager.StopService(operation.Value);
+
+                                _doneTaskAmount += 1;
+                                percentage = ((float)_doneTaskAmount / _totalTaskCount) * 100f;
+                                _progressReporter.ReportOperationProgress(percentage,
+                                    string.Format(Program.ServiceStopOperationText, operation.Value));
+                                break;
+                        }
+                        break;
+                    case OperationArea.Scripts:
+                        switch (operation.Method)
+                        {
+                            case OperationMethod.Execute:
+                                var helper = new CodeDomHelper();
+                                helper.ExecuteScript(operation.Value);
+                                break;
+                        }
+                        break;
+                }
+            }
         }
 
         /// <summary>

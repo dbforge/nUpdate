@@ -165,7 +165,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
             this.filesPanel = new System.Windows.Forms.Panel();
-            this.differentialUpdateCheckBox = new System.Windows.Forms.CheckBox();
             this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
             this.addFolderButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -1096,7 +1095,6 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // filesPanel
             // 
-            this.filesPanel.Controls.Add(this.differentialUpdateCheckBox);
             this.filesPanel.Controls.Add(this.filesDataTreeView);
             this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
             this.filesPanel.Controls.Add(this.filesList);
@@ -1104,17 +1102,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.filesPanel.Name = "filesPanel";
             this.filesPanel.Size = new System.Drawing.Size(474, 235);
             this.filesPanel.TabIndex = 41;
-            // 
-            // differentialUpdateCheckBox
-            // 
-            this.differentialUpdateCheckBox.AutoSize = true;
-            this.differentialUpdateCheckBox.Location = new System.Drawing.Point(388, 7);
-            this.differentialUpdateCheckBox.Name = "differentialUpdateCheckBox";
-            this.differentialUpdateCheckBox.Size = new System.Drawing.Size(84, 17);
-            this.differentialUpdateCheckBox.TabIndex = 6;
-            this.differentialUpdateCheckBox.Text = "Differential";
-            this.differentialUpdateCheckBox.UseVisualStyleBackColor = true;
-            this.differentialUpdateCheckBox.Visible = false;
             // 
             // filesDataTreeView
             // 
@@ -1480,7 +1467,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsPanel.ResumeLayout(false);
             this.replaceFilesTabPage.ResumeLayout(false);
             this.filesPanel.ResumeLayout(false);
-            this.filesPanel.PerformLayout();
             this.replaceFilesToolStrip.ResumeLayout(false);
             this.replaceFilesToolStrip.PerformLayout();
             this.conditionsTabPage.ResumeLayout(false);
@@ -1589,7 +1575,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
-        private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TabPage conditionsTabPage;
         private System.Windows.Forms.DataGridView conditionsDataGridView;

@@ -26,8 +26,6 @@ namespace nUpdate.UI.Dialogs
             InitializeComponent();
         }
 
-        public List<OperationArea> OperationAreas { get; set; }
-
         internal static void AddShieldToButton(Button btn)
         {
             const int bcmSetshield = 0x160C;
@@ -109,16 +107,6 @@ namespace nUpdate.UI.Dialogs
             }
 
             AddShieldToButton(installButton);
-
-            if (OperationAreas == null || OperationAreas.Count == 0)
-            {
-                accessLabel.Text = $"{_lp.NewUpdateDialogAccessText} -";
-                _allowCancel = true;
-                return;
-            }
-
-            accessLabel.Text =
-                $"{_lp.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
             _allowCancel = true;
         }
     }

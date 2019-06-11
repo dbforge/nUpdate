@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nUpdate.UpdateInstaller</RootNamespace>
-    <AssemblyName>nUpdate UpdateInstaller</AssemblyName>
+    <AssemblyName>nUpdate.UpdateInstaller</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -52,10 +52,6 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nUpdate.UpdateInstaller.Client.GuiInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\nUpdate.Client.GuiInterface\bin\nUpdate.UpdateInstaller.Client.GuiInterface.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Drawing" />
@@ -67,9 +63,6 @@
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\FileHelper.cs" />
     <Compile Include="Core\IconHelper.cs" />
-    <Compile Include="Core\Operations\Operation.cs" />
-    <Compile Include="Core\Operations\OperationArea.cs" />
-    <Compile Include="Core\Operations\OperationMethod.cs" />
     <Compile Include="Core\ProgressReporterServiceEventLog.cs" />
     <Compile Include="Core\RegistryManager.cs" />
     <Compile Include="Core\Serializer.cs" />
@@ -137,6 +130,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Trade-Updater-Logo-v3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\nUpdate.Client.GuiInterface\nUpdate.UpdateInstaller.Client.GuiInterface.csproj">
+      <Project>{5e63208a-8f06-4b99-a41d-f469be4cfd00}</Project>
+      <Name>nUpdate.UpdateInstaller.Client.GuiInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.Internal\nUpdate.Internal.csproj">
+      <Project>{efb71d69-ebf9-4f60-b776-de443730a3dd}</Project>
+      <Name>nUpdate.Internal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\nUpdate.Shared\nUpdate.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -16,8 +16,8 @@ using nUpdate.Core;
 using nUpdate.Exceptions;
 using nUpdate.Internal.Core;
 using nUpdate.Internal.Core.Localization;
-using nUpdate.Internal.Core.Operations;
 using nUpdate.Internal.Properties;
+using nUpdate.Shared.Core;
 
 namespace nUpdate.Updating
 {
@@ -31,10 +31,9 @@ namespace nUpdate.Updating
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
 
-        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
-            new Dictionary<UpdateVersion, IEnumerable<Operation>>();
-
         private bool _disposed;
+        private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
+
         private CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
         private CultureInfo _languageCulture = new CultureInfo("en");
 
@@ -116,13 +115,6 @@ namespace nUpdate.Updating
         public List<UpdateArgument> Arguments { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be closed when the nUpdate UpdateInstaller is
-        ///     started, or
-        ///     not.
-        /// </summary>
-        public bool CloseHostApplication { get; set; } = true;
-
-        /// <summary>
         ///     Gets or sets the paths to the files that contain the localized strings of their corresponding
         ///     <see cref="CultureInfo" />.
         /// </summary>
@@ -137,6 +129,11 @@ namespace nUpdate.Updating
         ///     Gets or sets the path of the assembly file that contains the user interface data for nUpdate UpdateInstaller.
         /// </summary>
         public string CustomInstallerUiAssemblyPath { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the update installer options for the host application.
+        /// </summary>
+        public HostApplicationOptions HostApplicationOptions { get; set; }
 
         /// <summary>
         ///     Gets or sets the HTTP(S) authentication credentials.
@@ -202,12 +199,6 @@ namespace nUpdate.Updating
         ///     Gets or sets the public key for checking the validity of the signature.
         /// </summary>
         public string PublicKey { get; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be restarted once the update installation has
-        ///     completed, or not.
-        /// </summary>
-        public bool RestartHostApplication { get; set; } = true;
 
         /// <summary>
         ///     Gets or sets the timeout in milliseconds that should be used when searching for updates.
@@ -277,7 +268,6 @@ namespace nUpdate.Updating
         private void Cleanup()
         {
             _packageFilePaths.Clear();
-            _packageOperations.Clear();
         }
 
         private Uri ConvertPackageUri(Uri updatePackageUri)
@@ -331,11 +321,29 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Finalizes an instance of the <see cref="UpdateManager" /> class.
+        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
         /// </summary>
-        ~UpdateManager()
+        public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        ///     unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _disposed)
+                return;
+
+            _searchCancellationTokenSource.Dispose();
+            _downloadCancellationTokenSource.Dispose();
+            _disposed = true;
         }
 
         private double? GetUpdatePackageSize(Uri packageUri)
@@ -406,7 +414,7 @@ namespace nUpdate.Updating
                 $"\"{Application.StartupPath}\"",
                 $"\"{Application.ExecutablePath}\"",
                 $"\"{Application.ProductName}\"",
-                $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))}\"",
+                "",
                 $"\"{(UseCustomInstallerUserInterface ? CustomInstallerUiAssemblyPath : string.Empty)}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,
@@ -423,8 +431,7 @@ namespace nUpdate.Updating
                 _lp.InstallerUpdatingErrorCaption,
                 _lp.InstallerInitializingErrorCaption,
                 $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
-                $"\"{CloseHostApplication}\"",
-                $"\"{RestartHostApplication}\"",
+                $"\"{HostApplicationOptions}\"",
                 $"\"{_lp.InstallerFileInUseError}\""
             };
 
@@ -449,7 +456,7 @@ namespace nUpdate.Updating
                 return;
             }
 
-            if (CloseHostApplication)
+            if (HostApplicationOptions != HostApplicationOptions.None)
                 TerminateApplication();
         }
 
