@@ -3,6 +3,7 @@
     public enum HostApplicationOptions
     {
         CloseAndRestart,
-        CloseOnly
+        Close,
+        None
     }
 }

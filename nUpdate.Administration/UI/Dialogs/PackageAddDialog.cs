@@ -428,7 +428,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     default:
                         categoryTabControl.SelectedTab =
-                            categoryTabControl.TabPages[5 + categoryTreeView.SelectedNode.Index];
+                            categoryTabControl.TabPages[(int)categoryTreeView.SelectedNode.Tag];
                         break;
                 }
         }
@@ -443,26 +443,33 @@ namespace nUpdate.Administration.UI.Dialogs
             if (data == null)
                 return;
 
+            TreeNode node;
             switch (data.ToString())
             {
                 case "DeleteFile":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _deleteNode.Clone());
+                    node = (TreeNode)_deleteNode.Clone();
 
                     var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
                     deletePage.Controls.Add(new FileDeleteOperationPanel());
                     categoryTabControl.TabPages.Add(deletePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(deletePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "RenameFile":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _renameNode.Clone());
+                    node = (TreeNode)_renameNode.Clone();
 
                     var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
                     renamePage.Controls.Add(new FileRenameOperationPanel());
                     categoryTabControl.TabPages.Add(renamePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(renamePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "CreateRegistrySubKey":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _createRegistrySubKeyNode.Clone());
+                    node = (TreeNode)_createRegistrySubKeyNode.Clone();
 
                     var createRegistrySubKeyPage = new TabPage("Create registry subkey")
                     {
@@ -470,10 +477,13 @@ namespace nUpdate.Administration.UI.Dialogs
                     };
                     createRegistrySubKeyPage.Controls.Add(new RegistrySubKeyCreateOperationPanel());
                     categoryTabControl.TabPages.Add(createRegistrySubKeyPage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(createRegistrySubKeyPage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "DeleteRegistrySubKey":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _deleteRegistrySubKeyNode.Clone());
+                    node = (TreeNode)_deleteRegistrySubKeyNode.Clone();
 
                     var deleteRegistrySubKeyPage = new TabPage("Delete registry subkey")
                     {
@@ -481,59 +491,83 @@ namespace nUpdate.Administration.UI.Dialogs
                     };
                     deleteRegistrySubKeyPage.Controls.Add(new RegistrySubKeyDeleteOperationPanel());
                     categoryTabControl.TabPages.Add(deleteRegistrySubKeyPage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(deleteRegistrySubKeyPage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "SetRegistryValue":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _setRegistryValueNode.Clone());
+                    node = (TreeNode) _setRegistryValueNode.Clone();
 
                     var setRegistryValuePage = new TabPage("Set registry value") {BackColor = SystemColors.Window};
                     setRegistryValuePage.Controls.Add(new RegistrySetValueOperationPanel());
                     categoryTabControl.TabPages.Add(setRegistryValuePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(setRegistryValuePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "DeleteRegistryValue":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _deleteRegistryValueNode.Clone());
+                    node = (TreeNode) _deleteRegistryValueNode.Clone();
 
                     var deleteRegistryValuePage =
                         new TabPage("Delete registry value") {BackColor = SystemColors.Window};
                     deleteRegistryValuePage.Controls.Add(new RegistryDeleteValueOperationPanel());
                     categoryTabControl.TabPages.Add(deleteRegistryValuePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(deleteRegistryValuePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
 
                 case "StartProcess":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _startProcessNode.Clone());
+                    node = (TreeNode) _startProcessNode.Clone();
 
                     var startProcessPage = new TabPage("Start process") {BackColor = SystemColors.Window};
                     startProcessPage.Controls.Add(new ProcessStartOperationPanel());
                     categoryTabControl.TabPages.Add(startProcessPage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(startProcessPage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
                 case "TerminateProcess":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _terminateProcessNode.Clone());
+                    node = (TreeNode) _terminateProcessNode.Clone();
 
                     var terminateProcessPage = new TabPage("Terminate process") {BackColor = SystemColors.Window};
                     terminateProcessPage.Controls.Add(new ProcessStopOperationPanel());
                     categoryTabControl.TabPages.Add(terminateProcessPage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(terminateProcessPage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
                 case "StartService":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _startServiceNode.Clone());
+                    node = (TreeNode) _startServiceNode.Clone();
 
                     var startServicePage = new TabPage("Start service") {BackColor = SystemColors.Window};
                     startServicePage.Controls.Add(new ServiceStartOperationPanel());
                     categoryTabControl.TabPages.Add(startServicePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(startServicePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
                 case "StopService":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _stopServiceNode.Clone());
+                    node = (TreeNode) _stopServiceNode.Clone();
 
                     var stopServicePage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                     stopServicePage.Controls.Add(new ServiceStopOperationPanel());
                     categoryTabControl.TabPages.Add(stopServicePage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(stopServicePage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
                 case "ExecuteScript":
-                    categoryTreeView.Nodes[4].Nodes.Add((TreeNode) _executeScriptNode.Clone());
+                   node = (TreeNode) _executeScriptNode.Clone();
 
                     var executeScriptPage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                     executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
                     categoryTabControl.TabPages.Add(executeScriptPage);
+
+                    node.Tag = categoryTabControl.TabPages.IndexOf(executeScriptPage);
+                    categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
             }
         }
@@ -548,24 +582,31 @@ namespace nUpdate.Administration.UI.Dialogs
             if (categoryTreeView.SelectedNode?.Parent == null)
                 return;
 
+            TreeNode selectedNode = categoryTreeView.SelectedNode;
             if (e.Control && e.KeyCode == Keys.Up)
             {
-                if (categoryTreeView.SelectedNode.Text != "Replace file/folder" &&
-                    categoryTreeView.SelectedNode.Index != 1)
-                    categoryTreeView.SelectedNode.MoveUp();
+                selectedNode.MoveUp();
+                categoryTreeView.SelectedNode = selectedNode;
+                return;
             }
             else if (e.Control && e.KeyCode == Keys.Down)
             {
-                if (categoryTreeView.SelectedNode.Text != "Replace file/folder")
-                    categoryTreeView.SelectedNode.MoveDown();
+                selectedNode.MoveDown();
+                categoryTreeView.SelectedNode = selectedNode;
+                return;
             }
 
-            if (e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back || categoryTreeView.SelectedNode.Parent == null ||
-                categoryTreeView.SelectedNode.Text == "Replace file/folder")
+            if (e.KeyCode != Keys.Delete && e.KeyCode != Keys.Back ||
+                categoryTreeView.SelectedNode.Equals(_replaceNode))
                 return;
-            categoryTabControl.TabPages.Remove(
-                categoryTabControl.TabPages[5 + categoryTreeView.SelectedNode.Index]);
+
+            int index = (int)categoryTreeView.SelectedNode.Tag;
+            foreach (var node in categoryTreeView.Nodes[4].Nodes.Cast<TreeNode>().Where(n => !n.Equals(_replaceNode) && (int)n.Tag > index))
+                node.Tag = (int)node.Tag - 1;
+
             categoryTreeView.SelectedNode.Remove();
+            categoryTabControl.TabPages.Remove(
+                categoryTabControl.TabPages[index]);
         }
 
         private void changelogClearButton_Click(object sender, EventArgs e)
@@ -784,7 +825,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     "Please specify some files and/or folders that should be included or operations into the package.",
                     PopupButtons.Ok);
                 filesPanel.BringToFront();
-                categoryTreeView.SelectedNode = categoryTreeView.Nodes[4].Nodes[0];
+                categoryTreeView.SelectedNode = _replaceNode;
                 return;
             }
 
@@ -800,7 +841,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     PopupButtons.Ok);
                 categoryTreeView.SelectedNode =
                     categoryTreeView.Nodes[4].Nodes.Cast<TreeNode>()
-                        .First(item => item.Index == categoryTabControl.TabPages.IndexOf(tabPage) - 5);
+                        .First(item => (int)item.Tag == categoryTabControl.TabPages.IndexOf(tabPage));
                 return;
             }
 
@@ -970,14 +1011,21 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Invoke(new Action(() =>
                 {
-                    operations.AddRange(from operationPanel in from TreeNode node in categoryTreeView.Nodes[4].Nodes
-                            where node.Index != 0
-                            select (IOperationPanel) categoryTabControl.TabPages[5 + node.Index].Controls[0]
-                        select operationPanel.Operation);
+                    foreach (TreeNode node in categoryTreeView.Nodes[4].Nodes)
+                    {
+                        if (node.Equals(_replaceNode))
+                            continue;
+
+                        bool execBefore = categoryTreeView.Nodes[4].Nodes.IndexOf(_replaceNode) > node.Index;
+                        var panel = (IOperationPanel)categoryTabControl.TabPages[(int)node.Tag].Controls[0];
+                        Operation op = panel.Operation;
+                        op.ExecuteBeforeReplacingFiles = execBefore;
+                        operations.Add(op);
+                    }
                 }));
 
                 File.WriteAllText(operationFile, Serializer.Serialize(operations));
-                _zip.AddFile(operationFile);
+                _zip.AddFile(operationFile, string.Empty);
 
                 //Invoke(new Action(() => loadingLabel.Text = "Initializing hash file..."));
 

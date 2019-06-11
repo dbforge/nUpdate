@@ -8,7 +8,9 @@ namespace nUpdate.Updating
     public sealed partial class UpdaterUI
     {
         private readonly LocalizationProperties _lp;
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
         private bool _active;
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdaterUI" />-class.

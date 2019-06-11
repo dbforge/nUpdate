@@ -1,6 +1,7 @@
 ﻿// Copyright © Dominic Beger 2017
 
 using System;
+using System.IO;
 
 namespace nUpdate.Internal.Core.Operations
 {
@@ -33,6 +34,30 @@ namespace nUpdate.Internal.Core.Operations
         ///     The second value of the current operation if it needs more than one argument.
         /// </summary>
         public object Value2 { get; set; }
+
+        public bool ExecuteBeforeReplacingFiles { get; set; }
+
+        /// <summary>
+        ///     Gets the full directory path for the given tag.
+        /// </summary>
+        /// <param name="tag">The tag to use.</param>
+        /// <returns>Returns the full path of the relating directory on the system.</returns>
+        public static string GetDirectory(string tag, string programFolder)
+        {
+            switch (tag)
+            {
+                case "%program%":
+                    return programFolder;
+                case "%appdata%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                case "%temp%":
+                    return Path.GetTempPath();
+                case "%desktop%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            }
+
+            return null;
+        }
 
         /// <summary>
         ///     Gets the operation area and method from a given tag.

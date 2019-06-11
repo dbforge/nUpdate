@@ -19,35 +19,6 @@ namespace nUpdate.Updating
     /// </summary>
     public partial class UpdateManager
     {
-        private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
-
-        /// <summary>
-        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
-        ///     unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _searchCancellationTokenSource.Dispose();
-            _downloadCancellationTokenSource.Dispose();
-            _searchManualResetEvent.Dispose();
-            _disposed = true;
-        }
-
         /// <summary>
         ///     Downloads the available update packages from the server.
         /// </summary>
@@ -317,8 +288,6 @@ namespace nUpdate.Updating
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                 updatePackageSize += newPackageSize.Value;
-                _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                    updateConfiguration.Operations);
             }
 
             TotalSize = updatePackageSize;
@@ -387,8 +356,6 @@ namespace nUpdate.Updating
                         throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                     updatePackageSize += newPackageSize.Value;
-                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                        updateConfiguration.Operations);
                 }
 
                 TotalSize = updatePackageSize;
