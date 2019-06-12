@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2018
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.WPFUpdateInstaller
 {
     /// <summary>
     ///     Sets the behaviour of an <see cref="UpdateArgument" /> when an update is installed.

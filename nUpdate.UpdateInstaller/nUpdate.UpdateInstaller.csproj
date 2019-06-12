@@ -60,16 +60,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CodeDomHelper.cs" />
-    <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\FileHelper.cs" />
     <Compile Include="Core\IconHelper.cs" />
     <Compile Include="Core\ProgressReporterServiceEventLog.cs" />
     <Compile Include="Core\RegistryManager.cs" />
-    <Compile Include="Core\Serializer.cs" />
     <Compile Include="Core\ServiceManager.cs" />
-    <Compile Include="Core\UpdateArgument.cs" />
-    <Compile Include="Core\UpdateArgumentExecutionOptions.cs" />
-    <Compile Include="Core\UpdateVersion.cs" />
     <Compile Include="Core\InstallerServiceProvider.cs" />
     <Compile Include="Core\ProgressReporterService.cs" />
     <Compile Include="Core\ServiceProviderHelper.cs" />

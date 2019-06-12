@@ -1526,7 +1526,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            $"Uploading package... {e.PercentComplete}% | {e.BytesPerSecond / 1024}KB/s"));
+                            $"Uploading package... {e.PercentComplete}% | {e.BytesPerSecond / 1024}KiB/s"));
             if (_uploadCancelled) Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));
         }
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using nUpdate.Internal.Core;
 using nUpdate.Internal.Core.Operations;
-using nUpdate.UpdateInstaller.Core;
 
 namespace nUpdate.WPFUpdateInstaller
 {

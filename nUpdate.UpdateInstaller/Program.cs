@@ -6,9 +6,12 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.Shared.Core;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.UI.Popups;
+using nUpdate.Updating;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -116,6 +119,9 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public static HostApplicationOptions HostApplicationOptions { get; set; }
 
+        // Deprecated, there for compatiblity
+        public static Dictionary<UpdateVersion, IEnumerable<Operation>> Operations { get; set; }
+
         /// <summary>
         ///     The text of the error that a file is currently being used by another program.
         /// </summary>
@@ -147,7 +153,8 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                // Argument 4 became deprecated and is ignored
+                // Argument 4 became deprecated, but for compatiblity reasons we need to have this
+                Operations = Serializer.Deserialize <Dictionary<UpdateVersion, IEnumerable<Operation>>>(appArguments[4]);
                 ExternalGuiAssemblyPath = appArguments[5];
                 ExtractFilesText = appArguments[6];
                 CopyingText = appArguments[7];

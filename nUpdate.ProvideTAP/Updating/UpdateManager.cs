@@ -212,6 +212,9 @@ namespace nUpdate.Updating
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                 updatePackageSize += newPackageSize.Value;
+                if (updateConfiguration.Operations != null)
+                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        updateConfiguration.Operations);
             }
 
             TotalSize = updatePackageSize;
@@ -262,6 +265,9 @@ namespace nUpdate.Updating
                         throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                     updatePackageSize += newPackageSize.Value;
+                    if (updateConfiguration.Operations != null)
+                        _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                            updateConfiguration.Operations);
                 }
 
                 TotalSize = updatePackageSize;
