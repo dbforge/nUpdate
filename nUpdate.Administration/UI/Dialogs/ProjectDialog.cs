@@ -13,6 +13,7 @@ using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ionic.Zip;
 using MySql.Data.MySqlClient;
 using nUpdate.Administration.Core;
 using nUpdate.Administration.Core.Application;
@@ -1079,6 +1080,124 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             await InitializeAsync();
+
+            if (Project.ConfigVersion.Equals("1b2"))
+            {
+                if (!_foundWithUrl)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Migration not possible.",
+                    "This project needs to be migrated in order to work properly with the newest version, but the update configuration file could not be loaded. Please make sure the update configuration is reachable over HTTP(S) and open the project again to start this process automatically.",
+                    PopupButtons.Ok);
+                    Close();
+                    return;
+                }
+
+                Popup.ShowPopup(this, SystemIcons.Warning, "Migration necessary.", 
+                    "This project needs to be migrated in order to work properly with the newest version. This will be done automatically.", 
+                    PopupButtons.Ok);
+                await Migrate();
+            }
+        }
+
+        private async Task Migrate()
+        {
+            SetUiState(false);
+            Invoke(new Action(() => loadingLabel.Text = "Migrating project..."));
+
+            IEnumerable<UpdateConfiguration> config = await UpdateConfiguration.DownloadAsync(_configurationFileUrl, Project.Proxy);
+
+            string projectDir = Path.Combine(Program.Path, "Projects", Project.Name);
+            string migrationDir = Path.Combine(projectDir, "migrate");
+            var updateConfigFile = Path.Combine(projectDir, "updates.json");
+            if (!Directory.Exists(migrationDir))
+                Directory.CreateDirectory(migrationDir);
+
+            foreach (var entry in config)
+            {
+                if (entry.Operations == null)
+                    continue;
+
+                var packageFolder = Path.Combine(projectDir, entry.LiteralVersion.ToString());
+                var packageFile = Path.Combine(packageFolder, $"{Project.Guid}.zip");
+                var extractedPackageDirectory = Path.Combine(packageFolder, Project.Guid);
+
+                if (!File.Exists(packageFile))
+                {
+                    Invoke(new Action(() =>
+                    {
+                        if (Popup.ShowPopup(this, SystemIcons.Warning, "Package archive not found locally.",
+                            "The archive of the package file does not exist in your local project data. Should it be downloaded from the server? Without the package archive, the package cannot be edited.",
+                            PopupButtons.YesNo) == DialogResult.No)
+                        {
+                            Close();
+                            return;
+                        }
+                    }));
+
+                    using (var wc = new WebClientWrapper())
+                    {
+                        wc.DownloadProgressChanged += (o, e) =>
+                        {
+                            Invoke(new Action(() => loadingLabel.Text = $"Downloading {entry.LiteralVersion} ({e.ProgressPercentage}%)"));
+                        };
+                        await wc.DownloadFileTaskAsync(entry.UpdatePackageUri, packageFile);
+                    }
+                }
+
+                await Task.Factory.StartNew(() =>
+                {
+                    Invoke(new Action(() => loadingLabel.Text = $"Migrating package {entry.LiteralVersion}..."));
+
+                    using (var stream = File.OpenRead(packageFile))
+                    {
+                        using (ZipFile zip = ZipFile.Read(stream))
+                        {
+                            zip.ExtractAll(extractedPackageDirectory);
+                        }
+                    }
+                    File.Delete(packageFile);
+
+                    File.WriteAllText(Path.Combine(extractedPackageDirectory, "operations.json"), Serializer.Serialize(entry.Operations));
+                    using (var newZip = new ZipFile())
+                    {
+                        newZip.AddDirectory(extractedPackageDirectory);
+                        newZip.Save(packageFile);
+                    }
+
+                    entry.Operations = null;
+
+                    Invoke(new Action(() =>
+                    {
+                        loadingLabel.Text = $"Uploading package {entry.LiteralVersion} (0%)";
+                        cancelLabel.Visible = true;
+                    }));
+
+                    _ftp.ProgressChanged += (o, e) =>
+                    {
+                        Invoke(
+                            new Action(
+                                () =>
+                                    loadingLabel.Text =
+                                        $"Uploading package {entry.LiteralVersion} ({e.PercentComplete}% | {e.BytesPerSecond / 1024}KiB/s)"));
+                    };
+                    _ftp.UploadPackage(packageFile, entry.LiteralVersion.ToString());
+                });
+            }
+
+            await Task.Factory.StartNew(() =>
+            {
+                Invoke(new Action(() => loadingLabel.Text = "Uploading configuration..."));
+
+                File.WriteAllText(updateConfigFile, Serializer.Serialize(config));
+                _ftp.UploadFile(updateConfigFile);
+
+
+                Invoke(new Action(() => loadingLabel.Text = "Saving project..."));
+                Project.ConfigVersion = "v3";
+                UpdateProject.SaveProject(Project.Path, Project);
+            });
+
+            SetUiState(true);
         }
 
         private void readOnlyTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -1366,7 +1485,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 new Action(
                     () =>
                         loadingLabel.Text =
-                            $"Uploading... {$"{e.PercentComplete}% | {e.BytesPerSecond / 1024}KB/s"}"));
+                            $"Uploading... {$"{e.PercentComplete}% | {e.BytesPerSecond / 1024}KiB/s"}"));
 
             if (_uploadCancelled)
                 Invoke(new Action(() => { loadingLabel.Text = "Cancelling upload..."; }));

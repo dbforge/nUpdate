@@ -16,6 +16,7 @@ using nUpdate.Core;
 using nUpdate.Exceptions;
 using nUpdate.Internal.Core;
 using nUpdate.Internal.Core.Localization;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.Internal.Properties;
 using nUpdate.Shared.Core;
 
@@ -30,6 +31,7 @@ namespace nUpdate.Updating
             Application.ProductName);
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
+        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>(); // obsolete
 
         private bool _disposed;
         private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
@@ -414,7 +416,7 @@ namespace nUpdate.Updating
                 $"\"{Application.StartupPath}\"",
                 $"\"{Application.ExecutablePath}\"",
                 $"\"{Application.ProductName}\"",
-                "",
+                _packageOperations == null ? string.Empty : $"\"{Serializer.Serialize(_packageOperations)}\"",
                 $"\"{(UseCustomInstallerUserInterface ? CustomInstallerUiAssemblyPath : string.Empty)}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,

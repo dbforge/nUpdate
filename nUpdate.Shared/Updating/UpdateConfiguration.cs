@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 
 namespace nUpdate.Updating
 {
@@ -45,6 +46,8 @@ namespace nUpdate.Updating
         ///     receive an update.
         /// </summary>
         public List<RolloutCondition> RolloutConditions { get; set; }
+
+        public List<Operation> Operations { get; set; }
 
         /// <summary>
         ///     The signature of the update package (Base64 encoded).

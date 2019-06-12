@@ -12,11 +12,13 @@ using System.Threading;
 using Ionic.Zip;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using nUpdate.Internal.Core;
 using nUpdate.Internal.Core.Operations;
 using nUpdate.Shared.Core;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.UI.Popups;
+using nUpdate.Updating;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -124,7 +126,7 @@ namespace nUpdate.UpdateInstaller
                     _totalTaskCount += new DirectoryInfo(extractedDirectoryPath).GetDirectories().Sum(
                         directory => Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories).Length);
 
-                    var currentVersionOperations =
+                    var currentVersionOperations = Program.Operations != null ? Program.Operations[version] :
                         Serializer.Deserialize<IEnumerable<Operation>>(
                             File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToArray();
 

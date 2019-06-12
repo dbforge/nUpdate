@@ -1,6 +1,6 @@
 ﻿// Copyright © Dominic Beger 2018
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.WPFUpdateInstaller
 {
     /// <summary>
     ///     Represents an argument that is handled over to the application after the installation of an update.

@@ -1,6 +1,8 @@
 ﻿// Copyright © Dominic Beger 2017
 
+using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.IO;
 
 namespace nUpdate.Internal.Core.Operations
@@ -35,6 +37,8 @@ namespace nUpdate.Internal.Core.Operations
         /// </summary>
         public object Value2 { get; set; }
 
+        [DefaultValue(false)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool ExecuteBeforeReplacingFiles { get; set; }
 
         /// <summary>
