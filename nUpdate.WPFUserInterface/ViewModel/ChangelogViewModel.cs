@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// ChangelogViewModel.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;

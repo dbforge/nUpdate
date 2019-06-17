@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// WebClientWrapper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Net;

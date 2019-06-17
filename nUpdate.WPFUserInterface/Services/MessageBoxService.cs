@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿// MessageBoxService.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.Windows;
 using nUpdate.WPFUserInterface.ServiceInterfaces;
 
 // ReSharper disable once CheckNamespace

@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// ServiceProviderAttribute.cs, 01.08.2018
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 
@@ -17,7 +18,7 @@ namespace nUpdate.UpdateInstaller.Client.GuiInterface
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            if (!typeof (IServiceProvider).IsAssignableFrom(serviceType))
+            if (!typeof(IServiceProvider).IsAssignableFrom(serviceType))
                 throw new ArgumentException("Implementation of IServiceProvider is missing.", nameof(serviceType));
             ServiceType = serviceType;
         }

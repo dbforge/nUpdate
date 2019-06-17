@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// Log.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,8 @@ namespace nUpdate.Administration.Core.History
             catch (Exception ex)
             {
                 userDomainName = null;
-                Popup.ShowPopup(null, SystemIcons.Error, "Error while get the current domainname.", ex, PopupButtons.Ok);
+                Popup.ShowPopup(null, SystemIcons.Error, "Error while get the current domainname.", ex,
+                    PopupButtons.Ok);
             }
 
             log.Username = userDomainName == null ? Environment.UserName : $"{userDomainName}\\{Environment.UserName}";

@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// PackageAddDialog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -428,7 +429,7 @@ namespace nUpdate.Administration.UI.Dialogs
                         break;
                     default:
                         categoryTabControl.SelectedTab =
-                            categoryTabControl.TabPages[(int)categoryTreeView.SelectedNode.Tag];
+                            categoryTabControl.TabPages[(int) categoryTreeView.SelectedNode.Tag];
                         break;
                 }
         }
@@ -447,7 +448,7 @@ namespace nUpdate.Administration.UI.Dialogs
             switch (data.ToString())
             {
                 case "DeleteFile":
-                    node = (TreeNode)_deleteNode.Clone();
+                    node = (TreeNode) _deleteNode.Clone();
 
                     var deletePage = new TabPage("Delete file") {BackColor = SystemColors.Window};
                     deletePage.Controls.Add(new FileDeleteOperationPanel());
@@ -458,7 +459,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case "RenameFile":
-                    node = (TreeNode)_renameNode.Clone();
+                    node = (TreeNode) _renameNode.Clone();
 
                     var renamePage = new TabPage("Rename file") {BackColor = SystemColors.Window};
                     renamePage.Controls.Add(new FileRenameOperationPanel());
@@ -469,7 +470,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case "CreateRegistrySubKey":
-                    node = (TreeNode)_createRegistrySubKeyNode.Clone();
+                    node = (TreeNode) _createRegistrySubKeyNode.Clone();
 
                     var createRegistrySubKeyPage = new TabPage("Create registry subkey")
                     {
@@ -483,7 +484,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     break;
 
                 case "DeleteRegistrySubKey":
-                    node = (TreeNode)_deleteRegistrySubKeyNode.Clone();
+                    node = (TreeNode) _deleteRegistrySubKeyNode.Clone();
 
                     var deleteRegistrySubKeyPage = new TabPage("Delete registry subkey")
                     {
@@ -560,7 +561,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     categoryTreeView.Nodes[4].Nodes.Add(node);
                     break;
                 case "ExecuteScript":
-                   node = (TreeNode) _executeScriptNode.Clone();
+                    node = (TreeNode) _executeScriptNode.Clone();
 
                     var executeScriptPage = new TabPage("Stop service") {BackColor = SystemColors.Window};
                     executeScriptPage.Controls.Add(new ScriptExecuteOperationPanel());
@@ -600,9 +601,10 @@ namespace nUpdate.Administration.UI.Dialogs
                 categoryTreeView.SelectedNode.Equals(_replaceNode))
                 return;
 
-            int index = (int)categoryTreeView.SelectedNode.Tag;
-            foreach (var node in categoryTreeView.Nodes[4].Nodes.Cast<TreeNode>().Where(n => !n.Equals(_replaceNode) && (int)n.Tag > index))
-                node.Tag = (int)node.Tag - 1;
+            int index = (int) categoryTreeView.SelectedNode.Tag;
+            foreach (var node in categoryTreeView.Nodes[4].Nodes.Cast<TreeNode>()
+                .Where(n => !n.Equals(_replaceNode) && (int) n.Tag > index))
+                node.Tag = (int) node.Tag - 1;
 
             categoryTreeView.SelectedNode.Remove();
             categoryTabControl.TabPages.Remove(
@@ -841,7 +843,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     PopupButtons.Ok);
                 categoryTreeView.SelectedNode =
                     categoryTreeView.Nodes[4].Nodes.Cast<TreeNode>()
-                        .First(item => (int)item.Tag == categoryTabControl.TabPages.IndexOf(tabPage));
+                        .First(item => (int) item.Tag == categoryTabControl.TabPages.IndexOf(tabPage));
                 return;
             }
 
@@ -1017,7 +1019,7 @@ namespace nUpdate.Administration.UI.Dialogs
                             continue;
 
                         bool execBefore = categoryTreeView.Nodes[4].Nodes.IndexOf(_replaceNode) > node.Index;
-                        var panel = (IOperationPanel)categoryTabControl.TabPages[(int)node.Tag].Controls[0];
+                        var panel = (IOperationPanel) categoryTabControl.TabPages[(int) node.Tag].Controls[0];
                         Operation op = panel.Operation;
                         op.ExecuteBeforeReplacingFiles = execBefore;
                         operations.Add(op);

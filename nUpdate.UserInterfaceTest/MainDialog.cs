@@ -1,4 +1,7 @@
-﻿using System;
+﻿// MainDialog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
@@ -14,7 +17,9 @@ namespace nUpdate.UserInterfaceTest
         {
             InitializeComponent();
 
-            UpdateManager manager = new UpdateManager(new Uri("https://www.nupdate.net/test/updates.json"), "<RSAKeyValue><Modulus>uCL1HpwhnKdP9F3jptfpvnedszCsoVpPv1LPwg8bGouORN2bMHw8JCNZ4Wp5NJ/mVJT5bAs9xlXDSeZgReprrvuLX65oiKxZKX9akC60d+LeVN8+lin/CijXuHZFIj5xRHLQOPUaidYDLN9He3V1fEcZwCe/Ir+4ayd34YpTCTPcSHnLOePHMWqTjsfYDx8gAFmGhP2VLKABbyhM1y9iCkyuVDy7DrvWjxadzL6QAtJ/BV3UFHRbpT17W11Xf1li0WyqO4YolAa34XL3MCBS0STclfqsy+EFArBMr2x54oJ61Kd3pRq1wK9UTCFhIySgtJDVpq7wB24t2Zvc3VeyR8mChObulTBTCSOpeTdnGEyLdHjCIvC6zRRQPZwUvhHr+WP1UbnPe1jw9a0Clv5EthD6cozdMkF0DlRVAHgQr6xuLtAbi+ADwlX98ARkDJl30SO8vkK3hfg6W37YYFPbVWMp20nQei7vwKfRycJbRHnX8injhrdyMkXMSm/ScIV5HEosarKfqcLYY9G6t6VKo0aZeHXiz3VOcXbFe2j0nm6eoSbZwwDpF2S+Jxg/REluXJL2tt/bAFvNeMYRZIHpgvS5kyQM+VVuepBWwdPSqgjPz3c5whN+fSzly7PLpS9JZajg6dE9fsXlEMV9jWPsDeo3GnnfN6gh6U4S7a95YDVgprAyY1DCOeXTxVimIy2l7BlZYirN+XFCU31+wMnvpVdC04hWu5T4XXx9PhCCUOdDzf3MvFUswg8dDBEtZW/EJhyoalQuHFEb7blyKfrEkQ63cVlMIQilvmU+HiRya6mH/gPiL7dDW5MQ84ba2Sue6XFdBHXuTNTD5vxgSDJf+VjQsjESbFmILPUM2KrhxD06g1L0NDfRpQ1ApvT9qwettlsncN1RZMO+ZqGKBAybyz18QdjPEG50WVVQ0nqtfLb0o+ydAmMVekxx6CJzIXtsZbSPsgF01IhvMkYqva4Rk07c1QBEVl+ZDFKqqJR20y1L4k/qAixaG4goracmjTaGqGx8Yj7vdqvcxJB4GOtb1lyx6HRWUyllwLk1FJnyO6Sst67+CNq0cuoTQABglpZov42J5g8vA+He0m+vHGAFU8KsvBvqaVTF+/c/x1rt/XB3qtxWruXBfyIR3LvyT1GN7Ef+grn3Bo9Xhdwf/DPWiC1iE1KjcY/0ZIpSBP29LRo8/SukYg6pPyuNZ/RqqB62nSs1QJgUNmz+P/zsF2ywAPzP/OuNymZ6x0qdazswObs+vqjX7fHm5a1d2lVqhCKsw1zWKR9MNqcCrskmeha0bJSkZIcxEzk1Jrd0NAfSrXJ3GZgTAlRY96rnWzU6/p/cz0K2UEm7IrkLYfbeCAQKFQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", new CultureInfo("en"));
+            UpdateManager manager = new UpdateManager(new Uri("http://localhost/test/updates.json"),
+                "<RSAKeyValue><Modulus>x41wUnWNlTcRPi2xE+ZrIY2h/xReeBtWtXEHrlhD/SgzLHTqVZPXikW/dCXrTXUXCS2ur81OFW01JnNcvLmWBVv92jmC9028uYr4yMYXcxQRpARbZJ3MFQ4s3XZw5nVLQFyhi95SqKIMOu2bOHQLUD0IlJ4EZYCAu86Mx6c36Xu9UAWbn7yWeJk1ZjgD+DrO3ar9NqaM0zWT8lbiR6mQwA55LCkolFq7HNbVXQIIgjd3VmRKcI0eOl7Lc901lllWTnzWtE7uXVo9HY5JF+3eQ5MVrrytBoPH2ZbTYPurRV9zwSQwW2ouAFvMPJQxrE4X0kY5sdTUq5P6Joe2GHXqjr2VIAMoUtJDIbFb7eaX9BOZJo+BsGy0iF5L0O4hmXXl2dlwDt3QnctHYYnIrqOHEGSYWzUeFO63shh691v+JvaBhKltzi1kUEqJ7nfvYySxjLt/DyBtyCCbX3QB/bC8rt2N7fpfbE/E6yo2SyG9VMwDWhViSKLZrScgsFC/Sn67EY07RvnMkD2HXHaiYnZdu14X2HmoqtmQt0QP1H2O/B7S/rU8NY6yS9rh/X5gdQKPTI3eBtdW5Ip5fJJzygtA5JmsgIaLxGbO8iPk5dr11es1yxK+QmrNFScbK7fBQYYgRgNMc+OgnsYQSwb0ZM2FoHo5k56hrexcF9itPksyM7jH2py+kCIgc34YsfylJQrdCCbg7lO6BQf/mUHke/PF4N8+NGnumJa3JudiQy6lyLJgili65hBY32CN4oAsg/8UwO/cKyvn6OKHvDTFwXB4OvPyj/arzNIcSMkBWnfBLVVs+kM6KlGzD4y6nRQUZyncz49jy8rBapI1rfS3wkTBdGcmU69WB6xIDhaPiKzH9zmqmDOBQLsU4ZwrZ9D49qFJ8GPTZPF7CISSMrK/oqL4cSIxb2vv2GfF8YC2n23XczjBBTorlOoBzMFedmT7jNP6HL2BTVcjkXVF18mKZExzvI+vzwHhCN9u/1/5H2N4i5gd2qUwz+fYDQAfsYQr4pjbgBmnuIUhVRVVHWvTiqYv3irTQWqvVdWQfyuV99QgHS1lp9F+Y3sZmUQMnhUCdQ38kAlY0OR+sQaZQ11H6fCroqwze+S0HKpoFxKo2nELb/DKWdePkTXEoe6xlbJ3tsK8c2Ut+d2Lb25/iYrTlAe2gsBAypU59NAhhHnBOJYGK1fiRmLit7LkzxOnrw5mlA5gyEj9yTDAWIxwmaGH2hC5vFThb4vJ4Xdo5a2yVtpzY25vNbY5RrZ7GvWZa6K82Oayv7i+u4JjARxmN/dseKqylp1RooiMjyFCut14g4qQk4QAJrZvLDnMEc5SSwIFKsdnK7t246X4PniWy7U6mVCLvQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>",
+                new CultureInfo("en"));
             // manager.HttpAuthenticationCredentials = new NetworkCredential("trade", "test123");
             _updaterUI = new UpdaterUI(manager, SynchronizationContext.Current);
         }

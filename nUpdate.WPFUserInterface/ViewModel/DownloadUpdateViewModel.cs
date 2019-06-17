@@ -1,4 +1,7 @@
-﻿using System;
+﻿// DownloadUpdateViewModel.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;

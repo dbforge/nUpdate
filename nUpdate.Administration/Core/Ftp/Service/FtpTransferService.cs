@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// FtpTransferService.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,7 @@ namespace nUpdate.Administration.Core.Ftp.Service
                             DeleteFile(directoryPath, item.Name);
                             break;
                     }
+
                 ftp.DeleteDirectory(directoryPath);
             }
         }
@@ -219,7 +221,8 @@ namespace nUpdate.Administration.Core.Ftp.Service
             _packageFtpsClient.PutFileAsyncCompleted += UploadPackageFinished;
             _packageFtpsClient.Open(Username, Password.ConvertToInsecureString());
             _packageFtpsClient.ChangeDirectoryMultiPath(Directory);
-            _packageFtpsClient.MakeDirectory(packageVersion);
+            if (!_packageFtpsClient.Exists(packageVersion))
+                _packageFtpsClient.MakeDirectory(packageVersion);
             _packageFtpsClient.ChangeDirectory(packageVersion);
             _packageFtpsClient.PutFileAsync(packagePath, FileAction.Create);
             _uploadPackageResetEvent.WaitOne();

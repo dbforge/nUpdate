@@ -1,4 +1,5 @@
-// Copyright © Dominic Beger 2018
+// UpdateManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -272,7 +273,7 @@ namespace nUpdate.Updating
                     SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
-                IncludeAlpha, IncludeBeta,Conditions);
+                IncludeAlpha, IncludeBeta, Conditions);
             if (!result.UpdatesFound)
                 return false;
 
@@ -340,7 +341,7 @@ namespace nUpdate.Updating
                     throw exception;
 
                 var result = new UpdateResult(configurations, CurrentVersion,
-                    IncludeAlpha, IncludeBeta,Conditions);
+                    IncludeAlpha, IncludeBeta, Conditions);
                 if (!result.UpdatesFound)
                     return false;
 

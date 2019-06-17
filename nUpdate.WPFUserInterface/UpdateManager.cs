@@ -1,4 +1,5 @@
-﻿// Copyright © Sascha Patschka 2018
+﻿// UpdateManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.IO;

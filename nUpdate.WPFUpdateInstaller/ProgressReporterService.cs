@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ProgressReporterService.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 
 namespace nUpdate.WPFUpdateInstaller

@@ -7,10 +7,10 @@
         mc:Ignorable="d" WindowStyle="ToolWindow"
         Title="MainWindow" Height="235.548" Width="308.942" MinHeight="130" MinWidth="130">
     <StackPanel>
-        <CheckBox x:Name="chkHidden" Content="Hidden" HorizontalAlignment="Center" Margin="10"/>
-        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Check for Updates" Padding="15" Click="Button_Click"/>
-        <DataGrid Height="100" Width="180" Margin="10" CanUserDeleteRows="True" CanUserAddRows="True" ItemsSource="{Binding ConditionValues}" IsSynchronizedWithCurrentItem="True">
-            
-          </DataGrid>
+        <CheckBox x:Name="chkHidden" Content="Hidden" HorizontalAlignment="Center" Margin="10" />
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Check for Updates" Padding="15"
+                Click="Button_Click" />
+        <DataGrid Height="100" Width="180" Margin="10" CanUserDeleteRows="True" CanUserAddRows="True"
+                  ItemsSource="{Binding ConditionValues}" IsSynchronizedWithCurrentItem="True" />
     </StackPanel>
 </Window>

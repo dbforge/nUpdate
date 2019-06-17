@@ -1,4 +1,7 @@
-﻿using nUpdate.WPFUserInterface.ViewModel.Interfaces;
+﻿// IDialogWindowService.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using nUpdate.WPFUserInterface.ViewModel.Interfaces;
 
 // ReSharper disable once CheckNamespace
 namespace nUpdate.WPFUserInterface.ServiceInterfaces

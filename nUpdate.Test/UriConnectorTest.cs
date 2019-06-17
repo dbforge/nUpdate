@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// UriConnectorTest.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
