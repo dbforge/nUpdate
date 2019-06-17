@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// LocalizationHelper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,8 @@ namespace nUpdate.Internal.Core.Localization
     {
         internal static CultureInfo[] IntegratedCultures => new[]
         {
-            new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("zh-CN"), new CultureInfo("it-IT"),
+            new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("zh-CN"),
+            new CultureInfo("it-IT"),
             new CultureInfo("en")
         };
 

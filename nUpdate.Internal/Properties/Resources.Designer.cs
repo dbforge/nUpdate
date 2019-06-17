@@ -99,5 +99,15 @@ namespace nUpdate.Internal.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] nUpdate_UpdateInstaller_pdb {
+            get {
+                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_pdb", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿// DialogWindowService.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.Windows;
 using nUpdate.UI.Windows;
 using nUpdate.WPFUserInterface.ServiceInterfaces;
 using nUpdate.WPFUserInterface.ViewModel.Interfaces;

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// WindowsEventLog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Security;
@@ -13,7 +16,7 @@ namespace nUpdate.UpdateInstaller
         // Note: The actual limit is higher than this, but different Microsoft operating systems actually have different limits. So just use 30,000 to be safe.
         private const int MaxEventLogEntryLength = 30000;
         private static string _source;
-        
+
         public static string Source
         {
             get
@@ -34,7 +37,7 @@ namespace nUpdate.UpdateInstaller
                 CreateEventSource();
             }
         }
-        
+
         private static void CreateEventSource()
         {
             try
@@ -53,12 +56,12 @@ namespace nUpdate.UpdateInstaller
         {
             Log(message, EventLogEntryType.Information);
         }
-        
+
         public static void LogWarning(string message)
         {
             Log(message, EventLogEntryType.Warning);
         }
-        
+
         public static void LogError(string message)
         {
             Log(message, EventLogEntryType.Error);

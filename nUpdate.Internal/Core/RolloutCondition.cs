@@ -1,4 +1,7 @@
-﻿using System;
+﻿// RolloutCondition.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 
 namespace nUpdate.Internal.Core
 {
@@ -6,7 +9,8 @@ namespace nUpdate.Internal.Core
     public class RolloutCondition
     {
         public RolloutCondition()
-        { }
+        {
+        }
 
         public RolloutCondition(string key, string value, bool isNegative = false)
         {
@@ -18,6 +22,5 @@ namespace nUpdate.Internal.Core
         public string Key { get; set; }
         public string Value { get; set; }
         public bool IsNegativeCondition { get; set; }
-
     }
 }

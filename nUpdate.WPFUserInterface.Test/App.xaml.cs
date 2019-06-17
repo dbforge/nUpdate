@@ -1,4 +1,7 @@
-﻿using System;
+﻿// App.xaml.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;

@@ -1,4 +1,7 @@
-﻿using nUpdate.WPFUserInterface.ServiceInterfaces;
+﻿// ServiceInjector.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using nUpdate.WPFUserInterface.ServiceInterfaces;
 
 // ReSharper disable once CheckNamespace
 namespace nUpdate.WPFUserInterface.Services

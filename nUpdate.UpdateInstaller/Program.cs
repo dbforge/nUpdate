@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// Program.cs, 01.08.2018
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ using System.Windows.Forms;
 using nUpdate.Internal.Core;
 using nUpdate.Internal.Core.Operations;
 using nUpdate.Shared.Core;
-using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.UI.Popups;
 using nUpdate.Updating;
 
@@ -135,8 +135,9 @@ namespace nUpdate.UpdateInstaller
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
-
+            MessageBox.Show("Meddl, Loide!");
             if (args.Length != 1)
             {
                 Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
@@ -154,7 +155,9 @@ namespace nUpdate.UpdateInstaller
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
                 // Argument 4 became deprecated, but for compatiblity reasons we need to have this
-                Operations = Serializer.Deserialize <Dictionary<UpdateVersion, IEnumerable<Operation>>>(appArguments[4]);
+                Operations = appArguments[4].Equals(string.Empty)
+                    ? null
+                    : Serializer.Deserialize<Dictionary<UpdateVersion, IEnumerable<Operation>>>(appArguments[4]);
                 ExternalGuiAssemblyPath = appArguments[5];
                 ExtractFilesText = appArguments[6];
                 CopyingText = appArguments[7];
@@ -174,7 +177,7 @@ namespace nUpdate.UpdateInstaller
                     Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20])));
                 // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
                 HostApplicationOptions =
-                    (HostApplicationOptions)Enum.Parse(typeof(HostApplicationOptions), appArguments[21]);
+                    (HostApplicationOptions) Enum.Parse(typeof(HostApplicationOptions), appArguments[21]);
                 FileInUseError = appArguments[22];
             }
             catch (Exception ex)
@@ -183,6 +186,7 @@ namespace nUpdate.UpdateInstaller
                 return;
             }
 
+            MessageBox.Show("Meddl");
             new Updater().RunUpdate();
         }
 
@@ -195,6 +199,7 @@ namespace nUpdate.UpdateInstaller
             {
                 MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
             }
+
             Application.Exit();
         }
     }

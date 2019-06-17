@@ -1,4 +1,5 @@
-// Copyright © Dominic Beger 2018
+// UpdateManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.IO;
@@ -196,7 +197,7 @@ namespace nUpdate.Updating
                     SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
-                IncludeAlpha, IncludeBeta,Conditions);
+                IncludeAlpha, IncludeBeta, Conditions);
             if (!result.UpdatesFound)
                 return false;
 
@@ -248,7 +249,7 @@ namespace nUpdate.Updating
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
                 var result = new UpdateResult(configuration, CurrentVersion,
-                    IncludeAlpha, IncludeBeta,Conditions);
+                    IncludeAlpha, IncludeBeta, Conditions);
                 if (!result.UpdatesFound)
                     return false;
 

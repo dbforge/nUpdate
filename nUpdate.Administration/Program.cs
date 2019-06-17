@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// Program.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.IO;
@@ -57,7 +58,7 @@ namespace nUpdate.Administration
         /// <summary>
         ///     The version string shown in all dialog titles.
         /// </summary>
-        public static string VersionString => "nUpdate Administration v3.3.1";
+        public static string VersionString => "nUpdate Administration v3.3.1-dev";
 
         private static void Exit(object sender, EventArgs e)
         {

@@ -1,4 +1,5 @@
-// Copyright © Dominic Beger 2018
+// UpdateManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,9 @@ namespace nUpdate.Updating
             Application.ProductName);
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
-        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>(); // obsolete
+
+        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
+            new Dictionary<UpdateVersion, IEnumerable<Operation>>(); // obsolete
 
         private bool _disposed;
         private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
@@ -397,6 +400,7 @@ namespace nUpdate.Updating
             var guiInterfacePath = Path.Combine(installerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
             var jsonNetPath = Path.Combine(installerDirectory, "Newtonsoft.Json.dll");
             var installerFilePath = Path.Combine(installerDirectory, "nUpdate UpdateInstaller.exe");
+            var unpackerAppPdbPath = Path.Combine(installerDirectory, "nUpdate UpdateInstaller.pdb");
 
             if (Directory.Exists(installerDirectory))
                 Directory.Delete(installerDirectory, true);
@@ -407,8 +411,8 @@ namespace nUpdate.Updating
             File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
             File.WriteAllBytes(installerFilePath, Resources.nUpdate_UpdateInstaller);
 
-            //if (!File.Exists(unpackerAppPdbPath))
-            //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
+            if (!File.Exists(unpackerAppPdbPath))
+                File.WriteAllBytes(unpackerAppPdbPath, Resources.nUpdate_UpdateInstaller_pdb);
 
             string[] args =
             {

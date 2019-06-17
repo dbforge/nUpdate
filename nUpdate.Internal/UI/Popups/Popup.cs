@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Popup.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Drawing;
@@ -25,7 +26,7 @@ namespace nUpdate.Internal.UI.Popups
                 Buttons = buttons,
                 StartPosition = FormStartPosition.CenterParent
             };
-            
+
             return popupWindow.ShowDialog(Form.ActiveForm);
         }
 
@@ -47,7 +48,7 @@ namespace nUpdate.Internal.UI.Popups
                 StartPosition = FormStartPosition.CenterParent,
                 Exception = ex
             };
-            
+
             return popupWindow.ShowDialog(Form.ActiveForm);
         }
 

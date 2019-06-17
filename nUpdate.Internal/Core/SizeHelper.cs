@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// SizeHelper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.IO;
@@ -24,6 +25,7 @@ namespace nUpdate.Internal.Core
                 necessaryBytesToFree = 0;
                 return true;
             }
+
             necessaryBytesToFree = Math.Abs(packageSize * 2 - drive.AvailableFreeSpace);
             // Multiply this value with 2 because the files are copied during the installation, so we have download + installation (copying)
             return false;

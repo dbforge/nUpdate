@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿// UpdateUiBaseViewModel.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;

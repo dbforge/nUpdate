@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// ConnectionCheckerTest.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Internal.Core;

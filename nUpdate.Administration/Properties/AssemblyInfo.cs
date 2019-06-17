@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// AssemblyInfo.cs, 01.08.2018
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.Reflection;
 using System.Resources;

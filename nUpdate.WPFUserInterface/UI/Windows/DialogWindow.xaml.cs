@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// DialogWindow.xaml.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.ComponentModel;
 using System.Windows;
 using nUpdate.Internal.Core;
 using nUpdate.WPFUserInterface.ViewModel;

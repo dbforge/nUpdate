@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// ProjectDialog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections;
@@ -1086,14 +1087,14 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (!_foundWithUrl)
                 {
                     Popup.ShowPopup(this, SystemIcons.Error, "Migration not possible.",
-                    "This project needs to be migrated in order to work properly with the newest version, but the update configuration file could not be loaded. Please make sure the update configuration is reachable over HTTP(S) and open the project again to start this process automatically.",
-                    PopupButtons.Ok);
+                        "This project needs to be migrated in order to work properly with the newest version, but the update configuration file could not be loaded. Please make sure the update configuration is reachable over HTTP(S) and open the project again to start this process automatically.",
+                        PopupButtons.Ok);
                     Close();
                     return;
                 }
 
-                Popup.ShowPopup(this, SystemIcons.Warning, "Migration necessary.", 
-                    "This project needs to be migrated in order to work properly with the newest version. This will be done automatically.", 
+                Popup.ShowPopup(this, SystemIcons.Warning, "Migration necessary.",
+                    "This project needs to be migrated in order to work properly with the newest version. This will be done automatically.",
                     PopupButtons.Ok);
                 await Migrate();
             }
@@ -1104,7 +1105,8 @@ namespace nUpdate.Administration.UI.Dialogs
             SetUiState(false);
             Invoke(new Action(() => loadingLabel.Text = "Migrating project..."));
 
-            IEnumerable<UpdateConfiguration> config = await UpdateConfiguration.DownloadAsync(_configurationFileUrl, Project.Proxy);
+            IEnumerable<UpdateConfiguration> config =
+                await UpdateConfiguration.DownloadAsync(_configurationFileUrl, Project.Proxy);
 
             string projectDir = Path.Combine(Program.Path, "Projects", Project.Name);
             string migrationDir = Path.Combine(projectDir, "migrate");
@@ -1126,8 +1128,8 @@ namespace nUpdate.Administration.UI.Dialogs
                     Invoke(new Action(() =>
                     {
                         if (Popup.ShowPopup(this, SystemIcons.Warning, "Package archive not found locally.",
-                            "The archive of the package file does not exist in your local project data. Should it be downloaded from the server? Without the package archive, the package cannot be edited.",
-                            PopupButtons.YesNo) == DialogResult.No)
+                                "The archive of the package file does not exist in your local project data. Should it be downloaded from the server? Without the package archive, the package cannot be edited.",
+                                PopupButtons.YesNo) == DialogResult.No)
                         {
                             Close();
                             return;
@@ -1138,7 +1140,9 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         wc.DownloadProgressChanged += (o, e) =>
                         {
-                            Invoke(new Action(() => loadingLabel.Text = $"Downloading {entry.LiteralVersion} ({e.ProgressPercentage}%)"));
+                            Invoke(new Action(() =>
+                                loadingLabel.Text =
+                                    $"Downloading {entry.LiteralVersion} ({e.ProgressPercentage}%)"));
                         };
                         await wc.DownloadFileTaskAsync(entry.UpdatePackageUri, packageFile);
                     }
@@ -1155,14 +1159,18 @@ namespace nUpdate.Administration.UI.Dialogs
                             zip.ExtractAll(extractedPackageDirectory);
                         }
                     }
+
                     File.Delete(packageFile);
 
-                    File.WriteAllText(Path.Combine(extractedPackageDirectory, "operations.json"), Serializer.Serialize(entry.Operations));
+                    File.WriteAllText(Path.Combine(extractedPackageDirectory, "operations.json"),
+                        Serializer.Serialize(entry.Operations));
                     using (var newZip = new ZipFile())
                     {
                         newZip.AddDirectory(extractedPackageDirectory);
                         newZip.Save(packageFile);
                     }
+
+                    Directory.Delete(extractedPackageDirectory);
 
                     entry.Operations = null;
 

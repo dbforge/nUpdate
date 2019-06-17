@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// AssemblyInfo.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using nUpdate.Core;
