@@ -202,6 +202,7 @@ namespace nUpdate.UpdateInstaller
                             CopyDirectoryRecursively(directory.FullName, Path.GetTempPath());
                             break;
                         case "Desktop":
+                            if (WindowsServiceHelper.IsRunningInServiceContext) continue;
                             CopyDirectoryRecursively(directory.FullName,
                                 Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
                             break;
