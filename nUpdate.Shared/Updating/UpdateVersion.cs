@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// UpdateVersion.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -182,7 +183,7 @@ namespace nUpdate.Updating
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
+            return obj != null && (obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString());
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// IProgressReporter.cs, 01.08.2018
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 

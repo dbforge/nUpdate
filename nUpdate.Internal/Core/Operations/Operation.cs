@@ -1,6 +1,10 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Operation.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
+using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
+using System.IO;
 
 namespace nUpdate.Internal.Core.Operations
 {
@@ -34,6 +38,9 @@ namespace nUpdate.Internal.Core.Operations
         /// </summary>
         public object Value2 { get; set; }
 
+        [DefaultValue(false)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool ExecuteBeforeReplacingFiles { get; set; }
         /// <summary>
         ///     Gets the operation area and method from a given tag.
         /// </summary>
@@ -68,6 +75,7 @@ namespace nUpdate.Internal.Core.Operations
                 case "ExecuteScript":
                     return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
             }
+
             return null;
         }
 
@@ -90,6 +98,7 @@ namespace nUpdate.Internal.Core.Operations
                         case OperationMethod.Rename:
                             return "RenameFile";
                     }
+
                     break;
                 case OperationArea.Registry:
                     switch (operation.Method)
@@ -103,6 +112,7 @@ namespace nUpdate.Internal.Core.Operations
                         case OperationMethod.DeleteValue:
                             return "DeleteRegistryValue";
                     }
+
                     break;
                 case OperationArea.Processes:
                     switch (operation.Method)
@@ -112,6 +122,7 @@ namespace nUpdate.Internal.Core.Operations
                         case OperationMethod.Stop:
                             return "TerminateProcess";
                     }
+
                     break;
                 case OperationArea.Services:
                     switch (operation.Method)
@@ -121,6 +132,7 @@ namespace nUpdate.Internal.Core.Operations
                         case OperationMethod.Stop:
                             return "StopService";
                     }
+
                     break;
                 case OperationArea.Scripts:
                     switch (operation.Method)
@@ -128,8 +140,10 @@ namespace nUpdate.Internal.Core.Operations
                         case OperationMethod.Execute:
                             return "ExecuteScript";
                     }
+
                     break;
             }
+
             return null;
         }
     }

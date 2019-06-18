@@ -19,7 +19,7 @@ namespace nUpdate.Internal.Properties {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,9 +63,9 @@ namespace nUpdate.Internal.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Ionic_Zip {
+        internal static byte[] DotNetZip {
             get {
-                object obj = ResourceManager.GetObject("Ionic_Zip", resourceCulture);
+                object obj = ResourceManager.GetObject("DotNetZip", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -96,6 +96,16 @@ namespace nUpdate.Internal.Properties {
         internal static byte[] nUpdate_UpdateInstaller_Client_GuiInterface {
             get {
                 object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_Client_GuiInterface", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] nUpdate_UpdateInstaller_pdb {
+            get {
+                object obj = ResourceManager.GetObject("nUpdate_UpdateInstaller_pdb", resourceCulture);
                 return ((byte[])(obj));
             }
         }

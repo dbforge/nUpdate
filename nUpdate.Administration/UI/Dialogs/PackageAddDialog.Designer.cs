@@ -82,7 +82,8 @@ namespace nUpdate.Administration.UI.Dialogs
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("General", 2, 2);
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Conditions", 4, 4);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Operations", 17, 17);
             this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -92,18 +93,18 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel = new System.Windows.Forms.Label();
             this.createButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new Line();
+            this.line2 = new nUpdate.Internal.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.necessaryUpdateInfoLabel = new System.Windows.Forms.Label();
             this.necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new Line();
-            this.line1 = new Line();
+            this.line3 = new nUpdate.Internal.UI.Controls.Line();
+            this.line1 = new nUpdate.Internal.UI.Controls.Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -164,7 +165,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
             this.filesPanel = new System.Windows.Forms.Panel();
-            this.differentialUpdateCheckBox = new System.Windows.Forms.CheckBox();
             this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
             this.addFolderButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -181,6 +181,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.filesList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.conditionsTabPage = new System.Windows.Forms.TabPage();
+            this.conditionHelpLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.line4 = new nUpdate.Internal.UI.Controls.Line();
+            this.rolloutConditionModeComboBox = new System.Windows.Forms.ComboBox();
+            this.rolloutConditionModeLabel = new System.Windows.Forms.Label();
+            this.conditionsDataGridView = new System.Windows.Forms.DataGridView();
+            this.Key = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Negative = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -210,6 +219,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.replaceFilesTabPage.SuspendLayout();
             this.filesPanel.SuspendLayout();
             this.replaceFilesToolStrip.SuspendLayout();
+            this.conditionsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // filesImageList
@@ -227,7 +238,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(1, "blue-documents-stack.png");
             this.categoryImageList.Images.SetKeyName(2, "property.png");
             this.categoryImageList.Images.SetKeyName(3, "document--pencil.png");
-            this.categoryImageList.Images.SetKeyName(4, "node-delete-previous.png");
+            this.categoryImageList.Images.SetKeyName(4, "node-select.png");
             this.categoryImageList.Images.SetKeyName(5, "sofa--arrow.png");
             this.categoryImageList.Images.SetKeyName(6, "sofa--minus.png");
             this.categoryImageList.Images.SetKeyName(7, "system-monitor--minus.png");
@@ -240,6 +251,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "application--arrow.png");
             this.categoryImageList.Images.SetKeyName(16, "script-code.png");
+            this.categoryImageList.Images.SetKeyName(17, "toolbox.png");
             // 
             // cancelToolTip
             // 
@@ -330,10 +342,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
             this.categoryTabControl.Controls.Add(this.replaceFilesTabPage);
+            this.categoryTabControl.Controls.Add(this.conditionsTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
-            this.categoryTabControl.Size = new System.Drawing.Size(481, 262);
+            this.categoryTabControl.Size = new System.Drawing.Size(481, 257);
             this.categoryTabControl.TabIndex = 44;
             // 
             // generalTabPage
@@ -342,7 +355,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.generalTabPage.Location = new System.Drawing.Point(4, 22);
             this.generalTabPage.Name = "generalTabPage";
             this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalTabPage.Size = new System.Drawing.Size(473, 236);
+            this.generalTabPage.Size = new System.Drawing.Size(473, 231);
             this.generalTabPage.TabIndex = 0;
             this.generalTabPage.Text = "General";
             this.generalTabPage.UseVisualStyleBackColor = true;
@@ -404,7 +417,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 323);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -444,7 +457,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 231);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -454,7 +467,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 153);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -467,7 +480,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.architectureInfoLabel.Location = new System.Drawing.Point(9, 198);
             this.architectureInfoLabel.Name = "architectureInfoLabel";
-            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.Size = new System.Drawing.Size(437, 26);
             this.architectureInfoLabel.TabIndex = 20;
             this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
@@ -543,7 +556,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.publishInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.publishInfoLabel.Location = new System.Drawing.Point(8, 120);
             this.publishInfoLabel.Name = "publishInfoLabel";
-            this.publishInfoLabel.Size = new System.Drawing.Size(449, 26);
+            this.publishInfoLabel.Size = new System.Drawing.Size(448, 26);
             this.publishInfoLabel.TabIndex = 16;
             this.publishInfoLabel.Text = "Sets if the package should be uploaded yet. You can upload it later, if you disab" +
     "le this\r\noption. The update package will be saved locally on your PC then.";
@@ -566,7 +579,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.versionLabel.AutoSize = true;
             this.versionLabel.Location = new System.Drawing.Point(8, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(49, 13);
+            this.versionLabel.Size = new System.Drawing.Size(48, 13);
             this.versionLabel.TabIndex = 2;
             this.versionLabel.Text = "Version:";
             // 
@@ -622,7 +635,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.changelogTabPage.Location = new System.Drawing.Point(4, 22);
             this.changelogTabPage.Name = "changelogTabPage";
             this.changelogTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.changelogTabPage.Size = new System.Drawing.Size(473, 236);
+            this.changelogTabPage.Size = new System.Drawing.Size(473, 231);
             this.changelogTabPage.TabIndex = 1;
             this.changelogTabPage.Text = "Changelog";
             this.changelogTabPage.UseVisualStyleBackColor = true;
@@ -836,7 +849,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.availabilityTabPage.Location = new System.Drawing.Point(4, 22);
             this.availabilityTabPage.Name = "availabilityTabPage";
             this.availabilityTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.availabilityTabPage.Size = new System.Drawing.Size(473, 236);
+            this.availabilityTabPage.Size = new System.Drawing.Size(473, 231);
             this.availabilityTabPage.TabIndex = 2;
             this.availabilityTabPage.Text = "Availability";
             this.availabilityTabPage.UseVisualStyleBackColor = true;
@@ -973,7 +986,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsTabPage.Location = new System.Drawing.Point(4, 22);
             this.operationsTabPage.Name = "operationsTabPage";
             this.operationsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.operationsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.operationsTabPage.Size = new System.Drawing.Size(473, 231);
             this.operationsTabPage.TabIndex = 3;
             this.operationsTabPage.Text = "Operations";
             this.operationsTabPage.UseVisualStyleBackColor = true;
@@ -1075,14 +1088,13 @@ namespace nUpdate.Administration.UI.Dialogs
             this.replaceFilesTabPage.Location = new System.Drawing.Point(4, 22);
             this.replaceFilesTabPage.Name = "replaceFilesTabPage";
             this.replaceFilesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replaceFilesTabPage.Size = new System.Drawing.Size(473, 236);
+            this.replaceFilesTabPage.Size = new System.Drawing.Size(473, 231);
             this.replaceFilesTabPage.TabIndex = 4;
             this.replaceFilesTabPage.Text = "ReplaceFiles";
             this.replaceFilesTabPage.UseVisualStyleBackColor = true;
             // 
             // filesPanel
             // 
-            this.filesPanel.Controls.Add(this.differentialUpdateCheckBox);
             this.filesPanel.Controls.Add(this.filesDataTreeView);
             this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
             this.filesPanel.Controls.Add(this.filesList);
@@ -1090,17 +1102,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.filesPanel.Name = "filesPanel";
             this.filesPanel.Size = new System.Drawing.Size(474, 235);
             this.filesPanel.TabIndex = 41;
-            // 
-            // differentialUpdateCheckBox
-            // 
-            this.differentialUpdateCheckBox.AutoSize = true;
-            this.differentialUpdateCheckBox.Location = new System.Drawing.Point(388, 7);
-            this.differentialUpdateCheckBox.Name = "differentialUpdateCheckBox";
-            this.differentialUpdateCheckBox.Size = new System.Drawing.Size(84, 17);
-            this.differentialUpdateCheckBox.TabIndex = 6;
-            this.differentialUpdateCheckBox.Text = "Differential";
-            this.differentialUpdateCheckBox.UseVisualStyleBackColor = true;
-            this.differentialUpdateCheckBox.Visible = false;
             // 
             // filesDataTreeView
             // 
@@ -1268,6 +1269,101 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader2.Text = "Size";
             this.columnHeader2.Width = 147;
             // 
+            // conditionsTabPage
+            // 
+            this.conditionsTabPage.Controls.Add(this.conditionHelpLinkLabel);
+            this.conditionsTabPage.Controls.Add(this.line4);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeComboBox);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeLabel);
+            this.conditionsTabPage.Controls.Add(this.conditionsDataGridView);
+            this.conditionsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.conditionsTabPage.Name = "conditionsTabPage";
+            this.conditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.conditionsTabPage.Size = new System.Drawing.Size(473, 231);
+            this.conditionsTabPage.TabIndex = 5;
+            this.conditionsTabPage.Text = "Rollout conditions";
+            this.conditionsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // conditionHelpLinkLabel
+            // 
+            this.conditionHelpLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.conditionHelpLinkLabel.AutoSize = true;
+            this.conditionHelpLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
+            this.conditionHelpLinkLabel.Location = new System.Drawing.Point(433, 14);
+            this.conditionHelpLinkLabel.Name = "conditionHelpLinkLabel";
+            this.conditionHelpLinkLabel.Size = new System.Drawing.Size(31, 13);
+            this.conditionHelpLinkLabel.TabIndex = 6;
+            this.conditionHelpLinkLabel.TabStop = true;
+            this.conditionHelpLinkLabel.Text = "Help";
+            this.conditionHelpLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.conditionHelpLinkLabel_LinkClicked);
+            // 
+            // line4
+            // 
+            this.line4.BackColor = System.Drawing.SystemColors.Window;
+            this.line4.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Vertical;
+            this.line4.Location = new System.Drawing.Point(420, 7);
+            this.line4.Name = "line4";
+            this.line4.Size = new System.Drawing.Size(10, 23);
+            this.line4.TabIndex = 3;
+            this.line4.Text = "line4";
+            // 
+            // rolloutConditionModeComboBox
+            // 
+            this.rolloutConditionModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.rolloutConditionModeComboBox.FormattingEnabled = true;
+            this.rolloutConditionModeComboBox.Items.AddRange(new object[] {
+            "One positive condition must be met for different keys",
+            "All positive conditions must be met for different keys"});
+            this.rolloutConditionModeComboBox.Location = new System.Drawing.Point(106, 11);
+            this.rolloutConditionModeComboBox.Name = "rolloutConditionModeComboBox";
+            this.rolloutConditionModeComboBox.Size = new System.Drawing.Size(305, 21);
+            this.rolloutConditionModeComboBox.TabIndex = 2;
+            // 
+            // rolloutConditionModeLabel
+            // 
+            this.rolloutConditionModeLabel.AutoSize = true;
+            this.rolloutConditionModeLabel.Location = new System.Drawing.Point(6, 14);
+            this.rolloutConditionModeLabel.Name = "rolloutConditionModeLabel";
+            this.rolloutConditionModeLabel.Size = new System.Drawing.Size(94, 13);
+            this.rolloutConditionModeLabel.TabIndex = 1;
+            this.rolloutConditionModeLabel.Text = "Condition mode:";
+            // 
+            // conditionsDataGridView
+            // 
+            this.conditionsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.conditionsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.conditionsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Key,
+            this.Value,
+            this.Negative});
+            this.conditionsDataGridView.Location = new System.Drawing.Point(9, 40);
+            this.conditionsDataGridView.Name = "conditionsDataGridView";
+            this.conditionsDataGridView.RowHeadersVisible = false;
+            this.conditionsDataGridView.Size = new System.Drawing.Size(455, 178);
+            this.conditionsDataGridView.TabIndex = 0;
+            // 
+            // Key
+            // 
+            this.Key.DataPropertyName = "Key";
+            this.Key.HeaderText = "Key";
+            this.Key.Name = "Key";
+            this.Key.Width = 152;
+            // 
+            // Value
+            // 
+            this.Value.DataPropertyName = "Value";
+            this.Value.HeaderText = "Value";
+            this.Value.Name = "Value";
+            this.Value.Width = 152;
+            // 
+            // Negative
+            // 
+            this.Negative.DataPropertyName = "IsNegativeCondition";
+            this.Negative.HeaderText = "Negative";
+            this.Negative.Name = "Negative";
+            this.Negative.ToolTipText = "When checked, this conditions must not be met.";
+            this.Negative.Width = 152;
+            // 
             // categoryTreeView
             // 
             this.categoryTreeView.AllowDrop = true;
@@ -1294,14 +1390,19 @@ namespace nUpdate.Administration.UI.Dialogs
             treeNode7.SelectedImageIndex = 0;
             treeNode7.Text = "Availability";
             treeNode8.ImageIndex = 4;
-            treeNode8.Name = "operationsNode";
+            treeNode8.Name = "conditionNode";
             treeNode8.SelectedImageIndex = 4;
-            treeNode8.Text = "Operations";
+            treeNode8.Text = "Conditions";
+            treeNode9.ImageIndex = 17;
+            treeNode9.Name = "operationsNode";
+            treeNode9.SelectedImageIndex = 17;
+            treeNode9.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode5,
             treeNode6,
             treeNode7,
-            treeNode8});
+            treeNode8,
+            treeNode9});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -1366,9 +1467,11 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsPanel.ResumeLayout(false);
             this.replaceFilesTabPage.ResumeLayout(false);
             this.filesPanel.ResumeLayout(false);
-            this.filesPanel.PerformLayout();
             this.replaceFilesToolStrip.ResumeLayout(false);
             this.replaceFilesToolStrip.PerformLayout();
+            this.conditionsTabPage.ResumeLayout(false);
+            this.conditionsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1472,8 +1575,15 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
-        private System.Windows.Forms.CheckBox differentialUpdateCheckBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-
+        private System.Windows.Forms.TabPage conditionsTabPage;
+        private System.Windows.Forms.DataGridView conditionsDataGridView;
+        private System.Windows.Forms.ComboBox rolloutConditionModeComboBox;
+        private System.Windows.Forms.Label rolloutConditionModeLabel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Key;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Negative;
+        private Line line4;
+        private System.Windows.Forms.LinkLabel conditionHelpLinkLabel;
     }
 }

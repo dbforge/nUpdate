@@ -64,9 +64,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -79,6 +78,8 @@
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\IconHelper.cs" />
+    <Compile Include="Core\RolloutCondition.cs" />
+    <Compile Include="Core\RolloutConditionMode.cs" />
     <Compile Include="Core\SizeHelper.cs" />
     <Compile Include="Core\IDeepCopy.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />
@@ -129,28 +130,37 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Core\Localization\en.json" />
     <EmbeddedResource Include="Core\Localization\zh-CN.json" />
-    <None Include="packages.config" />
+    <EmbeddedResource Include="Core\Localization\it-IT.json" />
     <EmbeddedResource Include="Core\Localization\de-AT.json" />
     <EmbeddedResource Include="Core\Localization\de-CH.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\en.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ionic.Zip.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Resources\Ionic.Zip.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Newtonsoft.Json.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Resources\nUpdate UpdateInstaller.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nUpdate UpdateInstaller.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Newtonsoft.Json.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DotNetZip.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\nUpdate UpdateInstaller.exe" />
+    <None Include="Resources\nUpdate.UpdateInstaller.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nUpdate.UpdateInstaller.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

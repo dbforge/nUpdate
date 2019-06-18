@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// LogEntry.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 namespace nUpdate.Administration.Core.History
 {
@@ -6,6 +7,7 @@ namespace nUpdate.Administration.Core.History
     {
         Create,
         Delete,
-        Upload
+        Upload,
+        Edit
     }
 }

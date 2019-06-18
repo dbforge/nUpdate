@@ -1,19 +1,25 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// Program.cs, 01.08.2018
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller.Core;
-using nUpdate.UpdateInstaller.Core.Operations;
 using nUpdate.UpdateInstaller.UI.Popups;
+using Operation = nUpdate.UpdateInstaller.Operations.Operation;
 
 namespace nUpdate.UpdateInstaller
 {
     internal static class Program
     {
+        /// <summary>
+        ///     The paths of the package files.
+        /// </summary>
+        public static string[] PackageFilePaths { get; set; }
+
         /// <summary>
         ///     The program folder where the updated files should be copied to.
         /// </summary>
@@ -30,16 +36,6 @@ namespace nUpdate.UpdateInstaller
         public static string AppName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the arguments to handle over to the application.
-        /// </summary>
-        public static List<UpdateArgument> Arguments { get; set; }
-
-        /// <summary>
-        ///     The text of the "Copying..."-label.
-        /// </summary>
-        public static string CopyingText { get; set; }
-
-        /// <summary>
         ///     The path of the external GUI assembly.
         /// </summary>
         public static string ExternalGuiAssemblyPath { get; set; }
@@ -50,14 +46,9 @@ namespace nUpdate.UpdateInstaller
         public static string ExtractFilesText { get; set; }
 
         /// <summary>
-        ///     The text of the file delete information.
+        ///     The text of the "Copying..."-label.
         /// </summary>
-        public static string FileDeletingOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the error that a file is currently being used by another program.
-        /// </summary>
-        public static string FileInUseError { get; set; }
+        public static string CopyingText { get; set; }
 
         /// <summary>
         ///     The text of the file rename information.
@@ -65,24 +56,26 @@ namespace nUpdate.UpdateInstaller
         public static string FileRenamingOperationText { get; set; }
 
         /// <summary>
-        ///     The caption of the initializing error message.
+        ///     The text of the file delete information.
         /// </summary>
-        public static string InitializingErrorCaption { get; set; }
+        public static string FileDeletingOperationText { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the host application has been closed, or not.
+        ///     The text of the registry sub key creation information.
         /// </summary>
-        public static bool IsHostApplicationClosed { get; set; }
+        public static string RegistrySubKeyCreateOperationText { get; set; }
 
         /// <summary>
-        ///     The operations to perform.
+        ///     The text of the registry name-value-pair value setting information.
         /// </summary>
-        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
+        public static string RegistryNameValuePairSetValueOperationText { get; set; }
+
+        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
 
         /// <summary>
         ///     The paths of the package files.
         /// </summary>
-        public static string[] PackageFilePaths { get; set; }
+        public static string RegistrySubKeyDeleteOperationText { get; set; }
 
         /// <summary>
         ///     The text of the process start information.
@@ -93,31 +86,6 @@ namespace nUpdate.UpdateInstaller
         ///     The text of the process stop information.
         /// </summary>
         public static string ProcessStopOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry name-value-pair value deleting information.
-        /// </summary>
-        public static string RegistryNameValuePairDeleteValueOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry name-value-pair value setting information.
-        /// </summary>
-        public static string RegistryNameValuePairSetValueOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry sub key creation information.
-        /// </summary>
-        public static string RegistrySubKeyCreateOperationText { get; set; }
-
-        /// <summary>
-        ///     The text of the registry sub key deletion information.
-        /// </summary>
-        public static string RegistrySubKeyDeleteOperationText { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the host application should be restarted, or not.
-        /// </summary>
-        public static bool RestartHostApplication { get; set; }
 
         /// <summary>
         ///     The text of the service start information.
@@ -134,14 +102,28 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public static string UpdatingErrorCaption { get; set; }
 
-        private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (e.ExceptionObject is ThreadAbortException)
-                return;
-            var exception = e.ExceptionObject as Exception;
-            if (exception != null) MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
-            Application.Exit();
-        }
+        /// <summary>
+        ///     The caption of the initializing error message.
+        /// </summary>
+        public static string InitializingErrorCaption { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the arguments to handle over to the application.
+        /// </summary>
+        public static List<UpdateArgument> Arguments { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the host application options after the update installation.
+        /// </summary>
+        public static HostApplicationOptions HostApplicationOptions { get; set; }
+
+        // Deprecated, there for compatiblity
+        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
+
+        /// <summary>
+        ///     The text of the error that a file is currently being used by another program.
+        /// </summary>
+        public static string FileInUseError { get; set; }
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -151,13 +133,13 @@ namespace nUpdate.UpdateInstaller
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.ThreadException += ApplicationOnThreadException;
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
 
             if (args.Length != 1)
             {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
-                    $"Invalid arguments count ({args.Length}) where 1 argument was expected.",
-                    PopupButtons.Ok);
+                MessageBox.Show($"Invalid arguments count ({args.Length}) where 1 argument was expected.",
+                    "Updating the application has failed.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -169,9 +151,10 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                Operations =
-                    Serializer.Deserialize<Dictionary<string, IEnumerable<Operation>>>(
-                        Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
+                // Argument 4 became deprecated, but for compatibility reasons we need to have this
+                Operations = appArguments[4].Equals(string.Empty)
+                    ? null
+                    : Serializer.Deserialize<Dictionary<string, IEnumerable<Operation>>>(Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
                 ExternalGuiAssemblyPath = appArguments[5];
                 ExtractFilesText = appArguments[6];
                 CopyingText = appArguments[7];
@@ -190,17 +173,29 @@ namespace nUpdate.UpdateInstaller
                 Arguments = Serializer.Deserialize<List<UpdateArgument>>(
                     Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[20])));
                 // Arguments-property can't be "null" as UpdateManager creates an instance of a List<UpdateArgument> and handles that over
-                IsHostApplicationClosed = Convert.ToBoolean(appArguments[21]);
-                RestartHostApplication = Convert.ToBoolean(appArguments[22]);
-                FileInUseError = appArguments[23];
+                HostApplicationOptions =
+                    (HostApplicationOptions) Enum.Parse(typeof(HostApplicationOptions), appArguments[21]);
+                FileInUseError = appArguments[22];
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
+                MessageBox.Show(ex.StackTrace, "Error while updating the application.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 return;
             }
 
             new Updater().RunUpdate();
+        }
+
+        private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message + "\n" + e.Exception.StackTrace, "Error while updating the application.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = (Exception) e.ExceptionObject;
+            MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "Error while updating the application.", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

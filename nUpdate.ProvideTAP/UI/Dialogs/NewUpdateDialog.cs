@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// NewUpdateDialog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,6 @@ namespace nUpdate.UI.Dialogs
         {
             InitializeComponent();
         }
-
-        public List<OperationArea> OperationAreas { get; set; }
 
         internal static void AddShieldToButton(Button btn)
         {
@@ -109,16 +108,6 @@ namespace nUpdate.UI.Dialogs
             }
 
             AddShieldToButton(installButton);
-
-            if (OperationAreas == null || OperationAreas.Count == 0)
-            {
-                accessLabel.Text = $"{_lp.NewUpdateDialogAccessText} -";
-                _allowCancel = true;
-                return;
-            }
-
-            accessLabel.Text =
-                $"{_lp.NewUpdateDialogAccessText} {string.Join(", ", LocalizationHelper.GetLocalizedEnumerationValues(_lp, OperationAreas.Cast<object>().GroupBy(item => item).Select(item => item.First()).ToArray()))}";
             _allowCancel = true;
         }
     }

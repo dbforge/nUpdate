@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// IconHelper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Drawing;
@@ -23,7 +24,7 @@ namespace nUpdate.UpdateInstaller.Core
         /// </remarks>
         internal static Icon ExtractAssociatedIcon(string filePath)
         {
-            int index = 0;
+            var index = 0;
 
             Uri uri;
             if (filePath == null)

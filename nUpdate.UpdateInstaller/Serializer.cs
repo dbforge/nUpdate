@@ -1,9 +1,11 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// Serializer.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.UpdateInstaller
 {
     public class Serializer
     {
@@ -27,7 +29,7 @@ namespace nUpdate.UpdateInstaller.Core
         public static T Deserialize<T>(Stream stream)
         {
             string streamContent;
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 streamContent = reader.ReadToEnd();
             }

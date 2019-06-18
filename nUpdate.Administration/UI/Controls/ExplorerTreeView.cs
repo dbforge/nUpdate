@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// ExplorerTreeView.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Drawing;
@@ -150,6 +151,7 @@ namespace nUpdate.Administration.UI.Controls
                     message.Result = IntPtr.Zero;
                     return;
                 }
+
                 case 20:
                     message.Result = (IntPtr) 1;
                     return;

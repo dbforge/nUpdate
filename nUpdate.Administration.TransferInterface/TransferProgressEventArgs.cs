@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// TransferProgressEventArgs.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 
@@ -6,7 +7,9 @@ namespace nUpdate.Administration.TransferInterface
 {
     public class TransferProgressEventArgs : EventArgs
     {
-        public TransferProgressEventArgs(int bytesTransferred, long totalBytesTransferred, int bytesPerSecond, int kilobytesPerSecond, int megabytesPerSecond, int gigabytesPerSecond, TimeSpan elapsedTime, int percentComplete, long transferSize, long bytesRemaining, TimeSpan timeRemaining)
+        public TransferProgressEventArgs(int bytesTransferred, long totalBytesTransferred, int bytesPerSecond,
+            int kilobytesPerSecond, int megabytesPerSecond, int gigabytesPerSecond, TimeSpan elapsedTime,
+            int percentComplete, long transferSize, long bytesRemaining, TimeSpan timeRemaining)
         {
             BytesTransferred = bytesTransferred;
             TotalBytesTransferred = totalBytesTransferred;

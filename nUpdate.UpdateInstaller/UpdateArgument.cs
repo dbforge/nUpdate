@@ -1,6 +1,7 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// UpdateArgument.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.UpdateInstaller
 {
     /// <summary>
     ///     Represents an argument that is handled over to the application after the installation of an update.

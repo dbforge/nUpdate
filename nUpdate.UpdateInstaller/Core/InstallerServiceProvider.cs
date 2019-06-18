@@ -1,7 +1,9 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// InstallerServiceProvider.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
 
@@ -23,13 +25,15 @@ namespace nUpdate.UpdateInstaller.Core
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            object service;
-            return !_services.TryGetValue(serviceType, out service) ? null : service;
+            return !_services.TryGetValue(serviceType, out var service) ? null : service;
         }
 
         private void InitializeServices()
         {
-            _services.Add(typeof(IProgressReporter), new ProgressReporterService());
+            if (WindowsServiceHelper.IsRunningInServiceContext)
+                _services.Add(typeof(IProgressReporter), new ProgressReporterServiceEventLog());
+            else
+                _services.Add(typeof(IProgressReporter), new ProgressReporterService());
         }
     }
 }

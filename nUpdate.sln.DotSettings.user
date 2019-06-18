@@ -3,6 +3,7 @@
   &lt;Assembly Path="C:\Users\Dominic\Downloads\AdvancedBugtracker\AdvancedBugtracker\Bibiliothek\AdvancedBugtracker.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceProcess.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/UseMsbuildStrategy/@EntryValue">AUTO</s:String>
 	
 	
 	

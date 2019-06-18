@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// IDeepCopy.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 namespace nUpdate.Internal.Core
 {

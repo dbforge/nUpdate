@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// FileHelper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Runtime.InteropServices;
@@ -12,7 +13,7 @@ namespace nUpdate.UpdateInstaller.Core
 
         public static bool IsFileLocked(Exception exception)
         {
-            int errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
+            var errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
             return errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION;
         }
     }
