@@ -154,13 +154,13 @@
     <None Include="Resources\DotNetZip.dll" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\nUpdate.UpdateInstaller.exe" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nUpdate.UpdateInstaller.pdb" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\nUpdate.UpdateInstaller.Client.GuiInterface.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
