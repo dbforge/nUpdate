@@ -32,7 +32,7 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectRemovalDialog));
             this.projectsTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.line1 = new Line();
+            this.line1 = new nUpdate.Internal.UI.Controls.Line();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.noProjectsLabel = new System.Windows.Forms.Label();
@@ -53,7 +53,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(-6, 225);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 10);

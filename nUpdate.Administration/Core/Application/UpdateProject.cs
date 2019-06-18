@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// UpdateProject.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace nUpdate.Administration.Core.Application
         /// </summary>
         public string AssemblyVersionPath { get; set; }
 
-        public string ConfigVersion => "1b2";
+        public string ConfigVersion { get; set; } = "v3";
 
         /// <summary>
         ///     The FTP-directory of the project.

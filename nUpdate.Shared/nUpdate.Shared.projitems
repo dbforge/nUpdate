@@ -9,6 +9,7 @@
     <Import_RootNamespace>nUpdate.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\HostApplicationOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\nUpdateVersionAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PackageDeleteException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SizeCalculationException.cs" />

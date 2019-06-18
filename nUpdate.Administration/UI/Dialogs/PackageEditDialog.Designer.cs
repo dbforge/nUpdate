@@ -39,7 +39,8 @@ namespace nUpdate.Administration.UI.Dialogs
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 2, 2);
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Changelog", 3, 3);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Availability", 0, 0);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Conditions", 16, 16);
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Operations", 4, 4);
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Registry", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Processes", System.Windows.Forms.HorizontalAlignment.Left);
@@ -78,6 +79,10 @@ namespace nUpdate.Administration.UI.Dialogs
             System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "Execute script",
             "Executes a C#-script."}, 15);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Program directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("AppData", 0, 0);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Temp directory", 0, 0);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Desktop", 0, 0);
             this.categoryImageList = new System.Windows.Forms.ImageList(this.components);
             this.cancelToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.saveButton = new System.Windows.Forms.Button();
@@ -87,18 +92,18 @@ namespace nUpdate.Administration.UI.Dialogs
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new Line();
+            this.line2 = new nUpdate.Internal.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.necessaryUpdateInfoLabel = new System.Windows.Forms.Label();
             this.necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new Line();
-            this.line1 = new Line();
+            this.line3 = new nUpdate.Internal.UI.Controls.Line();
+            this.line1 = new nUpdate.Internal.UI.Controls.Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -155,6 +160,34 @@ namespace nUpdate.Administration.UI.Dialogs
             this.operationsListView = new nUpdate.Administration.UI.Controls.ExplorerListView();
             this.itemName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Description = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.conditionsTabPage = new System.Windows.Forms.TabPage();
+            this.conditionHelpLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.line4 = new nUpdate.Internal.UI.Controls.Line();
+            this.rolloutConditionModeComboBox = new System.Windows.Forms.ComboBox();
+            this.rolloutConditionModeLabel = new System.Windows.Forms.Label();
+            this.conditionsDataGridView = new System.Windows.Forms.DataGridView();
+            this.Key = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Negative = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.replaceFilesTabPage = new System.Windows.Forms.TabPage();
+            this.filesPanel = new System.Windows.Forms.Panel();
+            this.filesDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
+            this.replaceFilesToolStrip = new System.Windows.Forms.ToolStrip();
+            this.addFolderButton = new System.Windows.Forms.ToolStripSplitButton();
+            this.addExistingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFolderContentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addVirtualFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addFilesButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.removeEntryButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.infoButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.filesList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.filesImageList = new System.Windows.Forms.ImageList(this.components);
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -180,6 +213,11 @@ namespace nUpdate.Administration.UI.Dialogs
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).BeginInit();
             this.operationsTabPage.SuspendLayout();
             this.operationsPanel.SuspendLayout();
+            this.conditionsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).BeginInit();
+            this.replaceFilesTabPage.SuspendLayout();
+            this.filesPanel.SuspendLayout();
+            this.replaceFilesToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // categoryImageList
@@ -190,7 +228,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(1, "blue-documents-stack.png");
             this.categoryImageList.Images.SetKeyName(2, "property.png");
             this.categoryImageList.Images.SetKeyName(3, "document--pencil.png");
-            this.categoryImageList.Images.SetKeyName(4, "node-delete-previous.png");
+            this.categoryImageList.Images.SetKeyName(4, "node-select.png");
             this.categoryImageList.Images.SetKeyName(5, "sofa--arrow.png");
             this.categoryImageList.Images.SetKeyName(6, "sofa--minus.png");
             this.categoryImageList.Images.SetKeyName(7, "system-monitor--minus.png");
@@ -202,6 +240,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryImageList.Images.SetKeyName(13, "wall--pencil.png");
             this.categoryImageList.Images.SetKeyName(14, "wall--plus.png");
             this.categoryImageList.Images.SetKeyName(15, "script-code.png");
+            this.categoryImageList.Images.SetKeyName(16, "toolbox.png");
             // 
             // cancelToolTip
             // 
@@ -299,15 +338,20 @@ namespace nUpdate.Administration.UI.Dialogs
             treeNode3.Name = "availabilityNode";
             treeNode3.SelectedImageIndex = 0;
             treeNode3.Text = "Availability";
-            treeNode4.ImageIndex = 4;
-            treeNode4.Name = "operationsNode";
-            treeNode4.SelectedImageIndex = 4;
-            treeNode4.Text = "Operations";
+            treeNode4.ImageIndex = 16;
+            treeNode4.Name = "conditionsNode";
+            treeNode4.SelectedImageIndex = 16;
+            treeNode4.Text = "Conditions";
+            treeNode13.ImageIndex = 4;
+            treeNode13.Name = "operationsNode";
+            treeNode13.SelectedImageIndex = 4;
+            treeNode13.Text = "Operations";
             this.categoryTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode13});
             this.categoryTreeView.SelectedImageIndex = 0;
             this.categoryTreeView.ShowLines = false;
             this.categoryTreeView.Size = new System.Drawing.Size(129, 231);
@@ -333,6 +377,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.categoryTabControl.Controls.Add(this.changelogTabPage);
             this.categoryTabControl.Controls.Add(this.availabilityTabPage);
             this.categoryTabControl.Controls.Add(this.operationsTabPage);
+            this.categoryTabControl.Controls.Add(this.replaceFilesTabPage);
+            this.categoryTabControl.Controls.Add(this.conditionsTabPage);
             this.categoryTabControl.Location = new System.Drawing.Point(151, 24);
             this.categoryTabControl.Name = "categoryTabControl";
             this.categoryTabControl.SelectedIndex = 0;
@@ -404,7 +450,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 262);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -443,7 +489,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 170);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -453,7 +499,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 92);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -466,7 +512,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.architectureInfoLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.architectureInfoLabel.Location = new System.Drawing.Point(9, 137);
             this.architectureInfoLabel.Name = "architectureInfoLabel";
-            this.architectureInfoLabel.Size = new System.Drawing.Size(438, 26);
+            this.architectureInfoLabel.Size = new System.Drawing.Size(437, 26);
             this.architectureInfoLabel.TabIndex = 20;
             this.architectureInfoLabel.Text = "Sets if the update package should only run on special architectures. To set any t" +
     "ype \r\nof architecture, choose \"AnyCPU\" as entry.";
@@ -553,7 +599,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.versionLabel.AutoSize = true;
             this.versionLabel.Location = new System.Drawing.Point(8, 39);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(49, 13);
+            this.versionLabel.Size = new System.Drawing.Size(48, 13);
             this.versionLabel.TabIndex = 2;
             this.versionLabel.Text = "Version:";
             // 
@@ -1043,6 +1089,292 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             this.Description.Width = 300;
             // 
+            // conditionsTabPage
+            // 
+            this.conditionsTabPage.Controls.Add(this.conditionHelpLinkLabel);
+            this.conditionsTabPage.Controls.Add(this.line4);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeComboBox);
+            this.conditionsTabPage.Controls.Add(this.rolloutConditionModeLabel);
+            this.conditionsTabPage.Controls.Add(this.conditionsDataGridView);
+            this.conditionsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.conditionsTabPage.Name = "conditionsTabPage";
+            this.conditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.conditionsTabPage.Size = new System.Drawing.Size(473, 236);
+            this.conditionsTabPage.TabIndex = 6;
+            this.conditionsTabPage.Text = "Rollout conditions";
+            this.conditionsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // conditionHelpLinkLabel
+            // 
+            this.conditionHelpLinkLabel.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.conditionHelpLinkLabel.AutoSize = true;
+            this.conditionHelpLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
+            this.conditionHelpLinkLabel.Location = new System.Drawing.Point(433, 14);
+            this.conditionHelpLinkLabel.Name = "conditionHelpLinkLabel";
+            this.conditionHelpLinkLabel.Size = new System.Drawing.Size(31, 13);
+            this.conditionHelpLinkLabel.TabIndex = 6;
+            this.conditionHelpLinkLabel.TabStop = true;
+            this.conditionHelpLinkLabel.Text = "Help";
+            // 
+            // line4
+            // 
+            this.line4.BackColor = System.Drawing.SystemColors.Window;
+            this.line4.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Vertical;
+            this.line4.Location = new System.Drawing.Point(420, 7);
+            this.line4.Name = "line4";
+            this.line4.Size = new System.Drawing.Size(10, 23);
+            this.line4.TabIndex = 3;
+            this.line4.Text = "line4";
+            // 
+            // rolloutConditionModeComboBox
+            // 
+            this.rolloutConditionModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.rolloutConditionModeComboBox.FormattingEnabled = true;
+            this.rolloutConditionModeComboBox.Items.AddRange(new object[] {
+            "One positive condition must be met for different keys",
+            "All positive conditions must be met for different keys"});
+            this.rolloutConditionModeComboBox.Location = new System.Drawing.Point(106, 11);
+            this.rolloutConditionModeComboBox.Name = "rolloutConditionModeComboBox";
+            this.rolloutConditionModeComboBox.Size = new System.Drawing.Size(305, 21);
+            this.rolloutConditionModeComboBox.TabIndex = 2;
+            // 
+            // rolloutConditionModeLabel
+            // 
+            this.rolloutConditionModeLabel.AutoSize = true;
+            this.rolloutConditionModeLabel.Location = new System.Drawing.Point(6, 14);
+            this.rolloutConditionModeLabel.Name = "rolloutConditionModeLabel";
+            this.rolloutConditionModeLabel.Size = new System.Drawing.Size(94, 13);
+            this.rolloutConditionModeLabel.TabIndex = 1;
+            this.rolloutConditionModeLabel.Text = "Condition mode:";
+            // 
+            // conditionsDataGridView
+            // 
+            this.conditionsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.conditionsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.conditionsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Key,
+            this.Value,
+            this.Negative});
+            this.conditionsDataGridView.Location = new System.Drawing.Point(9, 40);
+            this.conditionsDataGridView.Name = "conditionsDataGridView";
+            this.conditionsDataGridView.RowHeadersVisible = false;
+            this.conditionsDataGridView.Size = new System.Drawing.Size(455, 178);
+            this.conditionsDataGridView.TabIndex = 0;
+            // 
+            // Key
+            // 
+            this.Key.DataPropertyName = "Key";
+            this.Key.HeaderText = "Key";
+            this.Key.Name = "Key";
+            this.Key.Width = 152;
+            // 
+            // Value
+            // 
+            this.Value.DataPropertyName = "Value";
+            this.Value.HeaderText = "Value";
+            this.Value.Name = "Value";
+            this.Value.Width = 152;
+            // 
+            // Negative
+            // 
+            this.Negative.DataPropertyName = "IsNegativeCondition";
+            this.Negative.HeaderText = "Negative";
+            this.Negative.Name = "Negative";
+            this.Negative.ToolTipText = "When checked, this conditions must not be met.";
+            this.Negative.Width = 152;
+            // 
+            // replaceFilesTabPage
+            // 
+            this.replaceFilesTabPage.Controls.Add(this.filesPanel);
+            this.replaceFilesTabPage.Location = new System.Drawing.Point(4, 22);
+            this.replaceFilesTabPage.Name = "replaceFilesTabPage";
+            this.replaceFilesTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.replaceFilesTabPage.Size = new System.Drawing.Size(473, 236);
+            this.replaceFilesTabPage.TabIndex = 7;
+            this.replaceFilesTabPage.Text = "ReplaceFiles";
+            this.replaceFilesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // filesPanel
+            // 
+            this.filesPanel.Controls.Add(this.filesDataTreeView);
+            this.filesPanel.Controls.Add(this.replaceFilesToolStrip);
+            this.filesPanel.Controls.Add(this.filesList);
+            this.filesPanel.Location = new System.Drawing.Point(0, 0);
+            this.filesPanel.Name = "filesPanel";
+            this.filesPanel.Size = new System.Drawing.Size(474, 235);
+            this.filesPanel.TabIndex = 41;
+            // 
+            // filesDataTreeView
+            // 
+            this.filesDataTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.filesDataTreeView.HotTracking = true;
+            this.filesDataTreeView.ImageIndex = 0;
+            this.filesDataTreeView.ImageList = this.filesImageList;
+            this.filesDataTreeView.ItemHeight = 23;
+            this.filesDataTreeView.LabelEdit = true;
+            this.filesDataTreeView.Location = new System.Drawing.Point(3, 30);
+            this.filesDataTreeView.Name = "filesDataTreeView";
+            treeNode5.ImageIndex = 0;
+            treeNode5.Name = "Knoten0";
+            treeNode5.SelectedImageIndex = 0;
+            treeNode5.Text = "Program directory";
+            treeNode6.ImageIndex = 0;
+            treeNode6.Name = "Knoten1";
+            treeNode6.SelectedImageIndex = 0;
+            treeNode6.Text = "AppData";
+            treeNode7.ImageIndex = 0;
+            treeNode7.Name = "Knoten2";
+            treeNode7.SelectedImageIndex = 0;
+            treeNode7.Text = "Temp directory";
+            treeNode8.ImageIndex = 0;
+            treeNode8.Name = "Knoten3";
+            treeNode8.SelectedImageIndex = 0;
+            treeNode8.Text = "Desktop";
+            this.filesDataTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8});
+            this.filesDataTreeView.SelectedImageIndex = 0;
+            this.filesDataTreeView.ShowLines = false;
+            this.filesDataTreeView.Size = new System.Drawing.Size(469, 198);
+            this.filesDataTreeView.TabIndex = 5;
+            this.filesDataTreeView.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.FilesDataTreeView_BeforeLabelEdit);
+            // 
+            // replaceFilesToolStrip
+            // 
+            this.replaceFilesToolStrip.AutoSize = false;
+            this.replaceFilesToolStrip.BackColor = System.Drawing.Color.Transparent;
+            this.replaceFilesToolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.replaceFilesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.replaceFilesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFolderButton,
+            this.toolStripSeparator1,
+            this.addFilesButton,
+            this.toolStripSeparator4,
+            this.removeEntryButton,
+            this.toolStripSeparator9,
+            this.infoButton,
+            this.toolStripSeparator2});
+            this.replaceFilesToolStrip.Location = new System.Drawing.Point(3, 2);
+            this.replaceFilesToolStrip.Name = "replaceFilesToolStrip";
+            this.replaceFilesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.replaceFilesToolStrip.Size = new System.Drawing.Size(468, 25);
+            this.replaceFilesToolStrip.TabIndex = 4;
+            this.replaceFilesToolStrip.Text = "toolStrip4";
+            // 
+            // addFolderButton
+            // 
+            this.addFolderButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addExistingFolderToolStripMenuItem,
+            this.addFolderContentToolStripMenuItem,
+            this.addVirtualFolderToolStripMenuItem});
+            this.addFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("addFolderButton.Image")));
+            this.addFolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addFolderButton.Name = "addFolderButton";
+            this.addFolderButton.Size = new System.Drawing.Size(95, 22);
+            this.addFolderButton.Text = "Add folder";
+            this.addFolderButton.Click += new System.EventHandler(this.AddFolderButton_Click);
+            // 
+            // addExistingFolderToolStripMenuItem
+            // 
+            this.addExistingFolderToolStripMenuItem.Name = "addExistingFolderToolStripMenuItem";
+            this.addExistingFolderToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.addExistingFolderToolStripMenuItem.Text = "Add folder";
+            // 
+            // addFolderContentToolStripMenuItem
+            // 
+            this.addFolderContentToolStripMenuItem.Name = "addFolderContentToolStripMenuItem";
+            this.addFolderContentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addFolderContentToolStripMenuItem.Text = "Add folder content";
+            this.addFolderContentToolStripMenuItem.Click += new System.EventHandler(this.AddFolderContentToolStripMenuItem_Click);
+            // 
+            // addVirtualFolderToolStripMenuItem
+            // 
+            this.addVirtualFolderToolStripMenuItem.Name = "addVirtualFolderToolStripMenuItem";
+            this.addVirtualFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addVirtualFolderToolStripMenuItem.Text = "Add virtual folder";
+            this.addVirtualFolderToolStripMenuItem.Click += new System.EventHandler(this.AddVirtualFolderToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // addFilesButton
+            // 
+            this.addFilesButton.Image = ((System.Drawing.Image)(resources.GetObject("addFilesButton.Image")));
+            this.addFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addFilesButton.Name = "addFilesButton";
+            this.addFilesButton.Size = new System.Drawing.Size(73, 22);
+            this.addFilesButton.Text = "Add files";
+            this.addFilesButton.Click += new System.EventHandler(this.AddFilesButton_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // removeEntryButton
+            // 
+            this.removeEntryButton.Image = ((System.Drawing.Image)(resources.GetObject("removeEntryButton.Image")));
+            this.removeEntryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.removeEntryButton.Name = "removeEntryButton";
+            this.removeEntryButton.Size = new System.Drawing.Size(100, 22);
+            this.removeEntryButton.Text = "Remove entry";
+            this.removeEntryButton.Click += new System.EventHandler(this.RemoveEntryButton_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
+            // 
+            // infoButton
+            // 
+            this.infoButton.Image = ((System.Drawing.Image)(resources.GetObject("infoButton.Image")));
+            this.infoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.infoButton.Name = "infoButton";
+            this.infoButton.Size = new System.Drawing.Size(90, 22);
+            this.infoButton.Text = "Information";
+            this.infoButton.Click += new System.EventHandler(this.InfoButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // filesList
+            // 
+            this.filesList.BackColor = System.Drawing.SystemColors.Window;
+            this.filesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.filesList.FullRowSelect = true;
+            this.filesList.GridLines = true;
+            this.filesList.Location = new System.Drawing.Point(4, 30);
+            this.filesList.Name = "filesList";
+            this.filesList.Size = new System.Drawing.Size(467, 198);
+            this.filesList.TabIndex = 3;
+            this.filesList.UseCompatibleStateImageBehavior = false;
+            this.filesList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            this.columnHeader1.Width = 316;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Size";
+            this.columnHeader2.Width = 147;
+            // 
+            // filesImageList
+            // 
+            this.filesImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("filesImageList.ImageStream")));
+            this.filesImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.filesImageList.Images.SetKeyName(0, "folder.png");
+            this.filesImageList.Images.SetKeyName(1, "page_white.png");
+            // 
             // PackageEditDialog
             // 
             this.AcceptButton = this.saveButton;
@@ -1096,6 +1428,13 @@ namespace nUpdate.Administration.UI.Dialogs
             ((System.ComponentModel.ISupportInitialize)(this.unsupportedBuildNumericUpDown)).EndInit();
             this.operationsTabPage.ResumeLayout(false);
             this.operationsPanel.ResumeLayout(false);
+            this.conditionsTabPage.ResumeLayout(false);
+            this.conditionsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionsDataGridView)).EndInit();
+            this.replaceFilesTabPage.ResumeLayout(false);
+            this.filesPanel.ResumeLayout(false);
+            this.replaceFilesToolStrip.ResumeLayout(false);
+            this.replaceFilesToolStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1179,8 +1518,33 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.ListBox unsupportedVersionsListBox;
         private System.Windows.Forms.NumericUpDown unsupportedMinorNumericUpDown;
         private System.Windows.Forms.NumericUpDown unsupportedBuildNumericUpDown;
-
-
-
+        private System.Windows.Forms.TabPage conditionsTabPage;
+        private System.Windows.Forms.LinkLabel conditionHelpLinkLabel;
+        private Line line4;
+        private System.Windows.Forms.ComboBox rolloutConditionModeComboBox;
+        private System.Windows.Forms.Label rolloutConditionModeLabel;
+        private System.Windows.Forms.DataGridView conditionsDataGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Key;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Negative;
+        private System.Windows.Forms.TabPage replaceFilesTabPage;
+        private System.Windows.Forms.Panel filesPanel;
+        private Controls.ExplorerTreeView filesDataTreeView;
+        private System.Windows.Forms.ToolStrip replaceFilesToolStrip;
+        private System.Windows.Forms.ToolStripSplitButton addFolderButton;
+        private System.Windows.Forms.ToolStripMenuItem addExistingFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addFolderContentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addVirtualFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton addFilesButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton removeEntryButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripButton infoButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ListView filesList;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ImageList filesImageList;
     }
 }

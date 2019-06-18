@@ -1,6 +1,7 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// UpdateArgumentExecutionOptions.cs, 12.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
-namespace nUpdate.UpdateInstaller.Core
+namespace nUpdate.WPFUpdateInstaller
 {
     /// <summary>
     ///     Sets the behaviour of an <see cref="UpdateArgument" /> when an update is installed.

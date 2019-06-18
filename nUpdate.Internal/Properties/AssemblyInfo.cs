@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// AssemblyInfo.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -38,8 +39,11 @@ using System.Runtime.InteropServices;
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("3.3.1.0")]
-[assembly: AssemblyFileVersion("3.3.1.0")]
+[assembly: AssemblyVersion("3.4.1.0")]
+[assembly: AssemblyFileVersion("3.4.1.0")]
 [assembly: InternalsVisibleTo("nUpdate.Shared")]
 [assembly: InternalsVisibleTo("nUpdate.ProvideTAP")]
 [assembly: InternalsVisibleTo("nUpdate.WithoutTAP")]
+[assembly: InternalsVisibleTo("nUpdate.UpdateInstaller")]
+[assembly: InternalsVisibleTo("nUpdate.WPFUserInterface")]
+[assembly: InternalsVisibleTo("nUpdate.WPFUpdateInstaller")]

@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// ServiceStopOperationPanel.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.Windows.Forms;
 using nUpdate.Internal.Core.Operations;

@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// UpdateConfiguration.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using nUpdate.Internal.Core.Operations;
 namespace nUpdate.Updating
 {
     [Serializable]
-    public partial class UpdateConfiguration : IDeepCopy<UpdateConfiguration>
+    public partial class UpdateConfiguration
     {
         /// <summary>
         ///     The architecture settings of the update package.
@@ -37,8 +38,16 @@ namespace nUpdate.Updating
         public bool NecessaryUpdate { get; set; }
 
         /// <summary>
-        ///     The operations of the update package.
+        ///     Gets or sets the rollout condition mode used for selecting the updates.
         /// </summary>
+        public RolloutConditionMode RolloutConditionMode { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the rollout conditions which contain additional specifications that the client must meet in order to
+        ///     receive an update.
+        /// </summary>
+        public List<RolloutCondition> RolloutConditions { get; set; }
+
         public List<Operation> Operations { get; set; }
 
         /// <summary>
@@ -70,15 +79,6 @@ namespace nUpdate.Updating
         ///     The version ID of this package to use in the statistics, if used.
         /// </summary>
         public int VersionId { get; set; }
-
-        /// <summary>
-        ///     Performs a deep copy of the current <see cref="UpdateConfiguration" />-instance.
-        /// </summary>
-        /// <returns>Returns a copy of the given <see cref="UpdateConfiguration" />-instance.</returns>
-        public UpdateConfiguration DeepCopy()
-        {
-            return (UpdateConfiguration) MemberwiseClone();
-        }
 
         /// <summary>
         ///     Downloads the update configurations from the server.

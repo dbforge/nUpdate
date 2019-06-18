@@ -1,8 +1,8 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// CodeDomHelper.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System.CodeDom.Compiler;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CSharp;
 using nUpdate.UpdateInstaller.Exceptions;
 
@@ -21,15 +21,15 @@ namespace nUpdate.UpdateInstaller.Core
 
             _compileParameters.GenerateInMemory = false;
             _compileParameters.GenerateExecutable = true;
-            CompilerResults compilerResults = _cSharpCodeDomProvider.CompileAssemblyFromSource(_compileParameters,
+            var compilerResults = _cSharpCodeDomProvider.CompileAssemblyFromSource(_compileParameters,
                 sourceCode);
             foreach (
-                CompilerError compilerError in compilerResults.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
+                var compilerError in compilerResults.Errors.Cast<CompilerError>().Where(ce => !ce.IsWarning))
                 throw new CompileException(
                     $"({compilerError.Line},{compilerError.Column}: Error {compilerError.ErrorNumber}): {compilerError.ErrorText}");
 
-            MethodInfo entryPoint = compilerResults.CompiledAssembly.EntryPoint;
-            object entryPointInstance = compilerResults.CompiledAssembly.CreateInstance(entryPoint.Name);
+            var entryPoint = compilerResults.CompiledAssembly.EntryPoint;
+            var entryPointInstance = compilerResults.CompiledAssembly.CreateInstance(entryPoint.Name);
             object[] parameters = {new[] {Program.AimFolder}};
             entryPoint.Invoke(entryPointInstance, parameters);
         }

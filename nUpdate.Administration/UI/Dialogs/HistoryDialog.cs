@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// HistoryDialog.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,8 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 var item = new ActionListItem
                 {
-                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}"
+                    ItemText = $"{logEntry.PackageVersion} - {logEntry.EntryTime}" +
+                               (logEntry.Username == null ? string.Empty : $" by {logEntry.Username}")
                 };
 
                 switch (logEntry.Entry)
@@ -74,6 +76,10 @@ namespace nUpdate.Administration.UI.Dialogs
                     case LogEntry.Upload:
                         item.HeaderText = "Uploaded package";
                         item.ItemImage = Resources.Upload;
+                        break;
+                    case LogEntry.Edit:
+                        item.HeaderText = "Edit package";
+                        item.ItemImage = Resources.Edit;
                         break;
                 }
 
@@ -126,7 +132,8 @@ namespace nUpdate.Administration.UI.Dialogs
                 var logEntryList =
                     Project.Log.Select(
                             logEntry =>
-                                $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}")
+                                $"{logEntry.PackageVersion}-{logEntry.Entry}-{logEntry.EntryTime}" +
+                                (logEntry.Username == null ? "" : $" by {logEntry.Username}"))
                         .ToList();
                 File.WriteAllLines(sfd.FileName, logEntryList);
             }

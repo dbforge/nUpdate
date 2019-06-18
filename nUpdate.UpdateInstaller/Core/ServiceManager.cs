@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// ServiceManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.ServiceProcess;
@@ -43,7 +44,7 @@ namespace nUpdate.UpdateInstaller.Core
             {
                 var timeout = TimeSpan.FromMilliseconds(5000);
 
-                if (arguments != null || arguments.Length != 0)
+                if (arguments != null && arguments.Length != 0)
                     serviceController.Start(arguments);
                 else
                     serviceController.Start();

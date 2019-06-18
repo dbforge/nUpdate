@@ -1,9 +1,12 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// Operation.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
+using System.ComponentModel;
 using System.IO;
+using Newtonsoft.Json;
 
-namespace nUpdate.UpdateInstaller.Core.Operations
+namespace nUpdate.UpdateInstaller.Operations
 {
     public class Operation
     {
@@ -34,6 +37,10 @@ namespace nUpdate.UpdateInstaller.Core.Operations
         ///     The second value of the current operation if it needs more than one argument.
         /// </summary>
         public object Value2 { get; set; }
+
+        [DefaultValue(false)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool ExecuteBeforeReplacingFiles { get; set; }
 
         /// <summary>
         ///     Gets the full directory path for the given tag.
@@ -125,6 +132,8 @@ namespace nUpdate.UpdateInstaller.Core.Operations
                             return "DeleteRegistrySubKey";
                         case OperationMethod.SetValue:
                             return "SetRegistryValue";
+                        case OperationMethod.DeleteValue:
+                            return "DeleteRegistryValue";
                     }
 
                     break;

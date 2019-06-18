@@ -1,4 +1,5 @@
-// Copyright © Dominic Beger 2018
+// UpdateManager.cs, 10.06.2019
+// Copyright (C) Dominic Beger 17.06.2019
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using nUpdate.Exceptions;
 using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.Updating
@@ -19,35 +21,6 @@ namespace nUpdate.Updating
     /// </summary>
     public partial class UpdateManager
     {
-        private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
-
-        /// <summary>
-        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
-        ///     unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing || _disposed)
-                return;
-
-            _searchCancellationTokenSource.Dispose();
-            _downloadCancellationTokenSource.Dispose();
-            _searchManualResetEvent.Dispose();
-            _disposed = true;
-        }
-
         /// <summary>
         ///     Downloads the available update packages from the server.
         /// </summary>
@@ -301,7 +274,7 @@ namespace nUpdate.Updating
                     SearchTimeout);
 
             var result = new UpdateResult(configuration, CurrentVersion,
-                IncludeAlpha, IncludeBeta);
+                IncludeAlpha, IncludeBeta, Conditions);
             if (!result.UpdatesFound)
                 return false;
 
@@ -317,6 +290,9 @@ namespace nUpdate.Updating
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                 updatePackageSize += newPackageSize.Value;
+                if (updateConfiguration.Operations == null) continue;
+                if (_packageOperations == null)
+                    _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>();
                 _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                     updateConfiguration.Operations);
             }
@@ -368,7 +344,7 @@ namespace nUpdate.Updating
                     throw exception;
 
                 var result = new UpdateResult(configurations, CurrentVersion,
-                    IncludeAlpha, IncludeBeta);
+                    IncludeAlpha, IncludeBeta, Conditions);
                 if (!result.UpdatesFound)
                     return false;
 
@@ -387,6 +363,9 @@ namespace nUpdate.Updating
                         throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                     updatePackageSize += newPackageSize.Value;
+                    if (updateConfiguration.Operations == null) continue;
+                    if (_packageOperations == null)
+                        _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>();
                     _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                         updateConfiguration.Operations);
                 }
