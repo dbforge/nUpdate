@@ -27,7 +27,7 @@ namespace nUpdate.Administration.Core.Application
         /// </summary>
         public string AssemblyVersionPath { get; set; }
 
-        public string ConfigVersion { get; set; }
+        public string ConfigVersion { get; set; } = "v3";
 
         /// <summary>
         ///     The FTP-directory of the project.

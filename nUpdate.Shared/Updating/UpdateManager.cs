@@ -33,8 +33,7 @@ namespace nUpdate.Updating
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
 
-        private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
-            new Dictionary<UpdateVersion, IEnumerable<Operation>>(); // obsolete
+        private Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations; // obsolete
 
         private bool _disposed;
         private readonly ManualResetEvent _searchManualResetEvent = new ManualResetEvent(false);
@@ -396,7 +395,7 @@ namespace nUpdate.Updating
         public void InstallPackage()
         {
             var installerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
-            var dotNetZipPath = Path.Combine(installerDirectory, "Ionic.Zip.dll");
+            var dotNetZipPath = Path.Combine(installerDirectory, "DotNetZip.dll");
             var guiInterfacePath = Path.Combine(installerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
             var jsonNetPath = Path.Combine(installerDirectory, "Newtonsoft.Json.dll");
             var installerFilePath = Path.Combine(installerDirectory, "nUpdate UpdateInstaller.exe");
@@ -406,13 +405,11 @@ namespace nUpdate.Updating
                 Directory.Delete(installerDirectory, true);
             Directory.CreateDirectory(installerDirectory);
 
-            File.WriteAllBytes(dotNetZipPath, Resources.Ionic_Zip);
+            File.WriteAllBytes(dotNetZipPath, Resources.DotNetZip);
             File.WriteAllBytes(guiInterfacePath, Resources.nUpdate_UpdateInstaller_Client_GuiInterface);
             File.WriteAllBytes(jsonNetPath, Resources.Newtonsoft_Json);
             File.WriteAllBytes(installerFilePath, Resources.nUpdate_UpdateInstaller);
-
-            if (!File.Exists(unpackerAppPdbPath))
-                File.WriteAllBytes(unpackerAppPdbPath, Resources.nUpdate_UpdateInstaller_pdb);
+            File.WriteAllBytes(unpackerAppPdbPath, Resources.nUpdate_UpdateInstaller_pdb);
 
             string[] args =
             {
@@ -420,7 +417,7 @@ namespace nUpdate.Updating
                 $"\"{Application.StartupPath}\"",
                 $"\"{Application.ExecutablePath}\"",
                 $"\"{Application.ProductName}\"",
-                _packageOperations == null ? string.Empty : $"\"{Serializer.Serialize(_packageOperations)}\"",
+                _packageOperations == null ? string.Empty : $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(_packageOperations)))}\"",
                 $"\"{(UseCustomInstallerUserInterface ? CustomInstallerUiAssemblyPath : string.Empty)}\"",
                 _lp.InstallerExtractingFilesText,
                 _lp.InstallerCopyingText,

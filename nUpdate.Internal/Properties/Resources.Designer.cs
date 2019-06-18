@@ -63,9 +63,9 @@ namespace nUpdate.Internal.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Ionic_Zip {
+        internal static byte[] DotNetZip {
             get {
-                object obj = ResourceManager.GetObject("Ionic_Zip", resourceCulture);
+                object obj = ResourceManager.GetObject("DotNetZip", resourceCulture);
                 return ((byte[])(obj));
             }
         }

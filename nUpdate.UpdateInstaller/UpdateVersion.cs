@@ -6,9 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using nUpdate.Internal.Core;
 
-namespace nUpdate.Updating
+namespace nUpdate.UpdateInstaller
 {
     public class UpdateVersion : IComparable<UpdateVersion>
     {
@@ -183,7 +182,7 @@ namespace nUpdate.Updating
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj != null && (obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString());
+            return obj.GetType() == typeof(UpdateVersion) && ToString() == obj.ToString();
         }
 
         /// <summary>

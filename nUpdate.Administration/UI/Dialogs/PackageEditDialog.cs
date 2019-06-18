@@ -723,6 +723,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     _zip.AddDirectoryByName("AppData");
                     _zip.AddDirectoryByName("Temp");
                     _zip.AddDirectoryByName("Desktop");
+                    _zip.AddFile(Path.Combine(_extractedPackagePath, "operations.json"), string.Empty);
 
                     InitializeArchiveContents(filesDataTreeView.Nodes[0], "Program");
                     InitializeArchiveContents(filesDataTreeView.Nodes[1], "AppData");
@@ -741,6 +742,28 @@ namespace nUpdate.Administration.UI.Dialogs
                     return;
                 }
 
+                Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
+
+                try
+                {
+                    using (var stream = File.Open(_packagePath,
+                        FileMode.Open))
+                    {
+                        _packageConfiguration.Signature =
+                            Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(stream));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Invoke(
+                        new Action(
+                            () =>
+                                Popup.ShowPopup(this, SystemIcons.Error, "Error while signing the package.", ex,
+                                    PopupButtons.Ok)));
+                    Reset();
+                    return;
+                }
+
                 /* -------------- Package upload -----------------*/
                 Invoke(new Action(() =>
                 {
@@ -750,7 +773,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 try
                 {
-                    _ftp.UploadPackage(_packagePath, _packageConfiguration.LiteralVersion.ToString());
+                    _ftp.UploadPackage(_packagePath, _packageConfiguration.LiteralVersion);
                 }
                 catch (Exception ex) // Upload-method is async, it's true, but directory creation can fail.
                 {
@@ -793,9 +816,25 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 Invoke(new Action(() => loadingLabel.Text = "Uploading new configuration..."));
 
+                UpdateConfiguration[
+                        UpdateConfiguration.IndexOf(
+                            UpdateConfiguration.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
+                    _packageConfiguration;
+                var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
                 try
                 {
-                    _ftp.UploadFile(Path.Combine(_newPackageDirectory, "updates.json"));
+                    File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
+                }
+                catch (Exception ex)
+                {
+                    Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
+                        PopupButtons.Ok);
+                    return;
+                }
+
+                try
+                {
+                    _ftp.UploadFile(configurationFilePath);
                     if (_newVersion != new UpdateVersion(_existingVersionString))
                         _ftp.RenameDirectory(_existingVersionString, _packageConfiguration.LiteralVersion);
                     _configurationUploaded = true;
@@ -915,7 +954,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 e.Cancel = true;
         }
 
-        private void PackageEditDialog_Load(object sender, EventArgs e)
+        private async void PackageEditDialog_Load(object sender, EventArgs e)
         {
             Text = string.Format(Text, PackageVersion.FullText, Program.VersionString);
 
@@ -1048,48 +1087,54 @@ namespace nUpdate.Administration.UI.Dialogs
             _updateLog.Project = Project;
 
             var packageFolder = Path.Combine(Program.Path, "Projects", Project.Name,
-                _packageConfiguration.LiteralVersion.ToString());
+                _packageConfiguration.LiteralVersion);
             var packageFile = $"{Project.Guid}.zip";
             _packagePath = Path.Combine(packageFolder, packageFile);
-            _extractedPackagePath = Path.Combine(packageFolder, Project.Guid.ToString());
+            _extractedPackagePath = Path.Combine(packageFolder, Project.Guid);
+            if (Directory.Exists(_extractedPackagePath))
+                Directory.Delete(_extractedPackagePath, true);
 
             if (!File.Exists(_packagePath))
             {
                 Invoke(new Action(() =>
                 {
-                    if (Popup.ShowPopup(this, SystemIcons.Warning, "Package archive not found locally.",
-                            "The archive of the package file does not exist in your local project data. Should it be downloaded from the server? Without the package archive, the package cannot be edited.",
-                            PopupButtons.YesNo) == DialogResult.No)
-                    {
-                        Close();
-                        return;
-                    }
+                    Popup.ShowPopup(this, SystemIcons.Warning, "Package archive not found locally.",
+                            "The archive of the package file does not exist in your local project data. It will be downloaded now.",
+                            PopupButtons.Ok);
                 }));
 
-                var mre = new ManualResetEvent(false);
-                var wc = new WebClientWrapper();
-                wc.DownloadDataCompleted += (o, dce) => { mre.Set(); };
-                wc.DownloadFileAsync(_packageConfiguration.UpdatePackageUri, packageFolder);
-                mre.WaitOne();
+                using (var wc = new WebClientWrapper())
+                {
+                    wc.DownloadProgressChanged += (o, ev) =>
+                    {
+                        Invoke(new Action(() =>
+                            loadingLabel.Text =
+                                $"Downloading {_packageConfiguration.LiteralVersion} ({ev.ProgressPercentage}%)"));
+                    };
+                    await wc.DownloadFileTaskAsync(_packageConfiguration.UpdatePackageUri, _packagePath);
+                }
             }
-
-            _zip.ParallelDeflateThreshold = -1;
-            _zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 
             using (var stream = File.OpenRead(_packagePath))
             {
-                _zip = ZipFile.Read(stream);
-                _zip.ExtractAll(_extractedPackagePath);
+                using (_zip = ZipFile.Read(stream))
+                {
+                    _zip.ParallelDeflateThreshold = -1;
+                    _zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+                    _zip.ExtractAll(_extractedPackagePath);
+                }
             }
 
             var operations =
                 Serializer.Deserialize<IEnumerable<Operation>>(
-                    File.ReadAllText(Path.Combine(_extractedPackagePath, "operations.json")));
+                    File.ReadAllText(Path.Combine(_extractedPackagePath, "operations.json"))) ?? Enumerable.Empty<Operation>();
             foreach (var operation in operations.Where(o => o.ExecuteBeforeReplacingFiles))
                 AddOperation(operation);
             categoryTreeView.Nodes[4].Nodes.Add(_replaceNode);
             foreach (var operation in operations.Where(o => !o.ExecuteBeforeReplacingFiles))
                 AddOperation(operation);
+
+            await LoadPackageContent(_extractedPackagePath);
         }
 
         private void ProgressChanged(object sender, TransferInterface.TransferProgressEventArgs e)
@@ -1278,9 +1323,9 @@ namespace nUpdate.Administration.UI.Dialogs
             }
         }
 
-        private void LoadPackageContent(string packagePath)
+        private Task LoadPackageContent(string packagePath)
         {
-            TaskEx.Run(() =>
+            return Task.Factory.StartNew(() =>
             {
                 ListDirectoryContent(Path.Combine(packagePath, "Program"), filesDataTreeView.Nodes[0], true);
                 ListDirectoryContent(Path.Combine(packagePath, "AppData"), filesDataTreeView.Nodes[1], true);
@@ -1485,22 +1530,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         PopupButtons.Ok);
                     return;
                 }
-            }
-
-            UpdateConfiguration[
-                    UpdateConfiguration.IndexOf(
-                        UpdateConfiguration.First(item => item.LiteralVersion == PackageVersion.ToString()))] =
-                _packageConfiguration;
-            var configurationFilePath = Path.Combine(_newPackageDirectory, "updates.json");
-            try
-            {
-                File.WriteAllText(configurationFilePath, Serializer.Serialize(UpdateConfiguration));
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, "Error while saving the new configuration.", ex,
-                    PopupButtons.Ok);
-                return;
             }
 
             loadingPanel.Location = new Point(180, 91);
