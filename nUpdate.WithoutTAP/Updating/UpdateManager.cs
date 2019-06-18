@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using nUpdate.Exceptions;
 using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Operations;
 using nUpdate.UpdateEventArgs;
 
 namespace nUpdate.Updating
@@ -289,9 +290,11 @@ namespace nUpdate.Updating
                     throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                 updatePackageSize += newPackageSize.Value;
-                if (updateConfiguration.Operations != null)
-                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                        updateConfiguration.Operations);
+                if (updateConfiguration.Operations == null) continue;
+                if (_packageOperations == null)
+                    _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>();
+                _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                    updateConfiguration.Operations);
             }
 
             TotalSize = updatePackageSize;
@@ -360,9 +363,11 @@ namespace nUpdate.Updating
                         throw new SizeCalculationException(_lp.PackageSizeCalculationExceptionText);
 
                     updatePackageSize += newPackageSize.Value;
-                    if (updateConfiguration.Operations != null)
-                        _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
-                            updateConfiguration.Operations);
+                    if (updateConfiguration.Operations == null) continue;
+                    if (_packageOperations == null)
+                        _packageOperations = new Dictionary<UpdateVersion, IEnumerable<Operation>>();
+                    _packageOperations.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
+                        updateConfiguration.Operations);
                 }
 
                 TotalSize = updatePackageSize;

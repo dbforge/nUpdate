@@ -1,12 +1,12 @@
 ﻿// Operation.cs, 10.06.2019
 // Copyright (C) Dominic Beger 17.06.2019
 
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
+using Newtonsoft.Json;
 
-namespace nUpdate.Internal.Core.Operations
+namespace nUpdate.UpdateInstaller.Operations
 {
     public class Operation
     {
@@ -41,6 +41,29 @@ namespace nUpdate.Internal.Core.Operations
         [DefaultValue(false)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool ExecuteBeforeReplacingFiles { get; set; }
+
+        /// <summary>
+        ///     Gets the full directory path for the given tag.
+        /// </summary>
+        /// <param name="tag">The tag to use.</param>
+        /// <returns>Returns the full path of the relating directory on the system.</returns>
+        public static string GetDirectory(string tag)
+        {
+            switch (tag)
+            {
+                case "%program%":
+                    return Program.AimFolder;
+                case "%appdata%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                case "%temp%":
+                    return Path.GetTempPath();
+                case "%desktop%":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            }
+
+            return null;
+        }
+
         /// <summary>
         ///     Gets the operation area and method from a given tag.
         /// </summary>

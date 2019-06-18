@@ -4,14 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Operations;
-using nUpdate.Shared.Core;
 using nUpdate.UpdateInstaller.UI.Popups;
-using nUpdate.Updating;
+using Operation = nUpdate.UpdateInstaller.Operations.Operation;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -120,7 +118,7 @@ namespace nUpdate.UpdateInstaller
         public static HostApplicationOptions HostApplicationOptions { get; set; }
 
         // Deprecated, there for compatiblity
-        public static Dictionary<UpdateVersion, IEnumerable<Operation>> Operations { get; set; }
+        public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
 
         /// <summary>
         ///     The text of the error that a file is currently being used by another program.
@@ -135,14 +133,13 @@ namespace nUpdate.UpdateInstaller
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += ApplicationOnThreadException;
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
-            MessageBox.Show("Meddl, Loide!");
+
             if (args.Length != 1)
             {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.",
-                    $"Invalid arguments count ({args.Length}) where 1 argument was expected.",
-                    PopupButtons.Ok);
+                MessageBox.Show($"Invalid arguments count ({args.Length}) where 1 argument was expected.",
+                    "Updating the application has failed.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -154,10 +151,10 @@ namespace nUpdate.UpdateInstaller
                 AimFolder = appArguments[1];
                 ApplicationExecutablePath = appArguments[2];
                 AppName = appArguments[3];
-                // Argument 4 became deprecated, but for compatiblity reasons we need to have this
+                // Argument 4 became deprecated, but for compatibility reasons we need to have this
                 Operations = appArguments[4].Equals(string.Empty)
                     ? null
-                    : Serializer.Deserialize<Dictionary<UpdateVersion, IEnumerable<Operation>>>(appArguments[4]);
+                    : Serializer.Deserialize<Dictionary<string, IEnumerable<Operation>>>(Encoding.UTF8.GetString(Convert.FromBase64String(appArguments[4])));
                 ExternalGuiAssemblyPath = appArguments[5];
                 ExtractFilesText = appArguments[6];
                 CopyingText = appArguments[7];
@@ -182,25 +179,23 @@ namespace nUpdate.UpdateInstaller
             }
             catch (Exception ex)
             {
-                Popup.ShowPopup(SystemIcons.Error, "Updating the application has failed.", ex, PopupButtons.Ok);
+                MessageBox.Show(ex.StackTrace, "Error while updating the application.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 return;
             }
 
-            MessageBox.Show("Meddl");
             new Updater().RunUpdate();
+        }
+
+        private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message + "\n" + e.Exception.StackTrace, "Error while updating the application.", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is ThreadAbortException)
-                return;
-            var exception = e.ExceptionObject as Exception;
-            if (exception != null)
-            {
-                MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
-            }
-
-            Application.Exit();
+            var ex = (Exception) e.ExceptionObject;
+            MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "Error while updating the application.", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

@@ -563,9 +563,6 @@ namespace nUpdate.Administration.UI.Dialogs
                         UpdatePackage package1 = package;
                         Invoke(new Action(() =>
                         {
-                            Popup.ShowPopup(this, SystemIcons.Information, "Missing package file.",
-                                $"The package of version \"{new UpdateVersion(package1.Version).FullText}\" could not be found on your computer. Specific actions and information won't be available.",
-                                PopupButtons.Ok);
                             packageListViewItem.SubItems.Add("-");
                             packageListViewItem.SubItems.Add("-");
                         }));
@@ -1111,6 +1108,7 @@ namespace nUpdate.Administration.UI.Dialogs
             string projectDir = Path.Combine(Program.Path, "Projects", Project.Name);
             string migrationDir = Path.Combine(projectDir, "migrate");
             var updateConfigFile = Path.Combine(projectDir, "updates.json");
+
             if (!Directory.Exists(migrationDir))
                 Directory.CreateDirectory(migrationDir);
 
@@ -1119,23 +1117,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 if (entry.Operations == null)
                     continue;
 
-                var packageFolder = Path.Combine(projectDir, entry.LiteralVersion.ToString());
+                var packageFolder = Path.Combine(projectDir, entry.LiteralVersion);
                 var packageFile = Path.Combine(packageFolder, $"{Project.Guid}.zip");
                 var extractedPackageDirectory = Path.Combine(packageFolder, Project.Guid);
 
                 if (!File.Exists(packageFile))
                 {
-                    Invoke(new Action(() =>
-                    {
-                        if (Popup.ShowPopup(this, SystemIcons.Warning, "Package archive not found locally.",
-                                "The archive of the package file does not exist in your local project data. Should it be downloaded from the server? Without the package archive, the package cannot be edited.",
-                                PopupButtons.YesNo) == DialogResult.No)
-                        {
-                            Close();
-                            return;
-                        }
-                    }));
-
                     using (var wc = new WebClientWrapper())
                     {
                         wc.DownloadProgressChanged += (o, e) =>
@@ -1156,6 +1143,7 @@ namespace nUpdate.Administration.UI.Dialogs
                     {
                         using (ZipFile zip = ZipFile.Read(stream))
                         {
+                            zip.ParallelDeflateThreshold = -1;
                             zip.ExtractAll(extractedPackageDirectory);
                         }
                     }
@@ -1166,13 +1154,25 @@ namespace nUpdate.Administration.UI.Dialogs
                         Serializer.Serialize(entry.Operations));
                     using (var newZip = new ZipFile())
                     {
+                        newZip.ParallelDeflateThreshold = -1;
+                        newZip.UseZip64WhenSaving = Zip64Option.AsNecessary;
                         newZip.AddDirectory(extractedPackageDirectory);
                         newZip.Save(packageFile);
                     }
 
-                    Directory.Delete(extractedPackageDirectory);
-
+                    Directory.Delete(extractedPackageDirectory, true);
                     entry.Operations = null;
+
+                    Invoke(new Action(() => loadingLabel.Text = "Signing package..."));
+
+                    using (var stream = File.Open(packageFile, FileMode.Open))
+                    {
+                        entry.Signature =
+                            Convert.ToBase64String(new RsaManager(Project.PrivateKey).SignData(stream));
+                    }
+
+                    var versionConfigFile = Path.Combine(projectDir, entry.LiteralVersion, "updates.json");
+                    File.WriteAllText(versionConfigFile, Serializer.Serialize(config));
 
                     Invoke(new Action(() =>
                     {
@@ -1188,7 +1188,7 @@ namespace nUpdate.Administration.UI.Dialogs
                                     loadingLabel.Text =
                                         $"Uploading package {entry.LiteralVersion} ({e.PercentComplete}% | {e.BytesPerSecond / 1024}KiB/s)"));
                     };
-                    _ftp.UploadPackage(packageFile, entry.LiteralVersion.ToString());
+                    _ftp.UploadPackage(packageFile, entry.LiteralVersion);
                 });
             }
 
@@ -1199,12 +1199,12 @@ namespace nUpdate.Administration.UI.Dialogs
                 File.WriteAllText(updateConfigFile, Serializer.Serialize(config));
                 _ftp.UploadFile(updateConfigFile);
 
-
                 Invoke(new Action(() => loadingLabel.Text = "Saving project..."));
                 Project.ConfigVersion = "v3";
                 UpdateProject.SaveProject(Project.Path, Project);
             });
 
+            InitializePackageItems();
             SetUiState(true);
         }
 

@@ -13,13 +13,10 @@ using System.Threading;
 using Ionic.Zip;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
-using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Operations;
-using nUpdate.Shared.Core;
 using nUpdate.UpdateInstaller.Client.GuiInterface;
 using nUpdate.UpdateInstaller.Core;
+using nUpdate.UpdateInstaller.Operations;
 using nUpdate.UpdateInstaller.UI.Popups;
-using nUpdate.Updating;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -62,7 +59,7 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         /// <returns>
         ///     Returns a new instance of the given object that implements the
-        ///     <see cref="nUpdate.UpdateInstaller.Client.GuiInterface.IProgressReporter" />-interface.
+        ///     <see cref="IProgressReporter" />-interface.
         /// </returns>
         private IProgressReporter GetProgressReporter()
         {
@@ -79,13 +76,14 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         private void RunUpdateAsync()
         {
+            Thread.Sleep(500);
             var parentPath = Directory.GetParent(Program.PackageFilePaths.First()).FullName;
             /* Extract and count for the progress */
             foreach (var packageFilePath in Program.PackageFilePaths)
             {
-                var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
+                var versionString = Path.GetFileNameWithoutExtension(packageFilePath);
                 var extractedDirectoryPath =
-                    Path.Combine(parentPath, version.ToString());
+                    Path.Combine(parentPath, versionString ?? throw new InvalidOperationException());
                 Directory.CreateDirectory(extractedDirectoryPath);
                 using (var zf = ZipFile.Read(packageFilePath))
                 {
@@ -125,7 +123,7 @@ namespace nUpdate.UpdateInstaller
                         directory => Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories).Length);
 
                     var currentVersionOperations = Program.Operations != null
-                        ? Program.Operations[version].ToList()
+                        ? Program.Operations[versionString].ToList()
                         : Serializer.Deserialize<IEnumerable<Operation>>(
                             File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToList();
 
@@ -151,15 +149,16 @@ namespace nUpdate.UpdateInstaller
                 var packageFilePath in
                 Program.PackageFilePaths.OrderBy(item => new UpdateVersion(Path.GetFileNameWithoutExtension(item))))
             {
-                var version = new UpdateVersion(Path.GetFileNameWithoutExtension(packageFilePath));
+                var versionString = Path.GetFileNameWithoutExtension(packageFilePath);
                 var extractedDirectoryPath =
-                    Path.Combine(parentPath, version.ToString());
+                    Path.Combine(parentPath, versionString);
 
                 List<Operation> currentVersionOperations;
                 try
                 {
-                    currentVersionOperations =
-                        Serializer.Deserialize<IEnumerable<Operation>>(
+                    currentVersionOperations = Program.Operations != null
+                        ? Program.Operations[versionString].ToList()
+                        : Serializer.Deserialize<IEnumerable<Operation>>(
                             File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToList();
                     ExecuteOperations(currentVersionOperations.Where(o => o.ExecuteBeforeReplacingFiles));
                 }
@@ -276,7 +275,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Delete:
                                 var deleteFilePathParts = operation.Value.Split('\\');
                                 var deleteFileFullPath = Path.Combine(
-                                    Operation.GetDirectory(deleteFilePathParts[0], Program.AimFolder),
+                                    Operation.GetDirectory(deleteFilePathParts[0]),
                                     string.Join("\\",
                                         deleteFilePathParts.Where(item => item != deleteFilePathParts[0])));
                                 secondValueAsArray = operation.Value2 as JArray;
@@ -299,7 +298,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Rename:
                                 var renameFilePathParts = operation.Value.Split('\\');
                                 var renameFileFullPath = Path.Combine(
-                                    Operation.GetDirectory(renameFilePathParts[0], Program.AimFolder),
+                                    Operation.GetDirectory(renameFilePathParts[0]),
                                     string.Join("\\",
                                         renameFilePathParts.Where(item => item != renameFilePathParts[0])));
                                 if (File.Exists(renameFileFullPath))
@@ -399,7 +398,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Start:
                                 var processFilePathParts = operation.Value.Split('\\');
                                 var processFileFullPath =
-                                    Path.Combine(Operation.GetDirectory(processFilePathParts[0], Program.AimFolder),
+                                    Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
                                         string.Join("\\",
                                             processFilePathParts.Where(item => item != processFilePathParts[0])));
 
@@ -470,6 +469,10 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Execute:
                                 var helper = new CodeDomHelper();
                                 helper.ExecuteScript(operation.Value);
+
+                                _doneTaskAmount += 1;
+                                percentage = (float) _doneTaskAmount / _totalTaskCount * 100f;
+                                _progressReporter.ReportOperationProgress(percentage, "Executing operation.");
                                 break;
                         }
 
