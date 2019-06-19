@@ -18,9 +18,9 @@ namespace nUpdate.UI.WinForms
             _installerDialog.Fail(ex);
         }
 
-        public void Initialize()
+        public void Initialize(string appExecutablePath, string appName)
         {
-            _installerDialog.Initialize();
+            _installerDialog.Initialize(appExecutablePath, appName);
         }
 
         public void InitializingFail(Exception ex)

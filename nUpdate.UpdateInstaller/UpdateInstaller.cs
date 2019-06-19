@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace nUpdate.UpdateInstaller
@@ -17,11 +18,12 @@ namespace nUpdate.UpdateInstaller
             var packageDirectory = Program.PackageDirectory;
             var newUpdatePackages = Program.NewUpdatePackages;
 
-            await newUpdatePackages.ForEachAsync(package =>
+            throw new NotImplementedException();
+            /*await newUpdatePackages.ForEachAsync(package =>
             {
                 var identifier = package.Guid;
                 string packagePath = Path.Combine(packageDirectory, identifier.ToString(), ".zip");
-            });
-        });
+            });*/
+        }
     }
 }
