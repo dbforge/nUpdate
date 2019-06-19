@@ -3,6 +3,8 @@ branches:
   only:
   - develop
 image: Visual Studio 2019
+before_build:
+- cmd: nuget restore
 build:
   project: nUpdate.sln
   verbosity: minimal
