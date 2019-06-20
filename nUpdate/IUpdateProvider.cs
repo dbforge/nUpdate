@@ -6,10 +6,8 @@ namespace nUpdate
 {
     public interface IUpdateProvider
     {
-        Uri MasterChannelUri { get; set; }
-        string LowestUpdateChannel { get; set; }
-        string ApplicationChannel { get; set; }
-        UpdateVersion ApplicationVersion { get; set; }
+        Uri PackageFeedUri { get; set; }
+        SemanticVersion ApplicationVersion { get; set; }
         CultureInfo LanguageCulture { get; set; }
 
         Task<UpdateResult> BeginUpdateCheck();

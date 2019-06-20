@@ -60,7 +60,7 @@ namespace nUpdate
         /// <summary>
         ///     Gets or sets the versions that shouldn't be able to install this update package.
         /// </summary>
-        public IEnumerable<UpdateVersion> UnsupportedVersions { get; set; }
+        public IEnumerable<SemanticVersion> UnsupportedVersions { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="Uri" /> of the update package.
@@ -70,7 +70,7 @@ namespace nUpdate
         /// <summary>
         ///     Gets or sets the version of the package.
         /// </summary>
-        public UpdateVersion Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
         /// <summary>
         ///     Gets or sets the size of the package.

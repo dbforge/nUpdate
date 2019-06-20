@@ -13,7 +13,7 @@ namespace nUpdate
         private readonly List<DefaultUpdatePackage> _newUpdatePackages = new List<DefaultUpdatePackage>();
 
         /// <summary>
-        ///     Gets all available <see cref="UpdatePackage" />s.
+        ///     Gets all available <see cref="DefaultUpdatePackage" />s.
         /// </summary>
         public IEnumerable<DefaultUpdatePackage> Packages => _newUpdatePackages;
 
@@ -25,80 +25,45 @@ namespace nUpdate
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
         /// </summary>
-        internal async Task Initialize(IEnumerable<UpdateChannel> masterChannel, UpdateVersion applicationVersion,
-            string applicationChannelName, string lowestUpdateChannelName, CancellationToken cancellationToken)
+        internal Task Initialize(IEnumerable<DefaultUpdatePackage> packages, SemanticVersion applicationVersion,
+            bool includePreRelease, CancellationToken cancellationToken)
         {
-            if (masterChannel == null)
-                throw new ArgumentNullException(nameof(masterChannel));
-            if (applicationVersion == null)
-                throw new ArgumentNullException(nameof(applicationVersion));
-            if (applicationChannelName == null)
-                throw new ArgumentNullException(nameof(applicationChannelName));
-
-            // Filter the channels that we want to check out in our update search from our master channel...
-            var filteredChannels = masterChannel.Reverse()
-                .TakeWhile(x => !string.Equals(x.Name, lowestUpdateChannelName))
-                .Reverse();
-            var filteredChannelNames = filteredChannels.Select(x => x.Name).ToList();
-
-            Version GetBaseVersion(UpdateVersion version)
+            return Task.Run(() =>
             {
-                return new Version(version.Major, version.Minor, version.Build);
-            }
+                if (applicationVersion == null)
+                    throw new ArgumentNullException(nameof(applicationVersion));
 
-            bool IsSuitablePackage(DefaultUpdatePackage package)
-            {
-                var is64Bit = Environment.Is64BitOperatingSystem;
-                if (package.UnsupportedVersions != null &&
-                    package.UnsupportedVersions.Any(
-                        unsupportedVersion => unsupportedVersion.Equals(applicationVersion)))
-                    return false;
-
-                return (package.Architecture != Architecture.X86 || !is64Bit) &&
-                       (package.Architecture != Architecture.X64 || is64Bit);
-            }
-
-            var latestPackage = default(DefaultUpdatePackage);
-            var latestVersion = applicationVersion;
-            var latestChannelName = applicationChannelName;
-            foreach (var channel in filteredChannels)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var packageData = await DefaultUpdatePackage.GetPackageEnumerable(channel.Uri, null);
-                foreach (var package in packageData.Where(IsSuitablePackage))
+                bool IsSuitablePackage(DefaultUpdatePackage package)
                 {
-                    var packageVersion = GetBaseVersion(package.Version);
+                    var is64Bit = Environment.Is64BitOperatingSystem;
+                    if (package.UnsupportedVersions != null &&
+                        package.UnsupportedVersions.Any(
+                            unsupportedVersion => unsupportedVersion.Equals(applicationVersion)))
+                        return false;
 
-                    // Check if the version is greater than the current one of the application and if it's a compulsory update...
-                    // If so, this version should definitely be installed, even if newer versions are available.
-                    if (packageVersion > GetBaseVersion(applicationVersion)
-                        || 
-                        packageVersion == GetBaseVersion(applicationVersion) && filteredChannelNames.IndexOf(channel.Name) >
-                        filteredChannelNames.IndexOf(applicationChannelName) &&
-                        package.Compulsory)
-                        _newUpdatePackages.Add(package);
+                    return (package.Architecture != Architecture.X86 || !is64Bit) &&
+                           (package.Architecture != Architecture.X64 || is64Bit);
+                }
 
-                    // Readability
-                    // ReSharper disable once InvertIf
-
-                    // Check if the current version is greater than the currently newest one...
-                    // If it's equal to it but its update channel has a higher priority (e.g. 0.1.0-beta is newer than 0.1.0-alpha), it's also a a newer version that we should handle.
-                    if (packageVersion > GetBaseVersion(latestVersion)
-                        ||
-                        packageVersion == GetBaseVersion(latestVersion) &&
-                        filteredChannelNames.IndexOf(channel.Name) > filteredChannelNames.IndexOf(latestChannelName))
+                var latestPackage = default(DefaultUpdatePackage);
+                var latestVersion = applicationVersion;
+                foreach (var package in packages.Where(IsSuitablePackage))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (package.Version > latestVersion)
                     {
-                        // This version is newer than the old one and needs to replace it.
-                        latestVersion = package.Version;
+                        // package.Version > applicationVersion is always true in here as we initialize latestVersion with applicationVersion and > is a strict order and thus, transitive
+                        if (package.Compulsory)
+                            _newUpdatePackages.Add(package);
                         latestPackage = package;
-                        latestChannelName = channel.Name;
+                        latestVersion = package.Version;
                     }
                 }
-            }
 
-            // If the package was initialized and if it's not already in there
-            if (latestPackage != null && !_newUpdatePackages.Contains(latestPackage))
-                _newUpdatePackages.Add(latestPackage);
+                // If the package was initialized and if it's not already in there
+                if (latestPackage != null && !_newUpdatePackages.Contains(latestPackage))
+                    _newUpdatePackages.Add(latestPackage);
+            });
         }
     }
 }

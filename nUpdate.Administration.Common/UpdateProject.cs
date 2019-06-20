@@ -19,7 +19,7 @@ namespace nUpdate.Administration.Common
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class UpdateProject : Model
     {
-        private List<UpdateChannel> _channels;
+        private Uri _packageFileUri;
         private Guid _guid;
         private List<PackageActionLogData> _logData;
         private string _name;
@@ -66,15 +66,15 @@ namespace nUpdate.Administration.Common
         }
 
         /// <summary>
-        ///     Gets or sets the master channel of the project.
+        ///     Gets or sets the <see cref="Uri"/> of the package feed file of the project.
         /// </summary>
         [JsonProperty]
-        public List<UpdateChannel> MasterChannel
+        public Uri PackageFileUri
         {
-            get => _channels;
+            get => _packageFileUri;
             set
             {
-                _channels = value;
+                _packageFileUri = value;
                 OnPropertyChanged();
             }
         }

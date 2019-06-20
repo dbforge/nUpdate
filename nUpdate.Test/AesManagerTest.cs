@@ -14,7 +14,8 @@ namespace nUpdate.Test
         {
             byte[] plain = Encoding.UTF8.GetBytes("test");
             var cipherText = AesCryptoProvider.Encrypt(plain, "master");
-            Assert.AreEqual(AesCryptoProvider.Decrypt(cipherText, "master"), "test");
+            byte[] decrypted = AesCryptoProvider.Decrypt(cipherText, "master");
+            Assert.AreEqual(Encoding.UTF8.GetString(decrypted).TrimEnd('\0'), "test");
         }
     }
 }

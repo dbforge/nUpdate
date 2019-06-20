@@ -1,4 +1,7 @@
-﻿using System;
+﻿// HttpUpdateProvider.cs, 20.06.2019
+// Copyright (C) Dominic Beger 20.06.2019
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,8 +9,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NLog;
+using nUpdate.Properties;
 
 namespace nUpdate
 {
@@ -22,52 +25,29 @@ namespace nUpdate
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate",
                 "Updates", ApplicationParameters.ProductName);
 
-        private readonly CancellationTokenSource _updateCheckCancellationTokenSource = new CancellationTokenSource();
         private readonly CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
-        
+
+        private readonly CancellationTokenSource _updateCheckCancellationTokenSource = new CancellationTokenSource();
+
         private UpdateResult _updateResult;
 
-        public HttpUpdateProvider(Uri masterChannelUri, string publicKey, Version applicationVersion,
-            string applicationChannel, string lowestUpdateChannel) : this(masterChannelUri, publicKey,
-            new UpdateVersion(applicationVersion), applicationChannel, lowestUpdateChannel)
+        public HttpUpdateProvider(Uri packageFeedUri, string publicKey, string applicationVersion) : this(
+            packageFeedUri, publicKey,
+            new SemanticVersion(applicationVersion))
         {
         }
 
-        public HttpUpdateProvider(Uri masterChannelUri, string publicKey, UpdateVersion applicationVersion,
-            string applicationChannel, string lowestUpdateChannel)
+        public HttpUpdateProvider(Uri packageFeedFileUri, string publicKey, SemanticVersion applicationVersion)
         {
-            MasterChannelUri = masterChannelUri ?? throw new ArgumentNullException(nameof(masterChannelUri));
-            ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationChannel));
+            PackageFeedUri = packageFeedFileUri ?? throw new ArgumentNullException(nameof(packageFeedFileUri));
+            ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationVersion));
 
             if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentException(nameof(publicKey));
             PublicKey = publicKey;
 
-            if (string.IsNullOrWhiteSpace(applicationChannel))
-                throw new ArgumentException(nameof(applicationChannel));
-            ApplicationChannel = applicationChannel;
-
-            if (string.IsNullOrWhiteSpace(lowestUpdateChannel))
-                throw new ArgumentException(nameof(lowestUpdateChannel));
-            LowestUpdateChannel = lowestUpdateChannel;
-
             CreateAppUpdateDirectory();
         }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="Uri" /> of the master channel file.
-        /// </summary>
-        public Uri MasterChannelUri { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the update channel name the application's current version belongs to.
-        /// </summary>
-        public string ApplicationChannel { get; set; }
-
-        /// <summary>
-        ///     Gets the version of the current application.
-        /// </summary>
-        public UpdateVersion ApplicationVersion { get; set; }
 
         /// <summary>
         ///     Gets or sets the host application options during the update installation.
@@ -75,46 +55,40 @@ namespace nUpdate
         public static HostApplicationOptions HostApplicationOptions { get; set; }
 
         /// <summary>
-        ///     Gets the lowest supported update channel that should be used for the update search.
+        ///     Gets or sets a value indicating whether pre-releases should be included into the update check.
         /// </summary>
-        public string LowestUpdateChannel { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
-        /// </summary>
-        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
+        public bool IncludePreRelease { get; set; }
 
         /// <summary>
         ///     Gets or sets the public key used for verifying the update packages.
         /// </summary>
         public string PublicKey { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the <see cref="Uri" /> of the package definition file.
+        /// </summary>
+        public Uri PackageFeedUri { get; set; }
+
+        /// <summary>
+        ///     Gets the version of the current application.
+        /// </summary>
+        public SemanticVersion ApplicationVersion { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
+        /// </summary>
+        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
+
         public async Task<UpdateResult> BeginUpdateCheck()
         {
             // Empty result
             var result = new UpdateResult();
+            var
+                packages = await DefaultUpdatePackage.GetPackageEnumerable(PackageFeedUri, null);
 
-            IEnumerable<UpdateChannel> masterChannel;
-
-            try
-            {
-                Logger.Info("Loading the master channel from the server.");
-                // TODO: Proxy
-                masterChannel =
-                    await UpdateChannel.GetMasterChannel(MasterChannelUri, null);
-            }
-            catch (JsonReaderException ex)
-            {
-                Logger.Error(ex, "The received master channel data is no valid JSON data.");
-                throw new Exception(Properties.strings.InvalidJsonExceptionText, ex);
-            }
-            
-            _updateCheckCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-            Logger.Info("Initializing the update result for this search.");
-            await result.Initialize(masterChannel, ApplicationVersion,
-                ApplicationChannel, LowestUpdateChannel, _updateCheckCancellationTokenSource.Token);
-
+            Logger.Info("Initializing the update result for this cbeck.");
+            await result.Initialize(packages, ApplicationVersion, IncludePreRelease,
+                _updateCheckCancellationTokenSource.Token);
             _updateResult = result;
             return result;
         }
@@ -148,7 +122,7 @@ namespace nUpdate
 
         public async Task InstallUpdates(Action terminateAction = null)
         {
-            var updatePackages =_updateResult.Packages.ToArray();
+            var updatePackages = _updateResult.Packages.ToArray();
             await updatePackages.ForEachAsync(p =>
             {
                 return Task.Run(() =>
@@ -193,7 +167,7 @@ namespace nUpdate
         /// </summary>
         /// <param name="package">The update package.</param>
         /// <seealso cref="RemoveLocalPackages()" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="RemoveLocalPackages(System.Collections.Generic.IEnumerable{nUpdate.DefaultUpdatePackage})" />
         public void RemoveLocalPackage(DefaultUpdatePackage package)
         {
             var path = GetLocalPackagePath(package);
@@ -219,7 +193,7 @@ namespace nUpdate
         ///     Removes all downloaded update packages.
         /// </summary>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{DefaultUpdatePackage})" />
         public void RemoveLocalPackages()
         {
             RemoveLocalPackages(_updateResult.Packages);
@@ -243,7 +217,7 @@ namespace nUpdate
             {
                 Logger.Error(ex,
                     "The application's update directory could not be created as an exception occured.");
-                throw new IOException(string.Format(Properties.strings.MainFolderCreationExceptionText,
+                throw new IOException(string.Format(strings.MainFolderCreationExceptionText,
                     ex.Message));
             }
         }
@@ -256,7 +230,7 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="VerifyUpdates()" />
-        /// <seealso cref="VerifyUpdates(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="VerifyUpdates(IEnumerable{DefaultUpdatePackage})" />
         public Task<bool> VerifyUpdate(DefaultUpdatePackage package)
         {
             if (package == null)
@@ -271,7 +245,7 @@ namespace nUpdate
 
                 var packagePath = GetLocalPackagePath(package);
                 if (!File.Exists(packagePath))
-                    throw new FileNotFoundException(string.Format(Properties.strings.PackageFileNotFoundExceptionText,
+                    throw new FileNotFoundException(string.Format(strings.PackageFileNotFoundExceptionText,
                         package.Version));
 
                 // TODO: Check if packages will be disposed properly
@@ -310,7 +284,7 @@ namespace nUpdate
 
             var updatePackages = packages.ToArray();
             if (updatePackages.Length == 0)
-                return default(VerificationResult);
+                return default;
 
             var validationResult = new VerificationResult(updatePackages.Length);
             await updatePackages.ForEachAsync(async p =>

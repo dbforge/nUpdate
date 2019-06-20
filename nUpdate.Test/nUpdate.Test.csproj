@@ -63,7 +63,7 @@
     <Compile Include="RsaSignatureTest.cs" />
     <Compile Include="AesManagerTest.cs" />
     <Compile Include="UpdaterTest.cs" />
-    <Compile Include="UpdateVersionTest.cs" />
+    <Compile Include="SemanticVersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
