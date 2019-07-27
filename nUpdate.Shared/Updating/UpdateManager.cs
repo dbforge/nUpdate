@@ -204,6 +204,8 @@ namespace nUpdate.Updating
         /// </summary>
         public string PublicKey { get; }
 
+        public bool RunInstallerAsAdmin { get; set; } = true;
+
         /// <summary>
         ///     Gets or sets the timeout in milliseconds that should be used when searching for updates.
         /// </summary>
@@ -435,7 +437,8 @@ namespace nUpdate.Updating
                 _lp.InstallerInitializingErrorCaption,
                 $"\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Serializer.Serialize(Arguments)))}\"",
                 $"\"{HostApplicationOptions}\"",
-                $"\"{_lp.InstallerFileInUseError}\""
+                $"\"{_lp.InstallerFileInUseError}\"",
+                $"\"{Process.GetCurrentProcess().Id}\""
             };
 
             var startInfo = new ProcessStartInfo
@@ -443,8 +446,10 @@ namespace nUpdate.Updating
                 FileName = installerFilePath,
                 Arguments = string.Join("|", args),
                 UseShellExecute = true,
-                Verb = "runas"
             };
+
+            if (RunInstallerAsAdmin)
+                startInfo.Verb = "runas";
 
             try
             {
