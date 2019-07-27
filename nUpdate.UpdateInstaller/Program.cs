@@ -120,6 +120,8 @@ namespace nUpdate.UpdateInstaller
         // Deprecated, there for compatiblity
         public static Dictionary<string, IEnumerable<Operation>> Operations { get; set; }
 
+        public static int HostProcessId { get; set; }
+
         /// <summary>
         ///     The text of the error that a file is currently being used by another program.
         /// </summary>
@@ -176,6 +178,7 @@ namespace nUpdate.UpdateInstaller
                 HostApplicationOptions =
                     (HostApplicationOptions) Enum.Parse(typeof(HostApplicationOptions), appArguments[21]);
                 FileInUseError = appArguments[22];
+                HostProcessId = int.Parse(appArguments[23]);
             }
             catch (Exception ex)
             {
