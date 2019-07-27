@@ -77,6 +77,30 @@ namespace nUpdate.UpdateInstaller
         private void RunUpdateAsync()
         {
             Thread.Sleep(500);
+            Process hostProcess = null;
+            try
+            { 
+                hostProcess = Process.GetProcessById(Program.HostProcessId);
+                hostProcess.WaitForExit();
+            }
+            catch (Win32Exception)
+            {
+                try
+                {
+                    if (hostProcess != null)
+                    {
+                        while (!hostProcess.HasExited)
+                        {
+                            Thread.Sleep(100);
+                        }
+                    }
+                }
+                catch (SystemException)
+                { }
+            }
+            catch (SystemException) // Process already killed
+            { }
+
             var parentPath = Directory.GetParent(Program.PackageFilePaths.First()).FullName;
             /* Extract and count for the progress */
             foreach (var packageFilePath in Program.PackageFilePaths)
@@ -122,10 +146,11 @@ namespace nUpdate.UpdateInstaller
                     _totalTaskCount += new DirectoryInfo(extractedDirectoryPath).GetDirectories().Sum(
                         directory => Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories).Length);
 
-                    var currentVersionOperations = Program.Operations != null
+                    string operationsFile = Path.Combine(extractedDirectoryPath, "operations.json");
+                    var currentVersionOperations = !File.Exists(operationsFile)
                         ? Program.Operations[versionString].ToList()
                         : Serializer.Deserialize<IEnumerable<Operation>>(
-                            File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToList();
+                            File.ReadAllText(operationsFile)).ToList();
 
                     // Multiple entries for:
                     /* 
@@ -156,10 +181,11 @@ namespace nUpdate.UpdateInstaller
                 List<Operation> currentVersionOperations;
                 try
                 {
-                    currentVersionOperations = Program.Operations != null
+                    string operationsFile = Path.Combine(extractedDirectoryPath, "operations.json");
+                    currentVersionOperations = !File.Exists(operationsFile)
                         ? Program.Operations[versionString].ToList()
                         : Serializer.Deserialize<IEnumerable<Operation>>(
-                            File.ReadAllText(Path.Combine(extractedDirectoryPath, "operations.json"))).ToList();
+                            File.ReadAllText(operationsFile)).ToList();
                     ExecuteOperations(currentVersionOperations.Where(o => o.ExecuteBeforeReplacingFiles));
                 }
                 catch (Exception ex)
