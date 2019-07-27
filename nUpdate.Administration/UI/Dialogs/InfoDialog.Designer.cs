@@ -33,9 +33,9 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoDialog));
             this.closeButton = new System.Windows.Forms.Button();
             this.donatePictureBox = new System.Windows.Forms.PictureBox();
-            this.line1 = new Line();
+            this.line1 = new nUpdate.Internal.UI.Controls.Line();
             this.label13 = new System.Windows.Forms.Label();
-            this.controlPanel1 = new BottomPanel();
+            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
             this.websiteLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label12 = new System.Windows.Forms.Label();
             this.ll_github = new System.Windows.Forms.LinkLabel();
@@ -52,7 +52,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.line2 = new Line();
+            this.line2 = new nUpdate.Internal.UI.Controls.Line();
             this.label1 = new System.Windows.Forms.Label();
             this.dotNetZipLinkLabel = new System.Windows.Forms.LinkLabel();
             this.jsonNetLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -92,7 +92,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(17, 157);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 14);
@@ -105,9 +105,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label13.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.Location = new System.Drawing.Point(134, 39);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 13);
+            this.label13.Size = new System.Drawing.Size(28, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "v3.4.1";
+            this.label13.Text = "v3.5.0";
             // 
             // controlPanel1
             // 
@@ -167,7 +167,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(67, 221);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(306, 13);
+            this.label10.Size = new System.Drawing.Size(305, 13);
             this.label10.TabIndex = 13;
             this.label10.Text = "for tips and the great \"ExplorerNavigationButton\"-control.";
             // 
@@ -200,7 +200,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.timSchieweLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.timSchieweLinkLabel.Location = new System.Drawing.Point(108, 172);
             this.timSchieweLinkLabel.Name = "timSchieweLinkLabel";
-            this.timSchieweLinkLabel.Size = new System.Drawing.Size(69, 13);
+            this.timSchieweLinkLabel.Size = new System.Drawing.Size(70, 13);
             this.timSchieweLinkLabel.TabIndex = 9;
             this.timSchieweLinkLabel.TabStop = true;
             this.timSchieweLinkLabel.Text = "Tim Schiewe";
@@ -262,7 +262,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.copyrightLabel.AutoSize = true;
             this.copyrightLabel.Location = new System.Drawing.Point(92, 57);
             this.copyrightLabel.Name = "copyrightLabel";
-            this.copyrightLabel.Size = new System.Drawing.Size(195, 13);
+            this.copyrightLabel.Size = new System.Drawing.Size(194, 13);
             this.copyrightLabel.TabIndex = 3;
             this.copyrightLabel.Text = "Copyright © by Dominic Beger 2013-";
             // 
@@ -289,7 +289,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line2
             // 
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(21, 273);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(397, 10);
@@ -326,7 +326,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.jsonNetLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.jsonNetLinkLabel.Location = new System.Drawing.Point(165, 141);
             this.jsonNetLinkLabel.Name = "jsonNetLinkLabel";
-            this.jsonNetLinkLabel.Size = new System.Drawing.Size(56, 13);
+            this.jsonNetLinkLabel.Size = new System.Drawing.Size(57, 13);
             this.jsonNetLinkLabel.TabIndex = 27;
             this.jsonNetLinkLabel.TabStop = true;
             this.jsonNetLinkLabel.Text = "JSON.NET";
@@ -352,7 +352,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.bikoLibraryLinklabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.bikoLibraryLinklabel.Location = new System.Drawing.Point(341, 141);
             this.bikoLibraryLinklabel.Name = "bikoLibraryLinklabel";
-            this.bikoLibraryLinklabel.Size = new System.Drawing.Size(67, 13);
+            this.bikoLibraryLinklabel.Size = new System.Drawing.Size(66, 13);
             this.bikoLibraryLinklabel.TabIndex = 29;
             this.bikoLibraryLinklabel.TabStop = true;
             this.bikoLibraryLinklabel.Text = "Biko Library";
@@ -374,7 +374,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.iconLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.iconLinkLabel.Location = new System.Drawing.Point(177, 117);
             this.iconLinkLabel.Name = "iconLinkLabel";
-            this.iconLinkLabel.Size = new System.Drawing.Size(92, 13);
+            this.iconLinkLabel.Size = new System.Drawing.Size(91, 13);
             this.iconLinkLabel.TabIndex = 30;
             this.iconLinkLabel.TabStop = true;
             this.iconLinkLabel.Text = "Stefan Baumann";
@@ -385,7 +385,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(107, 188);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(306, 13);
+            this.label3.Size = new System.Drawing.Size(307, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "for helping with Regular Expressions, Constantin Tillmann";
             // 
@@ -396,7 +396,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.nafetsLinkLabel.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
             this.nafetsLinkLabel.Location = new System.Drawing.Point(18, 188);
             this.nafetsLinkLabel.Name = "nafetsLinkLabel";
-            this.nafetsLinkLabel.Size = new System.Drawing.Size(92, 13);
+            this.nafetsLinkLabel.Size = new System.Drawing.Size(91, 13);
             this.nafetsLinkLabel.TabIndex = 33;
             this.nafetsLinkLabel.TabStop = true;
             this.nafetsLinkLabel.Text = "Stefan Baumann";
