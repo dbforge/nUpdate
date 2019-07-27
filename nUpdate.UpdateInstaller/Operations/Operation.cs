@@ -59,9 +59,9 @@ namespace nUpdate.UpdateInstaller.Operations
                     return Path.GetTempPath();
                 case "%desktop%":
                     return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                default:
+                    return tag;
             }
-
-            return null;
         }
 
         /// <summary>
