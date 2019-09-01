@@ -10,16 +10,16 @@ namespace nUpdate.UI.WinForms.Dialogs
 {
     internal partial class UpdateSearchDialog : BaseDialog
     {
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
         public UpdateSearchDialog()
         {
             InitializeComponent();
         }
 
-        public UpdateResult Result { get; set; }
-
         private void Cancel()
         {
-            UpdateProvider.CancelUpdateCheck();
+            _cancellationTokenSource.Cancel();
             DialogResult = DialogResult.Cancel;
         }
 
@@ -37,7 +37,7 @@ namespace nUpdate.UI.WinForms.Dialogs
         {
             try
             {
-                Result = await UpdateProvider.BeginUpdateCheck();
+                UpdateCheckResult = await UpdateProvider.CheckForUpdates(_cancellationTokenSource.Token);
             }
             catch (OperationCanceledException)
             {

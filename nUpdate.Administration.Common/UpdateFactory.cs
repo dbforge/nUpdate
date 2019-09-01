@@ -18,12 +18,12 @@ namespace nUpdate.Administration.Common
         {
             _project = project;
         }
-        internal IEnumerable<DefaultUpdatePackage> LoadPackageData()
+        internal IEnumerable<UpdatePackage> LoadPackageData()
         {
             return _project.Packages;
         }
 
-        /*internal Task PushPackageData(DefaultUpdatePackage updatePackage, CancellationToken cancellationToken,
+        /*internal Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
             IProgress<ITransferProgressData> progress)
         {
             var masterChannel =
@@ -35,7 +35,7 @@ namespace nUpdate.Administration.Common
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await DefaultUpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
+                (await UpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
             updatePackages.Add(updatePackage);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes((string) JsonSerializer.Serialize(updatePackages))))
@@ -91,7 +91,7 @@ namespace nUpdate.Administration.Common
                 throw new InvalidOperationException("Invalid update channel.");
 
             var updatePackages =
-                (await DefaultUpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
+                (await UpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
             var destinationPackage =
                 updatePackages.FirstOrDefault(item => item.Version.Equals(SemanticVersion));
             if (destinationPackage != null)

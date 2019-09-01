@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace nUpdate
 {
-    public class UpdateResult
+    public class UpdateCheckResult
     {
-        private readonly List<DefaultUpdatePackage> _newUpdatePackages = new List<DefaultUpdatePackage>();
+        private readonly List<UpdatePackage> _newUpdatePackages = new List<UpdatePackage>();
 
         /// <summary>
-        ///     Gets all available <see cref="DefaultUpdatePackage" />s.
+        ///     Gets all available <see cref="UpdatePackage" />s.
         /// </summary>
-        public IEnumerable<DefaultUpdatePackage> Packages => _newUpdatePackages;
+        public IEnumerable<UpdatePackage> Packages => _newUpdatePackages;
 
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
@@ -23,9 +23,9 @@ namespace nUpdate
         public bool UpdatesFound => _newUpdatePackages.Count > 0;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
+        ///     Initializes a new instance of the <see cref="UpdateCheckResult" /> class.
         /// </summary>
-        internal Task Initialize(IEnumerable<DefaultUpdatePackage> packages, SemanticVersion applicationVersion,
+        internal Task Initialize(IEnumerable<UpdatePackage> packages, IVersion applicationVersion,
             bool includePreRelease, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -33,7 +33,7 @@ namespace nUpdate
                 if (applicationVersion == null)
                     throw new ArgumentNullException(nameof(applicationVersion));
 
-                bool IsSuitablePackage(DefaultUpdatePackage package)
+                bool IsSuitablePackage(UpdatePackage package)
                 {
                     var is64Bit = Environment.Is64BitOperatingSystem;
                     if (package.UnsupportedVersions != null &&
@@ -45,12 +45,12 @@ namespace nUpdate
                            (package.Architecture != Architecture.X64 || is64Bit);
                 }
 
-                var latestPackage = default(DefaultUpdatePackage);
+                var latestPackage = default(UpdatePackage);
                 var latestVersion = applicationVersion;
                 foreach (var package in packages.Where(IsSuitablePackage))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    if (package.Version > latestVersion)
+                    if (package.Version.CompareTo(latestVersion).Equals(-1))
                     {
                         // package.Version > applicationVersion is always true in here as we initialize latestVersion with applicationVersion and > is a strict order and thus, transitive
                         if (package.Compulsory)
@@ -63,7 +63,7 @@ namespace nUpdate
                 // If the package was initialized and if it's not already in there
                 if (latestPackage != null && !_newUpdatePackages.Contains(latestPackage))
                     _newUpdatePackages.Add(latestPackage);
-            });
+            }, cancellationToken);
         }
     }
 }

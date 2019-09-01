@@ -19,6 +19,7 @@ namespace nUpdate.UI.WinForms
     {
         private bool _updateProcessActive;
         private readonly IUpdateProvider _updateProvider;
+        private readonly CancellationTokenSource _updateCheckCancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultInteractionUpdater"/> class.
@@ -55,14 +56,14 @@ namespace nUpdate.UI.WinForms
 
             try
             {
-                UpdateResult updateResult;
+                UpdateCheckResult updateCheckResult;
                 if (!UseBackgroundSearch)
                 {
                     var searchDialog = new UpdateSearchDialog { UpdateProvider = _updateProvider };
                     if (searchDialog.ShowDialog() != DialogResult.OK)
                         return;
 
-                    if (!(updateResult = searchDialog.Result).UpdatesFound)
+                    if (!(updateCheckResult = searchDialog.UpdateCheckResult).UpdatesFound)
                     {
                         var noUpdateDialog = new NoUpdateFoundDialog {UpdateProvider = _updateProvider};
                         noUpdateDialog.ShowDialog();
@@ -73,7 +74,7 @@ namespace nUpdate.UI.WinForms
                 {
                     try
                     {
-                        if (!(updateResult = await _updateProvider.BeginUpdateCheck()).UpdatesFound)
+                        if (!(updateCheckResult = await _updateProvider.CheckForUpdates(_updateCheckCancellationTokenSource.Token)).UpdatesFound)
                             return;
                     }
                     catch (OperationCanceledException)
@@ -88,18 +89,18 @@ namespace nUpdate.UI.WinForms
                     }
                 }
 
-                var newUpdateDialog = new NewUpdateDialog { UpdateProvider = _updateProvider, UpdateResult = updateResult };
+                var newUpdateDialog = new NewUpdateDialog { UpdateProvider = _updateProvider, UpdateCheckResult = updateCheckResult };
                 if (newUpdateDialog.ShowDialog() != DialogResult.OK)
                     return;
 
-                var downloadDialog = new UpdateDownloadDialog { UpdateProvider = _updateProvider };
+                var downloadDialog = new UpdateDownloadDialog { UpdateProvider = _updateProvider, UpdateCheckResult = updateCheckResult };
                 if (downloadDialog.ShowDialog() != DialogResult.OK)
                     return;
 
                 bool valid;
                 try
                 {
-                    valid = (await _updateProvider.VerifyUpdates()).AreValid;
+                    valid = (await _updateProvider.VerifyUpdates(updateCheckResult)).AreValid;
                 }
                 catch (FileNotFoundException)
                 {
@@ -128,7 +129,7 @@ namespace nUpdate.UI.WinForms
                 else
                     try
                     {
-                        await _updateProvider.InstallUpdates();
+                        await _updateProvider.InstallUpdates(updateCheckResult);
                     }
                     catch (Exception ex)
                     {

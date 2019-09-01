@@ -11,6 +11,7 @@ namespace nUpdate.UI.WinForms.Dialogs
     internal partial class UpdateDownloadDialog : BaseDialog
     {
         private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public UpdateDownloadDialog()
         {
@@ -43,7 +44,7 @@ namespace nUpdate.UI.WinForms.Dialogs
 
         private void Cancel()
         {
-            UpdateProvider.CancelDownload();
+            _cancellationTokenSource.Cancel();
             DialogResult = DialogResult.Cancel;
         }
 
@@ -80,7 +81,7 @@ namespace nUpdate.UI.WinForms.Dialogs
 
             try
             {
-                await UpdateProvider.DownloadUpdates(progress);
+                await UpdateProvider.DownloadUpdates(UpdateCheckResult, _cancellationTokenSource.Token, progress);
             }
             catch (OperationCanceledException)
             {

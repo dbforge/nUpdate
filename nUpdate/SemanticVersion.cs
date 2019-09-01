@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace nUpdate
 {
-    public class SemanticVersion : IComparable<SemanticVersion>, IEquatable<SemanticVersion>
+    public class SemanticVersion : IVersion<SemanticVersion>
     {
         // https://semver.org
         // https://github.com/semver/semver/issues/232#issuecomment-405596809
@@ -32,37 +32,37 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Gets or sets the major version.
+        ///     Gets the major version.
         /// </summary>
         public int Major { get; }
 
         /// <summary>
-        ///     Gets or sets the minor version.
+        ///     Gets the minor version.
         /// </summary>
         public int Minor { get; }
 
         /// <summary>
-        ///     Gets or sets the patch version.
+        ///     Gets the patch version.
         /// </summary>
         public int Patch { get; }
 
         /// <summary>
-        ///     Gets or sets the pre-release information.
+        ///     Gets the pre-release information.
         /// </summary>
         public string PreRelease { get; } = string.Empty;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether pre-release information is available, or not.
+        ///     Gets a value indicating whether pre-release information is available, or not.
         /// </summary>
         public bool HasPreRelease => !PreRelease.Equals(string.Empty);
 
         /// <summary>
-        ///     Gets or sets the build metadata.
+        ///     Gets the build metadata.
         /// </summary>
         public string BuildMetadata { get; } = string.Empty;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether build metadata is available, or not.
+        ///     Gets a value indicating whether build metadata is available, or not.
         /// </summary>
         public bool HasBuildMetadata => !BuildMetadata.Equals(string.Empty);
 
@@ -131,7 +131,7 @@ namespace nUpdate
         /// <param name="semanticVersion">The update version to check.</param>
         public static bool IsValid(SemanticVersion semanticVersion)
         {
-            return IsValid(semanticVersion.ToString());
+            return semanticVersion.IsValid();
         }
 
         /// <summary>
@@ -140,8 +140,7 @@ namespace nUpdate
         /// <param name="versionString">The version string to check.</param>
         public static bool IsValid(string versionString)
         {
-            var regex = new Regex(RegexString, RegexOptions.IgnoreCase);
-            return regex.IsMatch(versionString);
+            return new SemanticVersion(versionString).IsValid();
         }
 
         public override string ToString()
@@ -152,6 +151,14 @@ namespace nUpdate
             if (HasBuildMetadata)
                 builder.Append($"+{BuildMetadata}");
             return builder.ToString();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(SemanticVersion))
+                throw new InvalidOperationException();
+
+            return CompareTo((SemanticVersion) obj);
         }
 
         public static bool operator <(SemanticVersion version1, SemanticVersion version2)
@@ -191,6 +198,12 @@ namespace nUpdate
                 hashCode = (hashCode * 397) ^ (BuildMetadata != null ? BuildMetadata.GetHashCode() : 0);
                 return hashCode;
             }
+        }
+
+        public bool IsValid()
+        {
+            var regex = new Regex(RegexString, RegexOptions.IgnoreCase);
+            return regex.IsMatch(ToString());
         }
 
         public static bool operator >(SemanticVersion version1, SemanticVersion version2)

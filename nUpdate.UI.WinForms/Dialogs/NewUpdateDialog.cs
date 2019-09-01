@@ -28,30 +28,28 @@ namespace nUpdate.UI.WinForms.Dialogs
             NativeMethods.SendMessage(button.Handle, bcmSetshield, new IntPtr(0), new IntPtr(1));
         }
 
-        internal UpdateResult UpdateResult { get; set; }
-
         private void NewUpdateDialog_Load(object sender, EventArgs e)
         {
             Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
 
             headerLabel.Text =
                 string.Format(
-                    UpdateResult.Packages.Count() > 1
+                    UpdateCheckResult.Packages.Count() > 1
                         ? Properties.strings.NewUpdateDialogMultipleUpdatesHeader
-                        : Properties.strings.NewUpdateDialogSingleUpdateHeader, UpdateResult.Packages.Count());
+                        : Properties.strings.NewUpdateDialogSingleUpdateHeader, UpdateCheckResult.Packages.Count());
             infoLabel.Text = string.Format(Properties.strings.NewUpdateDialogInfoText, Application.ProductName);
 
             var availablePackages =
-                UpdateResult.Packages.ToArray();
+                UpdateCheckResult.Packages.ToArray();
             newestVersionLabel.Text = string.Format(Properties.strings.NewUpdateDialogAvailableVersionsText,
-                UpdateResult.Packages.Count() <= 2
+                UpdateCheckResult.Packages.Count() <= 2
                     ? string.Join(", ", availablePackages.Select(x => x.Version))
                     : $"{availablePackages.First().Version} - {availablePackages.Last().Version}");
             currentVersionLabel.Text = string.Format(Properties.strings.NewUpdateDialogCurrentVersionText, UpdateProvider.ApplicationVersion);
             changelogLabel.Text = Properties.strings.NewUpdateDialogChangelogText;
             cancelButton.Text = Properties.strings.CancelButtonText;
             installButton.Text = Properties.strings.InstallButtonText;
-            updateSizeLabel.Text = string.Format(Properties.strings.NewUpdateDialogSizeText, UpdateResult.Packages.Sum(x => x.Size).ToAdequateSizeString());
+            updateSizeLabel.Text = string.Format(Properties.strings.NewUpdateDialogSizeText, UpdateCheckResult.Packages.Sum(x => x.Size).ToAdequateSizeString());
             
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
@@ -60,7 +58,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             iconPictureBox.BackgroundImageLayout = ImageLayout.Center;
             AddShieldToButton(installButton);
 
-            foreach (var updatePackage in UpdateResult.Packages)
+            foreach (var updatePackage in UpdateCheckResult.Packages)
             {
                 var changelogText = updatePackage.Changelog.ContainsKey(UpdateProvider.LanguageCulture)
                     ? updatePackage.Changelog.First(item => Equals(item.Key, UpdateProvider.LanguageCulture)).Value
@@ -91,7 +89,7 @@ namespace nUpdate.UI.WinForms.Dialogs
             Process.Start(e.LinkText);
         }
 
-        private static string GetVersionDescription(DefaultUpdatePackage package)
+        private static string GetVersionDescription(UpdatePackage package)
         {
             var versionStringBuilder = new StringBuilder(package.Version.ToString());
             if (package.ChannelName.ToLowerInvariant() != "release")

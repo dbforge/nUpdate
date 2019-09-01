@@ -9,7 +9,7 @@ namespace nUpdate
 {
     public static class Utility
     {
-        public static async Task<double> GetTotalPackageSize(IEnumerable<DefaultUpdatePackage> packages)
+        public static async Task<double> GetTotalPackageSize(IEnumerable<UpdatePackage> packages)
         {
             double size = 0;
             await packages.ForEachAsync(async p =>

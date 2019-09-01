@@ -21,25 +21,9 @@ namespace nUpdate
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly string _applicationUpdateDirectory =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate",
-                "Updates", ApplicationParameters.ProductName);
-
-        private readonly CancellationTokenSource _downloadCancellationTokenSource = new CancellationTokenSource();
-
-        private readonly CancellationTokenSource _updateCheckCancellationTokenSource = new CancellationTokenSource();
-
-        private UpdateResult _updateResult;
-
-        public HttpUpdateProvider(Uri packageFeedUri, string publicKey, string applicationVersion) : this(
-            packageFeedUri, publicKey,
-            new SemanticVersion(applicationVersion))
+        public HttpUpdateProvider(IHttpUpdateDeliveryEndpoint updateDeliveryEndpoint, string publicKey, IVersion applicationVersion)
         {
-        }
-
-        public HttpUpdateProvider(Uri packageFeedFileUri, string publicKey, SemanticVersion applicationVersion)
-        {
-            PackageFeedUri = packageFeedFileUri ?? throw new ArgumentNullException(nameof(packageFeedFileUri));
+            UpdateDeliveryEndpoint = updateDeliveryEndpoint ?? throw new ArgumentNullException(nameof(updateDeliveryEndpoint));
             ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationVersion));
 
             if (string.IsNullOrEmpty(publicKey))
@@ -65,82 +49,42 @@ namespace nUpdate
         public string PublicKey { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Uri" /> of the package definition file.
-        /// </summary>
-        public Uri PackageFeedUri { get; set; }
-
-        /// <summary>
         ///     Gets the version of the current application.
         /// </summary>
-        public SemanticVersion ApplicationVersion { get; set; }
+        public IVersion ApplicationVersion { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
         /// </summary>
         public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
 
-        public async Task<UpdateResult> BeginUpdateCheck()
-        {
-            // Empty result
-            var result = new UpdateResult();
-            var
-                packages = await DefaultUpdatePackage.GetPackageEnumerable(PackageFeedUri, null);
+        public IUpdateDeliveryEndpoint UpdateDeliveryEndpoint { get; }
 
-            Logger.Info("Initializing the update result for this cbeck.");
-            await result.Initialize(packages, ApplicationVersion, IncludePreRelease,
-                _updateCheckCancellationTokenSource.Token);
-            _updateResult = result;
-            return result;
+        public async Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken)
+        {
+            return await UpdateDeliveryEndpoint.CheckForUpdates(ApplicationVersion, IncludePreRelease,
+                cancellationToken);
         }
 
-        public async Task DownloadUpdates(IProgress<UpdateProgressData> progress)
+        public Task DownloadUpdates(UpdateCheckResult checkResult, CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
         {
-            if (_updateResult == null)
-                throw new InvalidOperationException(
-                    "Invalid update result. There must be a check for updates before being able to download them.");
-            var updatePackages = _updateResult.Packages.ToArray();
-
-            Logger.Info("Determining the total size of all packages.");
-            var totalSize = await Utility.GetTotalPackageSize(updatePackages);
-            await updatePackages.ForEachAsync(async p =>
-            {
-                if (Utility.IsHttpUri(p.PackageUri))
-                {
-                    // This package is located on a server.
-                    Logger.Info($"Downloading package of version {p.Version}.");
-                    await DownloadManager.DownloadFile(p.PackageUri, GetLocalPackagePath(p), (long) totalSize,
-                        _downloadCancellationTokenSource.Token, progress);
-                }
-                else
-                {
-                    // This package is located on a local drive.
-                    Logger.Info($"Copying package of version {p.Version}.");
-                    File.Copy(p.PackageUri.ToString(), GetLocalPackagePath(p));
-                }
-            });
+            if (checkResult == null)
+                throw new InvalidOperationException(nameof(checkResult));
+            return UpdateDeliveryEndpoint.DownloadPackages(checkResult, progress,
+                cancellationToken);
         }
 
-        public async Task InstallUpdates(Action terminateAction = null)
+        public async Task InstallUpdates(UpdateCheckResult checkResult, Action terminateAction = null)
         {
-            var updatePackages = _updateResult.Packages.ToArray();
+            var updatePackages = checkResult.Packages.ToArray();
             await updatePackages.ForEachAsync(p =>
             {
                 return Task.Run(() =>
                 {
                     ZipFile.ExtractToDirectory(GetLocalPackagePath(p),
-                        Path.Combine(_applicationUpdateDirectory, p.Guid.ToString()));
+                        Path.Combine(Globals.ApplicationUpdateDirectory, p.Guid.ToString()));
                 });
             });
-        }
-
-        public void CancelUpdateCheck()
-        {
-            _updateCheckCancellationTokenSource.Cancel();
-        }
-
-        public void CancelDownload()
-        {
-            _downloadCancellationTokenSource.Cancel();
         }
 
         /// <summary>
@@ -151,24 +95,24 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="VerifyUpdate" />
-        public Task<VerificationResult> VerifyUpdates()
+        public Task<VerificationResult> VerifyUpdates(UpdateCheckResult checkResult)
         {
-            return VerifyUpdates(_updateResult.Packages);
+            return VerifyUpdates(checkResult.Packages);
         }
 
-        private string GetLocalPackagePath(DefaultUpdatePackage package)
+        private string GetLocalPackagePath(UpdatePackage package)
         {
-            return Path.Combine(_applicationUpdateDirectory,
-                $"{package.Guid}.zip");
+            return Path.Combine(Globals.ApplicationUpdateDirectory,
+                $"{package.Guid}{Globals.PackageExtension}");
         }
 
         /// <summary>
         ///     Removes the specified update package.
         /// </summary>
         /// <param name="package">The update package.</param>
-        /// <seealso cref="RemoveLocalPackages()" />
-        /// <seealso cref="RemoveLocalPackages(System.Collections.Generic.IEnumerable{nUpdate.DefaultUpdatePackage})" />
-        public void RemoveLocalPackage(DefaultUpdatePackage package)
+        /// <seealso cref="RemoveLocalPackages(UpdateCheckResult)" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        public void RemoveLocalPackage(UpdatePackage package)
         {
             var path = GetLocalPackagePath(package);
             if (File.Exists(path))
@@ -180,8 +124,8 @@ namespace nUpdate
         /// </summary>
         /// <param name="packages">The update packages.</param>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages()" />
-        public void RemoveLocalPackages(IEnumerable<DefaultUpdatePackage> packages)
+        /// <seealso cref="RemoveLocalPackages(UpdateCheckResult)" />
+        public void RemoveLocalPackages(IEnumerable<UpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));
@@ -193,10 +137,10 @@ namespace nUpdate
         ///     Removes all downloaded update packages.
         /// </summary>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{DefaultUpdatePackage})" />
-        public void RemoveLocalPackages()
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        public void RemoveLocalPackages(UpdateCheckResult checkResult)
         {
-            RemoveLocalPackages(_updateResult.Packages);
+            RemoveLocalPackages(checkResult.Packages);
         }
 
         /// <summary>
@@ -205,13 +149,13 @@ namespace nUpdate
         private void CreateAppUpdateDirectory()
         {
             Logger.Info("Checking existence of the application's update directory.");
-            if (Directory.Exists(_applicationUpdateDirectory))
+            if (Directory.Exists(Globals.ApplicationUpdateDirectory))
                 return;
 
             Logger.Info("Creating the application's update directory.");
             try
             {
-                Directory.CreateDirectory(_applicationUpdateDirectory);
+                Directory.CreateDirectory(Globals.ApplicationUpdateDirectory);
             }
             catch (Exception ex)
             {
@@ -229,9 +173,9 @@ namespace nUpdate
         /// <exception cref="FileNotFoundException">One of the specified update packages could not be found.</exception>
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="VerifyUpdates()" />
-        /// <seealso cref="VerifyUpdates(IEnumerable{DefaultUpdatePackage})" />
-        public Task<bool> VerifyUpdate(DefaultUpdatePackage package)
+        /// <seealso cref="VerifyUpdates(UpdateCheckResult)" />
+        /// <seealso cref="VerifyUpdates(IEnumerable{UpdatePackage})" />
+        public Task<bool> VerifyUpdate(UpdatePackage package)
         {
             if (package == null)
                 throw new ArgumentNullException(nameof(package));
@@ -277,7 +221,7 @@ namespace nUpdate
         /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
         /// <seealso cref="RemoveLocalPackage" />
         /// <seealso cref="VerifyUpdate" />
-        public async Task<VerificationResult> VerifyUpdates(IEnumerable<DefaultUpdatePackage> packages)
+        public async Task<VerificationResult> VerifyUpdates(IEnumerable<UpdatePackage> packages)
         {
             if (packages == null)
                 throw new ArgumentNullException(nameof(packages));

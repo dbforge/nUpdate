@@ -2,14 +2,14 @@
 
 namespace nUpdate.Administration.Common
 {
-    internal class DistinctChannelComparer : IEqualityComparer<DefaultUpdatePackage>
+    internal class DistinctChannelComparer : IEqualityComparer<UpdatePackage>
     {
-        public bool Equals(DefaultUpdatePackage left, DefaultUpdatePackage right)
+        public bool Equals(UpdatePackage left, UpdatePackage right)
         {
             return left.ChannelName == right.ChannelName;
         }
 
-        public int GetHashCode(DefaultUpdatePackage obj)
+        public int GetHashCode(UpdatePackage obj)
         {
             return obj.ChannelName.GetHashCode();
         }

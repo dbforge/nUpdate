@@ -15,7 +15,7 @@ namespace nUpdate
     ///     Represents an update package.
     /// </summary>
     [Serializable]
-    public class DefaultUpdatePackage
+    public class UpdatePackage
     {
         /// <summary>
         ///     Gets or sets the supported <see cref="nUpdate.Architecture" />s of the update package.
@@ -70,14 +70,14 @@ namespace nUpdate
         /// <summary>
         ///     Gets or sets the version of the package.
         /// </summary>
-        public SemanticVersion Version { get; set; }
+        public IVersion Version { get; set; }
 
         /// <summary>
         ///     Gets or sets the size of the package.
         /// </summary>
         public long Size { get; set; }
 
-        public static async Task<IEnumerable<DefaultUpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
+        public static async Task<IEnumerable<UpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
             WebProxy proxy)
         {
             if (Utility.IsHttpUri(packageDataFileUri))
@@ -90,7 +90,7 @@ namespace nUpdate
 
                     var source = await wc.DownloadStringTaskAsync(packageDataFileUri);
                     if (!string.IsNullOrEmpty(source))
-                        return JsonSerializer.Deserialize<IEnumerable<DefaultUpdatePackage>>(source);
+                        return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
                 }
             }
             else
@@ -98,11 +98,11 @@ namespace nUpdate
                 using (var reader = File.OpenText(packageDataFileUri.ToString()))
                 {
                     var content = await reader.ReadToEndAsync();
-                    return JsonSerializer.Deserialize<IEnumerable<DefaultUpdatePackage>>(content);
+                    return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(content);
                 }
             }
 
-            return Enumerable.Empty<DefaultUpdatePackage>();
+            return Enumerable.Empty<UpdatePackage>();
         }
     }
 }
