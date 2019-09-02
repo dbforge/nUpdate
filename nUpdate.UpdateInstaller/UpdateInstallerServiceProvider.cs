@@ -27,8 +27,8 @@ namespace nUpdate.UpdateInstaller
 
         private void InitializeServices()
         {
-            _services.Add(typeof(IUpdateActionPathProvider), new ProgressReporterServiceEventLog());
-            _services.Add(typeof(IUpdateActionAppPathProvider), new ProgressReporterService());
+            _services.Add(typeof(IUpdateActionPathProvider), new UpdateActionPathProvider());
+            _services.Add(typeof(IUpdateActionAppPathProvider), new UpdateActionAppPathProvider());
         }
     }
 }
