@@ -27,7 +27,10 @@ namespace nUpdate.UpdateInstaller
                 return;
 
             var appArguments = args[0].Split('|');
+            PackageDirectory = appArguments[0];
+            AppDirectory = appArguments[1];
             // ...
+            UpdateInstaller.Instance.InstallUpdates();
         }
 
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)

@@ -19,7 +19,12 @@ namespace nUpdate.UpdateInstaller
 
         public static UpdateInstaller Instance => _instance ?? (_instance = new UpdateInstaller());
 
-        internal async Task Install()
+        internal async void InstallUpdates()
+        {
+            await Install();
+        }
+
+        private async Task Install()
         {
             var appDirectory = Program.AppDirectory;
             var packageDirectory = Program.PackageDirectory;
@@ -40,9 +45,7 @@ namespace nUpdate.UpdateInstaller
                 await directories.ForEachAsync(async d =>
                 {
                     if (d.Name.Trim().Equals(Globals.AppExecutableDirectoryIdentifier))
-                    {
                         await CopyDirectoryContent(d.FullName, appDirectory);
-                    }
                     else
                     {
                         var specialFolderPath = Environment.GetFolderPath(
