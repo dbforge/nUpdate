@@ -6,6 +6,7 @@ namespace nUpdate.Actions
     {
         string Name { get; }
         string Description { get; }
-        Task Execute(object parameter);
+        bool ExecuteBeforeReplacingFiles { get; set; }
+        Task Execute();
     }
 }

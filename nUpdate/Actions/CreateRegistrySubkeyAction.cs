@@ -7,11 +7,12 @@ namespace nUpdate.Actions
     {
         public string Name => "CreateRegistrySubkey";
         public string Description => "Creates a registry subkey.";
+        public bool ExecuteBeforeReplacingFiles { get; set; }
 
         public string RegistryKey { get; set; }
         public IEnumerable<string> SubkeysToCreate { get; set; }
 
-        public Task Execute(object parameter)
+        public Task Execute()
         {
             return Task.Run(() =>
             {

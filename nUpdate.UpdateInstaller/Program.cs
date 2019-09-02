@@ -1,6 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -9,7 +10,8 @@ namespace nUpdate.UpdateInstaller
     internal static class Program
     {
         public static string PackageDirectory { get; set; }
-        public static object NewUpdatePackages { get; internal set; }
+        public static IEnumerable<UpdatePackage> NewUpdatePackages { get; internal set; }
+        public static string AppDirectory { get; internal set; }
 
         /// <summary>
         ///     Der Haupteinstiegspunkt für die Anwendung.
@@ -30,13 +32,15 @@ namespace nUpdate.UpdateInstaller
 
         private static void HandlerMethod(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is ThreadAbortException)
-                return;
-            var exception = e.ExceptionObject as Exception;
-            if (exception != null)
+            switch (e.ExceptionObject)
             {
-                MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
+                case ThreadAbortException _:
+                    return;
+                case Exception exception:
+                    MessageBox.Show(exception.InnerException?.ToString() ?? exception.ToString());
+                    break;
             }
+
             Application.Exit();
         }
     }

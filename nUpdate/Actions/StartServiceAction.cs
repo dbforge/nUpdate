@@ -8,10 +8,11 @@ namespace nUpdate.Actions
     {
         public string Name => "StartService";
         public string Description => "Starts a service.";
+        public bool ExecuteBeforeReplacingFiles { get; set; }
         public string ServiceName { get; set; }
         public IEnumerable<string> Arguments { get; set; }
 
-        public Task Execute(object parameter)
+        public Task Execute()
         {
             return Task.Run(() =>
             {

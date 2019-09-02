@@ -7,9 +7,10 @@ namespace nUpdate.Actions
     {
         public string Name => "StopProcess";
         public string Description => "Stops a process.";
+        public bool ExecuteBeforeReplacingFiles { get; set; }
         public string ProcessName { get; set; }
 
-        public Task Execute(object parameter)
+        public Task Execute()
         {
             return Task.Run(() =>
             {

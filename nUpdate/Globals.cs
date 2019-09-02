@@ -9,5 +9,7 @@ namespace nUpdate
             "Updates", ApplicationParameters.ProductName);
 
         public static string PackageExtension => ".nupdpkg";
+
+        public static string AppExecutableDirectoryIdentifier => "ApplicationExecutablePath";
     }
 }
