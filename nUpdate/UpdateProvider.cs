@@ -1,5 +1,4 @@
-﻿// HttpUpdateProvider.cs, 20.06.2019
-// Copyright (C) Dominic Beger 20.06.2019
+﻿// Copyright © Dominic Beger 2019
 
 using System;
 using System.Collections.Generic;
@@ -14,24 +13,11 @@ using nUpdate.Properties;
 
 namespace nUpdate
 {
-    /// <summary>
-    ///     Provides functionality to update .NET-applications with a server accessed through HTTP(S).
-    /// </summary>
-    public class HttpUpdateProvider : IUpdateProvider
+    public abstract class UpdateProvider
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public HttpUpdateProvider(IHttpUpdateDeliveryEndpoint updateDeliveryEndpoint, string publicKey, IVersion applicationVersion)
-        {
-            UpdateDeliveryEndpoint = updateDeliveryEndpoint ?? throw new ArgumentNullException(nameof(updateDeliveryEndpoint));
-            ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationVersion));
-
-            if (string.IsNullOrEmpty(publicKey))
-                throw new ArgumentException(nameof(publicKey));
-            PublicKey = publicKey;
-
-            CreateAppUpdateDirectory();
-        }
+        public IVersion ApplicationVersion { get; set; }
 
         /// <summary>
         ///     Gets or sets the host application options during the update installation.
@@ -43,35 +29,57 @@ namespace nUpdate
         /// </summary>
         public bool IncludePreRelease { get; set; }
 
+        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
+
         /// <summary>
         ///     Gets or sets the public key used for verifying the update packages.
         /// </summary>
         public string PublicKey { get; set; }
 
-        /// <summary>
-        ///     Gets the version of the current application.
-        /// </summary>
-        public IVersion ApplicationVersion { get; set; }
+        public abstract Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken);
 
-        /// <summary>
-        ///     Gets or sets the <see cref="CultureInfo" /> of the language to use.
-        /// </summary>
-        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
-
-        public IUpdateDeliveryEndpoint UpdateDeliveryEndpoint { get; }
-
-        public async Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken)
+        protected UpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease)
         {
-            return await UpdateDeliveryEndpoint.CheckForUpdates(ApplicationVersion, IncludePreRelease,
-                cancellationToken);
+            ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationVersion));
+            IncludePreRelease = includePreRelease;
+
+            if (string.IsNullOrEmpty(publicKey))
+                throw new ArgumentException(nameof(publicKey));
+            PublicKey = publicKey;
+
+            CreateAppUpdateDirectory();
         }
 
-        public Task DownloadUpdates(UpdateCheckResult checkResult, CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
+        /// <summary>
+        ///     Creates the application's update directory where the downloaded packages and other files are stored.
+        /// </summary>
+        protected void CreateAppUpdateDirectory()
         {
-            if (checkResult == null)
-                throw new InvalidOperationException(nameof(checkResult));
-            return UpdateDeliveryEndpoint.DownloadPackages(checkResult, progress,
-                cancellationToken);
+            Logger.Info("Checking existence of the application's update directory.");
+            if (Directory.Exists(Globals.ApplicationUpdateDirectory))
+                return;
+
+            Logger.Info("Creating the application's update directory.");
+            try
+            {
+                Directory.CreateDirectory(Globals.ApplicationUpdateDirectory);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex,
+                    "The application's update directory could not be created as an exception occured.");
+                throw new IOException(string.Format(strings.MainFolderCreationExceptionText,
+                    ex.Message));
+            }
+        }
+
+        public abstract Task DownloadUpdates(UpdateCheckResult checkResult, CancellationToken cancellationToken,
+            IProgress<UpdateProgressData> progress);
+
+        private string GetLocalPackagePath(UpdatePackage package)
+        {
+            return Path.Combine(Globals.ApplicationUpdateDirectory,
+                $"{package.Guid}{Globals.PackageExtension}");
         }
 
         public async Task InstallUpdates(UpdateCheckResult checkResult, Action terminateAction = null)
@@ -88,30 +96,11 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Determines whether all available packages are valid, or not.
-        /// </summary>
-        /// <returns>A <see cref="VerificationResult" /> containing information about the validation of all packages.</returns>
-        /// <exception cref="FileNotFoundException">One of the specified update packages could not be found.</exception>
-        /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
-        /// <seealso cref="RemoveLocalPackage" />
-        /// <seealso cref="VerifyUpdate" />
-        public Task<VerificationResult> VerifyUpdates(UpdateCheckResult checkResult)
-        {
-            return VerifyUpdates(checkResult.Packages);
-        }
-
-        private string GetLocalPackagePath(UpdatePackage package)
-        {
-            return Path.Combine(Globals.ApplicationUpdateDirectory,
-                $"{package.Guid}{Globals.PackageExtension}");
-        }
-
-        /// <summary>
         ///     Removes the specified update package.
         /// </summary>
         /// <param name="package">The update package.</param>
         /// <seealso cref="RemoveLocalPackages(UpdateCheckResult)" />
-        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
+        /// <seealso cref="RemoveLocalPackages(System.Collections.Generic.IEnumerable{nUpdate.UpdatePackage})" />
         public void RemoveLocalPackage(UpdatePackage package)
         {
             var path = GetLocalPackagePath(package);
@@ -141,29 +130,6 @@ namespace nUpdate
         public void RemoveLocalPackages(UpdateCheckResult checkResult)
         {
             RemoveLocalPackages(checkResult.Packages);
-        }
-
-        /// <summary>
-        ///     Creates the application's update directory where the downloaded packages and other files are stored.
-        /// </summary>
-        private void CreateAppUpdateDirectory()
-        {
-            Logger.Info("Checking existence of the application's update directory.");
-            if (Directory.Exists(Globals.ApplicationUpdateDirectory))
-                return;
-
-            Logger.Info("Creating the application's update directory.");
-            try
-            {
-                Directory.CreateDirectory(Globals.ApplicationUpdateDirectory);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex,
-                    "The application's update directory could not be created as an exception occured.");
-                throw new IOException(string.Format(strings.MainFolderCreationExceptionText,
-                    ex.Message));
-            }
         }
 
         /// <summary>
@@ -211,6 +177,19 @@ namespace nUpdate
                     }
                 }
             });
+        }
+
+        /// <summary>
+        ///     Determines whether all available packages are valid, or not.
+        /// </summary>
+        /// <returns>A <see cref="VerificationResult" /> containing information about the validation of all packages.</returns>
+        /// <exception cref="FileNotFoundException">One of the specified update packages could not be found.</exception>
+        /// <exception cref="ArgumentException">The signature of an update package is <c>null</c> or empty.</exception>
+        /// <seealso cref="RemoveLocalPackage" />
+        /// <seealso cref="VerifyUpdate" />
+        public Task<VerificationResult> VerifyUpdates(UpdateCheckResult checkResult)
+        {
+            return VerifyUpdates(checkResult.Packages);
         }
 
         /// <summary>

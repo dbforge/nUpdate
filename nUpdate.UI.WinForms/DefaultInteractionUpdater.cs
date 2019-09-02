@@ -18,16 +18,16 @@ namespace nUpdate.UI.WinForms
     public class DefaultInteractionUpdater
     {
         private bool _updateProcessActive;
-        private readonly IUpdateProvider _updateProvider;
+        private readonly UpdateProvider _updateProvider;
         private readonly CancellationTokenSource _updateCheckCancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultInteractionUpdater"/> class.
         /// </summary>
-        /// <param name="updateProvider">The <see cref="IUpdateProvider"/> instance that has been initialized and will be used for the updating process.</param>
+        /// <param name="updateProvider">The <see cref="UpdateProvider"/> instance that has been initialized and will be used for the updating process.</param>
         /// <param name="context">The <see cref="SynchronizationContext"/> that should be used to invoke the methods that show the dialogs.</param>
         /// <param name="useHiddenSearch">If set to <c>true</c>, nUpdate will search for updates in the background without showing a search dialog.</param>
-        public DefaultInteractionUpdater(IUpdateProvider updateProvider, SynchronizationContext context,
+        public DefaultInteractionUpdater(UpdateProvider updateProvider, SynchronizationContext context,
             bool useHiddenSearch = false)
         {
             Context = context;

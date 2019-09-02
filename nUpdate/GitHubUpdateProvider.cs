@@ -10,12 +10,13 @@ using Octokit;
 
 namespace nUpdate
 {
-    internal class GitHubUpdateDeliveryEndpoint : IHttpUpdateDeliveryEndpoint
+    internal class GitHubUpdateProvider : UpdateProvider
     {
         private readonly GitHubClient _client;
         private readonly Dictionary<UpdatePackage, Uri> _packagesUris = new Dictionary<UpdatePackage, Uri>();
 
-        public GitHubUpdateDeliveryEndpoint()
+        public GitHubUpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease)
+            : base(publicKey, applicationVersion, includePreRelease)
         {
             _client = new GitHubClient(new ProductHeaderValue(ApplicationParameters.ProductName));
             if (AuthenticationCredential != null)
@@ -31,8 +32,7 @@ namespace nUpdate
 
         public DateTimeOffset? RequestLimitReset { get; private set; }
 
-        public async Task<UpdateCheckResult> CheckForUpdates(IVersion applicationVersion, bool includePreRelease,
-            CancellationToken cancellationToken)
+        public override async Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken)
         {
             var apiInfo = _client.GetLastApiInfo();
             var rateLimit = apiInfo?.RateLimit;
@@ -64,7 +64,7 @@ namespace nUpdate
             });
 
             var updateCheckResult = new UpdateCheckResult();
-            await updateCheckResult.Initialize(updatePackages, applicationVersion, includePreRelease,
+            await updateCheckResult.Initialize(updatePackages, ApplicationVersion, IncludePreRelease,
                 cancellationToken);
             return updateCheckResult;
         }
@@ -78,12 +78,12 @@ namespace nUpdate
             await DownloadManager.DownloadFile(packageUri, localPackagePath, package.Size, cancellationToken, progress);
         }
 
-        public Task DownloadPackages(UpdateCheckResult checkResult, IProgress<UpdateProgressData> progress,
-            CancellationToken cancellationToken)
+        public override async Task DownloadUpdates(UpdateCheckResult checkResult, CancellationToken cancellationToken,
+            IProgress<UpdateProgressData> progress)
         {
             long downloadedBytes = 0;
             long totalBytes = checkResult.Packages.Sum(p => p.Size);
-            return checkResult.Packages.ForEachAsync(async p =>
+            await checkResult.Packages.ForEachAsync(async p =>
             {
                 var packageProgress = new Progress<UpdateProgressData>();
                 long currentlyDownloadedBytes = 0;
@@ -93,7 +93,7 @@ namespace nUpdate
                     currentlyDownloadedBytes += data.BytesReceived;
                     progress.Report(new UpdateProgressData(downloadedBytes,
                         // ReSharper disable once PossibleLossOfFraction
-                        totalBytes, (float)(downloadedBytes / totalBytes) * 100));
+                        totalBytes, (float) (downloadedBytes / totalBytes) * 100));
                 };
                 await DownloadPackage(p, packageProgress, cancellationToken);
             });
