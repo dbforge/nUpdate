@@ -9,19 +9,17 @@ namespace nUpdate.Administration.Common
 {
     public static class TransferProviderResolver
     {
-        private static readonly Dictionary<TransferProviderType, Type> InternalTransferProviders =
-            new Dictionary<TransferProviderType, Type>
+        private static readonly Dictionary<TransferProviderType, ITransferProvider> InternalTransferProviders =
+            new Dictionary<TransferProviderType, ITransferProvider>
             {
-                {TransferProviderType.Http, typeof(HttpTransferProvider)},
-                {TransferProviderType.Ftp, typeof(FtpTransferProvider)},
-                {TransferProviderType.GitHub, typeof(GitHubTransferProvider) }
+                {TransferProviderType.Http, new HttpTransferProvider()},
+                {TransferProviderType.Ftp, new FtpTransferProvider()},
+                {TransferProviderType.GitHub, new GitHubTransferProvider() }
             };
 
         public static ITransferProvider ResolveInternal(TransferProviderType transferProviderType)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var serviceProvider = ServiceProviderHelper.CreateServiceProvider(assembly);
-            return (ITransferProvider)serviceProvider.GetService(InternalTransferProviders[transferProviderType]);
+            return InternalTransferProviders[transferProviderType];
         }
 
         public static ITransferProvider ResolveCustom(string transferAssemblyFilePath, Type transferProviderClassType)
