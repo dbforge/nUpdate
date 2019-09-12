@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace nUpdate.Administration.Common
 {
-    internal class GitHubTransferProvider : ITransferProvider
+    public class GitHubTransferProvider : ITransferProvider
     {
         public ITransferData TransferData { get; set; }
         public Task<(bool, Exception)> TestConnection()

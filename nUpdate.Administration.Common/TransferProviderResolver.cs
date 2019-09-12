@@ -19,6 +19,8 @@ namespace nUpdate.Administration.Common
 
         public static ITransferProvider ResolveInternal(TransferProviderType transferProviderType)
         {
+            if (transferProviderType == TransferProviderType.Custom)
+                throw new InvalidOperationException();
             return InternalTransferProviders[transferProviderType];
         }
 
@@ -30,6 +32,8 @@ namespace nUpdate.Administration.Common
             if (!transferAssemblyFilePath.IsValidPath())
                 throw new TransferProtocolException(
                     $"The project uses a custom transfer provider, but the path to the file containing the transfer provider is invalid: \"{transferAssemblyFilePath}\"");
+            if (transferProviderClassType == null)
+                throw new ArgumentNullException(nameof(transferProviderClassType));
 
             var assembly = Assembly.LoadFrom(transferAssemblyFilePath);
             var serviceProvider = ServiceProviderHelper.CreateServiceProvider(assembly);
