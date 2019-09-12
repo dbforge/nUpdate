@@ -45,6 +45,9 @@
     </StartupObject>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ServiceProcess" />
@@ -87,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\nUpdate\nUpdate.csproj">
-      <Project>{E68DD6C6-82DD-4837-BC94-431E6C41B6FE}</Project>
+      <Project>{e68dd6c6-82dd-4837-bc94-431e6c41b6fe}</Project>
       <Name>nUpdate</Name>
     </ProjectReference>
   </ItemGroup>
