@@ -15,7 +15,6 @@ namespace nUpdate.Administration.Common.Ftp
     {
         internal FtpData Data => TransferData as FtpData;
 
-        // TODO: Check implementation
         public Task DeleteDirectory(string directoryName)
         {
             return DeleteDirectoryWithPath(Path.Combine(Data.Directory, directoryName));
@@ -44,6 +43,7 @@ namespace nUpdate.Administration.Common.Ftp
             using (var ftpClient = await GetFtpClient())
             {
                 await ftpClient.DeleteFileAsync(filePath);
+                await ftpClient.DisconnectAsync();
             }
         }
 
