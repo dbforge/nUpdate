@@ -66,7 +66,7 @@ namespace nUpdate.Administration.ViewModels.Providers
 
         public bool CanEditMasterPassword()
         {
-            return SettingsManager.Instance.CheckExistance("UseEncryptedKeyDatabase") && (bool)SettingsManager.Instance["UseEncryptedKeyDatabase"];
+            return SettingsManager.Instance.CheckExistence("UseEncryptedKeyDatabase") && (bool)SettingsManager.Instance["UseEncryptedKeyDatabase"];
         }
 
         public List<MainMenuItem> GetCollectionView()

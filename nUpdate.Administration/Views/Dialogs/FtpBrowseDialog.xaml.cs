@@ -22,7 +22,7 @@ namespace nUpdate.Administration.Views.Dialogs
         public FtpBrowseDialog(ITransferData data)
         {
             InitializeComponent();
-            _transferManager = new TransferManager(TransferProtocol.FTP, data);
+            _transferManager = new TransferManager(TransferProviderType.Ftp, data);
             ServerTreeView.Items.Add(new TreeViewItem {Header = "/", Tag = ServerItemTag});
         }
 
@@ -58,7 +58,7 @@ namespace nUpdate.Administration.Views.Dialogs
                 Width = MainPanel.Width,
                 Height = MainPanel.Height
             };
-            parentAdorner.Add(loadingAdorner);
+            parentAdorner?.Add(loadingAdorner);
 
             // Update the path
             UpdatePath(selectedItem);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using nUpdate;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Ftp;
 using nUpdate.Administration.Common.Http;
@@ -22,14 +23,13 @@ namespace nUpdate.Administration.Common
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            object service;
-            return !_services.TryGetValue(serviceType, out service) ? null : service;
+            return !_services.TryGetValue(serviceType, out var service) ? null : service;
         }
 
         private void InitializeServices()
         {
-            _services.Add(typeof (FtpTransferService), new FtpTransferService());
-            _services.Add(typeof(HttpTransferService), new HttpTransferService());
+            _services.Add(typeof (FtpTransferProvider), new FtpTransferProvider());
+            _services.Add(typeof(HttpTransferProvider), new HttpTransferProvider());
         }
     }
 }

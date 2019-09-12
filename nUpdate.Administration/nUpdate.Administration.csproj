@@ -49,9 +49,6 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="starksoft.aspen, Version=1.1.5.0, Culture=neutral, PublicKeyToken=56b8923a24d03eb3, processorArchitecture=MSIL">
-      <HintPath>..\packages\starksoft.aspen.1.1.6\lib\net45\starksoft.aspen.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -141,8 +138,8 @@
     <Compile Include="Views\NewProject\HttpDataPage.xaml.cs">
       <DependentUpon>HttpDataPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NewProject\ProtocolSelectionPage.xaml.cs">
-      <DependentUpon>ProtocolSelectionPage.xaml</DependentUpon>
+    <Compile Include="Views\NewProject\ProviderSelectionPage.xaml.cs">
+      <DependentUpon>ProviderSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExtendedWindow.cs" />
     <Compile Include="Views\ProjectWindow.xaml.cs">
@@ -211,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NewProject\ProtocolSelectionPage.xaml">
+    <Page Include="Views\NewProject\ProviderSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

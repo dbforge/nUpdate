@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace nUpdate.Administration.Common.Http
 {
-    internal class HttpTransferService : ITransferProvider
+    public class HttpTransferProvider : ITransferProvider
     {
-        internal HttpData Data { get; set; }
+        internal HttpData Data => TransferData as HttpData;
 
         public Task DeleteDirectory(string directoryName)
         {
@@ -25,22 +23,12 @@ namespace nUpdate.Administration.Common.Http
             throw new NotImplementedException();
         }
 
+        Task<(bool, Exception)> ITransferProvider.TestConnection()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task DeleteFileWithPath(string filePath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Exists(string destinationName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Exists(string directoryPath, string destinationName)
         {
             throw new NotImplementedException();
         }
@@ -50,7 +38,37 @@ namespace nUpdate.Administration.Common.Http
             throw new NotImplementedException();
         }
 
+        public Task Rename(string oldName, string newName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RenameAtPath(string path, string oldName, string newName)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task MakeDirectory(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> FileExistsAtPath(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> FileExists(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DirectoryExistsAtPath(string directoryPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DirectoryExists(string destinationName)
         {
             throw new NotImplementedException();
         }
@@ -60,32 +78,9 @@ namespace nUpdate.Administration.Common.Http
             throw new NotImplementedException();
         }
 
-        public Task MoveContent(string destinationPath, IEnumerable<string> availableChannelNames)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RenameDirectory(string oldName, string newName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> TestConnection()
-        {
-            throw new NotImplementedException();
-        }
+        public ITransferData TransferData { get; set; }
 
         public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UploadFile(Stream fileStream, string remotePath, IProgress<ITransferProgressData> progress)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UploadPackage(string packagePath, Guid guid, CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }

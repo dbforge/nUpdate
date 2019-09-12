@@ -1,13 +1,14 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System.Security.Authentication;
+using FluentFTP;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Ftp;
 using nUpdate.Administration.Common.Providers;
-using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class FtpDataPageViewModel : WizardPageViewModel, IProtocolPageViewModel
+    public class FtpDataPageViewModel : WizardPageViewModel, ITransferProviderPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private readonly INewProjectProvider _newProjectProvider;
@@ -17,9 +18,10 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private string _host;
         private string _password;
         private int _port = 21;
-        private FtpsSecurityProtocol _protocol;
-        private int _selectedModeIndex;
         private string _username;
+        private bool _autoConnect;
+        private FtpEncryptionMode _encryptionMode;
+        private SslProtocols _sslProtocols;
 
         public FtpDataPageViewModel(NewProjectViewModel viewModel, INewProjectProvider newProjectProvider)
         {
@@ -39,8 +41,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             {
                 Host = Host,
                 Port = Port,
-                FtpSpecificProtocol = Protocol,
-                UsePassiveMode = SelectedModeIndex == 0,
                 Username = Username,
                 Secret = Password
             };
@@ -78,16 +78,22 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _port, nameof(Port));
         }
 
-        public FtpsSecurityProtocol Protocol
+        public bool AutoConnect
         {
-            get => _protocol;
-            set => SetProperty(value, ref _protocol, nameof(Protocol));
+            get => _autoConnect;
+            set => SetProperty(value, ref _autoConnect, nameof(AutoConnect));
         }
 
-        public int SelectedModeIndex
+        public FtpEncryptionMode EncryptionMode
         {
-            get => _selectedModeIndex;
-            set => SetProperty(value, ref _selectedModeIndex, nameof(SelectedModeIndex));
+            get => _encryptionMode;
+            set => SetProperty(value, ref _encryptionMode, nameof(EncryptionMode));
+        }
+
+        public SslProtocols SslProtocols
+        {
+            get => _sslProtocols;
+            set => SetProperty(value, ref _sslProtocols, nameof(SslProtocols));
         }
 
         public string Username
@@ -111,8 +117,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _transferData.Host = Host;
             _transferData.Port = Port;
             _transferData.Username = Username;
-            _transferData.UsePassiveMode = SelectedModeIndex == 0;
-            _transferData.FtpSpecificProtocol = Protocol;
             _transferData.Directory = Directory;
 
             _newProjectViewModel.ProjectCreationData.Project.TransferData = _transferData;

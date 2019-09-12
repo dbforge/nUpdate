@@ -13,8 +13,8 @@ namespace nUpdate.Administration.Common
         public static object Deserialize(byte[] graph)
         {
             var bf = new BinaryFormatter();
-            var ms = new MemoryStream(graph);
-            return bf.Deserialize(ms);
+            using (var ms = new MemoryStream(graph))
+                return bf.Deserialize(ms);
         }
 
         /// <summary>
@@ -33,9 +33,11 @@ namespace nUpdate.Administration.Common
         public static byte[] Serialize(object obj)
         {
             var bf = new BinaryFormatter();
-            var ms = new MemoryStream();
-            bf.Serialize(ms, obj);
-            return ms.ToArray();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
         }
     }
 }

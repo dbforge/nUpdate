@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using nUpdate.Administration.Common.Logging;
-using nUpdate.Administration.Common.Proxy;
 
 // ReSharper disable InconsistentNaming
 
@@ -13,7 +12,7 @@ namespace nUpdate.Administration.Common
         {
             AvailableLocations = JsonSerializer.Deserialize<TrulyObservableCollection<UpdateProjectLocation>>(File.ReadAllText(PathProvider.ProjectsConfigFilePath)) ?? new TrulyObservableCollection<UpdateProjectLocation>();
             AvailableLocations.CollectionChanged += (sender, args) => 
-                File.WriteAllText(PathProvider.ProjectsConfigFilePath, JsonSerializer.Serialize(Enumerable.ToList(AvailableLocations)));
+                File.WriteAllText(PathProvider.ProjectsConfigFilePath, JsonSerializer.Serialize(AvailableLocations.ToList()));
         }
 
         /// <summary>
@@ -45,12 +44,7 @@ namespace nUpdate.Administration.Common
         ///     Gets the path of the file containing the <see cref="UpdateProject"/> data of the <see cref="ProjectSession"/>.
         /// </summary>
         internal static string ProjectFilePath
-            => Enumerable.First(AvailableLocations, x => x.Guid == ActiveProject.Guid).LastSeenPath;
-
-        /// <summary>
-        ///     Gets the <see cref="Proxy.ProxyManager"/> of the <see cref="ProjectSession"/> for managing proxies.
-        /// </summary>
-        internal static ProxyManager ProxyManager { get; set; }
+            => AvailableLocations.First(x => x.Guid == ActiveProject.Guid).LastSeenPath;
 
         /// <summary>
         ///     Gets or sets the path of the local package data folders of the current <see cref="ActiveProject"/>.
@@ -69,7 +63,6 @@ namespace nUpdate.Administration.Common
             UpdateFactory = new UpdateFactory(project);
             Logger = new PackageActionLogger(project);
             TransferManager = new TransferManager(project);
-            ProxyManager = new ProxyManager();
             PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 
             ActiveProject.PropertyChanged += (sender, args) => ActiveProject.Save();
@@ -77,7 +70,7 @@ namespace nUpdate.Administration.Common
 
         internal static void Terminate()
         {
-            ActiveProject = default(UpdateProject);
+            ActiveProject = default;
             UpdateFactory = null;
             Logger = null;
             TransferManager = null;

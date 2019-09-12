@@ -18,10 +18,8 @@ namespace nUpdate.Administration.Common
         {
             _project = project;
         }
-        internal IEnumerable<UpdatePackage> LoadPackageData()
-        {
-            return _project.Packages;
-        }
+
+        internal IEnumerable<UpdatePackage> Packages => _project.Packages;
 
         /*internal Task PushPackageData(UpdatePackage updatePackage, CancellationToken cancellationToken,
             IProgress<ITransferProgressData> progress)
@@ -33,11 +31,11 @@ namespace nUpdate.Administration.Common
             var destinationChannel = masterChannel.FirstOrDefault(c => c.Name == updatePackage.ChannelName);
             if (destinationChannel == null)
                 throw new InvalidOperationException("Invalid update channel.");
-
+    
             var updatePackages =
                 (await UpdatePackage.GetPackageEnumerable(destinationChannel.Uri, null)).ToList();
             updatePackages.Add(updatePackage);
-
+    
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes((string) JsonSerializer.Serialize(updatePackages))))
             {
                 // TODO: Upload the package data
@@ -61,7 +59,7 @@ namespace nUpdate.Administration.Common
             });
         }
 
-        internal async Task PushUpdate(UpdateFactoryPackage factoryPackage, CancellationToken cancellationToken,
+        /*internal Task PushUpdate(UpdateFactoryPackage factoryPackage, CancellationToken cancellationToken,
             IProgress<ITransferProgressData> progress)
         {
             var package = factoryPackage.PackageData;
@@ -77,7 +75,7 @@ namespace nUpdate.Administration.Common
 
             ProjectSession.Logger.AppendEntry(PackageActionType.UploadPackage,
                 $"{factoryPackage.PackageData.Version} ({factoryPackage.PackageData.ChannelName})");
-        }
+        }*/
 
         /*internal Task RemovePackageData(SemanticVersion packageVersion,
             CancellationToken cancellationToken, IProgress<ITransferProgressData> progress)
@@ -112,7 +110,7 @@ namespace nUpdate.Administration.Common
             // First, remove the package data from the relating file. Background: If removing the package file fails, we can still be sure that the package won't be downloaded any longer.
             //await RemovePackageData(SemanticVersion, updateChannelName, cancellationToken, progress);
 
-            if (await ProjectSession.TransferManager.Exists(packageVersion.ToString()))
+            if (await ProjectSession.TransferManager.DirectoryExists(packageVersion.ToString()))
                 await ProjectSession.TransferManager.DeleteDirectory(packageVersion.ToString());
 
             var destinationPackage =

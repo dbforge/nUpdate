@@ -1,11 +1,27 @@
 ﻿using System;
-using Starksoft.Aspen.Ftps;
 
 namespace nUpdate.Administration.Common.Ftp
 {
-    internal class FtpTransferProgressData : TransferProgressEventArgs, ITransferProgressData
+    internal class FtpTransferProgressData : ITransferProgressData
     {
-        public FtpTransferProgressData(int bytesTransferred, long totalBytesTransferred, long transferSize, int bytesPerSecond, TimeSpan elapsedTime, int percentComplete) : base(bytesTransferred, totalBytesTransferred, transferSize, bytesPerSecond, elapsedTime, percentComplete)
-        { }
+        public FtpTransferProgressData(double bytesPerSecond, TimeSpan finishTime, double progress)
+        {
+            BytesPerSecond = bytesPerSecond;
+            FinishTime = finishTime;
+            Progress = progress;
+        }
+
+
+        public TimeSpan FinishTime { get; }
+
+        public double Progress { get; }
+
+        public double BytesPerSecond  { get; }
+
+        public double KilobytesPerSecond => BytesPerSecond / 1000;
+
+        public double MegabytesPerSecond => KilobytesPerSecond / 1000;
+
+        public double GigabytesPerSecond => MegabytesPerSecond / 1000;
     }
 }

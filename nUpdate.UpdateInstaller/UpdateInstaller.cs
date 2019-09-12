@@ -39,7 +39,8 @@ namespace nUpdate.UpdateInstaller
                 var updateActions =
                     JsonSerializer.Deserialize<IEnumerable<IUpdateAction>>(File.ReadAllText(actionDataFilePath));
 
-                await updateActions.Where(a => a.ExecuteBeforeReplacingFiles).ForEachAsync(async a => await a.Execute());
+                var enumerable = updateActions as IUpdateAction[] ?? updateActions.ToArray();
+                await enumerable.Where(a => a.ExecuteBeforeReplacingFiles).ForEachAsync(async a => await a.Execute());
 
                 var directories = new DirectoryInfo(packagePath).GetDirectories();
                 await directories.ForEachAsync(async d =>
@@ -54,7 +55,7 @@ namespace nUpdate.UpdateInstaller
                     }
                 });
 
-                await updateActions.Where(a => !a.ExecuteBeforeReplacingFiles).ForEachAsync(async a => await a.Execute());
+                await enumerable.Where(a => !a.ExecuteBeforeReplacingFiles).ForEachAsync(async a => await a.Execute());
             });
         }
         private async Task CopyDirectoryContent(string sourcePath, string destPath)

@@ -1,5 +1,7 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System;
+
 namespace nUpdate.Administration.Common
 {
     public class ProjectCreationData
@@ -15,9 +17,9 @@ namespace nUpdate.Administration.Common
         public string PrivateKey { get; set; }
 
         /// <summary>
-        ///     Gets or sets the transfer protocol that should be used in the project.
+        ///     Gets or sets the transfer provider enumeration type for the wizard.
         /// </summary>
-        public TransferProtocol TransferProtocol { get; set; }
+        public TransferProviderType TransferProviderType { get; set; }
 
         /// <summary>
         ///     Gets or sets the project data.

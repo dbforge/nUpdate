@@ -28,8 +28,9 @@ namespace nUpdate.Administration.Common
         private string _publicKey;
         private string _transferAssemblyFilePath;
         private ITransferData _transferData;
-        private TransferProtocol _transferProtocol;
+        private Type _customTransferProviderClassType;
         private Uri _updateDirectoryUri;
+        private TransferProviderType _transferProviderType;
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the project.
@@ -163,15 +164,29 @@ namespace nUpdate.Administration.Common
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Common.TransferProtocol" /> that should be used for data transfers.
+        ///     Gets or sets the transfer provider type that should be used for data transfers.
         /// </summary>
         [JsonProperty]
-        public TransferProtocol TransferProtocol
+        public TransferProviderType TransferProviderType
         {
-            get => _transferProtocol;
+            get => _transferProviderType;
             set
             {
-                _transferProtocol = value;
+                _transferProviderType = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="Type"/> of the custom transfer provider in the assembly that should be used for data transfers.
+        /// </summary>
+        [JsonProperty]
+        public Type CustomTransferProviderClassType
+        {
+            get => _customTransferProviderClassType;
+            set
+            {
+                _customTransferProviderClassType = value;
                 OnPropertyChanged();
             }
         }

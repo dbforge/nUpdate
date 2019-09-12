@@ -1,13 +1,13 @@
 ﻿using System;
-using Starksoft.Aspen.Ftps;
+using FluentFTP;
 
 namespace nUpdate.Administration.Common.Ftp
 {
     internal class FtpsItemEx : IServerItem
     {
-        private readonly FtpsItem _ftpsItem;
+        private readonly FtpListItem _ftpsItem;
 
-        public FtpsItemEx(FtpsItem ftpsItem)
+        public FtpsItemEx(FtpListItem ftpsItem)
         {
             _ftpsItem = ftpsItem;
         }
@@ -16,9 +16,9 @@ namespace nUpdate.Administration.Common.Ftp
         {
             get
             {
-                if (_ftpsItem.ItemType == FtpItemType.Directory)
+                if (_ftpsItem.Type == FtpFileSystemObjectType.Directory)
                     return ServerItemType.Directory;
-                return _ftpsItem.ItemType == FtpItemType.Directory ? ServerItemType.File : ServerItemType.Other;
+                return _ftpsItem.Type == FtpFileSystemObjectType.File ? ServerItemType.File : ServerItemType.Other;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace nUpdate.Administration.Common
 {
@@ -12,6 +13,7 @@ namespace nUpdate.Administration.Common
         public void CreateDefault()
         {
             _values.Add("FirstRun", true);
+            _values.Add("TransferServiceAssemblyPaths", Enumerable.Empty<string>());
             Save();
         }
 
@@ -21,7 +23,7 @@ namespace nUpdate.Administration.Common
                 throw new InvalidOperationException("SettingsManager");
         }
 
-        public bool CheckExistance(string key)
+        public bool CheckExistence(string key)
         {
             return _values.ContainsKey(key);
         }

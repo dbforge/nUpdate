@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaktionslogik für ProviderSelectionPage.xaml
     /// </summary>
-    public partial class ProtocolSelectionPage
+    public partial class ProviderSelectionPage
     {
-        public ProtocolSelectionPage()
+        public ProviderSelectionPage()
         {
             InitializeComponent();
         }

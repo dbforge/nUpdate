@@ -19,7 +19,7 @@ namespace nUpdate.Administration.ViewModels
             {
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this, newProjectProvider),
-                new ProtocolSelectionPageViewModel(this),
+                new TransferProviderSelectionPageViewModel(this),
                 new FtpDataPageViewModel(this, newProjectProvider),
                 new HttpDataPageViewModel(this)
             });
@@ -48,8 +48,8 @@ namespace nUpdate.Administration.ViewModels
         {
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateBack(this);
-            CurrentPageViewModel = oldPageViewModel is IProtocolPageViewModel
-                ? PageViewModels.First(x => x.GetType() == typeof(ProtocolSelectionPageViewModel))
+            CurrentPageViewModel = oldPageViewModel is ITransferProviderPageViewModel
+                ? PageViewModels.First(x => x.GetType() == typeof(TransferProviderSelectionPageViewModel))
                 : PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
@@ -59,25 +59,28 @@ namespace nUpdate.Administration.ViewModels
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateForward(this);
 
-            if (oldPageViewModel.GetType() == typeof(ProtocolSelectionPageViewModel))
+            if (oldPageViewModel.GetType() == typeof(TransferProviderSelectionPageViewModel))
             {
-                switch (ProjectCreationData.TransferProtocol)
+                switch (ProjectCreationData.TransferProviderType)
                 {
-                    case TransferProtocol.FTP:
+                    case TransferProviderType.Ftp:
                         CurrentPageViewModel =
                             PageViewModels.First(x => x.GetType() == typeof(FtpDataPageViewModel));
                         break;
-                    case TransferProtocol.HTTP:
+                    case TransferProviderType.Http:
                         CurrentPageViewModel =
                             PageViewModels.First(x => x.GetType() == typeof(HttpDataPageViewModel));
                         break;
-                    case TransferProtocol.Custom:
+                    // TODO: Implement
+                    case TransferProviderType.GitHub:
+                        break;
+                    case TransferProviderType.Custom:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            else if (oldPageViewModel is IProtocolPageViewModel)
+            else if (oldPageViewModel is ITransferProviderPageViewModel)
             {
                 // TODO: Add page after protocol-specific pages
                 // If no errors occured and everything worked, we can now close the window
