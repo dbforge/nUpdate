@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using nUpdate.Administration.Common.Http.JsonRpc;
 
 namespace nUpdate.Administration.Common.Http
 {
@@ -8,81 +12,125 @@ namespace nUpdate.Administration.Common.Http
     {
         internal HttpData Data => TransferData as HttpData;
 
-        public Task DeleteDirectory(string directoryName)
+        private async Task<string> SendRequestInternal(object parameter, string callerMethod)
         {
-            throw new NotImplementedException();
+            using (var client = new WebClientEx())
+            {
+                if (Data.MustAuthenticate)
+                    client.Credentials = new NetworkCredential(Data.Username, Data.Password);
+
+                var jsonRequest = new JsonRequest(callerMethod, parameter, Guid.NewGuid());
+                return await client.UploadStringTaskAsync(Data.ScriptUri, "POST", jsonRequest.ToString());
+            }
         }
 
-        public Task DeleteDirectoryWithPath(string directoryPath)
+        private async Task<JsonResponse> SendRequest(object parameter, [CallerMemberName] string callerMethod = "")
         {
-            throw new NotImplementedException();
+            return JsonSerializer.Deserialize<JsonResponse>(await SendRequestInternal(parameter, callerMethod));
         }
 
-        public Task DeleteFile(string fileName)
+        private async Task<JsonResponse<T>> SendRequest<T>(object parameter, [CallerMemberName] string callerMethod = "")
         {
-            throw new NotImplementedException();
+            return JsonSerializer.Deserialize<JsonResponse<T>>(await SendRequestInternal(parameter, callerMethod));
         }
 
-        Task<(bool, Exception)> ITransferProvider.TestConnection()
+        public Task DeleteDirectoryInWorkingDirectory(string directoryName)
         {
-            throw new NotImplementedException();
+            return DeleteDirectory(Path.Combine(Data.Directory, directoryName));
         }
 
-        public Task DeleteFileWithPath(string filePath)
+        public async Task DeleteDirectory(string directoryPath)
         {
-            throw new NotImplementedException();
+            var response = await SendRequest(directoryPath);
+            if (response.Error != null)
+                throw response.Error;
         }
 
-        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
+        public Task DeleteFileInWorkingDirectory(string fileName)
         {
-            throw new NotImplementedException();
+            return DeleteFile(Path.Combine(Data.Directory, fileName));
         }
 
-        public Task Rename(string oldName, string newName)
+        public async Task<(bool, Exception)> TestConnection()
         {
-            throw new NotImplementedException();
+            // ReSharper disable once ExplicitCallerInfoArgument
+            var response = await SendRequest(null);
+            return response.Error != null ? (false, response.Error) : (true, null);
         }
 
-        public Task RenameAtPath(string path, string oldName, string newName)
+        public async Task DeleteFile(string filePath)
         {
-            throw new NotImplementedException();
+            var response = await SendRequest(filePath);
+            if (response.Error != null)
+                throw response.Error;
         }
 
-        public Task MakeDirectory(string name)
+        public async Task<IEnumerable<IServerItem>> List(string path, bool recursive)
         {
-            throw new NotImplementedException();
+            var response = await SendRequest<IEnumerable<IServerItem>>(new object[] {path, recursive});
+            if (response.Error != null)
+                throw response.Error;
+            return response.Result;
         }
 
-        public Task<bool> FileExistsAtPath(string filePath)
+        public Task RenameInWorkingDirectory(string oldName, string newName)
         {
-            throw new NotImplementedException();
+            return Rename(Data.Directory, oldName, newName);
         }
 
-        public Task<bool> FileExists(string fileName)
+        public async Task Rename(string path, string oldName, string newName)
         {
-            throw new NotImplementedException();
+            var response = await SendRequest(new[] {path, oldName, newName});
+            if (response.Error != null)
+                throw response.Error;
         }
 
-        public Task<bool> DirectoryExistsAtPath(string directoryPath)
+        public Task MakeDirectoryInWorkingDirectory(string name)
         {
-            throw new NotImplementedException();
+            return MakeDirectory(Path.Combine(Data.Directory, name));
         }
 
-        public Task<bool> DirectoryExists(string destinationName)
+        public async Task<bool> FileExists(string filePath)
         {
-            throw new NotImplementedException();
+            var response = await SendRequest<bool>(filePath);
+            if (response.Error != null)
+                throw response.Error;
+            return response.Result;
         }
 
-        public Task MakeDirectoryWithPath(string directoryPath)
+        public Task<bool> FileExistsInWorkingDirectory(string fileName)
         {
-            throw new NotImplementedException();
+            return FileExists(Path.Combine(Data.Directory, fileName));
+        }
+
+        public async Task<bool> DirectoryExists(string directoryPath)
+        {
+            var response = await SendRequest<bool>(directoryPath);
+            if (response.Error != null)
+                throw response.Error;
+            return response.Result;
+        }
+
+        public Task<bool> DirectoryExistsInWorkingDirectory(string destinationName)
+        {
+            return DirectoryExists(Path.Combine(Data.Directory, destinationName));
+        }
+
+        public async Task MakeDirectory(string directoryPath)
+        {
+            var response = await SendRequest(directoryPath);
+            if (response.Error != null)
+                throw response.Error;
         }
 
         public ITransferData TransferData { get; set; }
 
-        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
+        public async Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
         {
-            throw new NotImplementedException();
+            // TODO: Implement progress handling
+            var response = await SendRequest(filePath);
+            if (response.Error != null)
+                throw response.Error;
         }
     }
 }

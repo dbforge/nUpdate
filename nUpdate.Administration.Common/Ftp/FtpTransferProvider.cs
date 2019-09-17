@@ -15,12 +15,12 @@ namespace nUpdate.Administration.Common.Ftp
     {
         internal FtpData Data => TransferData as FtpData;
 
-        public Task DeleteDirectory(string directoryName)
+        public Task DeleteDirectoryInWorkingDirectory(string directoryName)
         {
-            return DeleteDirectoryWithPath(Path.Combine(Data.Directory, directoryName));
+            return DeleteDirectory(Path.Combine(Data.Directory, directoryName));
         }
 
-        public async Task DeleteDirectoryWithPath(string directoryPath)
+        public async Task DeleteDirectory(string directoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -29,7 +29,7 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public async Task DeleteFile(string fileName)
+        public async Task DeleteFileInWorkingDirectory(string fileName)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -38,7 +38,7 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public async Task DeleteFileWithPath(string filePath)
+        public async Task DeleteFile(string filePath)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -47,7 +47,7 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public async Task<bool> FileExistsAtPath(string filePath)
+        public async Task<bool> FileExists(string filePath)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -57,9 +57,9 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public Task<bool> FileExists(string fileName)
+        public Task<bool> FileExistsInWorkingDirectory(string fileName)
         {
-            return FileExistsAtPath(Path.Combine(Data.Directory, fileName));
+            return FileExists(Path.Combine(Data.Directory, fileName));
         }
 
         public async Task<IEnumerable<IServerItem>> List(string path, bool recursive)
@@ -73,12 +73,12 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public Task MakeDirectory(string directoryName)
+        public Task MakeDirectoryInWorkingDirectory(string directoryName)
         {
-            return MakeDirectoryWithPath(Path.Combine(Data.Directory, directoryName));
+            return MakeDirectory(Path.Combine(Data.Directory, directoryName));
         }
 
-        public async Task MakeDirectoryWithPath(string directoryPath)
+        public async Task MakeDirectory(string directoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -87,12 +87,12 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public Task Rename(string oldName, string newName)
+        public Task RenameInWorkingDirectory(string oldName, string newName)
         {
-            return RenameAtPath(Data.Directory, oldName, newName);
+            return Rename(Data.Directory, oldName, newName);
         }
 
-        public async Task RenameAtPath(string path, string oldName, string newName)
+        public async Task Rename(string path, string oldName, string newName)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -134,7 +134,7 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public async Task<bool> DirectoryExistsAtPath(string directoryPath)
+        public async Task<bool> DirectoryExists(string directoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -144,9 +144,9 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public Task<bool> DirectoryExists(string destinationName)
+        public Task<bool> DirectoryExistsInWorkingDirectory(string destinationName)
         {
-            return DirectoryExistsAtPath(Path.Combine(Data.Directory, destinationName));
+            return DirectoryExists(Path.Combine(Data.Directory, destinationName));
         }
 
         private FtpTransferProgressData GetFromFtpProgress(FtpProgress ftpProgress)

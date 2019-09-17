@@ -25,22 +25,22 @@ namespace nUpdate.Administration.Common
 
         public Task DeleteDirectory(string directoryName)
         {
-            return _transferProvider.DeleteDirectory(directoryName);
+            return _transferProvider.DeleteDirectoryInWorkingDirectory(directoryName);
         }
 
         public Task DeleteDirectoryWithPath(string directoryPath)
         {
-            return _transferProvider.DeleteDirectoryWithPath(directoryPath);
+            return _transferProvider.DeleteDirectory(directoryPath);
         }
 
         public Task DeleteFile(string fileName)
         {
-            return _transferProvider.DeleteFile(fileName);
+            return _transferProvider.DeleteFileInWorkingDirectory(fileName);
         }
 
         public Task DeleteFileWithPath(string filePath)
         {
-            return _transferProvider.DeleteFileWithPath(filePath);
+            return _transferProvider.DeleteFile(filePath);
         }
 
         public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
@@ -50,12 +50,12 @@ namespace nUpdate.Administration.Common
 
         public Task MakeDirectory(string directoryName)
         {
-            return _transferProvider.MakeDirectory(directoryName);
+            return _transferProvider.MakeDirectoryInWorkingDirectory(directoryName);
         }
 
         public Task MakeDirectoryWithPath(string directoryPath)
         {
-            return _transferProvider.MakeDirectoryWithPath(directoryPath);
+            return _transferProvider.MakeDirectory(directoryPath);
         }
 
         public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
@@ -85,32 +85,32 @@ namespace nUpdate.Administration.Common
 
         public Task Rename(string oldName, string newName)
         {
-            return _transferProvider.Rename(oldName, newName);
+            return _transferProvider.RenameInWorkingDirectory(oldName, newName);
         }
 
         public Task RenameAtPath(string path, string oldName, string newName)
         {
-            return _transferProvider.RenameAtPath(path, oldName, newName);
+            return _transferProvider.Rename(path, oldName, newName);
         }
 
         public Task<bool> FileExistsAtPath(string filePath)
         {
-            return _transferProvider.FileExistsAtPath(filePath);
+            return _transferProvider.FileExists(filePath);
         }
 
         public Task<bool> FileExists(string fileName)
         {
-            return _transferProvider.FileExists(fileName);
+            return _transferProvider.FileExistsInWorkingDirectory(fileName);
         }
 
         public Task<bool> DirectoryExistsAtPath(string directoryPath)
         {
-            return _transferProvider.DirectoryExistsAtPath(directoryPath);
+            return _transferProvider.DirectoryExists(directoryPath);
         }
 
         public Task<bool> DirectoryExists(string destinationName)
         {
-            return _transferProvider.DirectoryExists(destinationName);
+            return _transferProvider.DirectoryExistsInWorkingDirectory(destinationName);
         }
     }
 }

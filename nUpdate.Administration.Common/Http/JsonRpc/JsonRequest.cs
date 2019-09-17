@@ -26,5 +26,10 @@ namespace nUpdate.Administration.Common.Http.JsonRpc
 
         [JsonProperty("id")]
         public object Id { get; set; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

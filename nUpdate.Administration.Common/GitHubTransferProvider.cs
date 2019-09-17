@@ -12,22 +12,22 @@ namespace nUpdate.Administration.Common
             throw new NotImplementedException();
         }
 
-        public Task DeleteFileWithPath(string filePath)
+        public Task DeleteFile(string filePath)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteFile(string fileName)
+        public Task DeleteFileInWorkingDirectory(string fileName)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteDirectoryWithPath(string directoryPath)
+        public Task DeleteDirectory(string directoryPath)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteDirectory(string directoryName)
+        public Task DeleteDirectoryInWorkingDirectory(string directoryName)
         {
             throw new NotImplementedException();
         }
@@ -37,42 +37,42 @@ namespace nUpdate.Administration.Common
             throw new NotImplementedException();
         }
 
-        public Task Rename(string oldName, string newName)
+        public Task RenameInWorkingDirectory(string oldName, string newName)
         {
             throw new NotImplementedException();
         }
 
-        public Task RenameAtPath(string path, string oldName, string newName)
+        public Task Rename(string path, string oldName, string newName)
         {
             throw new NotImplementedException();
         }
 
-        public Task MakeDirectoryWithPath(string directoryPath)
+        public Task MakeDirectory(string directoryPath)
         {
             throw new NotImplementedException();
         }
 
-        public Task MakeDirectory(string name)
+        public Task MakeDirectoryInWorkingDirectory(string name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> FileExistsAtPath(string filePath)
+        public Task<bool> FileExists(string filePath)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> FileExists(string fileName)
+        public Task<bool> FileExistsInWorkingDirectory(string fileName)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DirectoryExistsAtPath(string directoryPath)
+        public Task<bool> DirectoryExists(string directoryPath)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DirectoryExists(string destinationName)
+        public Task<bool> DirectoryExistsInWorkingDirectory(string destinationName)
         {
             throw new NotImplementedException();
         }
