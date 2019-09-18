@@ -1,5 +1,5 @@
 ﻿// FtpTransferProvider.cs, 27.07.2019
-// Copyright (C) Dominic Beger 10.09.2019
+// Copyright (C) Dominic Beger 18.09.2019
 
 using System;
 using System.Collections.Generic;
@@ -15,93 +15,73 @@ namespace nUpdate.Administration.Common.Ftp
     {
         internal FtpData Data => TransferData as FtpData;
 
-        public Task DeleteDirectoryInWorkingDirectory(string directoryName)
-        {
-            return DeleteDirectory(Path.Combine(Data.Directory, directoryName));
-        }
-
-        public async Task DeleteDirectory(string directoryPath)
+        public async Task DeleteDirectory(string relativeDirectoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                await ftpClient.DeleteDirectoryAsync(directoryPath);
+                await ftpClient.DeleteDirectoryAsync(Path.Combine(Data.Directory, relativeDirectoryPath));
                 await ftpClient.DisconnectAsync();
             }
         }
 
-        public async Task DeleteFileInWorkingDirectory(string fileName)
+        public async Task DeleteFile(string relativeFilePath)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                await ftpClient.DeleteFileAsync(Path.Combine(Data.Directory, fileName));
+                await ftpClient.DeleteFileAsync(Path.Combine(Data.Directory, relativeFilePath));
                 await ftpClient.DisconnectAsync();
             }
         }
 
-        public async Task DeleteFile(string filePath)
+        public async Task<bool> DirectoryExists(string relativeDirectoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                await ftpClient.DeleteFileAsync(filePath);
-                await ftpClient.DisconnectAsync();
-            }
-        }
-
-        public async Task<bool> FileExists(string filePath)
-        {
-            using (var ftpClient = await GetFtpClient())
-            {
-                bool result = await ftpClient.FileExistsAsync(filePath);
+                var result = await ftpClient.DirectoryExistsAsync(Path.Combine(Data.Directory, relativeDirectoryPath));
                 await ftpClient.DisconnectAsync();
                 return result;
             }
         }
 
-        public Task<bool> FileExistsInWorkingDirectory(string fileName)
-        {
-            return FileExists(Path.Combine(Data.Directory, fileName));
-        }
-
-        public async Task<IEnumerable<IServerItem>> List(string path, bool recursive)
+        public async Task<bool> FileExists(string relativeFilePath)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                var items = await ftpClient.GetListingAsync(path,
+                var result = await ftpClient.FileExistsAsync(Path.Combine(Data.Directory, relativeFilePath));
+                await ftpClient.DisconnectAsync();
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<IServerItem>> List(string relativePath, bool recursive)
+        {
+            using (var ftpClient = await GetFtpClient())
+            {
+                var items = await ftpClient.GetListingAsync(Path.Combine(Data.Directory, relativePath),
                     recursive ? FtpListOption.Recursive : FtpListOption.Auto);
                 await ftpClient.DisconnectAsync();
-                return items.Select(x => new FtpsItemEx(x));
+                return items.Select(x => new FtpServerItem(x));
             }
         }
 
-        public Task MakeDirectoryInWorkingDirectory(string directoryName)
-        {
-            return MakeDirectory(Path.Combine(Data.Directory, directoryName));
-        }
-
-        public async Task MakeDirectory(string directoryPath)
+        public async Task MakeDirectory(string relativeDirectoryPath)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                await ftpClient.CreateDirectoryAsync(directoryPath);
+                await ftpClient.CreateDirectoryAsync(Path.Combine(Data.Directory, relativeDirectoryPath));
                 await ftpClient.DisconnectAsync();
             }
         }
 
-        public Task RenameInWorkingDirectory(string oldName, string newName)
-        {
-            return Rename(Data.Directory, oldName, newName);
-        }
-
-        public async Task Rename(string path, string oldName, string newName)
+        public async Task Rename(string relativePath, string oldName, string newName)
         {
             using (var ftpClient = await GetFtpClient())
             {
-                await ftpClient.RenameAsync(Path.Combine(path, oldName), Path.Combine(path, newName));
+                await ftpClient.RenameAsync(Path.Combine(Data.Directory, relativePath, oldName),
+                    Path.Combine(Data.Directory, relativePath, newName));
                 await ftpClient.DisconnectAsync();
             }
         }
-
-        public ITransferData TransferData { get; set; }
 
         public async Task<(bool, Exception)> TestConnection()
         {
@@ -119,7 +99,10 @@ namespace nUpdate.Administration.Common.Ftp
             }
         }
 
-        public async Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
+        public ITransferData TransferData { get; set; }
+
+        public async Task UploadFile(string localFilePath, string remoteRelativePath,
+            IProgress<ITransferProgressData> progress)
         {
             using (var ftpClient = await GetFtpClient())
             {
@@ -127,26 +110,17 @@ namespace nUpdate.Administration.Common.Ftp
                 internalProgress.ProgressChanged +=
                     (sender, ftpProgress) => progress.Report(GetFromFtpProgress(ftpProgress));
 
-                await ftpClient.UploadFileAsync(filePath,
-                    Path.Combine(Data.Directory, Path.GetFileName(filePath) ?? throw new InvalidOperationException()),
+                await ftpClient.UploadFileAsync(localFilePath,
+                    Path.Combine(Data.Directory, remoteRelativePath),
                     FtpExists.Overwrite, true, FtpVerify.Retry, internalProgress);
                 await ftpClient.DisconnectAsync();
             }
         }
 
-        public async Task<bool> DirectoryExists(string directoryPath)
+        private async Task Connect(IFtpClient ftpClient)
         {
-            using (var ftpClient = await GetFtpClient())
-            {
-                bool result = await ftpClient.DirectoryExistsAsync(directoryPath);
-                await ftpClient.DisconnectAsync();
-                return result;
-            }
-        }
-
-        public Task<bool> DirectoryExistsInWorkingDirectory(string destinationName)
-        {
-            return DirectoryExists(Path.Combine(Data.Directory, destinationName));
+            if (!ftpClient.IsConnected)
+                await ftpClient.ConnectAsync();
         }
 
         private FtpTransferProgressData GetFromFtpProgress(FtpProgress ftpProgress)
@@ -159,12 +133,6 @@ namespace nUpdate.Administration.Common.Ftp
             var c = new FtpClient(Data.Host, Data.Port, Data.Username, (string) Data.Secret);
             await Connect(c);
             return c;
-        }
-
-        private async Task Connect(IFtpClient ftpClient)
-        {
-            if (!ftpClient.IsConnected)
-                await ftpClient.ConnectAsync();
         }
     }
 }

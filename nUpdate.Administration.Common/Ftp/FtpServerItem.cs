@@ -3,11 +3,11 @@ using FluentFTP;
 
 namespace nUpdate.Administration.Common.Ftp
 {
-    internal class FtpsItemEx : IServerItem
+    internal class FtpServerItem : IServerItem
     {
         private readonly FtpListItem _ftpsItem;
 
-        public FtpsItemEx(FtpListItem ftpsItem)
+        public FtpServerItem(FtpListItem ftpsItem)
         {
             _ftpsItem = ftpsItem;
         }
