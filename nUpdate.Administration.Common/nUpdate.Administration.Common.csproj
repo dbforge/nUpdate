@@ -13,4 +13,8 @@
     <ProjectReference Include="..\nUpdate\nUpdate.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Http\Backend\node.js\" />
+  </ItemGroup>
+
 </Project>

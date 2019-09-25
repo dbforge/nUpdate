@@ -1,0 +1,14 @@
+{
+  "name": "nupdate.administration.nodebackend",
+  "version": "1.0.0",
+  "description": "Node.js backend of nUpdate.Administration for update server request over HTTP(S).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dominic Beger",
+  "license": "MIT",
+  "dependencies": {
+    "node-json-rpc": "0.0.1"
+  }
+}
