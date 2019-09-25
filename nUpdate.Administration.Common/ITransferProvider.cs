@@ -29,9 +29,9 @@ namespace nUpdate.Administration.Common
         /// <summary>
         ///     Determines whether a directory exists at the path relative to the working directory.
         /// </summary>
-        /// <param name="directoryPath">The path of the directory relative to the working directory.</param>
+        /// <param name="relativeDirectoryPath">The path of the directory relative to the working directory.</param>
         /// <returns><c>true</c> if the directory exists, otherwise <c>false</c>.</returns>
-        Task<bool> DirectoryExists(string directoryPath);
+        Task<bool> DirectoryExists(string relativeDirectoryPath);
 
         /// <summary>
         ///     Determines whether a file exists at the path relative to the working directory.

@@ -1,5 +1,5 @@
 var rpc = require('node-json-rpc');
-var path = require("path")
+var p = require("path");
 const fs = require('fs');
 
 var options = {
@@ -34,7 +34,7 @@ server.addMethod('DeleteFile', function (para, callback) {
 var deleteFolderRecursive = function(path) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function(file) {
-            var curPath = path.join(path, file);
+            var curPath = p.join(path, file);
             if (fs.lstatSync(curPath).isDirectory()) { // recurse
                 deleteFolderRecursive(curPath);
             } else { // delete file

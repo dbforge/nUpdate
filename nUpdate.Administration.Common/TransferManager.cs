@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// TransferManager.cs, 27.07.2019
+// Copyright (C) Dominic Beger 25.09.2019
 
 using System;
 using System.Collections.Generic;
@@ -18,57 +19,41 @@ namespace nUpdate.Administration.Common
             _transferProvider = GetTransferProvider(project);
         }
 
-        public TransferManager(TransferProviderType transferProviderType, ITransferData data, Type customTransferProviderClassType = null, string transferAssemblyFilePath = null)
+        public TransferManager(TransferProviderType transferProviderType, ITransferData data,
+            Type customTransferProviderClassType = null, string transferAssemblyFilePath = null)
         {
-            _transferProvider = GetTransferProvider(transferProviderType, data, customTransferProviderClassType, transferAssemblyFilePath);
+            _transferProvider = GetTransferProvider(transferProviderType, data, customTransferProviderClassType,
+                transferAssemblyFilePath);
         }
 
-        public Task DeleteDirectory(string directoryName)
+        public Task DeleteDirectory(string relativeDirectoryPath)
         {
-            return _transferProvider.DeleteDirectoryInWorkingDirectory(directoryName);
+            return _transferProvider.DeleteDirectory(relativeDirectoryPath);
         }
 
-        public Task DeleteDirectoryWithPath(string directoryPath)
+        public Task DeleteFile(string relativeFileName)
         {
-            return _transferProvider.DeleteDirectory(directoryPath);
+            return _transferProvider.DeleteFile(relativeFileName);
         }
 
-        public Task DeleteFile(string fileName)
+        public Task<bool> DirectoryExists(string relativeDirectoryPath)
         {
-            return _transferProvider.DeleteFileInWorkingDirectory(fileName);
+            return _transferProvider.DirectoryExists(relativeDirectoryPath);
         }
 
-        public Task DeleteFileWithPath(string filePath)
+        public Task<bool> FileExists(string relativeFilePath)
         {
-            return _transferProvider.DeleteFile(filePath);
-        }
-
-        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
-        {
-            return _transferProvider.List(path, recursive);
-        }
-
-        public Task MakeDirectory(string directoryName)
-        {
-            return _transferProvider.MakeDirectoryInWorkingDirectory(directoryName);
-        }
-
-        public Task MakeDirectoryWithPath(string directoryPath)
-        {
-            return _transferProvider.MakeDirectory(directoryPath);
-        }
-
-        public Task UploadFile(string filePath, IProgress<ITransferProgressData> progress)
-        {
-            return _transferProvider.UploadFile(filePath, progress);
+            return _transferProvider.FileExists(relativeFilePath);
         }
 
         private ITransferProvider GetTransferProvider(UpdateProject project)
         {
-            return GetTransferProvider(project.TransferProviderType, project.TransferData, project.CustomTransferProviderClassType, project.TransferAssemblyFilePath);
+            return GetTransferProvider(project.TransferProviderType, project.TransferData,
+                project.CustomTransferProviderClassType, project.TransferAssemblyFilePath);
         }
 
-        private ITransferProvider GetTransferProvider(TransferProviderType transferProviderType, ITransferData data, Type customTransferProviderClassType,
+        private ITransferProvider GetTransferProvider(TransferProviderType transferProviderType, ITransferData data,
+            Type customTransferProviderClassType,
             string transferAssemblyFilePath)
         {
             var transferProvider = transferProviderType == TransferProviderType.Custom
@@ -78,39 +63,19 @@ namespace nUpdate.Administration.Common
             return transferProvider;
         }
 
+        public Task<IEnumerable<IServerItem>> List(string relativeDirectoryPath, bool recursive)
+        {
+            return _transferProvider.List(relativeDirectoryPath, recursive);
+        }
+
+        public Task Rename(string relativePath, string oldName, string newName)
+        {
+            return _transferProvider.Rename(relativePath, oldName, newName);
+        }
+
         public Task<(bool, Exception)> TestConnection()
         {
             return _transferProvider.TestConnection();
-        }
-
-        public Task Rename(string oldName, string newName)
-        {
-            return _transferProvider.RenameInWorkingDirectory(oldName, newName);
-        }
-
-        public Task RenameAtPath(string path, string oldName, string newName)
-        {
-            return _transferProvider.Rename(path, oldName, newName);
-        }
-
-        public Task<bool> FileExistsAtPath(string filePath)
-        {
-            return _transferProvider.FileExists(filePath);
-        }
-
-        public Task<bool> FileExists(string fileName)
-        {
-            return _transferProvider.FileExistsInWorkingDirectory(fileName);
-        }
-
-        public Task<bool> DirectoryExistsAtPath(string directoryPath)
-        {
-            return _transferProvider.DirectoryExists(directoryPath);
-        }
-
-        public Task<bool> DirectoryExists(string destinationName)
-        {
-            return _transferProvider.DirectoryExistsInWorkingDirectory(destinationName);
         }
     }
 }
