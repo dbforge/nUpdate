@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using nUpdate.Administration.Common.Exceptions;
-using Octokit;
 
 namespace nUpdate.Administration.Common
 {

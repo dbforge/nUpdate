@@ -6,7 +6,7 @@ using nUpdate.Administration.Common.Exceptions;
 namespace nUpdate.Administration.Test
 {
     [TestClass]
-    public class TransferProviderResolverTest
+    public class UpdateProviderResolverTest
     {
         [TestMethod]
         public void CanCreateInternalHttpTransferProvider()
