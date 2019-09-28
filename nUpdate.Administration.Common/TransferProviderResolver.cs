@@ -2,29 +2,37 @@
 using System.Collections.Generic;
 using System.Reflection;
 using nUpdate.Administration.Common.Exceptions;
-using nUpdate.Administration.Common.Ftp;
-using nUpdate.Administration.Common.Http;
+using Octokit;
 
 namespace nUpdate.Administration.Common
 {
     public static class TransferProviderResolver
     {
-        private static readonly Dictionary<TransferProviderType, ITransferProvider> InternalTransferProviders =
-            new Dictionary<TransferProviderType, ITransferProvider>
+        private static readonly Dictionary<UpdateProviderType, IUpdateProvider> InternalTransferProviders =
+            new Dictionary<UpdateProviderType, IUpdateProvider>
             {
-                {TransferProviderType.Http, new HttpTransferProvider()},
-                {TransferProviderType.Ftp, new FtpTransferProvider()},
-                {TransferProviderType.GitHub, new GitHubTransferProvider() }
+                {UpdateProviderType.ServerOverHttp, new HttpServerUpdateProvider()},
+                {UpdateProviderType.ServerOverFtp, new FtpServerUpdateProvider()},
+                {UpdateProviderType.ServerOverSsh, new SshServerUpdateProvider()},
+                {UpdateProviderType.GitHub, new GitHubUpdateProvider()},
             };
 
-        public static ITransferProvider ResolveInternal(TransferProviderType transferProviderType)
+
+        public static IUpdateProvider Resolve(UpdateProject project)
         {
-            if (transferProviderType == TransferProviderType.Custom)
-                throw new InvalidOperationException();
-            return InternalTransferProviders[transferProviderType];
+            return project.UpdateProviderType == UpdateProviderType.Custom
+                ? ResolveCustom(project.TransferAssemblyFilePath, project.CustomTransferProviderClassType)
+                : ResolveInternal(project.UpdateProviderType);
         }
 
-        public static ITransferProvider ResolveCustom(string transferAssemblyFilePath, Type transferProviderClassType)
+        public static IUpdateProvider ResolveInternal(UpdateProviderType updateProtocolType)
+        {
+            if (updateProtocolType == UpdateProviderType.Custom)
+                throw new InvalidOperationException();
+            return InternalTransferProviders[updateProtocolType];
+        }
+
+        public static IUpdateProvider ResolveCustom(string transferAssemblyFilePath, Type transferProviderClassType)
         {
             if (string.IsNullOrWhiteSpace(transferAssemblyFilePath))
                 throw new TransferProtocolException(
@@ -37,7 +45,7 @@ namespace nUpdate.Administration.Common
 
             var assembly = Assembly.LoadFrom(transferAssemblyFilePath);
             var serviceProvider = ServiceProviderHelper.CreateServiceProvider(assembly);
-            var transferProvider = (ITransferProvider) serviceProvider.GetService(transferProviderClassType);
+            var transferProvider = (IUpdateProvider) serviceProvider.GetService(transferProviderClassType);
             if (transferProvider == null)
                 throw new TransferProtocolException("No transfer provider is available in the specified assembly.");
             return transferProvider;

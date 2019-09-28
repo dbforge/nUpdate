@@ -2,8 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Exceptions;
-using nUpdate.Administration.Common.Ftp;
-using nUpdate.Administration.Common.Http;
 
 namespace nUpdate.Administration.Test
 {
@@ -13,29 +11,29 @@ namespace nUpdate.Administration.Test
         [TestMethod]
         public void CanCreateInternalHttpTransferProvider()
         {
-            var transferProvider = TransferProviderResolver.ResolveInternal(TransferProviderType.Http);
-            Assert.IsTrue(transferProvider.GetType() == typeof(HttpTransferProvider));
+            var transferProvider = TransferProviderResolver.ResolveInternal(UpdateProviderType.ServerOverHttp);
+            Assert.IsTrue(transferProvider.GetType() == typeof(HttpServerUpdateProvider));
         }
 
         [TestMethod]
         public void CanCreateInternalFtpTransferProvider()
         {
-            var transferProvider = TransferProviderResolver.ResolveInternal(TransferProviderType.Ftp);
-            Assert.IsTrue(transferProvider.GetType() == typeof(FtpTransferProvider));
+            var transferProvider = TransferProviderResolver.ResolveInternal(UpdateProviderType.ServerOverFtp);
+            Assert.IsTrue(transferProvider.GetType() == typeof(FtpServerUpdateProvider));
         }
 
         [TestMethod]
         public void CanCreateInternalGitHubTransferProvider()
         {
-            var transferProvider = TransferProviderResolver.ResolveInternal(TransferProviderType.GitHub);
-            Assert.IsTrue(transferProvider.GetType() == typeof(GitHubTransferProvider));
+            var transferProvider = TransferProviderResolver.ResolveInternal(UpdateProviderType.GitHub);
+            Assert.IsTrue(transferProvider.GetType() == typeof(GitHubUpdateProvider));
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void CanNotCreateCustomTransferProviderWithResolveInternalMethod()
         {
-            TransferProviderResolver.ResolveInternal(TransferProviderType.Custom);
+            TransferProviderResolver.ResolveInternal(UpdateProviderType.Custom);
         }
 
         [TestMethod]

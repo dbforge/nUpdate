@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaktionslogik für UpdateProviderSelectionPage.xaml
     /// </summary>
-    public partial class ProviderSelectionPage
+    public partial class UpdateProviderSelectionPage
     {
-        public ProviderSelectionPage()
+        public UpdateProviderSelectionPage()
         {
             InitializeComponent();
         }

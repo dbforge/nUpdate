@@ -61,20 +61,20 @@ namespace nUpdate.Administration.ViewModels
 
             if (oldPageViewModel.GetType() == typeof(TransferProviderSelectionPageViewModel))
             {
-                switch (ProjectCreationData.TransferProviderType)
+                switch (ProjectCreationData.UpdateProviderType)
                 {
-                    case TransferProviderType.Ftp:
+                    case UpdateProviderType.ServerOverFtp:
                         CurrentPageViewModel =
                             PageViewModels.First(x => x.GetType() == typeof(FtpDataPageViewModel));
                         break;
-                    case TransferProviderType.Http:
+                    case UpdateProviderType.ServerOverHttp:
                         CurrentPageViewModel =
                             PageViewModels.First(x => x.GetType() == typeof(HttpDataPageViewModel));
                         break;
                     // TODO: Implement
-                    case TransferProviderType.GitHub:
-                        break;
-                    case TransferProviderType.Custom:
+                    case UpdateProviderType.ServerOverSsh:
+                    case UpdateProviderType.GitHub:
+                    case UpdateProviderType.Custom:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

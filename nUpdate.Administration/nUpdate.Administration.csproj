@@ -138,8 +138,8 @@
     <Compile Include="Views\NewProject\HttpDataPage.xaml.cs">
       <DependentUpon>HttpDataPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NewProject\ProviderSelectionPage.xaml.cs">
-      <DependentUpon>ProviderSelectionPage.xaml</DependentUpon>
+    <Compile Include="Views\NewProject\UpdateProviderSelectionPage.xaml.cs">
+      <DependentUpon>UpdateProviderSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExtendedWindow.cs" />
     <Compile Include="Views\ProjectWindow.xaml.cs">
@@ -208,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NewProject\ProviderSelectionPage.xaml">
+    <Page Include="Views\NewProject\UpdateProviderSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

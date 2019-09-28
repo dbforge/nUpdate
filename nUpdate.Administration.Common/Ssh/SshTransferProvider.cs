@@ -1,25 +1,24 @@
-﻿// GitHubTransferProvider.cs, 10.09.2019
-// Copyright (C) Dominic Beger 25.09.2019
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace nUpdate.Administration.Common
+namespace nUpdate.Administration.Common.Ssh
 {
-    public class GitHubTransferProvider : ITransferProvider
+    public class SshTransferProvider : ITransferProvider
     {
-        public Task DeleteDirectory(string directoryPath)
+        public ITransferData TransferData { get; set; }
+
+        public Task DeleteDirectory(string relativeDirectoryPath)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteFile(string filePath)
+        public Task DeleteFile(string relativeFilePath)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DirectoryExists(string directoryPath)
+        public Task<bool> DirectoryExists(string relativeDirectoryPath)
         {
             throw new NotImplementedException();
         }
@@ -29,17 +28,17 @@ namespace nUpdate.Administration.Common
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IServerItem>> List(string path, bool recursive)
+        public Task<IEnumerable<IServerItem>> List(string relativeDirectoryPath, bool recursive)
         {
             throw new NotImplementedException();
         }
 
-        public Task MakeDirectory(string directoryPath)
+        public Task MakeDirectory(string relativePath)
         {
             throw new NotImplementedException();
         }
 
-        public Task Rename(string path, string oldName, string newName)
+        public Task Rename(string relativePath, string oldName, string newName)
         {
             throw new NotImplementedException();
         }
@@ -49,10 +48,7 @@ namespace nUpdate.Administration.Common
             throw new NotImplementedException();
         }
 
-        public ITransferData TransferData { get; set; }
-
-        public Task UploadFile(string localFilePath, string remoteRelativePath,
-            IProgress<ITransferProgressData> progress)
+        public Task UploadFile(string localFilePath, string remoteRelativePath, IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }

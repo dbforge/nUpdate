@@ -30,7 +30,7 @@ namespace nUpdate.Administration.Common
         private ITransferData _transferData;
         private Type _customTransferProviderClassType;
         private Uri _updateDirectoryUri;
-        private TransferProviderType _transferProviderType;
+        private UpdateProviderType _updateProviderType;
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the project.
@@ -167,12 +167,12 @@ namespace nUpdate.Administration.Common
         ///     Gets or sets the transfer provider type that should be used for data transfers.
         /// </summary>
         [JsonProperty]
-        public TransferProviderType TransferProviderType
+        public UpdateProviderType UpdateProviderType
         {
-            get => _transferProviderType;
+            get => _updateProviderType;
             set
             {
-                _transferProviderType = value;
+                _updateProviderType = value;
                 OnPropertyChanged();
             }
         }

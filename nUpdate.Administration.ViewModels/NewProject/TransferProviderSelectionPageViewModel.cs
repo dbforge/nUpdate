@@ -5,7 +5,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
     public class TransferProviderSelectionPageViewModel : WizardPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
-        private TransferProviderType _transferProviderType;
+        private UpdateProviderType _updateProviderType;
 
         public TransferProviderSelectionPageViewModel(NewProjectViewModel viewModel)
         {
@@ -13,16 +13,16 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CanGoBack = true;
             CanGoForward = true;
 
-            TransferProviderType = TransferProviderType.Http;
+            UpdateProviderType = UpdateProviderType.ServerOverHttp;
         }
 
-        public TransferProviderType TransferProviderType
+        public UpdateProviderType UpdateProviderType
         {
-            get => _transferProviderType;
+            get => _updateProviderType;
             set
             {
-                SetProperty(value, ref _transferProviderType, nameof(TransferProviderType));
-                _newProjectViewModel.ProjectCreationData.TransferProviderType = value;
+                SetProperty(value, ref _updateProviderType, nameof(UpdateProviderType));
+                _newProjectViewModel.ProjectCreationData.UpdateProviderType = value;
             }
         }
     }

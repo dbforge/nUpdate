@@ -21,19 +21,14 @@ namespace nUpdate.Administration.Common
         internal static UpdateProject ActiveProject { get; private set; }
 
         /// <summary>
-        ///     Gets the <see cref="Common.UpdateFactory"/> of the <see cref="ProjectSession"/> for managing channels and updates.
+        ///     Gets the <see cref="IUpdateProvider"/> of the <see cref="ProjectSession"/> for managing update transfers.
         /// </summary>
-        internal static UpdateFactory UpdateFactory { get; private set; }
+        internal static IUpdateProvider UpdateProvider { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="PackageActionLogger"/> of the <see cref="ProjectSession"/> for the package history.
         /// </summary>
         internal static PackageActionLogger Logger { get; private set; }
-
-        /// <summary>
-        ///     Gets the <see cref="Common.TransferManager"/> of the <see cref="ProjectSession"/> for data transfers.
-        /// </summary>
-        internal static TransferManager TransferManager { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="KeyManager"/> of the <see cref="ProjectSession"/> for the password management.
@@ -60,9 +55,8 @@ namespace nUpdate.Administration.Common
         internal static void InitializeWithProject(UpdateProject project)
         {
             ActiveProject = project;
-            UpdateFactory = new UpdateFactory(project);
             Logger = new PackageActionLogger(project);
-            TransferManager = new TransferManager(project);
+            UpdateProvider = TransferProviderResolver.Resolve(project);
             PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 
             ActiveProject.PropertyChanged += (sender, args) => ActiveProject.Save();
@@ -71,9 +65,9 @@ namespace nUpdate.Administration.Common
         internal static void Terminate()
         {
             ActiveProject = default;
-            UpdateFactory = null;
+            UpdateProvider = null;
             Logger = null;
-            TransferManager = null;
+            UpdateProvider = null;
             PasswordManager = null;
         }
     }

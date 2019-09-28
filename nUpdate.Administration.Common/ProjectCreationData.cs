@@ -19,7 +19,7 @@ namespace nUpdate.Administration.Common
         /// <summary>
         ///     Gets or sets the transfer provider enumeration type for the wizard.
         /// </summary>
-        public TransferProviderType TransferProviderType { get; set; }
+        public UpdateProviderType UpdateProviderType { get; set; }
 
         /// <summary>
         ///     Gets or sets the project data.

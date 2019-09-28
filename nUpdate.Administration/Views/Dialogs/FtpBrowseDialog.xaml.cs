@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using nUpdate.Administration.Common;
+using nUpdate.Administration.Common.Ftp;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs
@@ -16,13 +17,13 @@ namespace nUpdate.Administration.Views.Dialogs
     {
         private const string ServerItemTag = "server";
         private readonly List<TreeViewItem> _cachedTreeViewItems = new List<TreeViewItem>();
-        private readonly TransferManager _transferManager;
+        private readonly FtpTransferProvider _ftpTransferProvider;
         private string _directory = "/";
 
         public FtpBrowseDialog(ITransferData data)
         {
             InitializeComponent();
-            _transferManager = new TransferManager(TransferProviderType.Ftp, data);
+            _ftpTransferProvider = new FtpTransferProvider {TransferData = data};
             ServerTreeView.Items.Add(new TreeViewItem {Header = "/", Tag = ServerItemTag});
         }
 
@@ -38,7 +39,7 @@ namespace nUpdate.Administration.Views.Dialogs
 
         private async Task AddDirectoryContent(string path, ItemsControl current)
         {
-            var serverItems = await _transferManager.List(path, false);
+            var serverItems = await _ftpTransferProvider.List(path, false);
             foreach (var serverItem in serverItems.Where(x => x.ItemType == ServerItemType.Directory))
                 current.Items.Add(new TreeViewItem {Header = serverItem.Name});
         }
