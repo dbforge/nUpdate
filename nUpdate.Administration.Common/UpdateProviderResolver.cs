@@ -6,7 +6,7 @@ using Octokit;
 
 namespace nUpdate.Administration.Common
 {
-    public static class TransferProviderResolver
+    public static class UpdateProviderResolver
     {
         private static readonly Dictionary<UpdateProviderType, IUpdateProvider> InternalTransferProviders =
             new Dictionary<UpdateProviderType, IUpdateProvider>

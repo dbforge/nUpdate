@@ -56,7 +56,7 @@ namespace nUpdate.Administration.Common
         {
             ActiveProject = project;
             Logger = new PackageActionLogger(project);
-            UpdateProvider = TransferProviderResolver.Resolve(project);
+            UpdateProvider = UpdateProviderResolver.Resolve(project);
             PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 
             ActiveProject.PropertyChanged += (sender, args) => ActiveProject.Save();
