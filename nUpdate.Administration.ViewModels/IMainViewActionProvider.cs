@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using nUpdate.Administration.Common;
 
-namespace nUpdate.Administration.Common.Providers
+namespace nUpdate.Administration.ViewModels
 {
     public interface IMainViewActionProvider : ILoadActionProvider
     {

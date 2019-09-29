@@ -1,5 +1,4 @@
 ﻿using nUpdate.Administration.ViewModels;
-using nUpdate.Administration.ViewModels.Providers;
 
 namespace nUpdate.Administration.Views
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using nUpdate.Administration.Views.NewProject;
+using nUpdate.Administration.ViewModels.NewProject;
 
-namespace nUpdate.Administration.ViewModels.NewProject
+namespace nUpdate.Administration.Views.NewProject
 {
     public class NewProjectViewManager : ViewManager
     {

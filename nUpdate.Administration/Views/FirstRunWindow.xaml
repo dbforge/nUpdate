@@ -3,10 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:firstRun="clr-namespace:nUpdate.Administration.ViewModels.FirstRun"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:nUpdate.Administration.ViewModels"
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
+    xmlns:firstRun1="clr-namespace:nUpdate.Administration.Views.FirstRun"
     Title="First time setup - nUpdate Administration v4.0"
     Width="520"
     Height="310"
@@ -16,7 +15,7 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <firstRun:FirstRunViewManager x:Key="FirstRunViewManager" />
+        <firstRun1:FirstRunViewManager x:Key="FirstRunViewManager" />
     </Window.Resources>
 
     <DockPanel>

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
 using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Providers;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

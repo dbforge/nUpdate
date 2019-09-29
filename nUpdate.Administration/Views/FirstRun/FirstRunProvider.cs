@@ -2,11 +2,10 @@
 using System.IO;
 using System.Windows;
 using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Providers;
-using nUpdate.Administration.Views;
+using nUpdate.Administration.ViewModels.FirstRun;
 using WPFFolderBrowser;
 
-namespace nUpdate.Administration.ViewModels.Providers
+namespace nUpdate.Administration.Views.FirstRun
 {
     internal class FirstRunProvider : Singleton<FirstRunProvider>, IFirstRunProvider
     {

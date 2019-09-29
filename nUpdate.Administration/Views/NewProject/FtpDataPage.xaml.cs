@@ -1,7 +1,10 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System;
+using System.Security.Authentication;
 using System.Windows;
 using System.Windows.Controls;
+using FluentFTP;
 
 namespace nUpdate.Administration.Views.NewProject
 {
@@ -14,16 +17,10 @@ namespace nUpdate.Administration.Views.NewProject
         {
             InitializeComponent();
         }
-
         private void FtpDataPage_OnLoaded(object sender, RoutedEventArgs e)
         {
-            ModeComboBox.ItemsSource = new[] {"Passive (recommended)", "Active"};
-            ProtocolComboBox.ItemsSource = new[]
-            {
-                "FTP (insecure)", "FTPS (TLS1 Explicit)", "FTPS (TLS1 or SSL3 Explicit)", "FTPS (SSL3 explicit)",
-                "FTPS (SSL2 explicit)", "FTPS (TLS1 implicit)", "FTPS (TLS1 or SSL3 implicit)", "FTPS (SSL3 implicit)",
-                "FTPS (SSL2 implicit)"
-            };
+            ModeComboBox.ItemsSource = Enum.GetValues(typeof(FtpEncryptionMode));
+            ProtocolComboBox.ItemsSource = Enum.GetValues(typeof(SslProtocols));
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)

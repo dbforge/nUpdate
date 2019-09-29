@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Providers;
 using nUpdate.Administration.ViewModels.NewProject;
 
 namespace nUpdate.Administration.ViewModels

@@ -2,12 +2,11 @@
 using System.Windows;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Ftp;
-using nUpdate.Administration.Common.Providers;
-using nUpdate.Administration.Views;
+using nUpdate.Administration.ViewModels.NewProject;
 using nUpdate.Administration.Views.Dialogs;
 using WPFFolderBrowser;
 
-namespace nUpdate.Administration.ViewModels.Providers
+namespace nUpdate.Administration.Views.NewProject
 {
     public class NewProjectProvider : Singleton<NewProjectProvider>, INewProjectProvider
     {

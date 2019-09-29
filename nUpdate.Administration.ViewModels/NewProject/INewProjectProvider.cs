@@ -1,6 +1,6 @@
 ﻿using nUpdate.Administration.Common.Ftp;
 
-namespace nUpdate.Administration.Common.Providers
+namespace nUpdate.Administration.ViewModels.NewProject
 {
     public interface INewProjectProvider : IFinishProvider
     {

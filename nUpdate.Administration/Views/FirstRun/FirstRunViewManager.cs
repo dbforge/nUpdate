@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using nUpdate.Administration.Views.FirstRun;
+using nUpdate.Administration.ViewModels.FirstRun;
 
-namespace nUpdate.Administration.ViewModels.FirstRun
+namespace nUpdate.Administration.Views.FirstRun
 {
     public class FirstRunViewManager : ViewManager
     {

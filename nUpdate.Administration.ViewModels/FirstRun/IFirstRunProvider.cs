@@ -1,4 +1,6 @@
-﻿namespace nUpdate.Administration.Common.Providers
+﻿using nUpdate.Administration.Common;
+
+namespace nUpdate.Administration.ViewModels.FirstRun
 {
     public interface IFirstRunProvider : IFinishProvider
     {

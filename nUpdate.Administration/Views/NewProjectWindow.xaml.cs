@@ -1,5 +1,5 @@
 ﻿using nUpdate.Administration.ViewModels;
-using nUpdate.Administration.ViewModels.Providers;
+using nUpdate.Administration.Views.NewProject;
 
 namespace nUpdate.Administration.Views
 {

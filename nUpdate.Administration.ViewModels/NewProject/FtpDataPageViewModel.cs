@@ -4,7 +4,6 @@ using System.Security.Authentication;
 using FluentFTP;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Ftp;
-using nUpdate.Administration.Common.Providers;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {

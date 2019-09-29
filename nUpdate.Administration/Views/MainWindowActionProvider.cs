@@ -3,12 +3,11 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Windows;
 using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Providers;
-using nUpdate.Administration.Views;
+using nUpdate.Administration.ViewModels;
 using nUpdate.Administration.Views.Dialogs;
 using TaskDialogInterop;
 
-namespace nUpdate.Administration.ViewModels.Providers
+namespace nUpdate.Administration.Views
 {
     internal class MainWindowActionProvider : Singleton<MainWindowActionProvider>, IMainViewActionProvider
     {

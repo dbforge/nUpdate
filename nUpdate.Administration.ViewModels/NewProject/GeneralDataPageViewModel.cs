@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Providers;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {

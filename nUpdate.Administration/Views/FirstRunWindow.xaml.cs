@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using nUpdate.Administration.ViewModels;
-using nUpdate.Administration.ViewModels.Providers;
+using nUpdate.Administration.Views.FirstRun;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views

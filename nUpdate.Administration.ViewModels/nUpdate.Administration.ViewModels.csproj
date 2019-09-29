@@ -8,4 +8,8 @@
     <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Providers\" />
+  </ItemGroup>
+
 </Project>

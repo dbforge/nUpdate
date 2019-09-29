@@ -1,4 +1,4 @@
-﻿namespace nUpdate.Administration.Common.Providers
+﻿namespace nUpdate.Administration.ViewModels
 {
     public interface ILoadActionProvider
     {

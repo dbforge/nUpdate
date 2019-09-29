@@ -17,7 +17,7 @@
             DockPanel.Dock="Top"
             FontSize="12pt"
             Foreground="#003399"
-            Text="FTP(S)" />
+            Text="Server over FTP(S)" />
 
         <StackPanel VerticalAlignment="Center" Orientation="Vertical">
             <Grid>
