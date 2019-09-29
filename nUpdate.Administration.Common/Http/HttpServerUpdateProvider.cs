@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace nUpdate.Administration.Common
+namespace nUpdate.Administration.Common.Http
 {
     public class HttpServerUpdateProvider : IUpdateProvider
     {

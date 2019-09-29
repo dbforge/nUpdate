@@ -2,6 +2,6 @@
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public interface ITransferProviderPageViewModel
+    public interface IUpdateProviderPageViewModel
     { }
 }

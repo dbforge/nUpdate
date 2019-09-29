@@ -8,7 +8,7 @@ using nUpdate.Administration.Common.Providers;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class FtpDataPageViewModel : WizardPageViewModel, ITransferProviderPageViewModel
+    public class FtpDataPageViewModel : WizardPageViewModel, IUpdateProviderPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private readonly INewProjectProvider _newProjectProvider;

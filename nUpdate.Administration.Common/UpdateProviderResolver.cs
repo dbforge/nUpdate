@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using nUpdate.Administration.Common.Exceptions;
+using nUpdate.Administration.Common.Ftp;
+using nUpdate.Administration.Common.Http;
 
 namespace nUpdate.Administration.Common
 {

@@ -2,12 +2,12 @@
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class TransferProviderSelectionPageViewModel : WizardPageViewModel
+    public class UpdateProviderSelectionPageViewModel : WizardPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private UpdateProviderType _updateProviderType;
 
-        public TransferProviderSelectionPageViewModel(NewProjectViewModel viewModel)
+        public UpdateProviderSelectionPageViewModel(NewProjectViewModel viewModel)
         {
             _newProjectViewModel = viewModel;
             CanGoBack = true;

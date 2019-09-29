@@ -181,7 +181,7 @@ namespace nUpdate.Administration.ViewModels
                 // If no errors occured and everything worked, we can now call the finishing action (such as closing the window)
                 if (await Finish())
                     FinishingAction?.Invoke();
-                    //WindowManager.GetCurrentWindow().RequestClose();
+                //WindowManager.GetCurrentWindow().RequestClose();
                 return;
             }
 

@@ -19,7 +19,7 @@ namespace nUpdate.Administration.ViewModels
             {
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this, newProjectProvider),
-                new TransferProviderSelectionPageViewModel(this),
+                new UpdateProviderSelectionPageViewModel(this),
                 new FtpDataPageViewModel(this, newProjectProvider),
                 new HttpDataPageViewModel(this)
             });
@@ -48,8 +48,8 @@ namespace nUpdate.Administration.ViewModels
         {
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateBack(this);
-            CurrentPageViewModel = oldPageViewModel is ITransferProviderPageViewModel
-                ? PageViewModels.First(x => x.GetType() == typeof(TransferProviderSelectionPageViewModel))
+            CurrentPageViewModel = oldPageViewModel is IUpdateProviderPageViewModel
+                ? PageViewModels.First(x => x.GetType() == typeof(UpdateProviderSelectionPageViewModel))
                 : PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
@@ -59,7 +59,7 @@ namespace nUpdate.Administration.ViewModels
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateForward(this);
 
-            if (oldPageViewModel.GetType() == typeof(TransferProviderSelectionPageViewModel))
+            if (oldPageViewModel.GetType() == typeof(UpdateProviderSelectionPageViewModel))
             {
                 switch (ProjectCreationData.UpdateProviderType)
                 {
@@ -80,7 +80,7 @@ namespace nUpdate.Administration.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            else if (oldPageViewModel is ITransferProviderPageViewModel)
+            else if (oldPageViewModel is IUpdateProviderPageViewModel)
             {
                 // TODO: Add page after protocol-specific pages
                 // If no errors occured and everything worked, we can now close the window

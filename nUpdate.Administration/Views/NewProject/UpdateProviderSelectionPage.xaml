@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
     xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
-    d:DataContext="{d:DesignInstance newProject1:TransferProviderSelectionPageViewModel}"
+    d:DataContext="{d:DesignInstance newProject1:UpdateProviderSelectionPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
     Background="White"

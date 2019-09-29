@@ -3,7 +3,7 @@ using nUpdate.Administration.Common.Http;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class HttpDataPageViewModel : WizardPageViewModel, ITransferProviderPageViewModel
+    public class HttpDataPageViewModel : WizardPageViewModel, IUpdateProviderPageViewModel
     {
         private readonly NewProjectViewModel _newProjectViewModel;
         private readonly HttpData _transferData;

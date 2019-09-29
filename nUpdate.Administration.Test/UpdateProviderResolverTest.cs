@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nUpdate.Administration.Common;
 using nUpdate.Administration.Common.Exceptions;
+using nUpdate.Administration.Common.Ftp;
+using nUpdate.Administration.Common.Http;
 
 namespace nUpdate.Administration.Test
 {
