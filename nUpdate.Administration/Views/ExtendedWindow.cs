@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
 
 namespace nUpdate.Administration.Views
 {
-    public class ExtendedWindow : Window
+    public class ExtendedWindow : MetroWindow
     {
         public virtual void RequestClose() { }
     }

@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj" />
+    <Compile Remove="Providers\**" />
+    <EmbeddedResource Remove="Providers\**" />
+    <None Remove="Providers\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Providers\" />
+    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj" />
   </ItemGroup>
 
 </Project>

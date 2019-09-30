@@ -1,0 +1,38 @@
+﻿<Button x:Class="nUpdate.Administration.Controls.FeatureButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="400">
+
+    <Button.Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10"></Setter>
+            <Setter Property="BorderBrush" Value="{DynamicResource FeatureButtonBorderBrush}"></Setter>
+            <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Grid.IsMouseOver" Value="true"></Condition>
+                </MultiTrigger.Conditions>
+                <Setter Property="Control.Foreground" Value="Black"></Setter>
+                <Setter Property="Background" Value="WhiteSmoke"></Setter>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Grid.IsMouseOver" Value="false"></Condition>
+                </MultiTrigger.Conditions>
+                <Setter Property="Control.Foreground" Value="Black"></Setter>
+                <Setter Property="Background" Value="White"></Setter>
+            </MultiTrigger>
+        </Style.Triggers>
+        </Style>
+    </Button.Style>
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <Image Name="Icon" Source="{Binding IconSource, ElementName=RootElement}" Height="32" Width="32" />
+            <TextBlock FontSize="10pt" Name="MainTextBlock" Text="{Binding Text, ElementName=RootElement}" VerticalAlignment="Center" Margin="10,0" />
+        </StackPanel>
+    </Grid>
+</Button>

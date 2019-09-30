@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using nUpdate.Administration.Common;
-
-namespace nUpdate.Administration.ViewModels
+﻿namespace nUpdate.Administration.ViewModels
 {
     public interface IMainViewActionProvider : ILoadActionProvider
     {
-        List<MainMenuItem> GetCollectionView();
+        void CreateNewProject();
         bool CanEditMasterPassword();
     }
 }

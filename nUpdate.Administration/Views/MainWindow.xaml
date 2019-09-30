@@ -6,170 +6,107 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
-    xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
-    Title="nUpdate Administration 4.0.0"
-    Width="707.325"
-    Height="465.565"
+    xmlns:controls="clr-namespace:nUpdate.Administration.Controls"
+    ShowIconOnTitleBar="False"
+    Width="820"
+    Height="610"
     Icon="/./Icons/nUpdate.ico"
     WindowStartupLocation="CenterScreen"
+    SizeToContent="Height"
+    TitleTemplate="{x:Null}"
     mc:Ignorable="d">
+
+    <views:ExtendedWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </views:ExtendedWindow.Resources>
+    <!--<mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconModern Width="24" Kind="Download" />
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="1 update available" />
+                </StackPanel>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>-->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Window.Resources>
-        <SolidColorBrush x:Key="GroupSplitterBrush" Color="Gainsboro" />
-    </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackPanel Margin="20" Orientation="Horizontal">
+    <StackPanel Margin="30">
+        <StackPanel Orientation="Horizontal">
             <Image
                 Width="64"
                 Height="64"
                 Source="/./Icons/nUpdate.png" />
             <StackPanel
-                Margin="10"
-                VerticalAlignment="Center"
-                Orientation="Vertical">
+                VerticalAlignment="Center" Margin="10,0,0,0">
                 <TextBlock
-                    FontSize="12pt"
-                    Foreground="#003399"
-                    Text="nUpdate Administration 4.0.0" />
-                <TextBlock
-                    Margin="0,2,0,0"
-                    Text="Welcome! Here you are able to publish your updates."
-                    TextWrapping="Wrap" />
+                    FontSize="15pt" Text="Welcome to" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        FontSize="16pt"
+                        FontWeight="Bold"
+                        Text="nUpdate " />
+                    <TextBlock
+                        FontSize="16pt"
+                        Foreground="#0047AB"
+                        Text="Administration" />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding CollectionView}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition Height="1" />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <DockPanel>
-                                                <TextBlock
-                                                    Margin="10,0,0,0"
-                                                    FontSize="13"
-                                                    Foreground="#003399">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Projects}">
-                                                                    <Setter Property="Text" Value="Projects" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.KeyDatabase}">
-                                                                    <Setter Property="Text" Value="Key database" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Statistics}">
-                                                                    <Setter Property="Text" Value="Statistics" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Name}" Value="{x:Static common:MainMenuGroup.Application}">
-                                                                    <Setter Property="Text" Value="Application" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                                <Rectangle
-                                                    Height="1"
-                                                    Margin="10,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Fill="{StaticResource GroupSplitterBrush}"
-                                                    SnapsToDevicePixels="True" />
-                                            </DockPanel>
-                                            <ItemsPresenter Grid.Row="2" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ItemsControl.GroupStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type common:MainMenuItem}">
-                    <Button
-                        Width="Auto"
-                        Margin="10,0,0,0"
-                        Padding="5"
-                        Command="{Binding Command}">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid x:Name="BackgroundGrid">
-                                    <ContentPresenter Margin="{TemplateBinding Padding}" />
-                                </Grid>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="BackgroundGrid" Property="Background" Value="LightGray" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="BackgroundGrid" Property="Background" Value="LightBlue" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <!--<Image
-                                Width="24"
-                                Height="24"
-                                VerticalAlignment="Center"
-                                Source="{Binding Image}">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Opacity" Value="0.5" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>-->
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                Orientation="Vertical">
-                                <TextBlock FontSize="10pt" Text="{Binding Header}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsEnabled" Value="False">
-                                                    <Setter Property="Foreground" Value="Gray" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBlock
-                                    Margin="0,2,0,0"
-                                    Foreground="Gray"
-                                    Text="{Binding Description}" />
-                            </StackPanel>
-                        </Grid>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+        <Grid Margin="0,30,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <DockPanel Height="26">
+                    <Label DockPanel.Dock="Left" Content="Last projects"/>
+                    <Separator Margin="10,0,0,0" Foreground="LightGray"/>
+                </DockPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,10,0,0">
+                <controls:FeatureButton Height="50" IconSource="../Icons/icons8-empty-box-100.png" Text="Create new project" Command="{Binding NewProjectCommand}" />
+                <controls:FeatureButton Height="50" Margin="0,10,0,0" IconSource="../Icons/icons8-open-box-100.png" Text="Open existing project" />
+            </StackPanel>
+        </Grid>
+
+        <DockPanel Height="26">
+            <Label DockPanel.Dock="Left" Content="Key database"/>
+            <Separator Margin="10,0,0,0" Foreground="LightGray"/>
+        </DockPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10">
+            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-secure-50.png" Text="Manage key database" Description="Manage or edit your passwords or private keys" />
+            <controls:DescriptionButton Visibility="{Binding CanEditMasterPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Height="55" Margin="20,0" IconSource="../Icons/icons8-validation-50.png" Text="Change master password" Description="For encrypting the key database" />
+        </StackPanel>
+
+        <DockPanel Height="26">
+            <Label DockPanel.Dock="Left" Content="Statistics"/>
+            <Separator Margin="10,0,0,0" Foreground="LightGray"/>
+        </DockPanel>
+        <controls:DescriptionButton Margin="0,10" Height="55" HorizontalAlignment="Left" IconSource="../Icons/icons8-combo-chart-96.png" Text="Manage statistics server" Description="Add, edit or delete a statistics server" />
+
+        <DockPanel Height="25">
+            <Label DockPanel.Dock="Left" Content="Application"/>
+            <Separator Margin="10,0,0,0" Foreground="LightGray"/>
+        </DockPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10">
+            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-user-settings-50.png" Text="Preferences" Description="Customize nUpdate Administration" />
+            <controls:DescriptionButton Height="55" Margin="20,0" IconSource="../Icons/icons8-info-50.png" Text="Information" Description="About nUpdate Administration" />
+            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-feedback-50.png" Text="Feedback" Description="Send your feedback here" />
+        </StackPanel>
+
+    </StackPanel>
 </views:ExtendedWindow>
