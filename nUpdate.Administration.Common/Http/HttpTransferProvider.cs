@@ -99,9 +99,7 @@ namespace nUpdate.Administration.Common.Http
         {
             using (var client = new WebClientEx())
             {
-                if (Data.MustAuthenticate)
-                    client.Credentials = new NetworkCredential(Data.Username, Data.Password);
-
+                client.Credentials = new NetworkCredential(Data.Username, Data.Password);
                 var jsonRequest = new JsonRequest(callerMethod, parameter, Guid.NewGuid());
                 return await client.UploadStringTaskAsync(Data.ScriptUri, "POST", jsonRequest.ToString());
             }

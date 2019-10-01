@@ -19,7 +19,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
         public GeneralDataPageViewModel(NewProjectViewModel viewModel, INewProjectProvider newProjectProvider)
         {
             _newProjectViewModel = viewModel;
-            CanGoBack = true;
 
             _location = PathProvider.DefaultProjectDirectory;
             _locationSelectCommand = new RelayCommand(() => 

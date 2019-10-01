@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     d:DataContext="{d:DesignInstance newProject1:FtpDataPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
@@ -20,7 +21,7 @@
             Text="Server over FTP(S)" />
 
         <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-            <Grid>
+            <Grid Margin="0,10,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="10" />
@@ -45,47 +46,26 @@
                     Padding="5"
                     Text="Host:" />
                 <TextBox
+                    mah:TextBoxHelper.Watermark="ftp.example.com"
                     x:Name="HostTextBox"
                     Grid.Row="0"
                     Grid.Column="2"
                     Padding="5,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     Text="{Binding Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="5,5,0,5"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Foreground="Gray"
-                    IsHitTestVisible="False"
-                    Text="ftp.exmaple.com">
-                    <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=HostTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
+                
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="4"
                     Padding="5"
                     Text="Port:" />
-                <xctk:IntegerUpDown
-                    Grid.Row="0"
-                    Grid.Column="6"
-                    Width="60"
-                    HorizontalAlignment="Left"
-                    Maximum="65536"
-                    Minimum="0"
-                    Value="{Binding Port, Mode=TwoWay}" />
+                <mah:NumericUpDown Grid.Row="0"
+                                   Grid.Column="6"
+                                   HorizontalAlignment="Left"
+                                   Minimum = "0"
+                                   Maximum = "65536"
+                                   Interval = "5" 
+                                   Value="{Binding Port, Mode=TwoWay}"/>
 
                 <TextBlock
                     Grid.Row="2"
@@ -93,34 +73,14 @@
                     Padding="5"
                     Text="User:" />
                 <TextBox
+                    mah:TextBoxHelper.Watermark="user1@ftp.example.com"
                     x:Name="UserTextBox"
                     Grid.Row="2"
                     Grid.Column="2"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="2"
-                    Margin="5,5,0,5"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Foreground="Gray"
-                    IsHitTestVisible="False"
-                    Text="user1@ftp.exmaple.com">
-                    <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=UserTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
+                
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="4"
@@ -131,7 +91,6 @@
                     Grid.Column="6"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     PasswordChanged="PasswordChanged" />
 
                 <TextBlock
@@ -145,7 +104,6 @@
                     Grid.Column="2"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     SelectedIndex="0" />
 
                 <TextBlock
@@ -159,7 +117,6 @@
                     Grid.Column="6"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     SelectedIndex="0" />
             </Grid>
 
@@ -181,33 +138,14 @@
                     Padding="5"
                     Text="Directory:" />
                 <TextBox
+                    mah:TextBoxHelper.Watermark="/htdocs/updates/"
                     x:Name="DirectoryTextBox"
                     Grid.Row="0"
                     Grid.Column="2"
                     Padding="5,0,0,0"
                     VerticalContentAlignment="Center"
-                    BorderBrush="Black"
                     Text="{Binding Directory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="5,5,0,5"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Foreground="Gray"
-                    IsHitTestVisible="False"
-                    Text="/htdocs/updates/">
-                    <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=DirectoryTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                
                 <Button
                     Grid.Row="0"
                     Grid.Column="4"

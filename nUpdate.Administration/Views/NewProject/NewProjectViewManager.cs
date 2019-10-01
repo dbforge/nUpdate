@@ -12,6 +12,7 @@ namespace nUpdate.Administration.Views.NewProject
                 {typeof(GenerateKeyPairPageViewModel), typeof(GenerateKeyPairPage)},
                 {typeof(GeneralDataPageViewModel), typeof(GeneralDataPage)},
                 {typeof(UpdateProviderSelectionPageViewModel), typeof(UpdateProviderSelectionPage)},
+                {typeof(HttpBackendSelectionPageViewModel), typeof(HttpBackendSelectionPage)},
                 {typeof(HttpDataPageViewModel), typeof(HttpDataPage)},
                 {typeof(FtpDataPageViewModel), typeof(FtpDataPage)}
             })

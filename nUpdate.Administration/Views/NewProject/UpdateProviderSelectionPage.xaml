@@ -17,32 +17,52 @@
             DockPanel.Dock="Top"
             FontSize="12pt"
             Foreground="#003399"
-            Text="Transfer provider" />
+            Text="Update provider" />
 
         <StackPanel VerticalAlignment="Center">
-            <TextBlock
-                VerticalAlignment="Center"
-                Text="Please select the update provider that you want to use for distribution of updates."
-                TextWrapping="Wrap" />
-            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-                <RadioButton Content="Server over HTTP(S)" IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverHttp}}" />
+        <TextBlock
+            VerticalAlignment="Center"
+            Text="Please select the update provider that you want to use for distribution of updates."
+            TextWrapping="Wrap" />
+        <Grid VerticalAlignment="Center" Margin="0,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="Server over HTTP(S)" IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverHttp}}" />
                 <RadioButton
-                    Margin="10,0,0,0"
+                    Grid.Row="0"
+                    Grid.Column="2"
+
                     Content="Server over FTP(S)"
                     IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverFtp}}" />
                 <RadioButton
-                    Margin="10,0,0,0"
+                    Grid.Row="0"
+                    Grid.Column="4"
                     Content="Server over SSH"
                     IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverSsh}}" />
+            
                 <RadioButton
-                    Margin="10,0,0,0"
+                    Grid.Row="2"
+                    Grid.Column="0"
                     Content="GitHub"
                     IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.GitHub}}" />
                 <RadioButton
-                    Margin="10,0,0,0"
+                    Grid.Row="2"
+                    Grid.Column="2"
                     Content="Custom"
                     IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.Custom}}" />
-            </StackPanel>
+            
+        </Grid>
         </StackPanel>
     </DockPanel>
 </Page>

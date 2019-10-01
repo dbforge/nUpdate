@@ -17,9 +17,11 @@ namespace nUpdate.Administration.Common
         public string PrivateKey { get; set; }
 
         /// <summary>
-        ///     Gets or sets the transfer provider enumeration type for the wizard.
+        ///     Gets or sets the update provider enumeration type for the wizard.
         /// </summary>
         public UpdateProviderType UpdateProviderType { get; set; }
+
+        public HttpBackendType HttpBackendType { get; set; }
 
         /// <summary>
         ///     Gets or sets the project data.

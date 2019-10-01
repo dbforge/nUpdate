@@ -133,6 +133,9 @@
     <Compile Include="Views\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="Views\FirstRun\FirstRunProvider.cs" />
     <Compile Include="Views\MainWindowActionProvider.cs" />
+    <Compile Include="Views\NewProject\HttpBackendSelectionPage.xaml.cs">
+      <DependentUpon>HttpBackendSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NewProject\NewProjectProvider.cs" />
     <Compile Include="Views\NewProject\NewProjectViewManager.cs" />
     <Compile Include="Views\Dialogs\PasswordInputDialog.xaml.cs">
@@ -248,6 +251,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewProject\GenerateKeyPairPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewProject\HttpBackendSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

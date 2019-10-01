@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject"
-    d:DataContext="{d:DesignInstance newProject:GeneralDataPageViewModel}"
+    xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    d:DataContext="{d:DesignInstance newProject1:GeneralDataPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
     Background="White"
@@ -38,67 +39,27 @@
                 Padding="5"
                 Text="Name:" />
             <TextBox
+                mah:TextBoxHelper.Watermark="The name of the project"
                 x:Name="NameTextBox"
                 Grid.Row="0"
                 Grid.Column="2"
                 Padding="5,0"
                 VerticalContentAlignment="Center"
-                BorderBrush="Black"
                 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="5,5,0,5"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Foreground="Gray"
-                IsHitTestVisible="False"
-                Text="The name of the project">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text, ElementName=NameTextBox}" Value="">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-
+            
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
                 Padding="5"
                 Text="Update directory:" />
             <TextBox
+                mah:TextBoxHelper.Watermark="The URI for update distribution (local or remote)"
                 x:Name="UpdateDirectoryTextBox"
                 Grid.Row="2"
                 Grid.Column="2"
                 Padding="5,0,0,0"
                 VerticalContentAlignment="Center"
-                BorderBrush="Black"
                 Text="{Binding UpdateDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="2"
-                Grid.Column="2"
-                Margin="5,5,0,5"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Foreground="Gray"
-                IsHitTestVisible="False"
-                Text="The directory that contains your update files (local or remote)">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text, ElementName=UpdateDirectoryTextBox}" Value="">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
             <Button
                 Grid.Row="2"
                 Grid.Column="4"
@@ -111,34 +72,15 @@
                 Padding="5"
                 Text="Location:" />
             <TextBox
+                mah:TextBoxHelper.Watermark="The local directory of the project"
                 x:Name="LocationTextBox"
                 Grid.Row="4"
                 Grid.Column="2"
                 Padding="5,0,0,0"
                 VerticalContentAlignment="Center"
-                BorderBrush="Black"
                 Text="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock
-                Grid.Row="4"
-                Grid.Column="2"
-                Margin="5,5,0,5"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Foreground="Gray"
-                IsHitTestVisible="False"
-                Text="The location of the project folder">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text, ElementName=LocationTextBox}" Value="">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+            
             <Button
                 Grid.Row="4"
                 Grid.Column="4"

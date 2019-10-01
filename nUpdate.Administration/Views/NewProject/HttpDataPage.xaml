@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       d:DataContext="{d:DesignInstance newProject1:HttpDataPageViewModel}"
       mc:Ignorable="d" 
       d:DesignHeight="230" d:DesignWidth="520"
@@ -14,88 +15,89 @@
         <TextBlock DockPanel.Dock="Top"
                    FontSize="12pt"
                    Foreground="#003399"
-                   Text="HTTP(S) + PHP" />
-        <Grid VerticalAlignment="Center">
+                   Text="Server over HTTP(S)" />
+        <StackPanel VerticalAlignment="Center">
+            <Grid Margin="0,10,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="10" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="10" />
                 <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="10*" />
-                <ColumnDefinition Width="3" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       Padding="5"
-                       Text="Script URI:" />
-            <TextBox x:Name="ScriptUriTextBox"
-                     Grid.Row="0"
-                     Grid.Column="2"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="Black"
-                     Padding="5,0"
-                     Text="{Binding Name,
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Padding="5"
+                           Text="Script name:" />
+                <TextBox x:Name="ScriptNameTextBox"
+                         mah:TextBoxHelper.Watermark="e.g. main.ts/index.php/..."
+                         Grid.Row="0"
+                         Grid.Column="2"
+                         HorizontalAlignment="Stretch"
+                         Padding="5,0"
+                         IsEnabled="{Binding ScriptNameEditable}"
+                         Text="{Binding ScriptName,
                                     Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Grid.Row="0"
-                       Grid.Column="2"
-                       Margin="5,5,0,5"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Foreground="Gray"
-                       IsHitTestVisible="False"
-                       Text="https://www.example.com/updates/transfer.php">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text, ElementName=ScriptUriTextBox}" Value="">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
 
-            <TextBlock Grid.Row="2"
-                       Grid.Column="0"
+                <TextBlock Grid.Row="0"
+                       Grid.Column="4"
                        Padding="5"
                        Text="Username:" />
             <TextBox x:Name="UsernameTextBox"
-                     Grid.Row="2"
-                     Grid.Column="2"
+                     Grid.Row="0"
+                     Grid.Column="6"
                      VerticalContentAlignment="Center"
-                     BorderBrush="Black"
                      Padding="5,0"
-                     Text="{Binding Name,
+                     Text="{Binding Username,
                                     Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="2"
-                       Grid.Column="2"
-                       Margin="5,5,0,5"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Foreground="Gray"
-                       IsHitTestVisible="False"
-                       Text="user1">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text, ElementName=ScriptUriTextBox}" Value="">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-        </Grid>
+                       Grid.Column="0"
+                       Padding="5"
+                       Text="Password:" />
+            <PasswordBox x:Name="PasswordTextBox"
+                         PasswordChanged="PasswordChanged"
+                     Grid.Row="2"
+                     Grid.Column="2"
+                     VerticalContentAlignment="Center"
+                     Padding="5,0" />
+
+            <TextBlock Grid.Row="2"
+                       Grid.Column="4"
+                       Padding="5"
+                       Text="Confirm:" />
+            <PasswordBox x:Name="ConfirmPasswordTextBox"
+                         PasswordChanged="ConfirmationPasswordChanged"
+                         Grid.Row="2"
+                         Grid.Column="6"
+                         VerticalContentAlignment="Center"
+                         Padding="5,0" />
+            </Grid>
+
+            <WrapPanel Margin="0,10,0,0" Orientation="Horizontal">
+                <TextBlock Text="For a custom backend platform/language implementation, refer to the " />
+                <TextBlock>
+                    <Hyperlink>
+                        RPC specification
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Text="." />
+            </WrapPanel>
+        </StackPanel>
     </DockPanel>
 </Page>

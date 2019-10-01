@@ -8,9 +8,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/colors.xaml" />
                 <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/cobalt.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
@@ -21,7 +21,7 @@
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
 
             <!--  UI resources  -->
-            <SolidColorBrush x:Key="BottomPanelBrush" Color="#F0F0F0" />
+            <SolidColorBrush x:Key="BottomPanelBrush" Color="White" />
             <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
             <SolidColorBrush x:Key="FeatureButtonBorderBrush" Color="LightGray" />
 

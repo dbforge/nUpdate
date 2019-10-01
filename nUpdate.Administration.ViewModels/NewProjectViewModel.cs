@@ -20,6 +20,7 @@ namespace nUpdate.Administration.ViewModels
                 new GeneralDataPageViewModel(this, newProjectProvider),
                 new UpdateProviderSelectionPageViewModel(this),
                 new FtpDataPageViewModel(this, newProjectProvider),
+                new HttpBackendSelectionPageViewModel(this),
                 new HttpDataPageViewModel(this)
             });
 
@@ -47,7 +48,7 @@ namespace nUpdate.Administration.ViewModels
         {
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateBack(this);
-            CurrentPageViewModel = oldPageViewModel is IUpdateProviderPageViewModel
+            CurrentPageViewModel = oldPageViewModel is IFirstUpdateProviderSubWizardPageViewModel
                 ? PageViewModels.First(x => x.GetType() == typeof(UpdateProviderSelectionPageViewModel))
                 : PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
@@ -68,7 +69,7 @@ namespace nUpdate.Administration.ViewModels
                         break;
                     case UpdateProviderType.ServerOverHttp:
                         CurrentPageViewModel =
-                            PageViewModels.First(x => x.GetType() == typeof(HttpDataPageViewModel));
+                            PageViewModels.First(x => x.GetType() == typeof(HttpBackendSelectionPageViewModel));
                         break;
                     // TODO: Implement
                     case UpdateProviderType.ServerOverSsh:
@@ -79,9 +80,8 @@ namespace nUpdate.Administration.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            else if (oldPageViewModel is IUpdateProviderPageViewModel)
+            else if (oldPageViewModel is IFinishPageViewModel)
             {
-                // TODO: Add page after protocol-specific pages
                 // If no errors occured and everything worked, we can now close the window
                 if (await Finish())
                     FinishingAction.Invoke();
