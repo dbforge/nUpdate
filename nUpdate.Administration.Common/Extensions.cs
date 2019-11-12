@@ -72,13 +72,7 @@ namespace nUpdate.Administration.Common
             string invalidPathChars = new string(Path.GetInvalidPathChars());
             invalidPathChars += @":/?*" + "\"";
             var containsBadCharacterRegEx = new Regex("[" + Regex.Escape(invalidPathChars) + "]");
-            if (containsBadCharacterRegEx.IsMatch(path.Substring(3, path.Length - 3)))
-                return false;
-
-            var directory = new DirectoryInfo(Path.GetFullPath(path));
-            if (!directory.Exists)
-                directory.Create();
-            return true;
+            return !containsBadCharacterRegEx.IsMatch(path.Substring(3, path.Length - 3));
         }
         
         internal static async Task<bool> AllAsync<T>(this IEnumerable<T> items, Func<T, Task<bool>> predicate)
