@@ -15,15 +15,20 @@ namespace nUpdate
         private readonly GitHubClient _client;
         private readonly Dictionary<UpdatePackage, Uri> _packagesUris = new Dictionary<UpdatePackage, Uri>();
 
-        public GitHubUpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
+        public GitHubUpdateProvider(string repositoryAuthor, string repositoryName, Credentials authenticationCredentials, string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
             : base(publicKey, applicationVersion, updateChannelFilter)
         {
             _client = new GitHubClient(new ProductHeaderValue(ApplicationParameters.ProductName));
-            if (AuthenticationCredential != null)
-                _client.Credentials = AuthenticationCredential;
+            RepositoryAuthor = repositoryAuthor ?? throw new ArgumentNullException(nameof(repositoryAuthor));
+            RepositoryName = repositoryName ?? throw new ArgumentNullException(nameof(repositoryName));
+            AuthenticationCredentials = authenticationCredentials ?? throw new ArgumentNullException(nameof(authenticationCredentials)); // Do we actually need these?
         }
 
-        public Credentials AuthenticationCredential { get; set; }
+        public Credentials AuthenticationCredentials
+        {
+            get => _client.Credentials;
+            set => _client.Credentials = value;
+        }
 
         public int? RemainingRequests { get; private set; }
 

@@ -14,9 +14,10 @@ namespace nUpdate
     /// </summary>
     public class DefaultHttpUpdateProvider : UpdateProvider
     {
-        public DefaultHttpUpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
+        public DefaultHttpUpdateProvider(Uri packageDataFile, string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
             : base(publicKey, applicationVersion, updateChannelFilter)
         {
+            PackageDataFile = packageDataFile ?? throw new ArgumentNullException(nameof(packageDataFile));
         }
 
         public Uri PackageDataFile { get; set; }
