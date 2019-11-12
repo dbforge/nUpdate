@@ -11,8 +11,8 @@ namespace nUpdate
 {
     public class FileSystemUpdateProvider : UpdateProvider
     {
-        public FileSystemUpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease) : base(
-            publicKey, applicationVersion, includePreRelease)
+        public FileSystemUpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter) : base(
+            publicKey, applicationVersion, updateChannelFilter)
         {
         }
 
@@ -24,7 +24,7 @@ namespace nUpdate
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
 
             var result = new UpdateCheckResult();
-            await result.Initialize(packages, ApplicationVersion, IncludePreRelease, cancellationToken);
+            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken);
             return result;
         }
 
@@ -59,6 +59,11 @@ namespace nUpdate
                 };
                 await DownloadPackage(p, packageProgress, cancellationToken);
             });
+        }
+
+        public override Task<IEnumerable<string>> GetAvailableUpdateChannels()
+        {
+            throw new NotImplementedException();
         }
     }
 }

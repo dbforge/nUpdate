@@ -15,8 +15,8 @@ namespace nUpdate
         private readonly GitHubClient _client;
         private readonly Dictionary<UpdatePackage, Uri> _packagesUris = new Dictionary<UpdatePackage, Uri>();
 
-        public GitHubUpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease)
-            : base(publicKey, applicationVersion, includePreRelease)
+        public GitHubUpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
+            : base(publicKey, applicationVersion, updateChannelFilter)
         {
             _client = new GitHubClient(new ProductHeaderValue(ApplicationParameters.ProductName));
             if (AuthenticationCredential != null)
@@ -64,7 +64,7 @@ namespace nUpdate
             });
 
             var updateCheckResult = new UpdateCheckResult();
-            await updateCheckResult.Initialize(updatePackages, ApplicationVersion, IncludePreRelease,
+            await updateCheckResult.Initialize(updatePackages, ApplicationVersion, UpdateChannelFilter,
                 cancellationToken);
             return updateCheckResult;
         }
@@ -97,6 +97,11 @@ namespace nUpdate
                 };
                 await DownloadPackage(p, packageProgress, cancellationToken);
             });
+        }
+
+        public override Task<IEnumerable<string>> GetAvailableUpdateChannels()
+        {
+            throw new NotImplementedException();
         }
     }
 }

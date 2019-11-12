@@ -25,9 +25,9 @@ namespace nUpdate
         public static HostApplicationOptions HostApplicationOptions { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether pre-releases should be included into the update check.
+        ///     Gets or sets the filter for the update channels that should be used for the update check.
         /// </summary>
-        public bool IncludePreRelease { get; set; }
+        public UpdateChannelFilter UpdateChannelFilter { get; set; }
 
         public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
 
@@ -38,14 +38,11 @@ namespace nUpdate
 
         public abstract Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken);
 
-        protected UpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease)
+        protected UpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
         {
+            PublicKey = publicKey ?? throw new ArgumentException(nameof(publicKey));
             ApplicationVersion = applicationVersion ?? throw new ArgumentNullException(nameof(applicationVersion));
-            IncludePreRelease = includePreRelease;
-
-            if (string.IsNullOrEmpty(publicKey))
-                throw new ArgumentException(nameof(publicKey));
-            PublicKey = publicKey;
+            UpdateChannelFilter = updateChannelFilter ?? throw new ArgumentNullException(nameof(updateChannelFilter));
 
             CreateAppUpdateDirectory();
         }
@@ -75,6 +72,8 @@ namespace nUpdate
 
         public abstract Task DownloadUpdates(UpdateCheckResult checkResult, CancellationToken cancellationToken,
             IProgress<UpdateProgressData> progress);
+
+        public abstract Task<IEnumerable<string>> GetAvailableUpdateChannels();
 
         private string GetLocalPackagePath(UpdatePackage package)
         {

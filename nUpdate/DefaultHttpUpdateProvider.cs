@@ -14,8 +14,8 @@ namespace nUpdate
     /// </summary>
     public class DefaultHttpUpdateProvider : UpdateProvider
     {
-        public DefaultHttpUpdateProvider(string publicKey, IVersion applicationVersion, bool includePreRelease)
-            : base(publicKey, applicationVersion, includePreRelease)
+        public DefaultHttpUpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
+            : base(publicKey, applicationVersion, updateChannelFilter)
         {
         }
 
@@ -27,7 +27,7 @@ namespace nUpdate
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
 
             var result = new UpdateCheckResult();
-            await result.Initialize(packages, ApplicationVersion, IncludePreRelease, cancellationToken);
+            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken);
             return result;
         }
 
@@ -61,6 +61,13 @@ namespace nUpdate
                 };
                 await DownloadPackage(p, packageProgress, cancellationToken);
             });
+        }
+
+        public override async Task<IEnumerable<string>> GetAvailableUpdateChannels()
+        {
+            var packageData = await new WebClientEx().DownloadStringTaskAsync(PackageDataFile.ToString());
+            var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
+            return packages.Select(x => x.ChannelName).Distinct(StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }

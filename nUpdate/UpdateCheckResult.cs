@@ -1,4 +1,4 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// Copyright © Dominic Beger 2019
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace nUpdate
         ///     Initializes a new instance of the <see cref="UpdateCheckResult" /> class.
         /// </summary>
         internal Task Initialize(IEnumerable<UpdatePackage> packages, IVersion applicationVersion,
-            bool includePreRelease, CancellationToken cancellationToken)
+            UpdateChannelFilter channelFilter, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -36,6 +36,12 @@ namespace nUpdate
                 bool IsSuitablePackage(UpdatePackage package)
                 {
                     var is64Bit = Environment.Is64BitOperatingSystem;
+                    if (channelFilter != UpdateChannelFilter.None)
+                        return channelFilter.Mode == UpdateChannelFilter.ChannelFilterMode.SearchOnlyInSpecified &&
+                               channelFilter.Channels.Contains(package.ChannelName) ||
+                               channelFilter.Mode == UpdateChannelFilter.ChannelFilterMode.ExcludeSpecifiedFromSearch &&
+                               !channelFilter.Channels.Contains(package.ChannelName);
+
                     if (package.UnsupportedVersions != null &&
                         package.UnsupportedVersions.Any(
                             unsupportedVersion => unsupportedVersion.Equals(applicationVersion)))
