@@ -36,11 +36,12 @@ namespace nUpdate
                 bool IsSuitablePackage(UpdatePackage package)
                 {
                     var is64Bit = Environment.Is64BitOperatingSystem;
-                    if (channelFilter != UpdateChannelFilter.None)
-                        return channelFilter.Mode == UpdateChannelFilter.ChannelFilterMode.SearchOnlyInSpecified &&
-                               channelFilter.Channels.Contains(package.ChannelName) ||
-                               channelFilter.Mode == UpdateChannelFilter.ChannelFilterMode.ExcludeSpecifiedFromSearch &&
-                               !channelFilter.Channels.Contains(package.ChannelName);
+                    if (channelFilter != UpdateChannelFilter.None && channelFilter.Mode ==
+                        UpdateChannelFilter.ChannelFilterMode.ExcludeSpecifiedFromSearch &&
+                        channelFilter.Channels.Contains(package.ChannelName) ||
+                        channelFilter.Mode == UpdateChannelFilter.ChannelFilterMode.SearchOnlyInSpecified &&
+                        !channelFilter.Channels.Contains(package.ChannelName))
+                        return false;
 
                     if (package.UnsupportedVersions != null &&
                         package.UnsupportedVersions.Any(
