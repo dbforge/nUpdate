@@ -25,6 +25,11 @@ namespace nUpdate
         public static HostApplicationOptions HostApplicationOptions { get; set; }
 
         /// <summary>
+        ///     Gets or sets the configuration for the current client that is used for the update rollout condition checks to determine whether a package should be included into the update check or not.
+        /// </summary>
+        public List<KeyValuePair<string, string>> ClientConfiguration { get; set; }
+
+        /// <summary>
         ///     Gets or sets the filter for the update channels that should be used for the update check.
         /// </summary>
         public UpdateChannelFilter UpdateChannelFilter { get; set; }

@@ -70,7 +70,7 @@ namespace nUpdate
 
             var updateCheckResult = new UpdateCheckResult();
             await updateCheckResult.Initialize(updatePackages, ApplicationVersion, UpdateChannelFilter,
-                cancellationToken);
+                cancellationToken, ClientConfiguration);
             return updateCheckResult;
         }
 

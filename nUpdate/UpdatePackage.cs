@@ -32,6 +32,10 @@ namespace nUpdate
         /// </summary>
         public string ChannelName { get; set; }
 
+
+        public IEnumerable<UpdateRolloutCondition> RolloutConditions { get; set; }
+        public UpdateRolloutConditionMode RolloutConditionMode { get; set; }
+
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the package.
         /// </summary>

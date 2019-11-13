@@ -28,7 +28,7 @@ namespace nUpdate
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
 
             var result = new UpdateCheckResult();
-            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken);
+            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken, ClientConfiguration);
             return result;
         }
 

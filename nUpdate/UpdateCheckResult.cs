@@ -26,7 +26,7 @@ namespace nUpdate
         ///     Initializes a new instance of the <see cref="UpdateCheckResult" /> class.
         /// </summary>
         internal Task Initialize(IEnumerable<UpdatePackage> packages, IVersion applicationVersion,
-            UpdateChannelFilter channelFilter, CancellationToken cancellationToken)
+            UpdateChannelFilter channelFilter, CancellationToken cancellationToken, List<KeyValuePair<string, string>> clientConfiguration = null)
         {
             return Task.Run(() =>
             {
@@ -35,7 +35,6 @@ namespace nUpdate
 
                 bool IsSuitablePackage(UpdatePackage package)
                 {
-                    var is64Bit = Environment.Is64BitOperatingSystem;
                     if (channelFilter != UpdateChannelFilter.None && channelFilter.Mode ==
                         UpdateChannelFilter.ChannelFilterMode.ExcludeSpecifiedFromSearch &&
                         channelFilter.Channels.Contains(package.ChannelName) ||
@@ -48,6 +47,10 @@ namespace nUpdate
                             unsupportedVersion => unsupportedVersion.Equals(applicationVersion)))
                         return false;
 
+                    if (!CheckConditions(clientConfiguration, package))
+                        return false;
+
+                    var is64Bit = Environment.Is64BitOperatingSystem;
                     return (package.Architecture != Architecture.X86 || !is64Bit) &&
                            (package.Architecture != Architecture.X64 || is64Bit);
                 }
@@ -71,6 +74,56 @@ namespace nUpdate
                 if (latestPackage != null && !_newUpdatePackages.Contains(latestPackage))
                     _newUpdatePackages.Add(latestPackage);
             }, cancellationToken);
+        }
+
+        internal bool CheckConditions(List<KeyValuePair<string, string>> clientConfiguration,
+            UpdatePackage package)
+        {
+            if (package.RolloutConditions == null || !package.RolloutConditions.Any())
+                return true;
+
+            if (clientConfiguration != null && clientConfiguration.Any())
+            {
+                // If any negative condition is met, this update does not interest us.
+                if (clientConfiguration.Any(x => package.RolloutConditions.Where(n => n.IsNegativeCondition)
+                    .Any(c =>
+                        c.Key == x.Key &&
+                        string.Equals(c.Value, x.Value,
+                            StringComparison.CurrentCultureIgnoreCase))))
+                    return false;
+
+                switch (package.RolloutConditionMode)
+                {
+                    // If no positive condition is met, this update does not interest us.
+                    case UpdateRolloutConditionMode.AtLeastOne:
+                        if (package.RolloutConditions.Where(n => !n.IsNegativeCondition).All(x =>
+                            !clientConfiguration.Any(c => c.Key == x.Key &&
+                                                       string.Equals(c.Value, x.Value,
+                                                           StringComparison.CurrentCultureIgnoreCase))))
+                            return false;
+                        break;
+
+                    // If not all positive clientConfiguration are met, this update does not interest us.
+                    case UpdateRolloutConditionMode.All:
+                        if (package.RolloutConditions.Where(n => !n.IsNegativeCondition).Any(x =>
+                            !clientConfiguration.Any(c => c.Key == x.Key && string.Equals(c.Value, x.Value,
+                                                           StringComparison.CurrentCultureIgnoreCase))))
+                            return false;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(package),
+                            "Invalid rollout condition mode.");
+                }
+            }
+            else
+            {
+                // This should be discussed again as it may be senseful that a user with no local key for a positive condition may eventually also receive the update.
+                if (package.RolloutConditions.Any(c => !c.IsNegativeCondition))
+                    return false;
+            }
+
+            return true;
         }
     }
 }
