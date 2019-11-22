@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.Common;
+﻿using nUpdate.Administration.Models;
 
 namespace nUpdate.Administration.ViewModels.FirstRun
 {

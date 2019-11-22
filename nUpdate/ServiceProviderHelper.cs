@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace nUpdate
 {
-    internal class ServiceProviderHelper
+    public class ServiceProviderHelper
     {
         public static IServiceProvider CreateServiceProvider(Assembly assembly)
         {

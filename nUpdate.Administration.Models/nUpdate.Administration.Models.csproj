@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="27.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\nUpdate.Administration.Infrastructure\nUpdate.Administration.Infrastructure.csproj" />
+    <ProjectReference Include="..\nUpdate\nUpdate.csproj" />
+  </ItemGroup>
+
+</Project>

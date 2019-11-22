@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.Models;
 using nUpdate.Administration.ViewModels.FirstRun;
 
 namespace nUpdate.Administration.ViewModels

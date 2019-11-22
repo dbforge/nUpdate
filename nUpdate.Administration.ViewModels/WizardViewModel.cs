@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.Infrastructure;
 
 /*using System.Windows.Input;
 using System.Windows;

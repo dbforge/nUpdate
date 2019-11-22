@@ -2,7 +2,6 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
-using nUpdate;
 
 // Allgemeine Informationen über eine Assembly werden über folgende 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,

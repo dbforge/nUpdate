@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Exceptions;
-using nUpdate.Administration.Common.Ftp;
-using nUpdate.Administration.Common.Http;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.BusinessLogic.Exceptions;
+using nUpdate.Administration.BusinessLogic.Ftp;
+using nUpdate.Administration.BusinessLogic.Http;
+using nUpdate.Administration.Models;
 
 namespace nUpdate.Administration.Test
 {

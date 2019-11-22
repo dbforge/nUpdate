@@ -2,7 +2,7 @@
 
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.BusinessLogic;
 
 namespace nUpdate.Test
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Http;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.Models.Http;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {

@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.Models;
 using nUpdate.Administration.ViewModels.NewProject;
 
 namespace nUpdate.Administration.ViewModels
@@ -37,8 +38,8 @@ namespace nUpdate.Administration.ViewModels
                 string projectDirectory = Path.Combine(ProjectCreationData.Location, ProjectCreationData.Project.Name);
                 if (!Directory.Exists(projectDirectory))
                     Directory.CreateDirectory(projectDirectory);
-                ProjectCreationData.Project.PrivateKey = ProjectCreationData.PrivateKey;
-                ProjectCreationData.Project.Save(Path.Combine(projectDirectory,
+                KeyManager.Instance[ProjectCreationData.Project.Identifier] = ProjectCreationData.PrivateKey;
+                new UpdateProjectBl(ProjectCreationData.Project).Save(Path.Combine(projectDirectory,
                     ProjectCreationData.Project.Name + ".nupdproj"));
                 return true;
             });

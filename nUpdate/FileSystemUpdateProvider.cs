@@ -64,7 +64,12 @@ namespace nUpdate
 
         public override Task<IEnumerable<string>> GetAvailableUpdateChannels()
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                var packageData = File.ReadAllText(PackageDataFile.ToString());
+                var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
+                return packages.Select(x => x.ChannelName).Distinct(StringComparer.InvariantCultureIgnoreCase);
+            });
         }
     }
 }

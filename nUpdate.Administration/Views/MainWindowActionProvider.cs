@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 using System.Windows;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.ViewModels;
 using nUpdate.Administration.Views.Dialogs;
 using TaskDialogInterop;

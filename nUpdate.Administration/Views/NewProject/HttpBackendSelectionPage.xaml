@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
-      xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
+      xmlns:http="clr-namespace:nUpdate.Administration.Models.Http;assembly=nUpdate.Administration.Models"
       d:DataContext="{d:DesignInstance newProject:HttpBackendSelectionPageViewModel}"
       mc:Ignorable="d" 
       d:DesignHeight="230" d:DesignWidth="520"
@@ -34,19 +34,19 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="PHP" IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:HttpBackendType.Php}}" />
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="PHP" IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static http:HttpBackendType.Php}}" />
                 <RadioButton
                     Grid.Row="0"
                     Grid.Column="2"
 
                     Content="node.js"
-                    IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:HttpBackendType.NodeJs}}" />
+                    IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static http:HttpBackendType.NodeJs}}" />
                 <RadioButton
                     Grid.Row="0"
                     Grid.Column="4"
 
                     Content="Custom"
-                    IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:HttpBackendType.Custom}}" />
+                    IsChecked="{Binding Path=HttpBackendType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static http:HttpBackendType.Custom}}" />
 
 </Grid>
         </StackPanel>

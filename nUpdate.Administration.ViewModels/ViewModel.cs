@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.Common;
+﻿using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels
 {
