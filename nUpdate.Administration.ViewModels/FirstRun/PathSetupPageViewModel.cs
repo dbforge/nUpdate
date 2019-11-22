@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using System.Windows.Input;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels.FirstRun
 {

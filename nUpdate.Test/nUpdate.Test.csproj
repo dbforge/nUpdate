@@ -69,9 +69,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj">
-      <Project>{0a1f6926-5b7b-4240-a539-951acfdc980c}</Project>
-      <Name>nUpdate.Administration.Common</Name>
+    <ProjectReference Include="..\nUpdate.Administration.BusinessLogic\nUpdate.Administration.BusinessLogic.csproj">
+      <Project>{14D23AE6-5709-4E92-AD9C-5E282A5908EF}</Project>
+      <Name>nUpdate.Administration.BusinessLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate.Administration\nUpdate.Administration.csproj">
       <Project>{5a553cc2-3f8a-45a7-94ce-0771f3f041e1}</Project>

@@ -2,8 +2,9 @@
 
 using System.Security.Authentication;
 using FluentFTP;
-using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Ftp;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Models.Ftp;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
@@ -40,10 +41,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
             {
                 Host = Host,
                 Port = Port,
-                Username = Username,
-                Secret = Password
+                Username = Username
             };
 
+            // TODO: Add password in a good way
+            KeyManager.Instance[data.Identifier] = Password;
             Directory = _newProjectProvider.GetFtpDirectory(data);
         }
 

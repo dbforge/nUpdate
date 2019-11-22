@@ -59,9 +59,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj">
-      <Project>{0A1F6926-5B7B-4240-A539-951ACFDC980C}</Project>
-      <Name>nUpdate.Administration.Common</Name>
+    <ProjectReference Include="..\nUpdate.Administration.BusinessLogic\nUpdate.Administration.BusinessLogic.csproj">
+      <Project>{14D23AE6-5709-4E92-AD9C-5E282A5908EF}</Project>
+      <Name>nUpdate.Administration.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.Administration.Models\nUpdate.Administration.Models.csproj">
+      <Project>{3BED01CA-00E6-4F2C-A41C-102035B548CD}</Project>
+      <Name>nUpdate.Administration.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

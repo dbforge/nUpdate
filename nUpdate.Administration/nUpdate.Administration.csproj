@@ -118,17 +118,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BoundRelayCommand.cs" />
     <Compile Include="Controls\DescriptionButton.xaml.cs">
       <DependentUpon>DescriptionButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FeatureButton.xaml.cs">
       <DependentUpon>FeatureButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\EnumToBooleanConverter.cs" />
-    <Compile Include="EnumerationExtension.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PackageItem.cs" />
     <Compile Include="ViewManager.cs" />
     <Compile Include="Views\FirstRun\FirstRunViewManager.cs" />
     <Compile Include="Views\FirstRun\FirstRunProvider.cs" />
@@ -349,9 +345,17 @@
     <Resource Include="Icons\Folder_16xMD.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Common.csproj">
-      <Project>{0A1F6926-5B7B-4240-A539-951ACFDC980C}</Project>
-      <Name>nUpdate.Administration.Common</Name>
+    <ProjectReference Include="..\nUpdate.Administration.BusinessLogic\nUpdate.Administration.BusinessLogic.csproj">
+      <Project>{14D23AE6-5709-4E92-AD9C-5E282A5908EF}</Project>
+      <Name>nUpdate.Administration.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.Administration.Infrastructure\nUpdate.Administration.Infrastructure.csproj">
+      <Project>{5012921B-FC53-493C-93B3-DF076C2ACB9C}</Project>
+      <Name>nUpdate.Administration.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nUpdate.Administration.Models\nUpdate.Administration.Models.csproj">
+      <Project>{3BED01CA-00E6-4F2C-A41C-102035B548CD}</Project>
+      <Name>nUpdate.Administration.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\nUpdate.Administration.ViewModels\nUpdate.Administration.ViewModels.csproj">
       <Project>{377EC4B4-461A-44ED-8719-5A0B799F00D9}</Project>

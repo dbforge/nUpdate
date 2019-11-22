@@ -1,5 +1,5 @@
 ﻿using System.Windows.Input;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.Infrastructure;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

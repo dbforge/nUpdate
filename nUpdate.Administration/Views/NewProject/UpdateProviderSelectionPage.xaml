@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
-    xmlns:common="clr-namespace:nUpdate.Administration.Common;assembly=nUpdate.Administration.Common"
+    xmlns:models="clr-namespace:nUpdate.Administration.Models;assembly=nUpdate.Administration.Models"
     d:DataContext="{d:DesignInstance newProject1:UpdateProviderSelectionPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
@@ -38,29 +38,29 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="Server over HTTP(S)" IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverHttp}}" />
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="Server over HTTP(S)" IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:UpdateProviderType.ServerOverHttp}}" />
                 <RadioButton
                     Grid.Row="0"
                     Grid.Column="2"
 
                     Content="Server over FTP(S)"
-                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverFtp}}" />
+                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:UpdateProviderType.ServerOverFtp}}" />
                 <RadioButton
                     Grid.Row="0"
                     Grid.Column="4"
                     Content="Server over SSH"
-                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.ServerOverSsh}}" />
+                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:UpdateProviderType.ServerOverSsh}}" />
             
                 <RadioButton
                     Grid.Row="2"
                     Grid.Column="0"
                     Content="GitHub"
-                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.GitHub}}" />
+                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:UpdateProviderType.GitHub}}" />
                 <RadioButton
                     Grid.Row="2"
                     Grid.Column="2"
                     Content="Custom"
-                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static common:UpdateProviderType.Custom}}" />
+                    IsChecked="{Binding Path=UpdateProviderType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:UpdateProviderType.Custom}}" />
             
         </Grid>
         </StackPanel>

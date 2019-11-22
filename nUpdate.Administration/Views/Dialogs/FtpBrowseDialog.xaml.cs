@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Ftp;
+using nUpdate.Administration.BusinessLogic.Ftp;
+using nUpdate.Administration.Models;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs

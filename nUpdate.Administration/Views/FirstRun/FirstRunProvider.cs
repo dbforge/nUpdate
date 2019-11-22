@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using nUpdate.Administration.Common;
+using nUpdate.Administration.BusinessLogic;
+using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Models;
 using nUpdate.Administration.ViewModels.FirstRun;
 using WPFFolderBrowser;
 

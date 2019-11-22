@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
-using nUpdate.Administration.Common;
-using nUpdate.Administration.Common.Ftp;
+using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.Models.Ftp;
 using nUpdate.Administration.ViewModels.NewProject;
 using nUpdate.Administration.Views.Dialogs;
 using WPFFolderBrowser;
@@ -48,7 +48,11 @@ namespace nUpdate.Administration.Views.NewProject
 
         public void SetFinishAction(out Action finishAction)
         {
-            finishAction = () => Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
+            finishAction = () =>
+            {
+                if (Application.Current.Dispatcher != null)
+                    Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
+            };
         }
     }
 }

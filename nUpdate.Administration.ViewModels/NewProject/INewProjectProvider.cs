@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.Common.Ftp;
+﻿using nUpdate.Administration.Models.Ftp;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
