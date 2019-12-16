@@ -13,6 +13,7 @@ namespace nUpdate.Internal.Core
         /// </summary>
         public WebClientWrapper() : this(5000)
         {
+            SetUserAgent();
         }
 
         /// <summary>
@@ -22,6 +23,12 @@ namespace nUpdate.Internal.Core
         public WebClientWrapper(int timeout)
         {
             Timeout = timeout;
+            SetUserAgent();
+        }
+
+        private void SetUserAgent()
+        {
+            Headers.Add("User-Agent", HttpHeader.GetUserAgent());
         }
 
         /// <summary>

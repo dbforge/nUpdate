@@ -77,6 +77,7 @@
     <Compile Include="Core\Architecture.cs" />
     <Compile Include="Core\DevelopmentalStage.cs" />
     <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Core\HttpHeader.cs" />
     <Compile Include="Core\IconHelper.cs" />
     <Compile Include="Core\RolloutCondition.cs" />
     <Compile Include="Core\RolloutConditionMode.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Core\IDeepCopy.cs" />
     <Compile Include="Core\Localization\LocalizationHelper.cs" />
     <Compile Include="Core\Localization\LocalizationProperties.cs" />
+    <Compile Include="Core\WebRequestWrapper.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Core\Operations\Operation.cs" />
     <Compile Include="Core\Operations\OperationArea.cs" />
