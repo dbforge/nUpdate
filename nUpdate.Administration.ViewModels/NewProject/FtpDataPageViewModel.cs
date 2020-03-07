@@ -8,9 +8,9 @@ using nUpdate.Administration.Models.Ftp;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class FtpDataPageViewModel : WizardPageViewModel, IFirstUpdateProviderSubWizardPageViewModel
+    public class FtpDataPageViewModel : WizardPageBase, IFirstUpdateProviderSubWizardPageViewModel
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
         private readonly INewProjectProvider _newProjectProvider;
         private readonly FtpData _transferData;
         private RelayCommand _directoryButtonCommand;
@@ -23,9 +23,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private FtpEncryptionMode _encryptionMode;
         private SslProtocols _sslProtocols;
 
-        public FtpDataPageViewModel(NewProjectViewModel viewModel, INewProjectProvider newProjectProvider)
+        public FtpDataPageViewModel(NewProjectBase @base, INewProjectProvider newProjectProvider)
         {
-            _newProjectViewModel = viewModel;
+            _newProjectBase = @base;
             _newProjectProvider = newProjectProvider;
             _directoryButtonCommand = new RelayCommand(OnDirectoryButtonClick);
             _directory = "/";
@@ -120,7 +120,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _transferData.Username = Username;
             _transferData.Directory = Directory;
 
-            _newProjectViewModel.ProjectCreationData.Project.TransferData = _transferData;
+            _newProjectBase.ProjectCreationData.Project.TransferData = _transferData;
         }
     }
 }

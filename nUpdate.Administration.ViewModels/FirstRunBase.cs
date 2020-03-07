@@ -5,18 +5,18 @@ using nUpdate.Administration.ViewModels.FirstRun;
 
 namespace nUpdate.Administration.ViewModels
 {
-    public class FirstRunViewModel : WizardViewModel
+    public class FirstRunBase : WizardBase
     {
         private readonly IFirstRunProvider _firstRunProvider;
         public FirstSetupData FirstSetupData { get; } = new FirstSetupData();
 
-        public FirstRunViewModel(IFirstRunProvider firstRunProvider)
+        public FirstRunBase(IFirstRunProvider firstRunProvider)
         {
             _firstRunProvider = firstRunProvider;
             _firstRunProvider.SetFinishAction(out var f);
             FinishingAction = f;
 
-            InitializePages(new List<WizardPageViewModel>
+            InitializePages(new List<WizardPageBase>
             {
                 new WelcomePageViewModel(),
                 new KeyDatabaseSetupPageViewModel(this),

@@ -2,16 +2,16 @@
 
 namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class KeyDatabaseSetupPageViewModel : WizardPageViewModel
+    public class KeyDatabaseSetupPageViewModel : WizardPageBase
     {
-        private readonly FirstRunViewModel _firstRunViewModel;
+        private readonly FirstRunBase _firstRunBase;
         private bool _encryptKeyDatabase = true;
         private string _masterPassword = string.Empty;
         private string _masterPasswordVerify = string.Empty;
 
-        public KeyDatabaseSetupPageViewModel(FirstRunViewModel firstRunViewModel)
+        public KeyDatabaseSetupPageViewModel(FirstRunBase firstRunBase)
         {
-            _firstRunViewModel = firstRunViewModel;
+            _firstRunBase = firstRunBase;
             CanGoBack = true;
         }
 
@@ -46,8 +46,8 @@ namespace nUpdate.Administration.ViewModels.FirstRun
         }
         private void RefreshFirstRunData()
         {
-            _firstRunViewModel.FirstSetupData.EncryptKeyDatabase = EncryptKeyDatabase;
-            _firstRunViewModel.FirstSetupData.MasterPassword = MasterPassword;
+            _firstRunBase.FirstSetupData.EncryptKeyDatabase = EncryptKeyDatabase;
+            _firstRunBase.FirstSetupData.MasterPassword = MasterPassword;
         }
 
         private void RefreshNavigation()

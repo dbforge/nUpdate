@@ -5,7 +5,7 @@ namespace nUpdate.Administration.ViewModels
     /// <summary>
     ///     Represents a view model for a wizard page.
     /// </summary>
-    public abstract class WizardPageViewModel : ViewModel
+    public abstract class WizardPageBase : ViewModel
     {
         private bool _canBeShown = true;
         private bool _canGoBack;
@@ -36,13 +36,13 @@ namespace nUpdate.Administration.ViewModels
             set => SetProperty(value, ref _needsUserInteraction);
         }
 
-        public virtual void OnNavigateBack(WizardViewModel window)
+        public virtual void OnNavigateBack(WizardBase window)
         { }
 
-        public virtual void OnNavigateForward(WizardViewModel window)
+        public virtual void OnNavigateForward(WizardBase window)
         { }
 
-        public virtual void OnNavigated(WizardPageViewModel fromPage, WizardViewModel window)
+        public virtual void OnNavigated(WizardPageBase fromPage, WizardBase window)
         { }
     }
 }

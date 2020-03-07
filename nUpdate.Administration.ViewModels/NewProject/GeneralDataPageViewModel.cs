@@ -8,18 +8,18 @@ using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class GeneralDataPageViewModel : WizardPageViewModel
+    public class GeneralDataPageViewModel : WizardPageBase
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
         private string _location;
         private ICommand _locationSelectCommand;
         private string _name;
         private string _updateDirectory;
         private ICommand _updateDirectorySelectCommand;
 
-        public GeneralDataPageViewModel(NewProjectViewModel viewModel, INewProjectProvider newProjectProvider)
+        public GeneralDataPageViewModel(NewProjectBase @base, INewProjectProvider newProjectProvider)
         {
-            _newProjectViewModel = viewModel;
+            _newProjectBase = @base;
 
             _location = PathProvider.DefaultProjectDirectory;
             _locationSelectCommand = new RelayCommand(() => 
@@ -70,7 +70,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _updateDirectorySelectCommand, nameof(UpdateDirectorySelectCommand));
         }
 
-        public override void OnNavigated(WizardPageViewModel fromPage, WizardViewModel window)
+        public override void OnNavigated(WizardPageBase fromPage, WizardBase window)
         {
             if (!Directory.Exists(PathProvider.DefaultProjectDirectory))
                 Directory.CreateDirectory(PathProvider.DefaultProjectDirectory);
@@ -101,10 +101,10 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void RefreshProjectData()
         {
-            _newProjectViewModel.ProjectCreationData.Project.Name = Name;
-            _newProjectViewModel.ProjectCreationData.Project.UpdateDirectory = new Uri(UpdateDirectory);
-            _newProjectViewModel.ProjectCreationData.Project.Guid = Guid.NewGuid();
-            _newProjectViewModel.ProjectCreationData.Location = Location;
+            _newProjectBase.ProjectCreationData.Project.Name = Name;
+            _newProjectBase.ProjectCreationData.Project.UpdateDirectory = new Uri(UpdateDirectory);
+            _newProjectBase.ProjectCreationData.Project.Guid = Guid.NewGuid();
+            _newProjectBase.ProjectCreationData.Location = Location;
         }
     }
 }

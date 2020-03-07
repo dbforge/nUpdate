@@ -14,7 +14,7 @@ using nUpdate.Administration.Views;*/
 
 namespace nUpdate.Administration.ViewModels
 {
-    public abstract class WizardViewModel : ViewModel
+    public abstract class WizardBase : ViewModel
     {
         /*private static readonly DependencyProperty PageCanGoBackProperty =
             DependencyProperty.Register("PageCanGoBack", typeof(bool), typeof(PagedWindowViewModel),
@@ -43,10 +43,10 @@ namespace nUpdate.Administration.ViewModels
         /// </summary>
         public static readonly DependencyProperty CanGoForwardProperty = CanGoForwardPropertyKey.DependencyProperty;*/
 
-        private WizardPageViewModel _currentPageViewModel;
+        private WizardPageBase _currentPageViewModel;
         private RelayCommand _goBackCommand;
         private RelayCommand _goForwardCommand;
-        private ReadOnlyCollection<WizardPageViewModel> _pageViewModels;
+        private ReadOnlyCollection<WizardPageBase> _pageViewModels;
         
         /// <summary>
         ///     Gets a value indicating whether the user is allowed to go back, or not.
@@ -61,7 +61,7 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Gets or sets the view model of the current page to be shown.
         /// </summary>
-        public WizardPageViewModel CurrentPageViewModel
+        public WizardPageBase CurrentPageViewModel
         {
             get
             {
@@ -120,7 +120,7 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Gets the view models of the pages to be shown.
         /// </summary>
-        protected ReadOnlyCollection<WizardPageViewModel> PageViewModels
+        protected ReadOnlyCollection<WizardPageBase> PageViewModels
         {
             get
             {
@@ -193,9 +193,9 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Initialize the pages associated with this window.
         /// </summary>
-        protected void InitializePages(IList<WizardPageViewModel> viewModels)
+        protected void InitializePages(IList<WizardPageBase> viewModels)
         {
-            PageViewModels = new ReadOnlyCollection<WizardPageViewModel>(viewModels);
+            PageViewModels = new ReadOnlyCollection<WizardPageBase>(viewModels);
             CurrentPageViewModel = PageViewModels[0];
             CurrentPageViewModel.OnNavigated(null, this);
         }

@@ -15,7 +15,7 @@ namespace nUpdate.Administration.Views
         public FirstRunWindow()
         {
             InitializeComponent();
-            DataContext = new FirstRunViewModel(FirstRunProvider.Instance);
+            DataContext = new FirstRunBase(FirstRunProvider.Instance);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

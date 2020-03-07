@@ -114,7 +114,7 @@ namespace nUpdate.Administration.BusinessLogic.Ftp
 
                 await ftpClient.UploadFileAsync(localFilePath,
                     Path.Combine(Data.Directory, remoteRelativePath),
-                    FtpExists.Overwrite, true, FtpVerify.Retry, internalProgress);
+                    FtpRemoteExists.Overwrite, true, FtpVerify.Retry, internalProgress);
                 await ftpClient.DisconnectAsync();
             }
         }

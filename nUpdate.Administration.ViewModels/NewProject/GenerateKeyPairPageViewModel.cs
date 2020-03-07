@@ -2,18 +2,18 @@
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class GenerateKeyPairPageViewModel : WizardPageViewModel
+    public class GenerateKeyPairPageViewModel : WizardPageBase
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
 
-        public GenerateKeyPairPageViewModel(NewProjectViewModel viewModel)
+        public GenerateKeyPairPageViewModel(NewProjectBase @base)
         {
-            _newProjectViewModel = viewModel;
+            _newProjectBase = @base;
             
             NeedsUserInteraction = false;
         }
 
-        public override async void OnNavigated(WizardPageViewModel fromPage, WizardViewModel window)
+        public override async void OnNavigated(WizardPageBase fromPage, WizardBase window)
         {
             base.OnNavigated(fromPage, window);
 
@@ -24,7 +24,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CanBeShown = false;
 
             // Request going forward to the next page automatically.
-            _newProjectViewModel.RequestGoForward();
+            _newProjectBase.RequestGoForward();
         }
 
         private Task GenerateKeyPair()
@@ -32,8 +32,8 @@ namespace nUpdate.Administration.ViewModels.NewProject
             return Task.Run(() =>
             {
                 var rsa = new RsaManager();
-                _newProjectViewModel.ProjectCreationData.Project.PublicKey = rsa.PublicKey;
-                _newProjectViewModel.ProjectCreationData.PrivateKey = rsa.PrivateKey;
+                _newProjectBase.ProjectCreationData.Project.PublicKey = rsa.PublicKey;
+                _newProjectBase.ProjectCreationData.PrivateKey = rsa.PrivateKey;
             });
         }
     }

@@ -11,7 +11,7 @@
     ShowIconOnTitleBar="False"
     Width="520"
     Height="310"
-    d:DataContext="{d:DesignInstance newProject:NewProjectViewModel}"
+    d:DataContext="{d:DesignInstance newProject:NewProjectBase}"
     Icon="/./Icons/nUpdate.ico"
     ResizeMode="NoResize"
     mc:Ignorable="d">

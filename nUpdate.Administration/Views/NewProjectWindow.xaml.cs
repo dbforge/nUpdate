@@ -11,7 +11,7 @@ namespace nUpdate.Administration.Views
         public NewProjectWindow()
         {
             InitializeComponent();
-            DataContext = new NewProjectViewModel(NewProjectProvider.Instance);
+            DataContext = new NewProjectBase(NewProjectProvider.Instance);
         }
 
         public override void RequestClose()

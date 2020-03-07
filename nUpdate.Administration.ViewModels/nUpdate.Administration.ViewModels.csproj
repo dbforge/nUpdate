@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\nUpdate.Administration.BusinessLogic\nUpdate.Administration.BusinessLogic.csproj" />
-    <ProjectReference Include="..\nUpdate.Administration.Common\nUpdate.Administration.Infrastructure.csproj" />
     <ProjectReference Include="..\nUpdate.Administration.Infrastructure\nUpdate.Administration.Infrastructure.csproj" />
   </ItemGroup>
 

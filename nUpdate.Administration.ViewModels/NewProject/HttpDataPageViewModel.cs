@@ -4,9 +4,9 @@ using nUpdate.Administration.Models.Http;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class HttpDataPageViewModel : WizardPageViewModel
+    public class HttpDataPageViewModel : WizardPageBase
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
         private readonly HttpData _transferData;
         private string _username;
         private string _password;
@@ -14,9 +14,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private string _scriptName;
         private bool _scriptNameEditable;
 
-        public HttpDataPageViewModel(NewProjectViewModel viewModel)
+        public HttpDataPageViewModel(NewProjectBase @base)
         {
-            _newProjectViewModel = viewModel;
+            _newProjectBase = @base;
             _transferData = new HttpData();
 
             PropertyChanged += (sender, args) => RefreshNavigation();
@@ -53,10 +53,10 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _scriptNameEditable);
         }
 
-        public override void OnNavigated(WizardPageViewModel fromPage, WizardViewModel window)
+        public override void OnNavigated(WizardPageBase fromPage, WizardBase window)
         {
             base.OnNavigated(fromPage, window);
-            var backendType = _newProjectViewModel.ProjectCreationData.HttpBackendType;
+            var backendType = _newProjectBase.ProjectCreationData.HttpBackendType;
             ScriptName = backendType != HttpBackendType.Custom
                 ? EnumDescriptionHelper.GetEnumDescription(backendType)
                 : string.Empty;
@@ -75,10 +75,10 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private void RefreshProjectData()
         {
             _transferData.ScriptUri =
-                new Uri(_newProjectViewModel.ProjectCreationData.Project.UpdateDirectory, ScriptName);
+                new Uri(_newProjectBase.ProjectCreationData.Project.UpdateDirectory, ScriptName);
             _transferData.Username = Username;
             _transferData.Password = Password;
-            _newProjectViewModel.ProjectCreationData.Project.TransferData = _transferData;
+            _newProjectBase.ProjectCreationData.Project.TransferData = _transferData;
         }
     }
 }

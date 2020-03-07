@@ -7,9 +7,9 @@ using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class PathSetupPageViewModel : WizardPageViewModel
+    public class PathSetupPageViewModel : WizardPageBase
     {
-        private readonly FirstRunViewModel _firstRunViewModel;
+        private readonly FirstRunBase _firstRunBase;
 
         private ICommand _applicationDataDirectorySelectCommand;
 
@@ -23,10 +23,10 @@ namespace nUpdate.Administration.ViewModels.FirstRun
 
         private ICommand _defaultProjectDirectorySelectCommand;
 
-        public PathSetupPageViewModel(FirstRunViewModel firstRunViewModel,
+        public PathSetupPageViewModel(FirstRunBase firstRunBase,
             IFirstRunProvider firstRunProvider)
         {
-            _firstRunViewModel = firstRunViewModel;
+            _firstRunBase = firstRunBase;
             CanGoBack = true;
 
             _applicationDataDirectorySelectCommand = new RelayCommand(() =>
@@ -75,8 +75,8 @@ namespace nUpdate.Administration.ViewModels.FirstRun
 
         private void RefreshFirstRunData()
         {
-            _firstRunViewModel.FirstSetupData.ApplicationDataLocation = ApplicationDataLocation;
-            _firstRunViewModel.FirstSetupData.DefaultProjectDirectory = DefaultProjectDirectory;
+            _firstRunBase.FirstSetupData.ApplicationDataLocation = ApplicationDataLocation;
+            _firstRunBase.FirstSetupData.DefaultProjectDirectory = DefaultProjectDirectory;
         }
 
         private void RefreshNavigation()

@@ -2,14 +2,14 @@
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class UpdateProviderSelectionPageViewModel : WizardPageViewModel
+    public class UpdateProviderSelectionPageViewModel : WizardPageBase
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
         private UpdateProviderType _updateProviderType;
 
-        public UpdateProviderSelectionPageViewModel(NewProjectViewModel viewModel)
+        public UpdateProviderSelectionPageViewModel(NewProjectBase @base)
         {
-            _newProjectViewModel = viewModel;
+            _newProjectBase = @base;
             CanGoBack = true;
             CanGoForward = true;
 
@@ -22,7 +22,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set
             {
                 SetProperty(value, ref _updateProviderType, nameof(UpdateProviderType));
-                _newProjectViewModel.ProjectCreationData.UpdateProviderType = value;
+                _newProjectBase.ProjectCreationData.UpdateProviderType = value;
             }
         }
     }

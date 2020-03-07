@@ -11,11 +11,11 @@ using nUpdate.Administration.ViewModels.NewProject;
 
 namespace nUpdate.Administration.ViewModels
 {
-    public class NewProjectViewModel : WizardViewModel
+    public class NewProjectBase : WizardBase
     {
-        public NewProjectViewModel(INewProjectProvider newProjectProvider)
+        public NewProjectBase(INewProjectProvider newProjectProvider)
         {
-            InitializePages(new List<WizardPageViewModel>
+            InitializePages(new List<WizardPageBase>
             {
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this, newProjectProvider),

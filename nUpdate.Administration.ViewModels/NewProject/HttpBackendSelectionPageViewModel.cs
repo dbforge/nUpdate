@@ -2,14 +2,14 @@
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class HttpBackendSelectionPageViewModel : WizardPageViewModel, IFirstUpdateProviderSubWizardPageViewModel
+    public class HttpBackendSelectionPageViewModel : WizardPageBase, IFirstUpdateProviderSubWizardPageViewModel
     {
-        private readonly NewProjectViewModel _newProjectViewModel;
+        private readonly NewProjectBase _newProjectBase;
         private HttpBackendType _httpBackendType;
 
-        public HttpBackendSelectionPageViewModel(NewProjectViewModel newProjectViewModel)
+        public HttpBackendSelectionPageViewModel(NewProjectBase newProjectBase)
         {
-            _newProjectViewModel = newProjectViewModel;
+            _newProjectBase = newProjectBase;
 
             PropertyChanged += (sender, args) => RefreshProjectData();
             CanGoBack = true;
@@ -24,7 +24,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void RefreshProjectData()
         {
-            _newProjectViewModel.ProjectCreationData.HttpBackendType = _httpBackendType;
+            _newProjectBase.ProjectCreationData.HttpBackendType = _httpBackendType;
         }
     }
 }
