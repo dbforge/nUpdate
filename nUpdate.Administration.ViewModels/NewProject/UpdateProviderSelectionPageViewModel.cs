@@ -20,6 +20,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _availableUpdateProviderViewModels = new TrulyObservableCollection<UpdateProviderViewModel>(updateProviderViewModels);
             _availableUpdateProviderViewModels.First().IsSelected = true;
             _updateProviderSelectionCommand = new RelayCommand(SelectUpdateProvider);
+            RefreshProjectData();
 
             CanGoBack = true;
             CanGoForward = true;
