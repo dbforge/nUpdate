@@ -4,10 +4,11 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class PathSetupPageViewModel : WizardPageBase
+    public class PathSetupPageViewModel : WizardPageViewModelBase
     {
         private readonly FirstRunBase _firstRunBase;
 

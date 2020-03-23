@@ -7,8 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentFTP;
-using nUpdate.Administration.Models;
 using nUpdate.Administration.Models.Ftp;
+using nUpdate.Administration.PluginBase.BusinessLogic;
+using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.BusinessLogic.Ftp
 {

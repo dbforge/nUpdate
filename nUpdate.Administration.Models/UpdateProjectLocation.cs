@@ -5,7 +5,7 @@ using nUpdate.Administration.Infrastructure;
 namespace nUpdate.Administration.Models
 {
     [Serializable]
-    public class UpdateProjectLocation : Model
+    public class UpdateProjectLocation : NotifyPropertyChangedBase
     {
         [JsonConstructor]
         public UpdateProjectLocation(Guid guid, string lastSeenPath)

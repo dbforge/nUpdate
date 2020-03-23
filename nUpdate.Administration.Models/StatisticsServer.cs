@@ -6,7 +6,7 @@ using nUpdate.Administration.Infrastructure;
 namespace nUpdate.Administration.Models
 {
     [Serializable]
-    public class StatisticsServer : Model
+    public class StatisticsServer : NotifyPropertyChangedBase
     {
         public StatisticsServer(Uri webUri, string databaseName, string username)
         {

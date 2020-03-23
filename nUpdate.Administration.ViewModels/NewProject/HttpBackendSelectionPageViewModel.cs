@@ -1,16 +1,16 @@
 ﻿using nUpdate.Administration.Models.Http;
+using nUpdate.Administration.PluginBase.Models;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class HttpBackendSelectionPageViewModel : WizardPageBase, IFirstUpdateProviderSubWizardPageViewModel
+    public class HttpBackendSelectionPageViewModel : UpdateProviderWizardPageViewModelBase, IFirstUpdateProviderBase
     {
-        private readonly NewProjectBase _newProjectBase;
         private HttpBackendType _httpBackendType;
 
-        public HttpBackendSelectionPageViewModel(NewProjectBase newProjectBase)
+        public HttpBackendSelectionPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData)
+            : base(wizardViewModelBase, projectCreationData)
         {
-            _newProjectBase = newProjectBase;
-
             PropertyChanged += (sender, args) => RefreshProjectData();
             CanGoBack = true;
             CanGoForward = true;
@@ -24,7 +24,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void RefreshProjectData()
         {
-            _newProjectBase.ProjectCreationData.HttpBackendType = _httpBackendType;
+            HttpBackendType = _httpBackendType;
         }
     }
 }

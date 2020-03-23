@@ -1,19 +1,19 @@
 ﻿using System.Threading.Tasks;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class GenerateKeyPairPageViewModel : WizardPageBase
+    public class GenerateKeyPairPageViewModel : WizardPageViewModelBase
     {
         private readonly NewProjectBase _newProjectBase;
 
         public GenerateKeyPairPageViewModel(NewProjectBase @base)
         {
             _newProjectBase = @base;
-            
             NeedsUserInteraction = false;
         }
 
-        public override async void OnNavigated(WizardPageBase fromPage, WizardBase window)
+        public override async void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
         {
             base.OnNavigated(fromPage, window);
 

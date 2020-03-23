@@ -1,4 +1,7 @@
-﻿using System;
+﻿// NewProjectViewManager.cs, 14.11.2019
+// Copyright (C) Dominic Beger 15.03.2020
+
+using System;
 using System.Collections.Generic;
 using nUpdate.Administration.ViewModels.NewProject;
 

@@ -1,8 +1,6 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
-using nUpdate.Administration.Models.Http;
-
-namespace nUpdate.Administration.Models
+namespace nUpdate.Administration.PluginBase.Models
 {
     public class ProjectCreationData
     {
@@ -17,14 +15,7 @@ namespace nUpdate.Administration.Models
         public string PrivateKey { get; set; }
 
         /// <summary>
-        ///     Gets or sets the update provider enumeration type for the wizard.
-        /// </summary>
-        public UpdateProviderType UpdateProviderType { get; set; }
-
-        public HttpBackendType HttpBackendType { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the project data.
+        ///     Gets or sets the update project data.
         /// </summary>
         public UpdateProject Project { get; set; } = new UpdateProject();
     }

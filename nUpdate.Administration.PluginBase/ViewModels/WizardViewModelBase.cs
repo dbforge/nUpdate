@@ -12,9 +12,9 @@ using System.Windows;
 using System.Windows.Data;
 using nUpdate.Administration.Views;*/
 
-namespace nUpdate.Administration.ViewModels
+namespace nUpdate.Administration.PluginBase.ViewModels
 {
-    public abstract class WizardBase : ViewModel
+    public abstract class WizardViewModelBase : NotifyPropertyChangedBase
     {
         /*private static readonly DependencyProperty PageCanGoBackProperty =
             DependencyProperty.Register("PageCanGoBack", typeof(bool), typeof(PagedWindowViewModel),
@@ -43,10 +43,10 @@ namespace nUpdate.Administration.ViewModels
         /// </summary>
         public static readonly DependencyProperty CanGoForwardProperty = CanGoForwardPropertyKey.DependencyProperty;*/
 
-        private WizardPageBase _currentPageViewModel;
+        private WizardPageViewModelBase _currentPageViewModel;
         private RelayCommand _goBackCommand;
         private RelayCommand _goForwardCommand;
-        private ReadOnlyCollection<WizardPageBase> _pageViewModels;
+        private ReadOnlyCollection<WizardPageViewModelBase> _pageViewModels;
         
         /// <summary>
         ///     Gets a value indicating whether the user is allowed to go back, or not.
@@ -61,7 +61,7 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Gets or sets the view model of the current page to be shown.
         /// </summary>
-        public WizardPageBase CurrentPageViewModel
+        public WizardPageViewModelBase CurrentPageViewModel
         {
             get
             {
@@ -120,7 +120,7 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Gets the view models of the pages to be shown.
         /// </summary>
-        protected ReadOnlyCollection<WizardPageBase> PageViewModels
+        protected ReadOnlyCollection<WizardPageViewModelBase> PageViewModels
         {
             get
             {
@@ -193,9 +193,9 @@ namespace nUpdate.Administration.ViewModels
         /// <summary>
         ///     Initialize the pages associated with this window.
         /// </summary>
-        protected void InitializePages(IList<WizardPageBase> viewModels)
+        protected void InitializePages(IList<WizardPageViewModelBase> viewModels)
         {
-            PageViewModels = new ReadOnlyCollection<WizardPageBase>(viewModels);
+            PageViewModels = new ReadOnlyCollection<WizardPageViewModelBase>(viewModels);
             CurrentPageViewModel = PageViewModels[0];
             CurrentPageViewModel.OnNavigated(null, this);
         }

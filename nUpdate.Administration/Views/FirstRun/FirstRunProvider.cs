@@ -31,6 +31,8 @@ namespace nUpdate.Administration.Views.FirstRun
                 Directory.CreateDirectory(firstSetupData.ApplicationDataLocation);
             if (!Directory.Exists(firstSetupData.DefaultProjectDirectory))
                 Directory.CreateDirectory(firstSetupData.DefaultProjectDirectory);
+            if (!Directory.Exists(PathProvider.PluginDirectory))
+                Directory.CreateDirectory(PathProvider.PluginDirectory);
 
             // Set the master password for this session, if encryption should be used
             if (encrypt)

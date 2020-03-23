@@ -1,4 +1,4 @@
-﻿using nUpdate.Administration.ViewModels;
+﻿using nUpdate.Administration.ViewModels.NewProject;
 using nUpdate.Administration.Views.NewProject;
 
 namespace nUpdate.Administration.Views

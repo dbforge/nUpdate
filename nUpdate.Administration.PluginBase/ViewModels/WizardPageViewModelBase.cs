@@ -1,17 +1,21 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
-namespace nUpdate.Administration.ViewModels
+using nUpdate.Administration.Infrastructure;
+
+namespace nUpdate.Administration.PluginBase.ViewModels
 {
     /// <summary>
     ///     Represents a view model for a wizard page.
     /// </summary>
-    public abstract class WizardPageBase : ViewModel
+    public abstract class WizardPageViewModelBase : NotifyPropertyChangedBase
     {
         private bool _canBeShown = true;
         private bool _canGoBack;
         private bool _canGoForward;
         private bool _needsUserInteraction = true;
-        
+
+        public ushort DisplayOrderId { get; }
+
         public bool CanBeShown
         {
             get => _canBeShown;
@@ -36,13 +40,13 @@ namespace nUpdate.Administration.ViewModels
             set => SetProperty(value, ref _needsUserInteraction);
         }
 
-        public virtual void OnNavigateBack(WizardBase window)
+        public virtual void OnNavigateBack(WizardViewModelBase window)
         { }
 
-        public virtual void OnNavigateForward(WizardBase window)
+        public virtual void OnNavigateForward(WizardViewModelBase window)
         { }
 
-        public virtual void OnNavigated(WizardPageBase fromPage, WizardBase window)
+        public virtual void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
         { }
     }
 }

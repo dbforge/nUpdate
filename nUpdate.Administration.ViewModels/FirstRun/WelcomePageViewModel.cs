@@ -1,6 +1,8 @@
-﻿namespace nUpdate.Administration.ViewModels.FirstRun
+﻿using nUpdate.Administration.PluginBase.ViewModels;
+
+namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class WelcomePageViewModel : WizardPageBase
+    public class WelcomePageViewModel : WizardPageViewModelBase
     {
         public WelcomePageViewModel()
         {

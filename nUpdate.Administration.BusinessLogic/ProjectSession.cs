@@ -2,6 +2,9 @@
 using System.Linq;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Models;
+using nUpdate.Administration.PluginBase;
+using nUpdate.Administration.PluginBase.BusinessLogic;
+using nUpdate.Administration.PluginBase.Models;
 
 // ReSharper disable InconsistentNaming
 
@@ -9,6 +12,8 @@ namespace nUpdate.Administration.BusinessLogic
 {
     internal static class ProjectSession
     {
+        private static IUpdateProviderPlugin _currentUpdateProviderPlugin;
+
         static ProjectSession()
         {
             AvailableLocations = JsonSerializer.Deserialize<TrulyObservableCollection<UpdateProjectLocation>>(File.ReadAllText(PathProvider.ProjectsConfigFilePath)) ?? new TrulyObservableCollection<UpdateProjectLocation>();
@@ -51,7 +56,9 @@ namespace nUpdate.Administration.BusinessLogic
         internal static void InitializeWithProject(UpdateProject project)
         {
             ActiveProject = project;
-            UpdateProvider = UpdateProviderResolver.Resolve(project);
+            _currentUpdateProviderPlugin = GlobalSession.UpdateProviderPlugins.First(p =>
+                p.Value.Identifier.Equals(project.UpdateProviderIdentifier)).Value;
+            UpdateProvider = _currentUpdateProviderPlugin.UpdateProvider;
             PackagesPath = Path.Combine(PathProvider.Path, "Projects", project.Guid.ToString());
 
             ActiveProject.PropertyChanged += (sender, args) => new UpdateProjectBl(ActiveProject).Save();

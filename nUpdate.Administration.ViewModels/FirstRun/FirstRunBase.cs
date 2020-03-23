@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using nUpdate.Administration.Models;
-using nUpdate.Administration.ViewModels.FirstRun;
+using nUpdate.Administration.PluginBase.ViewModels;
 
-namespace nUpdate.Administration.ViewModels
+namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class FirstRunBase : WizardBase
+    public class FirstRunBase : WizardViewModelBase
     {
         private readonly IFirstRunProvider _firstRunProvider;
         public FirstSetupData FirstSetupData { get; } = new FirstSetupData();
@@ -16,7 +16,7 @@ namespace nUpdate.Administration.ViewModels
             _firstRunProvider.SetFinishAction(out var f);
             FinishingAction = f;
 
-            InitializePages(new List<WizardPageBase>
+            InitializePages(new List<WizardPageViewModelBase>
             {
                 new WelcomePageViewModel(),
                 new KeyDatabaseSetupPageViewModel(this),

@@ -1,16 +1,18 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using System.Reflection;
 using System.Security.Authentication;
 using FluentFTP;
 using nUpdate.Administration.BusinessLogic;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Models.Ftp;
+using nUpdate.Administration.PluginBase.Models;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class FtpDataPageViewModel : WizardPageBase, IFirstUpdateProviderSubWizardPageViewModel
+    public class FtpDataPageViewModel : UpdateProviderWizardPageViewModelBase, IFirstUpdateProviderBase
     {
-        private readonly NewProjectBase _newProjectBase;
         private readonly INewProjectProvider _newProjectProvider;
         private readonly FtpData _transferData;
         private RelayCommand _directoryButtonCommand;
@@ -23,10 +25,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private FtpEncryptionMode _encryptionMode;
         private SslProtocols _sslProtocols;
 
-        public FtpDataPageViewModel(NewProjectBase @base, INewProjectProvider newProjectProvider)
+        public FtpDataPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData) 
+            : base(wizardViewModelBase, projectCreationData)
         {
-            _newProjectBase = @base;
-            _newProjectProvider = newProjectProvider;
+            var serviceProvider = ServiceProviderHelper.CreateServiceProvider(Assembly.GetEntryAssembly());
+            _newProjectProvider = (INewProjectProvider)serviceProvider.GetService(typeof(INewProjectProvider));
             _directoryButtonCommand = new RelayCommand(OnDirectoryButtonClick);
             _directory = "/";
             _transferData = new FtpData();
@@ -120,7 +123,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _transferData.Username = Username;
             _transferData.Directory = Directory;
 
-            _newProjectBase.ProjectCreationData.Project.TransferData = _transferData;
+            ProjectCreationData.Project.TransferData = _transferData;
         }
     }
 }

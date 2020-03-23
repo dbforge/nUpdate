@@ -1,6 +1,8 @@
-﻿namespace nUpdate.Administration.ViewModels
+﻿using nUpdate.Administration.Infrastructure;
+
+namespace nUpdate.Administration.ViewModels
 {
-    internal class ProjectWindowViewModel : ViewModel
+    internal class ProjectWindowViewModel : NotifyPropertyChangedBase
     {
 
     }

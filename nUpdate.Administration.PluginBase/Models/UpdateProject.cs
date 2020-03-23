@@ -4,30 +4,27 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using nUpdate.Administration.Infrastructure;
-using nUpdate.Administration.Models.Logging;
 
 // ReSharper disable InconsistentNaming
 
-namespace nUpdate.Administration.Models
+namespace nUpdate.Administration.PluginBase.Models
 {
     /// <summary>
     ///     Represents a local update project.
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class UpdateProject : Model
+    public class UpdateProject : NotifyPropertyChangedBase
     {
         private Uri _packageFileUri;
         private Guid _guid;
-        private List<PackageActionLogData> _logData;
         private string _name;
         private List<UpdatePackage> _packages;
         private string _publicKey;
         private string _transferAssemblyFilePath;
         private ITransferData _transferData;
-        private Type _customTransferProviderClassType;
         private Uri _updateDirectoryUri;
-        private UpdateProviderType _updateProviderType;
+        private Guid _updateProviderIdentifier;
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the project.
@@ -48,20 +45,6 @@ namespace nUpdate.Administration.Models
         /// </summary>
         [JsonIgnore]
         public Uri Identifier => new Uri($"nupdproj://{Guid}");
-
-        /// <summary>
-        ///     Gets or sets the <see cref="PackageActionLogData" /> that carries information about the package history.
-        /// </summary>
-        [JsonProperty]
-        public List<PackageActionLogData> LogData
-        {
-            get => _logData;
-            set
-            {
-                _logData = value;
-                OnPropertyChanged();
-            }
-        }
 
         /// <summary>
         ///     Gets or sets the <see cref="Uri"/> of the package feed file of the project.
@@ -150,32 +133,18 @@ namespace nUpdate.Administration.Models
         ///     Gets or sets the transfer provider type that should be used for data transfers.
         /// </summary>
         [JsonProperty]
-        public UpdateProviderType UpdateProviderType
+        public Guid UpdateProviderIdentifier
         {
-            get => _updateProviderType;
+            get => _updateProviderIdentifier;
             set
             {
-                _updateProviderType = value;
+                _updateProviderIdentifier = value;
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="Type"/> of the custom transfer provider in the assembly that should be used for data transfers.
-        /// </summary>
-        [JsonProperty]
-        public Type CustomTransferProviderClassType
-        {
-            get => _customTransferProviderClassType;
-            set
-            {
-                _customTransferProviderClassType = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="System.Uri" /> of the local or remote update directory of the project.
+        ///     Gets or sets the <see cref="Uri" /> of the local or remote update directory of the project.
         /// </summary>
         [JsonProperty]
         public Uri UpdateDirectory

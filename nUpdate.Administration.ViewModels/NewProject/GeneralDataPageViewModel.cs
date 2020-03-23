@@ -5,10 +5,11 @@ using System.IO;
 using System.Windows.Input;
 using nUpdate.Administration.BusinessLogic;
 using nUpdate.Administration.Infrastructure;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class GeneralDataPageViewModel : WizardPageBase
+    public class GeneralDataPageViewModel : WizardPageViewModelBase
     {
         private readonly NewProjectBase _newProjectBase;
         private string _location;
@@ -26,16 +27,14 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 Location = newProjectProvider.GetLocationDirectory(_location));
             _updateDirectorySelectCommand = new RelayCommand(() => 
                 UpdateDirectory = newProjectProvider.GetUpdateDirectory());
+
+            PropertyChanged += (sender, args) => RefreshNavigation();
         }
 
         public string Location
         {
             get => _location;
-            set
-            {
-                SetProperty(value, ref _location, nameof(Location));
-                RefreshNavigation();
-            }
+            set => SetProperty(value, ref _location, nameof(Location));
         }
 
         public ICommand LocationSelectCommand
@@ -47,21 +46,13 @@ namespace nUpdate.Administration.ViewModels.NewProject
         public string Name
         {
             get => _name;
-            set
-            {
-                SetProperty(value, ref _name, nameof(Name));
-                RefreshNavigation();
-            }
+            set => SetProperty(value, ref _name, nameof(Name));
         }
 
         public string UpdateDirectory
         {
             get => _updateDirectory;
-            set
-            {
-                SetProperty(value, ref _updateDirectory, nameof(UpdateDirectory));
-                RefreshNavigation();
-            }
+            set => SetProperty(value, ref _updateDirectory, nameof(UpdateDirectory));
         }
 
         public ICommand UpdateDirectorySelectCommand
@@ -70,7 +61,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _updateDirectorySelectCommand, nameof(UpdateDirectorySelectCommand));
         }
 
-        public override void OnNavigated(WizardPageBase fromPage, WizardBase window)
+        public override void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
         {
             if (!Directory.Exists(PathProvider.DefaultProjectDirectory))
                 Directory.CreateDirectory(PathProvider.DefaultProjectDirectory);

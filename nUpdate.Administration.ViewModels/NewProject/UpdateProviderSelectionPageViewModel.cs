@@ -1,29 +1,37 @@
-﻿using nUpdate.Administration.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using nUpdate.Administration.PluginBase.Models;
+using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
 {
-    public class UpdateProviderSelectionPageViewModel : WizardPageBase
+    public class UpdateProviderSelectionPageViewModel : WizardPageViewModelBase
     {
-        private readonly NewProjectBase _newProjectBase;
-        private UpdateProviderType _updateProviderType;
+        private readonly ProjectCreationData _projectCreationData;
+        private KeyValuePair<Guid, string> _selectedUpdateProviderIdentifier;
 
-        public UpdateProviderSelectionPageViewModel(NewProjectBase @base)
+        public UpdateProviderSelectionPageViewModel(ProjectCreationData projectCreationData, Dictionary<Guid, string> updateProviderDictionary)
         {
-            _newProjectBase = @base;
+            _projectCreationData = projectCreationData;
+            UpdateProviderDictionary = updateProviderDictionary;
             CanGoBack = true;
             CanGoForward = true;
 
-            UpdateProviderType = UpdateProviderType.ServerOverHttp;
+            PropertyChanged += (sender, args) => RefreshProjectData();
+            _selectedUpdateProviderIdentifier = UpdateProviderDictionary.First();
         }
 
-        public UpdateProviderType UpdateProviderType
+        private void RefreshProjectData()
         {
-            get => _updateProviderType;
-            set
-            {
-                SetProperty(value, ref _updateProviderType, nameof(UpdateProviderType));
-                _newProjectBase.ProjectCreationData.UpdateProviderType = value;
-            }
+            _projectCreationData.Project.UpdateProviderIdentifier = _selectedUpdateProviderIdentifier.Key;
+        }
+        
+        public Dictionary<Guid, string> UpdateProviderDictionary { get; set; }
+        public KeyValuePair<Guid, string> SelectedUpdateProviderIdentifier
+        {
+            get => _selectedUpdateProviderIdentifier;
+            set => SetProperty(value, ref _selectedUpdateProviderIdentifier);
         }
     }
 }

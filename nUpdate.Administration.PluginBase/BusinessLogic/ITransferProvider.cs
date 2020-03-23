@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using nUpdate.Administration.Models;
+using nUpdate.Administration.PluginBase.Models;
 
-namespace nUpdate.Administration.BusinessLogic
+namespace nUpdate.Administration.PluginBase.BusinessLogic
 {
     public interface ITransferProvider
     {

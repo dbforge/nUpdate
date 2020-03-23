@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace nUpdate.Administration.Infrastructure
 {
     [Serializable]
-    public class Model : INotifyPropertyChanged
+    public class NotifyPropertyChangedBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -7,11 +7,12 @@
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
     xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels;assembly=nUpdate.Administration.ViewModels"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.Views.NewProject"
+    xmlns:newProject2="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
     TitleTemplate="{x:Null}"
     ShowIconOnTitleBar="False"
     Width="520"
     Height="310"
-    d:DataContext="{d:DesignInstance newProject:NewProjectBase}"
+    d:DataContext="{d:DesignInstance newProject2:NewProjectBase}"
     Icon="/./Icons/nUpdate.ico"
     ResizeMode="NoResize"
     mc:Ignorable="d">

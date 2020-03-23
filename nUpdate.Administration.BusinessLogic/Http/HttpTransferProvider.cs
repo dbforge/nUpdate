@@ -7,8 +7,9 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using nUpdate.Administration.BusinessLogic.Http.JsonRpc;
-using nUpdate.Administration.Models;
 using nUpdate.Administration.Models.Http;
+using nUpdate.Administration.PluginBase.BusinessLogic;
+using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.BusinessLogic.Http
 {

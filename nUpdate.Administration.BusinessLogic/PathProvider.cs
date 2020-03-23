@@ -14,6 +14,8 @@ namespace nUpdate.Administration.BusinessLogic
         public static string DefaultProjectDirectory => SettingsManager.Instance["DefaultProjectPath"].ToString();
         public static string KeyDatabaseFilePath => System.IO.Path.Combine(Path, "keys.db");
         public static string LocalesDirectory => System.IO.Path.Combine(Path, "Locales");
+        public static string PluginDirectory => System.IO.Path.Combine(Path, "Plugins");
+        public static string UpdateProviderPluginDirectory => System.IO.Path.Combine(PluginDirectory, "UpdateProvider");
         public static string Path => SettingsManager.Instance["ApplicationDataPath"].ToString();
         public static string ProjectsConfigFilePath => System.IO.Path.Combine(Path, "projconf.json");
         public static string StatisticServersFilePath => System.IO.Path.Combine(Path, "statservers.json");

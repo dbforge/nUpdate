@@ -19,6 +19,7 @@
             <!--  Converters  -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+            <converters:GuidToBooleanConverter x:Key="GuidToBooleanConverter" />
 
             <!--  UI resources  -->
             <SolidColorBrush x:Key="BottomPanelBrush" Color="White" />

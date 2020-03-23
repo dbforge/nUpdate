@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using nUpdate.Administration.BusinessLogic.Ftp;
-using nUpdate.Administration.Models;
+using nUpdate.Administration.PluginBase.Models;
 using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs
@@ -87,7 +87,7 @@ namespace nUpdate.Administration.Views.Dialogs
             }
             finally
             {
-                parentAdorner.Remove(loadingAdorner);
+                parentAdorner?.Remove(loadingAdorner);
                 ServerTreeView.IsEnabled = true;
             }
         }

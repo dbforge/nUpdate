@@ -1,5 +1,5 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
-namespace nUpdate.Administration.Models
+namespace nUpdate.Administration.PluginBase.Models
 {
     public enum ServerItemType
     {

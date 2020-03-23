@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentFTP;
+using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.Models.Ftp
 {

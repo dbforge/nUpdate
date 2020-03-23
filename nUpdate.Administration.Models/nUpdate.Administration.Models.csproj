@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="27.1.2" />
+    <PackageReference Include="FluentFTP" Version="32.2.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\nUpdate.Administration.Infrastructure\nUpdate.Administration.Infrastructure.csproj" />
+    <ProjectReference Include="..\nUpdate.Administration.PluginBase\nUpdate.Administration.PluginBase.csproj" />
     <ProjectReference Include="..\nUpdate\nUpdate.csproj" />
   </ItemGroup>
 

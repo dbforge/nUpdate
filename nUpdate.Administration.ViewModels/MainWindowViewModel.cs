@@ -5,7 +5,7 @@ using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.ViewModels
 {
-    public class MainWindowViewModel : ViewModel
+    public class MainWindowViewModel : NotifyPropertyChangedBase
     {
         private ICommand _loadCommand;
         private ICommand _newProjectCommand;

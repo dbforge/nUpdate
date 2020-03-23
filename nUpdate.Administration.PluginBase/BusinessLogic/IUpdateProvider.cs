@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace nUpdate.Administration.BusinessLogic
+namespace nUpdate.Administration.PluginBase.BusinessLogic
 {
     public interface IUpdateProvider
     {

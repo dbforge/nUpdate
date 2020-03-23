@@ -2,7 +2,7 @@
 
 using System;
 
-namespace nUpdate.Administration.Models
+namespace nUpdate.Administration.PluginBase.Models
 {
     public interface IServerItem
     {

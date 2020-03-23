@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using nUpdate.Administration.Models;
+using nUpdate.Administration.PluginBase.BusinessLogic;
+using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.BusinessLogic.Ssh
 {

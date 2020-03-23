@@ -2,6 +2,7 @@
 using System.Linq;
 using nUpdate.Administration.Models;
 using nUpdate.Administration.Models.Logging;
+using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.BusinessLogic
 {
@@ -32,12 +33,12 @@ namespace nUpdate.Administration.BusinessLogic
         public void AddLogEntry(string packageName, PackageActionType packageActionType)
         {
             var logData = new PackageActionLogData(packageActionType, packageName);
-            _updateProject.LogData.Add(logData);
+            // TODO: LOG
         }
 
         public void ClearLog()
         {
-            _updateProject.LogData.Clear();
+            // TODO: LOG
         }
 
         /// <summary>

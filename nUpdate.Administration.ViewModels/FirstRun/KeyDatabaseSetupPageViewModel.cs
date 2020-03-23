@@ -1,8 +1,10 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
 
+using nUpdate.Administration.PluginBase.ViewModels;
+
 namespace nUpdate.Administration.ViewModels.FirstRun
 {
-    public class KeyDatabaseSetupPageViewModel : WizardPageBase
+    public class KeyDatabaseSetupPageViewModel : WizardPageViewModelBase
     {
         private readonly FirstRunBase _firstRunBase;
         private bool _encryptKeyDatabase = true;

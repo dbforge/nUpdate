@@ -4,7 +4,7 @@ using nUpdate.Administration.Infrastructure;
 namespace nUpdate.Administration.Models.Logging
 {
     [Serializable]
-    public class PackageActionLogData : Model
+    public class PackageActionLogData : NotifyPropertyChangedBase
     {
         public PackageActionLogData(PackageActionType type, string packageName)
         {
