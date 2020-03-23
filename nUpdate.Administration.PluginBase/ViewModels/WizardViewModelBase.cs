@@ -100,7 +100,7 @@ namespace nUpdate.Administration.PluginBase.ViewModels
             {
                 EnsureObjectState();
                 return _goBackCommand ?? (_goBackCommand =
-                           new RelayCommand(GoBack, () => CanGoBack));
+                           new RelayCommand(o => GoBack(), () => CanGoBack));
             }
         }
 
@@ -113,7 +113,7 @@ namespace nUpdate.Administration.PluginBase.ViewModels
             {
                 EnsureObjectState();
                 return _goForwardCommand ?? (_goForwardCommand =
-                           new RelayCommand(GoForward, () => CanGoForward));
+                           new RelayCommand(o => GoForward(), () => CanGoForward));
             }
         }
 

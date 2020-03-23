@@ -8,7 +8,7 @@ namespace nUpdate.Administration.Infrastructure
     /// </summary>
     public class RelayCommand : ICommand
     {
-        readonly Action _methodToExecute;
+        readonly Action<object> _methodToExecute;
         readonly Func<bool> _canExecuteEvaluator;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace nUpdate.Administration.Infrastructure
         /// </summary>
         /// <param name="methodToExecute">A delegate that is invoked when the command is executed.</param>
         /// <param name="canExecuteEvaluator">A delegate that specifies if the command can be executed.</param>
-        public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator)
+        public RelayCommand(Action<object> methodToExecute, Func<bool> canExecuteEvaluator)
         {
             _methodToExecute = methodToExecute;
             _canExecuteEvaluator = canExecuteEvaluator;
@@ -31,7 +31,7 @@ namespace nUpdate.Administration.Infrastructure
         /// Creates a relay command.
         /// </summary>
         /// <param name="methodToExecute">A delegate that is invoked when the command is executed.</param>
-        public RelayCommand(Action methodToExecute)
+        public RelayCommand(Action<object> methodToExecute)
             : this(methodToExecute, () => true)
         {
         }
@@ -53,14 +53,14 @@ namespace nUpdate.Administration.Infrastructure
         /// <summary>
         /// Executes this command.
         /// </summary>
-        public void Execute()
+        public void Execute(object parameter)
         {
-            _methodToExecute.Invoke();
+            _methodToExecute.Invoke(parameter);
         }
 
         void ICommand.Execute(object parameter)
         {
-            Execute();
+            Execute(parameter);
         }
 
         public void OnCanExecuteChanged()

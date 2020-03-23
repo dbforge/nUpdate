@@ -23,7 +23,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this, newProjectProvider),
                 new UpdateProviderSelectionPageViewModel(ProjectCreationData,
-                    GlobalSession.UpdateProviderPlugins.ToDictionary(p => p.Value.Identifier, p => p.Value.Description))
+                    GlobalSession.UpdateProviderPlugins.Select(p => new UpdateProviderViewModel(p.Value.Identifier, p.Value.Description, false)))
             };
 
             pages.AddRange(from plugin in GlobalSession.UpdateProviderPlugins

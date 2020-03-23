@@ -30,9 +30,9 @@ namespace nUpdate.Administration.ViewModels.FirstRun
             _firstRunBase = firstRunBase;
             CanGoBack = true;
 
-            _applicationDataDirectorySelectCommand = new RelayCommand(() =>
+            _applicationDataDirectorySelectCommand = new RelayCommand(o =>
                 firstRunProvider.GetApplicationDataDirectoryCommandAction(ref _applicationDataLocation));
-            _defaultProjectDirectorySelectCommand = new RelayCommand(() =>
+            _defaultProjectDirectorySelectCommand = new RelayCommand(o =>
                 firstRunProvider.GetDefaultProjectDirectoryCommandAction(ref _defaultProjectDirectory));
             OnPropertyChanged(nameof(ApplicationDataLocation));
             OnPropertyChanged(nameof(DefaultProjectDirectory));

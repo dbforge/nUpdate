@@ -64,7 +64,7 @@
                                    HorizontalAlignment="Left"
                                    Minimum = "0"
                                    Maximum = "65536"
-                                   Interval = "5" 
+                                   Interval = "1" 
                                    Value="{Binding Port, Mode=TwoWay}"/>
 
                 <TextBlock

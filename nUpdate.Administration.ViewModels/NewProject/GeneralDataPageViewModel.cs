@@ -23,9 +23,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _newProjectBase = @base;
 
             _location = PathProvider.DefaultProjectDirectory;
-            _locationSelectCommand = new RelayCommand(() => 
+            _locationSelectCommand = new RelayCommand(o => 
                 Location = newProjectProvider.GetLocationDirectory(_location));
-            _updateDirectorySelectCommand = new RelayCommand(() => 
+            _updateDirectorySelectCommand = new RelayCommand(o => 
                 UpdateDirectory = newProjectProvider.GetUpdateDirectory());
 
             PropertyChanged += (sender, args) => RefreshNavigation();

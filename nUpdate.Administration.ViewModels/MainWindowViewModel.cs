@@ -13,8 +13,8 @@ namespace nUpdate.Administration.ViewModels
 
         public MainWindowViewModel(IMainViewActionProvider mainWindowActionProvider)
         {
-            LoadCommand = new RelayCommand(mainWindowActionProvider.Load);
-            NewProjectCommand = new RelayCommand(mainWindowActionProvider.CreateNewProject);
+            LoadCommand = new RelayCommand(o => mainWindowActionProvider.Load());
+            NewProjectCommand = new RelayCommand(o => mainWindowActionProvider.CreateNewProject());
             CanEditMasterPassword = mainWindowActionProvider.CanEditMasterPassword();
         }
         

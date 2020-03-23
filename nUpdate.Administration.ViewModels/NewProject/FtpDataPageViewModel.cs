@@ -30,7 +30,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             var serviceProvider = ServiceProviderHelper.CreateServiceProvider(Assembly.GetEntryAssembly());
             _newProjectProvider = (INewProjectProvider)serviceProvider.GetService(typeof(INewProjectProvider));
-            _directoryButtonCommand = new RelayCommand(OnDirectoryButtonClick);
+            _directoryButtonCommand = new RelayCommand(o => OnDirectoryButtonClick());
             _directory = "/";
             _transferData = new FtpData();
 

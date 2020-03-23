@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
+using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.PluginBase.Models;
 using nUpdate.Administration.PluginBase.ViewModels;
 
@@ -9,29 +11,51 @@ namespace nUpdate.Administration.ViewModels.NewProject
     public class UpdateProviderSelectionPageViewModel : WizardPageViewModelBase
     {
         private readonly ProjectCreationData _projectCreationData;
-        private KeyValuePair<Guid, string> _selectedUpdateProviderIdentifier;
+        private TrulyObservableCollection<UpdateProviderViewModel> _availableUpdateProviderViewModels;
+        private ICommand _updateProviderSelectionCommand;
 
-        public UpdateProviderSelectionPageViewModel(ProjectCreationData projectCreationData, Dictionary<Guid, string> updateProviderDictionary)
+        public UpdateProviderSelectionPageViewModel(ProjectCreationData projectCreationData, IEnumerable<UpdateProviderViewModel> updateProviderViewModels)
         {
             _projectCreationData = projectCreationData;
-            UpdateProviderDictionary = updateProviderDictionary;
+            _availableUpdateProviderViewModels = new TrulyObservableCollection<UpdateProviderViewModel>(updateProviderViewModels);
+            _availableUpdateProviderViewModels.First().IsSelected = true;
+            _updateProviderSelectionCommand = new RelayCommand(SelectUpdateProvider);
+
             CanGoBack = true;
             CanGoForward = true;
 
             PropertyChanged += (sender, args) => RefreshProjectData();
-            _selectedUpdateProviderIdentifier = UpdateProviderDictionary.First();
         }
 
         private void RefreshProjectData()
         {
-            _projectCreationData.Project.UpdateProviderIdentifier = _selectedUpdateProviderIdentifier.Key;
+            _projectCreationData.Project.UpdateProviderIdentifier = SelectedViewModel.Identifier;
         }
-        
-        public Dictionary<Guid, string> UpdateProviderDictionary { get; set; }
-        public KeyValuePair<Guid, string> SelectedUpdateProviderIdentifier
+
+        public UpdateProviderViewModel SelectedViewModel => AvailableUpdateProviderViewModels.First(x => x.IsSelected);
+
+        public TrulyObservableCollection<UpdateProviderViewModel> AvailableUpdateProviderViewModels
         {
-            get => _selectedUpdateProviderIdentifier;
-            set => SetProperty(value, ref _selectedUpdateProviderIdentifier);
+            get => _availableUpdateProviderViewModels;
+            set => SetProperty(value, ref _availableUpdateProviderViewModels);
+        }
+
+        public ICommand UpdateProviderSelectionCommand
+        {
+            get => _updateProviderSelectionCommand;
+            set => SetProperty(value, ref _updateProviderSelectionCommand);
+        }
+
+        private void SelectUpdateProvider(object o)
+        {
+            if (o == null)
+                throw new ArgumentNullException(nameof(o));
+
+            var updateProvider = (UpdateProviderViewModel) o;
+            foreach (var upv in AvailableUpdateProviderViewModels)
+                upv.IsSelected = false;
+            updateProvider.IsSelected = true;
+            OnPropertyChanged();
         }
     }
 }
