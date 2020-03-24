@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// AssemblyInfo.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden

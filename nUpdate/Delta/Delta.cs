@@ -1,39 +1,5 @@
-﻿/*
-   Copyright 2016 Endel Dreyer (C# port)
-   Copyright 2014 Dmitry Chestnykh (JavaScript port)
-   Copyright 2007 D. Richard Hipp  (original C version)
-   All rights reserved.
-   
-   Redistribution and use in source and binary forms, with or
-   without modification, are permitted provided that the
-   following conditions are met:
-   
-   1. Redistributions of source code must retain the above
-   copyright notice, this list of conditions and the
-   following disclaimer.
-   
-   2. Redistributions in binary form must reproduce the above
-   copyright notice, this list of conditions and the
-   following disclaimer in the documentation and/or other
-   materials provided with the distribution.
-   
-   THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS
-   OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-   ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
-   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-   BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-   OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-   
-   The views and conclusions contained in the software and documentation
-   are those of the authors and contributors and should not be interpreted
-   as representing official policies, either expressed or implied, of anybody
-   else.
- */
+﻿// Delta.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 
@@ -42,6 +8,113 @@ namespace nUpdate.Delta
     internal class Delta
     {
         public static ushort Nhash = 16;
+
+        public static byte[] Apply(byte[] origin, byte[] delta)
+        {
+            uint total = 0;
+            var lenSrc = (uint) origin.Length;
+            var lenDelta = (uint) delta.Length;
+            var zDelta = new Reader(delta);
+
+            var limit = zDelta.GetInt();
+            if (zDelta.GetChar() != '\n')
+                throw new Exception("size integer not terminated by \'\\n\'");
+
+            var zOut = new Writer();
+            while (zDelta.HaveBytes())
+            {
+                uint cnt, ofst;
+                cnt = zDelta.GetInt();
+
+                switch (zDelta.GetChar())
+                {
+                    case '@':
+                        ofst = zDelta.GetInt();
+                        if (zDelta.HaveBytes() && zDelta.GetChar() != ',')
+                            throw new Exception("copy command not terminated by \',\'");
+                        total += cnt;
+                        if (total > limit)
+                            throw new Exception("copy exceeds output file size");
+                        if (ofst + cnt > lenSrc)
+                            throw new Exception("copy extends past end of input");
+                        zOut.PutArray(origin, (int) ofst, (int) (ofst + cnt));
+                        break;
+
+                    case ':':
+                        total += cnt;
+                        if (total > limit)
+                            throw new Exception("insert command gives an output larger than predicted");
+                        if (cnt > lenDelta)
+                            throw new Exception("insert count exceeds size of delta");
+                        zOut.PutArray(zDelta.A, (int) zDelta.Pos, (int) (zDelta.Pos + cnt));
+                        zDelta.Pos += cnt;
+                        break;
+
+                    case ';':
+                        var output = zOut.ToArray();
+                        if (cnt != Checksum(output))
+                            throw new Exception("bad checksum");
+                        if (total != limit)
+                            throw new Exception("generated size does not match predicted size");
+                        return output;
+
+                    default:
+                        throw new Exception("unknown delta operator");
+                }
+            }
+
+            throw new Exception("unterminated delta");
+        }
+
+        // Return a 32-bit checksum of the array.
+        private static uint Checksum(byte[] arr)
+        {
+            uint sum0 = 0,
+                sum1 = 0,
+                sum2 = 0,
+                sum = 0,
+                z = 0,
+                n = (uint) arr.Length;
+
+            while (n >= 16)
+            {
+                sum0 += (uint) arr[z + 0] + arr[z + 4] + arr[z + 8] + arr[z + 12];
+                sum1 += (uint) arr[z + 1] + arr[z + 5] + arr[z + 9] + arr[z + 13];
+                sum2 += (uint) arr[z + 2] + arr[z + 6] + arr[z + 10] + arr[z + 14];
+                sum += (uint) arr[z + 3] + arr[z + 7] + arr[z + 11] + arr[z + 15];
+                z += 16;
+                n -= 16;
+            }
+
+            while (n >= 4)
+            {
+                sum0 += arr[z + 0];
+                sum1 += arr[z + 1];
+                sum2 += arr[z + 2];
+                sum += arr[z + 3];
+                z += 4;
+                n -= 4;
+            }
+
+            sum += (sum2 << 8) + (sum1 << 16) + (sum0 << 24);
+            switch (n & 3)
+            {
+                case 3:
+                    sum += (uint) (arr[z + 2] << 8);
+                    sum += (uint) (arr[z + 1] << 16);
+                    sum += (uint) (arr[z + 0] << 24);
+                    break;
+                case 2:
+                    sum += (uint) (arr[z + 1] << 16);
+                    sum += (uint) (arr[z + 0] << 24);
+                    break;
+                case 1:
+                    sum += (uint) (arr[z + 0] << 24);
+                    break;
+            }
+
+            return sum;
+        }
 
         public static byte[] Create(byte[] origin, byte[] target)
         {
@@ -209,72 +282,6 @@ namespace nUpdate.Delta
             return zDelta.ToArray();
         }
 
-        public static byte[] Apply(byte[] origin, byte[] delta)
-        {
-            uint total = 0;
-            var lenSrc = (uint) origin.Length;
-            var lenDelta = (uint) delta.Length;
-            var zDelta = new Reader(delta);
-
-            var limit = zDelta.GetInt();
-            if (zDelta.GetChar() != '\n')
-                throw new Exception("size integer not terminated by \'\\n\'");
-
-            var zOut = new Writer();
-            while (zDelta.HaveBytes())
-            {
-                uint cnt, ofst;
-                cnt = zDelta.GetInt();
-
-                switch (zDelta.GetChar())
-                {
-                    case '@':
-                        ofst = zDelta.GetInt();
-                        if (zDelta.HaveBytes() && zDelta.GetChar() != ',')
-                            throw new Exception("copy command not terminated by \',\'");
-                        total += cnt;
-                        if (total > limit)
-                            throw new Exception("copy exceeds output file size");
-                        if (ofst + cnt > lenSrc)
-                            throw new Exception("copy extends past end of input");
-                        zOut.PutArray(origin, (int) ofst, (int) (ofst + cnt));
-                        break;
-
-                    case ':':
-                        total += cnt;
-                        if (total > limit)
-                            throw new Exception("insert command gives an output larger than predicted");
-                        if (cnt > lenDelta)
-                            throw new Exception("insert count exceeds size of delta");
-                        zOut.PutArray(zDelta.A, (int) zDelta.Pos, (int) (zDelta.Pos + cnt));
-                        zDelta.Pos += cnt;
-                        break;
-
-                    case ';':
-                        var output = zOut.ToArray();
-                        if (cnt != Checksum(output))
-                            throw new Exception("bad checksum");
-                        if (total != limit)
-                            throw new Exception("generated size does not match predicted size");
-                        return output;
-
-                    default:
-                        throw new Exception("unknown delta operator");
-                }
-            }
-
-            throw new Exception("unterminated delta");
-        }
-
-        public static uint OutputSize(byte[] delta)
-        {
-            var zDelta = new Reader(delta);
-            var size = zDelta.GetInt();
-            if (zDelta.GetChar() != '\n')
-                throw new Exception("size integer not terminated by \'\\n\'");
-            return size;
-        }
-
         private static int DigitCount(int v)
         {
             int i, x;
@@ -285,54 +292,13 @@ namespace nUpdate.Delta
             return i;
         }
 
-        // Return a 32-bit checksum of the array.
-        private static uint Checksum(byte[] arr)
+        public static uint OutputSize(byte[] delta)
         {
-            uint sum0 = 0,
-                sum1 = 0,
-                sum2 = 0,
-                sum = 0,
-                z = 0,
-                n = (uint) arr.Length;
-
-            while (n >= 16)
-            {
-                sum0 += (uint) arr[z + 0] + arr[z + 4] + arr[z + 8] + arr[z + 12];
-                sum1 += (uint) arr[z + 1] + arr[z + 5] + arr[z + 9] + arr[z + 13];
-                sum2 += (uint) arr[z + 2] + arr[z + 6] + arr[z + 10] + arr[z + 14];
-                sum += (uint) arr[z + 3] + arr[z + 7] + arr[z + 11] + arr[z + 15];
-                z += 16;
-                n -= 16;
-            }
-
-            while (n >= 4)
-            {
-                sum0 += arr[z + 0];
-                sum1 += arr[z + 1];
-                sum2 += arr[z + 2];
-                sum += arr[z + 3];
-                z += 4;
-                n -= 4;
-            }
-
-            sum += (sum2 << 8) + (sum1 << 16) + (sum0 << 24);
-            switch (n & 3)
-            {
-                case 3:
-                    sum += (uint) (arr[z + 2] << 8);
-                    sum += (uint) (arr[z + 1] << 16);
-                    sum += (uint) (arr[z + 0] << 24);
-                    break;
-                case 2:
-                    sum += (uint) (arr[z + 1] << 16);
-                    sum += (uint) (arr[z + 0] << 24);
-                    break;
-                case 1:
-                    sum += (uint) (arr[z + 0] << 24);
-                    break;
-            }
-
-            return sum;
+            var zDelta = new Reader(delta);
+            var size = zDelta.GetInt();
+            if (zDelta.GetChar() != '\n')
+                throw new Exception("size integer not terminated by \'\\n\'");
+            return size;
         }
     }
 }

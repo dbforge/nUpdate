@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// FtpDataPage.xaml.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Security.Authentication;
@@ -17,6 +18,7 @@ namespace nUpdate.Administration.Views.NewProject
         {
             InitializeComponent();
         }
+
         private void FtpDataPage_OnLoaded(object sender, RoutedEventArgs e)
         {
             ModeComboBox.ItemsSource = Enum.GetValues(typeof(FtpEncryptionMode));
@@ -26,7 +28,7 @@ namespace nUpdate.Administration.Views.NewProject
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
-                ((dynamic)DataContext).Password = ((PasswordBox)sender).Password;
+                ((dynamic) DataContext).Password = ((PasswordBox) sender).Password;
         }
     }
 }

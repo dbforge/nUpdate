@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Singleton.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -22,9 +25,10 @@ namespace nUpdate.Administration.Infrastructure
             if (_instance != null)
                 return;
 
-            var instanceType = typeof (T);
+            var instanceType = typeof(T);
             if (instanceType.GetConstructors(BindingFlags.Public).Any())
-                throw new InvalidOperationException($"Cannot create a single instance of {instanceType.Name} because it has at least one public constructor.");
+                throw new InvalidOperationException(
+                    $"Cannot create a single instance of {instanceType.Name} because it has at least one public constructor.");
 
             _instance = (T) Activator.CreateInstance(instanceType, true);
         }

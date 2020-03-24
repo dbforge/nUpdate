@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿// FirstRunWindow.xaml.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.ComponentModel;
+using System.Windows;
 using nUpdate.Administration.ViewModels.FirstRun;
 using nUpdate.Administration.Views.FirstRun;
 using TaskDialogInterop;
@@ -6,7 +10,7 @@ using TaskDialogInterop;
 namespace nUpdate.Administration.Views
 {
     /// <summary>
-    /// Interaction logic for FirstRunWindow.xaml
+    ///     Interaction logic for FirstRunWindow.xaml
     /// </summary>
     public partial class FirstRunWindow
     {
@@ -17,8 +21,15 @@ namespace nUpdate.Administration.Views
             InitializeComponent();
             DataContext = new FirstRunBase(FirstRunProvider.Instance);
         }
-        
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+
+        public override void RequestClose()
+        {
+            // It's not the user who tries to close the window, but the application itself. Allow it then.
+            _finished = true;
+            Close();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (_finished)
                 return;
@@ -37,13 +48,6 @@ namespace nUpdate.Administration.Views
 
             if (TaskDialog.Show(taskDialog).Result == TaskDialogSimpleResult.Yes)
                 Application.Current.Shutdown();
-        }
-
-        public override void RequestClose()
-        {
-            // It's not the user who tries to close the window, but the application itself. Allow it then.
-            _finished = true;
-            Close();
         }
     }
 }

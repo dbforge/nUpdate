@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2019
+﻿// UpdateInstaller.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,15 @@ namespace nUpdate.UpdateInstaller
 
         public static UpdateInstaller Instance => _instance ?? (_instance = new UpdateInstaller());
 
-        internal async void InstallUpdates()
+        private async Task CopyDirectoryContent(string sourcePath, string destPath)
         {
-            await Install();
+            var di = new DirectoryInfo(sourcePath);
+            await di.GetFiles()
+                .ForEachAsync(f => Task.Run(() => File.Copy(Path.Combine(sourcePath, f.Name),
+                    Path.Combine(destPath, f.Name), true)));
+
+            await di.GetDirectories().ForEachAsync(d =>
+                CopyDirectoryContent(Path.Combine(sourcePath, d.Name), Path.Combine(destPath, d.Name)));
         }
 
         private async Task Install()
@@ -33,9 +40,9 @@ namespace nUpdate.UpdateInstaller
             await newUpdatePackages.ForEachAsync(async package =>
             {
                 var identifier = package.Guid;
-                string packagePath = Path.Combine(packageDirectory, identifier.ToString());
+                var packagePath = Path.Combine(packageDirectory, identifier.ToString());
 
-                string actionDataFilePath = Path.Combine(packagePath, "actions.json");
+                var actionDataFilePath = Path.Combine(packagePath, "actions.json");
                 var updateActions =
                     JsonSerializer.Deserialize<IEnumerable<IUpdateAction>>(File.ReadAllText(actionDataFilePath));
 
@@ -46,7 +53,9 @@ namespace nUpdate.UpdateInstaller
                 await directories.ForEachAsync(async d =>
                 {
                     if (d.Name.Trim().Equals(Globals.AppExecutableDirectoryIdentifier))
+                    {
                         await CopyDirectoryContent(d.FullName, appDirectory);
+                    }
                     else
                     {
                         var specialFolderPath = Environment.GetFolderPath(
@@ -58,15 +67,10 @@ namespace nUpdate.UpdateInstaller
                 await enumerable.Where(a => !a.ExecuteBeforeReplacingFiles).ForEachAsync(async a => await a.Execute());
             });
         }
-        private async Task CopyDirectoryContent(string sourcePath, string destPath)
-        {
-            var di = new DirectoryInfo(sourcePath);
-            await di.GetFiles()
-                .ForEachAsync(f => Task.Run(() => File.Copy(Path.Combine(sourcePath, f.Name),
-                    Path.Combine(destPath, f.Name), true)));
 
-            await di.GetDirectories().ForEachAsync(d =>
-                CopyDirectoryContent(Path.Combine(sourcePath, d.Name), Path.Combine(destPath, d.Name)));
+        internal async void InstallUpdates()
+        {
+            await Install();
         }
     }
 }

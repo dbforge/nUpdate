@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// ListingItem.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.Collections.Generic;
 
@@ -19,9 +20,9 @@ namespace nUpdate.Administration.BusinessLogic
         }
 
         /// <summary>
-        ///     The text of the current <see cref="ListingItem" />.
+        ///     The children of the current <see cref="ListingItem" />.
         /// </summary>
-        public string Text { get; set; }
+        public List<ListingItem> Children { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the current <see cref="ListingItem" /> is a directory or not.
@@ -29,8 +30,8 @@ namespace nUpdate.Administration.BusinessLogic
         public bool IsDirectory { get; set; }
 
         /// <summary>
-        ///     The children of the current <see cref="ListingItem" />.
+        ///     The text of the current <see cref="ListingItem" />.
         /// </summary>
-        public List<ListingItem> Children { get; set; }
+        public string Text { get; set; }
     }
 }

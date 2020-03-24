@@ -1,4 +1,7 @@
-﻿using System;
+﻿// UpdateInstallerServiceProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using nUpdate;
 using nUpdate.Actions;

@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2019
+﻿// FileSystemUpdateProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace nUpdate
 {
     public class FileSystemUpdateProvider : UpdateProvider
     {
-        public FileSystemUpdateProvider(Uri packageDataFile, string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter) : base(
+        public FileSystemUpdateProvider(Uri packageDataFile, string publicKey, IVersion applicationVersion,
+            UpdateChannelFilter updateChannelFilter) : base(
             publicKey, applicationVersion, updateChannelFilter)
         {
             PackageDataFile = packageDataFile ?? throw new ArgumentNullException(nameof(packageDataFile));
@@ -25,7 +27,8 @@ namespace nUpdate
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
 
             var result = new UpdateCheckResult();
-            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken, ClientConfiguration);
+            await result.Initialize(packages, ApplicationVersion, UpdateChannelFilter, cancellationToken,
+                ClientConfiguration);
             return result;
         }
 
@@ -45,7 +48,7 @@ namespace nUpdate
             IProgress<UpdateProgressData> progress)
         {
             long downloadedBytes = 0;
-            long totalBytes = checkResult.Packages.Sum(p => p.Size);
+            var totalBytes = checkResult.Packages.Sum(p => p.Size);
             return checkResult.Packages.ForEachAsync(async p =>
             {
                 var packageProgress = new Progress<UpdateProgressData>();

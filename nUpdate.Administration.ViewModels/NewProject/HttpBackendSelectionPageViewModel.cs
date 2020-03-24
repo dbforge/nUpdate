@@ -1,4 +1,7 @@
-﻿using nUpdate.Administration.Models.Http;
+﻿// HttpBackendSelectionPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using nUpdate.Administration.Models.Http;
 using nUpdate.Administration.PluginBase.Models;
 using nUpdate.Administration.PluginBase.ViewModels;
 
@@ -8,7 +11,8 @@ namespace nUpdate.Administration.ViewModels.NewProject
     {
         private HttpBackendType _httpBackendType;
 
-        public HttpBackendSelectionPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData)
+        public HttpBackendSelectionPageViewModel(WizardViewModelBase wizardViewModelBase,
+            ProjectCreationData projectCreationData)
             : base(wizardViewModelBase, projectCreationData)
         {
             PropertyChanged += (sender, args) => RefreshProjectData();

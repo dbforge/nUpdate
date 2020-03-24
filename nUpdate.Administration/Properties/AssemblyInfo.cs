@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// AssemblyInfo.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -7,7 +10,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("nUpdate.Administration")]
-[assembly: AssemblyDescription("nUpdate Administration is the application associated with the nUpdate library that allows the user to publish update packages.")]
+[assembly:
+    AssemblyDescription(
+        "nUpdate Administration is the application associated with the nUpdate library that allows the user to publish update packages.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("nUpdate.Administration")]
@@ -32,11 +37,11 @@ using System.Windows;
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
-                                     //(used if a resource is not found in the page, 
-                                     // or application resource dictionaries)
+    //(used if a resource is not found in the page, 
+    // or application resource dictionaries)
     ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
-                                              //(used if a resource is not found in the page, 
-                                              // app, or any theme specific resource dictionaries)
+    //(used if a resource is not found in the page, 
+    // app, or any theme specific resource dictionaries)
 )]
 
 

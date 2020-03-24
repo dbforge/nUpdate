@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// FtpDataPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.Reflection;
 using System.Security.Authentication;
@@ -15,21 +16,21 @@ namespace nUpdate.Administration.ViewModels.NewProject
     {
         private readonly INewProjectProvider _newProjectProvider;
         private readonly FtpData _transferData;
-        private RelayCommand _directoryButtonCommand;
+        private bool _autoConnect;
         private string _directory;
+        private RelayCommand _directoryButtonCommand;
+        private FtpEncryptionMode _encryptionMode;
         private string _host;
         private string _password;
         private int _port = 21;
-        private string _username;
-        private bool _autoConnect;
-        private FtpEncryptionMode _encryptionMode;
         private SslProtocols _sslProtocols;
+        private string _username;
 
-        public FtpDataPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData) 
+        public FtpDataPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData)
             : base(wizardViewModelBase, projectCreationData)
         {
             var serviceProvider = ServiceProviderHelper.CreateServiceProvider(Assembly.GetEntryAssembly());
-            _newProjectProvider = (INewProjectProvider)serviceProvider.GetService(typeof(INewProjectProvider));
+            _newProjectProvider = (INewProjectProvider) serviceProvider.GetService(typeof(INewProjectProvider));
             _directoryButtonCommand = new RelayCommand(o => OnDirectoryButtonClick());
             _directory = "/";
             _transferData = new FtpData();
@@ -38,18 +39,10 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CanGoBack = true;
         }
 
-        private void OnDirectoryButtonClick()
+        public bool AutoConnect
         {
-            var data = new FtpData
-            {
-                Host = Host,
-                Port = Port,
-                Username = Username
-            };
-
-            // TODO: Add password in a good way
-            KeyManager.Instance[data.Identifier] = Password;
-            Directory = _newProjectProvider.GetFtpDirectory(data);
+            get => _autoConnect;
+            set => SetProperty(value, ref _autoConnect, nameof(AutoConnect));
         }
 
         public string Directory
@@ -62,6 +55,12 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             get => _directoryButtonCommand;
             set => SetProperty(value, ref _directoryButtonCommand, nameof(DirectoryButtonCommand));
+        }
+
+        public FtpEncryptionMode EncryptionMode
+        {
+            get => _encryptionMode;
+            set => SetProperty(value, ref _encryptionMode, nameof(EncryptionMode));
         }
 
         public string Host
@@ -82,18 +81,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _port, nameof(Port));
         }
 
-        public bool AutoConnect
-        {
-            get => _autoConnect;
-            set => SetProperty(value, ref _autoConnect, nameof(AutoConnect));
-        }
-
-        public FtpEncryptionMode EncryptionMode
-        {
-            get => _encryptionMode;
-            set => SetProperty(value, ref _encryptionMode, nameof(EncryptionMode));
-        }
-
         public SslProtocols SslProtocols
         {
             get => _sslProtocols;
@@ -104,6 +91,20 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             get => _username;
             set => SetProperty(value, ref _username, nameof(Username));
+        }
+
+        private void OnDirectoryButtonClick()
+        {
+            var data = new FtpData
+            {
+                Host = Host,
+                Port = Port,
+                Username = Username
+            };
+
+            // TODO: Add password in a good way
+            KeyManager.Instance[data.Identifier] = Password;
+            Directory = _newProjectProvider.GetFtpDirectory(data);
         }
 
         private void RefreshNavigation()

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// HttpUpdateProviderPlugin.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using nUpdate.Administration.BusinessLogic.Http;
@@ -16,35 +19,41 @@ namespace nUpdate.Administration.Plugins
     {
         private HttpBackendSelectionPageViewModel _httpBackendSelectionPageViewModel;
         private HttpDataPageViewModel _httpDataPageViewModel;
+        public string Author => "Dominic Beger";
+        public string Description => "HTTP(S)";
 
         public Guid Identifier => Guid.Parse("a8085977-15cd-447f-bf55-48b3c403c620");
         public string Name => "HTTP(S) update provider";
-        public string Author => "Dominic Beger";
-        public Version Version => new Version(1,0);
-        public string Url => string.Empty;
-        public string Description => "HTTP(S)";
         public (Version, Version) SupportedVersionRange => (new Version(4, 0), null);
+        public string Url => string.Empty;
+        public Version Version => new Version(1, 0);
 
-        public UpdateProviderWizardPageViewModelBase GetNextPageViewModel(WizardViewModelBase wizardViewModelBase, WizardPageViewModelBase current,
+        public UpdateProviderWizardPageViewModelBase GetNextPageViewModel(WizardViewModelBase wizardViewModelBase,
+            WizardPageViewModelBase current,
             ProjectCreationData projectCreationData)
         {
             if (!(current is UpdateProviderWizardPageViewModelBase))
-                return _httpBackendSelectionPageViewModel ?? (_httpBackendSelectionPageViewModel = new HttpBackendSelectionPageViewModel(wizardViewModelBase, projectCreationData));
-            return current is HttpBackendSelectionPageViewModel ? _httpDataPageViewModel ?? (_httpDataPageViewModel = new HttpDataPageViewModel(wizardViewModelBase, projectCreationData)) : null;
+                return _httpBackendSelectionPageViewModel ?? (_httpBackendSelectionPageViewModel =
+                           new HttpBackendSelectionPageViewModel(wizardViewModelBase, projectCreationData));
+            return current is HttpBackendSelectionPageViewModel
+                ? _httpDataPageViewModel ?? (_httpDataPageViewModel =
+                      new HttpDataPageViewModel(wizardViewModelBase, projectCreationData))
+                : null;
         }
 
-        public UpdateProviderWizardPageViewModelBase GetPreviousPageViewModel(WizardViewModelBase wizardViewModelBase, WizardPageViewModelBase current,
+        public UpdateProviderWizardPageViewModelBase GetPreviousPageViewModel(WizardViewModelBase wizardViewModelBase,
+            WizardPageViewModelBase current,
             ProjectCreationData projectCreationData)
         {
             return current is HttpDataPageViewModel ? _httpBackendSelectionPageViewModel : null;
         }
 
+        public IUpdateProvider UpdateProvider => new HttpUpdateProvider();
+
         public Dictionary<Type, Type> WizardViewModelViewAssociations => new Dictionary<Type, Type>
         {
-            {typeof(HttpBackendSelectionPageViewModel), typeof(HttpBackendSelectionPage)}, 
+            {typeof(HttpBackendSelectionPageViewModel), typeof(HttpBackendSelectionPage)},
             {typeof(HttpDataPageViewModel), typeof(HttpDataPage)}
         };
-
-        public IUpdateProvider UpdateProvider => new HttpUpdateProvider();
     }
 }

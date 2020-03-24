@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ServiceProviderAttribute.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 
 namespace nUpdate.UpdateInstaller.UserInterface
 {
@@ -15,7 +18,7 @@ namespace nUpdate.UpdateInstaller.UserInterface
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            if (!typeof (IServiceProvider).IsAssignableFrom(serviceType))
+            if (!typeof(IServiceProvider).IsAssignableFrom(serviceType))
                 throw new ArgumentException("Implementation of IServiceProvider is missing.", nameof(serviceType));
             ServiceType = serviceType;
         }
@@ -23,6 +26,6 @@ namespace nUpdate.UpdateInstaller.UserInterface
         /// <summary>
         ///     Gets the type of the progress services provider.
         /// </summary>
-        public Type ServiceType { get; private set; }
+        public Type ServiceType { get; }
     }
 }

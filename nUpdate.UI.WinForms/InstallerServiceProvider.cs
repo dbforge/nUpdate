@@ -1,9 +1,12 @@
-﻿using System;
+﻿// InstallerServiceProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using nUpdate.UI.WinForms;
 using nUpdate.UpdateInstaller.UserInterface;
 
-[assembly: ServiceProvider(typeof (InstallerServiceProvider))]
+[assembly: ServiceProvider(typeof(InstallerServiceProvider))]
 
 namespace nUpdate.UI.WinForms
 {
@@ -26,7 +29,7 @@ namespace nUpdate.UI.WinForms
 
         private void InitializeServices()
         {
-            _services.Add(typeof (IProgressReporter), new ProgressReporterService());
+            _services.Add(typeof(IProgressReporter), new ProgressReporterService());
         }
     }
 }

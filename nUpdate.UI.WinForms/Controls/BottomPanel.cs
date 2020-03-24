@@ -1,4 +1,5 @@
-﻿// Author: Stefan Baumann (from AeroSuite library: https://github.com/stefan-baumann/AeroSuite)
+﻿// BottomPanel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.ComponentModel;
 using System.Drawing;
@@ -19,9 +20,9 @@ namespace nUpdate.UI.WinForms.Controls
     [DisplayName("Bottom Panel")]
     [Description(
         "A \"Bottom Panel\" that can be used for providing additional information or Buttons on the bottom of a Form/Dialog."
-        )]
+    )]
     [ToolboxItem(true)]
-    [ToolboxBitmap(typeof (Panel))]
+    [ToolboxBitmap(typeof(Panel))]
     public class BottomPanel
         : Panel
     {
@@ -44,25 +45,11 @@ namespace nUpdate.UI.WinForms.Controls
         {
             if (Application.RenderWithVisualStyles &&
                 VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement("TaskDialog", 8, 0)))
-            {
                 PaintWithVisualStyles(e.Graphics);
-            }
             else
-            {
                 PaintManually(e.Graphics);
-            }
 
             base.OnPaint(e);
-        }
-
-        /// <summary>
-        ///     Paints the panel with visual styles.
-        /// </summary>
-        /// <param name="g">The targeted graphics.</param>
-        protected virtual void PaintWithVisualStyles(Graphics g)
-        {
-            //Draw panel
-            new VisualStyleRenderer("TaskDialog", 8, 0).DrawBackground(g, DisplayRectangle);
         }
 
         /// <summary>
@@ -73,6 +60,16 @@ namespace nUpdate.UI.WinForms.Controls
         {
             g.Clear(SystemColors.Control);
             g.DrawLine(SystemPens.ControlDark, new Point(0, 0), new Point(Width, 0));
+        }
+
+        /// <summary>
+        ///     Paints the panel with visual styles.
+        /// </summary>
+        /// <param name="g">The targeted graphics.</param>
+        protected virtual void PaintWithVisualStyles(Graphics g)
+        {
+            //Draw panel
+            new VisualStyleRenderer("TaskDialog", 8, 0).DrawBackground(g, DisplayRectangle);
         }
     }
 }

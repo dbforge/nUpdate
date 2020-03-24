@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿// JsonRequest.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using Newtonsoft.Json;
 
 namespace nUpdate.Administration.BusinessLogic.Http.JsonRpc
 {
@@ -6,7 +9,8 @@ namespace nUpdate.Administration.BusinessLogic.Http.JsonRpc
     public class JsonRequest
     {
         public JsonRequest()
-        { }
+        {
+        }
 
         public JsonRequest(string method, object pars, object id)
         {
@@ -15,17 +19,13 @@ namespace nUpdate.Administration.BusinessLogic.Http.JsonRpc
             Id = id;
         }
 
-        [JsonProperty("jsonrpc")]
-        public string JsonRpc => "2.0";
+        [JsonProperty("id")] public object Id { get; set; }
 
-        [JsonProperty("method")]
-        public string Method { get; set; }
+        [JsonProperty("jsonrpc")] public string JsonRpc => "2.0";
 
-        [JsonProperty("params")]
-        public object Params { get; set; }
+        [JsonProperty("method")] public string Method { get; set; }
 
-        [JsonProperty("id")]
-        public object Id { get; set; }
+        [JsonProperty("params")] public object Params { get; set; }
 
         public override string ToString()
         {

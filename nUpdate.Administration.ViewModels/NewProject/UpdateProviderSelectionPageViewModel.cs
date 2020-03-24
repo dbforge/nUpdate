@@ -1,4 +1,7 @@
-﻿using System;
+﻿// UpdateProviderSelectionPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
@@ -14,10 +17,12 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private TrulyObservableCollection<UpdateProviderViewModel> _availableUpdateProviderViewModels;
         private ICommand _updateProviderSelectionCommand;
 
-        public UpdateProviderSelectionPageViewModel(ProjectCreationData projectCreationData, IEnumerable<UpdateProviderViewModel> updateProviderViewModels)
+        public UpdateProviderSelectionPageViewModel(ProjectCreationData projectCreationData,
+            IEnumerable<UpdateProviderViewModel> updateProviderViewModels)
         {
             _projectCreationData = projectCreationData;
-            _availableUpdateProviderViewModels = new TrulyObservableCollection<UpdateProviderViewModel>(updateProviderViewModels);
+            _availableUpdateProviderViewModels =
+                new TrulyObservableCollection<UpdateProviderViewModel>(updateProviderViewModels);
             _availableUpdateProviderViewModels.First().IsSelected = true;
             _updateProviderSelectionCommand = new RelayCommand(SelectUpdateProvider);
             RefreshProjectData();
@@ -28,23 +33,23 @@ namespace nUpdate.Administration.ViewModels.NewProject
             PropertyChanged += (sender, args) => RefreshProjectData();
         }
 
-        private void RefreshProjectData()
-        {
-            _projectCreationData.Project.UpdateProviderIdentifier = SelectedViewModel.Identifier;
-        }
-
-        public UpdateProviderViewModel SelectedViewModel => AvailableUpdateProviderViewModels.First(x => x.IsSelected);
-
         public TrulyObservableCollection<UpdateProviderViewModel> AvailableUpdateProviderViewModels
         {
             get => _availableUpdateProviderViewModels;
             set => SetProperty(value, ref _availableUpdateProviderViewModels);
         }
 
+        public UpdateProviderViewModel SelectedViewModel => AvailableUpdateProviderViewModels.First(x => x.IsSelected);
+
         public ICommand UpdateProviderSelectionCommand
         {
             get => _updateProviderSelectionCommand;
             set => SetProperty(value, ref _updateProviderSelectionCommand);
+        }
+
+        private void RefreshProjectData()
+        {
+            _projectCreationData.Project.UpdateProviderIdentifier = SelectedViewModel.Identifier;
         }
 
         private void SelectUpdateProvider(object o)

@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// WizardViewModelBase.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace nUpdate.Administration.PluginBase.ViewModels
         private RelayCommand _goBackCommand;
         private RelayCommand _goForwardCommand;
         private ReadOnlyCollection<WizardPageViewModelBase> _pageViewModels;
-        
+
         /// <summary>
         ///     Gets a value indicating whether the user is allowed to go back, or not.
         /// </summary>

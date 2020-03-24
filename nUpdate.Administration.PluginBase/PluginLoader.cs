@@ -1,4 +1,7 @@
-﻿using System;
+﻿// PluginLoader.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -9,9 +12,17 @@ namespace nUpdate.Administration.PluginBase
 {
     public sealed class PluginLoader<TPlugin> where TPlugin : IPluginBase
     {
-        private bool _pluginsLoaded;
         private readonly string _pluginDirectory;
         private IEnumerable<Lazy<TPlugin>> _plugins;
+        private bool _pluginsLoaded;
+
+        public PluginLoader(string pluginDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(pluginDirectory))
+                throw new ArgumentException(nameof(pluginDirectory));
+            _pluginDirectory = pluginDirectory;
+        }
+
         // TODO: Check, if plugin is supported
         [ImportMany]
         public IEnumerable<Lazy<TPlugin>> Plugins
@@ -23,13 +34,6 @@ namespace nUpdate.Administration.PluginBase
                 return _plugins;
             }
             set => _plugins = value;
-        }
-
-        public PluginLoader(string pluginDirectory)
-        {
-            if (string.IsNullOrWhiteSpace(pluginDirectory))
-                throw new ArgumentException(nameof(pluginDirectory));
-            _pluginDirectory = pluginDirectory;
         }
 
         public Task Load()

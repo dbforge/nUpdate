@@ -1,4 +1,7 @@
-﻿using System;
+﻿// DownloadManager.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -33,7 +36,7 @@ namespace nUpdate
                             received += size;
                             progress?.Report(new UpdateProgressData(received,
                                 // ReSharper disable once PossibleLossOfFraction
-                                totalSize, (float)(received / totalSize) * 100));
+                                totalSize, (float) (received / totalSize) * 100));
                             size = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         }
                     }

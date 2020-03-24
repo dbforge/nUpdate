@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ServiceProviderHelper.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -19,7 +22,7 @@ namespace nUpdate
             if (attribute == null)
                 return null;
 
-            return (IServiceProvider)Activator.CreateInstance(attribute.ServiceType);
+            return (IServiceProvider) Activator.CreateInstance(attribute.ServiceType);
         }
     }
 }

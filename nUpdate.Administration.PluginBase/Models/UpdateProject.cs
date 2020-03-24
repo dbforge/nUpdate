@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// UpdateProject.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -100,20 +101,6 @@ namespace nUpdate.Administration.PluginBase.Models
         }
 
         /// <summary>
-        ///     Gets or sets the transfer provider type that should be used for data transfers.
-        /// </summary>
-        [JsonProperty]
-        public Guid UpdateProviderIdentifier
-        {
-            get => _updateProviderIdentifier;
-            set
-            {
-                _updateProviderIdentifier = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         ///     Gets or sets the <see cref="Uri" /> of the local or remote update directory of the project.
         /// </summary>
         [JsonProperty]
@@ -123,6 +110,20 @@ namespace nUpdate.Administration.PluginBase.Models
             set
             {
                 _updateDirectoryUri = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the transfer provider type that should be used for data transfers.
+        /// </summary>
+        [JsonProperty]
+        public Guid UpdateProviderIdentifier
+        {
+            get => _updateProviderIdentifier;
+            set
+            {
+                _updateProviderIdentifier = value;
                 OnPropertyChanged();
             }
         }

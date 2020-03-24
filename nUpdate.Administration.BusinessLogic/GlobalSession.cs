@@ -1,4 +1,7 @@
-﻿using System;
+﻿// GlobalSession.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using nUpdate.Administration.PluginBase;
 
@@ -13,7 +16,6 @@ namespace nUpdate.Administration.BusinessLogic
                 var updateProviderPluginLoader = new PluginLoader<IUpdateProviderPlugin>(PathProvider.PluginDirectory);
                 updateProviderPluginLoader.Load();
                 UpdateProviderPlugins = updateProviderPluginLoader.Plugins;
-
             }
             catch (Exception e)
             {

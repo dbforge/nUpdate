@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// UpdateChannelFilter.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace nUpdate
@@ -11,13 +14,6 @@ namespace nUpdate
             ExcludeSpecifiedFromSearch
         }
 
-        public static UpdateChannelFilter None =>
-            new UpdateChannelFilter(ChannelFilterMode.ExcludeSpecifiedFromSearch, Enumerable.Empty<string>());
-
-        public IEnumerable<string> Channels { get; set; }
-
-        public ChannelFilterMode Mode { get; set; }
-
         public UpdateChannelFilter(ChannelFilterMode mode, params string[] channel)
         {
             Mode = mode;
@@ -29,5 +25,12 @@ namespace nUpdate
             Mode = mode;
             Channels = channels;
         }
+
+        public IEnumerable<string> Channels { get; set; }
+
+        public ChannelFilterMode Mode { get; set; }
+
+        public static UpdateChannelFilter None =>
+            new UpdateChannelFilter(ChannelFilterMode.ExcludeSpecifiedFromSearch, Enumerable.Empty<string>());
     }
 }

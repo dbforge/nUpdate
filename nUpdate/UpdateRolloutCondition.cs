@@ -1,5 +1,5 @@
-﻿// RolloutCondition.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
+﻿// UpdateRolloutCondition.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 
@@ -15,8 +15,9 @@ namespace nUpdate
             IsNegativeCondition = isNegative;
         }
 
+        public bool IsNegativeCondition { get; set; }
+
         public string Key { get; set; }
         public string Value { get; set; }
-        public bool IsNegativeCondition { get; set; }
     }
 }

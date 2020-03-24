@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// JsonHelper.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace nUpdate.Administration.BusinessLogic
                             sb.AppendLine();
                             Enumerable.Range(0, ++indent).ForEach(item => sb.Append(IndentString));
                         }
+
                         break;
                     case '}':
                     case ']':
@@ -35,16 +37,14 @@ namespace nUpdate.Administration.BusinessLogic
                             sb.AppendLine();
                             Enumerable.Range(0, --indent).ForEach(item => sb.Append(IndentString));
                         }
+
                         sb.Append(ch);
                         break;
                     case '"':
                         sb.Append(ch);
                         var escaped = false;
                         var index = i;
-                        while (index > 0 && str[--index] == '\\')
-                        {
-                            escaped = !escaped;
-                        }
+                        while (index > 0 && str[--index] == '\\') escaped = !escaped;
                         if (!escaped)
                             quoted = !quoted;
                         break;
@@ -55,6 +55,7 @@ namespace nUpdate.Administration.BusinessLogic
                             sb.AppendLine();
                             Enumerable.Range(0, indent).ForEach(item => sb.Append(IndentString));
                         }
+
                         break;
                     case ':':
                         sb.Append(ch);
@@ -66,6 +67,7 @@ namespace nUpdate.Administration.BusinessLogic
                         break;
                 }
             }
+
             return sb.ToString();
         }
     }

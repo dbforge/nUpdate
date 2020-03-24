@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// BinarySerializer.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -14,7 +15,9 @@ namespace nUpdate.Administration.BusinessLogic
         {
             var bf = new BinaryFormatter();
             using (var ms = new MemoryStream(graph))
+            {
                 return bf.Deserialize(ms);
+            }
         }
 
         /// <summary>

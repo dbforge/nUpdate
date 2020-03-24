@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// KeyManager.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,6 @@ namespace nUpdate.Administration.BusinessLogic
         private bool _initialized;
         private Dictionary<Uri, object> _secrets = new Dictionary<Uri, object>();
 
-        private void EnsureObjectState()
-        {
-            if (!_initialized)
-                throw new InvalidOperationException();
-        }
-        
         public object this[Uri identifier]
         {
             get
@@ -48,13 +43,19 @@ namespace nUpdate.Administration.BusinessLogic
             }
         }
 
+        private void EnsureObjectState()
+        {
+            if (!_initialized)
+                throw new InvalidOperationException();
+        }
+
         public void Initialize(string password)
         {
             if (!File.Exists(PathProvider.KeyDatabaseFilePath))
                 throw new InvalidOperationException("The key database could not be found.");
 
-            byte[] data = File.ReadAllBytes(PathProvider.KeyDatabaseFilePath);
-            if ((bool)SettingsManager.Instance["UseEncryptedKeyDatabase"])
+            var data = File.ReadAllBytes(PathProvider.KeyDatabaseFilePath);
+            if ((bool) SettingsManager.Instance["UseEncryptedKeyDatabase"])
                 data = AesCryptoProvider.Decrypt(data, password);
             _secrets = BinarySerializer.DeserializeType<Dictionary<Uri, object>>(data);
             _initialized = true;
@@ -62,8 +63,8 @@ namespace nUpdate.Administration.BusinessLogic
 
         public void Save()
         {
-            byte[] data = BinarySerializer.Serialize(_secrets);
-            if ((bool)SettingsManager.Instance["UseEncryptedKeyDatabase"])
+            var data = BinarySerializer.Serialize(_secrets);
+            if ((bool) SettingsManager.Instance["UseEncryptedKeyDatabase"])
                 data = AesCryptoProvider.Encrypt(data, GlobalSession.MasterPassword);
             File.WriteAllBytes(PathProvider.KeyDatabaseFilePath, data);
         }

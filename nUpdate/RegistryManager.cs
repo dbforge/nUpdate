@@ -1,4 +1,7 @@
-﻿using System;
+﻿// RegistryManager.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Linq;
 using Microsoft.Win32;
 
@@ -109,11 +112,11 @@ namespace nUpdate
                     switch (valueKind) // Special value kinds
                     {
                         case RegistryValueKind.Binary:
-                            var binaryValueStrings = ((string)value).Split(',');
+                            var binaryValueStrings = ((string) value).Split(',');
                             newValue = binaryValueStrings.Select(v => Convert.ToByte(v.Trim())).ToArray();
                             break;
                         case RegistryValueKind.MultiString:
-                            newValue = ((string)value).Split(',').Select(s => s.Trim()).ToArray();
+                            newValue = ((string) value).Split(',').Select(s => s.Trim()).ToArray();
                             break;
                     }
 

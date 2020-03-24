@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2018
+﻿// NewProjectBase.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -23,12 +24,14 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 new GenerateKeyPairPageViewModel(this),
                 new GeneralDataPageViewModel(this, newProjectProvider),
                 new UpdateProviderSelectionPageViewModel(ProjectCreationData,
-                    GlobalSession.UpdateProviderPlugins.Select(p => new UpdateProviderViewModel(p.Value.Identifier, p.Value.Description, false)))
+                    GlobalSession.UpdateProviderPlugins.Select(p =>
+                        new UpdateProviderViewModel(p.Value.Identifier, p.Value.Description, false)))
             };
 
             pages.AddRange(from plugin in GlobalSession.UpdateProviderPlugins
                 from type in plugin.Value.WizardViewModelViewAssociations.Keys
-                select (UpdateProviderWizardPageViewModelBase) Activator.CreateInstance(type, this, ProjectCreationData));
+                select (UpdateProviderWizardPageViewModelBase) Activator.CreateInstance(type, this,
+                    ProjectCreationData));
 
             pages.Add(new FinishPageViewModel(this));
             InitializePages(pages);
@@ -43,7 +46,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             return Task.Run(() =>
             {
-                string projectDirectory = Path.Combine(ProjectCreationData.Location, ProjectCreationData.Project.Name);
+                var projectDirectory = Path.Combine(ProjectCreationData.Location, ProjectCreationData.Project.Name);
                 if (!Directory.Exists(projectDirectory))
                     Directory.CreateDirectory(projectDirectory);
                 KeyManager.Instance[ProjectCreationData.Project.Identifier] = ProjectCreationData.PrivateKey;
@@ -65,13 +68,17 @@ namespace nUpdate.Administration.ViewModels.NewProject
                     break;
                 case UpdateProviderWizardPageViewModelBase _:
                     CurrentPageViewModel =
-                        _currentUpdateProviderPlugin.GetPreviousPageViewModel(this, CurrentPageViewModel, ProjectCreationData) ??
-                            PageViewModels[PageViewModels.IndexOf(PageViewModels.First(p => p is UpdateProviderSelectionPageViewModel))];
+                        _currentUpdateProviderPlugin.GetPreviousPageViewModel(this, CurrentPageViewModel,
+                            ProjectCreationData) ??
+                        PageViewModels[
+                            PageViewModels.IndexOf(PageViewModels.First(p =>
+                                p is UpdateProviderSelectionPageViewModel))];
                     break;
                 default:
                     CurrentPageViewModel = PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) - 1];
                     break;
             }
+
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
 
@@ -85,10 +92,13 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 case UpdateProviderSelectionPageViewModel _:
                     _currentUpdateProviderPlugin = GlobalSession.UpdateProviderPlugins.First(p =>
                         p.Value.Identifier.Equals(ProjectCreationData.Project.UpdateProviderIdentifier)).Value;
-                    CurrentPageViewModel = _currentUpdateProviderPlugin.GetNextPageViewModel(this, null, ProjectCreationData);
+                    CurrentPageViewModel =
+                        _currentUpdateProviderPlugin.GetNextPageViewModel(this, null, ProjectCreationData);
                     break;
                 case UpdateProviderWizardPageViewModelBase _:
-                    CurrentPageViewModel = _currentUpdateProviderPlugin.GetNextPageViewModel(this, CurrentPageViewModel, ProjectCreationData) ?? PageViewModels.Last();
+                    CurrentPageViewModel =
+                        _currentUpdateProviderPlugin.GetNextPageViewModel(this, CurrentPageViewModel,
+                            ProjectCreationData) ?? PageViewModels.Last();
                     break;
                 case FinishPageViewModel _:
                 {
@@ -101,7 +111,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                         PageViewModels[PageViewModels.IndexOf(CurrentPageViewModel) + 1];
                     break;
             }
-            
+
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
     }

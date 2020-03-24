@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ViewManager.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
@@ -7,22 +10,24 @@ using System.Windows.Data;
 namespace nUpdate.Administration
 {
     /// <summary>
-    ///     Provides an abstract view manager class that offers basic convertion methods for finding the corresponding view for a specified view model by using an <see cref="IValueConverter"/>. 
+    ///     Provides an abstract view manager class that offers basic convertion methods for finding the corresponding view for
+    ///     a specified view model by using an <see cref="IValueConverter" />.
     /// </summary>
     public abstract class ViewManager : IValueConverter
     {
+        /// <summary>
+        ///     Saves the types of the view models and an instance of their view.
+        /// </summary>
+        private readonly Dictionary<Type, FrameworkElement> _views = new Dictionary<Type, FrameworkElement>();
+
         /// <summary>
         ///     Saves the types of the view models and their corresponding views.
         /// </summary>
         private readonly Dictionary<Type, Type> _viewTypes = new Dictionary<Type, Type>();
 
-        /// <summary>
-        ///      Saves the types of the view models and an instance of their view.
-        /// </summary>
-        private readonly Dictionary<Type, FrameworkElement> _views = new Dictionary<Type, FrameworkElement>();
-
         protected ViewManager()
-        { }
+        {
+        }
 
         protected ViewManager(Dictionary<Type, Type> viewTypes)
         {
@@ -34,17 +39,21 @@ namespace nUpdate.Administration
             AddViews(views);
         }
 
-        protected void AddViewType(Type viewModelType, Type viewType)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            _viewTypes.Add(viewModelType, viewType);
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            var viewModelType = value.GetType();
+            return !_viewTypes.ContainsKey(viewModelType)
+                ? null
+                : GetViewInstance(viewModelType, value, _viewTypes[viewModelType]);
         }
 
-        protected void AddViewTypes(Dictionary<Type, Type> viewTypes)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            foreach (var entry in viewTypes)
-            {
-                AddViewType(entry.Key, entry.Value);
-            }
+            // This is not used in any case, so just leave it empty and throw a NotImplementedException.
+            throw new NotImplementedException();
         }
 
         protected void AddView(Type viewModelType, FrameworkElement view)
@@ -55,10 +64,17 @@ namespace nUpdate.Administration
 
         protected void AddViews(Dictionary<Type, FrameworkElement> views)
         {
-            foreach (var entry in views)
-            {
-                AddView(entry.Key, entry.Value);
-            }
+            foreach (var entry in views) AddView(entry.Key, entry.Value);
+        }
+
+        protected void AddViewType(Type viewModelType, Type viewType)
+        {
+            _viewTypes.Add(viewModelType, viewType);
+        }
+
+        protected void AddViewTypes(Dictionary<Type, Type> viewTypes)
+        {
+            foreach (var entry in viewTypes) AddViewType(entry.Key, entry.Value);
         }
 
         /// <summary>
@@ -73,27 +89,12 @@ namespace nUpdate.Administration
             // There is already a cached instance available.
             if (_views.ContainsKey(viewModelType))
                 return _views[viewModelType];
-            
+
             // No instance, yet. Let's create one and set the view model instance as data context.
             var view = (FrameworkElement) Activator.CreateInstance(viewType);
             view.DataContext = viewModelInstance;
             _views.Add(viewModelType, view);
             return view;
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            var viewModelType = value.GetType();
-            return !_viewTypes.ContainsKey(viewModelType) ? null : GetViewInstance(viewModelType, value, _viewTypes[viewModelType]);
-        }
-        
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // This is not used in any case, so just leave it empty and throw a NotImplementedException.
-            throw new NotImplementedException();
         }
     }
 }

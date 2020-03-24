@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ProgressReporterService.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using nUpdate.UI.WinForms.Dialogs;
 using nUpdate.UpdateInstaller.UserInterface;
 

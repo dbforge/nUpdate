@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2019
+﻿// UpdateProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -17,32 +18,6 @@ namespace nUpdate
     {
         protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public IVersion ApplicationVersion { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the host application options during the update installation.
-        /// </summary>
-        public static HostApplicationOptions HostApplicationOptions { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the configuration for the current client that is used for the update rollout condition checks to determine whether a package should be included into the update check or not.
-        /// </summary>
-        public List<KeyValuePair<string, string>> ClientConfiguration { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the filter for the update channels that should be used for the update check.
-        /// </summary>
-        public UpdateChannelFilter UpdateChannelFilter { get; set; }
-
-        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
-
-        /// <summary>
-        ///     Gets or sets the public key used for verifying the update packages.
-        /// </summary>
-        public string PublicKey { get; set; }
-
-        public abstract Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken);
-
         protected UpdateProvider(string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
         {
             PublicKey = publicKey ?? throw new ArgumentException(nameof(publicKey));
@@ -51,6 +26,33 @@ namespace nUpdate
 
             CreateAppUpdateDirectory();
         }
+
+        public IVersion ApplicationVersion { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the configuration for the current client that is used for the update rollout condition checks to
+        ///     determine whether a package should be included into the update check or not.
+        /// </summary>
+        public List<KeyValuePair<string, string>> ClientConfiguration { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the host application options during the update installation.
+        /// </summary>
+        public static HostApplicationOptions HostApplicationOptions { get; set; }
+
+        public CultureInfo LanguageCulture { get; set; } = CultureInfo.CurrentUICulture;
+
+        /// <summary>
+        ///     Gets or sets the public key used for verifying the update packages.
+        /// </summary>
+        public string PublicKey { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the filter for the update channels that should be used for the update check.
+        /// </summary>
+        public UpdateChannelFilter UpdateChannelFilter { get; set; }
+
+        public abstract Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken);
 
         /// <summary>
         ///     Creates the application's update directory where the downloaded packages and other files are stored.

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// SshTransferProvider.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using nUpdate.Administration.PluginBase.BusinessLogic;
@@ -8,8 +11,6 @@ namespace nUpdate.Administration.BusinessLogic.Ssh
 {
     public class SshTransferProvider : ITransferProvider
     {
-        public ITransferData TransferData { get; set; }
-
         public Task DeleteDirectory(string relativeDirectoryPath)
         {
             throw new NotImplementedException();
@@ -50,7 +51,10 @@ namespace nUpdate.Administration.BusinessLogic.Ssh
             throw new NotImplementedException();
         }
 
-        public Task UploadFile(string localFilePath, string remoteRelativePath, IProgress<ITransferProgressData> progress)
+        public ITransferData TransferData { get; set; }
+
+        public Task UploadFile(string localFilePath, string remoteRelativePath,
+            IProgress<ITransferProgressData> progress)
         {
             throw new NotImplementedException();
         }

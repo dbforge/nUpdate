@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// KeyDatabaseSetupPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using nUpdate.Administration.PluginBase.ViewModels;
 
@@ -46,6 +47,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
                 RefreshNavigation();
             }
         }
+
         private void RefreshFirstRunData()
         {
             _firstRunBase.FirstSetupData.EncryptKeyDatabase = EncryptKeyDatabase;

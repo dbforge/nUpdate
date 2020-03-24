@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// RsaManager.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.IO;
@@ -16,11 +17,11 @@ namespace nUpdate
         /// </summary>
         public const int DefaultKeySize =
 #if DEBUG
-            1024
+                1024
 #else
             8192
 #endif
-        ;
+            ;
 
         private readonly RSACryptoServiceProvider _rsa;
 

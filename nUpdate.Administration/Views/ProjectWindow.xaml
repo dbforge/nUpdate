@@ -13,8 +13,6 @@
                    Foreground="#003399"
                    Text="Project overview" />
 
-        <StackPanel VerticalAlignment="Center">
-           
-        </StackPanel>
+        <StackPanel VerticalAlignment="Center" />
     </DockPanel>
 </Window>

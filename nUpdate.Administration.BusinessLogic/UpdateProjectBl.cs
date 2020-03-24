@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿// UpdateProjectBl.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.IO;
 using System.Linq;
 using nUpdate.Administration.Models;
 using nUpdate.Administration.Models.Logging;
@@ -8,8 +11,6 @@ namespace nUpdate.Administration.BusinessLogic
 {
     public class UpdateProjectBl
     {
-        private readonly UpdateProject _updateProject;
-
         public UpdateProjectBl(string path)
         {
             var updateProject = JsonSerializer.Deserialize<UpdateProject>(File.ReadAllText(path));
@@ -20,15 +21,15 @@ namespace nUpdate.Administration.BusinessLogic
             else
                 currentProjectEntry.LastSeenPath = path;
 
-            _updateProject = updateProject;
+            UpdateProject = updateProject;
         }
 
         public UpdateProjectBl(UpdateProject project)
         {
-            _updateProject = project;
+            UpdateProject = project;
         }
 
-        public UpdateProject UpdateProject => _updateProject;
+        public UpdateProject UpdateProject { get; }
 
         public void AddLogEntry(string packageName, PackageActionType packageActionType)
         {
@@ -46,7 +47,8 @@ namespace nUpdate.Administration.BusinessLogic
         /// </summary>
         public void Save()
         {
-            var updateProjectLocation = ProjectSession.AvailableLocations.FirstOrDefault(loc => loc.Guid == _updateProject.Guid);
+            var updateProjectLocation =
+                ProjectSession.AvailableLocations.FirstOrDefault(loc => loc.Guid == UpdateProject.Guid);
             if (updateProjectLocation != null)
                 File.WriteAllText(updateProjectLocation.LastSeenPath, JsonSerializer.Serialize(this));
             // TODO: Handle case that path is null

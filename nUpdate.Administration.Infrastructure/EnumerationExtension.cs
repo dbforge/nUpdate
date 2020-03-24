@@ -1,5 +1,5 @@
-﻿// EnumerationExtension.cs, 29.09.2019
-// Copyright (C) Dominic Beger 29.09.2019
+﻿// EnumerationExtension.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.ComponentModel;

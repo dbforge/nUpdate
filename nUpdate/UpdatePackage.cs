@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// UpdatePackage.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,12 @@ namespace nUpdate
         /// </summary>
         public string ChannelName { get; set; }
 
-
-        public IEnumerable<UpdateRolloutCondition> RolloutConditions { get; set; }
-        public UpdateRolloutConditionMode RolloutConditionMode { get; set; }
+        /// <summary>
+        ///     Gets or sets a value indicating whether the update package should be installed, even if there are newer versions
+        ///     available (follows <see cref="UpdateStrategy.AllNewest" />), or not (follows
+        ///     <see cref="UpdateStrategy.OnlyLatest" />).
+        /// </summary>
+        public bool Compulsory { get; set; }
 
         /// <summary>
         ///     Gets or sets the <see cref="System.Guid" /> of the package.
@@ -47,14 +51,19 @@ namespace nUpdate
         public bool IsReleased { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the update package should be installed, even if there are newer versions available (follows <see cref="UpdateStrategy.AllNewest"/>), or not (follows <see cref="UpdateStrategy.OnlyLatest"/>).
+        ///     Gets or sets the <see cref="Uri" /> of the update package.
         /// </summary>
-        public bool Compulsory { get; set; }
+        public Uri PackageUri { get; set; }
 
         /// <summary>
         ///     Gets or sets the release date of the package.
         /// </summary>
         public DateTime ReleaseDate { get; set; }
+
+        public UpdateRolloutConditionMode RolloutConditionMode { get; set; }
+
+
+        public IEnumerable<UpdateRolloutCondition> RolloutConditions { get; set; }
 
         /// <summary>
         ///     Gets or sets the signature of the update package represented as a Base64 string.
@@ -62,30 +71,24 @@ namespace nUpdate
         public string Signature { get; set; }
 
         /// <summary>
+        ///     Gets or sets the size of the package.
+        /// </summary>
+        public long Size { get; set; }
+
+        /// <summary>
         ///     Gets or sets the versions that shouldn't be able to install this update package.
         /// </summary>
         public IEnumerable<SemanticVersion> UnsupportedVersions { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="Uri" /> of the update package.
-        /// </summary>
-        public Uri PackageUri { get; set; }
 
         /// <summary>
         ///     Gets or sets the version of the package.
         /// </summary>
         public IVersion Version { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the size of the package.
-        /// </summary>
-        public long Size { get; set; }
-
         public static async Task<IEnumerable<UpdatePackage>> GetPackageEnumerable(Uri packageDataFileUri,
             WebProxy proxy)
         {
             if (Utility.IsHttpUri(packageDataFileUri))
-            {
                 using (var wc = new WebClientEx(10000))
                 {
                     wc.Encoding = Encoding.UTF8;
@@ -96,15 +99,12 @@ namespace nUpdate
                     if (!string.IsNullOrEmpty(source))
                         return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
                 }
-            }
             else
-            {
                 using (var reader = File.OpenText(packageDataFileUri.ToString()))
                 {
                     var content = await reader.ReadToEndAsync();
                     return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(content);
                 }
-            }
 
             return Enumerable.Empty<UpdatePackage>();
         }

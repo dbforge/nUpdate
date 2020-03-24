@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// WizardPageViewModelBase.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using nUpdate.Administration.Infrastructure;
 
@@ -13,8 +14,6 @@ namespace nUpdate.Administration.PluginBase.ViewModels
         private bool _canGoBack;
         private bool _canGoForward;
         private bool _needsUserInteraction = true;
-
-        public ushort DisplayOrderId { get; }
 
         public bool CanBeShown
         {
@@ -34,6 +33,8 @@ namespace nUpdate.Administration.PluginBase.ViewModels
             set => SetProperty(value, ref _canGoForward);
         }
 
+        public ushort DisplayOrderId { get; }
+
         public bool NeedsUserInteraction
         {
             get => _needsUserInteraction;
@@ -41,12 +42,15 @@ namespace nUpdate.Administration.PluginBase.ViewModels
         }
 
         public virtual void OnNavigateBack(WizardViewModelBase window)
-        { }
-
-        public virtual void OnNavigateForward(WizardViewModelBase window)
-        { }
+        {
+        }
 
         public virtual void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
-        { }
+        {
+        }
+
+        public virtual void OnNavigateForward(WizardViewModelBase window)
+        {
+        }
     }
 }

@@ -19,25 +19,26 @@
             Text="Update provider" />
 
         <StackPanel VerticalAlignment="Center">
-        <TextBlock
-            VerticalAlignment="Center"
-            Text="Please select the update provider that you want to use for accessing the update server."
-            TextWrapping="Wrap" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="Please select the update provider that you want to use for accessing the update server."
+                TextWrapping="Wrap" />
 
-        <ItemsControl ItemsSource="{Binding AvailableUpdateProviderViewModels}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <RadioButton Margin="0,5,10,0" Content="{Binding Description}" IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                                           Command="{Binding DataContext.UpdateProviderSelectionCommand, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                           CommandParameter="{Binding}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <ItemsControl ItemsSource="{Binding AvailableUpdateProviderViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Margin="0,5,10,0" Content="{Binding Description}"
+                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                     Command="{Binding DataContext.UpdateProviderSelectionCommand, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                     CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
         </StackPanel>
     </DockPanel>

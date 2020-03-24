@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// GeneralDataPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.IO;
@@ -23,9 +24,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
             _newProjectBase = @base;
 
             _location = PathProvider.DefaultProjectDirectory;
-            _locationSelectCommand = new RelayCommand(o => 
+            _locationSelectCommand = new RelayCommand(o =>
                 Location = newProjectProvider.GetLocationDirectory(_location));
-            _updateDirectorySelectCommand = new RelayCommand(o => 
+            _updateDirectorySelectCommand = new RelayCommand(o =>
                 UpdateDirectory = newProjectProvider.GetUpdateDirectory());
 
             PropertyChanged += (sender, args) => RefreshNavigation();

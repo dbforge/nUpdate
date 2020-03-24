@@ -1,4 +1,7 @@
-﻿using System;
+﻿// HttpDataPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using nUpdate.Administration.BusinessLogic;
 using nUpdate.Administration.Models.Http;
 using nUpdate.Administration.PluginBase.Models;
@@ -9,11 +12,11 @@ namespace nUpdate.Administration.ViewModels.NewProject
     public class HttpDataPageViewModel : UpdateProviderWizardPageViewModelBase
     {
         private readonly HttpData _transferData;
-        private string _username;
-        private string _password;
         private string _confirmationPassword;
+        private string _password;
         private string _scriptName;
         private bool _scriptNameEditable;
+        private string _username;
 
         public HttpDataPageViewModel(WizardViewModelBase wizardViewModelBase, ProjectCreationData projectCreationData)
             : base(wizardViewModelBase, projectCreationData)
@@ -24,22 +27,16 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CanGoBack = true;
         }
 
-        public string Username
+        public string ConfirmationPassword
         {
-            get => _username;
-            set => SetProperty(value, ref _username);
+            get => _confirmationPassword;
+            set => SetProperty(value, ref _confirmationPassword);
         }
 
         public string Password
         {
             get => _password;
             set => SetProperty(value, ref _password);
-        }
-
-        public string ConfirmationPassword
-        {
-            get => _confirmationPassword;
-            set => SetProperty(value, ref _confirmationPassword);
         }
 
         public string ScriptName
@@ -54,6 +51,12 @@ namespace nUpdate.Administration.ViewModels.NewProject
             set => SetProperty(value, ref _scriptNameEditable);
         }
 
+        public string Username
+        {
+            get => _username;
+            set => SetProperty(value, ref _username);
+        }
+
         public override void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
         {
             base.OnNavigated(fromPage, window);
@@ -66,8 +69,9 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         private void RefreshNavigation()
         {
-            CanGoForward = !string.IsNullOrEmpty(Username) && !string.IsNullOrWhiteSpace(Password) && Password.Equals(ConfirmationPassword);
-           
+            CanGoForward = !string.IsNullOrEmpty(Username) && !string.IsNullOrWhiteSpace(Password) &&
+                           Password.Equals(ConfirmationPassword);
+
             // If the data is okay, we will set it directly.
             if (CanGoForward)
                 RefreshProjectData();

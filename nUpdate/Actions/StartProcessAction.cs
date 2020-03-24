@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// StartProcessAction.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,11 +12,9 @@ namespace nUpdate.Actions
 {
     public class StartProcessAction : IUpdateAction
     {
-        public string Name => "StartProcess";
-        public string Description => "Starts a process with optional arguments.";
-        public bool ExecuteBeforeReplacingFiles { get; set; }
-        public string FilePath { get; set; }
         public IEnumerable<string> Arguments { get; set; }
+        public string FilePath { get; set; }
+        public string Description => "Starts a process with optional arguments.";
 
         public Task Execute()
         {
@@ -23,7 +24,7 @@ namespace nUpdate.Actions
                 var provider = ServiceProviderHelper.CreateServiceProvider(assembly);
                 if (provider == null)
                     throw new ServiceProviderMissingException();
-                var pathProvider = (IUpdateActionPathProvider)provider.GetService(typeof(IUpdateActionPathProvider));
+                var pathProvider = (IUpdateActionPathProvider) provider.GetService(typeof(IUpdateActionPathProvider));
                 if (pathProvider == null)
                     throw new ServiceProviderMissingException(nameof(IUpdateActionPathProvider));
 
@@ -46,5 +47,8 @@ namespace nUpdate.Actions
                 }
             });
         }
+
+        public bool ExecuteBeforeReplacingFiles { get; set; }
+        public string Name => "StartProcess";
     }
 }

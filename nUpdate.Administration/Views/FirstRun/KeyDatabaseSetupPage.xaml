@@ -17,7 +17,8 @@
                    Text="Setup key database" />
 
         <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="The key database will manage your secret data, such as passwords or private keys." TextWrapping="Wrap" />
+            <TextBlock Text="The key database will manage your secret data, such as passwords or private keys."
+                       TextWrapping="Wrap" />
             <RadioButton x:Name="EncryptDatabaseRadioButton"
                          Margin="0,25,0,0"
                          Content="Encrypt the key database (recommended)"
@@ -28,7 +29,8 @@
                     <Style TargetType="{x:Type StackPanel}">
                         <Setter Property="IsEnabled" Value="False" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsChecked, ElementName=EncryptDatabaseRadioButton}" Value="True">
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=EncryptDatabaseRadioButton}"
+                                         Value="True">
                                 <Setter Property="IsEnabled" Value="True" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -68,4 +70,3 @@
         </StackPanel>
     </DockPanel>
 </Page>
-

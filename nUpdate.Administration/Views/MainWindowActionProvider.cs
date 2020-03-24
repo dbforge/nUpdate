@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿// MainWindowActionProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.IO;
 using System.Security.Cryptography;
 using System.Windows;
 using nUpdate.Administration.BusinessLogic;
@@ -16,21 +19,20 @@ namespace nUpdate.Administration.Views
             if (!Directory.Exists(PathProvider.SettingsDirectoryFilePath))
                 Directory.CreateDirectory(PathProvider.SettingsDirectoryFilePath);
             SettingsManager.Instance.Initialize();
-
         }
 
         public void Load()
         {
-            if ((bool)SettingsManager.Instance["FirstRun"])
+            if ((bool) SettingsManager.Instance["FirstRun"])
             {
                 WindowManager.ShowModalWindow<FirstRunWindow>();
                 return;
             }
 
-            if (!(bool)SettingsManager.Instance["UseEncryptedKeyDatabase"])
+            if (!(bool) SettingsManager.Instance["UseEncryptedKeyDatabase"])
                 return;
 
-            bool correctPassword = false;
+            var correctPassword = false;
             while (!correctPassword)
             {
                 var passwordDialog = new PasswordInputDialog();
@@ -63,14 +65,15 @@ namespace nUpdate.Administration.Views
             }
         }
 
+        public bool CanEditMasterPassword()
+        {
+            return SettingsManager.Instance.CheckExistence("UseEncryptedKeyDatabase") &&
+                   (bool) SettingsManager.Instance["UseEncryptedKeyDatabase"];
+        }
+
         public void CreateNewProject()
         {
             WindowManager.ShowModalWindow(new NewProjectWindow());
-        }
-
-        public bool CanEditMasterPassword()
-        {
-            return SettingsManager.Instance.CheckExistence("UseEncryptedKeyDatabase") && (bool)SettingsManager.Instance["UseEncryptedKeyDatabase"];
         }
     }
 }

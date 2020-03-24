@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2019
+﻿// GitHubUpdateProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,17 @@ namespace nUpdate
         private readonly GitHubClient _client;
         private readonly Dictionary<UpdatePackage, Uri> _packagesUris = new Dictionary<UpdatePackage, Uri>();
 
-        public GitHubUpdateProvider(string repositoryAuthor, string repositoryName, Credentials authenticationCredentials, string publicKey, IVersion applicationVersion, UpdateChannelFilter updateChannelFilter)
+        public GitHubUpdateProvider(string repositoryAuthor, string repositoryName,
+            Credentials authenticationCredentials, string publicKey, IVersion applicationVersion,
+            UpdateChannelFilter updateChannelFilter)
             : base(publicKey, applicationVersion, updateChannelFilter)
         {
             _client = new GitHubClient(new ProductHeaderValue(ApplicationParameters.ProductName));
             RepositoryAuthor = repositoryAuthor ?? throw new ArgumentNullException(nameof(repositoryAuthor));
             RepositoryName = repositoryName ?? throw new ArgumentNullException(nameof(repositoryName));
-            AuthenticationCredentials = authenticationCredentials ?? throw new ArgumentNullException(nameof(authenticationCredentials)); // Do we actually need these?
+            AuthenticationCredentials = authenticationCredentials ??
+                                        throw new ArgumentNullException(
+                                            nameof(authenticationCredentials)); // Do we actually need these?
         }
 
         public Credentials AuthenticationCredentials
@@ -87,7 +92,7 @@ namespace nUpdate
             IProgress<UpdateProgressData> progress)
         {
             long downloadedBytes = 0;
-            long totalBytes = checkResult.Packages.Sum(p => p.Size);
+            var totalBytes = checkResult.Packages.Sum(p => p.Size);
             await checkResult.Packages.ForEachAsync(async p =>
             {
                 var packageProgress = new Progress<UpdateProgressData>();

@@ -46,7 +46,7 @@
                 Padding="5,0"
                 VerticalContentAlignment="Center"
                 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            
+
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
@@ -80,7 +80,7 @@
                 VerticalContentAlignment="Center"
                 Text="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            
+
             <Button
                 Grid.Row="4"
                 Grid.Column="4"

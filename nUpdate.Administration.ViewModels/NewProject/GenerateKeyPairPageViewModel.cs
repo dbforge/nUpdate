@@ -1,4 +1,7 @@
-﻿using System;
+﻿// GenerateKeyPairPageViewModel.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Threading.Tasks;
 using nUpdate.Administration.PluginBase.ViewModels;
 
@@ -14,20 +17,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
             NeedsUserInteraction = false;
         }
 
-        public override async void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
-        {
-            base.OnNavigated(fromPage, window);
-
-            // Generate the key pair.
-            await GenerateKeyPair();
-            
-            CanGoForward = true;
-            CanBeShown = false;
-
-            // Request going forward to the next page automatically.
-            _newProjectBase.RequestGoForward();
-        }
-
         private Task GenerateKeyPair()
         {
             return Task.Run(() =>
@@ -37,6 +26,20 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 _newProjectBase.ProjectCreationData.PrivateKey = rsa.PrivateKey;
                 _newProjectBase.ProjectCreationData.Project.Guid = Guid.NewGuid();
             });
+        }
+
+        public override async void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)
+        {
+            base.OnNavigated(fromPage, window);
+
+            // Generate the key pair.
+            await GenerateKeyPair();
+
+            CanGoForward = true;
+            CanBeShown = false;
+
+            // Request going forward to the next page automatically.
+            _newProjectBase.RequestGoForward();
         }
     }
 }

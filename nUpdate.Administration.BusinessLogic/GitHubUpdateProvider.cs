@@ -1,4 +1,7 @@
-﻿using System;
+﻿// GitHubUpdateProvider.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Threading.Tasks;
 using nUpdate.Administration.PluginBase.BusinessLogic;
 

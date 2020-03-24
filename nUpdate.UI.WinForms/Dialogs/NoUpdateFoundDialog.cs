@@ -1,8 +1,11 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// NoUpdateFoundDialog.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using nUpdate.Properties;
 
 namespace nUpdate.UI.WinForms.Dialogs
 {
@@ -13,21 +16,21 @@ namespace nUpdate.UI.WinForms.Dialogs
             InitializeComponent();
         }
 
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
         private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
         {
             Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
 
-            closeButton.Text = Properties.strings.CloseButtonText;
-            headerLabel.Text = Properties.strings.NoUpdateDialogHeader;
-            infoLabel.Text = Properties.strings.NoUpdateDialogInfoText;
+            closeButton.Text = strings.CloseButtonText;
+            headerLabel.Text = strings.NoUpdateDialogHeader;
+            infoLabel.Text = strings.NoUpdateDialogInfoText;
 
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Text = Application.ProductName;
-        }
-
-        private void closeButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
         }
     }
 }

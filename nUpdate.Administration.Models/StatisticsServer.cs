@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// StatisticsServer.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using nUpdate.Administration.Infrastructure;
@@ -15,8 +16,9 @@ namespace nUpdate.Administration.Models
             Username = username;
         }
 
-        public Uri WebUri { get; set; } 
         public string DatabaseName { get; set; }
         public string Username { get; set; }
+
+        public Uri WebUri { get; set; }
     }
 }

@@ -1,5 +1,5 @@
-﻿// SemanticVersion.cs, 20.06.2019
-// Copyright (C) Dominic Beger 20.06.2019
+﻿// SemanticVersion.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Text;
@@ -32,6 +32,16 @@ namespace nUpdate
         }
 
         /// <summary>
+        ///     Gets the build metadata.
+        /// </summary>
+        public string BuildMetadata { get; } = string.Empty;
+
+        /// <summary>
+        ///     Gets a value indicating whether build metadata is available, or not.
+        /// </summary>
+        public bool HasBuildMetadata => !BuildMetadata.Equals(string.Empty);
+
+        /// <summary>
         ///     Gets the major version.
         /// </summary>
         public int Major { get; }
@@ -46,25 +56,13 @@ namespace nUpdate
         /// </summary>
         public int Patch { get; }
 
-        /// <summary>
-        ///     Gets the pre-release information.
-        /// </summary>
-        public string PreRelease { get; } = string.Empty;
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(SemanticVersion))
+                throw new InvalidOperationException();
 
-        /// <summary>
-        ///     Gets a value indicating whether pre-release information is available, or not.
-        /// </summary>
-        public bool HasPreRelease => !PreRelease.Equals(string.Empty);
-
-        /// <summary>
-        ///     Gets the build metadata.
-        /// </summary>
-        public string BuildMetadata { get; } = string.Empty;
-
-        /// <summary>
-        ///     Gets a value indicating whether build metadata is available, or not.
-        /// </summary>
-        public bool HasBuildMetadata => !BuildMetadata.Equals(string.Empty);
+            return CompareTo((SemanticVersion) obj);
+        }
 
         // https://semver.org/#spec-item-11
         public int CompareTo(SemanticVersion other)
@@ -126,55 +124,20 @@ namespace nUpdate
         }
 
         /// <summary>
-        ///     Determines whether the specified update version is valid.
+        ///     Gets a value indicating whether pre-release information is available, or not.
         /// </summary>
-        /// <param name="semanticVersion">The update version to check.</param>
-        public static bool IsValid(SemanticVersion semanticVersion)
+        public bool HasPreRelease => !PreRelease.Equals(string.Empty);
+
+        public bool IsValid()
         {
-            return semanticVersion.IsValid();
+            var regex = new Regex(RegexString, RegexOptions.IgnoreCase);
+            return regex.IsMatch(ToString());
         }
 
         /// <summary>
-        ///     Determines whether the specified version string is valid.
+        ///     Gets the pre-release information.
         /// </summary>
-        /// <param name="versionString">The version string to check.</param>
-        public static bool IsValid(string versionString)
-        {
-            return new SemanticVersion(versionString).IsValid();
-        }
-
-        public override string ToString()
-        {
-            var builder = new StringBuilder($"{Major}.{Minor}.{Patch}");
-            if (HasPreRelease)
-                builder.Append($"-{PreRelease}");
-            if (HasBuildMetadata)
-                builder.Append($"+{BuildMetadata}");
-            return builder.ToString();
-        }
-
-        public int CompareTo(object obj)
-        {
-            if (obj.GetType() != typeof(SemanticVersion))
-                throw new InvalidOperationException();
-
-            return CompareTo((SemanticVersion) obj);
-        }
-
-        public static bool operator <(SemanticVersion version1, SemanticVersion version2)
-        {
-            return version1.CompareTo(version2).Equals(-1);
-        }
-
-        public static bool operator ==(SemanticVersion version1, SemanticVersion version2)
-        {
-            return version1 != null && version1.CompareTo(version2).Equals(0);
-        }
-
-        public static bool operator !=(SemanticVersion version1, SemanticVersion version2)
-        {
-            return !(version1 == version2);
-        }
+        public string PreRelease { get; } = string.Empty;
 
         public override bool Equals(object obj)
         {
@@ -200,15 +163,52 @@ namespace nUpdate
             }
         }
 
-        public bool IsValid()
+        /// <summary>
+        ///     Determines whether the specified update version is valid.
+        /// </summary>
+        /// <param name="semanticVersion">The update version to check.</param>
+        public static bool IsValid(SemanticVersion semanticVersion)
         {
-            var regex = new Regex(RegexString, RegexOptions.IgnoreCase);
-            return regex.IsMatch(ToString());
+            return semanticVersion.IsValid();
+        }
+
+        /// <summary>
+        ///     Determines whether the specified version string is valid.
+        /// </summary>
+        /// <param name="versionString">The version string to check.</param>
+        public static bool IsValid(string versionString)
+        {
+            return new SemanticVersion(versionString).IsValid();
+        }
+
+        public static bool operator ==(SemanticVersion version1, SemanticVersion version2)
+        {
+            return version1 != null && version1.CompareTo(version2).Equals(0);
         }
 
         public static bool operator >(SemanticVersion version1, SemanticVersion version2)
         {
             return version1.CompareTo(version2).Equals(1);
+        }
+
+        public static bool operator !=(SemanticVersion version1, SemanticVersion version2)
+        {
+            return !(version1 == version2);
+        }
+
+        public static bool operator <(SemanticVersion version1, SemanticVersion version2)
+        {
+            return version1.CompareTo(version2).Equals(-1);
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder($"{Major}.{Minor}.{Patch}");
+            if (HasPreRelease)
+                builder.Append($"-{PreRelease}");
+            if (HasBuildMetadata)
+                builder.Append($"+{BuildMetadata}");
+            return builder.ToString();
         }
     }
 }

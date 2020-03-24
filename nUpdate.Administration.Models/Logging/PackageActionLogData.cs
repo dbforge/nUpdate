@@ -1,4 +1,7 @@
-﻿using System;
+﻿// PackageActionLogData.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using nUpdate.Administration.Infrastructure;
 
 namespace nUpdate.Administration.Models.Logging
@@ -14,7 +17,8 @@ namespace nUpdate.Administration.Models.Logging
         }
 
         /// <summary>
-        ///     Gets or sets the <see cref="System.DateTime"/> object that represents when this <see cref="PackageActionLogData"/> has been created.
+        ///     Gets or sets the <see cref="System.DateTime" /> object that represents when this
+        ///     <see cref="PackageActionLogData" /> has been created.
         /// </summary>
         public DateTime EntryDateTime { get; set; }
 

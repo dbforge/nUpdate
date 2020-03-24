@@ -1,4 +1,5 @@
-﻿// Copyright © Dominic Beger 2017
+﻿// SystemInformation.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Linq;
@@ -45,6 +46,7 @@ namespace nUpdate
                             case 3:
                                 return "Windows 8.1";
                         }
+
                         break;
 
                     case 10:
@@ -53,6 +55,7 @@ namespace nUpdate
                             case 0:
                                 return "Windows 10";
                         }
+
                         break;
                 }
 

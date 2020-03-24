@@ -1,5 +1,5 @@
-﻿// FtpTransferProvider.cs, 27.07.2019
-// Copyright (C) Dominic Beger 18.09.2019
+﻿// FtpTransferProvider.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;

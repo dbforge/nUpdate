@@ -1,4 +1,7 @@
-﻿using System;
+﻿// NewProjectProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Windows;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Models.Ftp;
@@ -10,6 +13,15 @@ namespace nUpdate.Administration.Views.NewProject
 {
     public class NewProjectProvider : Singleton<NewProjectProvider>, INewProjectProvider
     {
+        public void SetFinishAction(out Action finishAction)
+        {
+            finishAction = () =>
+            {
+                if (Application.Current.Dispatcher != null)
+                    Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
+            };
+        }
+
         public string GetFtpDirectory(FtpData data)
         {
             var ftpBrowseDialog = new FtpBrowseDialog(data);
@@ -44,15 +56,6 @@ namespace nUpdate.Administration.Views.NewProject
             if (result.HasValue && result.Value)
                 return browseDialog.FileName;
             return null;
-        }
-
-        public void SetFinishAction(out Action finishAction)
-        {
-            finishAction = () =>
-            {
-                if (Application.Current.Dispatcher != null)
-                    Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
-            };
         }
     }
 }

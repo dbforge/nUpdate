@@ -1,4 +1,7 @@
-﻿using System;
+﻿// FtpServerItem.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using FluentFTP;
 using nUpdate.Administration.PluginBase.Models;
 

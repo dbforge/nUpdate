@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// PathProvider.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 
@@ -9,15 +10,17 @@ namespace nUpdate.Administration.BusinessLogic
         public static string SettingsDirectoryFilePath = System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "nUpdate.Administration.GlobalSettings");
+
         public static string SettingsFilePath =
             System.IO.Path.Combine(SettingsDirectoryFilePath, "settings.dat");
+
         public static string DefaultProjectDirectory => SettingsManager.Instance["DefaultProjectPath"].ToString();
         public static string KeyDatabaseFilePath => System.IO.Path.Combine(Path, "keys.db");
         public static string LocalesDirectory => System.IO.Path.Combine(Path, "Locales");
-        public static string PluginDirectory => System.IO.Path.Combine(Path, "Plugins");
-        public static string UpdateProviderPluginDirectory => System.IO.Path.Combine(PluginDirectory, "UpdateProvider");
         public static string Path => SettingsManager.Instance["ApplicationDataPath"].ToString();
+        public static string PluginDirectory => System.IO.Path.Combine(Path, "Plugins");
         public static string ProjectsConfigFilePath => System.IO.Path.Combine(Path, "projconf.json");
         public static string StatisticServersFilePath => System.IO.Path.Combine(Path, "statservers.json");
+        public static string UpdateProviderPluginDirectory => System.IO.Path.Combine(PluginDirectory, "UpdateProvider");
     }
 }

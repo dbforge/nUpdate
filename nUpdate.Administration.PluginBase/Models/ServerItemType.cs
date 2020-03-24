@@ -1,4 +1,6 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2016
+﻿// ServerItemType.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
 namespace nUpdate.Administration.PluginBase.Models
 {
     public enum ServerItemType

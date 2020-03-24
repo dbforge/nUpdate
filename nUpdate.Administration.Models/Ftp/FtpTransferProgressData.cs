@@ -1,4 +1,7 @@
-﻿using System;
+﻿// FtpTransferProgressData.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using nUpdate.Administration.PluginBase.Models;
 
 namespace nUpdate.Administration.Models.Ftp
@@ -12,17 +15,17 @@ namespace nUpdate.Administration.Models.Ftp
             Progress = progress;
         }
 
+        public double BytesPerSecond { get; }
+
 
         public TimeSpan FinishTime { get; }
 
-        public double Progress { get; }
-
-        public double BytesPerSecond  { get; }
+        public double GigabytesPerSecond => MegabytesPerSecond / 1000;
 
         public double KilobytesPerSecond => BytesPerSecond / 1000;
 
         public double MegabytesPerSecond => KilobytesPerSecond / 1000;
 
-        public double GigabytesPerSecond => MegabytesPerSecond / 1000;
+        public double Progress { get; }
     }
 }

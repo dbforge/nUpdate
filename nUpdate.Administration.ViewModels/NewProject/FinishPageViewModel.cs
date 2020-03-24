@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿// FinishPageViewModel.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Threading.Tasks;
 using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
@@ -8,6 +11,12 @@ namespace nUpdate.Administration.ViewModels.NewProject
         private readonly NewProjectBase _newProjectBase;
         private string _currentStatus;
         private bool _loadingIndicatorVisible = true;
+
+        public FinishPageViewModel(NewProjectBase newProjectBase)
+        {
+            _newProjectBase = newProjectBase;
+            NeedsUserInteraction = false;
+        }
 
         public string CurrentStatus
         {
@@ -19,12 +28,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             get => _loadingIndicatorVisible;
             set => SetProperty(value, ref _loadingIndicatorVisible);
-        }
-
-        public FinishPageViewModel(NewProjectBase newProjectBase)
-        {
-            _newProjectBase = newProjectBase;
-            NeedsUserInteraction = false;
         }
 
         public override async void OnNavigated(WizardPageViewModelBase fromPage, WizardViewModelBase window)

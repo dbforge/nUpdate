@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿// Extensions.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Text;
 using nUpdate.UI.WinForms.Win32;
 
 namespace nUpdate.UI.WinForms

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// ServiceProviderHelper.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -12,7 +15,7 @@ namespace nUpdate.UI.WinForms
                 throw new ArgumentNullException(nameof(assembly));
 
             var attribute =
-                assembly.GetCustomAttributes(typeof (ServiceProviderAttribute), false)
+                assembly.GetCustomAttributes(typeof(ServiceProviderAttribute), false)
                     .Cast<ServiceProviderAttribute>()
                     .SingleOrDefault();
 

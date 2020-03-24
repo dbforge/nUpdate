@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// FirstRunBase.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using nUpdate.Administration.Models;
 using nUpdate.Administration.PluginBase.ViewModels;
@@ -8,7 +11,6 @@ namespace nUpdate.Administration.ViewModels.FirstRun
     public class FirstRunBase : WizardViewModelBase
     {
         private readonly IFirstRunProvider _firstRunProvider;
-        public FirstSetupData FirstSetupData { get; } = new FirstSetupData();
 
         public FirstRunBase(IFirstRunProvider firstRunProvider)
         {
@@ -23,6 +25,8 @@ namespace nUpdate.Administration.ViewModels.FirstRun
                 new PathSetupPageViewModel(this, _firstRunProvider)
             });
         }
+
+        public FirstSetupData FirstSetupData { get; } = new FirstSetupData();
 
         public override Task<bool> Finish()
         {

@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade) 2017
+﻿// PasswordInputDialog.xaml.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.Windows;
 using System.Windows.Interop;

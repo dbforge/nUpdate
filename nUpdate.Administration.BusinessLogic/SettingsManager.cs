@@ -1,4 +1,7 @@
-﻿using System;
+﻿// SettingsManager.cs, 23.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,24 +13,6 @@ namespace nUpdate.Administration.BusinessLogic
     {
         private bool _initialized;
         private Dictionary<string, object> _values = new Dictionary<string, object>();
-
-        public void CreateDefault()
-        {
-            _values.Add("FirstRun", true);
-            _values.Add("TransferServiceAssemblyPaths", Enumerable.Empty<string>());
-            Save();
-        }
-
-        private void EnsureObjectState()
-        {
-            if (!_initialized)
-                throw new InvalidOperationException("SettingsManager");
-        }
-
-        public bool CheckExistence(string key)
-        {
-            return _values.ContainsKey(key);
-        }
 
         public object this[string identifier]
         {
@@ -42,7 +27,7 @@ namespace nUpdate.Administration.BusinessLogic
             set
             {
                 EnsureObjectState();
-                
+
                 if (identifier == null)
                     throw new ArgumentNullException(nameof(identifier));
                 if (value == null)
@@ -58,13 +43,33 @@ namespace nUpdate.Administration.BusinessLogic
             }
         }
 
+        public bool CheckExistence(string key)
+        {
+            return _values.ContainsKey(key);
+        }
+
+        public void CreateDefault()
+        {
+            _values.Add("FirstRun", true);
+            _values.Add("TransferServiceAssemblyPaths", Enumerable.Empty<string>());
+            Save();
+        }
+
+        private void EnsureObjectState()
+        {
+            if (!_initialized)
+                throw new InvalidOperationException("SettingsManager");
+        }
+
         public void Initialize()
         {
             if (!File.Exists(PathProvider.SettingsFilePath))
+            {
                 CreateDefault();
+            }
             else
             {
-                byte[] data = File.ReadAllBytes(PathProvider.SettingsFilePath);
+                var data = File.ReadAllBytes(PathProvider.SettingsFilePath);
                 _values = BinarySerializer.DeserializeType<Dictionary<string, object>>(data);
             }
 
@@ -73,7 +78,7 @@ namespace nUpdate.Administration.BusinessLogic
 
         public void Save()
         {
-            byte[] data = BinarySerializer.Serialize(_values);
+            var data = BinarySerializer.Serialize(_values);
             File.WriteAllBytes(PathProvider.SettingsFilePath, data);
         }
     }

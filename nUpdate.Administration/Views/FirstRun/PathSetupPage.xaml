@@ -19,7 +19,9 @@
             Text="Setup paths" />
 
         <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="Please specify the paths that should be used by nUpdate Administration for saving your application specific data. If a directory does not yet exist, it will be created." TextWrapping="Wrap" />
+            <TextBlock
+                Text="Please specify the paths that should be used by nUpdate Administration for saving your application specific data. If a directory does not yet exist, it will be created."
+                TextWrapping="Wrap" />
 
             <Grid Margin="0,25,0,0">
                 <Grid.RowDefinitions>

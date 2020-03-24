@@ -1,9 +1,11 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// UpdateDownloadDialog.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using nUpdate.Properties;
 using nUpdate.UI.WinForms.Popups;
 
 namespace nUpdate.UI.WinForms.Dialogs
@@ -17,7 +19,7 @@ namespace nUpdate.UI.WinForms.Dialogs
         {
             InitializeComponent();
         }
-        
+
         /// <summary>
         ///     Gets or sets the progress percentage.
         /// </summary>
@@ -30,9 +32,9 @@ namespace nUpdate.UI.WinForms.Dialogs
                 {
                     Invoke(new Action(() =>
                     {
-                        downloadProgressBar.Value = (int)value;
+                        downloadProgressBar.Value = (int) value;
                         infoLabel.Text = string.Format(
-                            Properties.strings.UpdateDownloadDialogLoadingInfo, value);
+                            strings.UpdateDownloadDialogLoadingInfo, value);
                     }));
                 }
                 catch (InvalidOperationException)
@@ -65,10 +67,10 @@ namespace nUpdate.UI.WinForms.Dialogs
         {
             Thread.CurrentThread.CurrentUICulture = UpdateProvider.LanguageCulture;
 
-            headerLabel.Text = Properties.strings.UpdateDownloadDialogLoadingHeader;
+            headerLabel.Text = strings.UpdateDownloadDialogLoadingHeader;
             infoLabel.Text = string.Format(
-                Properties.strings.UpdateDownloadDialogLoadingInfo, "0");
-            cancelButton.Text = Properties.strings.CancelButtonText;
+                strings.UpdateDownloadDialogLoadingInfo, "0");
+            cancelButton.Text = strings.CancelButtonText;
 
             Text = Application.ProductName;
             Icon = _appIcon;

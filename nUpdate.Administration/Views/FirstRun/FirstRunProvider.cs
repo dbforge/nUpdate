@@ -1,4 +1,7 @@
-﻿using System;
+﻿// FirstRunProvider.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
+
+using System;
 using System.IO;
 using System.Windows;
 using nUpdate.Administration.BusinessLogic;
@@ -11,6 +14,11 @@ namespace nUpdate.Administration.Views.FirstRun
 {
     internal class FirstRunProvider : Singleton<FirstRunProvider>, IFirstRunProvider
     {
+        public void SetFinishAction(out Action action)
+        {
+            action = () => Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
+        }
+
         public bool Finish(FirstSetupData firstSetupData)
         {
             // Set the application specific data
@@ -67,11 +75,6 @@ namespace nUpdate.Administration.Views.FirstRun
             var result = browseDialog.ShowDialog();
             if (result.HasValue && result.Value)
                 defaultProjectDirectory = browseDialog.FileName;
-        }
-
-        public void SetFinishAction(out Action action)
-        {
-            action = () => Application.Current.Dispatcher.Invoke(() => WindowManager.GetCurrentWindow().RequestClose());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿// Author: Dominic Beger (Trade/ProgTrade)
+﻿// BaseDialog.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,8 +8,8 @@ namespace nUpdate.UI.WinForms.Dialogs
 {
     internal class BaseDialog : Form
     {
-        public UpdateProvider UpdateProvider { get; set; }
         public UpdateCheckResult UpdateCheckResult { get; set; }
+        public UpdateProvider UpdateProvider { get; set; }
 
         public void InitializeComponent()
         {

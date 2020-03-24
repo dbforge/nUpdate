@@ -1,5 +1,5 @@
 ﻿// NewProjectViewManager.cs, 14.11.2019
-// Copyright (C) Dominic Beger 15.03.2020
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace nUpdate.Administration.Views.NewProject
                 {typeof(FtpDataPageViewModel), typeof(FtpDataPage)},
                 {typeof(FinishPageViewModel), typeof(FinishPage)}
             })
-        { }
+        {
+        }
     }
 }

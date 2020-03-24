@@ -1,5 +1,5 @@
-﻿// SemanticVersionTest.cs, 01.08.2018
-// Copyright (C) Dominic Beger 20.06.2019
+﻿// SemanticVersionTest.cs, 14.11.2019
+// Copyright (C) Dominic Beger 24.03.2020
 
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,125 +47,9 @@ namespace nUpdate.Test
         }
 
         [TestMethod]
-        public void CanConstructVersion1()
-        {
-            new SemanticVersion("1.0.0");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion2()
-        {
-            new SemanticVersion("2.1.0-alpha");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion3()
-        {
-            new SemanticVersion("2.1.0-alpha1");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion4()
-        {
-            new SemanticVersion("2.1.0-alpha.1");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion5()
-        {
-            new SemanticVersion("2.1.0-alpha.beta");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion6()
-        {
-            new SemanticVersion("2.1.0-alpha.1.2.3");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion7()
-        {
-            new SemanticVersion("2.1.0-0.3.2");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion8()
-        {
-            new SemanticVersion("2.1.0-0.x.2.h.1");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion9()
-        {
-            new SemanticVersion("2.1.0-beta.1.3.4+exp.build");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion10()
-        {
-            new SemanticVersion("2.1.0+exp.build");
-        }
-
-        [TestMethod]
-        public void CanConstructVersion11()
-        {
-            new SemanticVersion("2.1.0-beta.-.0.1");
-        }
-
-        [TestMethod]
         public void CanCompareVersions1()
         {
             Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha").CompareTo(new SemanticVersion("1.0.0")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions2()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha").CompareTo(new SemanticVersion("1.0.0-alpha.1")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions3()
-        {
-            Assert.AreEqual(-1,
-                new SemanticVersion("1.0.0-alpha.1").CompareTo(new SemanticVersion("1.0.0-alpha.beta")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions4()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha").CompareTo(new SemanticVersion("1.0.0-beta")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions5()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-beta").CompareTo(new SemanticVersion("1.0.0-beta.2")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions6()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0-alpha.11")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions7()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions8()
-        {
-            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0-rc.1")));
-        }
-
-        [TestMethod]
-        public void CanCompareVersions9()
-        {
-            Assert.AreEqual(-1,
-                new SemanticVersion("1.0.0-alpha.2+exp.bla").CompareTo(new SemanticVersion("1.0.0-alpha.11")));
         }
 
         [TestMethod]
@@ -225,7 +109,14 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanCompareVersions19()
         {
-            Assert.AreEqual(0, new SemanticVersion("1.0.0-alpha1+exp.2").CompareTo(new SemanticVersion("1.0.0-alpha1")));
+            Assert.AreEqual(0,
+                new SemanticVersion("1.0.0-alpha1+exp.2").CompareTo(new SemanticVersion("1.0.0-alpha1")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions2()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha").CompareTo(new SemanticVersion("1.0.0-alpha.1")));
         }
 
         [TestMethod]
@@ -237,7 +128,8 @@ namespace nUpdate.Test
         [TestMethod]
         public void CanCompareVersions21()
         {
-            Assert.AreEqual(0, new SemanticVersion("1.2.1-beta.0.8.1").CompareTo(new SemanticVersion("1.2.1-beta.0.8.1")));
+            Assert.AreEqual(0,
+                new SemanticVersion("1.2.1-beta.0.8.1").CompareTo(new SemanticVersion("1.2.1-beta.0.8.1")));
         }
 
         [TestMethod]
@@ -256,6 +148,116 @@ namespace nUpdate.Test
         public void CanCompareVersions24()
         {
             Assert.AreEqual(1, new SemanticVersion("1.2.0-r").CompareTo(new SemanticVersion("1.2.0-1")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions3()
+        {
+            Assert.AreEqual(-1,
+                new SemanticVersion("1.0.0-alpha.1").CompareTo(new SemanticVersion("1.0.0-alpha.beta")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions4()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha").CompareTo(new SemanticVersion("1.0.0-beta")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions5()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-beta").CompareTo(new SemanticVersion("1.0.0-beta.2")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions6()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0-alpha.11")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions7()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions8()
+        {
+            Assert.AreEqual(-1, new SemanticVersion("1.0.0-alpha.2").CompareTo(new SemanticVersion("1.0.0-rc.1")));
+        }
+
+        [TestMethod]
+        public void CanCompareVersions9()
+        {
+            Assert.AreEqual(-1,
+                new SemanticVersion("1.0.0-alpha.2+exp.bla").CompareTo(new SemanticVersion("1.0.0-alpha.11")));
+        }
+
+        [TestMethod]
+        public void CanConstructVersion1()
+        {
+            new SemanticVersion("1.0.0");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion10()
+        {
+            new SemanticVersion("2.1.0+exp.build");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion11()
+        {
+            new SemanticVersion("2.1.0-beta.-.0.1");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion2()
+        {
+            new SemanticVersion("2.1.0-alpha");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion3()
+        {
+            new SemanticVersion("2.1.0-alpha1");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion4()
+        {
+            new SemanticVersion("2.1.0-alpha.1");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion5()
+        {
+            new SemanticVersion("2.1.0-alpha.beta");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion6()
+        {
+            new SemanticVersion("2.1.0-alpha.1.2.3");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion7()
+        {
+            new SemanticVersion("2.1.0-0.3.2");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion8()
+        {
+            new SemanticVersion("2.1.0-0.x.2.h.1");
+        }
+
+        [TestMethod]
+        public void CanConstructVersion9()
+        {
+            new SemanticVersion("2.1.0-beta.1.3.4+exp.build");
         }
     }
 }
