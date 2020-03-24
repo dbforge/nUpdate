@@ -12,13 +12,9 @@
     Height="610"
     Icon="/./Icons/nUpdate.ico"
     WindowStartupLocation="CenterScreen"
-    SizeToContent="Height"
     TitleTemplate="{x:Null}"
     mc:Ignorable="d">
 
-    <views:ExtendedWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </views:ExtendedWindow.Resources>
     <!--<mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button>

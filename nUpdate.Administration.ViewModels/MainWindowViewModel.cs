@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 using nUpdate.Administration.Infrastructure;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
@@ -17,7 +18,7 @@ namespace nUpdate.Administration.ViewModels
             NewProjectCommand = new RelayCommand(o => mainWindowActionProvider.CreateNewProject());
             CanEditMasterPassword = mainWindowActionProvider.CanEditMasterPassword();
         }
-        
+
         public ICommand LoadCommand
         {
             get => _loadCommand;
