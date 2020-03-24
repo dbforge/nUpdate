@@ -19,6 +19,8 @@ namespace nUpdate.Administration.BusinessLogic
             {
                 throw new PluginLoadingException(e);
             }
+
+            SettingsManager.Instance.Initialize();
         }
 
         public static string MasterPassword { get; set; }
