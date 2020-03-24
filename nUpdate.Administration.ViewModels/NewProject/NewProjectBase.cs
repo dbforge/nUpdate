@@ -30,7 +30,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 from type in plugin.Value.WizardViewModelViewAssociations.Keys
                 select (UpdateProviderWizardPageViewModelBase) Activator.CreateInstance(type, this, ProjectCreationData));
 
-            pages.Add(new FinishPageViewModel());
+            pages.Add(new FinishPageViewModel(this));
             InitializePages(pages);
 
             newProjectProvider.SetFinishAction(out var f);
@@ -39,7 +39,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
 
         public ProjectCreationData ProjectCreationData { get; } = new ProjectCreationData();
 
-        protected override Task<bool> Finish()
+        public override Task<bool> Finish()
         {
             return Task.Run(() =>
             {
@@ -48,7 +48,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                     Directory.CreateDirectory(projectDirectory);
                 KeyManager.Instance[ProjectCreationData.Project.Identifier] = ProjectCreationData.PrivateKey;
                 new UpdateProjectBl(ProjectCreationData.Project).Save(Path.Combine(projectDirectory,
-                    ProjectCreationData.Project.Name, ".nupdproj"));
+                    ProjectCreationData.Project.Name + ".nupdproj"));
                 return true;
             });
         }
@@ -75,7 +75,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
             CurrentPageViewModel.OnNavigated(oldPageViewModel, this);
         }
 
-        protected override async void GoForward()
+        protected override void GoForward()
         {
             var oldPageViewModel = CurrentPageViewModel;
             oldPageViewModel.OnNavigateForward(this);
@@ -92,9 +92,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                     break;
                 case FinishPageViewModel _:
                 {
-                    // If no errors occured and everything worked, we can now close the window
-                    if (await Finish())
-                        FinishingAction.Invoke();
+                    FinishingAction.Invoke();
                     return;
                 }
 

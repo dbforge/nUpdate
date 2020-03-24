@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using nUpdate.Administration.PluginBase.ViewModels;
 
 namespace nUpdate.Administration.ViewModels.NewProject
@@ -34,6 +35,7 @@ namespace nUpdate.Administration.ViewModels.NewProject
                 var rsa = new RsaManager();
                 _newProjectBase.ProjectCreationData.Project.PublicKey = rsa.PublicKey;
                 _newProjectBase.ProjectCreationData.PrivateKey = rsa.PrivateKey;
+                _newProjectBase.ProjectCreationData.Project.Guid = Guid.NewGuid();
             });
         }
     }

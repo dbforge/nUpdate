@@ -24,7 +24,7 @@ namespace nUpdate.Administration.ViewModels.FirstRun
             });
         }
 
-        protected override Task<bool> Finish()
+        public override Task<bool> Finish()
         {
             return Task.Run(() =>
             {

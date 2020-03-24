@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:nUpdate.Administration.Infrastructure.Converters;assembly=nUpdate.Administration.Infrastructure"
+    xmlns:wpf="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -35,6 +36,7 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            <Style x:Key="LoadingIndicatorDoubleBounceStyle" TargetType="wpf:LoadingIndicator" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -94,7 +94,6 @@ namespace nUpdate.Administration.ViewModels.NewProject
         {
             _newProjectBase.ProjectCreationData.Project.Name = Name;
             _newProjectBase.ProjectCreationData.Project.UpdateDirectory = new Uri(UpdateDirectory);
-            _newProjectBase.ProjectCreationData.Project.Guid = Guid.NewGuid();
             _newProjectBase.ProjectCreationData.Location = Location;
         }
     }

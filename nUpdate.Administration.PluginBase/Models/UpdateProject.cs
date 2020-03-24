@@ -16,12 +16,10 @@ namespace nUpdate.Administration.PluginBase.Models
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class UpdateProject : NotifyPropertyChangedBase
     {
-        private Uri _packageFileUri;
         private Guid _guid;
         private string _name;
         private List<UpdatePackage> _packages;
         private string _publicKey;
-        private string _transferAssemblyFilePath;
         private ITransferData _transferData;
         private Uri _updateDirectoryUri;
         private Guid _updateProviderIdentifier;
@@ -45,20 +43,6 @@ namespace nUpdate.Administration.PluginBase.Models
         /// </summary>
         [JsonIgnore]
         public Uri Identifier => new Uri($"nupdproj://{Guid}");
-
-        /// <summary>
-        ///     Gets or sets the <see cref="Uri"/> of the package feed file of the project.
-        /// </summary>
-        [JsonProperty]
-        public Uri PackageFileUri
-        {
-            get => _packageFileUri;
-            set
-            {
-                _packageFileUri = value;
-                OnPropertyChanged();
-            }
-        }
 
         /// <summary>
         ///     Gets or sets the name of the project.
@@ -97,20 +81,6 @@ namespace nUpdate.Administration.PluginBase.Models
             set
             {
                 _publicKey = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the path of the file containing an assembly that implements a custom transfer protocol.
-        /// </summary>
-        [JsonProperty]
-        public string TransferAssemblyFilePath
-        {
-            get => _transferAssemblyFilePath;
-            set
-            {
-                _transferAssemblyFilePath = value;
                 OnPropertyChanged();
             }
         }

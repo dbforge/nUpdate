@@ -17,7 +17,8 @@ namespace nUpdate.Administration.Views.NewProject
                 {typeof(UpdateProviderSelectionPageViewModel), typeof(UpdateProviderSelectionPage)},
                 {typeof(HttpBackendSelectionPageViewModel), typeof(HttpBackendSelectionPage)},
                 {typeof(HttpDataPageViewModel), typeof(HttpDataPage)},
-                {typeof(FtpDataPageViewModel), typeof(FtpDataPage)}
+                {typeof(FtpDataPageViewModel), typeof(FtpDataPage)},
+                {typeof(FinishPageViewModel), typeof(FinishPage)}
             })
         { }
     }

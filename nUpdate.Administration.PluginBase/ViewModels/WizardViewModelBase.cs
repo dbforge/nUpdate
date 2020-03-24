@@ -159,7 +159,7 @@ namespace nUpdate.Administration.PluginBase.ViewModels
         /// <summary>
         ///     Performs the final steps with the data collected among the different pages to finish the wizard.
         /// </summary>
-        protected abstract Task<bool> Finish();
+        public abstract Task<bool> Finish();
 
         protected virtual void GoBack()
         {
