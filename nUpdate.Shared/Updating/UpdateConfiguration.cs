@@ -112,8 +112,8 @@ namespace nUpdate.Updating
                 if (proxy != null)
                     wc.Proxy = proxy;
 
-                // Check for SSL and ignore it
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
                 var source = wc.DownloadString(configFileUri);
                 if (!string.IsNullOrEmpty(source))
                     return Serializer.Deserialize<IEnumerable<UpdateConfiguration>>(source);

@@ -48,8 +48,8 @@ namespace nUpdate.Updating
             NetworkCredential credentials,
             WebProxy proxy, CancellationTokenSource cancellationTokenSource = null, int timeout = 10000)
         {
-            // Check for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             
             var request = (HttpWebRequest) WebRequestWrapper.Create(configFileUri);
             request.Timeout = timeout;
