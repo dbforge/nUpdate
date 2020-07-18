@@ -191,9 +191,9 @@ namespace nUpdate.Updating
 
             if (!ConnectionManager.IsConnectionAvailable())
                 return false;
-
-            // Check for SSL and ignore it
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+            
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             var configuration =
                 UpdateConfiguration.Download(UpdateConfigurationFileUri, HttpAuthenticationCredentials, Proxy,
                     SearchTimeout);
@@ -245,8 +245,8 @@ namespace nUpdate.Updating
                     return false;
 
                 _searchCancellationTokenSource.Token.ThrowIfCancellationRequested();
-                // Check for SSL and ignore it
-                ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
                 var configuration =
                     await UpdateConfiguration.DownloadAsync(UpdateConfigurationFileUri, HttpAuthenticationCredentials,
                         Proxy, _searchCancellationTokenSource, SearchTimeout);
