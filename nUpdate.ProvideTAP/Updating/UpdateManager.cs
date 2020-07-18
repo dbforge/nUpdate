@@ -35,7 +35,7 @@ namespace nUpdate.Updating
                 WebResponse webResponse = null;
                 try
                 {
-                    var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    var webRequest = WebRequestWrapper.Create(updateConfiguration.UpdatePackageUri);
                     if (HttpAuthenticationCredentials != null)
                         webRequest.Credentials = HttpAuthenticationCredentials;
                     using (webResponse = webRequest.GetResponse())
@@ -112,7 +112,7 @@ namespace nUpdate.Updating
                             throw new OperationCanceledException();
                         }
 
-                        var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                        var webRequest = WebRequestWrapper.Create(updateConfiguration.UpdatePackageUri);
                         if (HttpAuthenticationCredentials != null)
                             webRequest.Credentials = HttpAuthenticationCredentials;
                         webResponse = await webRequest.GetResponseAsync();

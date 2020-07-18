@@ -356,7 +356,7 @@ namespace nUpdate.Updating
         {
             try
             {
-                var req = WebRequest.Create(packageUri);
+                var req = WebRequestWrapper.Create(packageUri);
                 req.Method = "HEAD";
                 if (HttpAuthenticationCredentials != null)
                     req.Credentials = HttpAuthenticationCredentials;

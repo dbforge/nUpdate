@@ -42,7 +42,7 @@ namespace nUpdate.Updating
                 WebResponse webResponse = null;
                 try
                 {
-                    var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                    var webRequest = WebRequestWrapper.Create(updateConfiguration.UpdatePackageUri);
                     if (HttpAuthenticationCredentials != null)
                         webRequest.Credentials = HttpAuthenticationCredentials;
                     using (webResponse = webRequest.GetResponse())
@@ -124,7 +124,7 @@ namespace nUpdate.Updating
                     {
                         // TODO: Implement cancellation for this method in case of e.g. a timeout
                         // Thread will currently continue until the timeout message is thrown and then cancel in the background
-                        var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
+                        var webRequest = WebRequestWrapper.Create(updateConfiguration.UpdatePackageUri);
                         if (HttpAuthenticationCredentials != null)
                             webRequest.Credentials = HttpAuthenticationCredentials;
                         using (webResponse = webRequest.GetResponse())

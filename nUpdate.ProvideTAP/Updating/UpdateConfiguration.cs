@@ -50,8 +50,8 @@ namespace nUpdate.Updating
         {
             // Check for SSL and ignore it
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-
-            var request = (HttpWebRequest) WebRequest.Create(configFileUri);
+            
+            var request = (HttpWebRequest) WebRequestWrapper.Create(configFileUri);
             request.Timeout = timeout;
 
             if (credentials != null)
