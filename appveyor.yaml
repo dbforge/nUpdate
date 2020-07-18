@@ -1,0 +1,45 @@
+version: 4.0.{build}
+branches:
+  only:
+  - v4.0
+image: Visual Studio 2019
+before_build:
+- cmd: nuget restore
+build:
+  project: nUpdate.sln
+  verbosity: minimal
+artifacts:
+- path: nUpdate\bin\Debug
+  name: nUpdate
+- path: nUpdate.Administration\bin\Debug
+  name: nUpdate.Administration
+- path: nUpdate.UpdateInstaller.UserInterface\bin\Debug
+  name: nUpdate.UpdateInstaller.UserInterface
+deploy:
+- provider: FTP
+  host: dominic-beger.de
+  protocol: ftps
+  username: ftp@dominic-beger.de
+  password:
+    secure: fDjF7IWO2cHvC4Woj2J64TkAi1WG51Alw9kBERez9hA=
+  folder: /nupdate.net/htdocs/deploy
+  artifact: nUpdate, nUpdate.Administration, nUpdate.UpdateInstaller.UserInterface
+  on:
+    branch: /v4.0
+notifications:
+- provider: Email
+  to:
+  - dominic.beger@hotmail.de
+  subject: AppVeyor Build Succeeded
+  message: The newest build of the develop-branch was successfully created.
+  on_build_success: true
+  on_build_failure: false
+  on_build_status_changed: false
+- provider: Email
+  to:
+  - dominic.beger@hotmail.de
+  subject: AppVeyor Build Failed
+  message: The newest build of the develop-branch was successfully failed.
+  on_build_success: false
+  on_build_failure: false
+  on_build_status_changed: false
