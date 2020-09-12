@@ -100,11 +100,11 @@ namespace nUpdate.Administration.BusinessLogic.Http
 
         private async Task<string> SendRequestInternal(object parameter, string callerMethod)
         {
-            using (var client = new WebClientEx())
+            using (var client = new CustomWebClient())
             {
                 client.Credentials = new NetworkCredential(Data.Username, Data.Password);
                 var jsonRequest = new JsonRequest(callerMethod, parameter, Guid.NewGuid());
-                return await client.UploadStringTaskAsync(Data.ScriptUri, "POST", jsonRequest.ToString());
+                return await client.UploadStringTo(Data.ScriptUri, "POST", jsonRequest.ToString());
             }
         }
     }

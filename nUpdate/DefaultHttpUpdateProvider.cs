@@ -26,7 +26,7 @@ namespace nUpdate
 
         public override async Task<UpdateCheckResult> CheckForUpdates(CancellationToken cancellationToken)
         {
-            var packageData = await new WebClientEx().DownloadStringTaskAsync(PackageDataFile.ToString());
+            var packageData = await new CustomWebClient().DownloadStringFrom(PackageDataFile);
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
 
             var result = new UpdateCheckResult();
@@ -69,7 +69,7 @@ namespace nUpdate
 
         public override async Task<IEnumerable<string>> GetAvailableUpdateChannels()
         {
-            var packageData = await new WebClientEx().DownloadStringTaskAsync(PackageDataFile.ToString());
+            var packageData = await new CustomWebClient().DownloadStringFrom(PackageDataFile);
             var packages = JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(packageData);
             return packages.Select(x => x.ChannelName).Distinct(StringComparer.InvariantCultureIgnoreCase);
         }

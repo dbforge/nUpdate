@@ -89,13 +89,13 @@ namespace nUpdate
             WebProxy proxy)
         {
             if (Utility.IsHttpUri(packageDataFileUri))
-                using (var wc = new WebClientEx(10000))
+                using (var wc = new CustomWebClient(10000))
                 {
                     wc.Encoding = Encoding.UTF8;
                     if (proxy != null)
                         wc.Proxy = proxy;
 
-                    var source = await wc.DownloadStringTaskAsync(packageDataFileUri);
+                    var source = await wc.DownloadStringFrom(packageDataFileUri);
                     if (!string.IsNullOrEmpty(source))
                         return JsonSerializer.Deserialize<IEnumerable<UpdatePackage>>(source);
                 }

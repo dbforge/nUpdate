@@ -62,7 +62,7 @@ namespace nUpdate
                         $"The GitHub release for package {r.TagName} does not contain a package definition file and cannot be used with nUpdate.");
 
                 var packageDefinition =
-                    await new WebClientEx().DownloadStringTaskAsync(packageUpdateDataAsset.BrowserDownloadUrl);
+                    await new CustomWebClient().DownloadStringFrom(new Uri(packageUpdateDataAsset.BrowserDownloadUrl));
                 var currentPackage = JsonSerializer.Deserialize<UpdatePackage>(packageDefinition);
                 updatePackages.Add(currentPackage);
 
