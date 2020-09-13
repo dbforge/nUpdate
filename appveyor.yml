@@ -1,7 +1,7 @@
-version: 4.0.{build}
+version: 5.0.{build}
 branches:
   only:
-  - v4.0
+  - v5.0
 image: Visual Studio 2019
 before_build:
 - cmd: nuget restore
