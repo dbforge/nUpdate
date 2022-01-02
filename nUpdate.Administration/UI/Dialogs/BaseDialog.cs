@@ -3,7 +3,6 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Application;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

@@ -2,7 +2,7 @@
 // Copyright (C) Dominic Beger 17.06.2019
 
 using System;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
+using nUpdate.UpdateInstaller.UIBase;
 
 namespace nUpdate.WPFUpdateInstaller
 {

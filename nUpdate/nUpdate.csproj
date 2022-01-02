@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>4.0.0</Version>
+    <Authors>Dominic Beger</Authors>
+    <Company>Dominic Beger Software Solutions</Company>
+    <Description>nUpdate is a powerful and secure update system for .NET applications.</Description>
+    <Copyright>© Dominic Beger 2013-2022</Copyright>
+    <PackageProjectUrl>https://www.nupdate.net</PackageProjectUrl>
+    <PackageIcon>IMG_4852.PNG</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://www.github.com/dbforge/nUpdate</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Localization\de-AT.json" />
+    <None Remove="Localization\de-CH.json" />
+    <None Remove="Localization\de-DE.json" />
+    <None Remove="Localization\en.json" />
+    <None Remove="Localization\it-IT.json" />
+    <None Remove="Localization\zh-CN.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\de-AT.json" />
+    <EmbeddedResource Include="Localization\de-CH.json" />
+    <EmbeddedResource Include="Localization\de-DE.json" />
+    <EmbeddedResource Include="Localization\en.json" />
+    <EmbeddedResource Include="Localization\it-IT.json" />
+    <EmbeddedResource Include="Localization\zh-CN.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="D:\Downloads\Telegram Desktop\IMG_4852.PNG">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="WebClientWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\DotNetZip.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

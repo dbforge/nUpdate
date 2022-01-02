@@ -4,9 +4,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
-using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.UI.Popups;
+using nUpdate.UpdateInstaller.UIBase;
 
 namespace nUpdate.UpdateInstaller.UI.Dialogs
 {

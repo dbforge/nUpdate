@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
+using nUpdate.UpdateInstaller.UIBase;
 using nUpdate.WPFUpdateInstaller;
 
 [assembly: ServiceProvider(typeof(InstallerServiceProvider))]

@@ -8,10 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ionic.Zip;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Internal.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs

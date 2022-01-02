@@ -1,4 +1,4 @@
-﻿using nUpdate.Internal.UI.Controls;
+﻿using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -93,18 +93,18 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingLabel = new System.Windows.Forms.Label();
             this.createButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.BottomPanel();
             this.categoryTabControl = new nUpdate.Administration.UI.Controls.TablessTabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
             this.generalPanel = new System.Windows.Forms.Panel();
             this.includeIntoStatisticsInfoLabel = new System.Windows.Forms.Label();
             this.includeIntoStatisticsCheckBox = new System.Windows.Forms.CheckBox();
-            this.line2 = new nUpdate.Internal.UI.Controls.Line();
+            this.line2 = new nUpdate.Administration.UI.Controls.Line();
             this.developmentBuildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.necessaryUpdateInfoLabel = new System.Windows.Forms.Label();
             this.necessaryUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.line3 = new nUpdate.Internal.UI.Controls.Line();
-            this.line1 = new nUpdate.Internal.UI.Controls.Line();
+            this.line3 = new nUpdate.Administration.UI.Controls.Line();
+            this.line1 = new nUpdate.Administration.UI.Controls.Line();
             this.architectureInfoLabel = new System.Windows.Forms.Label();
             this.buildNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -183,7 +183,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.conditionsTabPage = new System.Windows.Forms.TabPage();
             this.conditionHelpLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.line4 = new nUpdate.Internal.UI.Controls.Line();
+            this.line4 = new nUpdate.Administration.UI.Controls.Line();
             this.rolloutConditionModeComboBox = new System.Windows.Forms.ComboBox();
             this.rolloutConditionModeLabel = new System.Windows.Forms.Label();
             this.conditionsDataGridView = new System.Windows.Forms.DataGridView();
@@ -417,7 +417,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.SystemColors.Window;
-            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(9, 323);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(437, 10);
@@ -457,7 +457,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.SystemColors.Window;
-            this.line3.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(10, 231);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(437, 10);
@@ -467,7 +467,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.SystemColors.Window;
-            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(7, 153);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(437, 14);
@@ -1300,7 +1300,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line4
             // 
             this.line4.BackColor = System.Drawing.SystemColors.Window;
-            this.line4.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Vertical;
+            this.line4.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Vertical;
             this.line4.Location = new System.Drawing.Point(420, 7);
             this.line4.Name = "line4";
             this.line4.Size = new System.Drawing.Size(10, 23);

@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Internal.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Test
@@ -418,7 +417,7 @@ namespace nUpdate.Test
 
         [TestMethod]
         [TestCategory("Conditions")]
-        [Description("If no conditions are defined in the package, we always pull the update")]
+        [System.ComponentModel.Description("If no conditions are defined in the package, we always pull the update")]
         public void ConditionCheckWithoutRemoteValuesMustAllwayReturnTrue()
         {
             _updateConfigs.Add(CreateConfig("1.2.0.0", RolloutConditionMode.AtLeastOne, new List<RolloutCondition>()));
@@ -431,7 +430,7 @@ namespace nUpdate.Test
 
         [TestMethod]
         [TestCategory("Conditions")]
-        [Description("If no conditions are defined in the package, we always pull the update")]
+        [System.ComponentModel.Description("If no conditions are defined in the package, we always pull the update")]
         public void ConditionCheckWithoutRemoteValuesMustReturnAllUpdates()
         {
             _updateConfigs.Add(CreateConfig("1.2.0.0", RolloutConditionMode.AtLeastOne, new List<RolloutCondition>()));

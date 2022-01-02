@@ -16,15 +16,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.History;
+using nUpdate.Administration.History;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
-using nUpdate.Internal.Core;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.UI.Dialogs
@@ -1270,7 +1266,7 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private async Task UploadPackage(UpdateVersion packageVersion)
         {
-            await TaskEx.Run(() =>
+            await Task.Run(() =>
             {
                 if (!File.Exists(
                     Project.Packages.First(item => item.Version == packageVersion.ToString()).LocalPackagePath))

@@ -8,12 +8,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.Localization;
+using nUpdate.Administration.Localization;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Internal.Core;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

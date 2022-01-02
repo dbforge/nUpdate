@@ -2,13 +2,11 @@
 
 # nUpdate - .NET Update Solution
 
-[![Release](https://img.shields.io/badge/release-v3.5.0-blue.svg)](https://github.com/dbforge/nUpdate/releases)
-[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.ProvideTAP-v3.5.0-red.svg)](https://www.nuget.org/packages/nUpdate.ProvideTAP/)
-[![NuGet](https://img.shields.io/badge/nuget%20nUpdate.WithoutTAP-v3.5.0-red.svg)](https://www.nuget.org/packages/nUpdate.WithoutTAP/)  
+[![Release](https://img.shields.io/badge/release-v4.0-blue.svg)](https://github.com/dbforge/nUpdate/releases)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/ProgTrade/nUpdate/master/LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
-nUpdate is a modern update system for .NET applications.
+nUpdate is a powerful update system for .NET applications.
 Providing high security and an easy-to-use user interface, it is the perfect solution for your software.
 
 ![](https://www.nupdate.net/img/new-updates.png)
@@ -27,30 +25,25 @@ Providing high security and an easy-to-use user interface, it is the perfect sol
 - Supports very large update packages
 - ...
 
+## Specs and requirements
+
+The pure `nUpdate` library is based on .NET standard 2.0.
+This means your project needs to fulfill one of these requirements:
+
+- .NET Framework >= 4.6.1
+- .NET Core >= 2.0
+- UWP >= 10.0.16299
+
+All other libraries in the solution use the .NET Framework 4.6.1.
+
 ## Installation
 
-You can get the necessary libraries and applications from the current [releases](https://github.com/ProgTrade/nUpdate/releases). The nUpdate library itself can also be installed in your application using the NuGet package manager.
+You can get the necessary libraries and applications from the current [releases](https://github.com/dbforge/nUpdate/releases). The nUpdate library itself can also be installed in your application using the NuGet package manager.
 
 ### Using NuGet
 
-#### nUpdate.ProvideTAP
-
-If you want to use nUpdate with the Taskbased Asynchronous Pattern including `async` and `await`, then install this package:
-
 ```
-PM> Install-Package nUpdate.ProvideTAP -Version 3.5.0
-```
-
-##### Trouble installing nUpdate.ProvideTAP?
-
-It may be that Visual Studio shows you a warning like `The primary reference "nUpdate.ProvideTAP, Version=..., Culture=neutral, PublicKeyToken=..., processorArchitecture=MSIL" could not be resolved because it has an indirect dependency on the .NET Framework assembly "System.Runtime, Version=..., Culture=neutral, PublicKeyToken=..." which has a higher version "..." than the version "..." in the current target framework.` and won't let you compile the project. You can fix this by going to the NuGet Package Manager and updating the Microsoft.Bcl.\* packages to the newest version.
-
-#### nUpdate.WithoutTAP
-
-Otherwise, if you want to use the Eventbased Asynchronous Pattern, make sure to install this package:
-
-```
-PM> Install-Package nUpdate.WithoutTAP -Version 3.5.0
+PM> Install-Package nUpdate -Version 4.0.0
 ```
 
 ## Usage example
@@ -75,7 +68,19 @@ When none of them is specified, an exception will be thrown.
 
 ### Using the integrated user interface (Windows Forms or WPF)
 
-The projects `nUpdate.ProvideTAP` and `nUpdate.WithoutTAP` contain Windows Forms only. To use a WPF user interface, you need to reference `nUpdate.WPFUserInterface` (not yet available in NuGet). The codes for the usage are completely equal (except for having the WPF UI in nUpdate.UpdateInstaller as well, you'll have to provide the integrated `nUpdate.WPFUpdateInstaller`-DLL location using the `CustomUiAssemblyPath`-property).
+The package `nUpdate.UI.WindowsForms` provides a built-in user interface for Windows Forms application. Install it via NuGet:
+
+```
+PM> Install-Package nUpdate.UI.WindowsForms -Version 4.0.0
+```
+
+To use the built-in WPF user interface, you need to install `nUpdate.UI.WPF`:
+
+```
+PM> Install-Package nUpdate.UI.WPF -Version 4.0.0
+```
+
+Both projects give you an `UpdaterUI` class that you can use as follows:
 
 ``` c#
 // Generated via nUpdate Administration > Open project > Overview > Copy source
@@ -104,7 +109,7 @@ if (manager.SearchForUpdates())
 
 ### Using no user interface (asynchronously)
 
-For asynchronous usage, each method (except `InstallPackage` and `ValidatePackages` which are synchronous in any case till now) has a corresponding asynchronous one defined inside the `UpdateManager`. Depending on your reference, `nUpdate.ProvideTAP` uses the task-based asynchronous pattern with `async`, `await` and `Task<T>` whereas `nUpdate.WithoutTAP` uses the event-based asynchronous pattern (obsolete). You may have a look at each `UpdaterUI` implementation to see how it is used.
+For asynchronous usage, each method (except `InstallPackage` and `ValidatePackages` which are synchronous in any case till now) has a corresponding asynchronous one defined inside the `UpdateManager`.
 
 ### Specifying an `UpdateVersion`
 
@@ -122,29 +127,6 @@ ReleaseCandidate: `rc`
 **Note**: These need to be specified by using the abbrevations above. `1.2.3alpha1` is not valid in v3 of nUpdate.
 
 In version 4 any type of pre-release descriptor, as well as build metadata, will be available. It will fulfill the complete semantic versioning specification and have an abstract version system.
-
-## Web
-* [nUpdate] - The official website of nUpdate.
-
-## Roadmap
-
-- .NET Standard and .NET Core port
-- WPF port
-- Differential updates
-- Faster updating
-- Fix remaining bugs
-- Improvements
-- Multilanguage everywhere
-- Lots of new languages
-- Code Signing Certificate
-- PowerShell support
-- Better integration in company networks
-- ...
-
-Have a look at the [develop]-branch for the newest changes.
-
-[develop]:https://www.github.com/ProgTrade/nUpdate/tree/develop
-[nUpdate]:http://www.nupdate.net/
 
 ## Supported by
 

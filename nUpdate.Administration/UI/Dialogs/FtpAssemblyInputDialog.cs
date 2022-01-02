@@ -5,7 +5,6 @@ using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
 using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs

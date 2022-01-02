@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.Win32;
 
 namespace nUpdate.Administration.UI.Controls
 {

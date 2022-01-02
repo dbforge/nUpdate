@@ -14,22 +14,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.History;
-using nUpdate.Administration.Core.Operations.Panels;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Operations;
 using nUpdate.Updating;
-using Newtonsoft.Json.Linq;
 using Starksoft.Aspen.Ftps;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
-using nUpdate.Administration.Core.Win32;
 using Ionic.Zip;
-using System.Threading;
-using nUpdate.Administration.TransferInterface;
+using Newtonsoft.Json.Linq;
+using nUpdate.Administration.History;
+using nUpdate.Administration.Operations.Panels;
+using nUpdate.Administration.Win32;
+using nUpdate.Operations;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -1618,7 +1613,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 selectedPath = folderDialog.SelectedPath;
             }
 
-            TaskEx.Run(() => ListDirectoryContent(selectedPath, onlyContent));
+            Task.Run(() => ListDirectoryContent(selectedPath, onlyContent));
         }
 
         private void ListDirectoryContent(string path, bool onlyContent)
