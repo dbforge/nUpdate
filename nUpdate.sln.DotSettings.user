@@ -3,6 +3,11 @@
   &lt;Assembly Path="C:\Users\Dominic\Downloads\AdvancedBugtracker\AdvancedBugtracker\Bibiliothek\AdvancedBugtracker.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceProcess.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b6ce569d_002D4c02_002D446f_002Db822_002D3643a2803aae/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="UseDynamicUpdateUriTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::4BF8AB62-1A33-49BB-8054-B154D3E64957::.NETFramework,Version=v4.6.1::nUpdate.Test.UseDynamicUpdateUriTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/UseMsbuildStrategy/@EntryValue">AUTO</s:String>
 	
 	

@@ -1,5 +1,4 @@
 ﻿using nUpdate.Administration.UI.Controls;
-using nUpdate.Internal.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

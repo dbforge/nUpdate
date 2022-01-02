@@ -8,8 +8,6 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Win32;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Popups;
 using Starksoft.Aspen.Ftps;
@@ -18,14 +16,9 @@ namespace nUpdate.Administration.UI.Dialogs
 {
     public partial class DirectorySearchDialog : BaseDialog, IAsyncSupportable
     {
-        private const int WM_NCLBUTTONDOWN = 0xA1;
-        private const int HT_CAPTION = 0x2;
         private readonly List<TreeNode> _handledNodes = new List<TreeNode>();
-        private readonly Navigator<TreeNode> _nav = new Navigator<TreeNode>();
         private bool _allowCancel;
         private FtpManager _ftp;
-        private Margins _margins;
-        private bool _nodeSelectedByUser = true;
 
         public DirectorySearchDialog()
         {
@@ -92,8 +85,7 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 foreach (
                     var c in
-                    (from Control c in Controls where c.Visible select c).Where(
-                        c => c.GetType() != typeof(ExplorerNavigationButton.ExplorerNavigationButton)))
+                    (from Control c in Controls where c.Visible select c))
                     c.Enabled = enabled;
 
                 if (!enabled)
@@ -124,18 +116,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
             serverDataTreeView.LabelEdit = true;
             node.BeginEdit();
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            _nav.GoBack();
-            _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _nav.Current;
-            _nodeSelectedByUser = true;
-            if (!_nav.CanGoBack)
-                backButton.Enabled = false;
-            if (_nav.CanGoForward)
-                forwardButton.Enabled = true;
         }
 
         private void continueButton_Click(object sender, EventArgs e)
@@ -170,23 +150,9 @@ namespace nUpdate.Administration.UI.Dialogs
             });
         }
 
-        private void DirectorySearchDialog_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            NativeMethods.ReleaseCapture();
-            NativeMethods.SendMessage(Handle, WM_NCLBUTTONDOWN, new IntPtr(HT_CAPTION), new IntPtr(0));
-        }
-
         private async void DirectorySearchDialog_Shown(object sender, EventArgs e)
         {
             Text = string.Format(Text, ProjectName, Program.VersionString);
-            if (NativeMethods.DwmIsCompositionEnabled())
-            {
-                _margins = new Margins {Top = 38};
-                NativeMethods.DwmExtendFrameIntoClientArea(Handle, ref _margins);
-            }
 
             _ftp =
                 new FtpManager(Host, Port, null, Username,
@@ -202,18 +168,6 @@ namespace nUpdate.Administration.UI.Dialogs
         {
             if (!_allowCancel)
                 e.Cancel = true;
-        }
-
-        private void forwardButton_Click(object sender, EventArgs e)
-        {
-            _nav.GoForward();
-            _nodeSelectedByUser = false;
-            serverDataTreeView.SelectedNode = _nav.Current;
-            _nodeSelectedByUser = true;
-            if (!_nav.CanGoForward)
-                forwardButton.Enabled = false;
-            if (_nav.CanGoBack)
-                backButton.Enabled = true;
         }
 
         private async Task LoadListAsync(string path, TreeNode node)
@@ -253,25 +207,6 @@ namespace nUpdate.Administration.UI.Dialogs
 
                 SetUiState(true);
             });
-        }
-
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-            base.OnPaintBackground(e);
-            if (!NativeMethods.DwmIsCompositionEnabled())
-                return;
-
-            _margins.Top = 38;
-            e.Graphics.Clear(Color.Black);
-
-            var clientArea = new Rectangle(
-                _margins.Left,
-                _margins.Top,
-                ClientRectangle.Width - _margins.Left - _margins.Right,
-                ClientRectangle.Height - _margins.Top - _margins.Bottom
-            );
-            Brush b = new SolidBrush(BackColor);
-            e.Graphics.FillRectangle(b, clientArea);
         }
 
         private async Task RemoveDirectory(string path)
@@ -337,11 +272,6 @@ namespace nUpdate.Administration.UI.Dialogs
                 directoryTextBox.Text = "/";
                 return;
             }
-
-            if (_nodeSelectedByUser)
-                _nav.Add(e.Node);
-            if (!backButton.Enabled && _nav.CanGoBack)
-                backButton.Enabled = true;
 
             var directories = new Stack<string>();
             var currentNode = e.Node;

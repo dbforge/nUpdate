@@ -2,12 +2,8 @@
 // Copyright (C) Dominic Beger 17.06.2019
 
 using System;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using nUpdate.Internal.Core;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
+using nUpdate.UpdateInstaller.UIBase;
 
 namespace nUpdate.WPFUpdateInstaller
 {
@@ -24,18 +20,18 @@ namespace nUpdate.WPFUpdateInstaller
         public void Initialize()
         {
             ShowDialog();
-            using (var memory = new MemoryStream())
-            {
-                var bitmap = IconHelper.ExtractAssociatedIcon(Program.ApplicationExecutablePath).ToBitmap();
-                bitmap.Save(memory, ImageFormat.Png);
-                memory.Position = 0;
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                Icon = bitmapImage;
-            }
+            //using (var memory = new MemoryStream())
+            //{
+            //    var bitmap = IconHelper.ExtractAssociatedIcon(Program.ApplicationExecutablePath).ToBitmap();
+            //    bitmap.Save(memory, ImageFormat.Png);
+            //    memory.Position = 0;
+            //    var bitmapImage = new BitmapImage();
+            //    bitmapImage.BeginInit();
+            //    bitmapImage.StreamSource = memory;
+            //    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            //    bitmapImage.EndInit();
+            //    Icon = bitmapImage;
+            //}
 
             Title = Program.AppName;
             copyingLabel.Text = Program.ExtractFilesText;

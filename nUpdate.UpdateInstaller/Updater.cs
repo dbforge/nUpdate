@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,10 +12,9 @@ using System.Threading;
 using Ionic.Zip;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
-using nUpdate.UpdateInstaller.Client.GuiInterface;
-using nUpdate.UpdateInstaller.Core;
 using nUpdate.UpdateInstaller.Operations;
-using nUpdate.UpdateInstaller.UI.Popups;
+using nUpdate.UpdateInstaller.UIBase;
+using UpdateInstaller;
 
 namespace nUpdate.UpdateInstaller
 {
@@ -31,16 +29,7 @@ namespace nUpdate.UpdateInstaller
         /// </summary>
         public void RunUpdate()
         {
-            try
-            {
-                _progressReporter = GetProgressReporter();
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(SystemIcons.Error, "Error while initializing the graphic user interface.", ex,
-                    PopupButtons.Ok);
-                return;
-            }
+            _progressReporter = GetProgressReporter();
 
             ThreadPool.QueueUserWorkItem(arg => RunUpdateAsync());
             try
@@ -101,7 +90,15 @@ namespace nUpdate.UpdateInstaller
             catch (SystemException) // Process already killed
             { }
 
-            var parentPath = Directory.GetParent(Program.PackageFilePaths.First()).FullName;
+            var parentPath = Directory.GetParent(Program.PackageFilePaths.First())?.FullName;
+            if (parentPath == null)
+            {
+                _progressReporter.Fail(new Exception("The packages directory could not be determined."));
+                CleanUp();
+                _progressReporter.Terminate();
+                return;
+            }
+
             /* Extract and count for the progress */
             foreach (var packageFilePath in Program.PackageFilePaths)
             {
@@ -302,7 +299,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Delete:
                                 var deleteFilePathParts = operation.Value.Split('\\');
                                 var deleteFileFullPath = Path.Combine(
-                                    Operation.GetDirectory(deleteFilePathParts[0]),
+                                    PathDetector.GetDirectory(deleteFilePathParts[0]),
                                     string.Join("\\",
                                         deleteFilePathParts.Where(item => item != deleteFilePathParts[0])));
                                 secondValueAsArray = operation.Value2 as JArray;
@@ -325,7 +322,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Rename:
                                 var renameFilePathParts = operation.Value.Split('\\');
                                 var renameFileFullPath = Path.Combine(
-                                    Operation.GetDirectory(renameFilePathParts[0]),
+                                    PathDetector.GetDirectory(renameFilePathParts[0]),
                                     string.Join("\\",
                                         renameFilePathParts.Where(item => item != renameFilePathParts[0])));
                                 if (File.Exists(renameFileFullPath))
@@ -425,7 +422,7 @@ namespace nUpdate.UpdateInstaller
                             case OperationMethod.Start:
                                 var processFilePathParts = operation.Value.Split('\\');
                                 var processFileFullPath =
-                                    Path.Combine(Operation.GetDirectory(processFilePathParts[0]),
+                                    Path.Combine(PathDetector.GetDirectory(processFilePathParts[0]),
                                         string.Join("\\",
                                             processFilePathParts.Where(item => item != processFilePathParts[0])));
 

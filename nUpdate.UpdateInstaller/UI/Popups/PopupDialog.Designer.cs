@@ -1,4 +1,6 @@
-﻿namespace nUpdate.UpdateInstaller.UI.Popups
+﻿using nUpdate.UpdateInstaller.UI.Controls;
+
+namespace nUpdate.UpdateInstaller.UI.Popups
 {
     partial class PopupDialog
     {
@@ -33,7 +35,7 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyEntireMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.UpdateInstaller.UI.Controls.ControlPanel();
+            this.controlPanel1 = new BottomPanel();
             this.noButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.yesButton = new System.Windows.Forms.Button();
@@ -88,7 +90,7 @@
             this.controlPanel1.Controls.Add(this.noButton);
             this.controlPanel1.Controls.Add(this.closeButton);
             this.controlPanel1.Controls.Add(this.yesButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 132);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 136);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(359, 35);
             this.controlPanel1.TabIndex = 8;
@@ -140,7 +142,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(359, 167);
+            this.ClientSize = new System.Drawing.Size(359, 171);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.headerLabel);
             this.Controls.Add(this.messageLabel);
@@ -166,7 +168,7 @@
         private System.Windows.Forms.PictureBox iconPictureBox;
         private System.Windows.Forms.Label messageLabel;
         private System.Windows.Forms.Label headerLabel;
-        private Controls.ControlPanel controlPanel1;
+        private Controls.BottomPanel controlPanel1;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem copyEntireMessageToolStripMenuItem;

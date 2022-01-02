@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using nUpdate.Internal.UI.Controls;
+using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -36,9 +36,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverImageList = new System.Windows.Forms.ImageList(this.components);
             this.continueButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new BottomPanel();
-            this.backButton = new ExplorerNavigationButton.ExplorerNavigationButton();
-            this.forwardButton = new ExplorerNavigationButton.ExplorerNavigationButton();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.BottomPanel();
             this.serverDataTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
             this.loadingPanel = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -88,33 +86,10 @@ namespace nUpdate.Administration.UI.Dialogs
             this.controlPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.controlPanel1.Controls.Add(this.cancelButton);
             this.controlPanel1.Controls.Add(this.continueButton);
-            this.controlPanel1.Location = new System.Drawing.Point(0, 223);
+            this.controlPanel1.Location = new System.Drawing.Point(0, 184);
             this.controlPanel1.Name = "controlPanel1";
             this.controlPanel1.Size = new System.Drawing.Size(434, 38);
             this.controlPanel1.TabIndex = 19;
-            // 
-            // backButton
-            // 
-            this.backButton.BackColor = System.Drawing.Color.Black;
-            this.backButton.Enabled = false;
-            this.backButton.Location = new System.Drawing.Point(3, 6);
-            this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(24, 24);
-            this.backButton.TabIndex = 21;
-            this.backButton.Text = "explorerNavigationButton1";
-            this.backButton.Click += new System.EventHandler(this.backButton_Click);
-            // 
-            // forwardButton
-            // 
-            this.forwardButton.ArrowDirection = ExplorerNavigationButton.ArrowDirection.Right;
-            this.forwardButton.BackColor = System.Drawing.Color.Black;
-            this.forwardButton.Enabled = false;
-            this.forwardButton.Location = new System.Drawing.Point(33, 6);
-            this.forwardButton.Name = "forwardButton";
-            this.forwardButton.Size = new System.Drawing.Size(24, 24);
-            this.forwardButton.TabIndex = 22;
-            this.forwardButton.Text = "explorerNavigationButton2";
-            this.forwardButton.Click += new System.EventHandler(this.forwardButton_Click);
             // 
             // serverDataTreeView
             // 
@@ -124,7 +99,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.serverDataTreeView.ImageIndex = 0;
             this.serverDataTreeView.ImageList = this.serverImageList;
             this.serverDataTreeView.ItemHeight = 23;
-            this.serverDataTreeView.Location = new System.Drawing.Point(12, 76);
+            this.serverDataTreeView.Location = new System.Drawing.Point(12, 37);
             this.serverDataTreeView.Name = "serverDataTreeView";
             this.serverDataTreeView.SelectedImageIndex = 0;
             this.serverDataTreeView.ShowLines = false;
@@ -139,7 +114,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.loadingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.loadingPanel.Controls.Add(this.pictureBox1);
             this.loadingPanel.Controls.Add(this.loadingLabel);
-            this.loadingPanel.Location = new System.Drawing.Point(88, 89);
+            this.loadingPanel.Location = new System.Drawing.Point(88, 75);
             this.loadingPanel.Name = "loadingPanel";
             this.loadingPanel.Size = new System.Drawing.Size(269, 51);
             this.loadingPanel.TabIndex = 67;
@@ -167,7 +142,6 @@ namespace nUpdate.Administration.UI.Dialogs
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.directoryLabel,
             this.directoryTextBox,
@@ -175,9 +149,9 @@ namespace nUpdate.Administration.UI.Dialogs
             this.addDirectoryButton,
             this.toolStripSeparator2,
             this.removeDirectoryButton});
-            this.toolStrip1.Location = new System.Drawing.Point(12, 45);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(405, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(434, 25);
             this.toolStrip1.TabIndex = 68;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -229,10 +203,8 @@ namespace nUpdate.Administration.UI.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(434, 261);
+            this.ClientSize = new System.Drawing.Size(434, 222);
             this.Controls.Add(this.loadingPanel);
-            this.Controls.Add(this.forwardButton);
-            this.Controls.Add(this.backButton);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.serverDataTreeView);
             this.Controls.Add(this.toolStrip1);
@@ -246,7 +218,6 @@ namespace nUpdate.Administration.UI.Dialogs
             this.Text = "Set directory - {0} - {1}";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectorySearchForm_FormClosing);
             this.Shown += new System.EventHandler(this.DirectorySearchDialog_Shown);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DirectorySearchDialog_MouseDown);
             this.controlPanel1.ResumeLayout(false);
             this.loadingPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -262,8 +233,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.ImageList serverImageList;
-        private ExplorerNavigationButton.ExplorerNavigationButton backButton;
-        private ExplorerNavigationButton.ExplorerNavigationButton forwardButton;
         private Controls.ExplorerTreeView serverDataTreeView;
         private Panel loadingPanel;
         private PictureBox pictureBox1;

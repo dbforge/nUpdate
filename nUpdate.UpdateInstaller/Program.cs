@@ -3,13 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using nUpdate.UpdateInstaller.UI.Popups;
-using Operation = nUpdate.UpdateInstaller.Operations.Operation;
+using nUpdate.UpdateInstaller.Operations;
 
 namespace nUpdate.UpdateInstaller
 {

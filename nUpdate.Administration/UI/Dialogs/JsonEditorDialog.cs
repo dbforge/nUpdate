@@ -6,9 +6,8 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using FastColoredTextBoxNS;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.UI.Popups;
 using Newtonsoft.Json.Linq;
+using nUpdate.Administration.UI.Popups;
 
 namespace nUpdate.Administration.UI.Dialogs
 {

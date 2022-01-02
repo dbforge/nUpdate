@@ -1,5 +1,4 @@
 ﻿using nUpdate.Administration.UI.Controls;
-using nUpdate.Internal.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -46,7 +45,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.assemblyPathTextBox = new nUpdate.Administration.UI.Controls.ButtonTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.line5 = new nUpdate.Internal.UI.Controls.Line();
+            this.line5 = new nUpdate.Administration.UI.Controls.Line();
             this.label3 = new System.Windows.Forms.Label();
             this.stepTwoLabel = new System.Windows.Forms.Label();
             this.programmingLanguageComboBox = new System.Windows.Forms.ComboBox();
@@ -56,7 +55,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.assumeHeader = new System.Windows.Forms.Label();
             this.checkingUrlPictureBox = new System.Windows.Forms.PictureBox();
             this.tickPictureBox = new System.Windows.Forms.PictureBox();
-            this.line3 = new nUpdate.Internal.UI.Controls.Line();
+            this.line3 = new nUpdate.Administration.UI.Controls.Line();
             this.newestPackageLabel = new System.Windows.Forms.Label();
             this.amountLabel = new System.Windows.Forms.Label();
             this.checkUpdateConfigurationLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -71,15 +70,15 @@ namespace nUpdate.Administration.UI.Dialogs
             this.projectIdLabel = new System.Windows.Forms.Label();
             this.publicKeyTextBox = new System.Windows.Forms.TextBox();
             this.publicKeyLabel = new System.Windows.Forms.Label();
-            this.line2 = new nUpdate.Internal.UI.Controls.Line();
+            this.line2 = new nUpdate.Administration.UI.Controls.Line();
             this.projectDataHeader = new System.Windows.Forms.Label();
-            this.line1 = new nUpdate.Internal.UI.Controls.Line();
+            this.line1 = new nUpdate.Administration.UI.Controls.Line();
             this.ftpDirectoryLabel = new System.Windows.Forms.Label();
             this.ftpHostLabel = new System.Windows.Forms.Label();
             this.overviewHeader = new System.Windows.Forms.Label();
             this.newestPackageReleasedLabel = new System.Windows.Forms.Label();
             this.releasedPackagesAmountLabel = new System.Windows.Forms.Label();
-            this.line4 = new nUpdate.Internal.UI.Controls.Line();
+            this.line4 = new nUpdate.Administration.UI.Controls.Line();
             this.panel2 = new System.Windows.Forms.Panel();
             this.loadFromAssemblyRadioButton = new System.Windows.Forms.RadioButton();
             this.enterVersionManuallyRadioButton = new System.Windows.Forms.RadioButton();
@@ -108,7 +107,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.searchTextBox = new nUpdate.Administration.UI.Controls.CueTextBox();
             this.statisticsTabPage = new System.Windows.Forms.TabPage();
             this.updateStatisticsButton = new System.Windows.Forms.Button();
-            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.BottomPanel();
             this.lastUpdatedLabel = new System.Windows.Forms.Label();
             this.chartPanel = new System.Windows.Forms.Panel();
             this.gatheringStatisticsPictureBox = new System.Windows.Forms.PictureBox();
@@ -248,7 +247,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line5
             // 
             this.line5.BackColor = System.Drawing.Color.White;
-            this.line5.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line5.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line5.Location = new System.Drawing.Point(132, 368);
             this.line5.Name = "line5";
             this.line5.Size = new System.Drawing.Size(398, 13);
@@ -351,7 +350,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line3
             // 
             this.line3.BackColor = System.Drawing.Color.White;
-            this.line3.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(25, 167);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(505, 10);
@@ -497,7 +496,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line2
             // 
             this.line2.BackColor = System.Drawing.Color.White;
-            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(110, 270);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(420, 13);
@@ -519,7 +518,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line1
             // 
             this.line1.BackColor = System.Drawing.Color.White;
-            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(144, 24);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(386, 13);
@@ -578,7 +577,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // line4
             // 
             this.line4.BackColor = System.Drawing.Color.White;
-            this.line4.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line4.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line4.Location = new System.Drawing.Point(101, 532);
             this.line4.Name = "line4";
             this.line4.Size = new System.Drawing.Size(432, 10);

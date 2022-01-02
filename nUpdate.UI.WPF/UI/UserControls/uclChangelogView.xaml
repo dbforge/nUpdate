@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="nUpdate.UI.WPF.UI.UserControls.uclChangelogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:nUpdate.UI.WPF.ViewModel"
+
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type={x:Type viewModel:ChangelogViewModel}}"
+             Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+             d:DesignHeight="325.4" d:DesignWidth="311.688" MinWidth="300" Height="320">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Image Source="{Binding WindowIcon}" Width="32" Height="32" VerticalAlignment="Center" Grid.RowSpan="2" />
+            <TextBlock Text="{Binding Header}" Grid.Column="1" Grid.Row="0"
+                       Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                       FontSize="16" VerticalAlignment="Bottom" />
+            <TextBlock Text="{Binding InfoText}" Grid.Column="1" Grid.Row="1" />
+        </Grid>
+
+        <StackPanel Grid.Row="2">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="10,1" />
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock Text="{Binding AviableVersionText}" FontWeight="Bold" />
+            <TextBlock Text="{Binding CurrentVersionText}" />
+            <TextBlock Text="{Binding UpdateSizeText}" />
+            <TextBlock Text="{Binding AccessesText}" />
+        </StackPanel>
+        <Border BorderBrush="Black" Grid.Row="3" Height="2" BorderThickness="2" Margin="0,4" />
+        <TextBlock Text="{Binding LocProperties.NewUpdateDialogChangelogText, FallbackValue=Changelog:}" Margin="10,3"
+                   Grid.Row="4" />
+        <TextBox Text="{Binding ChangelogText,Mode=OneWay}" IsReadOnly="True" Grid.Row="5"
+                 VerticalScrollBarVisibility="Auto" Margin="10,0" />
+
+        <DockPanel Grid.Row="7" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                   LastChildFill="False">
+            <DockPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="DockPanel.Dock" Value="Right" />
+                    <Setter Property="VerticalAlignment" Value="Bottom" />
+                    <Setter Property="Margin" Value="7" />
+                    <Setter Property="Padding" Value="20,2" />
+                </Style>
+            </DockPanel.Resources>
+            <Button Content="{Binding LocProperties.CancelButtonText,FallbackValue=Cancel,Mode=OneWay}"
+                    Command="{Binding Abort}" />
+            <Button Command="{Binding DoInstall}">
+                <DockPanel>
+                    <ContentControl>
+                        <Viewbox Width="16" Height="16">
+                            <Canvas Width="24" Height="24">
+                                <Path
+                                    Data="M21,11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1L21,5V11M12,21C15.75,20 19,15.54 19,11.22V6.3L12,3.18V21Z"
+                                    Fill="Black" />
+                            </Canvas>
+                        </Viewbox>
+                    </ContentControl>
+                    <TextBlock Text="{Binding LocProperties.InstallButtonText,FallbackValue=Install}" />
+                </DockPanel>
+            </Button>
+        </DockPanel>
+    </Grid>
+</UserControl>

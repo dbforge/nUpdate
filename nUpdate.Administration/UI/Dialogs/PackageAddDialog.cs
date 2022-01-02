@@ -15,17 +15,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
-using nUpdate.Administration.Core.History;
-using nUpdate.Administration.Core.Operations.Panels;
-using nUpdate.Administration.Core.Win32;
+using nUpdate.Administration.History;
+using nUpdate.Administration.Operations.Panels;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Core;
-using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Operations;
+using nUpdate.Administration.Win32;
+using nUpdate.Operations;
 using nUpdate.Updating;
 using Starksoft.Aspen.Ftps;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
@@ -963,7 +959,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 selectedPath = folderDialog.SelectedPath;
             }
 
-            TaskEx.Run(() => ListDirectoryContent(selectedPath, onlyContent));
+            Task.Run(() => ListDirectoryContent(selectedPath, onlyContent));
         }
 
         private async void InitializePackage()

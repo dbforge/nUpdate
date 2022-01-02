@@ -1,0 +1,28 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewModel="clr-namespace:nUpdate.UI.WPF.ViewModel"
+    x:Class="nUpdate.UI.WPF.UI.UserControls.uclUpdateSearch"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type={x:Type viewModel:UpdateSearchViewModel}}"
+    d:DesignHeight="107" d:DesignWidth="261" Height="107" MinWidth="261" Background="White">
+    <UserControl.Resources>
+
+    </UserControl.Resources>
+    <StackPanel>
+        <TextBlock
+            Text="{Binding LocProperties.UpdateSearchDialogHeader,FallbackValue=Searching&#160;for&#160;updates...,Mode=OneWay}"
+            FontSize="16" Margin="10,10,10,0"
+            Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+        <ProgressBar Height="15" IsIndeterminate="True" Margin="10" />
+        <DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" LastChildFill="False">
+            <Button Content="{Binding LocProperties.CancelButtonText,FallbackValue=Cancel,Mode=OneWay}"
+                    Command="{Binding Abort}"
+                    DockPanel.Dock="Right"
+                    Margin="10"
+                    Padding="20,2" />
+        </DockPanel>
+    </StackPanel>
+</UserControl>

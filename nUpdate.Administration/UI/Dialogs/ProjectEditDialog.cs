@@ -13,11 +13,8 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using nUpdate.Administration.Core;
-using nUpdate.Administration.Core.Application;
 using nUpdate.Administration.Properties;
 using nUpdate.Administration.UI.Popups;
-using nUpdate.Internal.Core;
 using nUpdate.Updating;
 using Starksoft.Aspen.Ftps;
 

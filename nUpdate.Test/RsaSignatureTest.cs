@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using nUpdate.Internal.Core;
 
 namespace nUpdate.Test
 {

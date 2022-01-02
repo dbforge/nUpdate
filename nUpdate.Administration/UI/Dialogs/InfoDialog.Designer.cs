@@ -1,4 +1,4 @@
-﻿using nUpdate.Internal.UI.Controls;
+﻿using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.UI.Dialogs
 {
@@ -33,9 +33,9 @@ namespace nUpdate.Administration.UI.Dialogs
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoDialog));
             this.closeButton = new System.Windows.Forms.Button();
             this.donatePictureBox = new System.Windows.Forms.PictureBox();
-            this.line1 = new nUpdate.Internal.UI.Controls.Line();
+            this.line1 = new nUpdate.Administration.UI.Controls.Line();
             this.label13 = new System.Windows.Forms.Label();
-            this.controlPanel1 = new nUpdate.Internal.UI.Controls.BottomPanel();
+            this.controlPanel1 = new nUpdate.Administration.UI.Controls.BottomPanel();
             this.websiteLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label12 = new System.Windows.Forms.Label();
             this.ll_github = new System.Windows.Forms.LinkLabel();
@@ -52,7 +52,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.line2 = new nUpdate.Internal.UI.Controls.Line();
+            this.line2 = new nUpdate.Administration.UI.Controls.Line();
             this.label1 = new System.Windows.Forms.Label();
             this.dotNetZipLinkLabel = new System.Windows.Forms.LinkLabel();
             this.jsonNetLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -92,7 +92,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line1
             // 
-            this.line1.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(17, 157);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(401, 14);
@@ -107,7 +107,7 @@ namespace nUpdate.Administration.UI.Dialogs
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(28, 13);
             this.label13.TabIndex = 20;
-            this.label13.Text = "v3.5.0";
+            this.label13.Text = "v4.0.0";
             // 
             // controlPanel1
             // 
@@ -289,7 +289,7 @@ namespace nUpdate.Administration.UI.Dialogs
             // 
             // line2
             // 
-            this.line2.LineAlignment = nUpdate.Internal.UI.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = nUpdate.Administration.UI.Controls.Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(21, 273);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(397, 10);

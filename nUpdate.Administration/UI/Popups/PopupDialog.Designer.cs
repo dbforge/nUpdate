@@ -1,4 +1,4 @@
-﻿using nUpdate.Internal.UI.Controls;
+﻿using nUpdate.Administration.UI.Controls;
 
 namespace nUpdate.Administration.UI.Popups
 {
