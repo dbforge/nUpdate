@@ -8,7 +8,6 @@ using nUpdate.Administration.BusinessLogic;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.ViewModels;
 using nUpdate.Administration.Views.Dialogs;
-using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views
 {
@@ -51,16 +50,16 @@ namespace nUpdate.Administration.Views
                 }
                 catch (CryptographicException)
                 {
-                    var taskDialog = new TaskDialogOptions
-                    {
-                        Owner = WindowManager.GetCurrentWindow(),
-                        Title = "nUpdate Administration v4.0",
-                        MainIcon = VistaTaskDialogIcon.Error,
-                        MainInstruction = "Decrypting the key database failed.",
-                        Content = "Invalid password."
-                    };
+                    //var taskDialog = new TaskDialogOptions
+                    //{
+                    //    Owner = WindowManager.GetCurrentWindow(),
+                    //    Title = "nUpdate Administration v4.0",
+                    //    MainIcon = VistaTaskDialogIcon.Error,
+                    //    MainInstruction = "Decrypting the key database failed.",
+                    //    Content = "Invalid password."
+                    //};
 
-                    TaskDialog.Show(taskDialog);
+                    //TaskDialog.Show(taskDialog);
                 }
             }
         }

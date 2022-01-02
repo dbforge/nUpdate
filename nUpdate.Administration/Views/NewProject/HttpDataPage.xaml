@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
-      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       d:DataContext="{d:DesignInstance newProject1:HttpDataPageViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="230" d:DesignWidth="520"
@@ -44,7 +43,6 @@
                            Padding="5"
                            Text="Script name:" />
                 <TextBox x:Name="ScriptNameTextBox"
-                         mah:TextBoxHelper.Watermark="e.g. main.ts/index.php/..."
                          Grid.Row="0"
                          Grid.Column="2"
                          HorizontalAlignment="Stretch"

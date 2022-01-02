@@ -2,9 +2,6 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-      xmlns:loadingIndicators="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
-      xmlns:local="clr-namespace:nUpdate.Administration.Views.NewProject"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       d:DesignHeight="230"
       d:DesignWidth="520"
@@ -16,13 +13,6 @@
                    Foreground="#003399"
                    Text="Key Pair Generation" />
         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-            <loadingIndicators:LoadingIndicator Foreground="#607d8b"
-                                                SpeedRatio="1"
-                                                Style="{DynamicResource LoadingIndicatorDoubleBounceStyle}">
-                <loadingIndicators:LoadingIndicator.LayoutTransform>
-                    <ScaleTransform ScaleX="0.65" ScaleY="0.65" />
-                </loadingIndicators:LoadingIndicator.LayoutTransform>
-            </loadingIndicators:LoadingIndicator>
             <TextBlock Margin="15,0,0,0"
                        VerticalAlignment="Center"
                        Text="Please wait while the keys are generated. This may take up to some minutes..."

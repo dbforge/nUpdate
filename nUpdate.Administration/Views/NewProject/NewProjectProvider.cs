@@ -7,7 +7,6 @@ using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Models.Ftp;
 using nUpdate.Administration.ViewModels.NewProject;
 using nUpdate.Administration.Views.Dialogs;
-using WPFFolderBrowser;
 
 namespace nUpdate.Administration.Views.NewProject
 {
@@ -33,28 +32,28 @@ namespace nUpdate.Administration.Views.NewProject
 
         public string GetLocationDirectory(string initialDirectory)
         {
-            var browseDialog = new WPFFolderBrowserDialog
-            {
-                Title = "Select the project location...",
-                InitialDirectory = initialDirectory
-            };
+            //var browseDialog = new WPFFolderBrowserDialog
+            //{
+            //    Title = "Select the project location...",
+            //    InitialDirectory = initialDirectory
+            //};
 
-            var result = browseDialog.ShowDialog();
-            if (result.HasValue && result.Value)
-                return browseDialog.FileName;
+            //var result = browseDialog.ShowDialog();
+            //if (result.HasValue && result.Value)
+            //    return browseDialog.FileName;
             return null;
         }
 
         public string GetUpdateDirectory()
         {
-            var browseDialog = new WPFFolderBrowserDialog
-            {
-                Title = "Select the local update directory..."
-            };
+            //var browseDialog = new WPFFolderBrowserDialog
+            //{
+            //    Title = "Select the local update directory..."
+            //};
 
-            var result = browseDialog.ShowDialog();
-            if (result.HasValue && result.Value)
-                return browseDialog.FileName;
+            //var result = browseDialog.ShowDialog();
+            //if (result.HasValue && result.Value)
+            //    return browseDialog.FileName;
             return null;
         }
     }

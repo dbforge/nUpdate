@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:wpf="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
       xmlns:newProject="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
       Background="White"
       mc:Ignorable="d"
@@ -18,15 +17,6 @@
                    Foreground="#003399"
                    Text="Finishing project creation" />
         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-            <wpf:LoadingIndicator
-                Visibility="{Binding LoadingIndicatorVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Foreground="#607d8b"
-                SpeedRatio="1"
-                Style="{DynamicResource LoadingIndicatorDoubleBounceStyle}">
-                <wpf:LoadingIndicator.LayoutTransform>
-                    <ScaleTransform ScaleX="0.65" ScaleY="0.65" />
-                </wpf:LoadingIndicator.LayoutTransform>
-            </wpf:LoadingIndicator>
             <TextBlock Margin="15,0,0,0"
                        VerticalAlignment="Center"
                        Text="{Binding CurrentStatus}"

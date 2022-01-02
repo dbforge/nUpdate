@@ -23,7 +23,7 @@ namespace nUpdate.Administration.PluginBase
             _pluginDirectory = pluginDirectory;
         }
 
-        // TODO: Check, if plugin is supported
+        // TODO: Check if plugin is supported
         [ImportMany]
         public IEnumerable<Lazy<TPlugin>> Plugins
         {

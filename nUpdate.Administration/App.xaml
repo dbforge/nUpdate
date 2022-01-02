@@ -2,21 +2,43 @@
     x:Class="nUpdate.Administration.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
     xmlns:converters="clr-namespace:nUpdate.Administration.Infrastructure.Converters;assembly=nUpdate.Administration.Infrastructure"
-    xmlns:wpf="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/colors.xaml" />
-                <!-- Accent and AppTheme setting -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/cobalt.xaml" />
-                <ResourceDictionary
-                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
+                <!-- FluentWPF Controls -->
+                <ResourceDictionary Source="/FluentWPF;component/Styles/Controls.xaml" />
+
+                <ui:ThemeResources>
+                    <ui:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Light">
+                            <ResourceDictionary.MergedDictionaries>
+                                <!-- FluentWPF theme resources -->
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Light.xaml" />
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
+                                <!-- ModernWPF theme resources -->
+                                <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Light.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Dark">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Dark.xaml" />
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
+                                <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Dark.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource SystemBaseHighColor}" />
+                        </ResourceDictionary>
+                    </ui:ThemeResources.ThemeDictionaries>
+                </ui:ThemeResources>
+
+                <!-- ModernWPF controls resources -->
+                <ui:XamlControlsResources />
+
             </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
 
             <!--  Converters  -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -27,17 +49,6 @@
             <SolidColorBrush x:Key="BottomPanelBrush" Color="White" />
             <SolidColorBrush x:Key="BottomPanelLineBrush" Color="DarkGray" />
             <SolidColorBrush x:Key="FeatureButtonBorderBrush" Color="LightGray" />
-
-            <!--  Styles  -->
-            <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="Black" />
-                <Style.Triggers>
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Foreground" Value="LightGray" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style x:Key="LoadingIndicatorDoubleBounceStyle" TargetType="wpf:LoadingIndicator" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

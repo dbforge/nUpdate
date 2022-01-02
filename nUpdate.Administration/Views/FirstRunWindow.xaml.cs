@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Windows;
 using nUpdate.Administration.ViewModels.FirstRun;
 using nUpdate.Administration.Views.FirstRun;
-using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views
 {
@@ -35,19 +34,19 @@ namespace nUpdate.Administration.Views
                 return;
 
             e.Cancel = true;
-            var taskDialog = new TaskDialogOptions
-            {
-                Owner = this,
-                Title = "nUpdate Administration v4.0",
-                MainIcon = VistaTaskDialogIcon.Warning,
-                MainInstruction = "Cancel the first time configuration?",
-                Content =
-                    "Are you sure that you want to cancel the first time configuration? If you select \"Yes\", nUpdate Administration will exit and open the configuration dialog on the next start.",
-                CommonButtons = TaskDialogCommonButtons.YesNo
-            };
+            //var taskDialog = new TaskDialogOptions
+            //{
+            //    Owner = this,
+            //    Title = "nUpdate Administration v4.0",
+            //    MainIcon = VistaTaskDialogIcon.Warning,
+            //    MainInstruction = "Cancel the first time configuration?",
+            //    Content =
+            //        "Are you sure that you want to cancel the first time configuration? If you select \"Yes\", nUpdate Administration will exit and open the configuration dialog on the next start.",
+            //    CommonButtons = TaskDialogCommonButtons.YesNo
+            //};
 
-            if (TaskDialog.Show(taskDialog).Result == TaskDialogSimpleResult.Yes)
-                Application.Current.Shutdown();
+            //if (TaskDialog.Show(taskDialog).Result == TaskDialogSimpleResult.Yes)
+            //    Application.Current.Shutdown();
         }
     }
 }

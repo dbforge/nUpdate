@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     d:DataContext="{d:DesignInstance newProject1:GeneralDataPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
@@ -39,7 +38,6 @@
                 Padding="5"
                 Text="Name:" />
             <TextBox
-                mah:TextBoxHelper.Watermark="The name of the project"
                 x:Name="NameTextBox"
                 Grid.Row="0"
                 Grid.Column="2"
@@ -53,7 +51,6 @@
                 Padding="5"
                 Text="Update directory:" />
             <TextBox
-                mah:TextBoxHelper.Watermark="The URI for update distribution (local or remote)"
                 x:Name="UpdateDirectoryTextBox"
                 Grid.Row="2"
                 Grid.Column="2"
@@ -72,7 +69,6 @@
                 Padding="5"
                 Text="Location:" />
             <TextBox
-                mah:TextBoxHelper.Watermark="The local directory of the project"
                 x:Name="LocationTextBox"
                 Grid.Row="4"
                 Grid.Column="2"

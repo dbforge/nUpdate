@@ -3,118 +3,88 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:nUpdate.Administration.Views"
     xmlns:controls="clr-namespace:nUpdate.Administration.Controls"
-    ShowIconOnTitleBar="False"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:i1="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:converters="clr-namespace:nUpdate.Administration.Converters"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:TitleBar.ExtendViewIntoTitleBar="True"
     Width="820"
     Height="610"
     Icon="/./Icons/nUpdate.ico"
+    Title="nUpdate Administration"
     WindowStartupLocation="CenterScreen"
-    TitleTemplate="{x:Null}"
     mc:Ignorable="d">
 
-    <!--<mah:MetroWindow.LeftWindowCommands>
-        <mah:WindowCommands>
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconModern Width="24" Kind="Download" />
-                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="1 update available" />
-                </StackPanel>
-            </Button>
-        </mah:WindowCommands>
-    </mah:MetroWindow.LeftWindowCommands>-->
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    <StackPanel Margin="30">
-        <StackPanel Orientation="Horizontal">
-            <Image
-                Width="64"
-                Height="64"
-                Source="/./Icons/nUpdate.png" />
-            <StackPanel
-                VerticalAlignment="Center" Margin="10,0,0,0">
-                <TextBlock
-                    FontSize="15pt" Text="Welcome to" />
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        FontSize="16pt"
-                        FontWeight="Bold"
-                        Text="nUpdate " />
-                    <TextBlock
-                        FontSize="16pt"
-                        Foreground="#0047AB"
-                        Text="Administration" />
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
-        <Grid Margin="0,30,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="40" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+    <Window.Resources>
+        <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+    </Window.Resources>
 
-            <StackPanel Grid.Row="0" Grid.Column="0">
-                <DockPanel Height="26">
-                    <Label DockPanel.Dock="Left" Content="Last projects" />
-                    <Separator Margin="10,0,0,0" Foreground="LightGray" />
-                </DockPanel>
-            </StackPanel>
+    <Grid>
+        <ui:NavigationView
+            x:Name="NavView"
+            Header="Create a new project"
+            IsBackButtonVisible="Collapsed"
+            IsBackEnabled="False"
+            IsPaneOpen="True"
+            OpenPaneLength="250"
+            PaneDisplayMode="Left"
+            PaneTitle="nUpdate Administration">
 
-            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,10,0,0">
-                <controls:FeatureButton Height="50" IconSource="../Icons/icons8-empty-box-100.png"
-                                        Text="Create new project" Command="{Binding NewProjectCommand}" />
-                <controls:FeatureButton Height="50" Margin="0,10,0,0" IconSource="../Icons/icons8-open-box-100.png"
-                                        Text="Open existing project" />
-            </StackPanel>
-        </Grid>
+            <ui:NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#1D4ED8"/>
+            </ui:NavigationView.Resources>
 
-        <DockPanel Height="26">
-            <Label DockPanel.Dock="Left" Content="Key database" />
-            <Separator Margin="10,0,0,0" Foreground="LightGray" />
-        </DockPanel>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItemHeader Content="Project management" />
+                <ui:NavigationViewItem Icon="Add" Content="New project" />
+                <ui:NavigationViewItem Icon="OpenLocal" Content="Open project" />
 
-        <StackPanel Orientation="Horizontal" Margin="0,10">
-            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-secure-50.png"
-                                        Text="Manage key database"
-                                        Description="Manage or edit your passwords or private keys" />
-            <controls:DescriptionButton
-                Visibility="{Binding CanEditMasterPassword, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Height="55" Margin="20,0" IconSource="../Icons/icons8-validation-50.png" Text="Change master password"
-                Description="For encrypting the key database" />
-        </StackPanel>
+                <ui:NavigationViewItemSeparator />
+                <ui:NavigationViewItemHeader Content="Recent projects" />
+                <ui:NavigationViewItem Icon="Library" Content="BuildIt" />
+                <ui:NavigationViewItem Icon="Library" Content="PalletManagement" />
 
-        <DockPanel Height="26">
-            <Label DockPanel.Dock="Left" Content="Statistics" />
-            <Separator Margin="10,0,0,0" Foreground="LightGray" />
-        </DockPanel>
-        <controls:DescriptionButton Margin="0,10" Height="55" HorizontalAlignment="Left"
-                                    IconSource="../Icons/icons8-combo-chart-96.png" Text="Manage statistics server"
-                                    Description="Add, edit or delete a statistics server" />
+                <ui:NavigationViewItemSeparator />
 
-        <DockPanel Height="25">
-            <Label DockPanel.Dock="Left" Content="Application" />
-            <Separator Margin="10,0,0,0" Foreground="LightGray" />
-        </DockPanel>
+                <ui:NavigationViewItemHeader Content="Key database" />
+                <ui:NavigationViewItem Icon="Admin" Content="Manage secrets" />
+            </ui:NavigationView.MenuItems>
 
-        <StackPanel Orientation="Horizontal" Margin="0,10">
-            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-user-settings-50.png"
-                                        Text="Preferences" Description="Customize nUpdate Administration" />
-            <controls:DescriptionButton Height="55" Margin="20,0" IconSource="../Icons/icons8-info-50.png"
-                                        Text="Information" Description="About nUpdate Administration" />
-            <controls:DescriptionButton Height="55" IconSource="../Icons/icons8-feedback-50.png" Text="Feedback"
-                                        Description="Send your feedback here" />
-        </StackPanel>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Icon="Download" Content="No updates available" IsEnabled="False" />
+                <ui:NavigationViewItem Icon="Mail" Content="Feedback" />
+            </ui:NavigationView.FooterMenuItems>
 
-    </StackPanel>
+
+
+            <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+                <GroupBox Header="Update packages"
+                          Margin="24,32,24,0">
+                    <ui:SimpleStackPanel 
+                        Spacing="24">
+
+                    <ui:CommandBar>
+                        <ui:AppBarButton Icon="Add" Label="Add package" />
+                        <ui:AppBarButton Icon="Remove" Label="Remove package(s)" IsEnabled="False" />
+                        <ui:AppBarButton Icon="Upload" Label="Publish package(s)" IsEnabled="False" />
+                        <ui:AppBarSeparator/>
+                        <ui:AppBarButton Icon="Bullets" Label="Select multiple" />
+
+                        <ui:CommandBar.Content>
+                            <TextBlock Text="10 packages available" Margin="12,14"/>
+                        </ui:CommandBar.Content>
+                    </ui:CommandBar>
+
+                    <Button
+                        Content="Toggle theme"
+                        Click="ToggleTheme"/>
+                    </ui:SimpleStackPanel>
+                </GroupBox>
+            </Border>
+        </ui:NavigationView>
+    </Grid>
+
 </views:ExtendedWindow>

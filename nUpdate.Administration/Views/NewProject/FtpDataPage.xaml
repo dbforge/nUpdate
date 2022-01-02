@@ -4,9 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     d:DataContext="{d:DesignInstance newProject1:FtpDataPageViewModel}"
     d:DesignHeight="230"
     d:DesignWidth="520"
@@ -46,7 +45,6 @@
                     Padding="5"
                     Text="Host:" />
                 <TextBox
-                    mah:TextBoxHelper.Watermark="ftp.example.com"
                     x:Name="HostTextBox"
                     Grid.Row="0"
                     Grid.Column="2"
@@ -59,13 +57,11 @@
                     Grid.Column="4"
                     Padding="5"
                     Text="Port:" />
-                <mah:NumericUpDown Grid.Row="0"
-                                   Grid.Column="6"
-                                   HorizontalAlignment="Left"
-                                   Minimum="0"
-                                   Maximum="65536"
-                                   Interval="1"
-                                   Value="{Binding Port, Mode=TwoWay}" />
+                <ui:NumberBox 
+                    Grid.Row="0"
+                    Grid.Column="6"
+                    SpinButtonPlacementMode="Compact"
+                    Value="{Binding Port, Mode=TwoWay}" />
 
                 <TextBlock
                     Grid.Row="2"
@@ -73,7 +69,6 @@
                     Padding="5"
                     Text="User:" />
                 <TextBox
-                    mah:TextBoxHelper.Watermark="user1@ftp.example.com"
                     x:Name="UserTextBox"
                     Grid.Row="2"
                     Grid.Column="2"
@@ -138,7 +133,6 @@
                     Padding="5"
                     Text="Directory:" />
                 <TextBox
-                    mah:TextBoxHelper.Watermark="/htdocs/updates/"
                     x:Name="DirectoryTextBox"
                     Grid.Row="0"
                     Grid.Column="2"

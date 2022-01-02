@@ -8,7 +8,6 @@ using nUpdate.Administration.BusinessLogic;
 using nUpdate.Administration.Infrastructure;
 using nUpdate.Administration.Models;
 using nUpdate.Administration.ViewModels.FirstRun;
-using WPFFolderBrowser;
 
 namespace nUpdate.Administration.Views.FirstRun
 {
@@ -55,26 +54,26 @@ namespace nUpdate.Administration.Views.FirstRun
 
         public void GetApplicationDataDirectoryCommandAction(ref string applicationDataDirectory)
         {
-            var browseDialog = new WPFFolderBrowserDialog
-            {
-                Title = "Select the location for the application data..."
-            };
+            //var browseDialog = new WPFFolderBrowserDialog
+            //{
+            //    Title = "Select the location for the application data..."
+            //};
 
-            var result = browseDialog.ShowDialog();
-            if (result.HasValue && result.Value)
-                applicationDataDirectory = browseDialog.FileName;
+            //var result = browseDialog.ShowDialog();
+            //if (result.HasValue && result.Value)
+            //    applicationDataDirectory = browseDialog.FileName;
         }
 
         public void GetDefaultProjectDirectoryCommandAction(ref string defaultProjectDirectory)
         {
-            var browseDialog = new WPFFolderBrowserDialog
-            {
-                Title = "Select the default location for your projects..."
-            };
+            //var browseDialog = new WPFFolderBrowserDialog
+            //{
+            //    Title = "Select the default location for your projects..."
+            //};
 
-            var result = browseDialog.ShowDialog();
-            if (result.HasValue && result.Value)
-                defaultProjectDirectory = browseDialog.FileName;
+            //var result = browseDialog.ShowDialog();
+            //if (result.HasValue && result.Value)
+            //    defaultProjectDirectory = browseDialog.FileName;
         }
     }
 }

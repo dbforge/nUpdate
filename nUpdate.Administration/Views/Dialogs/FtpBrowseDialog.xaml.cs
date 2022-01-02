@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using nUpdate.Administration.BusinessLogic.Ftp;
 using nUpdate.Administration.PluginBase.Models;
-using TaskDialogInterop;
 
 namespace nUpdate.Administration.Views.Dialogs
 {
@@ -76,15 +75,15 @@ namespace nUpdate.Administration.Views.Dialogs
             {
                 await AddDirectoryContent(Directory, selectedItem);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var taskDialog = new TaskDialogOptions
-                {
-                    MainIcon = VistaTaskDialogIcon.Error,
-                    MainInstruction = ex.Message,
-                    ExpandedInfo = ex.StackTrace
-                };
-                TaskDialog.Show(taskDialog);
+                //var taskDialog = new TaskDialogOptions
+                //{
+                //    MainIcon = VistaTaskDialogIcon.Error,
+                //    MainInstruction = ex.Message,
+                //    ExpandedInfo = ex.StackTrace
+                //};
+                //TaskDialog.Show(taskDialog);
             }
             finally
             {

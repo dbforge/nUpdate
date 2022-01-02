@@ -1,0 +1,45 @@
+﻿<Page
+    x:Class="nUpdate.Administration.Views.NewProject.UpdateProviderSelectionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:newProject1="clr-namespace:nUpdate.Administration.ViewModels.NewProject;assembly=nUpdate.Administration.ViewModels"
+    d:DataContext="{d:DesignInstance newProject1:UpdateProviderSelectionPageViewModel}"
+    d:DesignHeight="230"
+    d:DesignWidth="520"
+    Background="White"
+    mc:Ignorable="d">
+
+    <DockPanel Margin="20">
+        <TextBlock
+            DockPanel.Dock="Top"
+            FontSize="12pt"
+            Foreground="#003399"
+            Text="Update provider" />
+
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="Please select the update provider that you want to use for accessing the update server."
+                TextWrapping="Wrap" />
+
+            <ItemsControl ItemsSource="{Binding AvailableUpdateProviderViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Margin="0,5,10,0" Content="{Binding Description}"
+                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                     Command="{Binding DataContext.UpdateProviderSelectionCommand, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                     CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </DockPanel>
+</Page>
