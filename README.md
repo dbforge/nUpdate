@@ -71,13 +71,13 @@ When none of them is specified, an exception will be thrown.
 The package `nUpdate.UI.WindowsForms` provides a built-in user interface for Windows Forms application. Install it via NuGet:
 
 ```
-PM> Install-Package nUpdate.UI.WindowsForms -Version 4.0.0
+PM> Install-Package nUpdate.UI.WindowsForms -Version 1.0.0
 ```
 
 To use the built-in WPF user interface, you need to install `nUpdate.UI.WPF`:
 
 ```
-PM> Install-Package nUpdate.UI.WPF -Version 4.0.0
+PM> Install-Package nUpdate.UI.WPF -Version 1.0.0
 ```
 
 Both projects give you an `UpdaterUI` class that you can use as follows:
