@@ -35,7 +35,6 @@ namespace nUpdate.UpdateInstaller
         private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += HandlerMethod;
 

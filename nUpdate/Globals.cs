@@ -10,8 +10,10 @@ namespace nUpdate
     {
         public static string AppExecutableDirectoryIdentifier => "ApplicationExecutablePath";
 
-        public static string ApplicationUpdateDirectory => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate",
+        public static string ApplicationFilesDirectory => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nUpdate");
+
+        public static string ApplicationUpdateDirectory => Path.Combine(ApplicationFilesDirectory,
             "Updates", ApplicationParameters.ProductName);
 
         public static string PackageExtension => ".nupdpkg";

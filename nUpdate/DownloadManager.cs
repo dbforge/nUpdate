@@ -11,7 +11,7 @@ namespace nUpdate
 {
     internal static class DownloadManager
     {
-        internal static async Task DownloadFile(Uri fileUri, string localFilePath, long totalSize,
+        internal static async Task DownloadFile(Uri fileUri, string localFilePath,
             CancellationToken cancellationToken, IProgress<UpdateProgressData> progress)
         {
             long received = 0;
@@ -19,6 +19,8 @@ namespace nUpdate
             var webRequest = WebRequest.Create(fileUri);
             using (webResponse = await webRequest.GetResponseAsync())
             {
+                long totalSize = webResponse.ContentLength;
+
                 var buffer = new byte[1024];
                 using (var fileStream = File.Create(localFilePath))
                 {

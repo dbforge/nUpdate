@@ -106,7 +106,7 @@ namespace nUpdate
         /// </summary>
         /// <param name="package">The update package.</param>
         /// <seealso cref="RemoveLocalPackages(UpdateCheckResult)" />
-        /// <seealso cref="RemoveLocalPackages(System.Collections.Generic.IEnumerable{nUpdate.UpdatePackage})" />
+        /// <seealso cref="RemoveLocalPackages(IEnumerable{UpdatePackage})" />
         public void RemoveLocalPackage(UpdatePackage package)
         {
             var path = GetLocalPackagePath(package);

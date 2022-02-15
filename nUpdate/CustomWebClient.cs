@@ -27,6 +27,12 @@ namespace nUpdate
 
         public int Timeout { get; set; }
 
+        public async Task<T> DownloadFromJson<T>(Uri resourceUri)
+        {
+            var result = await DownloadStringFrom(resourceUri);
+            return JsonSerializer.Deserialize<T>(result);
+        }
+
         public Task<string> DownloadStringFrom(Uri resourceUri)
         {
             return DownloadStringTaskAsync(resourceUri);
