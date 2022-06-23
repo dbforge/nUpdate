@@ -3,14 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
+using FluentFTP;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Updating;
-using Starksoft.Aspen.Ftps;
-using Starksoft.Aspen.Proxy;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration.Ftp.Service
@@ -23,16 +24,6 @@ namespace nUpdate.Administration.Ftp.Service
         private string _host;
         private FtpsClient _packageFtpsClient;
 
-        /// <summary>
-        ///     Gets or sets the network version.
-        /// </summary>
-        public NetworkVersion NetworkVersion { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the protocol.
-        /// </summary>
-        public FtpsSecurityProtocol Protocol { get; set; }
-
         public event EventHandler<EventArgs> CancellationFinished;
 
         public void CancelPackageUpload()
@@ -40,45 +31,27 @@ namespace nUpdate.Administration.Ftp.Service
             _packageFtpsClient?.CancelAsync();
         }
 
-        public void DeleteDirectory(string directoryPath)
+        public async Task DeleteDirectory(string directoryPath)
         {
-            using (var ftp = GetNewFtpsClient())
+            using (var ftpClient = await GetFtpClient())
             {
-                IEnumerable<ServerItem> items = ListDirectoriesAndFiles(directoryPath, true);
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                foreach (var item in items)
-                    switch (item.ItemType)
-                    {
-                        case ServerItemType.Directory:
-                            DeleteDirectory($"/{directoryPath}/{item.Name}/");
-                            break;
-                        case ServerItemType.File:
-                            DeleteFile(directoryPath, item.Name);
-                            break;
-                    }
-
-                ftp.DeleteDirectory(directoryPath);
+                await ftpClient.DeleteDirectoryAsync(directoryPath);
             }
         }
 
-        public void DeleteFile(string directoryPath, string fileName)
+        public async Task DeleteFile(string directoryPath, string fileName)
         {
-            using (var ftp = GetNewFtpsClient())
+            string fullPath = Path.Combine(directoryPath, fileName);
+
+            using (var ftpClient = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.ChangeDirectoryMultiPath(directoryPath);
-                ftp.DeleteFile(fileName);
+                await ftpClient.DeleteFileAsync(fullPath);
             }
         }
 
-        public void DeleteFile(string fileName)
+        public Task DeleteFile(string fileName)
         {
-            using (var ftp = GetNewFtpsClient())
-            {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.ChangeDirectoryMultiPath(Directory);
-                ftp.DeleteFile(fileName);
-            }
+            return DeleteFile(Directory, fileName);
         }
 
         /// <summary>
@@ -109,19 +82,19 @@ namespace nUpdate.Administration.Ftp.Service
             }
         }
 
-        public bool IsExisting(string directoryPath, string destinationName)
+        public async Task<bool> DirectoryExists(string directoryPath, string destinationName)
         {
-            using (var ftp = GetNewFtpsClient())
+            string fullPath = Path.Combine(directoryPath, destinationName);
+
+            using (var ftp = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.ChangeDirectoryMultiPath(directoryPath);
-                return ftp.Exists(directoryPath, destinationName);
+                await ftp.DirectoryExistsAsync(fullPath);
             }
         }
 
         public bool IsExisting(string destinationName)
         {
-            using (var ftp = GetNewFtpsClient())
+            using (var ftp = GetFtpClient())
             {
                 ftp.Open(Username, Password.ConvertToInsecureString());
                 ftp.ChangeDirectoryMultiPath(Directory);
@@ -140,22 +113,24 @@ namespace nUpdate.Administration.Ftp.Service
             }
         }
 
-        public IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive)
+        public async Task<IEnumerable<ServerItem>> ListDirectoriesAndFiles(string path, bool recursive)
         {
-            using (var ftp = GetNewFtpsClient())
+            string fullPath = Path.Combine(Directory, path);
+
+            using (var ftp = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                var items = recursive ? ftp.GetDirListDeep(path) : ftp.GetDirList(path);
+                var items = await ftp.GetListingAsync(fullPath, recursive ? FtpListOption.Recursive : FtpListOption.Auto);
                 return items.Select(f => f.ToServerItem());
             }
         }
 
-        public void MakeDirectory(string name)
+        public async Task MakeDirectory(string name)
         {
-            using (var ftp = GetNewFtpsClient())
+            string fullPath = Path.Combine(Directory, name);
+
+            using (var ftp = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.MakeDirectory(name);
+                await ftp.CreateDirectoryAsync(fullPath, true);
             }
         }
 
@@ -186,37 +161,38 @@ namespace nUpdate.Administration.Ftp.Service
         /// </summary>
         public WebProxy Proxy { get; set; }
 
-        public void RenameDirectory(string oldName, string newName)
+        public async Task RenameDirectory(string oldName, string newName)
         {
-            using (var ftp = GetNewFtpsClient())
+            string oldPath = Path.Combine(Directory, oldName);
+            string newPath = Path.Combine(Directory, newName);
+
+            using (var ftp = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.ChangeDirectoryMultiPath(Directory);
-                ftp.Rename(oldName, newName);
+                await ftp.RenameAsync(oldPath, newPath);
             }
         }
 
         public void TestConnection()
         {
-            using (var ftp = GetNewFtpsClient())
+            using (var ftp = GetFtpClient())
             {
                 ftp.Open(Username, Password.ConvertToInsecureString());
             }
         }
 
-        public void UploadFile(string filePath)
+        public async Task UploadFile(string filePath)
         {
-            using (var ftp = GetNewFtpsClient())
+            string remotePath = Path.Combine(Directory, Path.GetFileName(filePath));
+
+            using (var ftp = await GetFtpClient())
             {
-                ftp.Open(Username, Password.ConvertToInsecureString());
-                ftp.ChangeDirectoryMultiPath(Directory);
-                ftp.PutFile(filePath, FileAction.Create);
+                await ftp.UploadFileAsync(filePath, remotePath, FtpRemoteExists.Overwrite, true, FtpVerify.Retry);
             }
         }
 
         public void UploadPackage(string packagePath, string packageVersion)
         {
-            _packageFtpsClient = GetNewFtpsClient();
+            _packageFtpsClient = GetFtpClient();
             _packageFtpsClient.TransferProgress += TransferProgressChangedEventHandler;
             _packageFtpsClient.PutFileAsyncCompleted += UploadPackageFinished;
             _packageFtpsClient.Open(Username, Password.ConvertToInsecureString());
@@ -229,11 +205,6 @@ namespace nUpdate.Administration.Ftp.Service
             _packageFtpsClient.Close();
             _uploadPackageResetEvent.Reset();
         }
-
-        /// <summary>
-        ///     Sets if passive mode should be used.
-        /// </summary>
-        public bool UsePassiveMode { get; set; }
 
         /// <summary>
         ///     The username.
@@ -257,16 +228,11 @@ namespace nUpdate.Administration.Ftp.Service
             _disposed = true;
         }
 
-        private FtpsClient GetNewFtpsClient()
+        private async Task<FtpClient> GetFtpClient()
         {
-            return new FtpsClient(Host, Port, Protocol)
-            {
-                DataTransferMode = UsePassiveMode ? TransferMode.Passive : TransferMode.Active,
-                FileTransferType = TransferType.Binary,
-                NetworkProtocol = NetworkVersion,
-                Proxy = Proxy != null ? new HttpProxyClient(Proxy.Address.ToString()) : null,
-                AlwaysAcceptServerCertificate = true,
-            };
+            var connection = new FtpClient(Host, Username, Password.ConvertToInsecureString());
+            await connection.AutoConnectAsync();
+            return connection;
         }
 
         public void MoveContent(string directory, string aimPath)
@@ -274,7 +240,7 @@ namespace nUpdate.Administration.Ftp.Service
             foreach (var item in ListDirectoriesAndFiles(directory, false)
                 .Where(
                     item => item.FullPath != aimPath && item.FullPath != aimPath.Substring(aimPath.Length - 1)))
-                using (var ftp = GetNewFtpsClient())
+                using (var ftp = GetFtpClient())
                 {
                     ftp.Open(Username, Password.ConvertToInsecureString());
 

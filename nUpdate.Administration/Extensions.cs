@@ -7,10 +7,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
+using FluentFTP;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.UI.Controls;
 using nUpdate.Administration.Win32;
-using Starksoft.Aspen.Ftps;
 using TransferProgressEventArgs = nUpdate.Administration.TransferInterface.TransferProgressEventArgs;
 
 namespace nUpdate.Administration
@@ -131,20 +131,20 @@ namespace nUpdate.Administration
             return dest;
         }
 
-        public static ServerItem ToServerItem(this FtpsItem ftpsItem)
+        public static ServerItem ToServerItem(this FtpListItem ftpsItem)
         {
             var serverItemType = ServerItemType.Other;
-            switch (ftpsItem.ItemType)
+            switch (ftpsItem.Type)
             {
-                case FtpItemType.Directory:
+                case FtpFileSystemObjectType.Directory:
                     serverItemType = ServerItemType.Directory;
                     break;
-                case FtpItemType.File:
+                case FtpFileSystemObjectType.File:
                     serverItemType = ServerItemType.File;
                     break;
             }
 
-            return new ServerItem(ftpsItem.Name, ftpsItem.FullPath, ftpsItem.Size, ftpsItem.Modified, serverItemType);
+            return new ServerItem(ftpsItem.Name, ftpsItem.FullName, ftpsItem.Size, ftpsItem.Modified, serverItemType);
         }
 
         public static TransferProgressEventArgs ToTransferInterfaceProgressEventArgs(
