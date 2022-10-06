@@ -22,7 +22,7 @@
   "UpdateDownloadDialogLoadingInfo": "Please wait while the available updates are\ndownloaded...  ({0}%)",
   "InstallerExtractingFilesText": "\"Extracting files...\"",
   "InstallerCopyingText": "\"Copying {0}...\"",
-  "InstallerInitializingErrorCaption": "\"Error while iniaitializing the data.\"",
+  "InstallerInitializingErrorCaption": "\"Error while initializing the data.\"",
   "InstallerUpdatingErrorCaption": "\"Error while updating the application\"",
   "InstallerFileInUseError":
     "The installer cannot overwrite the file '{0}' because it is being used by another process. Terminate all applications that block the access and try again by pressing \"OK\".",
