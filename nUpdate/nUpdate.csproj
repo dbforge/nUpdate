@@ -22,6 +22,7 @@
     <None Remove="Localization\en.json" />
     <None Remove="Localization\it-IT.json" />
     <None Remove="Localization\zh-CN.json" />
+	<None Remove="Localization\es-ES.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <EmbeddedResource Include="Localization\en.json" />
     <EmbeddedResource Include="Localization\it-IT.json" />
     <EmbeddedResource Include="Localization\zh-CN.json" />
+	<EmbeddedResource Include="Localization\es-ES.json" />
   </ItemGroup>
 
   <ItemGroup>
