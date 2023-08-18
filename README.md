@@ -128,6 +128,11 @@ ReleaseCandidate: `rc`
 
 In version 4 any type of pre-release descriptor, as well as build metadata, will be available. It will fulfill the complete semantic versioning specification and have an abstract version system.
 
+### Specifying an `applicationExecutablePath`
+
+Under some circumstances the UpdateManager is not able to obtain the correct executable path. While the update might work during a debug build, an update with an actual release build will lead to errors while unpacking and copying the files into your application path.
+To help nUpdate to find the correct program path the UpdateManager accepts `applicationExectuablePath` as a parameter. With recent .NET versions an executable path is provided by `AppContext.BaseDirectory`. Please note that the UpdateManager needs also the name of your application, so as an example the parameter could be `applicationExecutablePath: AppContext.BaseDirectory + "MyApp.exe"`.
+
 ## Supported by
 
 <img src="https://www.nupdate.net/jetbrains.png" width="96" height="96"/>
