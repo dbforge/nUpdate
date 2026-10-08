@@ -1,28 +1,10 @@
-﻿// OperationArea.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
+namespace nUpdate.Operations;
 
-using System.ComponentModel;
-
-namespace nUpdate.Operations
+/// <summary>The part of the system an <see cref="Operation" /> touches.</summary>
+public enum OperationArea
 {
-    /// <summary>
-    ///     Represents the different areas in which operations can take place.
-    /// </summary>
-    public enum OperationArea
-    {
-        [Description("NewUpdateDialogFilesAccessText")]
-        Files,
-
-        [Description("NewUpdateDialogRegistryAccessText")]
-        Registry,
-
-        [Description("NewUpdateDialogProcessesAccessText")]
-        Processes,
-
-        [Description("NewUpdateDialogServicesAccessText")]
-        Services,
-
-        [Description("NewUpdateDialogCodeExecutionAccessText")]
-        Scripts
-    }
+    Files,
+    Registry,
+    Processes,
+    Services,
 }
