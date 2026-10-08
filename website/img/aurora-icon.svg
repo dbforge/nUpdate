@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1430"/>
+      <stop offset="1" stop-color="#1c2f68"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3df2b2"/>
+      <stop offset="0.55" stop-color="#2fd0e8"/>
+      <stop offset="1" stop-color="#8b8cff"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.15" stop-color="#fff"/>
+      <stop offset="0.85" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="glow"><rect width="64" height="64" fill="url(#fade)"/></mask>
+    <clipPath id="squircle"><rect width="64" height="64" rx="15"/></clipPath>
+  </defs>
+  <g clip-path="url(#squircle)">
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <g mask="url(#glow)" fill="none" stroke="url(#band)" stroke-linecap="round">
+      <path d="M4 31 C 16 13, 29 35, 41 19 S 57 12, 62 9" stroke-width="7"/>
+      <path d="M2 43 C 15 28, 29 47, 43 31 S 58 26, 63 22" stroke-width="4.5" opacity="0.55"/>
+    </g>
+    <circle cx="50" cy="38" r="1.2" fill="#fff" opacity="0.85"/>
+    <circle cx="12" cy="17" r="1" fill="#fff" opacity="0.6"/>
+    <circle cx="31" cy="9" r="0.9" fill="#fff" opacity="0.55"/>
+    <path d="M0 64 V52 L13 43 L23 50 L35 39 L49 51 L64 44 V64 Z" fill="#081027"/>
+  </g>
+</svg>
