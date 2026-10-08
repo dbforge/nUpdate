@@ -128,9 +128,9 @@
               <header>
                 <p class="api-kind">enum · <code>nUpdate</code> · package nUpdate</p>
                 <h3>AfterInstall</h3>
-                <p>What happens to the application once the installer has been started.</p>
+                <p>What happens to the application once the installer has been started. A package can ask for <code>Restart</code> or <code>Close</code>, overriding <a href="#UpdateManager"><code>UpdateManager.DefaultAfterInstall</code></a>.</p>
               </header>
-              <figure class="api-example"><figcaption>Example</figcaption><pre><code>manager.<span class="tok-type">AfterInstall</span> = <span class="tok-type">AfterInstall</span>.KeepRunning; <span class="tok-com">// a service that restarts itself</span></code></pre></figure>
+              <figure class="api-example"><figcaption>Example</figcaption><pre><code>manager.DefaultAfterInstall = <span class="tok-type">AfterInstall</span>.KeepRunning; <span class="tok-com">// a service that restarts itself</span></code></pre></figure>
               <section class="api-group">
                 <h4>Values</h4>
                 <div class="api-member" data-search="afterinstall restart restart the application is closed and started again after the update. the default.">
@@ -338,6 +338,10 @@ manager.Arguments.Add(<span class="tok-key">new</span> <span class="tok-type">In
                 <div class="api-member" data-search="packageinfo necessary bool necessary { get; set; } installed even when a newer version exists.">
                   <code class="sig"><span class="k">bool</span> <span class="n">Necessary</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
                   <p>Installed even when a newer version exists.</p>
+                </div>
+                <div class="api-member" data-search="packageinfo afterinstall afterinstall? afterinstall { get; set; } restart or close to override updatemanager.defaultafterinstall, or null to leave it to the application. set in nupdate administration.">
+                  <code class="sig"><a class="t" href="#AfterInstall">AfterInstall</a>? <span class="n">AfterInstall</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
+                  <p><code>Restart</code> or <code>Close</code> to override <a href="#UpdateManager"><code>UpdateManager.DefaultAfterInstall</code></a>, or <code>null</code> to leave it to the application. Set in nUpdate Administration.</p>
                 </div>
                 <div class="api-member" data-search="packageinfo changelog dictionary&lt;string, string&gt; changelog { get; set; } the changelog per culture name, such as en or de-de.">
                   <code class="sig"><span class="t">Dictionary</span>&lt;<span class="k">string</span>, <span class="k">string</span>&gt; <span class="n">Changelog</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
@@ -590,10 +594,16 @@ manager.RolloutConditions[<span class="tok-str">&quot;Ring&quot;</span>] = <span
               </section>
               <section class="api-group">
                 <h4>Installer</h4>
-                <div class="api-member" data-search="updatemanager afterinstall afterinstall afterinstall { get; set; } restart (default), close or keeprunning.">
-                  <code class="sig"><a class="t" href="#AfterInstall">AfterInstall</a> <span class="n">AfterInstall</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
-                  <p><code>Restart</code> (default), <code>Close</code> or <code>KeepRunning</code>.</p>
-                  <pre class="api-snippet"><code>manager.<span class="tok-type">AfterInstall</span> = <span class="tok-type">AfterInstall</span>.Close;</code></pre>
+                <div class="api-member" data-search="updatemanager defaultafterinstall afterinstall defaultafterinstall { get; set; } restart (default), close or keeprunning, unless a package asks to restart the application or to leave it closed.">
+                  <code class="sig"><a class="t" href="#AfterInstall">AfterInstall</a> <span class="n">DefaultAfterInstall</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
+                  <p><code>Restart</code> (default), <code>Close</code> or <code>KeepRunning</code>, unless a package asks to restart the application or to leave it closed.</p>
+                  <pre class="api-snippet"><code>manager.DefaultAfterInstall = <span class="tok-type">AfterInstall</span>.Close;</code></pre>
+                </div>
+                <div class="api-member" data-search="updatemanager afterinstall afterinstall afterinstall { get; } the outcome for availableupdates: close when one of them asks to leave the application closed, restart when one asks to restart it, otherwise defaultafterinstall.">
+                  <code class="sig"><a class="t" href="#AfterInstall">AfterInstall</a> <span class="n">AfterInstall</span> { <span class="k">get</span>; }</code>
+                  <p>The outcome for <code>AvailableUpdates</code>: <code>Close</code> when one of them asks to leave the application closed, <code>Restart</code> when one asks to restart it, otherwise <code>DefaultAfterInstall</code>.</p>
+                  <pre class="api-snippet"><code><span class="tok-key">if</span> (manager.AfterInstall == <span class="tok-type">AfterInstall</span>.Close)
+    <span class="tok-type">Console</span>.WriteLine(<span class="tok-str">&quot;Start the application again once the update has finished.&quot;</span>);</code></pre>
                 </div>
                 <div class="api-member" data-search="updatemanager arguments ilist&lt;installerargument&gt; arguments { get; } command line arguments for the restarted application, depending on the outcome.">
                   <code class="sig"><span class="t">IList</span>&lt;<a class="t" href="#InstallerArgument">InstallerArgument</a>&gt; <span class="n">Arguments</span> { <span class="k">get</span>; }</code>
@@ -828,6 +838,10 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
                 <div class="api-member" data-search="updatetexts touchesservices string touchesservices { get; set; } services">
                   <code class="sig"><span class="k">string</span> <span class="n">TouchesServices</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
                   <p><code>Services</code></p>
+                </div>
+                <div class="api-member" data-search="updatetexts staysclosedafterupdate string staysclosedafterupdate { get; set; } {0} stays closed after the update.">
+                  <code class="sig"><span class="k">string</span> <span class="n">StaysClosedAfterUpdate</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
+                  <p><code>{0} stays closed after the update.</code></p>
                 </div>
                 <div class="api-member" data-search="updatetexts noupdatestitle string noupdatestitle { get; set; } there are no new updates available.">
                   <code class="sig"><span class="k">string</span> <span class="n">NoUpdatesTitle</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
