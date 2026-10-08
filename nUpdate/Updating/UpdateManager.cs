@@ -33,6 +33,9 @@ public sealed class UpdateManager : IDisposable
 
     private const string OptionsFileName = "installer-options.json";
 
+    /// <summary>The folder in the temp directory that holds one installer folder per application.</summary>
+    private const string InstallerTempFolderName = "nUpdate Installer";
+
     private readonly UpdateManagerServices _services;
     private readonly IFileSystem _fileSystem;
     private readonly LocalizationProvider _localizationProvider;
@@ -46,6 +49,7 @@ public sealed class UpdateManager : IDisposable
     private CultureInfo _culture = LocalizationProvider.DefaultCulture;
     private string? _installerPath;
     private string? _installerAccentColor;
+    private string? _applicationExecutablePath;
     private bool _disposed;
 
     /// <param name="feedUri">The absolute URI of the project's <c>nupdate.json</c>.</param>
@@ -68,7 +72,8 @@ public sealed class UpdateManager : IDisposable
 
         var applicationInfo = _services.ApplicationInfo;
         ApplicationName = applicationInfo.ProductName;
-        ApplicationExecutablePath = applicationInfo.ExecutablePath;
+        // A path the process cannot tell (empty, or relative) counts as unknown, so StartInstaller asks for it clearly.
+        _applicationExecutablePath = IsAbsolutePath(applicationInfo.ExecutablePath) ? applicationInfo.ExecutablePath : null;
         CurrentVersion = currentVersion ?? ParseDeclaredVersion(applicationInfo.DeclaredVersion);
         Texts = _localizationProvider.Load(LocalizationProvider.DefaultCulture);
         if (culture is not null)
@@ -108,8 +113,18 @@ public sealed class UpdateManager : IDisposable
     /// <summary>The product name used for the download folder and shown by the installer.</summary>
     public string ApplicationName { get; set; }
 
-    /// <summary>The executable the installer restarts. Must be set when it cannot be derived from the entry assembly.</summary>
-    public string? ApplicationExecutablePath { get; set; }
+    /// <summary>
+    ///     The absolute path of the executable the installer restarts; its folder is the one the installer updates.
+    ///     Derived from the running process; set it when that fails, for example to <c>Environment.ProcessPath</c>.
+    /// </summary>
+    /// <exception cref="ArgumentException">The path is empty or not absolute.</exception>
+    public string? ApplicationExecutablePath
+    {
+        get => _applicationExecutablePath;
+        set => _applicationExecutablePath = value is null || IsAbsolutePath(value)
+            ? value
+            : throw new ArgumentException($"The executable path must be absolute, such as Path.Combine(AppContext.BaseDirectory, \"MyApp.exe\"); \"{value}\" is not.", nameof(value));
+    }
 
     /// <summary>
     ///     The runtime identifier this client installs package files for, see <see cref="PackagePlatform" />: the one of
@@ -342,8 +357,11 @@ public sealed class UpdateManager : IDisposable
             throw new InvalidOperationException("There are no downloaded packages to install.");
 
         var executablePath = ApplicationExecutablePath
-                             ?? throw new InvalidOperationException($"{nameof(ApplicationExecutablePath)} is not set and could not be derived from the entry assembly.");
-        var applicationDirectory = _fileSystem.Path.GetDirectoryName(executablePath) ?? string.Empty;
+                             ?? throw new InvalidOperationException(
+                                 $"The application's executable could not be determined. Set {nameof(ApplicationExecutablePath)} to its absolute path, for example Environment.ProcessPath.");
+        var applicationDirectory = _fileSystem.Path.GetDirectoryName(executablePath);
+        if (applicationDirectory is null || applicationDirectory.Length == 0)
+            throw new InvalidOperationException($"{nameof(ApplicationExecutablePath)} \"{executablePath}\" names no file in a folder, so there is no application folder to update.");
         var installerPath = InstallerPath!; // never null once the executable path is known
         if (!_fileSystem.File.Exists(installerPath))
             throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Texts.InstallerNotFound, installerPath), installerPath);
@@ -357,10 +375,7 @@ public sealed class UpdateManager : IDisposable
                 throw new UnauthorizedAccessException(string.Format(CultureInfo.CurrentCulture, Texts.NoWriteAccess, ApplicationName, writable));
         }
 
-        // A fixed folder per application: the previous copy is removed so installer files never accumulate.
-        var targetDirectory = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), "nUpdate Installer", ApplicationName);
-        if (_fileSystem.Directory.Exists(targetDirectory))
-            _fileSystem.Directory.Delete(targetDirectory, recursive: true);
+        var targetDirectory = PrepareInstallerDirectory();
         CopyDirectory(_fileSystem.Path.GetDirectoryName(installerPath)!, targetDirectory);
         var installer = _fileSystem.Path.Combine(targetDirectory, _fileSystem.Path.GetFileName(installerPath));
         _services.FilePermissions.SetMode(installer, FilePermissions.ExecutableMode); // NuGet and copies do not always keep the execute bit
@@ -439,6 +454,58 @@ public sealed class UpdateManager : IDisposable
         var fileName = PackagePlatform.IsWindows(Platform) ? BuiltInInstallerName + ".exe" : BuiltInInstallerName;
         return _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(ApplicationExecutablePath) ?? string.Empty, InstallerFolderName, Platform, fileName);
     }
+
+    /// <summary>
+    ///     The temp folder the installer is copied to: one per application, emptied first so installer files do not
+    ///     accumulate. When an earlier installer still holds a file in it (it is still running, or a virus scanner reads
+    ///     it), the installer goes to a new folder next to it, which a later update removes again.
+    /// </summary>
+    private string PrepareInstallerDirectory()
+    {
+        var root = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), InstallerTempFolderName);
+        var folder = _fileSystem.Path.Combine(root, ApplicationName);
+        if (_fileSystem.Directory.Exists(root))
+        {
+            foreach (var earlier in _fileSystem.Directory.GetDirectories(root))
+            {
+                if (IsAlternativeInstallerFolder(_fileSystem.Path.GetFileName(earlier)))
+                    TryDeleteDirectory(earlier);
+            }
+        }
+
+        if (TryDeleteDirectory(folder))
+            return folder;
+        var alternative = folder + "-" + Guid.NewGuid().ToString("N");
+        _services.Logger.LogWarning("The installer folder {Folder} is still in use, so the installer runs from {Alternative}.", folder, alternative);
+        return alternative;
+    }
+
+    /// <summary>
+    ///     Whether the folder is one an earlier run used instead of the application's folder: the name, a dash and 32 hex
+    ///     digits. Checked here, not with a search pattern, because a trailing <c>?</c> also matches nothing on Windows,
+    ///     which would take in the folders of other applications.
+    /// </summary>
+    private bool IsAlternativeInstallerFolder(string name) =>
+        name.Length == ApplicationName.Length + 33
+        && name.StartsWith(ApplicationName + "-", StringComparison.Ordinal)
+        && name.Skip(ApplicationName.Length + 1).All(c => Uri.IsHexDigit(c));
+
+    /// <summary>Deletes the directory if it exists; <c>false</c> when a file in it is in use.</summary>
+    private bool TryDeleteDirectory(string path)
+    {
+        try
+        {
+            if (_fileSystem.Directory.Exists(path))
+                _fileSystem.Directory.Delete(path, recursive: true);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    private bool IsAbsolutePath(string? path) => !string.IsNullOrWhiteSpace(path) && _fileSystem.Path.IsPathRooted(path);
 
     /// <summary>The <c>.app</c> folder of an executable in <c>…/MyApp.app/Contents/MacOS/</c>, or <c>null</c>.</summary>
     internal static string? FindBundle(string executablePath)
