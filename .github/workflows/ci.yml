@@ -1,0 +1,236 @@
+name: CI
+
+# Every push runs CI, on every branch. Pull requests run it only when they come from a fork; a branch of this
+# repository was already checked by its push.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+jobs:
+  linux:
+    name: Linux build, tests, coverage
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore nUpdate.sln && dotnet tool restore
+
+      - name: Check formatting
+        run: dotnet format nUpdate.sln --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build nUpdate.sln --configuration Release --no-restore
+
+      - name: Tests (unit and Docker integration)
+        env:
+          NUPDATE_REQUIRE_DOCKER: "1" # fail instead of skipping the Docker tests when the daemon does not answer
+        run: |
+          dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build --results-directory TestResults/nUpdate.Tests -- \
+            --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml \
+            --report-trx --report-trx-filename nUpdate.Tests.trx
+
+      - name: Merge coverage reports
+        if: always()
+        run: |
+          dotnet reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:TestResults/report \
+            -reporttypes:"Cobertura;HtmlInline;MarkdownSummaryGithub" -assemblyfilters:"-nUpdate.Tests"
+          cat TestResults/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Coverage gate
+        run: |
+          dotnet run --project tools/CoverageGate --configuration Release -- TestResults/report/Cobertura.xml \
+            --require nUpdate=100,100 \
+            --require nUpdate.UpdateInstaller=100,100 \
+            --require nUpdate.UpdateInstaller.UI.Avalonia=90,90 \
+            --require nUpdate.UI.Avalonia=90,90 \
+            --require nUpdate.Administration.Core=100,100 \
+            --require nUpdate.Administration.TransferInterface=100,100 \
+            --require nUpdate.Administration=90,90 \
+            --show-uncovered
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: TestResults/report
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-linux
+          path: TestResults/**/*.trx
+
+  packages:
+    name: Packages and the Linux installer
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-packages-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-packages-${{ runner.os }}-
+
+      # Packing publishes the built-in installer for all seven runtime identifiers, which all build on Linux.
+      - name: Pack NuGet packages
+        run: dotnet pack nUpdate.sln --configuration Release --output artifacts/packages
+
+      - name: List the installers in the package
+        run: |
+          unzip -l artifacts/packages/nUpdate.UpdateInstaller.UI.Avalonia.5.0.0.nupkg | tee artifacts/installer-package.txt
+          test "$(grep -c 'installer/.*/nUpdate.UpdateInstaller.UI.Avalonia' artifacts/installer-package.txt)" -eq 7
+          ls -la artifacts/packages
+
+      - name: Install from the packages in a consumer project
+        run: bash tools/ci/consumer-smoke-test.sh linux-x64
+
+      # Under Xvfb, so the trimmed single-file window really opens; one test points the installer at a missing display.
+      - name: Update with the published installer
+        run: |
+          dotnet build nUpdate.Tests/nUpdate.Tests.csproj --configuration Release
+          xvfb-run -a dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build -- --filter-trait "Category=PublishedInstaller"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: |
+            artifacts/packages/*.nupkg
+            artifacts/packages/*.snupkg
+
+  windows:
+    name: Windows build, tests, installer
+    needs: packages
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore nUpdate.sln
+
+      - name: Build
+        run: dotnet build nUpdate.sln --configuration Release --no-restore
+
+      - name: Unit tests (including the Windows-only adapter tests, without the Docker integration tests)
+        shell: bash
+        run: |
+          dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build --results-directory TestResults/nUpdate.Tests -- \
+            --filter-not-trait "Category=Integration" \
+            --report-trx --report-trx-filename nUpdate.Tests.trx
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts/packages
+
+      - name: Install from the packages in a consumer project
+        shell: bash
+        run: bash tools/ci/consumer-smoke-test.sh win-x64
+
+      - name: Update with the published installer
+        run: dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build -- --filter-trait "Category=PublishedInstaller"
+
+      - name: Publish nUpdate Administration
+        run: dotnet publish nUpdate.Administration/nUpdate.Administration.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/administration-win-x64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: administration-win-x64
+          path: artifacts/administration-win-x64
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-windows
+          path: TestResults/**/*.trx
+
+  macos:
+    name: macOS installer and bundle swap
+    needs: packages
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts/packages
+
+      - name: Install from the packages in a consumer project
+        run: bash tools/ci/consumer-smoke-test.sh osx-arm64
+
+      # The SDK signs the apphost ad hoc when it publishes on Linux; macOS refuses unsigned arm64 code.
+      - name: Check the installer's signature
+        run: codesign --verify --strict --verbose=2 "$NUPDATE_INSTALLER"
+
+      - name: Update with the published installer, including the swap of a signed bundle
+        run: |
+          dotnet build nUpdate.Tests/nUpdate.Tests.csproj --configuration Release
+          dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build -- --filter-trait "Category=PublishedInstaller"
+
+      # Self-contained and signed ad hoc; zipped with ditto, which keeps the extended attributes the signature needs.
+      - name: Build the nUpdate Administration bundle
+        run: bash tools/ci/administration-macos-app.sh osx-arm64 artifacts/administration-osx-arm64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: administration-osx-arm64
+          path: artifacts/administration-osx-arm64/nUpdate-Administration-osx-arm64.zip
