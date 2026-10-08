@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using nUpdate.Ui;
@@ -37,6 +38,8 @@ internal sealed partial class NewUpdateDialog : BaseDialog
         currentVersionLabel.Text = summary.CurrentVersionText;
         updateSizeLabel.Text = summary.UpdateSizeText;
         accessLabel.Text = summary.TouchesText;
+        if (summary.AfterInstallText is { } afterInstallText)
+            ShowAfterInstallLine(afterInstallText);
         changelogLabel.Text = Localization.Changelog;
         changelogTextBox.Text = summary.ChangelogText;
         cancelButton.Text = Localization.Cancel;
@@ -50,5 +53,16 @@ internal sealed partial class NewUpdateDialog : BaseDialog
 
         if (UpdateManager.RunInstallerAsAdmin)
             NativeMethods.AddShieldToButton(installButton);
+    }
+
+    private void ShowAfterInstallLine(string text)
+    {
+        afterInstallLabel.Text = text;
+        afterInstallLabel.Visible = true;
+        // The labels are laid out in fixed positions: everything below moves down by one line, measured after scaling.
+        var lineHeight = accessLabel.Top - updateSizeLabel.Top;
+        foreach (var control in new Control[] { line1, changelogLabel, changelogTextBox, controlPanel1 })
+            control.Top += lineHeight;
+        ClientSize = new Size(ClientSize.Width, ClientSize.Height + lineHeight);
     }
 }

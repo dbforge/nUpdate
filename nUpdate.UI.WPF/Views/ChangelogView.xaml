@@ -55,6 +55,8 @@
                 <TextBlock Text="{Binding CurrentVersionText, Mode=OneWay}" />
                 <TextBlock Text="{Binding UpdateSizeText, Mode=OneWay}" />
                 <TextBlock Text="{Binding TouchesText, Mode=OneWay}" />
+                <TextBlock Text="{Binding AfterInstallText, Mode=OneWay}" FontWeight="Bold"
+                           Visibility="{Binding ShowsAfterInstallText, Converter={StaticResource BooleanToVisibility}}" />
             </StackPanel>
             <TextBlock Grid.Row="2" Text="{Binding LocProperties.Changelog, Mode=OneWay}" Margin="0,10,0,3" />
             <TextBox Grid.Row="3" Text="{Binding ChangelogText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"

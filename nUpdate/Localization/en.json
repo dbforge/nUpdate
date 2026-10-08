@@ -15,6 +15,7 @@
   "touchesFiles": "File system",
   "touchesProcesses": "Processes",
   "touchesServices": "Services",
+  "staysClosedAfterUpdate": "{0} stays closed after the update.",
   "noUpdatesTitle": "There are no new updates available.",
   "noUpdatesInfo": "The application is currently up-to-date.",
   "downloading": "Downloading updates...",

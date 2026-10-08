@@ -78,6 +78,7 @@ public sealed class AvaloniaDialogTests : IDisposable
         Dispatcher.UIThread.RunJobs();
         Find<TextBlock>(confirm, "HeaderText").Text.ShouldBe("1 new update available.");
         Find<TextBlock>(confirm, "TouchesText").Text.ShouldBe("Accesses: Processes");
+        Find<TextBlock>(confirm, "AfterInstallText").IsVisible.ShouldBeFalse();
         Find<TextBox>(confirm, "ChangelogBox").Text!.ShouldContain("Faster start.");
         Find<Button>(confirm, "InstallButton").Command!.Execute(null);
 
@@ -202,7 +203,7 @@ public sealed class AvaloniaDialogTests : IDisposable
     }
 
     [AvaloniaFact]
-    public async Task NewUpdateDialog_SummarizesSeveralPackagesWithoutOperations()
+    public async Task NewUpdateDialog_SummarizesSeveralPackagesWithoutOperationsThatLeaveTheApplicationClosed()
     {
         var feed = new UpdateFeed();
         foreach (var version in new[] { "1.1.0", "1.2.0" })
@@ -211,6 +212,7 @@ public sealed class AvaloniaDialogTests : IDisposable
             {
                 Version = new UpdateVersion(version),
                 Necessary = true,
+                AfterInstall = version == "1.2.0" ? AfterInstall.Close : null,
                 Changelog = { ["en"] = $"Changes in {version}." },
                 Files = [new PackageFile { Path = $"packages/{version}/any.zip", Size = 1000, Sha512 = "x", Signature = new PackageSignature { Value = "s" } }],
             });
@@ -225,6 +227,14 @@ public sealed class AvaloniaDialogTests : IDisposable
         viewModel.Summary.AvailableVersionsText.ShouldContain("1.1.0");
         viewModel.Summary.ChangelogText.ShouldContain("Changes in 1.2.0.");
         viewModel.InstallCommand.Execute(null); // no dialog listens: nothing happens
+
+        var dialog = new UpdateDialog(viewModel);
+        dialog.Show();
+        Dispatcher.UIThread.RunJobs();
+        var afterInstall = Find<TextBlock>(dialog, "AfterInstallText");
+        afterInstall.Text.ShouldBe("TestApp stays closed after the update.");
+        afterInstall.IsVisible.ShouldBeTrue();
+        dialog.Close();
     }
 
     [AvaloniaFact]

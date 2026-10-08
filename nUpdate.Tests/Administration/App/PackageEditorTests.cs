@@ -98,6 +98,9 @@ public class PackageEditorTests
         request.RolloutConditions.Single().Key.ShouldBe("R");
         request.Changelog[new CultureInfo("en")].ShouldBe("Changes");
         request.Necessary.ShouldBeFalse();
+        request.AfterInstall.ShouldBeNull();
+        editor.AfterUpdate = editor.AfterInstallChoices.Single(c => c.Value == AfterInstall.Close);
+        editor.BuildRequest().AfterInstall.ShouldBe(AfterInstall.Close);
         editor.RestrictVersions = false;
         editor.BuildRequest().UnsupportedVersions.ShouldBeEmpty();
     }
@@ -330,6 +333,7 @@ public class PackageEditorTests
             { Mode = RolloutConditionMode.All, Conditions = [new RolloutCondition("R", "east", true)] },
             Statistics = new PackageStatistics { Url = "nupdate-statistics.php", Enabled = true },
             Necessary = true,
+            AfterInstall = AfterInstall.Restart,
             Files = [new PackageFile { Platform = "win-x86" }, new PackageFile { Platform = "linux-arm64" }],
         };
         var editing = Editor(project, entry);
@@ -346,12 +350,14 @@ public class PackageEditorTests
         editing.Conditions.Single().IsNegative.ShouldBeTrue();
         editing.RolloutConditionMode.ShouldBe(RolloutConditionMode.All);
         editing.IncludeInStatistics.ShouldBeTrue();
+        editing.AfterUpdate.Display.ShouldBe("Restart the application");
         editing.Platforms.Select(p => p.Display).ShouldBe(["Windows x86 (win-x86)", "Linux ARM64 (linux-arm64)"]);
         editing.SelectedPlatform.Platform.ShouldBe("win-x86");
         editing.Validate().ShouldBeNull();
 
         editing.Description = " new ";
         editing.Necessary = false;
+        editing.AfterUpdate = AfterInstallChoice.For(null);
         editing.Changelogs[1].Text = " ";
         var closedEdit = new List<bool>();
         editing.CloseRequested += (_, a) => closedEdit.Add(a);
@@ -359,7 +365,7 @@ public class PackageEditorTests
         closedEdit.ShouldBe([true]);
         await _context.Publisher.Received().UpdateEntryAsync(project, Arg.Any<ProjectSecrets>(),
             Arg.Is<PackageInfo>(c =>
-                !c.Necessary && c.Changelog.Count == 1 && c.UnsupportedVersions.Count == 1 &&
+                !c.Necessary && c.AfterInstall == null && c.Changelog.Count == 1 && c.UnsupportedVersions.Count == 1 &&
                 c.Rollout.Conditions.Count == 1 && c.Statistics!.Enabled &&
                 c.Statistics.Url == "nupdate-statistics.php"), Arg.Any<IProgress<PipelineProgress>>(),
             Arg.Any<CancellationToken>());
@@ -401,6 +407,9 @@ public class PackageEditorTests
         }
 
         window.SectionList.ItemCount.ShouldBe(6);
+        window.AfterUpdateBox.ItemCount.ShouldBe(3);
+        window.AfterUpdateBox.SelectedItem = viewModel.AfterInstallChoices[1];
+        viewModel.AfterUpdate.Value.ShouldBe(AfterInstall.Restart);
 
         window.OperationList.ItemCount.ShouldBe(2);
         window.FileList.ItemCount.ShouldBe(1);

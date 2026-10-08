@@ -52,6 +52,9 @@ internal static class FeedLoader
                 file.Touches ??= [];
             }
 
+            // Whether the running application can stay open while its files are replaced only the application knows.
+            if (package.AfterInstall is { } afterInstall && afterInstall != AfterInstall.Restart && afterInstall != AfterInstall.Close)
+                throw new InvalidFeedException($"The package \"{package.Version}\" asks for \"{afterInstall}\" after the update; a package can only ask to restart the application or to leave it closed.");
             package.Changelog ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             package.UnsupportedVersions ??= [];
             package.Rollout ??= new RolloutSettings();

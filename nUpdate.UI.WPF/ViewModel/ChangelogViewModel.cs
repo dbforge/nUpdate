@@ -20,6 +20,7 @@ public sealed class ChangelogViewModel : DialogViewModel
         UpdateSizeText = summary.UpdateSizeText;
         TouchesText = summary.TouchesText;
         ChangelogText = summary.ChangelogText;
+        AfterInstallText = summary.AfterInstallText;
         ShowsShield = updateManager.RunInstallerAsAdmin;
 
         InstallCommand = new RelayCommand(() => RequestClose(true));
@@ -41,6 +42,11 @@ public sealed class ChangelogViewModel : DialogViewModel
     public string TouchesText { get; }
 
     public string ChangelogText { get; }
+
+    /// <summary>That the application stays closed after the update, or <c>null</c> when it restarts or keeps running.</summary>
+    public string? AfterInstallText { get; }
+
+    public bool ShowsAfterInstallText => AfterInstallText is not null;
 
     /// <summary>Whether the install button shows the UAC shield because the installer runs elevated.</summary>
     public bool ShowsShield { get; }

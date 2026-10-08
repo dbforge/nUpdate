@@ -11,6 +11,9 @@
     <DataTemplate x:DataType="vm:PlatformChoice">
       <TextBlock Text="{Binding Display}" />
     </DataTemplate>
+    <DataTemplate x:DataType="vm:AfterInstallChoice">
+      <TextBlock Text="{Binding Display}" />
+    </DataTemplate>
   </Window.DataTemplates>
   <Window.Styles>
     <Style Selector="StackPanel.pagehead">
@@ -184,6 +187,14 @@
                                Text="Counts the downloads of this package in the project statistics. You can change this later." />
                   </StackPanel>
                 </DockPanel>
+                <Border Classes="hairline" />
+                <StackPanel Margin="18,14" Spacing="6">
+                  <TextBlock Classes="settingtitle" Text="After the update" />
+                  <ComboBox Name="AfterUpdateBox" ItemsSource="{Binding AfterInstallChoices}"
+                            SelectedItem="{Binding AfterUpdate}" MinWidth="280" />
+                  <TextBlock Classes="hint" Margin="0"
+                             Text="Whether the application starts again after this update. Usually the application decides; ask to leave it closed when the update needs a step before the next start, or to restart it when the application would otherwise stay closed. If one of several updates installed together asks to leave it closed, it stays closed." />
+                </StackPanel>
               </StackPanel>
             </Border>
             <StackPanel Spacing="8">

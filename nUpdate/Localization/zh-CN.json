@@ -15,6 +15,7 @@
   "touchesFiles": "文件系统",
   "touchesProcesses": "进度",
   "touchesServices": "服务",
+  "staysClosedAfterUpdate": "更新后，{0} 将保持关闭。",
   "noUpdatesTitle": "没有任何可用更新。",
   "noUpdatesInfo": "当前程序已是最新版本。",
   "downloading": "正在下载更新...",

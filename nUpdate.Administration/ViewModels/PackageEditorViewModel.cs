@@ -129,6 +129,20 @@ public sealed record PlatformChoice(string Platform)
     public string Display => $"{Name} ({Platform})";
 }
 
+/// <summary>What a package asks for after the update, with the name the editor shows.</summary>
+public sealed record AfterInstallChoice(AfterInstall? Value, string Display)
+{
+    public static IReadOnlyList<AfterInstallChoice> All { get; } =
+    [
+        new(null, "As the application decides"),
+        new(AfterInstall.Restart, "Restart the application"),
+        new(AfterInstall.Close, "Leave the application closed"),
+    ];
+
+    /// <summary>The choice for a value read from the feed, which only allows these three.</summary>
+    public static AfterInstallChoice For(AfterInstall? value) => All.Single(choice => choice.Value == value);
+}
+
 /// <summary>
 ///     The files and operations of the package file of one platform. For an existing package it remembers its operations
 ///     as they were, so the editor knows which platforms to build again.
@@ -248,6 +262,9 @@ public partial class PackageEditorViewModel : DialogViewModel
 
     [ObservableProperty] private bool _necessary;
 
+    /// <summary>Whether the application starts again after this update; see <see cref="UpdateManager.DefaultAfterInstall" />.</summary>
+    [ObservableProperty] private AfterInstallChoice _afterUpdate = AfterInstallChoice.All[0];
+
     [ObservableProperty] private bool _publish = true;
 
     [ObservableProperty] private bool _includeInStatistics = true;
@@ -312,6 +329,7 @@ public partial class PackageEditorViewModel : DialogViewModel
         Version = entry.Version.ToString();
         Description = project.FindPackage(entry.Version)?.Description ?? string.Empty;
         Necessary = entry.Necessary;
+        AfterUpdate = AfterInstallChoice.For(entry.AfterInstall);
         CanChangeContent = existing.Content is not null;
         if (existing.Content is null)
         {
@@ -432,6 +450,8 @@ public partial class PackageEditorViewModel : DialogViewModel
     public ObservableCollection<RolloutConditionItemViewModel> Conditions { get; } = [];
 
     public IReadOnlyList<RolloutConditionMode> RolloutConditionModes { get; } = Enum.GetValues<RolloutConditionMode>();
+
+    public IReadOnlyList<AfterInstallChoice> AfterInstallChoices => AfterInstallChoice.All;
 
     public IReadOnlyList<PackageRoot> Roots { get; } = Enum.GetValues<PackageRoot>();
 
@@ -909,6 +929,7 @@ public partial class PackageEditorViewModel : DialogViewModel
         {
             Description = Description.Trim(),
             Necessary = Necessary,
+            AfterInstall = AfterUpdate.Value,
             Publish = Publish,
             IncludeInStatistics = IncludeInStatistics,
             RolloutConditionMode = RolloutConditionMode,
@@ -927,6 +948,7 @@ public partial class PackageEditorViewModel : DialogViewModel
     {
         var entry = _existingEntry ?? throw new InvalidOperationException("The editor is not in edit mode.");
         entry.Necessary = Necessary;
+        entry.AfterInstall = AfterUpdate.Value;
         entry.Statistics = Project.Statistics.Enabled
             ? new PackageStatistics { Url = PublishService.StatisticsUrl(Project), Enabled = IncludeInStatistics }
             : null;

@@ -186,7 +186,28 @@ public sealed class UpdateManager : IDisposable
     /// <summary>Timeout for every HTTP request when the HTTP client is created on first use.</summary>
     public TimeSpan HttpTimeout { get; set; } = TimeSpan.FromSeconds(100);
 
-    public AfterInstall AfterInstall { get; set; } = AfterInstall.Restart;
+    /// <summary>
+    ///     What happens to the application after an update unless a package says otherwise: <c>Restart</c> (the default),
+    ///     <c>Close</c> or <c>KeepRunning</c>. A package can ask to restart the application or to leave it closed instead
+    ///     (set in nUpdate Administration); <see cref="AfterInstall" /> is the outcome.
+    /// </summary>
+    public AfterInstall DefaultAfterInstall { get; set; } = AfterInstall.Restart;
+
+    /// <summary>
+    ///     What happens to the application after installing <see cref="AvailableUpdates" />: <c>Close</c> when one of
+    ///     them asks to leave it closed, <c>Restart</c> when one asks to restart it, otherwise
+    ///     <see cref="DefaultAfterInstall" />.
+    /// </summary>
+    public AfterInstall AfterInstall
+    {
+        get
+        {
+            // Closed wins: a package that needs the application closed, for example for a manual step, is not outvoted.
+            if (AvailableUpdates.Any(p => p.AfterInstall == AfterInstall.Close))
+                return AfterInstall.Close;
+            return AvailableUpdates.Any(p => p.AfterInstall == AfterInstall.Restart) ? AfterInstall.Restart : DefaultAfterInstall;
+        }
+    }
 
     /// <summary>Whether the installer asks for administrator rights through UAC. Only applies on Windows; Linux and macOS install as the current user.</summary>
     public bool RunInstallerAsAdmin { get; set; } = true;
@@ -366,6 +387,7 @@ public sealed class UpdateManager : IDisposable
         if (!_fileSystem.File.Exists(installerPath))
             throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Texts.InstallerNotFound, installerPath), installerPath);
 
+        var afterInstall = AfterInstall;
         var isWindows = PackagePlatform.IsWindows(Platform);
         var bundle = PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOS ? FindBundle(executablePath) : null;
         if (!isWindows)
@@ -392,8 +414,8 @@ public sealed class UpdateManager : IDisposable
             },
             Host = new HostOptions
             {
-                ProcessId = AfterInstall == AfterInstall.KeepRunning ? null : _services.ApplicationInfo.CurrentProcessId,
-                AfterInstall = AfterInstall,
+                ProcessId = afterInstall == AfterInstall.KeepRunning ? null : _services.ApplicationInfo.CurrentProcessId,
+                AfterInstall = afterInstall,
             },
             Arguments = Arguments.ToList(),
             Ui = new InstallerUiOptions
@@ -414,7 +436,7 @@ public sealed class UpdateManager : IDisposable
             return false;
         }
 
-        if (AfterInstall != AfterInstall.KeepRunning)
+        if (afterInstall != AfterInstall.KeepRunning)
             _services.ApplicationTerminator.Terminate();
         return true;
     }

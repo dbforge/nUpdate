@@ -41,6 +41,8 @@
         <TextBlock Text="{Binding Summary.CurrentVersionText}" />
         <TextBlock Name="SizeText" Text="{Binding Summary.UpdateSizeText}" />
         <TextBlock Name="TouchesText" Text="{Binding Summary.TouchesText}" />
+        <TextBlock Name="AfterInstallText" Text="{Binding Summary.AfterInstallText}" FontWeight="SemiBold"
+                   IsVisible="{Binding Summary.AfterInstallText, Converter={x:Static ObjectConverters.IsNotNull}}" />
         <TextBlock Text="{Binding Texts.Changelog}" FontWeight="SemiBold" Margin="0,8,0,0" />
         <TextBox Name="ChangelogBox" Text="{Binding Summary.ChangelogText}" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="160" />
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
