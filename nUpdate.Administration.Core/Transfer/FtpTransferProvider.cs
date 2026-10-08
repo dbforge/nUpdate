@@ -139,11 +139,15 @@ public sealed class FtpTransferProvider : ITransferProvider
         _client.Dispose();
     }
 
-    private static bool IsTransferError(Exception ex) => ex is FtpException or IOException or System.Net.Sockets.SocketException or TimeoutException;
+    // A failed TLS handshake on a data connection surfaces as an AuthenticationException.
+    private static bool IsTransferError(Exception ex) =>
+        ex is FtpException or IOException or System.Net.Sockets.SocketException or TimeoutException or System.Security.Authentication.AuthenticationException;
 
-    private static Task Guard(Func<Task> action) => TransferGuard.RunAsync(action, IsTransferError);
+    private Task Guard(Func<Task> action) => TransferGuard.RunAsync(action, IsTransferError, Describe);
 
-    private static Task<T> Guard<T>(Func<Task<T>> action) => TransferGuard.RunAsync(action, IsTransferError);
+    private Task<T> Guard<T>(Func<Task<T>> action) => TransferGuard.RunAsync(action, IsTransferError, Describe);
+
+    private string Describe(Exception ex) => FtpsDataConnection.Describe(ex, _settings.Protocol);
 
     private string Absolute(string remotePath) => RemotePath.Combine(_settings.Directory, remotePath);
 

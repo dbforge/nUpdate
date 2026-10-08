@@ -164,9 +164,9 @@ public sealed class SftpTransferProvider : ITransferProvider
 
     private static bool IsTransferError(Exception ex) => ex is SshException or IOException or System.Net.Sockets.SocketException;
 
-    private static Task Guard(Func<Task> action) => TransferGuard.RunAsync(action, IsTransferError);
+    private static Task Guard(Func<Task> action) => TransferGuard.RunAsync(action, IsTransferError, ex => ex.Message);
 
-    private static Task<T> Guard<T>(Func<Task<T>> action) => TransferGuard.RunAsync(action, IsTransferError);
+    private static Task<T> Guard<T>(Func<Task<T>> action) => TransferGuard.RunAsync(action, IsTransferError, ex => ex.Message);
 
     private string Absolute(string remotePath) => RemotePath.Combine(_settings.Directory, remotePath);
 
