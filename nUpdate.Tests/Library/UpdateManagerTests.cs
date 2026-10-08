@@ -155,7 +155,7 @@ public class UpdateManagerTests
         manager.Culture.Name.ShouldBe("fr-CA");
 
         // Unknown cultures fall back to English; parents and siblings of the shipped German files are found.
-        manager.Culture = new CultureInfo("es-ES");
+        manager.Culture = new CultureInfo("pt-BR");
         manager.Texts.Cancel.ShouldBe("Cancel");
         manager.Culture = new CultureInfo("de-LI");
         manager.Texts.Cancel.ShouldBe("Abbrechen");
