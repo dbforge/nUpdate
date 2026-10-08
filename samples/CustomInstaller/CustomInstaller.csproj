@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>CustomInstaller</AssemblyName>
+    <Description>Sample of an update installer of your own: a WPF window on top of the nUpdate.UpdateInstaller base library.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- In your own installer: <PackageReference Include="nUpdate.UpdateInstaller" Version="5.0.0" /> -->
+    <ProjectReference Include="../../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj" />
+  </ItemGroup>
+
+</Project>

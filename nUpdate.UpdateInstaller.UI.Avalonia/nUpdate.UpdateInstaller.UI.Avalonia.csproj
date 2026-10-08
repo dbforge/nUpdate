@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ApplicationIcon>Assets/nUpdate.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- No ICU: a self-contained installer must start on minimal Linux systems; the texts come translated in the options. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeSymbols>false</IncludeSymbols>
+    <Description>The built-in update installer of nUpdate: a small window with the progress of the update, for Windows, Linux and macOS. Reference it and the build copies the installer for your app's runtime identifier to nUpdate.Installer/&lt;rid&gt;/, where UpdateManager looks for it.</Description>
+    <PackageTags>update;updater;auto-update;installer;avalonia</PackageTags>
+    <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Published self-contained, as one trimmed file per runtime identifier, so it runs without an installed .NET.
+    Newtonsoft.Json and the nUpdate assemblies read the options through reflection and are kept whole, which is why the
+    trim analysis warnings about them do not apply.
+  -->
+  <PropertyGroup>
+    <PublishTrimmed>true</PublishTrimmed>
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <!-- Analysing the whole app for trimming belongs to the publish of each runtime identifier, not to every build. -->
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Newtonsoft.Json" />
+    <TrimmerRootAssembly Include="nUpdate" />
+    <TrimmerRootAssembly Include="nUpdate.UpdateInstaller" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="nUpdate.Tests" />
+  </ItemGroup>
+
+  <!--
+    Packing publishes the installer for every runtime identifier (all of them build on Linux) and ships only the
+    executables below installer/<rid>/, plus the build targets that copy them into the consuming application.
+  -->
+  <PropertyGroup>
+    <nUpdateInstallerRuntimeIdentifiers>win-x64;win-x86;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</nUpdateInstallerRuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(_IsPacking)' == 'true'">$(nUpdateInstallerRuntimeIdentifiers)</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="build/nUpdate.UpdateInstaller.UI.Avalonia.targets" Pack="true" PackagePath="build/" />
+  </ItemGroup>
+
+  <Target Name="PublishInstallerBuilds" BeforeTargets="_GetPackageFiles" Condition="'$(_IsPacking)' == 'true'">
+    <ItemGroup>
+      <_InstallerRuntime Include="$(nUpdateInstallerRuntimeIdentifiers)" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish"
+             Properties="Configuration=$(Configuration);RuntimeIdentifier=%(_InstallerRuntime.Identity);PublishDir=$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/;_IsPacking=true" />
+    <ItemGroup>
+      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName).exe" Condition="$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)" />
+      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName)" Condition="!$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)" />
+      <None Include="@(_InstallerExecutable)" Pack="true" PackagePath="installer/%(_InstallerExecutable.Runtime)/" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(_InstallerExecutable.Identity)')" Text="The installer for %(_InstallerExecutable.Runtime) was not published to %(_InstallerExecutable.Identity)." />
+  </Target>
+
+</Project>
