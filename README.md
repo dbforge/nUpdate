@@ -575,14 +575,16 @@ The migration assistant ends with these steps:
 - **Administration**: rewritten with Avalonia for Windows, Linux and macOS. Transfer over SFTP (the default for new
   projects), FTPS and FTP is built in (SSH.NET and FluentFTP), the project proxy applies to all of them, and third-party
   transfer plugins implement the asynchronous `ITransferProvider`; the Starksoft libraries and the IPv4/IPv6 preference
-  are gone. Server certificates and SSH host keys must be trusted explicitly by fingerprint. Renaming a project changes
-  its name only; the folder stays. The data folder (`nUpdate Administration` in the roaming application data) only
-  holds the list of known projects (`projects.json`) and the remembered project passwords. nUpdate Administration 4
-  uses the same folder: its `projconf.json` is read until the new list exists and never changed, and its local package
-  copies are left alone, so both versions can be installed side by side. The remembered passwords are protected with
-  DPAPI on Windows, and on Linux and macOS with a key ring in that folder, so they are only as private as the folder
-  itself. Editing the files of an already created package, the server directory browser and cancelling a running
-  upload are not available in this version.
+  are gone. Server certificates and SSH host keys must be trusted explicitly by fingerprint. FTPS cannot resume the TLS
+  session of the control connection on data connections, which vsftpd and ProFTPD require by default; allow fresh
+  sessions on the server (`require_ssl_reuse=NO`, `TLSOptions NoSessionReuseRequired`) or use SFTP, as the error message
+  suggests. Renaming a project changes its name only; the folder stays. The data folder (`nUpdate Administration` in the
+  roaming application data) only holds the list of known projects (`projects.json`) and the remembered project
+  passwords. nUpdate Administration 4 uses the same folder: its `projconf.json` is read until the new list exists and
+  never changed, and its local package copies are left alone, so both versions can be installed side by side. The
+  remembered passwords are protected with DPAPI on Windows, and on Linux and macOS with a key ring in that folder, so
+  they are only as private as the folder itself. Editing the files of an already created package, the server directory
+  browser and cancelling a running upload are not available in this version.
 - **Timeouts and cleanup**: the search timeout grew from 10 to 100 seconds (`HttpTimeout`, replacing `SearchTimeout`);
   the installer is copied to one fixed temp folder per application and old downloads are removed before a new one.
   Overriding `TerminateApplication` is replaced by `UpdateManagerServices.ApplicationTerminator`.

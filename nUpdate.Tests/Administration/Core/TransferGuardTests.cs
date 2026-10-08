@@ -9,16 +9,17 @@ public class TransferGuardTests
     public async Task Run_WrapsOnlyTheProviderExceptions()
     {
         static bool IsTransferError(Exception ex) => ex is IOException;
+        static string Describe(Exception ex) => "described: " + ex.Message;
 
-        await TransferGuard.RunAsync(() => Task.CompletedTask, IsTransferError);
-        (await TransferGuard.RunAsync(() => Task.FromResult(7), IsTransferError)).ShouldBe(7);
+        await TransferGuard.RunAsync(() => Task.CompletedTask, IsTransferError, Describe);
+        (await TransferGuard.RunAsync(() => Task.FromResult(7), IsTransferError, Describe)).ShouldBe(7);
 
-        var wrapped = await Should.ThrowAsync<TransferException>(() => TransferGuard.RunAsync(() => throw new IOException("broken pipe"), IsTransferError));
-        wrapped.Message.ShouldBe("broken pipe");
+        var wrapped = await Should.ThrowAsync<TransferException>(() => TransferGuard.RunAsync(() => throw new IOException("broken pipe"), IsTransferError, Describe));
+        wrapped.Message.ShouldBe("described: broken pipe");
         wrapped.InnerException.ShouldBeOfType<IOException>();
-        await Should.ThrowAsync<TransferException>(() => TransferGuard.RunAsync<int>(() => throw new IOException("x"), IsTransferError));
+        (await Should.ThrowAsync<TransferException>(() => TransferGuard.RunAsync<int>(() => throw new IOException("x"), IsTransferError, Describe))).Message.ShouldBe("described: x");
 
-        await Should.ThrowAsync<InvalidOperationException>(() => TransferGuard.RunAsync(() => throw new InvalidOperationException(), IsTransferError));
-        await Should.ThrowAsync<InvalidOperationException>(() => TransferGuard.RunAsync<int>(() => throw new InvalidOperationException(), IsTransferError));
+        await Should.ThrowAsync<InvalidOperationException>(() => TransferGuard.RunAsync(() => throw new InvalidOperationException(), IsTransferError, Describe));
+        await Should.ThrowAsync<InvalidOperationException>(() => TransferGuard.RunAsync<int>(() => throw new InvalidOperationException(), IsTransferError, Describe));
     }
 }
