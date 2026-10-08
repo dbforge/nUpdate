@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.UI.Avalonia.ViewModels"
+        x:Class="nUpdate.UI.Avalonia.Views.UpdateDialog"
+        x:DataType="vm:DialogViewModel"
+        Title="{Binding Title}" Width="520" SizeToContent="Height" CanResize="False" WindowStartupLocation="CenterOwner">
+  <!-- The look of the nUpdate installer window: a title, a muted status line, a slim accent progress bar. -->
+  <!-- The accent (UpdateAccentBrush and Fluent's accent buttons) comes from the code behind. -->
+  <Window.Styles>
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Opacity" Value="0.75" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="MinWidth" Value="88" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="ProgressBar">
+      <Setter Property="Height" Value="8" />
+      <Setter Property="Foreground" Value="{DynamicResource UpdateAccentBrush}" />
+    </Style>
+  </Window.Styles>
+  <Window.DataTemplates>
+    <DataTemplate DataType="vm:SearchDialogViewModel">
+      <StackPanel Spacing="10">
+        <TextBlock Name="SearchingText" Classes="title" Text="{Binding Texts.Searching}" />
+        <ProgressBar Name="SearchProgress" IsIndeterminate="True" />
+        <Button Name="CancelSearchButton" Content="{Binding Texts.Cancel}" Command="{Binding CancelCommand}" HorizontalAlignment="Right" IsCancel="True" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="vm:NewUpdateDialogViewModel">
+      <StackPanel Spacing="6">
+        <TextBlock Name="HeaderText" Classes="title" Text="{Binding Summary.Header}" />
+        <TextBlock Classes="muted" Text="{Binding Summary.InfoText}" />
+        <TextBlock Name="VersionsText" Text="{Binding Summary.AvailableVersionsText}" Margin="0,6,0,0" />
+        <TextBlock Text="{Binding Summary.CurrentVersionText}" />
+        <TextBlock Name="SizeText" Text="{Binding Summary.UpdateSizeText}" />
+        <TextBlock Name="TouchesText" Text="{Binding Summary.TouchesText}" />
+        <TextBlock Text="{Binding Texts.Changelog}" FontWeight="SemiBold" Margin="0,8,0,0" />
+        <TextBox Name="ChangelogBox" Text="{Binding Summary.ChangelogText}" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="160" />
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+          <Button Name="InstallButton" Classes="accent" Content="{Binding Texts.Install}" Command="{Binding InstallCommand}" IsDefault="True" />
+          <Button Name="CancelInstallButton" Content="{Binding Texts.Cancel}" Command="{Binding CancelCommand}" IsCancel="True" />
+        </StackPanel>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="vm:DownloadDialogViewModel">
+      <StackPanel Spacing="8">
+        <TextBlock Classes="title" Text="{Binding Texts.Downloading}" />
+        <TextBlock Name="DownloadInfoText" Classes="muted" Text="{Binding InfoText}" />
+        <ProgressBar Name="DownloadProgress" Minimum="0" Maximum="100" Value="{Binding Progress}" />
+        <Button Name="CancelDownloadButton" Content="{Binding Texts.Cancel}" Command="{Binding CancelCommand}" HorizontalAlignment="Right" IsCancel="True" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="vm:MessageDialogViewModel">
+      <StackPanel Spacing="8">
+        <TextBlock Name="CaptionText" Classes="title" Text="{Binding Caption}" />
+        <SelectableTextBlock Name="MessageText" Text="{Binding Text}" TextWrapping="Wrap" />
+        <Expander Name="DetailsExpander" Header="Details" IsVisible="{Binding Details, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch">
+          <SelectableTextBlock Text="{Binding Details}" TextWrapping="Wrap" FontSize="11" />
+        </Expander>
+        <Button Name="CloseButton" Classes="accent" Content="{Binding Texts.Close}" Command="{Binding CloseCommand}" HorizontalAlignment="Right" IsDefault="True" IsCancel="True" />
+      </StackPanel>
+    </DataTemplate>
+  </Window.DataTemplates>
+  <ContentControl Name="Body" Content="{Binding}" Margin="20,18,20,18" />
+</Window>

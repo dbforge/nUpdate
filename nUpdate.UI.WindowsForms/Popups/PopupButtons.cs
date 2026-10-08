@@ -1,11 +1,8 @@
-﻿// PopupButtons.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
+namespace nUpdate.UI.WindowsForms.Popups;
 
-namespace nUpdate.UI.WindowsForms.Popups
+/// <summary>The buttons of a <see cref="Popup" />.</summary>
+internal enum PopupButtons
 {
-    public enum PopupButtons
-    {
-        YesNo,
-        Ok
-    }
+    YesNo,
+    Ok,
 }

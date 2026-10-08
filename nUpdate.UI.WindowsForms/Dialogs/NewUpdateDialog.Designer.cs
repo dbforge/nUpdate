@@ -199,7 +199,6 @@ namespace nUpdate.UI.WindowsForms.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormTitle";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewUpdateDialog_FormClosing);
             this.Load += new System.EventHandler(this.NewUpdateDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox)).EndInit();
             this.controlPanel1.ResumeLayout(false);

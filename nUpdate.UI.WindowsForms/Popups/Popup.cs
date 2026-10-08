@@ -1,102 +1,29 @@
-﻿// Popup.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace nUpdate.UI.WindowsForms.Popups
+namespace nUpdate.UI.WindowsForms.Popups;
+
+/// <summary>Shows a message in the style of a task dialog, optionally with the exception behind it.</summary>
+internal static class Popup
 {
-    internal class Popup
+    /// <param name="owner">The window to centre on; <c>null</c> uses the active form.</param>
+    /// <param name="icon">One of the <see cref="SystemIcons" />; error, warning and question icons play their sound.</param>
+    /// <param name="title">The heading.</param>
+    /// <param name="message">The text.</param>
+    /// <param name="exception">An exception whose full text the user can copy from the context menu.</param>
+    /// <param name="buttons">The buttons to offer.</param>
+    public static DialogResult Show(IWin32Window? owner, Icon icon, string title, string message, Exception? exception = null,
+        PopupButtons buttons = PopupButtons.Ok)
     {
-        /// <summary>
-        ///     Shows a new popup-window.
-        /// </summary>
-        /// <param name="popupIcon">The icons of the popup.</param>
-        /// <param name="title">The title of the popup.</param>
-        /// <param name="infoMessage">The info message of the popup.</param>
-        /// <param name="buttons">The buttons to show for the user-interaction.</param>
-        public static DialogResult ShowPopup(Icon popupIcon, string title, string infoMessage, PopupButtons buttons)
+        using var dialog = new PopupDialog
         {
-            var popupWindow = new PopupDialog
-            {
-                PopupIcon = popupIcon,
-                Title = title,
-                InfoMessage = infoMessage,
-                Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            return popupWindow.ShowDialog(Form.ActiveForm);
-        }
-
-        /// <summary>
-        ///     Shows a new popup-window.
-        /// </summary>
-        /// <param name="popupIcon">The icons of the popup.</param>
-        /// <param name="title">The title of the popup.</param>
-        /// <param name="ex">The exception to handle in the popup-information.</param>
-        /// <param name="buttons">The buttons to show for the user-interaction.</param>
-        public static DialogResult ShowPopup(Icon popupIcon, string title, Exception ex, PopupButtons buttons)
-        {
-            var popupWindow = new PopupDialog
-            {
-                PopupIcon = popupIcon,
-                Title = title,
-                InfoMessage = ex.Message,
-                Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent,
-                Exception = ex
-            };
-
-            return popupWindow.ShowDialog(Form.ActiveForm);
-        }
-
-        /// <summary>
-        ///     Shows a new popup-window.
-        /// </summary>
-        /// <param name="owner">The owner of the modal popup dialog.</param>
-        /// <param name="popupIcon">The icons of the popup.</param>
-        /// <param name="title">The title of the popup.</param>
-        /// <param name="infoMessage">The info message of the popup.</param>
-        /// <param name="buttons">The buttons to show for the user-interaction.</param>
-        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, string infoMessage,
-            PopupButtons buttons)
-        {
-            var popupWindow = new PopupDialog
-            {
-                PopupIcon = popupIcon,
-                Title = title,
-                InfoMessage = infoMessage,
-                Buttons = buttons,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            return popupWindow.ShowDialog(owner);
-        }
-
-        /// <summary>
-        ///     Shows a new popup-window.
-        /// </summary>
-        /// <param name="owner">The owner of the modal popup dialog.</param>
-        /// <param name="popupIcon">The icons of the popup.</param>
-        /// <param name="title">The title of the popup.</param>
-        /// <param name="exception">The exception to handle in the popup-information.</param>
-        /// <param name="buttons">The buttons to show for the user-interaction.</param>
-        public static DialogResult ShowPopup(IWin32Window owner, Icon popupIcon, string title, Exception exception,
-            PopupButtons buttons)
-        {
-            var popupWindow = new PopupDialog
-            {
-                PopupIcon = popupIcon,
-                Title = title,
-                InfoMessage = exception.Message,
-                StartPosition = FormStartPosition.CenterParent,
-                Buttons = buttons,
-                Exception = exception
-            };
-
-            return popupWindow.ShowDialog(owner);
-        }
+            PopupIcon = icon,
+            Title = title,
+            InfoMessage = message,
+            Exception = exception,
+            Buttons = buttons,
+            StartPosition = FormStartPosition.CenterParent,
+        };
+        return dialog.ShowDialog(owner ?? Form.ActiveForm);
     }
 }

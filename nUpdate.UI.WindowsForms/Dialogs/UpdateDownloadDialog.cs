@@ -1,107 +1,57 @@
-﻿// UpdateDownloadDialog.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
-using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
-using nUpdate.Exceptions;
-using nUpdate.Localization;
-using nUpdate.UI.WindowsForms.Popups;
-using nUpdate.UpdateEventArgs;
+using nUpdate.Ui;
+using nUpdate.Updating;
 
-namespace nUpdate.UI.WindowsForms.Dialogs
+namespace nUpdate.UI.WindowsForms.Dialogs;
+
+/// <summary>Shows the download progress; cancelling closes the dialog and the download.</summary>
+internal sealed partial class UpdateDownloadDialog : BaseDialog
 {
-    internal partial class UpdateDownloadDialog : BaseDialog
+    private readonly Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> _download;
+    private readonly DialogOperation<bool> _operation = new();
+
+    internal UpdateDownloadDialog(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
+        : base(updateManager)
     {
-        private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
-        private LocalizationProperties _lp;
+        _download = download ?? throw new ArgumentNullException(nameof(download));
+        InitializeComponent();
+        Disposed += (_, _) => _operation.Dispose();
+    }
 
-        internal UpdateDownloadDialog()
-        {
-            InitializeComponent();
-        }
+    /// <summary>Completes once the dialog has closed; cancelled or faulted like the download.</summary>
+    internal Task Completion => _operation.Completion;
 
-        internal float ProgressPercentage
-        {
-            get => downloadProgressBar.Value;
-            set
-            {
-                try
-                {
-                    downloadProgressBar.Value = (int) value;
-                    infoLabel.Text = string.Format(CultureInfo.CurrentCulture,
-                        _lp.UpdateDownloadDialogLoadingInfo, Math.Round(value, 1));
-                }
-                catch (InvalidOperationException)
-                {
-                    // Prevent race conditions
-                }
-            }
-        }
+    private void cancelButton_Click(object sender, EventArgs e) => _operation.Cancel();
 
-        private void Cancel()
-        {
-            UpdateManager.CancelDownloadAsync();
-            DialogResult = DialogResult.Cancel;
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            Cancel();
-        }
-
-        private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason != CloseReason.UserClosing)
-                return;
+    private void UpdateDownloadDialog_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (e.CloseReason == CloseReason.UserClosing && !_operation.TryClose())
             e.Cancel = true;
-            Cancel();
-        }
+    }
 
-        private void UpdateDownloadDialog_Load(object sender, EventArgs e)
+    private void UpdateDownloadDialog_Load(object sender, EventArgs e)
+    {
+        headerLabel.Text = Localization.Downloading;
+        cancelButton.Text = Localization.Cancel;
+        ShowProgress(0);
+    }
+
+    private async void UpdateDownloadDialog_Shown(object sender, EventArgs e)
+    {
+        var progress = new Progress<UpdateDownloadProgress>(value => ShowProgress(value.Percentage));
+        await _operation.RunAsync(async token =>
         {
-            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
-                UpdateManager.CultureFilePaths);
+            await _download(progress, token);
+            return true;
+        });
+        DialogResult = _operation.Succeeded ? DialogResult.OK : DialogResult.Cancel;
+        Close();
+    }
 
-            headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
-            infoLabel.Text = string.Format(
-                _lp.UpdateDownloadDialogLoadingInfo, "0");
-            cancelButton.Text = _lp.CancelButtonText;
-
-            Text = Application.ProductName;
-            Icon = _appIcon;
-        }
-
-        private async void UpdateDownloadDialog_Shown(object sender, EventArgs e)
-        {
-            var progress = new Progress<UpdateDownloadProgressChangedEventArgs>();
-            progress.ProgressChanged += (o, value) => ProgressPercentage = value.Percentage;
-
-            try
-            {
-                await UpdateManager.DownloadPackagesAsync(progress);
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
-            catch (StatisticsException ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Warning,
-                    "Error while adding a new statistics entry.",
-                    ex, PopupButtons.Ok);
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error,
-                    "Error while downloading the update package.",
-                    ex.InnerException ?? ex, PopupButtons.Ok);
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
-            DialogResult = DialogResult.OK;
-        }
+    private void ShowProgress(float percentage)
+    {
+        downloadProgressBar.Value = Math.Max(downloadProgressBar.Minimum, Math.Min(downloadProgressBar.Maximum, (int)percentage));
+        infoLabel.Text = string.Format(CultureInfo.CurrentCulture, Localization.DownloadingInfo, Math.Round(percentage, 1));
     }
 }

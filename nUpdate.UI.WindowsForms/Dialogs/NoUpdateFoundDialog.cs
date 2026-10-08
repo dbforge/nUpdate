@@ -1,39 +1,27 @@
-﻿// NoUpdateFoundDialog.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
-using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Localization;
+using nUpdate.Updating;
 
-namespace nUpdate.UI.WindowsForms.Dialogs
+namespace nUpdate.UI.WindowsForms.Dialogs;
+
+/// <summary>Tells the user that the application is up to date.</summary>
+internal sealed partial class NoUpdateFoundDialog : BaseDialog
 {
-    internal partial class NoUpdateFoundDialog : BaseDialog
+    internal NoUpdateFoundDialog(UpdateManager updateManager)
+        : base(updateManager)
     {
-        private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
-        private LocalizationProperties _lp;
+        InitializeComponent();
+    }
 
-        internal NoUpdateFoundDialog()
-        {
-            InitializeComponent();
-        }
+    private void closeButton_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Close();
+    }
 
-        private void closeButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-        }
-
-        private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
-        {
-            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
-                UpdateManager.CultureFilePaths);
-
-            closeButton.Text = _lp.CloseButtonText;
-            headerLabel.Text = _lp.NoUpdateDialogHeader;
-            infoLabel.Text = _lp.NoUpdateDialogInfoText;
-
-            Icon = _appIcon;
-            Text = Application.ProductName;
-        }
+    private void NoUpdateFoundDialog_Load(object sender, EventArgs e)
+    {
+        closeButton.Text = Localization.Close;
+        headerLabel.Text = Localization.NoUpdatesTitle;
+        infoLabel.Text = Localization.NoUpdatesInfo;
     }
 }

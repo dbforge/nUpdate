@@ -1,103 +1,75 @@
-﻿// PopupDialog.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 
-namespace nUpdate.UI.WindowsForms.Popups
+namespace nUpdate.UI.WindowsForms.Popups;
+
+internal sealed partial class PopupDialog : Form
 {
-    public partial class PopupDialog : Form
+    public PopupDialog()
     {
-        public PopupDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        /// <summary>
-        ///     Gets or sets the buttons to show for the user-interaction.
-        /// </summary>
-        public PopupButtons Buttons { get; set; }
+    public PopupButtons Buttons { get; set; } = PopupButtons.Ok;
 
-        /// <summary>
-        ///     Gets or sets the exception containing the message that should be shown in the text of the popup.
-        /// </summary>
-        public Exception Exception { get; set; }
+    /// <summary>The exception whose full text can be copied from the context menu.</summary>
+    public Exception? Exception { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the text of the popup.
-        /// </summary>
-        public string InfoMessage { get; set; }
+    public string InfoMessage { get; set; } = string.Empty;
 
-        /// <summary>
-        ///     Gets or sets the icon to show.
-        /// </summary>
-        public Icon PopupIcon { get; set; }
+    public Icon PopupIcon { get; set; } = SystemIcons.Information;
 
-        /// <summary>
-        ///     Gets or sets the title of the popup.
-        /// </summary>
-        public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-        private void closeButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+    private void closeButton_Click(object sender, EventArgs e) => Close();
 
-        private void copyEntireMessageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+    private void copyEntireMessageToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (Exception is not null)
             Clipboard.SetText(Exception.ToString());
-        }
+    }
 
-        private void noButton_Click(object sender, EventArgs e)
+    private void noButton_Click(object sender, EventArgs e) => DialogResult = DialogResult.No;
+
+    private void yesButton_Click(object sender, EventArgs e) => DialogResult = DialogResult.Yes;
+
+    private void PopupDialog_Shown(object sender, EventArgs e)
+    {
+        iconPictureBox.Image = PopupIcon.ToBitmap();
+        headerLabel.Text = Title;
+        messageLabel.Text = InfoMessage;
+
+        if (headerLabel.Height > 20)
+            headerLabel.Location = new Point(headerLabel.Location.X, headerLabel.Location.Y - 7);
+
+        if (messageLabel.Height > 41)
         {
-            DialogResult = DialogResult.No;
+            var difference = messageLabel.Height - 41;
+            messageLabel.Height += difference;
+            Height += difference;
+            controlPanel1.Location = new Point(controlPanel1.Location.X, controlPanel1.Location.Y + difference);
         }
 
-        private void PopupDialog_Shown(object sender, EventArgs e)
+        if (Buttons == PopupButtons.Ok)
         {
-            iconPictureBox.Image = PopupIcon.ToBitmap();
-            headerLabel.Text = Title;
-            messageLabel.Text = InfoMessage;
-
-            if (headerLabel.Height > 20)
-                headerLabel.Location = new Point(headerLabel.Location.X, headerLabel.Location.Y - 7);
-
-            if (messageLabel.Height > 41)
-            {
-                var difference = messageLabel.Height - 41;
-                messageLabel.Height += difference;
-                Height += difference;
-                controlPanel1.Location = new Point(controlPanel1.Location.X, controlPanel1.Location.Y + difference);
-            }
-
-            if (Buttons == PopupButtons.Ok)
-            {
-                closeButton.Visible = true;
-                AcceptButton = closeButton;
-            }
-            else
-            {
-                noButton.Visible = true;
-                yesButton.Visible = true;
-                AcceptButton = noButton;
-            }
-
-            if (Exception == null)
-                contextMenu.Enabled = false;
-
-            if (ReferenceEquals(PopupIcon, SystemIcons.Error))
-                SystemSounds.Hand.Play();
-            else if (ReferenceEquals(PopupIcon, SystemIcons.Warning))
-                SystemSounds.Exclamation.Play();
-            else if (ReferenceEquals(PopupIcon, SystemIcons.Question))
-                SystemSounds.Question.Play();
+            closeButton.Visible = true;
+            AcceptButton = closeButton;
         }
-
-        private void yesButton_Click(object sender, EventArgs e)
+        else
         {
-            DialogResult = DialogResult.Yes;
+            noButton.Visible = true;
+            yesButton.Visible = true;
+            AcceptButton = noButton;
         }
+
+        contextMenu.Enabled = Exception is not null;
+
+        if (ReferenceEquals(PopupIcon, SystemIcons.Error))
+            SystemSounds.Hand.Play();
+        else if (ReferenceEquals(PopupIcon, SystemIcons.Warning))
+            SystemSounds.Exclamation.Play();
+        else if (ReferenceEquals(PopupIcon, SystemIcons.Question))
+            SystemSounds.Question.Play();
     }
 }
