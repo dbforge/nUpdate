@@ -1,149 +1,185 @@
-﻿// Operation.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
-using System.ComponentModel;
 using Newtonsoft.Json;
 
-namespace nUpdate.Operations
+namespace nUpdate.Operations;
+
+/// <summary>
+///     An action the installer performs before or after replacing the application files. Each kind of operation is
+///     its own class; in JSON the <c>type</c> property names the kind.
+/// </summary>
+public abstract class Operation
 {
-    public class Operation
+    /// <summary>The JSON discriminator, for example <c>deleteFiles</c>.</summary>
+    [JsonProperty(Order = -2)]
+    public abstract string Type { get; }
+
+    /// <summary>The part of the system the operation touches.</summary>
+    [JsonIgnore]
+    public abstract OperationArea Area { get; }
+
+    /// <summary>When <c>true</c> the operation runs before the package files are copied, otherwise after.</summary>
+    public bool RunBeforeFileReplacement { get; set; }
+
+    /// <summary>Registry and service operations exist only on Windows; packages for other platforms must not contain them.</summary>
+    [JsonIgnore]
+    public bool RequiresWindows => IsWindowsOnly(Area);
+
+    /// <summary>Whether operations of the area exist only on Windows: the registry and services.</summary>
+    public static bool IsWindowsOnly(OperationArea area) => area is OperationArea.Registry or OperationArea.Services;
+
+    /// <summary>The discriminator of every operation class, so readers and editors can enumerate them.</summary>
+    public static IReadOnlyDictionary<string, Type> Types { get; } = new Dictionary<string, Type>(StringComparer.Ordinal)
     {
-        public Operation(OperationArea area, OperationMethod method, string value, object value2 = null)
-        {
-            Area = area;
-            Method = method;
-            Value = value;
-            Value2 = value2;
-        }
+        [DeleteFilesOperation.TypeName] = typeof(DeleteFilesOperation),
+        [RenameFileOperation.TypeName] = typeof(RenameFileOperation),
+        [CreateRegistryKeysOperation.TypeName] = typeof(CreateRegistryKeysOperation),
+        [DeleteRegistryKeysOperation.TypeName] = typeof(DeleteRegistryKeysOperation),
+        [SetRegistryValuesOperation.TypeName] = typeof(SetRegistryValuesOperation),
+        [DeleteRegistryValuesOperation.TypeName] = typeof(DeleteRegistryValuesOperation),
+        [StartProcessOperation.TypeName] = typeof(StartProcessOperation),
+        [TerminateProcessOperation.TypeName] = typeof(TerminateProcessOperation),
+        [StartServiceOperation.TypeName] = typeof(StartServiceOperation),
+        [StopServiceOperation.TypeName] = typeof(StopServiceOperation),
+    };
+}
 
-        /// <summary>
-        ///     The area of the current operation.
-        /// </summary>
-        public OperationArea Area { get; set; }
+/// <summary>Deletes files from a directory of the client. Placeholders such as <c>%program%</c> are expanded by the installer.</summary>
+public sealed class DeleteFilesOperation : Operation
+{
+    public const string TypeName = "deleteFiles";
 
-        /// <summary>
-        ///     The method of the current oepration.
-        /// </summary>
-        public OperationMethod Method { get; set; }
+    public override string Type => TypeName;
 
-        /// <summary>
-        ///     The value of the current operation.
-        /// </summary>
-        public string Value { get; set; }
+    public override OperationArea Area => OperationArea.Files;
 
-        /// <summary>
-        ///     The second value of the current operation if it needs more than one argument.
-        /// </summary>
-        public object Value2 { get; set; }
+    public string Directory { get; set; } = string.Empty;
 
-        [DefaultValue(false)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool ExecuteBeforeReplacingFiles { get; set; }
-        /// <summary>
-        ///     Gets the operation area and method from a given tag.
-        /// </summary>
-        /// <param name="areaTag">The tag to check.</param>
-        /// <returns>Returns a new Tuple with the area and method for the given tag.</returns>
-        public static Tuple<OperationArea, OperationMethod> GetOperation(object areaTag)
-        {
-            var areaTagString = areaTag.ToString();
-            switch (areaTagString)
-            {
-                case "DeleteFile":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Delete);
-                case "RenameFile":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Files, OperationMethod.Rename);
-                case "CreateRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Create);
-                case "DeleteRegistrySubKey":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.Delete);
-                case "SetRegistryValue":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry, OperationMethod.SetValue);
-                case "DeleteRegistryValue":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Registry,
-                        OperationMethod.DeleteValue);
-                case "StartProcess":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Start);
-                case "TerminateProcess":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Processes, OperationMethod.Stop);
-                case "StartService":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Start);
-                case "StopService":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Services, OperationMethod.Stop);
-                case "ExecuteScript":
-                    return new Tuple<OperationArea, OperationMethod>(OperationArea.Scripts, OperationMethod.Execute);
-            }
+    public List<string> Files { get; set; } = [];
+}
 
-            return null;
-        }
+/// <summary>Renames one file.</summary>
+public sealed class RenameFileOperation : Operation
+{
+    public const string TypeName = "renameFile";
 
-        /// <summary>
-        ///     Gets the operation tag from a given operation.
-        /// </summary>
-        /// <param name="operation">The operation to get the tag from.</param>
-        /// <returns>
-        ///     Returns the tag as a string.
-        /// </returns>
-        public static string GetOperationTag(Operation operation)
-        {
-            switch (operation.Area)
-            {
-                case OperationArea.Files:
-                    switch (operation.Method)
-                    {
-                        case OperationMethod.Delete:
-                            return "DeleteFile";
-                        case OperationMethod.Rename:
-                            return "RenameFile";
-                    }
+    public override string Type => TypeName;
 
-                    break;
-                case OperationArea.Registry:
-                    switch (operation.Method)
-                    {
-                        case OperationMethod.Create:
-                            return "CreateRegistrySubKey";
-                        case OperationMethod.Delete:
-                            return "DeleteRegistrySubKey";
-                        case OperationMethod.SetValue:
-                            return "SetRegistryValue";
-                        case OperationMethod.DeleteValue:
-                            return "DeleteRegistryValue";
-                    }
+    public override OperationArea Area => OperationArea.Files;
 
-                    break;
-                case OperationArea.Processes:
-                    switch (operation.Method)
-                    {
-                        case OperationMethod.Start:
-                            return "StartProcess";
-                        case OperationMethod.Stop:
-                            return "TerminateProcess";
-                    }
+    public string Path { get; set; } = string.Empty;
 
-                    break;
-                case OperationArea.Services:
-                    switch (operation.Method)
-                    {
-                        case OperationMethod.Start:
-                            return "StartService";
-                        case OperationMethod.Stop:
-                            return "StopService";
-                    }
+    public string NewName { get; set; } = string.Empty;
+}
 
-                    break;
-                case OperationArea.Scripts:
-                    switch (operation.Method)
-                    {
-                        case OperationMethod.Execute:
-                            return "ExecuteScript";
-                    }
+/// <summary>Creates sub keys below a registry key.</summary>
+public sealed class CreateRegistryKeysOperation : Operation
+{
+    public const string TypeName = "createRegistryKeys";
 
-                    break;
-            }
+    public override string Type => TypeName;
 
-            return null;
-        }
-    }
+    public override OperationArea Area => OperationArea.Registry;
+
+    public string Key { get; set; } = string.Empty;
+
+    public List<string> SubKeys { get; set; } = [];
+}
+
+/// <summary>Deletes sub keys below a registry key.</summary>
+public sealed class DeleteRegistryKeysOperation : Operation
+{
+    public const string TypeName = "deleteRegistryKeys";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Registry;
+
+    public string Key { get; set; } = string.Empty;
+
+    public List<string> SubKeys { get; set; } = [];
+}
+
+/// <summary>Sets values of a registry key.</summary>
+public sealed class SetRegistryValuesOperation : Operation
+{
+    public const string TypeName = "setRegistryValues";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Registry;
+
+    public string Key { get; set; } = string.Empty;
+
+    public List<RegistryValue> Values { get; set; } = [];
+}
+
+/// <summary>Deletes values of a registry key.</summary>
+public sealed class DeleteRegistryValuesOperation : Operation
+{
+    public const string TypeName = "deleteRegistryValues";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Registry;
+
+    public string Key { get; set; } = string.Empty;
+
+    public List<string> Names { get; set; } = [];
+}
+
+/// <summary>Starts a process, optionally waiting for it and failing the update when it reports an error.</summary>
+public sealed class StartProcessOperation : Operation
+{
+    public const string TypeName = "startProcess";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Processes;
+
+    public string Path { get; set; } = string.Empty;
+
+    public string Arguments { get; set; } = string.Empty;
+
+    /// <summary>Whether the installer waits until the process has exited before it continues.</summary>
+    public bool WaitForExit { get; set; }
+
+    /// <summary>Whether an exit code other than 0 fails the update. Only applies with <see cref="WaitForExit" />.</summary>
+    public bool FailOnError { get; set; }
+}
+
+/// <summary>Terminates every process with the given name.</summary>
+public sealed class TerminateProcessOperation : Operation
+{
+    public const string TypeName = "terminateProcess";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Processes;
+
+    public string ProcessName { get; set; } = string.Empty;
+}
+
+/// <summary>Starts a Windows service.</summary>
+public sealed class StartServiceOperation : Operation
+{
+    public const string TypeName = "startService";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Services;
+
+    public string ServiceName { get; set; } = string.Empty;
+
+    public List<string> Arguments { get; set; } = [];
+}
+
+/// <summary>Stops a Windows service.</summary>
+public sealed class StopServiceOperation : Operation
+{
+    public const string TypeName = "stopService";
+
+    public override string Type => TypeName;
+
+    public override OperationArea Area => OperationArea.Services;
+
+    public string ServiceName { get; set; } = string.Empty;
 }

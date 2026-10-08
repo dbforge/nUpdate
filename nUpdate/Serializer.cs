@@ -1,50 +1,43 @@
-﻿// Serializer.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using nUpdate.Operations;
+using nUpdate.Updating;
 
-namespace nUpdate
+namespace nUpdate;
+
+/// <summary>
+///     The JSON conventions every nUpdate file format shares: camelCase names, enums as camelCase strings, versions as
+///     canonical strings, operations with a <c>type</c> discriminator, dates in ISO 8601.
+/// </summary>
+internal static class Serializer
 {
-    public class Serializer
+    public static JsonSerializerSettings Settings { get; } = Create();
+
+    public static T? Deserialize<T>(string content) => JsonConvert.DeserializeObject<T>(content, Settings);
+
+    public static T? Deserialize<T>(Stream stream)
     {
-        /// <summary>
-        ///     Deserializes a given string.
-        /// </summary>
-        /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
-        /// <param name="content">The data to deserialize.</param>
-        /// <returns>Returns the data as given type in the type-argument.</returns>
-        public static T Deserialize<T>(string content)
-        {
-            return JsonConvert.DeserializeObject<T>(content);
-        }
+        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 4096, leaveOpen: true);
+        return Deserialize<T>(reader.ReadToEnd());
+    }
 
-        /// <summary>
-        ///     Deserializes a string object from a stream.
-        /// </summary>
-        /// <typeparam name="T">The type that the deserializer should return. (Must be serializable)</typeparam>
-        /// <param name="stream">The data to deserialize.</param>
-        /// <returns>Returns the data as given type in the type-argument.</returns>
-        public static T Deserialize<T>(Stream stream)
-        {
-            string streamContent;
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                streamContent = reader.ReadToEnd();
-            }
+    public static string Serialize(object? value, bool indented = false) =>
+        JsonConvert.SerializeObject(value, indented ? Formatting.Indented : Formatting.None, Settings);
 
-            return JsonConvert.DeserializeObject<T>(streamContent);
-        }
-
-        /// <summary>
-        ///     Serializes a given serializable object.
-        /// </summary>
-        /// <param name="dataToSerialize">The data to serialize.</param>
-        /// <returns>Returns the serialized data as a string.</returns>
-        public static string Serialize(object dataToSerialize)
+    private static JsonSerializerSettings Create()
+    {
+        var settings = new JsonSerializerSettings
         {
-            return JsonConvert.SerializeObject(dataToSerialize);
-        }
+            NullValueHandling = NullValueHandling.Include,
+            DateParseHandling = DateParseHandling.None,
+            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+        };
+        settings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+        settings.Converters.Add(new UpdateVersionJsonConverter());
+        settings.Converters.Add(new OperationJsonConverter());
+        settings.Converters.Add(new RegistryValueJsonConverter());
+        return settings;
     }
 }
