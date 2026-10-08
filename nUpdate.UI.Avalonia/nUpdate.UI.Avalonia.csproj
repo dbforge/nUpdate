@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <IsPackable>true</IsPackable>
+    <PackageId>nUpdate.UI.Avalonia</PackageId>
+    <Description>The built-in nUpdate user interface for Avalonia applications on Windows, Linux and macOS: search, changelog, download and error dialogs in the look of the nUpdate installer.</Description>
+    <PackageTags>update;updater;auto-update;avalonia</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="nUpdate.Tests" />
+  </ItemGroup>
+
+</Project>

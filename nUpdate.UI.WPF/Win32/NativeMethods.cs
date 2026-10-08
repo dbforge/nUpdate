@@ -1,20 +1,15 @@
-﻿// NativeMethods.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace nUpdate.UI.WPF.Win32
+namespace nUpdate.UI.WPF.Win32;
+
+internal static class NativeMethods
 {
-    internal class NativeMethods
-    {
-        [DllImport("shell32.dll", EntryPoint = "ExtractAssociatedIcon", CharSet = CharSet.Auto)]
-        public static extern IntPtr ExtractAssociatedIcon(HandleRef hInst, StringBuilder iconPath, ref int index);
+    public const int MaxPath = 260;
 
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+    public static extern IntPtr ExtractAssociatedIcon(IntPtr hInst, [In, Out] char[] iconPath, ref ushort index);
 
-        [DllImport("Shlwapi.dll", CharSet = CharSet.Auto)]
-        public static extern int StrFormatByteSize(long fileSize,
-            [MarshalAs(UnmanagedType.LPTStr)] StringBuilder buffer, int bufferSize);
-    }
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DestroyIcon(IntPtr handle);
 }

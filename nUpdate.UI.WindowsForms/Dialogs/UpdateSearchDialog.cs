@@ -1,76 +1,44 @@
-﻿// UpdateSearchDialog.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
-using System;
-using System.Drawing;
 using System.Windows.Forms;
-using nUpdate.Localization;
-using nUpdate.UI.WindowsForms.Popups;
+using nUpdate.Ui;
+using nUpdate.Updating;
 
-namespace nUpdate.UI.WindowsForms.Dialogs
+namespace nUpdate.UI.WindowsForms.Dialogs;
+
+/// <summary>Shows an indeterminate progress bar while the search runs; cancelling closes the dialog and the search.</summary>
+internal sealed partial class UpdateSearchDialog : BaseDialog
 {
-    internal partial class UpdateSearchDialog : BaseDialog
+    private readonly Func<CancellationToken, Task<bool>> _search;
+    private readonly DialogOperation<bool> _operation = new();
+
+    internal UpdateSearchDialog(UpdateManager updateManager, Func<CancellationToken, Task<bool>> search)
+        : base(updateManager)
     {
-        private readonly Icon _appIcon = IconHelper.ExtractAssociatedIcon(Application.ExecutablePath);
-        private LocalizationProperties _lp;
+        _search = search ?? throw new ArgumentNullException(nameof(search));
+        InitializeComponent();
+        Disposed += (_, _) => _operation.Dispose();
+    }
 
-        internal UpdateSearchDialog()
-        {
-            InitializeComponent();
-        }
+    /// <summary>Completes with the search result once the dialog has closed; cancelled or faulted like the search.</summary>
+    internal Task<bool> Completion => _operation.Completion;
 
-        internal bool UpdatesFound { get; set; }
+    private void cancelButton_Click(object sender, EventArgs e) => _operation.Cancel();
 
-        private void Cancel()
-        {
-            UpdateManager.CancelSearchAsync();
-            DialogResult = DialogResult.Cancel;
-        }
+    private void SearchDialog_Load(object sender, EventArgs e)
+    {
+        cancelButton.Text = Localization.Cancel;
+        headerLabel.Text = Localization.Searching;
+    }
 
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            Cancel();
-        }
-
-        private void SearchDialog_Load(object sender, EventArgs e)
-        {
-            _lp = LocalizationHelper.GetLocalizationProperties(UpdateManager.LanguageCulture,
-                UpdateManager.CultureFilePaths);
-
-            cancelButton.Text = _lp.CancelButtonText;
-            headerLabel.Text = _lp.UpdateSearchDialogHeader;
-
-            Text = Application.ProductName;
-            Icon = _appIcon;
-        }
-
-        private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason != CloseReason.UserClosing)
-                return;
+    private void UpdateSearchDialog_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (e.CloseReason == CloseReason.UserClosing && !_operation.TryClose())
             e.Cancel = true;
-            Cancel();
-        }
+    }
 
-        private async void UpdateSearchDialog_Shown(object sender, EventArgs e)
-        {
-            try
-            {
-                UpdatesFound = await UpdateManager.SearchForUpdatesAsync();
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
-            catch (Exception ex)
-            {
-                Popup.ShowPopup(this, SystemIcons.Error, _lp.UpdateSearchErrorCaption, ex,
-                    PopupButtons.Ok);
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
-            DialogResult = DialogResult.OK;
-        }
+    private async void UpdateSearchDialog_Shown(object sender, EventArgs e)
+    {
+        await _operation.RunAsync(_search);
+        DialogResult = _operation.Succeeded ? DialogResult.OK : DialogResult.Cancel;
+        Close();
     }
 }

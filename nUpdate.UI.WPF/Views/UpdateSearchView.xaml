@@ -1,0 +1,16 @@
+<UserControl x:Class="nUpdate.UI.WPF.Views.UpdateSearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="300">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" LastChildFill="False">
+            <Button Content="{Binding LocProperties.Cancel, Mode=OneWay}" Command="{Binding CancelCommand}"
+                    DockPanel.Dock="Right" Margin="10" Padding="20,2" IsCancel="True" />
+        </DockPanel>
+        <StackPanel Margin="10">
+            <TextBlock Text="{Binding LocProperties.Searching, Mode=OneWay}" FontSize="16"
+                       Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+            <ProgressBar Height="15" IsIndeterminate="True" Margin="0,10" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>

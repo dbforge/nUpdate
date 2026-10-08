@@ -3,17 +3,17 @@ using System.Windows.Input;
 using nUpdate.Ui;
 using nUpdate.Updating;
 
-namespace nUpdate.UI.WPF.ViewModel;
+namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>Runs the download while the dialog is open and shows its progress.</summary>
-public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
+public sealed class DownloadDialogViewModel : DialogViewModel, IDisposable
 {
     private readonly Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> _download;
     private readonly DialogOperation<bool> _operation = new();
-    private double _progressPercentage;
+    private double _progress;
     private string _infoText = string.Empty;
 
-    internal DownloadUpdateViewModel(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
+    internal DownloadDialogViewModel(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         : base(updateManager)
     {
         _download = download ?? throw new ArgumentNullException(nameof(download));
@@ -21,20 +21,21 @@ public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
         ShowProgress(0);
     }
 
-    public override string WindowTitle => LocProperties.Downloading;
+    public override string Title => Texts.Downloading;
 
     public ICommand CancelCommand { get; }
 
-    public double ProgressPercentage
+    /// <summary>0 to 100.</summary>
+    public double Progress
     {
-        get => _progressPercentage;
-        private set => SetProperty(ref _progressPercentage, value);
+        get => _progress;
+        private set => Set(ref _progress, value);
     }
 
     public string InfoText
     {
         get => _infoText;
-        private set => SetProperty(ref _infoText, value);
+        private set => Set(ref _infoText, value);
     }
 
     /// <summary>Completes once the dialog has closed; cancelled or faulted like the download.</summary>
@@ -42,7 +43,7 @@ public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
 
     public void Dispose() => _operation.Dispose();
 
-    internal override async Task OnLoadedAsync()
+    public override async Task OnOpenedAsync()
     {
         var progress = new Progress<UpdateDownloadProgress>(value => ShowProgress(value.Percentage));
         await _operation.RunAsync(async token =>
@@ -53,11 +54,11 @@ public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
         RequestClose(_operation.Succeeded);
     }
 
-    internal override bool OnClosing() => _operation.TryClose();
+    public override bool OnClosing() => _operation.TryClose();
 
-    private void ShowProgress(float percentage)
+    internal void ShowProgress(float percentage)
     {
-        ProgressPercentage = percentage;
-        InfoText = string.Format(CultureInfo.CurrentCulture, LocProperties.DownloadingInfo, Math.Round(percentage, 1));
+        Progress = percentage;
+        InfoText = string.Format(CultureInfo.CurrentCulture, Texts.DownloadingInfo, Math.Round(percentage, 1)).Replace("\n", " ", StringComparison.Ordinal);
     }
 }

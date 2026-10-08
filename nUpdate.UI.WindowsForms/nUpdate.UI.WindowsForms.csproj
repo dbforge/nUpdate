@@ -1,45 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
     <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TargetFrameworks>net462;net8.0-windows</TargetFrameworks>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- One source for .NET Framework 4.6.2, which has no ArgumentNullException.ThrowIfNull, and .NET 8. -->
+    <NoWarn>$(NoWarn);CA1510</NoWarn>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>Dominic Beger</Authors>
-    <Company>Dominic Beger Software Solutions</Company>
-    <Description>A built-in nUpdate user interface for Windows Forms applications.</Description>
-    <Copyright>© Dominic Beger 2022</Copyright>
-    <RepositoryUrl>https://www.github.com/dbforge/nUpdate</RepositoryUrl>
-    <PackageProjectUrl>https://www.nupdate.net</PackageProjectUrl>
-    <PackageIcon>IMG_4852.PNG</PackageIcon>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.0.0</Version>
+    <IsPackable>true</IsPackable>
     <PackageId>nUpdate.UI.WindowsForms</PackageId>
+    <Description>The built-in nUpdate user interface for Windows Forms applications.</Description>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="D:\Downloads\Telegram Desktop\IMG_4852.PNG">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Runtime">
-      <HintPath>..\..\..\..\.nuget\packages\system.runtime\4.3.0\ref\netstandard1.5\System.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices">
-      <HintPath>..\..\..\..\.nuget\packages\system.runtime.interopservices\4.3.0\ref\netcoreapp1.1\System.Runtime.InteropServices.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Controls\Line.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\nUpdate\nUpdate.csproj" />
-  </ItemGroup>
+
 </Project>

@@ -1,13 +1,26 @@
-﻿// BaseDialog.cs, 10.06.2019
-// Copyright (C) Dominic Beger 17.06.2019
-
 using System.Windows.Forms;
+using nUpdate.Localization;
 using nUpdate.Updating;
 
-namespace nUpdate.UI.WindowsForms.Dialogs
+namespace nUpdate.UI.WindowsForms.Dialogs;
+
+/// <summary>Common base of the update dialogs: carries the update manager and the host application's identity.</summary>
+internal class BaseDialog : Form
 {
-    internal class BaseDialog : Form
+    protected BaseDialog(UpdateManager updateManager)
     {
-        internal UpdateManager UpdateManager { get; set; }
+        UpdateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
+    }
+
+    protected UpdateManager UpdateManager { get; }
+
+    protected UpdateTexts Localization => UpdateManager.Texts;
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        Text = UpdateManager.ApplicationName;
+        if (ApplicationIcon.Get() is { } icon)
+            Icon = icon;
     }
 }

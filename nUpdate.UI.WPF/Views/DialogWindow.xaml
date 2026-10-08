@@ -1,0 +1,24 @@
+<Window x:Class="nUpdate.UI.WPF.Views.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModel="clr-namespace:nUpdate.UI.WPF.ViewModel"
+        xmlns:views="clr-namespace:nUpdate.UI.WPF.Views"
+        Title="{Binding WindowTitle, Mode=OneWay}"
+        Icon="{Binding WindowIcon, Mode=OneWay}"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModel:UpdateSearchViewModel}">
+            <views:UpdateSearchView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:ChangelogViewModel}">
+            <views:ChangelogView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:DownloadUpdateViewModel}">
+            <views:DownloadUpdateView />
+        </DataTemplate>
+    </Window.Resources>
+    <ContentPresenter Content="{Binding}" />
+</Window>
