@@ -114,6 +114,10 @@ var manager = new UpdateManager(new Uri("https://example.com/updates/nupdate.jso
 `publicKey` is the PEM public key of your project, and `nupdate.json` is the feed nUpdate Administration writes next to
 the `packages/` folder. The administration generates this snippet for your project (Overview > Copy source).
 
+The installer updates the folder of the running executable and starts it again; `UpdateManager` takes its path from
+the process, single-file builds included. Where that fails, for example in a host that runs your code in another
+process, set `ApplicationExecutablePath` to the absolute path of the executable, such as `Environment.ProcessPath`.
+
 ### 3. Update, with the integrated user interface…
 
 ```
@@ -182,8 +186,10 @@ operations of every package, copies its files, restarts the application and dele
   for that. `InstallerIcon` (a PNG) and `InstallerAccentColor` (`#RRGGBB`, also used by the `nUpdate.UI.Avalonia`
   dialogs) brand the window, which follows the system's light or dark mode. When the installer cannot even start,
   for example because the options do not match its version, it says so in the window too.
-- **The log:** every run writes `install.log` into the installer's temp folder (`<temp>/nUpdate Installer/<application>`);
-  error messages name it, and on Windows failures of a windowless run also go to the event log.
+- **The log:** every run writes `install.log` into the installer's temp folder
+  (`<temp>/nUpdate Installer/<application>`, or a folder next to it with a suffix while an earlier installer or a virus
+  scanner still holds a file in it); error messages name it, and on Windows failures of a windowless run also go to the
+  event log.
 - **Rights:** on Windows the installer asks for administrator rights through UAC unless `RunInstallerAsAdmin` is
   `false`. Linux and macOS have no such prompt: the installer runs as the user, and `StartInstaller()` throws an
   `UnauthorizedAccessException` with a translated message when that user may not change the application's folder.

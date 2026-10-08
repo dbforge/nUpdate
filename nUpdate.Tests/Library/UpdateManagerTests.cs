@@ -53,6 +53,30 @@ public class UpdateManagerTests
 
     // --- construction ---
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("TestApp.exe")]
+    public void Constructor_TakesAnExecutablePathItCannotUseAsUnknown(string? derived)
+    {
+        _services.ApplicationInfo.ExecutablePath.Returns(derived);
+        using var manager = Create();
+        manager.ApplicationExecutablePath.ShouldBeNull();
+        manager.InstallerPath.ShouldBeNull();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData("MyApp.exe")]
+    [InlineData("bin/MyApp")]
+    public void ApplicationExecutablePath_MustBeAbsolute(string path)
+    {
+        using var manager = Create();
+        Should.Throw<ArgumentException>(() => manager.ApplicationExecutablePath = path).Message.ShouldContain("must be absolute");
+        manager.ApplicationExecutablePath.ShouldBe(_services.ApplicationInfo.ExecutablePath);
+    }
+
     [Fact]
     public void Constructor_DefaultsToEnglishAndEntryAssemblyFacts()
     {
@@ -886,6 +910,47 @@ public class UpdateManagerTests
     }
 
     [Fact]
+    public async Task StartInstaller_UsesAnotherFolderWhileTheInstallerFolderIsInUse()
+    {
+        _services.AddInstaller();
+        var fs = _services.FileSystem;
+        var root = fs.Path.Combine(fs.Path.GetTempPath(), "nUpdate Installer");
+        var folder = fs.Path.Combine(root, "TestApp");
+        // An earlier installer still holds a file: deleting the folder fails as it did in #117.
+        var held = fs.Path.Combine(folder, "held.dll");
+        fs.AddFile(held, new MockFileData("x") { Attributes = FileAttributes.ReadOnly });
+        ServeFeed(Publish("1.1.0", Package(1)));
+        using var manager = Create();
+        await manager.CheckForUpdatesAsync();
+        await manager.DownloadAsync();
+
+        manager.StartInstaller().ShouldBeTrue();
+        var started = (string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[0]!;
+        var alternative = fs.Path.GetDirectoryName(started)!;
+        fs.Path.GetDirectoryName(alternative).ShouldBe(root);
+        fs.Path.GetFileName(alternative).ShouldMatch("^TestApp-[0-9a-f]{32}$");
+        fs.File.Exists(held).ShouldBeTrue();
+        Warnings().ShouldContain(w => w.Contains("still in use", StringComparison.Ordinal));
+
+        // Once the folder is free again, the next update uses it and removes the other folders it can.
+        fs.File.SetAttributes(held, FileAttributes.Normal);
+        var stuck = fs.Path.Combine(root, "TestApp-" + new string('0', 32));
+        fs.AddFile(fs.Path.Combine(stuck, "held.dll"), new MockFileData("x") { Attributes = FileAttributes.ReadOnly });
+        var others = new[] { "TestApp-Pro", "TestApp-" + new string('z', 32), "TestApq-" + new string('0', 32) }
+            .Select(name => fs.Path.Combine(root, name)).ToList(); // other applications' folders, or not ours
+        others.ForEach(other => fs.AddDirectory(other));
+        _services.ProcessLauncher.ClearReceivedCalls();
+        await manager.CheckForUpdatesAsync();
+        await manager.DownloadAsync();
+
+        manager.StartInstaller().ShouldBeTrue();
+        fs.Path.GetDirectoryName((string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[0]!).ShouldBe(folder);
+        fs.Directory.Exists(alternative).ShouldBeFalse();
+        fs.Directory.Exists(stuck).ShouldBeTrue();
+        others.ShouldAllBe(other => fs.Directory.Exists(other));
+    }
+
+    [Fact]
     public async Task StartInstaller_DeclinedElevation_DeletesDownloadsAndReturnsFalse()
     {
         _services.AddInstaller();
@@ -931,15 +996,13 @@ public class UpdateManagerTests
         ex.Message.ShouldContain("InstallerPath");
 
         manager.ApplicationExecutablePath = null;
-        Should.Throw<InvalidOperationException>(() => manager.StartInstaller());
-
-        manager.ApplicationExecutablePath = "/";
-        Should.Throw<FileNotFoundException>(() => manager.StartInstaller());
+        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message.ShouldContain("Environment.ProcessPath");
     }
 
     [Fact]
-    public async Task StartInstaller_WithRootExecutable_UsesEmptyApplicationDirectory()
+    public async Task StartInstaller_RefusesAnExecutablePathWithoutAFolder()
     {
+        // An empty application folder used to reach the installer, which failed with "the path is empty" (#101).
         _services.FileSystem.AddFile("/custom/installer/" + TestServices.InstallerFileName, new MockFileData("exe"));
         ServeFeed(Publish("1.1.0", Package(1)));
         using var manager = Create();
@@ -947,8 +1010,9 @@ public class UpdateManagerTests
         manager.ApplicationExecutablePath = "/";
         await manager.CheckForUpdatesAsync();
         await manager.DownloadAsync();
-        manager.StartInstaller().ShouldBeTrue();
-        StartedOptions().Application.Directory.ShouldBe("");
+
+        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message.ShouldContain("no application folder");
+        _services.ProcessLauncher.ReceivedCalls().ShouldBeEmpty();
     }
 
     // --- delete and dispose ---
