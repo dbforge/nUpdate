@@ -133,17 +133,17 @@
               <figure class="api-example"><figcaption>Example</figcaption><pre><code>manager.DefaultAfterInstall = <span class="tok-type">AfterInstall</span>.KeepRunning; <span class="tok-com">// a service that restarts itself</span></code></pre></figure>
               <section class="api-group">
                 <h4>Values</h4>
-                <div class="api-member" data-search="afterinstall restart restart the application is closed and started again after the update. the default.">
+                <div class="api-member" data-search="afterinstall restart restart the application is closed and started again after the update. the default of updatemanager.defaultafterinstall.">
                   <code class="sig"><span class="n">Restart</span></code>
-                  <p>The application is closed and started again after the update. The default.</p>
+                  <p>The application is closed and started again after the update. The default of <a href="#UpdateManager"><code>UpdateManager.DefaultAfterInstall</code></a>.</p>
                 </div>
-                <div class="api-member" data-search="afterinstall close close the application is closed and stays closed.">
+                <div class="api-member" data-search="afterinstall close close the application is closed and stays closed; the update dialogs tell the user so.">
                   <code class="sig"><span class="n">Close</span></code>
-                  <p>The application is closed and stays closed.</p>
+                  <p>The application is closed and stays closed; the update dialogs tell the user so.</p>
                 </div>
-                <div class="api-member" data-search="afterinstall keeprunning keeprunning the application keeps running; the installer waits for nothing.">
+                <div class="api-member" data-search="afterinstall keeprunning keeprunning the application keeps running; the installer waits for nothing. only the application can choose it, not a package.">
                   <code class="sig"><span class="n">KeepRunning</span></code>
-                  <p>The application keeps running; the installer waits for nothing.</p>
+                  <p>The application keeps running; the installer waits for nothing. Only the application can choose it, not a package.</p>
                 </div>
               </section>
             </article>
@@ -1166,7 +1166,7 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
                 <h3>IUpdateFlowPresenter</h3>
                 <p>The dialogs an <a href="#UpdateFlow"><code>UpdateFlow</code></a> shows. Every member is called on the thread that started the flow.</p>
               </header>
-              <figure class="api-example"><figcaption>Example</figcaption><pre><code><span class="tok-key">sealed</span> <span class="tok-key">class</span> <span class="tok-type">ConsolePresenter</span> : <span class="tok-type">IUpdateFlowPresenter</span>
+              <figure class="api-example"><figcaption>Example</figcaption><pre><code><span class="tok-key">sealed</span> <span class="tok-key">class</span> <span class="tok-type">ConsolePresenter</span>(<span class="tok-type">UpdateManager</span> manager) : <span class="tok-type">IUpdateFlowPresenter</span>
 {
     <span class="tok-key">public</span> <span class="tok-type">Task</span>&lt;<span class="tok-key">bool</span>&gt; RunSearchAsync(<span class="tok-type">Func</span>&lt;<span class="tok-type">CancellationToken</span>, <span class="tok-type">Task</span>&lt;<span class="tok-key">bool</span>&gt;&gt; search) =&gt;
         search(<span class="tok-type">CancellationToken</span>.None);
@@ -1179,6 +1179,8 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
 
     <span class="tok-key">public</span> <span class="tok-type">Task</span>&lt;<span class="tok-key">bool</span>&gt; ConfirmInstallAsync()
     {
+        <span class="tok-key">if</span> (manager.AfterInstall == <span class="tok-type">AfterInstall</span>.Close) <span class="tok-com">// the application does not start again after this update</span>
+            <span class="tok-type">Console</span>.WriteLine(<span class="tok-key">string</span>.Format(manager.Texts.StaysClosedAfterUpdate, manager.ApplicationName));
         <span class="tok-type">Console</span>.Write(<span class="tok-str">&quot;Install the updates now? [y/N] &quot;</span>);
         <span class="tok-key">return</span> <span class="tok-type">Task</span>.FromResult(<span class="tok-type">Console</span>.ReadLine()?.Trim() == <span class="tok-str">&quot;y&quot;</span>);
     }
@@ -1207,9 +1209,9 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
                   <code class="sig"><span class="t">Task</span> <span class="n">ShowNoUpdatesAsync</span>()</code>
                   <p>Tells the user that the application is up to date.</p>
                 </div>
-                <div class="api-member" data-search="iupdateflowpresenter confirminstallasync task&lt;bool&gt; confirminstallasync() shows the updates with their changelog; true to install them.">
+                <div class="api-member" data-search="iupdateflowpresenter confirminstallasync task&lt;bool&gt; confirminstallasync() shows the updates with their changelog and, when updatemanager.afterinstall is close, that the application stays closed (updatetexts.staysclosedafterupdate); true to install them.">
                   <code class="sig"><span class="t">Task</span>&lt;<span class="k">bool</span>&gt; <span class="n">ConfirmInstallAsync</span>()</code>
-                  <p>Shows the updates with their changelog; <code>true</code> to install them.</p>
+                  <p>Shows the updates with their changelog and, when <a href="#UpdateManager"><code>UpdateManager.AfterInstall</code></a> is <code>Close</code>, that the application stays closed (<a href="#UpdateTexts"><code>UpdateTexts.StaysClosedAfterUpdate</code></a>); <code>true</code> to install them.</p>
                 </div>
                 <div class="api-member" data-search="iupdateflowpresenter rundownloadasync task rundownloadasync(func&lt;iprogress&lt;updatedownloadprogress&gt;, cancellationtoken, task&gt; download) shows the download with its progress; cancelling cancels it.">
                   <code class="sig"><span class="t">Task</span> <span class="n">RunDownloadAsync</span>(<span class="t">Func</span>&lt;<span class="t">IProgress</span>&lt;<a class="t" href="#UpdateDownloadProgress">UpdateDownloadProgress</a>&gt;, <span class="t">CancellationToken</span>, <span class="t">Task</span>&gt; download)</code>
@@ -1255,7 +1257,7 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
                 <h3>UpdateFlow</h3>
                 <p>The update process behind the built-in dialogs. Drive it with your own dialogs through <a href="#IUpdateFlowPresenter"><code>IUpdateFlowPresenter</code></a>.</p>
               </header>
-              <figure class="api-example"><figcaption>Example</figcaption><pre><code><span class="tok-key">var</span> flow = <span class="tok-key">new</span> <span class="tok-type">UpdateFlow</span>(manager, <span class="tok-key">new</span> <span class="tok-type">ConsolePresenter</span>()) { UseHiddenSearch = <span class="tok-key">true</span> };
+              <figure class="api-example"><figcaption>Example</figcaption><pre><code><span class="tok-key">var</span> flow = <span class="tok-key">new</span> <span class="tok-type">UpdateFlow</span>(manager, <span class="tok-key">new</span> <span class="tok-type">ConsolePresenter</span>(manager)) { UseHiddenSearch = <span class="tok-key">true</span> };
 <span class="tok-key">var</span> result = <span class="tok-key">await</span> flow.RunAsync();</code></pre></figure>
               <section class="api-group">
                 <h4>Members</h4>
@@ -1404,9 +1406,9 @@ manager.Texts.NoUpdatesTitle = <span class="tok-str">&quot;Aurora is up to date.
                   <code class="sig"><span class="k">int</span>? <span class="n">ProcessId</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
                   <p>The process the installer waits for before it replaces files, or <code>null</code> when the application keeps running.</p>
                 </div>
-                <div class="api-member" data-search="hostoptions afterinstall afterinstall afterinstall { get; set; } restart (default), close or keeprunning.">
+                <div class="api-member" data-search="hostoptions afterinstall afterinstall afterinstall { get; set; } what happens to the application after the update: updatemanager.afterinstall, which a package can set to restart or close.">
                   <code class="sig"><a class="t" href="#AfterInstall">AfterInstall</a> <span class="n">AfterInstall</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
-                  <p><code>Restart</code> (default), <code>Close</code> or <code>KeepRunning</code>.</p>
+                  <p>What happens to the application after the update: <a href="#UpdateManager"><code>UpdateManager.AfterInstall</code></a>, which a package can set to <code>Restart</code> or <code>Close</code>.</p>
                 </div>
               </section>
             </article>
