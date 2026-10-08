@@ -461,7 +461,7 @@ manager.InstallerAccentColor = "#2E7D32";
 <summary><b>Another language</b></summary>
 
 Copy [`en.json`](nUpdate/Localization/en.json), translate it and register it. English, German (Germany, Austria,
-Switzerland), Italian and Chinese (simplified) are built in.
+Switzerland), Spanish, Italian and Chinese (simplified) are built in.
 
 ``` c#
 manager.TextFiles[new CultureInfo("fr-FR")] = Path.Combine(AppContext.BaseDirectory, "Localization", "fr-FR.json");

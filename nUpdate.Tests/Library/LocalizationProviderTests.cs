@@ -11,6 +11,7 @@ public class LocalizationProviderTests
     [InlineData("de-DE", "Abbrechen")]
     [InlineData("de-AT", "Abbrechen")]
     [InlineData("de-CH", "Abbrechen")]
+    [InlineData("es-ES", "Cancelar")]
     [InlineData("it-IT", "Annulla")]
     [InlineData("zh-CN", "取消")]
     [InlineData("DE-de", "Abbrechen")]
@@ -25,7 +26,7 @@ public class LocalizationProviderTests
     [Fact]
     public void IntegratedCultures_AreListedAndDetected()
     {
-        LocalizationProvider.IntegratedCultures.Select(c => c.Name).ShouldBe(["de-AT", "de-CH", "de-DE", "en", "it-IT", "zh-CN"]);
+        LocalizationProvider.IntegratedCultures.Select(c => c.Name).ShouldBe(["de-AT", "de-CH", "de-DE", "en", "es-ES", "it-IT", "zh-CN"]);
         LocalizationProvider.IsIntegratedCulture(new CultureInfo("en")).ShouldBeTrue();
         LocalizationProvider.IsIntegratedCulture(new CultureInfo("fr-FR")).ShouldBeFalse();
         LocalizationProvider.IsIntegratedCulture(null!).ShouldBeFalse();
@@ -36,7 +37,8 @@ public class LocalizationProviderTests
         LocalizationProvider.Resolve(new CultureInfo("de-LI"), null).Name.ShouldBe("de-DE");
         LocalizationProvider.Resolve(new CultureInfo("it"), null).Name.ShouldBe("it-IT");
         LocalizationProvider.Resolve(new CultureInfo("zh"), null).Name.ShouldBe("zh-CN");
-        LocalizationProvider.Resolve(new CultureInfo("es-ES"), null).Name.ShouldBe("en");
+        LocalizationProvider.Resolve(new CultureInfo("es-MX"), null).Name.ShouldBe("es-ES");
+        LocalizationProvider.Resolve(new CultureInfo("pt-BR"), null).Name.ShouldBe("en");
         LocalizationProvider.Resolve(CultureInfo.InvariantCulture, null).Name.ShouldBe("en");
         var custom = new Dictionary<CultureInfo, string> { [new CultureInfo("fr-CA")] = "/fr.json" };
         LocalizationProvider.Resolve(new CultureInfo("fr-BE"), custom).Name.ShouldBe("fr-CA");

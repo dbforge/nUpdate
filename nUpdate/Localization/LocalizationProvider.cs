@@ -9,7 +9,7 @@ namespace nUpdate.Localization;
 /// </summary>
 internal sealed class LocalizationProvider
 {
-    private static readonly string[] IntegratedCultureNames = ["de-AT", "de-CH", "de-DE", "en", "it-IT", "zh-CN"];
+    private static readonly string[] IntegratedCultureNames = ["de-AT", "de-CH", "de-DE", "en", "es-ES", "it-IT", "zh-CN"];
 
     private readonly IFileSystem _fileSystem;
 
