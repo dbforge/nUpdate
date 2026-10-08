@@ -1,0 +1,609 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        xmlns:ops="using:nUpdate.Operations"
+        x:Class="nUpdate.Administration.Views.PackageEditorWindow"
+        x:DataType="vm:PackageEditorViewModel"
+        Title="{Binding Title}" Width="1100" Height="720" MinWidth="900" MinHeight="560"
+        WindowStartupLocation="CenterOwner" Icon="/Assets/nUpdate.ico">
+  <Window.DataTemplates>
+    <DataTemplate x:DataType="vm:PlatformChoice">
+      <TextBlock Text="{Binding Display}" />
+    </DataTemplate>
+  </Window.DataTemplates>
+  <Window.Styles>
+    <Style Selector="StackPanel.pagehead">
+      <Setter Property="Spacing" Value="4" />
+      <Setter Property="Margin" Value="0,0,0,18" />
+    </Style>
+    <!-- A setting with its switch on the right and an explanation below the title -->
+    <Style Selector="DockPanel.setting">
+      <Setter Property="Margin" Value="18,14" />
+    </Style>
+    <Style Selector="DockPanel.setting > ToggleSwitch">
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="16,0,0,0" />
+    </Style>
+    <Style Selector="TextBlock.settingtitle">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <!-- Operation cards: the list item is only the hit area, the card shows selection -->
+    <Style Selector="ListBox.operations">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ListBox.operations ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+    <Style Selector="ListBox.operations ListBoxItem /template/ ContentPresenter#PART_ContentPresenter, ListBox.operations ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter, ListBox.operations ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter, ListBox.operations ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBox.operations Border.opcard">
+      <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HairlineBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="10,0,8,0" />
+      <Setter Property="Height" Value="60" />
+    </Style>
+    <Style Selector="ListBox.operations ListBoxItem:pointerover Border.opcard">
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderStrongBrush}" />
+    </Style>
+    <Style Selector="ListBox.operations ListBoxItem:selected Border.opcard">
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="BorderThickness" Value="1.5" />
+      <Setter Property="Background" Value="{DynamicResource SelectionBrush}" />
+    </Style>
+    <!-- Files -->
+    <Style Selector="ListBox.files ListBoxItem">
+      <Setter Property="Padding" Value="14,0" />
+      <Setter Property="MinHeight" Value="38" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HairlineSoftBrush}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+    <Style Selector="TextBlock.removed">
+      <Setter Property="TextDecorations" Value="Strikethrough" />
+      <Setter Property="Foreground" Value="{DynamicResource DisabledBrush}" />
+    </Style>
+    <!-- The placeholders of the selected platform -->
+    <Style Selector="Button.placeholder">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Padding" Value="8,6" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+  </Window.Styles>
+  <Panel>
+    <DockPanel>
+      <Border DockPanel.Dock="Bottom" Classes="bottombar">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+            <Button Name="CancelButton" Content="Cancel" Command="{Binding CancelCommand}" IsCancel="True" />
+            <Button Name="SaveButton" Classes="primary" Command="{Binding SaveCommand}" IsDefault="True" MinWidth="140">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconUpload}" IsVisible="{Binding IsReleased}" />
+                <c:Icon Data="{StaticResource IconCheck}" IsVisible="{Binding !IsReleased}" />
+                <TextBlock Text="{Binding SaveText}" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+          <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+            <TextBlock Name="SummaryText" Text="{Binding Summary}" FontSize="12" TextTrimming="CharacterEllipsis"
+                       Foreground="{DynamicResource InkSecondaryBrush}"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNull}}" />
+            <TextBlock Name="ErrorText" Classes="error" Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <Border DockPanel.Dock="Left" Classes="sidebar" Width="224" Padding="12,18">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="8,0,8,16">
+            <TextBlock Text="{Binding Version}" FontSize="18" FontWeight="Bold" LetterSpacing="-0.2"
+                       TextTrimming="CharacterEllipsis" />
+            <Border Classes="pill" Classes.released="{Binding IsReleased}" Classes.accent="{Binding IsCreateMode}">
+              <TextBlock Text="{Binding State}" />
+            </Border>
+          </StackPanel>
+          <ListBox Name="SectionList" Classes="nav" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:EditorSection">
+                <DockPanel>
+                  <TextBlock DockPanel.Dock="Right" Text="{Binding Hint}" FontSize="11.5" FontWeight="Normal"
+                             Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <c:Icon Data="{Binding Icon, Converter={x:Static c:ResourceConverter.Instance}}" />
+                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+                  </StackPanel>
+                </DockPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+
+      <Panel>
+        <!-- General -->
+        <ScrollViewer IsVisible="{Binding IsGeneralSection}">
+          <StackPanel Margin="28,22" Spacing="16" MaxWidth="760" HorizontalAlignment="Left">
+            <StackPanel Classes="pagehead" Margin="0,0,0,2">
+              <TextBlock Classes="h1" Text="General" />
+              <TextBlock Classes="sub" Text="The version, how clients treat the package and which platforms it is built for." />
+            </StackPanel>
+            <Border Name="MissingContentNotice" Classes="notice warning" IsVisible="{Binding !CanChangeContent}">
+              <DockPanel>
+                <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconWarning}" Width="18" Height="18" VerticalAlignment="Top"
+                        Margin="0,1,12,0" />
+                <TextBlock Text="{Binding MissingContentNotice}" />
+              </DockPanel>
+            </Border>
+            <Grid ColumnDefinitions="220,*" ColumnSpacing="12">
+              <StackPanel Grid.Column="0">
+                <TextBlock Classes="label" Text="Version" />
+                <TextBox Name="VersionBox" Text="{Binding Version}" IsEnabled="{Binding IsCreateMode}"
+                         PlaceholderText="2.1.0 or 2.1.0-beta.1" />
+              </StackPanel>
+              <StackPanel Grid.Column="1">
+                <TextBlock Classes="label" Text="Description (optional)" />
+                <TextBox Name="DescriptionBox" Text="{Binding Description}" PlaceholderText="Shown in the package list" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Classes="hint" Margin="0,-8,0,0"
+                       Text="Semantic versions such as 2.2.0, 2.2.0-beta.1 or 2.2.0-rc.2; a fourth number only when it is not 0 (2.2.0.1). Pre-release labels order alphabetically: alpha &lt; beta &lt; rc &lt; release." />
+            <Border Classes="panel">
+              <StackPanel>
+                <DockPanel Classes="setting" IsVisible="{Binding IsCreateMode}">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="PublishBox" IsChecked="{Binding Publish}" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="settingtitle" Text="Publish this update" />
+                    <TextBlock Classes="hint" Margin="0"
+                               Text="Uploads the package right away. Otherwise it is saved on this computer and you can publish it later." />
+                  </StackPanel>
+                </DockPanel>
+                <Border Classes="hairline" IsVisible="{Binding IsCreateMode}" />
+                <DockPanel Classes="setting">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="NecessaryBox" IsChecked="{Binding Necessary}" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="settingtitle" Text="Necessary update" />
+                    <TextBlock Classes="hint" Margin="0"
+                               Text="Installed even if newer versions are available. The installer then installs all necessary packages and the newest one." />
+                  </StackPanel>
+                </DockPanel>
+                <Border Classes="hairline" />
+                <DockPanel Classes="setting">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="IncludeInStatisticsBox" IsChecked="{Binding IncludeInStatistics}"
+                                IsEnabled="{Binding StatisticsAvailable}" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="settingtitle" Text="Include into statistics" />
+                    <TextBlock Classes="hint" Margin="0"
+                               Text="Counts the downloads of this package in the project statistics. You can change this later." />
+                  </StackPanel>
+                </DockPanel>
+              </StackPanel>
+            </Border>
+            <StackPanel Spacing="8">
+              <TextBlock Classes="h2" Text="Platforms" />
+              <TextBlock Classes="hint" Margin="0"
+                         Text="One package file per platform, each with its own files and operations. A client takes the file of its runtime identifier (win-x64), else the one of its operating system (win), else the one for any platform; a version without a file for it is not offered." />
+              <Border Classes="panel" ClipToBounds="True">
+                <ItemsControl Name="PlatformList" ItemsSource="{Binding Platforms}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PlatformItemViewModel">
+                      <Border BorderBrush="{DynamicResource HairlineSoftBrush}" BorderThickness="0,0,0,1" Padding="14,8,8,8">
+                        <DockPanel>
+                          <Button DockPanel.Dock="Right" Classes="ghost icon small" ToolTip.Tip="Remove the platform"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).RemovePlatformCommand}"
+                                  CommandParameter="{Binding}"
+                                  IsVisible="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).CanChangeContent}"
+                                  IsEnabled="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).HasSeveralPlatforms}">
+                            <c:Icon Data="{StaticResource IconClose}" />
+                          </Button>
+                          <Border DockPanel.Dock="Left" Classes="pill accent" Margin="0,0,10,0">
+                            <TextBlock Text="{Binding Platform}" />
+                          </Border>
+                          <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                        </DockPanel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Border>
+              <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanChangeContent}">
+                <ComboBox Name="NewPlatformBox" ItemsSource="{Binding AvailablePlatforms}"
+                          SelectedItem="{Binding NewPlatform}" MinWidth="300" PlaceholderText="Choose a platform" />
+                <Button Name="AddPlatformButton" Command="{Binding AddPlatformCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <c:Icon Data="{StaticResource IconPlus}" />
+                    <TextBlock Text="Add platform" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Changelog -->
+        <ScrollViewer IsVisible="{Binding IsChangelogSection}">
+          <StackPanel Margin="28,22" Spacing="12" MaxWidth="760" HorizontalAlignment="Left">
+            <StackPanel Classes="pagehead" Margin="0,0,0,6">
+              <TextBlock Classes="h1" Text="Changelog" />
+              <TextBlock Classes="sub" Text="What the users read before they install the package. English is required; add other languages as needed." />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Changelogs}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ChangelogItemViewModel">
+                  <Border Classes="panel" Padding="16,12,16,16" Margin="0,0,0,12">
+                    <StackPanel Spacing="8">
+                      <DockPanel>
+                        <Button DockPanel.Dock="Right" Classes="ghost icon small" ToolTip.Tip="Remove the language"
+                                IsVisible="{Binding IsRemovable}"
+                                Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).RemoveCultureCommand}"
+                                CommandParameter="{Binding}">
+                          <c:Icon Data="{StaticResource IconClose}" />
+                        </Button>
+                        <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconGlobe}" Foreground="{DynamicResource MutedBrush}"
+                                Margin="0,0,8,0" />
+                        <TextBlock Text="{Binding Display}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                      </DockPanel>
+                      <TextBox Classes="multiline" Text="{Binding Text}" MinHeight="110" />
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBox Name="CultureBox" Text="{Binding NewCultureName}" PlaceholderText="Culture, e.g. de-DE" Width="180" />
+              <Button Name="AddCultureButton" Command="{Binding AddCultureCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <c:Icon Data="{StaticResource IconPlus}" />
+                  <TextBlock Text="Add language" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Files -->
+        <DockPanel IsVisible="{Binding IsFilesSection}" Margin="28,22,28,20">
+          <StackPanel DockPanel.Dock="Top" Classes="pagehead">
+            <TextBlock Classes="h1" Text="Files" />
+            <TextBlock Classes="sub" Text="What the installer copies onto the client, per platform and folder." />
+          </StackPanel>
+          <Border DockPanel.Dock="Top" Classes="notice" Margin="0,0,0,14" IsVisible="{Binding IsReleased}">
+            <DockPanel>
+              <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconInfo}" Width="18" Height="18" VerticalAlignment="Top"
+                      Margin="0,1,12,0" />
+              <TextBlock Text="{Binding RebuildNotice}" />
+            </DockPanel>
+          </Border>
+          <ListBox DockPanel.Dock="Top" Name="FilesPlatformBox" Classes="segmented" Margin="0,0,0,14"
+                   ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform}"
+                   IsVisible="{Binding HasSeveralPlatforms}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:PlatformItemViewModel">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" />
+                  <TextBlock Text="{Binding Files.Count}" FontWeight="Medium" Foreground="{DynamicResource MutedBrush}" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <Border DockPanel.Dock="Top" Classes="notice" Margin="0,0,0,14" IsVisible="{Binding SelectedPlatform.IsMacOS}">
+            <DockPanel>
+              <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconInfo}" Width="18" Height="18" VerticalAlignment="Top"
+                      Margin="0,1,12,0" />
+              <TextBlock
+                Text="For an app that runs from a bundle, Program is the whole .app: add the .app folder to Program without a sub folder, and the package carries the complete signed bundle, which replaces the installed one. Packages cannot contain symbolic links, such as Versions/Current of embedded frameworks." />
+            </DockPanel>
+          </Border>
+          <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+            <TextBlock Text="Into" VerticalAlignment="Center" Foreground="{DynamicResource InkSecondaryBrush}" />
+            <ComboBox Name="RootBox" ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedRoot}" MinWidth="130" />
+            <TextBox Name="TargetFolderBox" Text="{Binding TargetFolder}" PlaceholderText="Sub folder (optional)" Width="190" />
+            <Button Name="AddFilesButton" Command="{Binding AddFilesCommand}" Margin="4,0,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconPlus}" />
+                <TextBlock Text="Add files…" />
+              </StackPanel>
+            </Button>
+            <Button Name="AddFolderButton" Command="{Binding AddFolderCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconFolder}" />
+                <TextBlock Text="Add folder…" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+          <Border Classes="panel" ClipToBounds="True">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Background="{DynamicResource SurfaceAltBrush}"
+                      BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,0,1" Padding="14,9">
+                <Grid ColumnDefinitions="*,110,80,Auto,40" ColumnSpacing="12">
+                  <Grid.Styles>
+                    <Style Selector="TextBlock">
+                      <Setter Property="FontSize" Value="12" />
+                      <Setter Property="FontWeight" Value="SemiBold" />
+                      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+                    </Style>
+                  </Grid.Styles>
+                  <TextBlock Grid.Column="0" Text="Name" />
+                  <TextBlock Grid.Column="1" Text="Folder" />
+                  <TextBlock Grid.Column="2" Text="Size" />
+                  <TextBlock Grid.Column="3" Text="Change" Width="100" IsVisible="{Binding IsEditMode}" />
+                </Grid>
+              </Border>
+              <Panel>
+                <TextBlock Classes="sub" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                           Text="No files yet. Add files or a folder above."
+                           IsVisible="{Binding !Files.Count}" />
+                <ListBox Name="FileList" Classes="plain files" ItemsSource="{Binding Files}">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PackageFileItem">
+                      <Grid ColumnDefinitions="*,110,80,Auto,40" ColumnSpacing="12">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                          <c:Icon Data="{StaticResource IconFile}" Foreground="{DynamicResource MutedBrush}" StrokeThickness="1.6" />
+                          <TextBlock Text="{Binding RelativePath}" Classes.removed="{Binding IsRemoved}"
+                                     TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip.Tip="{Binding SourcePath}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Classes="mono muted" Text="{Binding RootPlaceholder}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Classes="muted" Text="{Binding SizeText}" VerticalAlignment="Center" />
+                        <Panel Grid.Column="3" Width="100"
+                               IsVisible="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).IsEditMode}">
+                          <Border Classes="pill accent" IsVisible="{Binding Change, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:FileChange.Added}}">
+                            <TextBlock Text="Added" />
+                          </Border>
+                          <Border Classes="pill changed" IsVisible="{Binding Change, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:FileChange.Changed}}">
+                            <TextBlock Text="Changed" />
+                          </Border>
+                          <Border Classes="pill removed" IsVisible="{Binding IsRemoved}">
+                            <TextBlock Text="Removed" />
+                          </Border>
+                          <TextBlock Classes="muted" FontSize="12" Text="Unchanged" VerticalAlignment="Center"
+                                     IsVisible="{Binding Change, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:FileChange.Unchanged}}" />
+                        </Panel>
+                        <Panel Grid.Column="4">
+                          <Button Classes="ghost icon small" ToolTip.Tip="Remove" IsVisible="{Binding !IsRemoved}"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).RemoveFileCommand}"
+                                  CommandParameter="{Binding}">
+                            <c:Icon Data="{StaticResource IconClose}" />
+                          </Button>
+                          <Button Classes="ghost icon small" ToolTip.Tip="Keep" IsVisible="{Binding IsRemoved}"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).KeepFileCommand}"
+                                  CommandParameter="{Binding}">
+                            <c:Icon Data="{StaticResource IconUndo}" />
+                          </Button>
+                        </Panel>
+                      </Grid>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+              </Panel>
+            </DockPanel>
+          </Border>
+        </DockPanel>
+
+        <!-- Operations -->
+        <Grid IsVisible="{Binding IsOperationsSection}" ColumnDefinitions="*,340">
+          <ScrollViewer Grid.Column="0">
+            <StackPanel Margin="28,22" Spacing="14">
+              <StackPanel Classes="pagehead" Margin="0">
+                <TextBlock Classes="h1" Text="Operations" />
+                <TextBlock Classes="sub" Text="Run top to bottom, before or after the files are replaced." />
+              </StackPanel>
+              <ListBox Name="OperationsPlatformBox" Classes="segmented" ItemsSource="{Binding Platforms}"
+                       SelectedItem="{Binding SelectedPlatform}" IsVisible="{Binding HasSeveralPlatforms}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:PlatformItemViewModel">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" />
+                      <TextBlock Text="{Binding Operations.Count}" FontWeight="Medium" Foreground="{DynamicResource MutedBrush}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+              <Border Classes="notice" IsVisible="{Binding IsReleased}">
+                <DockPanel>
+                  <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconInfo}" Width="18" Height="18" VerticalAlignment="Top"
+                          Margin="0,1,12,0" />
+                  <TextBlock Text="{Binding RebuildNotice}" />
+                </DockPanel>
+              </Border>
+              <Border Classes="sunken" IsVisible="{Binding !Operations.Count}">
+                <TextBlock Classes="muted" Text="No operations yet. Add one below; most packages need none." />
+              </Border>
+              <ListBox Name="OperationList" Classes="operations" ItemsSource="{Binding Operations}"
+                       SelectedItem="{Binding SelectedOperation}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:OperationEditorViewModel">
+                    <Border Classes="opcard">
+                      <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                          <Button Classes="ghost icon small" ToolTip.Tip="Move up"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).MoveOperationUpCommand}"
+                                  CommandParameter="{Binding}">
+                            <c:Icon Data="{StaticResource IconUp}" />
+                          </Button>
+                          <Button Classes="ghost icon small" ToolTip.Tip="Move down"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).MoveOperationDownCommand}"
+                                  CommandParameter="{Binding}">
+                            <c:Icon Data="{StaticResource IconDown}" />
+                          </Button>
+                          <Button Classes="ghost icon small" ToolTip.Tip="Remove"
+                                  Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).RemoveOperationCommand}"
+                                  CommandParameter="{Binding}">
+                            <c:Icon Data="{StaticResource IconClose}" />
+                          </Button>
+                        </StackPanel>
+                        <Border DockPanel.Dock="Right" Classes="pill" Margin="8,0,10,0">
+                          <TextBlock Text="{Binding Phase}" FontWeight="Medium" />
+                        </Border>
+                        <Border DockPanel.Dock="Left" Classes="tile" Margin="0,0,12,0"
+                                Classes.processes="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Processes}}"
+                                Classes.registry="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Registry}}"
+                                Classes.services="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Services}}">
+                          <c:Icon Data="{Binding Kind.Icon, Converter={x:Static c:ResourceConverter.Instance}}" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center" Spacing="2">
+                          <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                          <TextBlock Classes="muted" FontSize="12" Text="{Binding Summary}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                      </DockPanel>
+                    </Border>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+              <TextBlock Classes="eyebrow" Text="ADD AN OPERATION" Margin="0,6,0,0" />
+              <ItemsControl ItemsSource="{Binding OperationPalette}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2" ColumnSpacing="8" RowSpacing="8" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:OperationKind">
+                    <Button Classes="choice" ToolTip.Tip="{Binding DisplayName}"
+                            Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).AddOperationOfKindCommand}"
+                            CommandParameter="{Binding}">
+                      <DockPanel>
+                        <Border DockPanel.Dock="Left" Classes="tile small" Margin="0,0,10,0"
+                                Classes.processes="{Binding Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Processes}}"
+                                Classes.registry="{Binding Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Registry}}"
+                                Classes.services="{Binding Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Services}}">
+                          <c:Icon Data="{Binding Icon, Converter={x:Static c:ResourceConverter.Instance}}" Width="14" Height="14" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center" Spacing="1">
+                          <TextBlock Text="{Binding DisplayName}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Classes="muted" FontSize="11.5" Text="{Binding AreaTitle}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                      </DockPanel>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+          <Border Grid.Column="1" Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource HairlineBrush}"
+                  BorderThickness="1,0,0,0">
+            <Panel>
+              <StackPanel IsVisible="{Binding SelectedOperation, Converter={x:Static ObjectConverters.IsNull}}"
+                          VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Margin="24" MaxWidth="240">
+                <Border Classes="tile" Width="40" Height="40" CornerRadius="10" HorizontalAlignment="Center">
+                  <c:Icon Data="{StaticResource IconOperations}" Width="18" Height="18" />
+                </Border>
+                <TextBlock Classes="sub" TextAlignment="Center" Text="Select an operation to change it, or add one from the list." />
+              </StackPanel>
+              <ScrollViewer IsVisible="{Binding SelectedOperation, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <StackPanel Margin="22" Spacing="18">
+                  <ContentControl Content="{Binding SelectedOperation}">
+                    <ContentControl.ContentTemplate>
+                      <DataTemplate x:DataType="vm:OperationEditorViewModel">
+                        <c:OperationEditor />
+                      </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                  </ContentControl>
+                  <Border Classes="panel" Padding="10" IsVisible="{Binding HasPlaceholders}">
+                    <StackPanel Spacing="2">
+                      <TextBlock Text="{Binding PlaceholdersTitle}" FontSize="12" FontWeight="SemiBold" Margin="8,0,0,6"
+                                 Foreground="{DynamicResource MutedBrush}" />
+                      <ItemsControl Name="PlaceholderList" ItemsSource="{Binding Placeholders}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="vm:PathPlaceholder">
+                            <Button Classes="ghost placeholder" ToolTip.Tip="{Binding Name}"
+                                    Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).InsertPlaceholderCommand}"
+                                    CommandParameter="{Binding}">
+                              <Grid ColumnDefinitions="78,*" RowDefinitions="Auto,Auto" RowSpacing="2">
+                                <TextBlock Classes="mono" Text="{Binding Name}" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Meaning}" FontSize="12" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource InkBrush}" />
+                                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Classes="mono muted" FontSize="11.5"
+                                           Text="{Binding Example}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Example}"
+                                           IsVisible="{Binding Example, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                              </Grid>
+                            </Button>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                      <TextBlock Classes="hint" Margin="8,6,8,0"
+                                 Text="Click one to put it in front of the path. Each platform has its own; switch the platform to see where they point there." />
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+              </ScrollViewer>
+            </Panel>
+          </Border>
+        </Grid>
+
+        <!-- Availability -->
+        <ScrollViewer IsVisible="{Binding IsAvailabilitySection}">
+          <StackPanel Margin="28,22" Spacing="12" MaxWidth="760" HorizontalAlignment="Left">
+            <StackPanel Classes="pagehead" Margin="0,0,0,6">
+              <TextBlock Classes="h1" Text="Availability" />
+              <TextBlock Classes="sub" Text="By default the package is offered to every older version." />
+            </StackPanel>
+            <Border Classes="panel">
+              <StackPanel>
+                <DockPanel Classes="setting">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="RestrictVersionsBox" IsChecked="{Binding RestrictVersions}" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="settingtitle" Text="Not available for some older versions" />
+                    <TextBlock Classes="hint" Margin="0" Text="Clients running one of these versions do not receive this package." />
+                  </StackPanel>
+                </DockPanel>
+                <TextBox Name="UnsupportedVersionsBox" Classes="multiline mono" Text="{Binding UnsupportedVersionsText}"
+                         MinHeight="110" PlaceholderText="One version per line" IsEnabled="{Binding RestrictVersions}"
+                         Margin="18,0,18,18" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Rollout -->
+        <ScrollViewer IsVisible="{Binding IsConditionsSection}">
+          <StackPanel Margin="28,22" Spacing="12" MaxWidth="760" HorizontalAlignment="Left">
+            <StackPanel Classes="pagehead" Margin="0,0,0,6">
+              <TextBlock Classes="h1" Text="Rollout" />
+              <TextBlock Classes="sub" Text="Roll the package out only to clients whose conditions (set in the UpdateManager) match." />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Clients must match" VerticalAlignment="Center" />
+              <ComboBox Name="ConditionModeBox" ItemsSource="{Binding RolloutConditionModes}"
+                        SelectedItem="{Binding RolloutConditionMode}" />
+              <TextBlock Text="of the positive conditions" VerticalAlignment="Center" />
+            </StackPanel>
+            <Border Classes="sunken" IsVisible="{Binding !Conditions.Count}">
+              <TextBlock Classes="muted" Text="No conditions: every client receives the package." />
+            </Border>
+            <ItemsControl ItemsSource="{Binding Conditions}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:RolloutConditionItemViewModel">
+                  <Grid ColumnDefinitions="*,*,Auto,Auto" ColumnSpacing="8" Margin="0,0,0,8">
+                    <TextBox Grid.Column="0" Text="{Binding Key}" PlaceholderText="Key" />
+                    <TextBox Grid.Column="1" Text="{Binding Value}" PlaceholderText="Value" />
+                    <CheckBox Grid.Column="2" Content="must not match" IsChecked="{Binding IsNegative}" />
+                    <Button Grid.Column="3" Classes="ghost icon" ToolTip.Tip="Remove the condition"
+                            Command="{Binding $parent[Window].((vm:PackageEditorViewModel)DataContext).RemoveConditionCommand}"
+                            CommandParameter="{Binding}">
+                      <c:Icon Data="{StaticResource IconClose}" />
+                    </Button>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Name="AddConditionButton" Command="{Binding AddConditionCommand}" HorizontalAlignment="Left">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconPlus}" />
+                <TextBlock Text="Add condition" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </ScrollViewer>
+      </Panel>
+    </DockPanel>
+    <c:BusyOverlay />
+  </Panel>
+</Window>

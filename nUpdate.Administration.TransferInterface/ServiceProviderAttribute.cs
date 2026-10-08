@@ -1,31 +1,19 @@
-﻿// ServiceProviderAttribute.cs, 01.08.2018
-// Copyright (C) Dominic Beger 17.06.2019
+namespace nUpdate.Administration.TransferInterface;
 
-using System;
-
-namespace nUpdate.Administration.TransferInterface
+/// <summary>
+///     Marks the <see cref="IServiceProvider" /> of a plugin assembly. nUpdate Administration instantiates it and asks it
+///     for an <see cref="ITransferProviderFactory" />.
+/// </summary>
+[AttributeUsage(AttributeTargets.Assembly)]
+public sealed class ServiceProviderAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Assembly)]
-    public class ServiceProviderAttribute : Attribute
+    public ServiceProviderAttribute(Type serviceType)
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ServiceProviderAttribute" /> class.
-        /// </summary>
-        /// <param name="serviceType">The type of the transfer services provider.</param>
-        /// <exception cref="System.ArgumentNullException">srviceType is null.</exception>
-        /// <exception cref="System.ArgumentException">Implementation of IServiceProvider is missing.;serviceType</exception>
-        public ServiceProviderAttribute(Type serviceType)
-        {
-            if (serviceType == null)
-                throw new ArgumentNullException(nameof(serviceType));
-            if (!typeof(IServiceProvider).IsAssignableFrom(serviceType))
-                throw new ArgumentException("Implementation of IServiceProvider is missing.", nameof(serviceType));
-            ServiceType = serviceType;
-        }
-
-        /// <summary>
-        ///     Gets the type of the services provider.
-        /// </summary>
-        public Type ServiceType { get; private set; }
+        ArgumentNullException.ThrowIfNull(serviceType);
+        if (!typeof(IServiceProvider).IsAssignableFrom(serviceType))
+            throw new ArgumentException("The type must implement System.IServiceProvider.", nameof(serviceType));
+        ServiceType = serviceType;
     }
+
+    public Type ServiceType { get; }
 }

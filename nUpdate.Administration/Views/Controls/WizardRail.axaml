@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:nUpdate.Administration.ViewModels"
+             x:Class="nUpdate.Administration.Views.Controls.WizardRail"
+             x:Name="Root">
+  <Border Classes="sidebar" Width="220" Padding="12,18">
+    <ItemsControl Name="StepList" ItemsSource="{Binding #Root.Steps}">
+      <ItemsControl.Styles>
+        <Style Selector="Border.marker">
+          <Setter Property="Width" Value="22" />
+          <Setter Property="Height" Value="22" />
+          <Setter Property="CornerRadius" Value="11" />
+          <Setter Property="BorderThickness" Value="1.5" />
+          <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+          <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        </Style>
+        <Style Selector="Border.marker.current">
+          <Setter Property="BorderBrush" Value="{DynamicResource AccentFillBrush}" />
+          <Setter Property="Background" Value="{DynamicResource AccentFillBrush}" />
+        </Style>
+        <Style Selector="Border.marker.done">
+          <Setter Property="BorderBrush" Value="{DynamicResource AccentSoftBrush}" />
+          <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+        </Style>
+        <Style Selector="Border.marker TextBlock">
+          <Setter Property="FontSize" Value="11" />
+          <Setter Property="FontWeight" Value="SemiBold" />
+          <Setter Property="HorizontalAlignment" Value="Center" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+          <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+        </Style>
+        <Style Selector="Border.marker.current TextBlock">
+          <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+        </Style>
+        <Style Selector="Border.marker.done TextBlock">
+          <Setter Property="Foreground" Value="{DynamicResource AccentSoftInkBrush}" />
+        </Style>
+        <Style Selector="TextBlock.steptitle">
+          <Setter Property="Foreground" Value="{DynamicResource InkSecondaryBrush}" />
+          <Setter Property="FontWeight" Value="Medium" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.steptitle.current">
+          <Setter Property="Foreground" Value="{DynamicResource InkBrush}" />
+          <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Border.steprow">
+          <Setter Property="Padding" Value="10,0" />
+          <Setter Property="Height" Value="38" />
+          <Setter Property="CornerRadius" Value="8" />
+          <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+        <Style Selector="Border.steprow.current">
+          <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+          <Setter Property="BoxShadow" Value="{DynamicResource RaisedShadow}" />
+        </Style>
+      </ItemsControl.Styles>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:WizardStep">
+          <Border Classes="steprow" Classes.current="{Binding IsCurrent}">
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+              <Border Classes="marker" Classes.current="{Binding IsCurrent}" Classes.done="{Binding IsDone}">
+                <TextBlock Text="{Binding Marker}" />
+              </Border>
+              <TextBlock Classes="steptitle" Classes.current="{Binding IsCurrent}" Text="{Binding Title}" />
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Border>
+</UserControl>
