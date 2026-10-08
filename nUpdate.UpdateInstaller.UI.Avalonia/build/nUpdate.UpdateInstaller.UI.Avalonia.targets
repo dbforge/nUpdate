@@ -1,0 +1,44 @@
+<Project>
+  <!--
+    Copies the built-in nUpdate installer to nUpdate.Installer/<rid>/ next to the application, where UpdateManager looks
+    for it by default. Which runtime identifiers are copied:
+      - nUpdateInstallerRuntimes, when set (for example "win-x64;win-arm64"),
+      - else the RuntimeIdentifier of the project, when the package has an installer for it,
+      - else all seven (about 170 MB), with warning NUPD001.
+    nUpdateInstallerFolderName changes the folder name.
+  -->
+  <PropertyGroup>
+    <nUpdateInstallerFolderName Condition="'$(nUpdateInstallerFolderName)' == ''">nUpdate.Installer</nUpdateInstallerFolderName>
+    <_nUpdateInstallerSource>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../installer/'))</_nUpdateInstallerSource>
+    <_nUpdateInstallerRuntimes>$(nUpdateInstallerRuntimes)</_nUpdateInstallerRuntimes>
+    <_nUpdateInstallerRuntimes Condition="'$(_nUpdateInstallerRuntimes)' == '' and '$(RuntimeIdentifier)' != '' and Exists('$(_nUpdateInstallerSource)$(RuntimeIdentifier)')">$(RuntimeIdentifier)</_nUpdateInstallerRuntimes>
+  </PropertyGroup>
+
+  <Target Name="nUpdateIncludeInstaller" BeforeTargets="AssignTargetPaths">
+    <Warning Code="NUPD001" Condition="'$(_nUpdateInstallerRuntimes)' == ''"
+             Text="nUpdate copies its installer for all seven runtime identifiers (about 170 MB) because the project has no RuntimeIdentifier the installer is built for. Set nUpdateInstallerRuntimes to the ones you ship, for example &lt;nUpdateInstallerRuntimes&gt;win-x64&lt;/nUpdateInstallerRuntimes&gt;." />
+    <ItemGroup>
+      <_nUpdateInstallerRuntime Include="$(_nUpdateInstallerRuntimes)" />
+      <_nUpdateInstallerFile Condition="'$(_nUpdateInstallerRuntimes)' == ''" Include="$(_nUpdateInstallerSource)**/*" />
+      <_nUpdateInstallerFile Condition="'$(_nUpdateInstallerRuntimes)' != ''" Include="$(_nUpdateInstallerSource)%(_nUpdateInstallerRuntime.Identity)/**/*" />
+      <!-- ExcludeFromSingleFile: a single-file publish must not bundle the installer, which has to exist as a file. -->
+      <None Include="@(_nUpdateInstallerFile)" Link="$(nUpdateInstallerFolderName)/$([MSBuild]::MakeRelative('$(_nUpdateInstallerSource)', '%(FullPath)'))"
+            CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" Visible="false" />
+    </ItemGroup>
+    <Error Condition="'@(_nUpdateInstallerFile)' == ''" Code="NUPD002" Text="The nUpdate installer package has no installer for &quot;$(_nUpdateInstallerRuntimes)&quot;. It has: win-x64, win-x86, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64." />
+  </Target>
+
+  <!-- NuGet does not keep the execute bit; Linux and macOS need it to start the installer. -->
+  <Target Name="nUpdateMarkInstallerExecutable" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(OS)' != 'Windows_NT'">
+    <ItemGroup>
+      <_nUpdateInstallerCopy Include="$(OutDir)$(nUpdateInstallerFolderName)/*/nUpdate.UpdateInstaller.UI.Avalonia" />
+    </ItemGroup>
+    <Exec Condition="'@(_nUpdateInstallerCopy)' != ''" Command="chmod +x @(_nUpdateInstallerCopy->'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+  <Target Name="nUpdateMarkPublishedInstallerExecutable" AfterTargets="Publish" Condition="'$(OS)' != 'Windows_NT'">
+    <ItemGroup>
+      <_nUpdatePublishedInstaller Include="$(PublishDir)$(nUpdateInstallerFolderName)/*/nUpdate.UpdateInstaller.UI.Avalonia" />
+    </ItemGroup>
+    <Exec Condition="'@(_nUpdatePublishedInstaller)' != ''" Command="chmod +x @(_nUpdatePublishedInstaller->'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+</Project>
