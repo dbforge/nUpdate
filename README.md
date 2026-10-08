@@ -338,9 +338,14 @@ manager.RolloutConditions["Ring"] = "early-adopters";
 <summary><b>Restart with arguments and react to a finished update</b></summary>
 
 ``` c#
-manager.AfterInstall = AfterInstall.Restart; // or Close, or KeepRunning
+manager.AfterInstall = AfterInstall.Restart; // or Close to leave it closed, or KeepRunning
 manager.Arguments.Add(new InstallerArgument("--updated", ArgumentCondition.Succeeded));
 manager.Arguments.Add(new InstallerArgument("--update-failed", ArgumentCondition.Failed));
+
+// Restarted from the installer, not from a shortcut: pass on the arguments this instance was started with,
+// such as a settings file, so the updated application gets them too.
+foreach (var argument in Environment.GetCommandLineArgs().Skip(1))
+    manager.Arguments.Add(new InstallerArgument(argument));
 
 // In Main of the restarted application:
 if (args.Contains("--updated"))
