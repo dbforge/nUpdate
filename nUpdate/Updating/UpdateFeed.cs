@@ -27,6 +27,12 @@ public sealed class PackageInfo
     /// <summary>When <c>true</c> the package is installed even if a newer one exists.</summary>
     public bool Necessary { get; set; }
 
+    /// <summary>
+    ///     Whether the application starts again after this package: <c>Restart</c> or <c>Close</c>, overriding
+    ///     <see cref="UpdateManager.DefaultAfterInstall" />, or <c>null</c> to leave it to the application.
+    /// </summary>
+    public AfterInstall? AfterInstall { get; set; }
+
     /// <summary>The changelog per culture name (<c>en</c>, <c>de-DE</c>).</summary>
     public Dictionary<string, string> Changelog { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 

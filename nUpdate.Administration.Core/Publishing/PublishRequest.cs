@@ -28,6 +28,9 @@ public sealed class PublishRequest
 
     public bool Necessary { get; set; }
 
+    /// <summary>Whether the application starts again after this update (<c>Restart</c> or <c>Close</c>), or <c>null</c> to leave it to the application.</summary>
+    public AfterInstall? AfterInstall { get; set; }
+
     /// <summary>Client versions that must not install this package.</summary>
     public List<UpdateVersion> UnsupportedVersions { get; } = [];
 

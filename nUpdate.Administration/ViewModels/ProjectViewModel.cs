@@ -61,6 +61,8 @@ public sealed class PackageDetailsViewModel(UpdatePackage package, PackageInfo? 
         }
     }
 
+    public string AfterInstall => entry is null ? "-" : AfterInstallChoice.For(entry.AfterInstall).Display;
+
     public string Created => package.CreatedAt == DateTimeOffset.MinValue
         ? "-"
         : package.CreatedAt.LocalDateTime.ToString("g", System.Globalization.CultureInfo.CurrentCulture);

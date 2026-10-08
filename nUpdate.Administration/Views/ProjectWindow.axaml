@@ -215,7 +215,7 @@
                           </Button>
                         </UniformGrid>
                       </DockPanel>
-                      <Grid ColumnDefinitions="112,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+                      <Grid ColumnDefinitions="112,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
                         <TextBlock Grid.Row="0" Classes="key" Text="Platforms" Margin="0,3,0,0" />
                         <ItemsControl Grid.Row="0" Grid.Column="1" ItemsSource="{Binding SelectedDetails.Platforms, FallbackValue={x:Null}}">
                           <ItemsControl.ItemsPanel>
@@ -235,8 +235,10 @@
                         <TextBlock Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Size, FallbackValue=''}" />
                         <TextBlock Grid.Row="2" Classes="key" Text="Rollout" />
                         <TextBlock Grid.Row="2" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Rollout, FallbackValue=''}" />
-                        <TextBlock Grid.Row="3" Classes="key" Text="Created" />
-                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Created, FallbackValue=''}" />
+                        <TextBlock Grid.Row="3" Classes="key" Text="After the update" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.AfterInstall, FallbackValue=''}" />
+                        <TextBlock Grid.Row="4" Classes="key" Text="Created" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Created, FallbackValue=''}" />
                       </Grid>
                       <StackPanel Spacing="8" IsVisible="{Binding SelectedDetails.HasChangelog, FallbackValue=False}">
                         <TextBlock Classes="eyebrow" Text="CHANGELOG" />

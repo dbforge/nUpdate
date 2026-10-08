@@ -166,7 +166,10 @@ if (await manager.CheckForUpdatesAsync())
   default `Release` installs releases only, so release candidates are skipped unless the client asks for them
   (nUpdate 3 and 4 always offered them).
 - **Rollout and installation:** `RolloutConditions` are matched against the rollout conditions of a package, and
-  `AfterInstall` tells the installer whether to restart, close or keep the application running.
+  `DefaultAfterInstall` tells the installer whether to restart, close or keep the application running. A package can
+  ask to restart the application or to leave it closed instead (set in nUpdate Administration); when several packages
+  are installed together, leaving it closed wins. `AfterInstall` is the outcome for the updates found, and the update
+  dialogs say when the application stays closed.
 - **Statistics:** failures never abort the download; they are written to `UpdateManagerServices.Logger` (an `ILogger`).
 
 ### The installer
@@ -338,7 +341,7 @@ manager.RolloutConditions["Ring"] = "early-adopters";
 <summary><b>Restart with arguments and react to a finished update</b></summary>
 
 ``` c#
-manager.AfterInstall = AfterInstall.Restart; // or Close to leave it closed, or KeepRunning
+manager.DefaultAfterInstall = AfterInstall.Restart; // or Close to leave it closed, or KeepRunning; a package can override it
 manager.Arguments.Add(new InstallerArgument("--updated", ArgumentCondition.Succeeded));
 manager.Arguments.Add(new InstallerArgument("--update-failed", ArgumentCondition.Failed));
 
@@ -544,10 +547,10 @@ The migration assistant ends with these steps:
   replace `SearchForUpdatesAsync`, `DownloadPackagesAsync`, `ValidatePackagesAsync`, `InstallPackage()` and
   `DeletePackages()`; `AvailableUpdates` (a list of `PackageInfo` from the `UpdateFeed`) replaces
   `PackageConfigurations`, `FeedUri` replaces `UpdateConfigurationFileUri`, `TotalDownloadSize`, `DownloadedPackages`
-  and `DownloadDirectory` replace `TotalSize`, `PackageFilePaths` and `UpdateDirectory`. `AfterInstall` (`Restart`,
-  `Close`, `KeepRunning`) replaces `HostApplicationOptions`; `InstallerArgument(value, when)` with `ArgumentCondition`
-  (`Succeeded`, `Failed`, `Always`) replaces `UpdateArgument`; `MinimumStability` and `AcceptedPreReleaseLabels` replace
-  `IncludeAlpha` and `IncludeBeta`; `Culture`, `Texts` and `TextFiles` replace `LanguageCulture`,
+  and `DownloadDirectory` replace `TotalSize`, `PackageFilePaths` and `UpdateDirectory`. `DefaultAfterInstall`
+  (`Restart`, `Close`, `KeepRunning`) replaces `HostApplicationOptions`, and a package can override it;
+  `InstallerArgument(value, when)` with `ArgumentCondition` (`Succeeded`, `Failed`, `Always`) replaces
+  `UpdateArgument`; `MinimumStability` and `AcceptedPreReleaseLabels` replace `IncludeAlpha` and `IncludeBeta`; `Culture`, `Texts` and `TextFiles` replace `LanguageCulture`,
   `LocalizationProperties` and `CultureFilePaths`; `ReportDownloads` replaces `IncludeCurrentPcIntoStatistics`;
   `RolloutConditions` replaces `Conditions`, with `RolloutCondition.Negated` and `RolloutConditionMode.Any`;
   `Platform` and the platform of each package file replace `Architecture`; `UpdateManagerServices.Logger` replaces the

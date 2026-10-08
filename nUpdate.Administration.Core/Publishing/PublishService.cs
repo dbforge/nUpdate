@@ -501,6 +501,7 @@ public sealed class PublishService(
             Changelog = request.Changelog.ToDictionary(pair => pair.Key.Name, pair => pair.Value,
                 StringComparer.OrdinalIgnoreCase),
             Necessary = request.Necessary,
+            AfterInstall = request.AfterInstall,
             UnsupportedVersions = request.UnsupportedVersions.ToList(),
             Rollout = new RolloutSettings
             {

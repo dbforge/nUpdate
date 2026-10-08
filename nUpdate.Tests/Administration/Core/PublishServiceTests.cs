@@ -48,6 +48,7 @@ public class PublishServiceTests
             Description = "desc",
             Publish = publish,
             Necessary = true,
+            AfterInstall = AfterInstall.Close,
             RolloutConditionMode = RolloutConditionMode.All
         };
         request.Changelog[new CultureInfo("en")] = "Fixes";
@@ -106,6 +107,7 @@ public class PublishServiceTests
         entry.Statistics!.Url.ShouldBe("nupdate-statistics.php");
         entry.Statistics.Enabled.ShouldBeTrue();
         entry.Necessary.ShouldBeTrue();
+        entry.AfterInstall.ShouldBe(AfterInstall.Close);
         entry.UnsupportedVersions.ShouldBe([new UpdateVersion("0.9.0")]);
         entry.Rollout.Mode.ShouldBe(RolloutConditionMode.All);
         entry.Rollout.Conditions.Single().Key.ShouldBe("R");
@@ -726,6 +728,7 @@ public class PublishServiceTests
         var request = new PublishRequest(project, secrets, definition)
         {
             Description = "rebuilt",
+            AfterInstall = AfterInstall.Restart,
         };
         request.Changelog[new CultureInfo("en")] = "Fixes again";
         return request;
@@ -852,6 +855,7 @@ public class PublishServiceTests
         _context.Signer.Verify(packagePath, TestKeys.PublicKey, file.Signature.Value).ShouldBeTrue();
         entry.PublishedAt.ShouldBe(previous.PublishedAt);
         entry.GetChangelog(new CultureInfo("de-DE")).ShouldBe("Fixes again");
+        entry.AfterInstall.ShouldBe(AfterInstall.Restart);
         var content = await _context.ContentReader.ReadAsync(packagePath);
         content.Manifest!.Operations.ShouldBeEmpty();
         content.Entries.Single().RelativePath.ShouldBe("app.dll");

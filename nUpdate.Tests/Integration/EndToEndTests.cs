@@ -125,7 +125,7 @@ public sealed class EndToEndTests : IDisposable
         using var manager = new UpdateManager(project.FeedUri, TestKeys.PublicKey, services: ClientServices("IntegrationApp", Path.Combine(appDirectory, "app.exe"), launcher))
         {
             InstallerPath = Path.Combine(installerDirectory, "installer.exe"),
-            AfterInstall = AfterInstall.KeepRunning,
+            DefaultAfterInstall = AfterInstall.KeepRunning,
         };
         (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
         manager.AvailableUpdates.Single().Version.ShouldBe(new UpdateVersion("1.1.0"));

@@ -22,6 +22,7 @@ public sealed class UpdateTexts
     public string TouchesFiles { get; set; } = "File system";
     public string TouchesProcesses { get; set; } = "Processes";
     public string TouchesServices { get; set; } = "Services";
+    public string StaysClosedAfterUpdate { get; set; } = "{0} stays closed after the update.";
     public string NoUpdatesTitle { get; set; } = "There are no new updates available.";
     public string NoUpdatesInfo { get; set; } = "The application is currently up-to-date.";
     public string Downloading { get; set; } = "Downloading updates...";

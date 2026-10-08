@@ -19,7 +19,7 @@ public sealed class UpdateSummaryTests : IDisposable
 
     public void Dispose() => _manager.Dispose();
 
-    private async Task CheckAsync(params (string Version, OperationArea[] Touches)[] packages)
+    private async Task CheckAsync(params (string Version, OperationArea[] Touches, AfterInstall? AfterInstall)[] packages)
     {
         var feed = new UpdateFeed
         {
@@ -27,6 +27,7 @@ public sealed class UpdateSummaryTests : IDisposable
             {
                 Version = new UpdateVersion(p.Version),
                 Necessary = true,
+                AfterInstall = p.AfterInstall,
                 Changelog = { ["en"] = $"Changes in {p.Version}." },
                 Files = [new PackageFile { Path = $"packages/{p.Version}/any.zip", Size = 2048, Sha512 = "x", Signature = new PackageSignature { Value = "s" }, Touches = p.Touches.ToList() }],
             }).ToList(),
@@ -38,7 +39,8 @@ public sealed class UpdateSummaryTests : IDisposable
     [Fact]
     public async Task UpdateSummary_DescribesOneUpdateWithWhatItTouches()
     {
-        await CheckAsync(("1.1.0", [OperationArea.Processes]));
+        _manager.DefaultAfterInstall = AfterInstall.Close;
+        await CheckAsync(("1.1.0", [OperationArea.Processes], AfterInstall.Restart));
 
         var summary = new UpdateSummary(_manager, "|");
 
@@ -49,18 +51,20 @@ public sealed class UpdateSummaryTests : IDisposable
         summary.UpdateSizeText.ShouldStartWith("Total package size: 2");
         summary.TouchesText.ShouldBe("Accesses: Processes");
         summary.ChangelogText.ShouldContain("Changes in 1.1.0.");
+        summary.AfterInstallText.ShouldBeNull();
         Should.Throw<ArgumentNullException>(() => new UpdateSummary(null!, "\n"));
     }
 
     [Fact]
-    public async Task UpdateSummary_DescribesSeveralUpdatesThatTouchNothing()
+    public async Task UpdateSummary_DescribesSeveralUpdatesThatTouchNothingAndLeaveTheApplicationClosed()
     {
-        await CheckAsync(("1.1.0", []), ("1.2.0", []));
+        await CheckAsync(("1.1.0", [], AfterInstall.Close), ("1.2.0", [], null));
 
         var summary = new UpdateSummary(_manager, "|");
 
         summary.Header.ShouldBe("2 new updates available.");
         summary.TouchesText.ShouldBe("Accesses: -");
         summary.ChangelogText.ShouldContain("|");
+        summary.AfterInstallText.ShouldBe("TestApp stays closed after the update.");
     }
 }

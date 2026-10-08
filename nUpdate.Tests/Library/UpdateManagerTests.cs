@@ -29,7 +29,7 @@ public class UpdateManagerTests
 
     /// <summary>Serves a package zip with the payload and a matching manifest and returns the feed entry that announces it.</summary>
     private PackageInfo Publish(string version, byte[] payload, bool statistics = false, bool necessary = false, byte[]? served = null, Guid? manifestProject = null,
-        string? manifestVersion = null, string platform = PackagePlatform.Any, string? manifestPlatform = null)
+        string? manifestVersion = null, string platform = PackagePlatform.Any, string? manifestPlatform = null, AfterInstall? afterInstall = null)
     {
         var path = $"packages/{new UpdateVersion(version)}/{platform}.zip";
         var package = TestPackages.Build(manifestVersion ?? version, manifestProject ?? ProjectId, payload, platform: manifestPlatform ?? platform);
@@ -38,6 +38,7 @@ public class UpdateManagerTests
         {
             Version = new UpdateVersion(version),
             Necessary = necessary,
+            AfterInstall = afterInstall,
             Files = [File(path, package, platform)],
             Statistics = statistics ? new PackageStatistics { Url = "statistics.php" } : null,
         };
@@ -92,6 +93,7 @@ public class UpdateManagerTests
         manager.AvailableUpdates.ShouldBeEmpty();
         manager.DownloadedPackages.ShouldBeEmpty();
         manager.TotalDownloadSize.ShouldBe(0);
+        manager.DefaultAfterInstall.ShouldBe(AfterInstall.Restart);
         manager.AfterInstall.ShouldBe(AfterInstall.Restart);
         manager.RunInstallerAsAdmin.ShouldBeTrue();
         manager.ReportDownloads.ShouldBeTrue();
@@ -872,7 +874,7 @@ public class UpdateManagerTests
         _services.AddInstaller();
         ServeFeed(Publish("1.1.0", Package(1)));
         using var manager = Create();
-        manager.AfterInstall = AfterInstall.KeepRunning;
+        manager.DefaultAfterInstall = AfterInstall.KeepRunning;
         manager.RunInstallerAsAdmin = false;
         await manager.CheckForUpdatesAsync();
         await manager.DownloadAsync();
@@ -881,6 +883,48 @@ public class UpdateManagerTests
         _services.ApplicationTerminator.DidNotReceive().Terminate();
         StartedOptions().Host.ProcessId.ShouldBeNull();
         ((bool)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[2]!).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task AfterInstall_FollowsThePackagesOverTheDefaultAndClosedWins()
+    {
+        using var manager = Create();
+        manager.DefaultAfterInstall = AfterInstall.KeepRunning;
+
+        ServeFeed(Publish("1.1.0", Package(1)));
+        await manager.CheckForUpdatesAsync();
+        manager.AfterInstall.ShouldBe(AfterInstall.KeepRunning);
+
+        ServeFeed(Publish("1.1.0", Package(1), necessary: true), Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
+        await manager.CheckForUpdatesAsync();
+        manager.AfterInstall.ShouldBe(AfterInstall.Restart);
+
+        ServeFeed(Publish("1.1.0", Package(1), necessary: true, afterInstall: AfterInstall.Close), Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
+        await manager.CheckForUpdatesAsync();
+        manager.AfterInstall.ShouldBe(AfterInstall.Close);
+
+        // A package that restarts the application overrides an application that stays closed by default.
+        manager.DefaultAfterInstall = AfterInstall.Close;
+        ServeFeed(Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
+        await manager.CheckForUpdatesAsync();
+        manager.AfterInstall.ShouldBe(AfterInstall.Restart);
+    }
+
+    [Fact]
+    public async Task StartInstaller_ClosesTheApplicationWhenAPackageAsksForIt()
+    {
+        _services.AddInstaller();
+        ServeFeed(Publish("1.1.0", Package(1), afterInstall: AfterInstall.Close));
+        using var manager = Create();
+        manager.DefaultAfterInstall = AfterInstall.KeepRunning;
+        await manager.CheckForUpdatesAsync();
+        await manager.DownloadAsync();
+
+        manager.StartInstaller().ShouldBeTrue();
+        var host = StartedOptions().Host;
+        host.AfterInstall.ShouldBe(AfterInstall.Close);
+        host.ProcessId.ShouldBe(4242);
+        _services.ApplicationTerminator.Received(1).Terminate();
     }
 
     [Fact]

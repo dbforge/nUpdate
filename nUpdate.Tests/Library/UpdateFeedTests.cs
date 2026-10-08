@@ -27,6 +27,7 @@ public class UpdateFeedTests
         json.ShouldNotContain("architecture");
         json.ShouldContain("\"rollout\":{\"mode\":\"any\",\"conditions\":[]}");
         json.ShouldContain("\"files\":[{\"platform\":\"any\",\"path\":\"packages/1.0.0/any.zip\",\"size\":10,\"sha512\":\"aGFzaA==\",\"signature\":{\"algorithm\":\"rsa-pss-sha512\",\"value\":\"c2ln\"},\"touches\":[\"services\"]}]");
+        json.ShouldContain("\"necessary\":false,\"afterInstall\":null,");
         json.ShouldContain("\"statistics\":null");
         FeedLoader.Parse(json).Packages.Single().Statistics.ShouldBeNull();
     }

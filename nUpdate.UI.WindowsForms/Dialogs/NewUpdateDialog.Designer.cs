@@ -42,6 +42,7 @@ namespace nUpdate.UI.WindowsForms.Dialogs
             this.cancelButton = new System.Windows.Forms.Button();
             this.installButton = new System.Windows.Forms.Button();
             this.accessLabel = new System.Windows.Forms.Label();
+            this.afterInstallLabel = new System.Windows.Forms.Label();
             this.line1 = new Line();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -163,6 +164,16 @@ namespace nUpdate.UI.WindowsForms.Dialogs
             this.accessLabel.TabIndex = 17;
             this.accessLabel.Text = "Accesses:";
             // 
+            // afterInstallLabel
+            // 
+            this.afterInstallLabel.AutoSize = true;
+            this.afterInstallLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.afterInstallLabel.Location = new System.Drawing.Point(9, 151);
+            this.afterInstallLabel.Name = "afterInstallLabel";
+            this.afterInstallLabel.Size = new System.Drawing.Size(0, 13);
+            this.afterInstallLabel.TabIndex = 19;
+            this.afterInstallLabel.Visible = false;
+            // 
             // line1
             // 
             this.line1.LineAlignment = Line.Alignment.Horizontal;
@@ -182,6 +193,7 @@ namespace nUpdate.UI.WindowsForms.Dialogs
             this.ClientSize = new System.Drawing.Size(371, 335);
             this.Controls.Add(this.line1);
             this.Controls.Add(this.accessLabel);
+            this.Controls.Add(this.afterInstallLabel);
             this.Controls.Add(this.controlPanel1);
             this.Controls.Add(this.changelogLabel);
             this.Controls.Add(this.updateSizeLabel);
@@ -221,6 +233,7 @@ namespace nUpdate.UI.WindowsForms.Dialogs
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button installButton;
         private System.Windows.Forms.Label accessLabel;
+        private System.Windows.Forms.Label afterInstallLabel;
         private Line line1;
     }
 }

@@ -597,7 +597,7 @@ public class ProjectWindowTests
         var withoutEntry = new PackageDetailsViewModel(package, null);
         (withoutEntry.Version, withoutEntry.Description, withoutEntry.Released).ShouldBe(("2.0.0", "Two", true));
         withoutEntry.Platforms.ShouldBeEmpty();
-        new[] { withoutEntry.Size, withoutEntry.Rollout, withoutEntry.Created }
+        new[] { withoutEntry.Size, withoutEntry.Rollout, withoutEntry.AfterInstall, withoutEntry.Created }
             .ShouldAllBe(text => text == "-");
         withoutEntry.HasChangelog.ShouldBeFalse();
 
@@ -605,6 +605,7 @@ public class ProjectWindowTests
         {
             Version = new UpdateVersion("2.0.0"),
             Necessary = true,
+            AfterInstall = AfterInstall.Close,
             Changelog = { ["en"] = "Fixes" },
             Rollout = new RolloutSettings { Conditions = [new RolloutCondition("Region", "EU")] },
             Files =
@@ -618,13 +619,16 @@ public class ProjectWindowTests
         details.Platforms.ShouldBe(["win-x64", "linux-x64"]);
         details.Size.ShouldBe(nUpdate.Ui.ByteSizeFormatter.Format(2 * 1024 * 1024, System.Globalization.CultureInfo.CurrentCulture));
         details.Rollout.ShouldBe("1 condition · necessary");
+        details.AfterInstall.ShouldBe("Leave the application closed");
         details.Created.ShouldNotBe("-");
         details.Changelog.ShouldBe("Fixes");
         details.HasChangelog.ShouldBeTrue();
 
         entry.Necessary = false;
+        entry.AfterInstall = null;
         entry.Rollout.Conditions.Add(new RolloutCondition("Tier", "beta"));
         details.Rollout.ShouldBe("2 conditions");
+        details.AfterInstall.ShouldBe("As the application decides");
         entry.Rollout.Conditions.Clear();
         details.Rollout.ShouldBe("Everyone");
     }

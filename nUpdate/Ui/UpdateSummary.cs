@@ -24,6 +24,7 @@ internal sealed class UpdateSummary
         var touches = TouchesFormatter.Describe(packages, manager.Platform, texts);
         TouchesText = $"{texts.Touches} {(touches.Count == 0 ? "-" : string.Join(", ", touches))}";
         ChangelogText = ChangelogFormatter.Format(packages, manager.Culture, newLine);
+        AfterInstallText = manager.AfterInstall == AfterInstall.Close ? string.Format(culture, texts.StaysClosedAfterUpdate, manager.ApplicationName) : null;
     }
 
     public string Header { get; }
@@ -40,4 +41,7 @@ internal sealed class UpdateSummary
     public string TouchesText { get; }
 
     public string ChangelogText { get; }
+
+    /// <summary>That the application stays closed after the update, or <c>null</c> when it restarts or keeps running.</summary>
+    public string? AfterInstallText { get; }
 }

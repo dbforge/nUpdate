@@ -15,6 +15,7 @@
   "touchesFiles": "File system",
   "touchesProcesses": "Processi",
   "touchesServices": "Servizi",
+  "staysClosedAfterUpdate": "{0} resterà chiuso dopo l'aggiornamento.",
   "noUpdatesTitle": "Non ci sono aggiornamenti disponibili.",
   "noUpdatesInfo": "L'applicazione è già aggiornata.",
   "downloading": "Download degli aggiornamenti...",

@@ -19,6 +19,7 @@ public class FeedLoaderTests
               "version": "2.1.0-beta.1",
               "publishedAt": "2026-10-05T14:12:00+00:00",
               "necessary": true,
+              "afterInstall": "close",
               "changelog": { "en": "English", "de-DE": "Deutsch" },
               "unsupportedVersions": ["1.0.0"],
               "rollout": { "mode": "all", "conditions": [{ "key": "Region", "value": "EU", "negated": false }] },
@@ -56,6 +57,7 @@ public class FeedLoaderTests
         package.Version.ShouldBe(new UpdateVersion("2.1.0-beta.1"));
         package.PublishedAt.ShouldBe(new DateTimeOffset(2026, 10, 5, 14, 12, 0, TimeSpan.Zero));
         package.Necessary.ShouldBeTrue();
+        package.AfterInstall.ShouldBe(AfterInstall.Close);
         package.Changelog["de-DE"].ShouldBe("Deutsch");
         package.UnsupportedVersions.ShouldBe([new UpdateVersion("1.0.0")]);
         package.Rollout.Mode.ShouldBe(RolloutConditionMode.All);
@@ -98,7 +100,10 @@ public class FeedLoaderTests
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"win","path":"p","signature":{"value":"s"}},{"platform":"WIN","path":"q","signature":{"value":"s"}}]}]}""")).Message.ShouldContain("more than one file for the platform \"WIN\"");
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"unsupportedVersions":[null]}]}""")).Message.ShouldContain("empty entry");
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"rollout":{"conditions":[null]}}]}""")).Message.ShouldContain("empty entry");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"keepRunning"}]}""")).Message.ShouldContain("can only ask to restart");
+        FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"restart"}]}""").Packages.Single().AfterInstall.ShouldBe(AfterInstall.Restart);
         var sparse = FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"},"touches":null}],"changelog":null,"unsupportedVersions":null,"rollout":null}]}""").Packages.Single();
+        sparse.AfterInstall.ShouldBeNull();
         sparse.Changelog.ShouldBeEmpty();
         sparse.UnsupportedVersions.ShouldBeEmpty();
         sparse.Rollout.Conditions.ShouldBeEmpty();
