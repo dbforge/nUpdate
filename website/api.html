@@ -627,9 +627,9 @@ manager.RolloutConditions[<span class="tok-str">&quot;Ring&quot;</span>] = <span
                   <p>Ask for administrator rights through UAC. <code>true</code> by default; only on Windows.</p>
                   <pre class="api-snippet"><code>manager.RunInstallerAsAdmin = <span class="tok-key">false</span>; <span class="tok-com">// installed per user, no UAC prompt</span></code></pre>
                 </div>
-                <div class="api-member" data-search="updatemanager applicationexecutablepath string? applicationexecutablepath { get; set; } the executable the installer restarts; derived from the entry assembly when not set.">
+                <div class="api-member" data-search="updatemanager applicationexecutablepath string? applicationexecutablepath { get; set; } the absolute path of the executable the installer restarts; its folder is the one that is updated. taken from the running process, single-file builds included. set it when that fails; an empty or relative path throws argumentexception.">
                   <code class="sig"><span class="k">string</span>? <span class="n">ApplicationExecutablePath</span> { <span class="k">get</span>; <span class="k">set</span>; }</code>
-                  <p>The executable the installer restarts; derived from the entry assembly when not set.</p>
+                  <p>The absolute path of the executable the installer restarts; its folder is the one that is updated. Taken from the running process, single-file builds included. Set it when that fails; an empty or relative path throws <code>ArgumentException</code>.</p>
                   <pre class="api-snippet"><code>manager.ApplicationExecutablePath = <span class="tok-type">Environment</span>.ProcessPath;</code></pre>
                 </div>
               </section>
