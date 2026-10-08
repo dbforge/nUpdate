@@ -1,144 +1,33 @@
-﻿// ITransferProvider.cs, 01.08.2018
-// Copyright (C) Dominic Beger 17.06.2019
+namespace nUpdate.Administration.TransferInterface;
 
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Security;
-
-namespace nUpdate.Administration.TransferInterface
+/// <summary>
+///     Uploads, lists and deletes files on the update server. Remote paths are relative to the configured base
+///     directory and use <c>/</c> as separator; an empty path means the base directory itself.
+///     Implementations keep one connection open for their lifetime.
+/// </summary>
+public interface ITransferProvider : IAsyncDisposable
 {
-    public interface ITransferProvider
-    {
-        /// <summary>
-        ///     Sets if passive mode should be used.
-        /// </summary>
-        bool UsePassiveMode { get; set; }
+    /// <summary>Connects and authenticates. Throws <see cref="TransferException" /> on failure.</summary>
+    Task ConnectAsync(CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The FTP-server.
-        /// </summary>
-        string Host { get; set; }
+    Task<bool> FileExistsAsync(string remotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The port.
-        /// </summary>
-        int Port { get; set; }
+    Task<bool> DirectoryExistsAsync(string remotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The directory.
-        /// </summary>
-        string Directory { get; set; }
+    Task<IReadOnlyList<ServerItem>> ListAsync(string remotePath, bool recursive, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The username.
-        /// </summary>
-        string Username { get; set; }
+    /// <summary>Creates the directory and any missing parents.</summary>
+    Task CreateDirectoryAsync(string remotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The password.
-        /// </summary>
-        SecureString Password { get; set; }
+    /// <summary>Deletes a file; a missing file is not an error.</summary>
+    Task DeleteFileAsync(string remotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     The proxy to use, if wished.
-        /// </summary>
-        WebProxy Proxy { get; set; }
+    /// <summary>Deletes a directory with everything below it; a missing directory is not an error.</summary>
+    Task DeleteDirectoryAsync(string remotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     Gets or sets the exception appearing during the package upload.
-        /// </summary>
-        Exception PackageUploadException { get; set; }
+    Task RenameAsync(string remotePath, string newRemotePath, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     Fired when the download progress changes.
-        /// </summary>
-        event EventHandler<TransferProgressEventArgs> ProgressChanged;
+    Task UploadFileAsync(string localPath, string remotePath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        ///     Fired when the cancellation is finished.
-        /// </summary>
-        event EventHandler<EventArgs> CancellationFinished;
-
-        /// <summary>
-        ///     Tests the connection to the server and also if all certificates are valid.
-        /// </summary>
-        void TestConnection();
-
-        /// <summary>
-        ///     Deletes a file on the server.
-        /// </summary>
-        /// <param name="fileName">The name of the file to delete.</param>
-        void DeleteFile(string fileName);
-
-        /// <summary>
-        ///     Deletes a file on the server which is located at the specified path.
-        /// </summary>
-        /// <param name="directoryPath">The path of the directory where the file is located.</param>
-        /// <param name="fileName">The name of the file to delete.</param>
-        void DeleteFile(string directoryPath, string fileName);
-
-        /// <summary>
-        ///     Deletes a directory on the server.
-        /// </summary>
-        /// <param name="directoryPath">The name of the directory to delete.</param>
-        void DeleteDirectory(string directoryPath);
-
-        /// <summary>
-        ///     Lists the directories and files of the current directory.
-        /// </summary>
-        IEnumerable<ServerItem> ListDirectoriesAndFiles(string path, bool recursive);
-
-        /// <summary>
-        ///     Renames a directory on the server.
-        /// </summary>
-        /// <param name="oldName">The old name of the directory.</param>
-        /// <param name="newName">The new name of the directory.</param>
-        void RenameDirectory(string oldName, string newName);
-
-        /// <summary>
-        ///     Creates a new directory on the server.
-        /// </summary>
-        /// <param name="name">The name of the directory.</param>
-        void MakeDirectory(string name);
-
-        /// <summary>
-        ///     Moves all files and subdirectories from the current FTP-directory to the given aim directory.
-        /// </summary>
-        /// <param name="aimPath">The aim directory to move the files and subdirectories to.</param>
-        void MoveContent(string aimPath);
-
-        /// <summary>
-        ///     Returns if a file or directory is existing on the server.
-        /// </summary>
-        /// <param name="destinationName">The name of the file or folder to check.</param>
-        /// <returns>Returns "true" if the file or folder exists, otherwise "false".</returns>
-        bool IsExisting(string destinationName);
-
-        /// <summary>
-        ///     Returns if a file or directory is existing on the server.
-        /// </summary>
-        /// <param name="directoryPath">The directory in which the file should be existing.</param>
-        /// <param name="destinationName">The name of the file or folder to check.</param>
-        /// <returns>Returns "true" if the file or folder exists, otherwise "false".</returns>
-        bool IsExisting(string directoryPath, string destinationName);
-
-        /// <summary>
-        ///     Uploads a file to the server.
-        /// </summary>
-        /// <param name="filePath">The local path of the file to upload.</param>
-        void UploadFile(string filePath);
-
-        /// <summary>
-        ///     Uploads an update package to the server.
-        /// </summary>
-        /// <param name="packagePath">The local path of the package..</param>
-        /// <param name="packageVersion">The package version for the directory name.</param>
-        void UploadPackage(string packagePath, string packageVersion);
-
-        /// <summary>
-        ///     Terminates the package upload process.
-        /// </summary>
-        void CancelPackageUpload();
-    }
+    Task DownloadFileAsync(string remotePath, string localPath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default);
 }

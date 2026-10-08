@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:nUpdate.Administration.ViewModels"
+             x:Class="nUpdate.Administration.Views.Controls.StatisticsSettingsEditor"
+             x:DataType="vm:StatisticsSettingsEditorViewModel">
+  <StackPanel Spacing="14">
+    <DockPanel>
+      <ToggleSwitch DockPanel.Dock="Right" Name="EnabledBox" IsChecked="{Binding Enabled}" VerticalAlignment="Top"
+                    Margin="16,0,0,0" />
+      <StackPanel Spacing="2">
+        <TextBlock Text="Count downloads" FontWeight="SemiBold" />
+        <TextBlock Classes="hint" Margin="0" Text="Needs PHP and MySQL on the update server." />
+      </StackPanel>
+    </DockPanel>
+    <StackPanel IsVisible="{Binding Enabled}" Spacing="14">
+      <StackPanel>
+        <TextBlock Classes="label" Text="MySQL host as seen from the web server" />
+        <TextBox Name="DbHostBox" Text="{Binding DatabaseHost}" />
+      </StackPanel>
+      <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+        <StackPanel Grid.Column="0">
+          <TextBlock Classes="label" Text="Database" />
+          <TextBox Name="DbNameBox" Text="{Binding DatabaseName}" />
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+          <TextBlock Classes="label" Text="User" />
+          <TextBox Name="DbUserBox" Text="{Binding DatabaseUsername}" />
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+          <TextBlock Classes="label" Text="Password" />
+          <TextBox Name="DbPasswordBox" Text="{Binding DatabasePassword}" PasswordChar="•" />
+        </StackPanel>
+      </Grid>
+      <StackPanel>
+        <TextBlock Classes="label" Text="Statistics endpoint URL (optional)" />
+        <TextBox Classes="mono" Text="{Binding EndpointUrl}" PlaceholderText="nupdate-statistics.php next to nupdate.json" />
+      </StackPanel>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

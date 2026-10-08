@@ -1,0 +1,493 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        xmlns:sys="using:System"
+        xmlns:stats="using:nUpdate.Administration.Core.Statistics"
+        xmlns:plot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
+        x:Class="nUpdate.Administration.Views.ProjectWindow"
+        x:DataType="vm:ProjectViewModel"
+        Title="{Binding Title}" Width="1120" Height="720" MinWidth="860" MinHeight="520"
+        WindowStartupLocation="CenterOwner" Icon="/Assets/nUpdate.ico">
+  <!-- The menu bar of macOS -->
+  <NativeMenu.Menu>
+    <NativeMenu>
+      <NativeMenuItem Header="Project">
+        <NativeMenu>
+          <NativeMenuItem Header="Check the Feed" Command="{Binding CheckFeedCommand}" />
+          <NativeMenuItem Header="Migration Assistant…" Command="{Binding MigrateCommand}" />
+          <NativeMenuItem Header="Copy Client Code" Gesture="Meta+Shift+C" Command="{Binding CopySourceCommand}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="Project Settings…" Gesture="Meta+OemComma" Command="{Binding OpenSettingsCommand}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="Close Project" Gesture="Meta+W" Command="{Binding CancelCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
+      <NativeMenuItem Header="Package">
+        <NativeMenu>
+          <NativeMenuItem Header="New Package…" Gesture="Meta+Shift+N" Command="{Binding AddPackageCommand}" />
+          <NativeMenuItem Header="Edit Package…" Gesture="Meta+E" Command="{Binding EditPackageCommand}" />
+          <NativeMenuItem Header="Publish Package" Gesture="Meta+U" Command="{Binding PublishPackageCommand}" />
+          <NativeMenuItem Header="Delete Package…" Command="{Binding DeletePackageCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
+    </NativeMenu>
+  </NativeMenu.Menu>
+  <Window.Styles>
+    <!-- The header of every page: title and explanation on the left, actions on the right -->
+    <Style Selector="DockPanel.pagehead">
+      <Setter Property="Margin" Value="24,22,24,16" />
+    </Style>
+    <Style Selector="DockPanel.pagehead > Button, DockPanel.pagehead > TextBox">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.details TextBlock.key">
+      <Setter Property="FontSize" Value="12.5" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="Border.details TextBlock.value">
+      <Setter Property="FontSize" Value="12.5" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </Window.Styles>
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Classes="statusbar">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+          <c:Icon Data="{StaticResource IconServer}" />
+          <TextBlock Text="{Binding TransferSummary}" />
+        </StackPanel>
+        <TextBlock Text="{Binding PackageCountText}" />
+      </DockPanel>
+    </Border>
+    <Border DockPanel.Dock="Bottom" Classes="bottombar" IsVisible="{Binding IsBusy}">
+      <StackPanel Spacing="8">
+        <TextBlock Name="BusyText" Text="{Binding BusyText}" FontSize="12" Foreground="{DynamicResource InkSecondaryBrush}" />
+        <ProgressBar Name="BusyProgress" Value="{Binding Progress}" Minimum="0" Maximum="100" Height="6" MinHeight="6"
+                     CornerRadius="3" Foreground="{DynamicResource AccentBrush}" />
+      </StackPanel>
+    </Border>
+    <Border DockPanel.Dock="Bottom" Classes="bottombar" Background="{DynamicResource DangerSoftBrush}"
+            IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <c:Icon Data="{StaticResource IconError}" Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Top" Margin="0,1,0,0" />
+        <TextBlock Name="ErrorText" Classes="error" Text="{Binding ErrorMessage}" />
+      </StackPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Left" Classes="sidebar" Width="236" Padding="12,16">
+      <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="8,4,8,18">
+          <Border DockPanel.Dock="Left" Width="36" Height="36" CornerRadius="9" Background="{DynamicResource AccentSoftBrush}">
+            <TextBlock Text="{Binding Initials}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <StackPanel Margin="10,0,0,0" VerticalAlignment="Center" Spacing="2">
+            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock Classes="muted" FontSize="11.5" Text="{Binding UpdateUrl}" TextTrimming="CharacterEllipsis"
+                       ToolTip.Tip="{Binding UpdateUrl}" />
+          </StackPanel>
+        </DockPanel>
+        <Button DockPanel.Dock="Bottom" Name="SettingsButton" Classes="ghost nav" Command="{Binding OpenSettingsCommand}">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <c:Icon Data="{StaticResource IconSettings}" />
+            <TextBlock Text="Settings" />
+          </StackPanel>
+        </Button>
+        <ListBox Name="Nav" Classes="nav" SelectedIndex="0">
+          <ListBoxItem>
+            <DockPanel>
+              <Border DockPanel.Dock="Right" Classes="count">
+                <TextBlock Text="{Binding PackageCount}" />
+              </Border>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconPackage}" />
+                <TextBlock Text="Packages" />
+              </StackPanel>
+            </DockPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <c:Icon Data="{StaticResource IconOverview}" />
+              <TextBlock Text="Overview" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <c:Icon Data="{StaticResource IconChart}" />
+              <TextBlock Text="Statistics" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <c:Icon Data="{StaticResource IconHistory}" />
+              <TextBlock Text="History" />
+            </StackPanel>
+          </ListBoxItem>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <DockPanel>
+      <Border DockPanel.Dock="Top" Name="MigrationBanner" Classes="notice warning" Margin="24,18,24,0"
+              IsVisible="{Binding NeedsMigration}">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Name="MigrateButton" Classes="primary" Command="{Binding MigrateCommand}"
+                  VerticalAlignment="Center" Margin="12,0,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <c:Icon Data="{StaticResource IconMigrate}" />
+              <TextBlock Text="Open the migration assistant" />
+            </StackPanel>
+          </Button>
+          <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconWarning}" VerticalAlignment="Top" Margin="0,2,10,0" />
+          <TextBlock Name="MigrationBannerText" Text="{Binding MigrationText}" VerticalAlignment="Center" />
+        </DockPanel>
+      </Border>
+
+      <Carousel Name="Pages" SelectedIndex="{Binding #Nav.SelectedIndex}">
+        <!-- Packages -->
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Classes="pagehead">
+            <Button DockPanel.Dock="Right" Name="AddPackageButton" Classes="primary" Command="{Binding AddPackageCommand}"
+                    Margin="10,0,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconPlus}" />
+                <TextBlock Text="New package" />
+              </StackPanel>
+            </Button>
+            <TextBox DockPanel.Dock="Right" Name="SearchBox" Text="{Binding SearchText}" PlaceholderText="Search"
+                     Width="200">
+              <TextBox.InnerLeftContent>
+                <c:Icon Data="{StaticResource IconSearch}" Margin="10,0,0,0" Foreground="{DynamicResource MutedBrush}" />
+              </TextBox.InnerLeftContent>
+            </TextBox>
+            <StackPanel Spacing="3" VerticalAlignment="Center">
+              <TextBlock Classes="h1" Text="Packages" />
+              <TextBlock Classes="sub" Text="What the users of your application can install." />
+            </StackPanel>
+          </DockPanel>
+          <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0">
+            <DockPanel>
+              <Border DockPanel.Dock="Right" Classes="details" Width="304" BorderBrush="{DynamicResource HairlineBrush}"
+                      BorderThickness="1,0,0,0">
+                <Panel>
+                  <StackPanel IsVisible="{Binding SelectedDetails, Converter={x:Static ObjectConverters.IsNull}}"
+                              VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Margin="24" MaxWidth="220">
+                    <Border Classes="tile" Width="40" Height="40" CornerRadius="10" HorizontalAlignment="Center">
+                      <c:Icon Data="{StaticResource IconPackage}" Width="18" Height="18" />
+                    </Border>
+                    <TextBlock Classes="sub" TextAlignment="Center" Text="Select a package to publish, edit or delete it." />
+                  </StackPanel>
+                  <ScrollViewer IsVisible="{Binding SelectedDetails, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <StackPanel Margin="20" Spacing="18">
+                      <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                          <TextBlock Text="{Binding SelectedDetails.Version, FallbackValue=''}" FontSize="18" FontWeight="Bold"
+                                     LetterSpacing="-0.2" VerticalAlignment="Center" />
+                          <Border Classes="pill released" IsVisible="{Binding SelectedDetails.Released, FallbackValue=False}">
+                            <TextBlock Text="Released" />
+                          </Border>
+                          <Border Classes="pill" IsVisible="{Binding CanPublishSelected}">
+                            <TextBlock Text="Local only" />
+                          </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding SelectedDetails.Description, FallbackValue=''}" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource InkSecondaryBrush}" />
+                      </StackPanel>
+                      <DockPanel>
+                        <Button DockPanel.Dock="Right" Name="DeletePackageButton" Classes="danger icon" Width="36" Height="36"
+                                Margin="8,0,0,0" ToolTip.Tip="Delete the package" Command="{Binding DeletePackageCommand}">
+                          <c:Icon Data="{StaticResource IconDelete}" />
+                        </Button>
+                        <UniformGrid Rows="1" ColumnSpacing="8">
+                          <Button Name="PublishPackageButton" Classes="primary" HorizontalAlignment="Stretch"
+                                  IsVisible="{Binding CanPublishSelected}" Command="{Binding PublishPackageCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                              <c:Icon Data="{StaticResource IconUpload}" />
+                              <TextBlock Text="Publish" />
+                            </StackPanel>
+                          </Button>
+                          <Button Name="EditPackageButton" HorizontalAlignment="Stretch" Command="{Binding EditPackageCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                              <c:Icon Data="{StaticResource IconEdit}" />
+                              <TextBlock Text="Edit" />
+                            </StackPanel>
+                          </Button>
+                        </UniformGrid>
+                      </DockPanel>
+                      <Grid ColumnDefinitions="112,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+                        <TextBlock Grid.Row="0" Classes="key" Text="Platforms" Margin="0,3,0,0" />
+                        <ItemsControl Grid.Row="0" Grid.Column="1" ItemsSource="{Binding SelectedDetails.Platforms, FallbackValue={x:Null}}">
+                          <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                              <WrapPanel />
+                            </ItemsPanelTemplate>
+                          </ItemsControl.ItemsPanel>
+                          <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="sys:String">
+                              <Border Classes="pill accent" Margin="0,0,6,6" Padding="7,2">
+                                <TextBlock Text="{Binding}" />
+                              </Border>
+                            </DataTemplate>
+                          </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Grid.Row="1" Classes="key" Text="Size" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Size, FallbackValue=''}" />
+                        <TextBlock Grid.Row="2" Classes="key" Text="Rollout" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Rollout, FallbackValue=''}" />
+                        <TextBlock Grid.Row="3" Classes="key" Text="Created" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="value" Text="{Binding SelectedDetails.Created, FallbackValue=''}" />
+                      </Grid>
+                      <StackPanel Spacing="8" IsVisible="{Binding SelectedDetails.HasChangelog, FallbackValue=False}">
+                        <TextBlock Classes="eyebrow" Text="CHANGELOG" />
+                        <Border Classes="sunken">
+                          <TextBlock Text="{Binding SelectedDetails.Changelog, FallbackValue=''}" TextWrapping="Wrap" LineHeight="20"
+                                     Foreground="{DynamicResource InkSecondaryBrush}" />
+                        </Border>
+                      </StackPanel>
+                    </StackPanel>
+                  </ScrollViewer>
+                </Panel>
+              </Border>
+              <DataGrid Name="PackageGrid" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedPackage}"
+                        IsReadOnly="True" AutoGenerateColumns="False" CanUserResizeColumns="True">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Header="Version" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:PackageItemViewModel">
+                        <TextBlock Text="{Binding Version}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Header="State" Width="116">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="vm:PackageItemViewModel">
+                        <Panel VerticalAlignment="Center">
+                          <Border Classes="pill released" IsVisible="{Binding Package.Released}">
+                            <TextBlock Text="Released" />
+                          </Border>
+                          <Border Classes="pill" IsVisible="{Binding !Package.Released}">
+                            <TextBlock Text="Local only" />
+                          </Border>
+                        </Panel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"
+                                      x:DataType="vm:PackageItemViewModel" />
+                  <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="128"
+                                      x:DataType="vm:PackageItemViewModel" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </DockPanel>
+          </Border>
+        </DockPanel>
+
+        <!-- Overview -->
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Classes="pagehead">
+            <StackPanel Spacing="3">
+              <TextBlock Classes="h1" Text="Overview" />
+              <TextBlock Classes="sub" Text="Where the project publishes and what your application needs to find its updates." />
+            </StackPanel>
+          </DockPanel>
+          <ScrollViewer>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="16" Margin="24,0,24,24">
+              <StackPanel Grid.Column="0" Spacing="16">
+                <Border Classes="panel" Padding="20">
+                  <StackPanel Spacing="14">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <Border Classes="tile small">
+                        <c:Icon Data="{StaticResource IconGlobe}" />
+                      </Border>
+                      <TextBlock Classes="h2" Text="Feed" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Update URL" />
+                      <TextBox Name="UpdateUrlBox" Classes="mono" Text="{Binding UpdateUrl}" IsReadOnly="True" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Feed (set this in your application)" />
+                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <TextBox Grid.Column="0" Name="FeedUrlBox" Classes="mono" Text="{Binding FeedUrl}" IsReadOnly="True" />
+                        <Button Grid.Column="1" Name="CopyFeedUrlButton" Classes="icon" Width="36" Height="36" ToolTip.Tip="Copy"
+                                Command="{Binding CopyFeedUrlCommand}">
+                          <c:Icon Data="{StaticResource IconCopy}" />
+                        </Button>
+                      </Grid>
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Project folder" />
+                      <TextBox Name="FolderBox" Text="{Binding Folder}" IsReadOnly="True" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Upload" />
+                      <TextBox Name="TransferBox" Text="{Binding TransferSummary}" IsReadOnly="True" />
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <Border Classes="panel" Padding="20">
+                  <StackPanel Spacing="14">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <Border Classes="tile small processes">
+                        <c:Icon Data="{StaticResource IconCheck}" />
+                      </Border>
+                      <TextBlock Classes="h2" Text="Status" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Packages" />
+                      <TextBlock Name="PackagesSummaryText" Text="{Binding PackagesSummary}" TextWrapping="Wrap"
+                                 Foreground="{DynamicResource InkSecondaryBrush}" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Status of the feed" />
+                      <DockPanel>
+                        <Button DockPanel.Dock="Right" Name="CheckFeedButton" Classes="small" Content="Check"
+                                Command="{Binding CheckFeedCommand}" Margin="12,0,0,0" />
+                        <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconCheck}" Foreground="{DynamicResource SuccessBrush}"
+                                IsVisible="{Binding FeedReachable}" Margin="0,0,8,0" />
+                        <TextBlock Name="FeedStatusText" Text="{Binding FeedStatus}" VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource InkSecondaryBrush}" />
+                      </DockPanel>
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="nUpdate 3 and 4" />
+                      <TextBlock Name="MigrationStatusText" Text="{Binding MigrationText}" TextWrapping="Wrap"
+                                 Foreground="{DynamicResource InkSecondaryBrush}" />
+                      <WrapPanel Margin="0,10,0,0">
+                        <Button Name="CheckMigrationButton" Classes="small" Content="Check" Margin="0,0,8,8"
+                                Command="{Binding CheckMigrationCommand}" />
+                        <Button Name="MigrationAssistantButton" Classes="small" Content="Migration assistant…" Margin="0,0,8,8"
+                                Command="{Binding MigrateCommand}" IsVisible="{Binding LegacyFeedPresent}" />
+                        <Button Name="RetireLegacySetupButton" Classes="small danger" Content="Retire the nUpdate 4 setup…"
+                                Margin="0,0,8,8" Command="{Binding RetireLegacySetupCommand}" IsVisible="{Binding LegacyFeedPresent}" />
+                      </WrapPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="16">
+                <Border Classes="panel" Padding="20">
+                  <StackPanel Spacing="14">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <Border Classes="tile small registry">
+                        <c:Icon Data="{StaticResource IconCopy}" />
+                      </Border>
+                      <TextBlock Classes="h2" Text="Client code" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock Classes="sub" Text="Paste this into your application to create the update manager for this project." />
+                    <DockPanel>
+                      <Button DockPanel.Dock="Right" Name="CopySourceButton" Classes="primary" Command="{Binding CopySourceCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                          <c:Icon Data="{StaticResource IconCopy}" />
+                          <TextBlock Text="Copy source" />
+                        </StackPanel>
+                      </Button>
+                      <ComboBox Name="SourceLanguageBox" ItemsSource="{Binding SourceLanguages}"
+                                SelectedItem="{Binding SelectedSourceLanguage}" MinWidth="160" />
+                    </DockPanel>
+                    <Border Classes="sunken">
+                      <TextBlock Classes="mono" Text="{Binding SourceSnippetPreview}" TextWrapping="Wrap" LineHeight="18" />
+                    </Border>
+                    <TextBlock Classes="hint" Margin="0" Text="The copied source contains the complete public key." />
+                  </StackPanel>
+                </Border>
+                <Border Classes="panel" Padding="20">
+                  <StackPanel Spacing="14">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <Border Classes="tile small services">
+                        <c:Icon Data="{StaticResource IconKey}" />
+                      </Border>
+                      <TextBlock Classes="h2" Text="Project data" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Project id" />
+                      <TextBox Name="ProjectIdBox" Classes="mono" Text="{Binding ProjectId}" IsReadOnly="True" />
+                    </StackPanel>
+                    <StackPanel>
+                      <TextBlock Classes="label" Text="Public key (embed it in your application)" />
+                      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <TextBox Grid.Column="0" Name="PublicKeyBox" Classes="mono multiline" Text="{Binding PublicKey}"
+                                 IsReadOnly="True" Height="96" FontSize="11.5" />
+                        <Button Grid.Column="1" Name="CopyPublicKeyButton" Classes="icon" Width="36" Height="36" VerticalAlignment="Top"
+                                ToolTip.Tip="Copy public key" Command="{Binding CopyPublicKeyCommand}">
+                          <c:Icon Data="{StaticResource IconCopy}" />
+                        </Button>
+                      </Grid>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </DockPanel>
+
+        <!-- Statistics -->
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Classes="pagehead">
+            <Button DockPanel.Dock="Right" Name="RefreshStatisticsButton" Command="{Binding RefreshStatisticsCommand}"
+                    IsEnabled="{Binding StatisticsEnabled}" Margin="12,0,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconRefresh}" />
+                <TextBlock Text="Refresh" />
+              </StackPanel>
+            </Button>
+            <TextBlock DockPanel.Dock="Right" Name="StatisticsUpdatedText" Classes="hint" Text="{Binding StatisticsUpdatedText}"
+                       VerticalAlignment="Center" Margin="0" />
+            <StackPanel Spacing="3">
+              <TextBlock Classes="h1" Text="Statistics" />
+              <TextBlock Classes="sub" Text="Downloads per version, as your server's statistics endpoint counted them." />
+            </StackPanel>
+          </DockPanel>
+          <Grid ColumnDefinitions="320,*" ColumnSpacing="16" Margin="24,0,24,24">
+            <DockPanel Grid.Column="0">
+              <Border DockPanel.Dock="Top" Classes="panel" Padding="18,14" Margin="0,0,0,16">
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="eyebrow" Text="TOTAL DOWNLOADS" />
+                  <TextBlock Text="{Binding TotalDownloads, StringFormat={}{0:N0}}" FontSize="28" FontWeight="SemiBold" LetterSpacing="-0.5"
+                             Foreground="{DynamicResource AccentBrush}" />
+                  <TextBlock Name="StatisticsStatusText" Classes="hint" Text="{Binding StatisticsStatus}" Margin="0" />
+                </StackPanel>
+              </Border>
+              <Border Classes="panel" ClipToBounds="True">
+                <DataGrid Name="StatisticsGrid" ItemsSource="{Binding VersionStatistics}" IsReadOnly="True"
+                          AutoGenerateColumns="False" RowHeight="40">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="*"
+                                        x:DataType="stats:VersionStatistics" />
+                    <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads, StringFormat={}{0:N0}}" Width="130"
+                                        x:DataType="stats:VersionStatistics" />
+                  </DataGrid.Columns>
+                </DataGrid>
+              </Border>
+            </DockPanel>
+            <Border Grid.Column="1" Classes="panel" Padding="8">
+              <plot:AvaPlot Name="DownloadsPlot" />
+            </Border>
+          </Grid>
+        </DockPanel>
+
+        <!-- History -->
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Classes="pagehead">
+            <StackPanel Spacing="3">
+              <TextBlock Classes="h1" Text="History" />
+              <TextBlock Classes="sub" Text="What happened to the packages of this project, newest first." />
+            </StackPanel>
+          </DockPanel>
+          <Border BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0">
+            <DataGrid Name="HistoryGrid" ItemsSource="{Binding History}" IsReadOnly="True" AutoGenerateColumns="False">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="170" x:DataType="vm:LogItemViewModel" />
+                <DataGridTextColumn Header="Action" Binding="{Binding Kind}" Width="130" x:DataType="vm:LogItemViewModel" />
+                <DataGridTextColumn Header="Package" Binding="{Binding Version}" Width="160"
+                                    x:DataType="vm:LogItemViewModel" />
+                <DataGridTextColumn Header="User" Binding="{Binding User}" Width="*" x:DataType="vm:LogItemViewModel" />
+              </DataGrid.Columns>
+            </DataGrid>
+          </Border>
+        </DockPanel>
+      </Carousel>
+    </DockPanel>
+  </DockPanel>
+</Window>

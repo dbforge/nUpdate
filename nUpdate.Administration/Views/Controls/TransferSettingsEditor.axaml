@@ -1,0 +1,102 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:nUpdate.Administration.ViewModels"
+             xmlns:c="using:nUpdate.Administration.Views.Controls"
+             x:Class="nUpdate.Administration.Views.Controls.TransferSettingsEditor"
+             x:DataType="vm:TransferSettingsEditorViewModel">
+  <StackPanel Spacing="14">
+    <Grid ColumnDefinitions="*,130" ColumnSpacing="12">
+      <StackPanel Grid.Column="0">
+        <TextBlock Classes="label" Text="Protocol" />
+        <ComboBox Name="ProtocolBox" ItemsSource="{Binding Protocols}" SelectedItem="{Binding Protocol}"
+                  HorizontalAlignment="Stretch" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" IsVisible="{Binding !IsPlugin}">
+        <TextBlock Classes="label" Text="Port" />
+        <NumericUpDown Name="PortBox" Value="{Binding Port}" Minimum="1" Maximum="65535" FormatString="0" Increment="1" />
+      </StackPanel>
+    </Grid>
+    <TextBlock Classes="hint" Margin="0,-8,0,0" Text="SFTP is recommended: encrypted, key-based and firewall-friendly." />
+
+    <StackPanel IsVisible="{Binding !IsPlugin}" Spacing="14">
+      <StackPanel>
+        <TextBlock Classes="label" Text="Host" />
+        <TextBox Name="HostBox" Text="{Binding Host}" PlaceholderText="server.host.com" />
+      </StackPanel>
+      <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+        <StackPanel Grid.Column="0">
+          <TextBlock Classes="label" Text="User" />
+          <TextBox Name="UsernameBox" Text="{Binding Username}" PlaceholderText="The username" />
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+          <TextBlock Classes="label" Text="Password" />
+          <TextBox Name="PasswordBox" Text="{Binding Password}" PasswordChar="•" />
+        </StackPanel>
+      </Grid>
+      <StackPanel IsVisible="{Binding IsSftp}">
+        <Grid ColumnDefinitions="*,Auto,160" ColumnSpacing="8">
+          <StackPanel Grid.Column="0">
+            <TextBlock Classes="label" Text="Private key file (instead of the password)" />
+            <TextBox Name="KeyPathBox" Text="{Binding SftpPrivateKeyPath}" PlaceholderText="~/.ssh/id_ed25519" />
+          </StackPanel>
+          <Button Grid.Column="1" Name="BrowseKeyButton" Classes="icon" Width="36" Height="36" ToolTip.Tip="Browse"
+                  Command="{Binding BrowseKeyFileCommand}" VerticalAlignment="Bottom">
+            <c:Icon Data="{StaticResource IconFolder}" />
+          </Button>
+          <StackPanel Grid.Column="2">
+            <TextBlock Classes="label" Text="Passphrase" />
+            <TextBox Name="PassphraseBox" Text="{Binding SftpKeyPassphrase}" PasswordChar="•" />
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+      <StackPanel>
+        <TextBlock Classes="label" Text="Directory on the server that the update URL points to" />
+        <TextBox Name="DirectoryBox" Classes="mono" Text="{Binding Directory}" PlaceholderText="/updates" />
+      </StackPanel>
+      <DockPanel IsVisible="{Binding IsFtp}">
+        <ToggleSwitch DockPanel.Dock="Right" Name="PassiveBox" IsChecked="{Binding UsePassiveMode}" />
+        <TextBlock Text="Passive mode (advised)" VerticalAlignment="Center" />
+      </DockPanel>
+    </StackPanel>
+
+    <StackPanel IsVisible="{Binding IsPlugin}">
+      <TextBlock Classes="label" Text="Plugin assembly" />
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <TextBox Grid.Column="0" Text="{Binding PluginAssemblyPath}" />
+        <Button Grid.Column="1" Classes="icon" Width="36" Height="36" ToolTip.Tip="Browse" Command="{Binding BrowsePluginCommand}">
+          <c:Icon Data="{StaticResource IconFolder}" />
+        </Button>
+      </Grid>
+      <TextBlock Classes="label" Text="Host, user name and password are passed to the plugin" />
+      <TextBox Text="{Binding Host}" PlaceholderText="Host" />
+      <TextBox Text="{Binding Username}" PlaceholderText="User name" Margin="0,4,0,0" />
+      <TextBox Text="{Binding Password}" PasswordChar="•" PlaceholderText="Password" Margin="0,4,0,0" />
+    </StackPanel>
+
+    <DockPanel>
+      <ToggleSwitch DockPanel.Dock="Right" Name="ProxyBox" IsChecked="{Binding UseProxy}" />
+      <TextBlock Text="Use an HTTP proxy" VerticalAlignment="Center" />
+    </DockPanel>
+    <StackPanel IsVisible="{Binding UseProxy}">
+      <TextBox Text="{Binding ProxyAddress}" PlaceholderText="http://proxyserver:8080" />
+      <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,4,0,0">
+        <TextBox Grid.Column="0" Text="{Binding ProxyUsername}" PlaceholderText="Proxy user (optional)" />
+        <TextBox Grid.Column="1" Text="{Binding ProxyPassword}" PasswordChar="•" PlaceholderText="Proxy password" />
+      </Grid>
+    </StackPanel>
+
+    <Border Classes="hairline" />
+    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+      <Button Grid.Column="0" Name="TestButton" Command="{Binding TestConnectionCommand}" IsEnabled="{Binding !IsTesting}">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <c:Icon Data="{StaticResource IconRefresh}" />
+          <TextBlock Text="Test connection" />
+        </StackPanel>
+      </Button>
+      <TextBlock Grid.Column="1" Name="TestResultText" Text="{Binding TestResult}" VerticalAlignment="Center"
+                 TextWrapping="Wrap" />
+    </Grid>
+    <TextBlock Classes="hint" Margin="0,-6,0,0"
+               Text="An unknown certificate or SSH host key is shown with its fingerprint before it is trusted; the fingerprint is stored in the project." />
+  </StackPanel>
+</UserControl>

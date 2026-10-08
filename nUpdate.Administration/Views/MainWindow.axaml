@@ -1,0 +1,157 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        x:Class="nUpdate.Administration.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="nUpdate Administration" Width="980" Height="640" MinWidth="760" MinHeight="480"
+        Icon="/Assets/nUpdate.ico">
+  <!-- The menu bar of macOS -->
+  <NativeMenu.Menu>
+    <NativeMenu>
+      <NativeMenuItem Header="File">
+        <NativeMenu>
+          <NativeMenuItem Header="New Project…" Gesture="Meta+N" Command="{Binding NewProjectCommand}" />
+          <NativeMenuItem Header="Open Project File…" Gesture="Meta+O" Command="{Binding OpenProjectFileCommand}" />
+          <NativeMenuItemSeparator />
+          <NativeMenuItem Header="Refresh" Gesture="Meta+R" Command="{Binding RefreshCommand}" />
+        </NativeMenu>
+      </NativeMenuItem>
+    </NativeMenu>
+  </NativeMenu.Menu>
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Classes="statusbar">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Right" Text="{Binding Version}" />
+        <TextBlock Name="StatusText" Text="{Binding Status}" />
+      </DockPanel>
+    </Border>
+    <Border DockPanel.Dock="Left" Classes="sidebar" Width="272" Padding="18,20">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12">
+          <Image Width="40" Height="40" Source="avares://nUpdate.Administration/Assets/nUpdate.png" />
+          <StackPanel VerticalAlignment="Center" Spacing="2">
+            <TextBlock Text="nUpdate Administration" FontSize="15" FontWeight="Bold" />
+            <TextBlock Classes="muted" FontSize="12" Text="Publish updates for your apps" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,24,0,0">
+          <Button Name="NewProjectButton" Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                  MinHeight="40" Command="{Binding NewProjectCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <c:Icon Data="{StaticResource IconPlus}" />
+              <TextBlock Text="New project" />
+            </StackPanel>
+          </Button>
+          <Button Name="OpenButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="40"
+                  Command="{Binding OpenProjectFileCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <c:Icon Data="{StaticResource IconFolder}" />
+              <TextBlock Text="Open project file…" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+        <Border DockPanel.Dock="Bottom" Classes="panel" Padding="14">
+          <StackPanel Spacing="6">
+            <TextBlock Text="Projects are folders" FontSize="12" FontWeight="SemiBold" />
+            <TextBlock Classes="hint" Margin="0"
+                       Text="Copy a project folder to another computer and open its project.nupdproj there. Its password unlocks the server credentials." />
+          </StackPanel>
+        </Border>
+        <Panel />
+      </DockPanel>
+    </Border>
+    <DockPanel Margin="32,28,32,12">
+      <DockPanel DockPanel.Dock="Top" Margin="0,0,0,20">
+        <Button Name="RefreshButton" DockPanel.Dock="Right" Classes="ghost icon" Margin="8,0,0,0"
+                ToolTip.Tip="Refresh" Command="{Binding RefreshCommand}">
+          <c:Icon Data="{StaticResource IconRefresh}" />
+        </Button>
+        <TextBox Name="SearchBox" DockPanel.Dock="Right" Width="260" PlaceholderText="Search projects"
+                 Text="{Binding SearchText}" IsVisible="{Binding HasProjects}">
+          <TextBox.InnerLeftContent>
+            <c:Icon Data="{StaticResource IconSearch}" Margin="10,0,0,0" Foreground="{DynamicResource MutedBrush}" />
+          </TextBox.InnerLeftContent>
+        </TextBox>
+        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <TextBlock Classes="h1" Text="Projects" FontSize="22" />
+          <Border Classes="pill" IsVisible="{Binding HasProjects}">
+            <TextBlock Text="{Binding Projects.Count}" />
+          </Border>
+        </StackPanel>
+      </DockPanel>
+      <StackPanel Name="EmptyState" IsVisible="{Binding HasNoProjects}" HorizontalAlignment="Center"
+                  VerticalAlignment="Center" Spacing="10" MaxWidth="380" Margin="0,0,0,40">
+        <Border Classes="tile" Width="48" Height="48" CornerRadius="12" HorizontalAlignment="Center">
+          <c:Icon Data="{StaticResource IconPackage}" Width="22" Height="22" StrokeThickness="1.5" />
+        </Border>
+        <TextBlock Classes="h2" Text="No projects yet" HorizontalAlignment="Center" />
+        <TextBlock Classes="sub" TextAlignment="Center"
+                   Text="Create a project for your application, or open the project.nupdproj of a project folder from another computer." />
+      </StackPanel>
+      <ListBox Name="ProjectList" Classes="cards" IsVisible="{Binding HasProjects}" ItemsSource="{Binding VisibleProjects}"
+               SelectedItem="{Binding SelectedProject}" DoubleTapped="OnProjectDoubleTapped">
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel />
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ProjectCardViewModel">
+            <Border Classes="card" Width="304" Padding="18">
+              <StackPanel Spacing="14">
+                <DockPanel>
+                  <Border DockPanel.Dock="Left" Width="44" Height="44" CornerRadius="10" Background="{DynamicResource AccentSoftBrush}">
+                    <TextBlock Text="{Binding Initials}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Button DockPanel.Dock="Right" Classes="ghost icon" VerticalAlignment="Top" ToolTip.Tip="More actions">
+                    <c:Icon Data="{StaticResource IconMore}" StrokeThickness="2.4" />
+                    <Button.Flyout>
+                      <MenuFlyout>
+                        <MenuItem Header="Remove from list"
+                                  Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).ForgetProjectCardCommand}"
+                                  CommandParameter="{Binding}" />
+                      </MenuFlyout>
+                    </Button.Flyout>
+                  </Button>
+                  <StackPanel Margin="12,0,8,0" VerticalAlignment="Center" Spacing="3">
+                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="mono muted" Text="{Binding UpdateUrl}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </DockPanel>
+                <WrapPanel>
+                  <Border Classes="pill released" Margin="0,0,6,6" IsVisible="{Binding HasRelease}">
+                    <TextBlock Text="{Binding Latest}" />
+                  </Border>
+                  <Border Classes="pill" Margin="0,0,6,6" IsVisible="{Binding ShowsUnreleased}">
+                    <TextBlock Text="{Binding Latest}" />
+                  </Border>
+                  <Border Classes="pill" Margin="0,0,6,6" IsVisible="{Binding Packages, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Text="{Binding Packages}" FontWeight="Normal" />
+                  </Border>
+                  <Border Classes="pill" Margin="0,0,6,6" IsVisible="{Binding Protocol, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Text="{Binding Protocol}" FontWeight="Normal" />
+                  </Border>
+                  <Border Classes="pill removed" Margin="0,0,6,6" IsVisible="{Binding Problem, Converter={x:Static ObjectConverters.IsNotNull}}"
+                          ToolTip.Tip="{Binding Problem}">
+                    <TextBlock Text="Cannot be read" />
+                  </Border>
+                </WrapPanel>
+                <Border BorderBrush="{DynamicResource HairlineSoftBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                  <DockPanel>
+                    <Button DockPanel.Dock="Right" Classes="small" Content="Open" Margin="12,0,0,0"
+                            Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).OpenProjectCardCommand}"
+                            CommandParameter="{Binding}" />
+                    <TextBlock Classes="muted" FontSize="12" Text="{Binding Path}" TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" ToolTip.Tip="{Binding Path}" />
+                  </DockPanel>
+                </Border>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+  </DockPanel>
+</Window>

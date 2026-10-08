@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:nUpdate.Administration.ViewModels"
+             xmlns:c="using:nUpdate.Administration.Views.Controls"
+             xmlns:ops="using:nUpdate.Operations"
+             x:Class="nUpdate.Administration.Views.Controls.OperationEditor"
+             x:DataType="vm:OperationEditorViewModel">
+  <UserControl.Styles>
+    <Style Selector="DockPanel.switch > ToggleSwitch">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="12,0,0,0" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="16">
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Border Classes="tile"
+              Classes.processes="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Processes}}"
+              Classes.registry="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Registry}}"
+              Classes.services="{Binding Kind.Area, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ops:OperationArea.Services}}">
+        <c:Icon Data="{Binding Kind.Icon, Converter={x:Static c:ResourceConverter.Instance}}" />
+      </Border>
+      <TextBlock Classes="h2" Text="{Binding DisplayName}" VerticalAlignment="Center" />
+    </StackPanel>
+    <DockPanel Classes="switch">
+      <ToggleSwitch DockPanel.Dock="Right" Name="BeforeReplacingBox" IsChecked="{Binding RunBeforeFileReplacement}" />
+      <TextBlock Text="Run before the files are replaced" TextWrapping="Wrap" VerticalAlignment="Center" />
+    </DockPanel>
+    <StackPanel>
+      <TextBlock Classes="label" Text="{Binding ValueLabel}" TextWrapping="Wrap" />
+      <TextBox Name="ValueBox" Classes="mono" Text="{Binding Value}" />
+    </StackPanel>
+    <StackPanel IsVisible="{Binding HasSecondValue}">
+      <TextBlock Classes="label" Text="{Binding SecondValueLabel}" />
+      <TextBox Name="SecondValueBox" Classes="mono" Text="{Binding SecondValue}" />
+    </StackPanel>
+    <StackPanel IsVisible="{Binding IsStartProcess}" Spacing="12">
+      <DockPanel Classes="switch">
+        <ToggleSwitch DockPanel.Dock="Right" Name="WaitForExitBox" IsChecked="{Binding WaitForExit}" />
+        <TextBlock Text="Wait until it has exited" TextWrapping="Wrap" VerticalAlignment="Center" />
+      </DockPanel>
+      <DockPanel Classes="switch">
+        <ToggleSwitch DockPanel.Dock="Right" Name="FailOnErrorBox" IsChecked="{Binding FailOnError}"
+                      IsEnabled="{Binding WaitForExit}" />
+        <TextBlock Text="Fail the update on an error exit code" TextWrapping="Wrap" VerticalAlignment="Center" />
+      </DockPanel>
+      <TextBlock Classes="hint" Margin="0"
+                 Text="Waiting lets a migration tool or a setup step finish before the files are replaced or the application restarts. Without waiting, the installer starts the process and goes on." />
+    </StackPanel>
+    <StackPanel IsVisible="{Binding HasList}">
+      <TextBlock Classes="label" Text="{Binding ListLabel}" />
+      <TextBox Name="ListBox" Classes="multiline mono" Text="{Binding ListText}" MinHeight="96" />
+    </StackPanel>
+    <StackPanel IsVisible="{Binding HasRegistryValues}" Spacing="8">
+      <TextBlock Classes="label" Text="Values" Margin="0" />
+      <ItemsControl ItemsSource="{Binding RegistryValues}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:RegistryValueEditorViewModel">
+            <Border Classes="panel" Padding="10" Margin="0,0,0,8">
+              <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="*,120,Auto" ColumnSpacing="6">
+                  <TextBox Grid.Column="0" Text="{Binding Name}" PlaceholderText="Name" />
+                  <ComboBox Grid.Column="1" ItemsSource="{x:Static vm:RegistryValueEditorViewModel.Kinds}"
+                            SelectedItem="{Binding Kind}" HorizontalAlignment="Stretch" />
+                  <Button Grid.Column="2" Classes="ghost icon" ToolTip.Tip="Remove the value"
+                          Command="{Binding $parent[UserControl].((vm:OperationEditorViewModel)DataContext).RemoveRegistryValueCommand}"
+                          CommandParameter="{Binding}">
+                    <c:Icon Data="{StaticResource IconClose}" />
+                  </Button>
+                </Grid>
+                <TextBox Classes="mono" Text="{Binding Value}" PlaceholderText="Value" AcceptsReturn="True" />
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Button Name="AddRegistryValueButton" Classes="small" Command="{Binding AddRegistryValueCommand}" HorizontalAlignment="Left">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <c:Icon Data="{StaticResource IconPlus}" Width="14" Height="14" />
+          <TextBlock Text="Add value" />
+        </StackPanel>
+      </Button>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

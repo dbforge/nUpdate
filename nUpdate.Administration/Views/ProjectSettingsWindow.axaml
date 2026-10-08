@@ -1,0 +1,201 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        x:Class="nUpdate.Administration.Views.ProjectSettingsWindow"
+        x:DataType="vm:ProjectSettingsViewModel"
+        Title="{Binding Title}" Width="920" Height="700" MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterOwner" Icon="/Assets/nUpdate.ico">
+  <Window.Styles>
+    <Style Selector="StackPanel.sectionhead">
+      <Setter Property="Spacing" Value="4" />
+      <Setter Property="Margin" Value="0,0,0,14" />
+    </Style>
+    <Style Selector="DockPanel.setting > ToggleSwitch">
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="16,0,0,0" />
+    </Style>
+  </Window.Styles>
+  <Panel>
+    <DockPanel>
+      <Border DockPanel.Dock="Bottom" Classes="bottombar">
+        <DockPanel>
+          <Button DockPanel.Dock="Left" Name="DeleteButton" Classes="danger" Command="{Binding DeleteProjectCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <c:Icon Data="{StaticResource IconDelete}" />
+              <TextBlock Text="Delete project…" />
+            </StackPanel>
+          </Button>
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+            <Button Name="CancelButton" Content="Cancel" Command="{Binding CancelCommand}" IsCancel="True" />
+            <Button Name="SaveButton" Classes="primary" Command="{Binding SaveCommand}" IsDefault="True" MinWidth="100">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconCheck}" />
+                <TextBlock Text="Save" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+          <TextBlock Name="ErrorText" Classes="error" Text="{Binding ErrorMessage}"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     VerticalAlignment="Center" Margin="16,0" />
+        </DockPanel>
+      </Border>
+
+      <Border DockPanel.Dock="Left" Classes="sidebar" Width="220" Padding="12,18">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="{Binding Name}" FontSize="15" FontWeight="Bold" Margin="8,0,8,16"
+                     TextTrimming="CharacterEllipsis" />
+          <ListBox Name="SectionList" Classes="nav" SelectedIndex="0">
+            <ListBoxItem>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconSettings}" />
+                <TextBlock Text="General" />
+              </StackPanel>
+            </ListBoxItem>
+            <ListBoxItem>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconServer}" />
+                <TextBlock Text="Transfer" />
+              </StackPanel>
+            </ListBoxItem>
+            <ListBoxItem>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconChart}" />
+                <TextBlock Text="Statistics" />
+              </StackPanel>
+            </ListBoxItem>
+            <ListBoxItem>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconLock}" />
+                <TextBlock Text="Project password" />
+              </StackPanel>
+            </ListBoxItem>
+            <ListBoxItem>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <c:Icon Data="{StaticResource IconMigrate}" />
+                <TextBlock Text="Migration" />
+              </StackPanel>
+            </ListBoxItem>
+          </ListBox>
+        </DockPanel>
+      </Border>
+
+      <ScrollViewer Name="Scroller">
+        <StackPanel Name="Sections" Spacing="32" Margin="28,22,28,28" MaxWidth="720" HorizontalAlignment="Left">
+          <StackPanel Name="GeneralSection">
+            <StackPanel Classes="sectionhead">
+              <TextBlock Classes="h1" Text="General" />
+              <TextBlock Classes="sub" Text="Where the project lives and where clients look for updates." />
+            </StackPanel>
+            <Border Classes="panel" Padding="20">
+              <StackPanel Spacing="16">
+                <StackPanel>
+                  <TextBlock Classes="label" Text="Name" />
+                  <TextBox Name="NameBox" Text="{Binding Name}" />
+                </StackPanel>
+                <StackPanel>
+                  <TextBlock Classes="label" Text="Project folder" />
+                  <TextBox Name="FolderBox" Text="{Binding Folder}" IsReadOnly="True" />
+                </StackPanel>
+                <StackPanel>
+                  <TextBlock Classes="label" Text="Update URL" />
+                  <TextBox Name="UpdateUrlBox" Classes="mono" Text="{Binding UpdateUrl}" />
+                  <TextBlock Classes="hint" Text="The folder that holds nupdate.json and the packages folder." />
+                </StackPanel>
+                <StackPanel>
+                  <TextBlock Classes="label" Text="Version linking (optional)" />
+                  <TextBox Name="AssemblyVersionPathBox" Text="{Binding AssemblyVersionPath}"
+                           PlaceholderText="C:\path\to\YourApp.exe" />
+                  <TextBlock Classes="hint" Text="New packages suggest the version of this assembly." />
+                </StackPanel>
+                <Border Classes="hairline" />
+                <DockPanel Classes="setting">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="UseHttpAuthenticationBox" IsChecked="{Binding UseHttpAuthentication}" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="The update URL requires HTTP authentication" FontWeight="SemiBold" />
+                    <TextBlock Classes="hint" Margin="0" Text="User name and password are kept with the project's secrets." />
+                  </StackPanel>
+                </DockPanel>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding UseHttpAuthentication}">
+                  <TextBox Grid.Column="0" Name="HttpUsernameBox" Text="{Binding HttpUsername}" PlaceholderText="HTTP user" />
+                  <TextBox Grid.Column="1" Name="HttpPasswordBox" Text="{Binding HttpPassword}" PasswordChar="•"
+                           PlaceholderText="HTTP password" />
+                </Grid>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Name="TransferSection">
+            <StackPanel Classes="sectionhead">
+              <TextBlock Classes="h1" Text="Transfer" />
+              <TextBlock Classes="sub" Text="How packages and the feed get onto the update server." />
+            </StackPanel>
+            <Border Classes="panel" Padding="20">
+              <c:TransferSettingsEditor DataContext="{Binding Transfer}" />
+            </Border>
+          </StackPanel>
+
+          <StackPanel Name="StatisticsSection">
+            <StackPanel Classes="sectionhead">
+              <TextBlock Classes="h1" Text="Statistics" />
+              <TextBlock Classes="sub" Text="Downloads counted by a PHP script next to the feed." />
+            </StackPanel>
+            <Border Classes="panel" Padding="20">
+              <c:StatisticsSettingsEditor DataContext="{Binding Statistics}" />
+            </Border>
+          </StackPanel>
+
+          <StackPanel Name="SecuritySection">
+            <StackPanel Classes="sectionhead">
+              <TextBlock Classes="h1" Text="Project password" />
+              <TextBlock Classes="sub" Text="Keeps the server passwords and the private key with the project, so it can move to another computer." />
+            </StackPanel>
+            <Border Classes="panel" Padding="20">
+              <StackPanel Spacing="14">
+                <DockPanel Classes="setting">
+                  <ToggleSwitch DockPanel.Dock="Right" Name="SaveCredentialsBox" IsChecked="{Binding SaveCredentials}" />
+                  <TextBlock Text="Save the passwords and the private key in the project file, encrypted with a project password"
+                             TextWrapping="Wrap" FontWeight="SemiBold" />
+                </DockPanel>
+                <StackPanel IsVisible="{Binding SaveCredentials}" Spacing="12">
+                  <TextBlock Classes="hint" Text="{Binding PasswordHint}" Margin="0" />
+                  <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <StackPanel Grid.Column="0">
+                      <TextBlock Classes="label" Text="Project password" />
+                      <TextBox Name="ProjectPasswordBox" Text="{Binding ProjectPassword}" PasswordChar="•" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Classes="label" Text="Confirm the password" />
+                      <TextBox Name="ProjectPasswordConfirmationBox" Text="{Binding ProjectPasswordConfirmation}"
+                               PasswordChar="•" />
+                    </StackPanel>
+                  </Grid>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Name="MigrationSection">
+            <StackPanel Classes="sectionhead">
+              <TextBlock Classes="h1" Text="Migration" />
+              <TextBlock Classes="sub" Text="For projects that were published with nUpdate 3 or 4." />
+            </StackPanel>
+            <Border Classes="panel" Padding="20">
+              <StackPanel Spacing="12">
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource InkSecondaryBrush}"
+                           Text="Projects published with nUpdate 3 or 4 keep their updates.json on the server. The migration assistant publishes the packages for nUpdate 5 next to it and explains how to run both versions side by side." />
+                <Button Name="MigrateButton" Command="{Binding MigrateCommand}" HorizontalAlignment="Left">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <c:Icon Data="{StaticResource IconMigrate}" />
+                    <TextBlock Text="Migration assistant…" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </DockPanel>
+    <c:BusyOverlay />
+  </Panel>
+</Window>

@@ -1,0 +1,148 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:controls="using:nUpdate.Administration.Views.Controls"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        x:Class="nUpdate.Administration.Views.NewProjectWindow"
+        x:DataType="vm:NewProjectViewModel"
+        Title="New project – nUpdate Administration" Width="860" Height="640" MinWidth="720" MinHeight="540"
+        WindowStartupLocation="CenterOwner" Icon="/Assets/nUpdate.ico">
+  <Panel>
+    <DockPanel>
+      <Border DockPanel.Dock="Bottom" Classes="bottombar">
+        <DockPanel>
+          <Button DockPanel.Dock="Left" Name="CancelButton" Content="Cancel" Command="{Binding CancelCommand}" IsCancel="True" />
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+            <Button Name="BackButton" Command="{Binding BackCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <c:Icon Data="{StaticResource IconBack}" />
+                <TextBlock Text="Back" />
+              </StackPanel>
+            </Button>
+            <Button Name="ContinueButton" Classes="primary" Command="{Binding ContinueCommand}" IsDefault="True"
+                    MinWidth="120">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding ContinueText}" />
+                <c:Icon Data="{StaticResource IconForward}" IsVisible="{Binding !IsLastStep}" />
+                <c:Icon Data="{StaticResource IconCheck}" IsVisible="{Binding IsLastStep}" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+          <TextBlock Name="ErrorText" Classes="error" Text="{Binding ErrorMessage}"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     VerticalAlignment="Center" Margin="16,0" />
+        </DockPanel>
+      </Border>
+      <controls:WizardRail DockPanel.Dock="Left" Steps="{Binding Steps}" />
+      <ScrollViewer>
+        <Panel Margin="28,22,28,24" MaxWidth="680" HorizontalAlignment="Left">
+          <StackPanel Spacing="16" IsVisible="{Binding IsGeneralStep}">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="h1" Text="General" />
+              <TextBlock Classes="sub" Text="Name the project and tell nUpdate where the clients will look for updates." />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="label" Text="Name" />
+              <TextBox Name="NameBox" Text="{Binding Name}" PlaceholderText="The name of the project" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="label" Text="Project folder" />
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <TextBox Grid.Column="0" Name="FolderBox" Text="{Binding Folder}" />
+                <Button Grid.Column="1" Name="BrowseFolderButton" Classes="icon" Width="36" Height="36" ToolTip.Tip="Browse"
+                        Command="{Binding BrowseFolderCommand}">
+                  <c:Icon Data="{StaticResource IconFolder}" />
+                </Button>
+              </Grid>
+              <TextBlock Classes="hint"
+                         Text="The folder keeps project.nupdproj and the packages; copy it to take the project to another computer." />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="label" Text="Update URL" />
+              <TextBox Name="UpdateUrlBox" Classes="mono" Text="{Binding UpdateUrl}"
+                       PlaceholderText="https://www.yourserver.com/updates/" />
+              <TextBlock Classes="hint"
+                         Text="The folder on your web server where nupdate.json and the packages are served from." />
+            </StackPanel>
+          </StackPanel>
+          <StackPanel Spacing="16" IsVisible="{Binding IsAuthenticationStep}">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="h1" Text="Authentication" />
+              <TextBlock Classes="sub" Text="Only needed when the update URL is protected by HTTP basic authentication." />
+            </StackPanel>
+            <DockPanel>
+              <ToggleSwitch DockPanel.Dock="Right" Name="UseHttpAuthenticationBox" IsChecked="{Binding UseHttpAuthentication}" />
+              <TextBlock Text="Authenticate using credentials" FontWeight="SemiBold" VerticalAlignment="Center" />
+            </DockPanel>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding UseHttpAuthentication}">
+              <StackPanel Grid.Column="0">
+                <TextBlock Classes="label" Text="Username" />
+                <TextBox Name="HttpUsernameBox" Text="{Binding HttpUsername}"
+                         PlaceholderText="The username to authenticate with" />
+              </StackPanel>
+              <StackPanel Grid.Column="1">
+                <TextBlock Classes="label" Text="Password" />
+                <TextBox Name="HttpPasswordBox" Text="{Binding HttpPassword}" PasswordChar="•"
+                         PlaceholderText="The password to authenticate with" />
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+          <StackPanel Spacing="16" IsVisible="{Binding IsTransferStep}">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="h1" Text="Transfer" />
+              <TextBlock Classes="sub" Text="How nUpdate Administration uploads packages and the feed to your server." />
+            </StackPanel>
+            <controls:TransferSettingsEditor DataContext="{Binding Transfer}" />
+          </StackPanel>
+          <StackPanel Spacing="16" IsVisible="{Binding IsStatisticsStep}">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="h1" Text="Statistics" />
+              <TextBlock Classes="sub"
+                         Text="Counts the downloads of your packages. All it needs is PHP and a MySQL database on the update server." />
+            </StackPanel>
+            <controls:StatisticsSettingsEditor DataContext="{Binding Statistics}" />
+          </StackPanel>
+          <StackPanel Spacing="16" IsVisible="{Binding IsSecurityStep}">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="h1" Text="Security" />
+              <TextBlock Classes="sub"
+                         Text="nUpdate signs every package with RSA and SHA-512 so clients only install what you published." />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="label" Text="RSA key size" />
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <ComboBox Name="KeySizeBox" ItemsSource="{Binding KeySizes}" SelectedItem="{Binding KeySize}"
+                          MinWidth="120" />
+                <TextBlock Classes="hint" Text="bit – generating an 8192 bit key can take a minute"
+                           VerticalAlignment="Center" Margin="0" />
+              </StackPanel>
+            </StackPanel>
+            <DockPanel>
+              <ToggleSwitch DockPanel.Dock="Right" Name="SaveCredentialsBox" IsChecked="{Binding SaveCredentials}"
+                            VerticalAlignment="Top" Margin="16,0,0,0" />
+              <TextBlock TextWrapping="Wrap" FontWeight="SemiBold"
+                         Text="Save the passwords and the private key in the project file, encrypted with a project password" />
+            </DockPanel>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding SaveCredentials}">
+              <StackPanel Grid.Column="0">
+                <TextBlock Classes="label" Text="Project password (at least 8 characters)" />
+                <TextBox Name="ProjectPasswordBox" Text="{Binding ProjectPassword}" PasswordChar="•" />
+              </StackPanel>
+              <StackPanel Grid.Column="1">
+                <TextBlock Classes="label" Text="Confirm the password" />
+                <TextBox Name="ProjectPasswordConfirmationBox" Text="{Binding ProjectPasswordConfirmation}"
+                         PasswordChar="•" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Classes="hint" Margin="0,-8,0,0"
+                       Text="The password is remembered on this computer and asked for once when the project folder is opened elsewhere."
+                       IsVisible="{Binding SaveCredentials}" />
+            <CheckBox Name="TestConnectionFirstBox" Content="Test the connection before creating the project"
+                      IsChecked="{Binding TestConnectionFirst}" />
+          </StackPanel>
+        </Panel>
+      </ScrollViewer>
+    </DockPanel>
+    <controls:BusyOverlay />
+  </Panel>
+</Window>

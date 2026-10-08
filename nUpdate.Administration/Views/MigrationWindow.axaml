@@ -1,0 +1,163 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="using:System"
+        xmlns:vm="using:nUpdate.Administration.ViewModels"
+        xmlns:controls="using:nUpdate.Administration.Views.Controls"
+        xmlns:c="using:nUpdate.Administration.Views.Controls"
+        x:Class="nUpdate.Administration.Views.MigrationWindow"
+        x:DataType="vm:MigrationViewModel"
+        Title="{Binding Title}" Width="940" Height="700" MinWidth="760" MinHeight="560"
+        WindowStartupLocation="CenterOwner" Icon="/Assets/nUpdate.ico">
+  <Window.Resources>
+    <DataTemplate x:Key="Bullet" x:DataType="sys:String">
+      <DockPanel Margin="0,4,0,0">
+        <Ellipse DockPanel.Dock="Left" Width="5" Height="5" Fill="{DynamicResource MutedBrush}" VerticalAlignment="Top"
+                 Margin="4,8,10,0" />
+        <TextBlock Text="{Binding}" TextWrapping="Wrap" LineHeight="19" Foreground="{DynamicResource InkSecondaryBrush}" />
+      </DockPanel>
+    </DataTemplate>
+  </Window.Resources>
+  <Panel>
+    <DockPanel>
+      <Border DockPanel.Dock="Bottom" Classes="bottombar">
+        <DockPanel>
+          <Button DockPanel.Dock="Left" Name="CancelButton" Content="Close" Command="{Binding CancelCommand}" IsCancel="True" />
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+            <Button Name="ReloadButton" Command="{Binding ReloadCommand}" IsVisible="{Binding CanReload}">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <c:Icon Data="{StaticResource IconRefresh}" />
+                <TextBlock Text="Read the server again" />
+              </StackPanel>
+            </Button>
+            <Button Name="BackButton" Command="{Binding BackCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <c:Icon Data="{StaticResource IconBack}" />
+                <TextBlock Text="Back" />
+              </StackPanel>
+            </Button>
+            <Button Name="ContinueButton" Classes="primary" Command="{Binding ContinueCommand}" IsDefault="True"
+                    MinWidth="120">
+              <TextBlock Text="{Binding ContinueText}" />
+            </Button>
+          </StackPanel>
+          <TextBlock Name="ErrorText" Classes="error" Text="{Binding ErrorMessage}" TextWrapping="Wrap"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     VerticalAlignment="Center" Margin="16,0" />
+        </DockPanel>
+      </Border>
+      <controls:WizardRail DockPanel.Dock="Left" Steps="{Binding Steps}" />
+      <ScrollViewer>
+        <Panel Margin="28,22,28,24" MaxWidth="760" HorizontalAlignment="Left">
+          <StackPanel Spacing="4" IsVisible="{Binding IsOverviewStep}">
+            <TextBlock Classes="h1" Text="What changes" />
+            <TextBlock Classes="sub" Margin="0,4,0,8"
+                       Text="Your server still serves the updates of nUpdate 3 or 4. This assistant publishes the packages for nUpdate 5 next to them, so installations of both versions keep finding their updates. Nothing changes until you start the migration in step 4." />
+            <TextBlock Classes="h2" Text="On the server now" Margin="0,10,0,0" />
+            <ItemsControl Name="ServerStateList" ItemsSource="{Binding ServerState}"
+                          ItemTemplate="{StaticResource Bullet}" />
+            <TextBlock Classes="h2" Text="What the migration adds" Margin="0,14,0,0" />
+            <ItemsControl Name="AddedList" ItemsSource="{Binding AddedItems}" ItemTemplate="{StaticResource Bullet}" />
+            <TextBlock Classes="h2" Text="What stays as it is" Margin="0,14,0,0" />
+            <ItemsControl Name="KeptList" ItemsSource="{Binding KeptItems}" ItemTemplate="{StaticResource Bullet}" />
+          </StackPanel>
+
+          <StackPanel Spacing="4" IsVisible="{Binding IsPackagesStep}">
+            <TextBlock Classes="h1" Text="Packages" />
+            <TextBlock Classes="sub" Margin="0,4,0,8"
+                       Text="Every package of updates.json with the version it gets in nUpdate 5. Applications built with nUpdate 5 only install versions newer than their own, so packages older than your first nUpdate 5 release only complete the history; you can leave them out." />
+            <TextBlock Name="SelectionSummaryText" Classes="label" Text="{Binding SelectionSummary}" />
+            <ItemsControl Name="PackageList" ItemsSource="{Binding Packages}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:MigrationPackageItemViewModel">
+                  <Border Classes="panel" Padding="14,10" Margin="0,8,0,0">
+                    <StackPanel Spacing="2">
+                      <CheckBox Content="{Binding Title}" IsChecked="{Binding Include}"
+                                IsEnabled="{Binding CanInclude}" FontWeight="SemiBold" />
+                      <TextBlock Classes="hint" Text="{Binding Details}" Margin="28,0,0,0" />
+                      <ItemsControl ItemsSource="{Binding Notes}" IsVisible="{Binding HasNotes}" Margin="28,2,0,0">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="sys:String">
+                            <TextBlock Classes="hint" Foreground="{DynamicResource WarningBrush}" Text="{Binding}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <StackPanel Spacing="4" IsVisible="{Binding IsStatisticsStep}">
+            <TextBlock Classes="h1" Text="Statistics" />
+            <StackPanel IsVisible="{Binding StatisticsEnabled}">
+              <TextBlock Classes="sub" Margin="0,4,0,8"
+                         Text="Applications built with nUpdate 5 report their downloads to nupdate-statistics.php. The migration uploads it next to statistics.php, which keeps counting the copies with nUpdate 3 or 4. Both write into the same database, nUpdate 5 into its own tables nupdate_version and nupdate_download. The counts of nUpdate 3 and 4 are not carried over." />
+              <ItemsControl Name="StatisticsDetailsList" ItemsSource="{Binding StatisticsDetails}"
+                            ItemTemplate="{StaticResource Bullet}" />
+              <TextBlock Name="StatisticsProblemText" Classes="error" Text="{Binding StatisticsProblem}"
+                         TextWrapping="Wrap" Margin="0,8,0,0"
+                         IsVisible="{Binding StatisticsProblem, Converter={x:Static ObjectConverters.IsNotNull}}" />
+              <TextBlock Classes="h2" Text="What the server needs" Margin="0,14,0,0" />
+              <TextBlock TextWrapping="Wrap"
+                         Text="PHP 7.1 or later with the mysqli extension, and a web server that passes the path after the script name to PHP (PATH_INFO), because the API answers below nupdate-statistics.php/v2. Apache does this by default. On nginx split the path with fastcgi_split_path_info and set PATH_INFO for PHP-FPM; on IIS the default PHP handler passes it. The migration stops and tells you when the API does not answer." />
+            </StackPanel>
+            <TextBlock Classes="sub" Margin="0,4,0,8" IsVisible="{Binding !StatisticsEnabled}"
+                       Text="This project has no statistics, so nothing is uploaded for them. Copies with nUpdate 3 or 4 keep reporting to statistics.php if they did so far. You can turn statistics on later in the project settings." />
+          </StackPanel>
+
+          <StackPanel Spacing="4" IsVisible="{Binding IsMigrateStep}">
+            <TextBlock Classes="h1" Text="Migrate" />
+            <TextBlock Classes="sub" Margin="0,4,0,8" Text="This is what happens when you start the migration:" />
+            <ItemsControl Name="MigrationSummaryList" ItemsSource="{Binding MigrationSummary}"
+                          ItemTemplate="{StaticResource Bullet}" />
+          </StackPanel>
+
+          <StackPanel Spacing="4" IsVisible="{Binding IsSideBySideStep}">
+            <TextBlock Classes="h1" Text="Run nUpdate 4 and nUpdate 5 side by side" />
+            <TextBlock Name="SideBySideIntroductionText" Classes="sub" Margin="0,4,0,4"
+                       Text="{Binding SideBySideIntroduction}" />
+
+            <TextBlock Classes="h2" Text="1. Check the new feed" Margin="0,12,0,0" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="Download nupdate.json and every package the way an application built with nUpdate 5 does, and check size, hash, signature and manifest." />
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,6,0,0">
+              <Button Name="CheckFeedButton" Classes="small" Content="Check now" Command="{Binding CheckFeedCommand}" />
+              <TextBlock Name="CheckStatusText" Text="{Binding CheckStatus}" VerticalAlignment="Center"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+            <ItemsControl Name="CheckResultList" ItemsSource="{Binding CheckResults}" Margin="0,4,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="sys:String">
+                  <TextBlock Classes="hint" Text="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Classes="h2" Text="2. Build your application with nUpdate 5" Margin="0,14,0,0" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="Update the nUpdate package to version 5, add nUpdate.UpdateInstaller.UI.Avalonia (the installer, now also for Linux and macOS), and nUpdate.UI.WindowsForms, nUpdate.UI.WPF or nUpdate.UI.Avalonia if you use the integrated dialogs. Create the UpdateManager with the new feed and the public key of the project in PEM form:" />
+            <Border Classes="sunken" Margin="0,6,0,0">
+              <TextBlock Name="ClientSnippetText" Classes="mono" Text="{Binding ClientSnippet}" TextWrapping="Wrap" LineHeight="18" />
+            </Border>
+            <Button Name="CopySnippetButton" Classes="small" Content="Copy" Command="{Binding CopySnippetCommand}"
+                    HorizontalAlignment="Left" Margin="0,6,0,0" />
+            <TextBlock Name="VersionExampleText" TextWrapping="Wrap" Text="{Binding VersionExample}" Margin="0,6,0,0" />
+            <TextBlock Classes="hint"
+                       Text="The section &quot;Migrating to 5.0&quot; of the nUpdate README lists every renamed member of the client API." />
+
+            <TextBlock Classes="h2" Text="3. Ship that build once through the old feed" Margin="0,14,0,0" />
+            <TextBlock Name="BridgeReleaseText" TextWrapping="Wrap" Text="{Binding BridgeRelease}" />
+
+            <TextBlock Classes="h2" Text="4. Keep the old files until everybody has moved" Margin="0,14,0,0" />
+            <TextBlock TextWrapping="Wrap" Text="{Binding KeepOldFiles}" />
+
+            <TextBlock Classes="h2" Text="5. Retire the nUpdate 4 setup" Margin="0,14,0,0" />
+            <TextBlock TextWrapping="Wrap" Text="{Binding Retirement}" />
+          </StackPanel>
+        </Panel>
+      </ScrollViewer>
+    </DockPanel>
+    <controls:BusyOverlay />
+  </Panel>
+</Window>
