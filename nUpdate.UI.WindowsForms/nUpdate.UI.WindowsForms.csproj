@@ -16,4 +16,9 @@
     <ProjectReference Include="../nUpdate/nUpdate.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Renders the update dialog for the README. -->
+    <InternalsVisibleTo Include="WinFormsScreenshots" />
+  </ItemGroup>
+
 </Project>

@@ -164,6 +164,17 @@ jobs:
             --filter-not-trait "Category=Integration" \
             --report-trx --report-trx-filename nUpdate.Tests.trx
 
+      - name: Screenshot of the Windows Forms update dialog for the README
+        continue-on-error: true # a runner without a desktop session must not fail the build
+        run: dotnet run --project tools/WinFormsScreenshots --configuration Release --no-build -- artifacts/screenshots
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-windows
+          path: artifacts/screenshots
+          if-no-files-found: ignore
+
       - uses: actions/download-artifact@v4
         with:
           name: nuget-packages
