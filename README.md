@@ -138,7 +138,7 @@ The user interfaces are thin presenters over `nUpdate.Ui.UpdateFlow`, which you 
 implementing `IUpdateFlowPresenter`.
 
 <p align="center">
-  <img src="https://www.nupdate.net/img/new-updates.png" alt="The update dialog of nUpdate.UI.WindowsForms" />
+  <img src="docs/images/winforms-update-dialog.png" alt="The update dialog of nUpdate.UI.WindowsForms" />
   <img src="docs/images/avalonia-update-dialog.png" alt="The update dialog of nUpdate.UI.Avalonia" />
 </p>
 

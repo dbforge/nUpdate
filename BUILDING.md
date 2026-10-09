@@ -103,14 +103,22 @@ targets copy.
 ## Screenshots
 
 `WindowScreenshots` renders every window of nUpdate Administration, the installer window and the Avalonia update
-dialog with sample data. Set `NUPDATE_SCREENSHOTS` to a
-folder to get the PNGs, then copy the ones the README shows into `docs/images` (`project-packages.png`,
-`package-general.png`, `project-statistics.png` and `migration-packages.png`, renamed to `administration-*.png`;
-`installer.png`, `installer-locked-file.png`, and `update-dialog.png` as `avalonia-update-dialog.png`):
+dialog with sample data for an application called Aurora, and the main windows of nUpdate Administration once more in
+dark mode (`*-dark.png`). Headless rendering has no window decorations, so it adds
+them: a Windows 11 frame for nUpdate Administration, a GNOME frame for the installer and the update dialog. Set
+`NUPDATE_SCREENSHOTS` to a folder to get the PNGs, then copy the ones the README shows into `docs/images`
+(`project-packages.png`, `package-operations.png`, `project-statistics.png` and `migration-packages.png`, renamed to
+`administration-*.png`; `installer.png`, `installer-locked-file.png`, and `update-dialog.png` as
+`avalonia-update-dialog.png`):
 
 ```
 NUPDATE_SCREENSHOTS=/tmp/screenshots dotnet test nUpdate.Tests/nUpdate.Tests.csproj -- --filter-class nUpdate.Tests.Administration.App.WindowScreenshots
 ```
+
+The update dialog of nUpdate.UI.WindowsForms can only be rendered on Windows. `tools/WinFormsScreenshots` shows the real
+dialog for Aurora, captures it from the screen and adds the same Windows 11 frame. The Windows job of CI runs it and
+uploads `winforms-update-dialog.png` as the artifact `screenshots-windows`; copy it into `docs/images`. On a Windows
+machine, `dotnet run --project tools/WinFormsScreenshots -- <folder>` does the same.
 
 ## The macOS bundle of nUpdate Administration
 
@@ -159,3 +167,4 @@ osx-arm64. Coverage, test results, packages and the published administration are
 | `nUpdate.Administration` | net10.0 | The Avalonia administration app. |
 | `nUpdate.Tests` | net10.0 | All tests: `Library/`, `Installer/`, `InstallerUi/` and `ClientUi/` (headless), `Administration/` (unit, view models, headless views), `Integration/` (Docker, trait `Category=Integration`; `Scenarios/` drives the real windows headlessly, one Given/When/Then class per dialog; `PublishedInstallerTests`, trait `Category=PublishedInstaller`), `Support/`. xUnit v3, NSubstitute, Shouldly, Avalonia.Headless, Testcontainers. |
 | `tools/CoverageGate` | net10.0 | Cobertura threshold checker used by CI. |
+| `tools/WinFormsScreenshots` | net8.0-windows | Renders the Windows Forms update dialog for the README (Windows only). |

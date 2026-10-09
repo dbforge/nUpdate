@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomInstaller", "samples\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nUpdate.UI.Avalonia", "nUpdate.UI.Avalonia\nUpdate.UI.Avalonia.csproj", "{D661BE89-86BB-47F3-A4C3-B87BED8A7D49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsScreenshots", "tools\WinFormsScreenshots\WinFormsScreenshots.csproj", "{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -185,6 +187,18 @@ Global
 		{D661BE89-86BB-47F3-A4C3-B87BED8A7D49}.Release|x64.Build.0 = Release|Any CPU
 		{D661BE89-86BB-47F3-A4C3-B87BED8A7D49}.Release|x86.ActiveCfg = Release|Any CPU
 		{D661BE89-86BB-47F3-A4C3-B87BED8A7D49}.Release|x86.Build.0 = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|x64.Build.0 = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Debug|x86.Build.0 = Debug|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|x64.ActiveCfg = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|x64.Build.0 = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|x86.ActiveCfg = Release|Any CPU
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,5 +206,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{91F67EC0-E150-44C6-A8F0-82E2EF38CE19} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
 		{87495C22-BF4B-449B-A06B-BCEC9821DEF0} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
+		{2709B3CC-D3E1-4C23-8694-575C6F6FF7EC} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
 	EndGlobalSection
 EndGlobal
