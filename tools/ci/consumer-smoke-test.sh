@@ -7,6 +7,7 @@
 set -euo pipefail
 
 rid="${1:?usage: consumer-smoke-test.sh <runtime identifier>}"
+version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props | head -n 1)"
 work="$(pwd)/artifacts/consumer"
 rm -rf "$work"
 mkdir -p "$work"
@@ -16,8 +17,8 @@ cat > consumer.csproj <<EOF
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="nUpdate" Version="5.0.0" />
-    <PackageReference Include="nUpdate.UpdateInstaller.UI.Avalonia" Version="5.0.0" />
+    <PackageReference Include="nUpdate" Version="$version" />
+    <PackageReference Include="nUpdate.UpdateInstaller.UI.Avalonia" Version="$version" />
   </ItemGroup>
 </Project>
 EOF
@@ -27,7 +28,7 @@ printf '<Project>\n</Project>\n' > Directory.Build.props
 printf '<Project>\n</Project>\n' > Directory.Packages.props
 printf '<Project>\n</Project>\n' > Directory.Build.targets
 # Sources go into a nuget.config: Git Bash would turn an https:// argument into a Windows path. A package folder of its
-# own, so a 5.0.0 package from an earlier run's cache cannot stand in for the new one; NUGET_PACKAGES would win over it.
+# own, so a package of the same version from an earlier run's cache cannot stand in for the new one; NUGET_PACKAGES would win over it.
 cat > nuget.config <<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>

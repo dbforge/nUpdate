@@ -6,7 +6,7 @@
 
 **Signed, self-hosted updates for .NET applications**
 
-[![CI](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml/badge.svg)](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml) [![Release](https://img.shields.io/badge/release-v5.0-blue.svg)](https://github.com/dbforge/nUpdate/releases) [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%2010-512BD4.svg)](#requirements) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
+[![CI](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml/badge.svg)](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml) [![Release](https://img.shields.io/badge/release-v5.0.0--rc.1-orange.svg)](https://github.com/dbforge/nUpdate/releases) [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%2010-512BD4.svg)](#requirements) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 [Features](#features) · [Installation](#installation) · [Usage](#usage) · [Examples](#examples) · [Migrating to 5.0](#migrating-to-50) · [Building](BUILDING.md)
 
@@ -74,9 +74,11 @@ hands them to the installer, with a ready-made user interface or one of your own
 
 ## Installation
 
+nUpdate 5 is a release candidate: 5.0.0-rc.1 is complete and tested, but details may still change before 5.0.0.
+
 ```
-dotnet add package nUpdate --version 5.0.0
-dotnet add package nUpdate.UpdateInstaller.UI.Avalonia --version 5.0.0
+dotnet add package nUpdate --version 5.0.0-rc.1
+dotnet add package nUpdate.UpdateInstaller.UI.Avalonia --version 5.0.0-rc.1
 ```
 
 `nUpdate.UpdateInstaller.UI.Avalonia` carries the built-in installer for seven runtime identifiers. On build it copies
@@ -121,9 +123,9 @@ process, set `ApplicationExecutablePath` to the absolute path of the executable,
 ### 3. Update, with the integrated user interface…
 
 ```
-dotnet add package nUpdate.UI.WindowsForms --version 5.0.0
-dotnet add package nUpdate.UI.WPF --version 5.0.0
-dotnet add package nUpdate.UI.Avalonia --version 5.0.0
+dotnet add package nUpdate.UI.WindowsForms --version 5.0.0-rc.1
+dotnet add package nUpdate.UI.WPF --version 5.0.0-rc.1
+dotnet add package nUpdate.UI.Avalonia --version 5.0.0-rc.1
 ```
 
 Each package provides an `UpdaterUI` class. Create and use it on the UI thread:

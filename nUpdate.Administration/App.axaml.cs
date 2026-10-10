@@ -37,7 +37,7 @@ public sealed class App : Application
 
     private void OnAboutClicked(object? sender, EventArgs e) =>
         _ = _dialogs?.ShowInfoAsync("nUpdate Administration",
-            $"Version {typeof(App).Assembly.GetName().Version?.ToString(3)}. Publishes updates for applications that use nUpdate on Windows, Linux and macOS.\n\nhttps://github.com/dbforge/nUpdate");
+            $"Version {AdministrationVersion.Text}. Publishes updates for applications that use nUpdate on Windows, Linux and macOS.\n\nhttps://github.com/dbforge/nUpdate");
 
     /// <summary>Whatever escapes a command or a forgotten task is shown instead of taking the application down.</summary>
     private static void ReportUnhandledExceptions(DialogService dialogs)
