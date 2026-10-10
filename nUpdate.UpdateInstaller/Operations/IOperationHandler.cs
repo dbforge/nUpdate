@@ -3,7 +3,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Executes the operations of one <see cref="OperationArea" />.</summary>
-public interface IOperationHandler
+internal interface IOperationHandler
 {
     OperationArea Area { get; }
 

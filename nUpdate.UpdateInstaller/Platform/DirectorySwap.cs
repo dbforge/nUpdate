@@ -10,7 +10,7 @@ namespace nUpdate.UpdateInstaller.Platform;
 ///     Swaps two directories. On macOS in one atomic step (<c>renamex_np</c> with <c>RENAME_SWAP</c>), so the bundle is
 ///     never missing; elsewhere, or when the volume cannot swap, with three renames that are rolled back on failure.
 /// </summary>
-public sealed class DirectorySwap : IDirectorySwap
+internal sealed class DirectorySwap : IDirectorySwap
 {
     /// <summary>The name the current directory has while the renames are under way, and keeps if it cannot be moved on.</summary>
     public const string ParkedSuffix = ".nupdate-old";

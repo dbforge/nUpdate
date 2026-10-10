@@ -5,7 +5,7 @@ using System.Windows.Input;
 namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>Raises <see cref="PropertyChanged" /> for the properties it sets.</summary>
-public abstract class ObservableObject : INotifyPropertyChanged
+internal abstract class ObservableObject : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 

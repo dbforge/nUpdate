@@ -3,7 +3,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Routes operations to the handler of their area.</summary>
-public sealed class OperationDispatcher
+internal sealed class OperationDispatcher
 {
     private readonly Dictionary<OperationArea, IOperationHandler> _handlers;
 

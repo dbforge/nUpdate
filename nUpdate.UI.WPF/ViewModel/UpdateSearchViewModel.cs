@@ -5,7 +5,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.WPF.ViewModel;
 
 /// <summary>Runs the search while the dialog is open; cancelling closes the dialog and the search.</summary>
-public sealed class UpdateSearchViewModel : DialogViewModel, IDisposable
+internal sealed class UpdateSearchViewModel : DialogViewModel, IDisposable
 {
     private readonly Func<CancellationToken, Task<bool>> _search;
     private readonly DialogOperation<bool> _operation = new();

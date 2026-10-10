@@ -4,7 +4,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>One dialog of the update process, hosted by <see cref="Views.UpdateDialog" />.</summary>
-public abstract class DialogViewModel(UpdateManager updateManager) : ObservableObject
+internal abstract class DialogViewModel(UpdateManager updateManager) : ObservableObject
 {
     /// <summary>Raised with <c>true</c> when the dialog was accepted and <c>false</c> when it was cancelled.</summary>
     public event EventHandler<bool>? CloseRequested;

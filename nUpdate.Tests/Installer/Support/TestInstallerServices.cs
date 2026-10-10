@@ -12,7 +12,7 @@ using nUpdate.Updating;
 namespace nUpdate.Tests.Installer.Support;
 
 /// <summary>An in-memory installer environment: mock file system, substituted system services, recording reporter.</summary>
-public sealed class TestInstallerServices
+internal sealed class TestInstallerServices
 {
     public TestInstallerServices()
     {

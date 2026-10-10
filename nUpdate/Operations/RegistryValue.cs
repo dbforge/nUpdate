@@ -73,7 +73,7 @@ public sealed class RegistryValue(string name, RegistryValueKind kind, object? v
 }
 
 /// <summary>Writes a <see cref="RegistryValue" /> as <c>{ name, kind, value }</c> with the value typed by its kind.</summary>
-public sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
+internal sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
 {
     public override void WriteJson(JsonWriter writer, RegistryValue? value, JsonSerializer serializer)
     {

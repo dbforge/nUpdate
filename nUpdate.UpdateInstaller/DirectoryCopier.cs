@@ -10,7 +10,7 @@ namespace nUpdate.UpdateInstaller;
 ///     so a failure never leaves a half-written file behind. On Windows an exclusive open finds locked files before
 ///     anything is touched; Linux and macOS replace files that are in use (even running executables) without trouble.
 /// </summary>
-public sealed class DirectoryCopier
+internal sealed class DirectoryCopier
 {
     private const int ErrorSharingViolation = 32;
     private const int ErrorLockViolation = 33;

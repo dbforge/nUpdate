@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller;
 
 /// <summary>Counts finished tasks and turns them into a percentage.</summary>
-public sealed class ProgressTracker
+internal sealed class ProgressTracker
 {
     public int Total { get; private set; }
 

@@ -35,7 +35,7 @@ public sealed class PackageBuilder : IPackageBuilder
     /// <param name="now">The creation time written into the manifest.</param>
     /// <param name="isWindows">Whether files lack Unix permissions, so executables are recognized by content.</param>
     /// <param name="signatures">Reads the macOS code signature attributes of the files, which only a Mac has.</param>
-    public PackageBuilder(IFileSystem fileSystem, Func<DateTimeOffset> now, bool isWindows,
+    internal PackageBuilder(IFileSystem fileSystem, Func<DateTimeOffset> now, bool isWindows,
         ICodeSignatureAttributes signatures)
     {
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));

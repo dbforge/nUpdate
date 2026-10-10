@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller.Windows;
 
 /// <summary>Parses registry paths such as <c>HKEY_CURRENT_USER\Software\Vendor</c>.</summary>
-public static class RegistryKeyPath
+internal static class RegistryKeyPath
 {
     private static readonly Dictionary<string, RegistryHive> Hives = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -30,7 +30,7 @@ public static class RegistryKeyPath
 }
 
 /// <summary>The registry hives the installer supports.</summary>
-public enum RegistryHive
+internal enum RegistryHive
 {
     ClassesRoot,
     CurrentUser,

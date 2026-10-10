@@ -8,7 +8,7 @@ namespace nUpdate.UpdateInstaller.Windows;
 /// <summary>Service control through <see cref="ServiceController" />.</summary>
 [SupportedOSPlatform("windows")]
 [ExcludeFromCodeCoverage] // Controls real Windows services; verified by the Windows-only test run.
-public sealed class WindowsServiceController : IServiceController
+internal sealed class WindowsServiceController : IServiceController
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
 

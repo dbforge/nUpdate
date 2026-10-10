@@ -4,7 +4,7 @@ using System.Text;
 namespace nUpdate.Platform;
 
 /// <summary>Sets permissions with the C library's <c>chmod</c>, which .NET Standard 2.0 does not wrap.</summary>
-public sealed class FilePermissions : IFilePermissions
+internal sealed class FilePermissions : IFilePermissions
 {
     /// <summary>0755: read and execute for everybody, write for the owner.</summary>
     public const int ExecutableMode = 0x1ED;

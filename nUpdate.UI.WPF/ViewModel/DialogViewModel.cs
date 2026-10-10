@@ -5,7 +5,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.WPF.ViewModel;
 
 /// <summary>The view model of one dialog in the update process, hosted by a <see cref="Views.DialogWindow" />.</summary>
-public abstract class DialogViewModel(UpdateManager updateManager) : ViewModelBase
+internal abstract class DialogViewModel(UpdateManager updateManager) : ViewModelBase
 {
     /// <summary>Raised with <c>true</c> when the dialog was accepted and <c>false</c> when it was cancelled.</summary>
     public event EventHandler<bool>? CloseRequested;

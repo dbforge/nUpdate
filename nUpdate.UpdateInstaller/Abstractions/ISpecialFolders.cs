@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller.Abstractions;
 
 /// <summary>The well-known folders packages can target.</summary>
-public interface ISpecialFolders
+internal interface ISpecialFolders
 {
     string ApplicationData { get; }
 

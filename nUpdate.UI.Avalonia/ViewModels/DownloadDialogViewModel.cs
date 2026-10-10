@@ -6,7 +6,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>Runs the download while the dialog is open and shows its progress.</summary>
-public sealed class DownloadDialogViewModel : DialogViewModel, IDisposable
+internal sealed class DownloadDialogViewModel : DialogViewModel, IDisposable
 {
     private readonly Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> _download;
     private readonly DialogOperation<bool> _operation = new();

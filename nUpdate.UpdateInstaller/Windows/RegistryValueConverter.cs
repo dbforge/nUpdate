@@ -3,7 +3,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Windows;
 
 /// <summary>Maps a <see cref="RegistryValue" /> to what <c>Microsoft.Win32.RegistryKey.SetValue</c> expects.</summary>
-public static class RegistryValueConverter
+internal static class RegistryValueConverter
 {
     /// <summary>
     ///     The CLR value: a string, an <see cref="int" /> for DWORD (values above <see cref="int.MaxValue" /> wrap to the

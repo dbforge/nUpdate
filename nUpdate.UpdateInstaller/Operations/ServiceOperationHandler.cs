@@ -4,7 +4,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Starts and stops Windows services.</summary>
-public sealed class ServiceOperationHandler : IOperationHandler
+internal sealed class ServiceOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Services;
 

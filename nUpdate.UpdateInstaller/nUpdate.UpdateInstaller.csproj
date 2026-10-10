@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="nUpdate.Tests"/>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 
 </Project>

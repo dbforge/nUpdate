@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller.Abstractions;
 
 /// <summary>Facts about the system and the session the installer runs in.</summary>
-public interface IEnvironmentInfo
+internal interface IEnvironmentInfo
 {
     /// <summary>True when there is no interactive desktop, for example when started by a Windows service.</summary>
     bool IsServiceContext { get; }

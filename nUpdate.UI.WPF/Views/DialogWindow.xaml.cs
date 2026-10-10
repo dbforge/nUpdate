@@ -5,7 +5,7 @@ using nUpdate.UI.WPF.ViewModel;
 namespace nUpdate.UI.WPF.Views;
 
 /// <summary>Hosts one <see cref="DialogViewModel" /> and closes when it asks to.</summary>
-public partial class DialogWindow : Window
+internal sealed partial class DialogWindow : Window
 {
     private readonly DialogViewModel _viewModel;
 

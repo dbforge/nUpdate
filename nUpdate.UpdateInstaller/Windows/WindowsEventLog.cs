@@ -9,7 +9,7 @@ namespace nUpdate.UpdateInstaller.Windows;
 ///     no package and no administrator rights. Only for Windows.
 /// </summary>
 [ExcludeFromCodeCoverage] // Writes to the real event log; only reached on Windows, by the default-services test of InstallerHost.
-public sealed class WindowsEventLog : IEventLog
+internal sealed class WindowsEventLog : IEventLog
 {
     private const string Source = "nUpdate";
     private const ushort ErrorType = 1;

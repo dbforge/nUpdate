@@ -4,7 +4,7 @@ using nUpdate.Installer;
 namespace nUpdate.UpdateInstaller;
 
 /// <summary>Reads and validates the options file the host application wrote.</summary>
-public static class InstallerOptionsReader
+internal static class InstallerOptionsReader
 {
     /// <exception cref="FileNotFoundException">The options file does not exist.</exception>
     /// <exception cref="InvalidDataException">The file is not valid.</exception>

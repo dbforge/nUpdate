@@ -4,7 +4,7 @@ using nUpdate.UpdateInstaller.Reporting;
 namespace nUpdate.Tests.Installer.Support;
 
 /// <summary>Install logs on a mock file system that stamp every line with the same time.</summary>
-public sealed class TestInstallLogs
+internal sealed class TestInstallLogs
 {
     public static readonly DateTimeOffset Noon = new(2026, 10, 7, 12, 0, 0, TimeSpan.FromHours(2));
 

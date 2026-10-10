@@ -9,7 +9,7 @@ namespace nUpdate.UpdateInstaller.Reporting;
 ///     the installer is killed, and readable while the installer runs. Writing is best effort; a log that cannot be
 ///     written never stops an update.
 /// </summary>
-public sealed class InstallLog : IDisposable
+internal sealed class InstallLog : IDisposable
 {
     private readonly IFileSystem _fileSystem;
     private readonly Func<DateTimeOffset> _clock;

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 namespace nUpdate.Operations;
 
 /// <summary>Reads an <see cref="Operation" /> by its <c>type</c> discriminator. Writing needs no converter: <see cref="Operation.Type" /> is a normal property.</summary>
-public sealed class OperationJsonConverter : JsonConverter
+internal sealed class OperationJsonConverter : JsonConverter
 {
     public override bool CanWrite => false;
 

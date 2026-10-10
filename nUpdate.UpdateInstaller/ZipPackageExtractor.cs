@@ -11,7 +11,7 @@ namespace nUpdate.UpdateInstaller;
 ///     Extracts zip packages through the file-system abstraction, refuses entries that escape the target and restores
 ///     the Unix permissions nUpdate Administration stored in each entry.
 /// </summary>
-public sealed class ZipPackageExtractor(IFileSystem fileSystem, IFilePermissions permissions) : IPackageExtractor
+internal sealed class ZipPackageExtractor(IFileSystem fileSystem, IFilePermissions permissions) : IPackageExtractor
 {
     private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 

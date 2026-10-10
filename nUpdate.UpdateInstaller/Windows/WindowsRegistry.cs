@@ -9,7 +9,7 @@ namespace nUpdate.UpdateInstaller.Windows;
 /// <summary>Registry access through <see cref="Microsoft.Win32.Registry" />.</summary>
 [SupportedOSPlatform("windows")]
 [ExcludeFromCodeCoverage] // Touches the real Windows registry; verified by the Windows-only test run.
-public sealed class WindowsRegistry : IRegistry
+internal sealed class WindowsRegistry : IRegistry
 {
     public void CreateSubKey(string keyPath, string subKeyName)
     {

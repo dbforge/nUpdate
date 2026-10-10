@@ -3,7 +3,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Abstractions;
 
 /// <summary>Registry access. Key paths start with a hive name such as <c>HKEY_CURRENT_USER</c>.</summary>
-public interface IRegistry
+internal interface IRegistry
 {
     void CreateSubKey(string keyPath, string subKeyName);
 

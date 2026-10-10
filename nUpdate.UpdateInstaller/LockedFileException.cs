@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller;
 
 /// <summary>Thrown when a file could not be replaced because another process keeps it open.</summary>
-public class LockedFileException : IOException
+internal class LockedFileException : IOException
 {
     public LockedFileException()
     {
