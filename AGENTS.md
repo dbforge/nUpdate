@@ -13,6 +13,9 @@ cost the most time:
   command from BUILDING.md on that report.
 - **No hidden branches in the 100% assemblies.** `"text" + exception` compiles to
   `string.Concat("text", exception?.ToString())`, a null branch no test reaches. Write `"text" + exception.ToString()`.
+- **Public API needs an entry on the API page.** CI fails when a public type or member of a package has no entry in
+  `website/api.html`; `bash tools/ci/api-docs-check.sh` after a Release build lists the IDs to add. Make a type
+  `internal` (with `InternalsVisibleTo`) when only nUpdate's own assemblies use it.
 - **`.gitignore` hides folders named `Packages`.** The Visual Studio rule `**/[Pp]ackages/*` once kept a source folder
   out of the repository unnoticed. Before pushing new folders, check `git status --short --ignored` or build a fresh
   clone of the branch.

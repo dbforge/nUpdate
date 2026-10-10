@@ -18,9 +18,17 @@ python3 -m http.server --directory website 8000
   runtime identifier, then operating system, then `any`), tabs, copy buttons, scroll reveals and a small highlighter.
 - `img/`: a copy of `assets/nupdate-icon.png` and the icon of the sample app Aurora.
 
-`api.html` is plain HTML: the public types of nUpdate 5 with their real signatures and an example for each type and the
-main calls, grouped like the packages, on one page. The examples compile against the libraries. The list on the left jumps to a type (each has an anchor, such as `api.html#UpdateFlow`), marks the one in view
-and filters the members. Update it when the public API changes.
+`api.html` is plain HTML: every public type and member of the packages with its real signature, examples for the types
+and the main calls, grouped like the packages, on one page. The list on the left jumps to a type (each has an anchor,
+such as `api.html#UpdateFlow`), marks the one in view and filters the members.
+
+Each entry names what it documents in `data-api`: the documentation comment ID of the type or member, followed by `~`
+and its type for members that have one, several IDs separated by spaces (all overloads of a method, the same member in
+the three `UpdaterUI` packages). CI runs `tools/ApiDocsCheck` after the build and fails when a public type or member
+has no entry, or an entry names one that no longer exists; after a Release build, `bash tools/ci/api-docs-check.sh`
+does the same and lists the IDs. A changed signature shows up as both, so the entry's signature is updated along with
+its ID. A type that is public only because another nUpdate assembly uses it belongs `internal`, with
+`InternalsVisibleTo`, rather than on the page.
 
 The Administration screens are rebuilt in HTML in a Windows 11 frame, after the real windows (texts, layout,
 colours); they follow light and dark mode and scale down on narrow screens.

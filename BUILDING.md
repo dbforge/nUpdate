@@ -140,17 +140,31 @@ allow it under System Settings > Privacy & Security or remove the quarantine wit
 `nUpdate.Administration/Assets`: `python3 -c "from PIL import Image; Image.open('nUpdate.png').save('nUpdate.icns')"`.
 It is not an Avalonia resource of the app.
 
+## The API page
+
+`website/api.html` documents every public type and member of the packages: nUpdate, nUpdate.UpdateInstaller, the three
+UI packages and nUpdate.Administration.TransferInterface. After a Release build of the solution,
+
+```bash
+bash tools/ci/api-docs-check.sh
+```
+
+compares the page with the assemblies and lists what the page is missing and what it names that the API no longer has,
+as documentation comment IDs. Each entry of the page lists the IDs it documents in its `data-api` attribute;
+[website/README.md](website/README.md) has the details. CI runs the check right after the build.
+
 ## CI
 
 `.github/workflows/ci.yml` runs on every push and on pull requests from forks. The Linux job checks the formatting,
-runs every test including the Docker integration tests and the headless scenarios, merges the coverage reports and
-applies the coverage gate. The packages job packs the NuGet packages on Linux (publishing the installer for all seven
-runtime identifiers), builds a consumer project against them and runs the published-installer tests with the
-linux-x64 installer. The Windows job runs the tests without Docker (including the Windows-only adapter tests), the
-consumer project and the published-installer tests with the win-x64 installer, and publishes nUpdate Administration
-for win-x64. The macOS job (Apple silicon) checks the signature of the osx-arm64 installer, runs the
-published-installer tests, including the bundle swap, and builds the macOS bundle of nUpdate Administration for
-osx-arm64. Coverage, test results, packages and the published administration are uploaded as artifacts.
+checks that the API page documents the public API, runs every test including the Docker integration tests and the
+headless scenarios, merges the coverage reports and applies the coverage gate. The packages job packs the NuGet packages
+on Linux (publishing the installer for all seven runtime identifiers), builds a consumer project against them and runs
+the published-installer tests with the linux-x64 installer. The Windows job runs the tests without Docker (including the
+Windows-only adapter tests), the consumer project and the published-installer tests with the win-x64 installer, and
+publishes nUpdate Administration for win-x64. The macOS job (Apple silicon) checks the signature of the osx-arm64
+installer, runs the published-installer tests, including the bundle swap, and builds the macOS bundle of nUpdate
+Administration for osx-arm64. Coverage, test results, packages and the published administration are uploaded as
+artifacts.
 
 ## Layout
 
