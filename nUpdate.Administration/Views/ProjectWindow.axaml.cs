@@ -13,6 +13,8 @@ public partial class ProjectWindow : Window
     public ProjectWindow()
     {
         InitializeComponent();
+        Nav.SelectionChanged += (_, _) => ShowPage();
+        ShowPage();
         DataContextChanged += (_, _) => Attach();
         ActualThemeVariantChanged += (_, _) => DrawStatistics();
         Opened += async (_, _) =>
@@ -20,6 +22,18 @@ public partial class ProjectWindow : Window
             if (_viewModel is not null)
                 await _viewModel.OnOpenedAsync();
         };
+    }
+
+    /// <summary>
+    ///     Shows the page of the rail's selected entry and hides the others. The rail always has an entry selected; should
+    ///     it lose its selection, the page shown stays.
+    /// </summary>
+    private void ShowPage()
+    {
+        if (Nav.SelectedIndex < 0)
+            return;
+        for (var index = 0; index < Pages.Children.Count; index++)
+            Pages.Children[index].IsVisible = index == Nav.SelectedIndex;
     }
 
     private void Attach()

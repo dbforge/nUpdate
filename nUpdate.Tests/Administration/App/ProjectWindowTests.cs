@@ -666,4 +666,26 @@ public class ProjectWindowTests
         viewModel.SelectedPackage = null;
         viewModel.SelectedDetails.ShouldBeNull();
     }
+
+    [AvaloniaFact]
+    public void ProjectWindow_ShowsThePageChosenInTheRail()
+    {
+        var viewModel = _context.Factory.Create<ProjectViewModel>(AppTestContext.NewProject(), AppTestContext.NewSecrets());
+        var window = new ProjectWindow { DataContext = viewModel };
+        window.Show();
+        int[] VisiblePages() => window.Pages.Children.Select((page, index) => (page, index))
+            .Where(p => p.page.IsVisible).Select(p => p.index).ToArray();
+        VisiblePages().ShouldBe([0]);
+
+        // Back and forth between every page and Packages, which once stayed hidden behind the page shown before.
+        foreach (var page in new[] { 1, 0, 2, 0, 3, 0, 1, 2, 3, 1 })
+        {
+            window.Nav.SelectedIndex = page;
+            VisiblePages().ShouldBe([page]);
+        }
+
+        window.Nav.SelectedIndex = -1; // the rail lost its selection: the page stays
+        VisiblePages().ShouldBe([1]);
+        window.Close();
+    }
 }

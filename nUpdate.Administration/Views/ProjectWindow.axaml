@@ -144,7 +144,8 @@
         </DockPanel>
       </Border>
 
-      <Carousel Name="Pages" SelectedIndex="{Binding #Nav.SelectedIndex}">
+      <!-- One page per entry of the rail; the code-behind shows the chosen one -->
+      <Panel Name="Pages">
         <!-- Packages -->
         <DockPanel>
           <DockPanel DockPanel.Dock="Top" Classes="pagehead">
@@ -489,7 +490,7 @@
             </DataGrid>
           </Border>
         </DockPanel>
-      </Carousel>
+      </Panel>
     </DockPanel>
   </DockPanel>
 </Window>
