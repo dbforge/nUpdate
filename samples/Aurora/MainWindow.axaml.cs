@@ -55,7 +55,7 @@ public partial class MainWindow : Window
         {
             using (manager)
             {
-                var ui = new UpdaterUi(manager, this) { UseHiddenSearch = hiddenSearch };
+                var ui = new UpdaterUI(manager, this) { UseHiddenSearch = hiddenSearch };
                 var result = await ui.RunAsync();
                 ResultText.Text = Describe(result, manager);
             }

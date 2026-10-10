@@ -118,7 +118,7 @@ public sealed record PlatformChoice(string Platform)
         [PackagePlatform.Linux] = "Linux (every architecture)",
         ["linux-x64"] = "Linux x64",
         ["linux-arm64"] = "Linux ARM64",
-        [PackagePlatform.MacOs] = "macOS (every architecture)",
+        [PackagePlatform.MacOS] = "macOS (every architecture)",
         ["osx-x64"] = "macOS Intel",
         ["osx-arm64"] = "macOS Apple silicon",
     };
@@ -172,7 +172,7 @@ public sealed class PlatformItemViewModel(string platform, bool isNew = true)
 
     public bool IsWindows => PackagePlatform.IsWindows(Platform);
 
-    public bool IsMacOs => PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOs;
+    public bool IsMacOS => PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOS;
 
     public ObservableCollection<PackageFileItem> Files { get; } = [];
 
@@ -212,7 +212,7 @@ public sealed record PathPlaceholder(string Name, string Meaning, string Example
                 new("%temp%", "The temporary folder ($TMPDIR)", "/tmp"),
                 new("%desktop%", "The desktop of the user", "~/Desktop"),
             ];
-        if (system == PackagePlatform.MacOs)
+        if (system == PackagePlatform.MacOS)
             return
             [
                 new("%program%", $"The whole {application}.app bundle", $"/Applications/{application}.app"),
@@ -716,7 +716,7 @@ public partial class PackageEditorViewModel : DialogViewModel
         var name = _fileSystem.Path.GetFileName(folder.TrimEnd(_fileSystem.Path.DirectorySeparatorChar,
             _fileSystem.Path.AltDirectorySeparatorChar));
         var target = TargetFolder.Trim().Trim('/', '\\').Replace('\\', '/');
-        var isBundle = SelectedPlatform.IsMacOs && SelectedRoot == PackageRoot.Program && target.Length == 0 &&
+        var isBundle = SelectedPlatform.IsMacOS && SelectedRoot == PackageRoot.Program && target.Length == 0 &&
                        name.EndsWith(".app", StringComparison.OrdinalIgnoreCase);
         var prefix = isBundle ? string.Empty : target.Length > 0 ? $"{target}/{name}/" : $"{name}/";
         string[] entries;

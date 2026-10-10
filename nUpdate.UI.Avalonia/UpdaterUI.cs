@@ -10,13 +10,13 @@ namespace nUpdate.UI.Avalonia;
 ///     Runs the complete update process with the built-in Avalonia dialogs on Windows, Linux and macOS. Create and use it
 ///     on the UI thread.
 /// </summary>
-public sealed class UpdaterUi
+public sealed class UpdaterUI
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window that owns the dialogs, which are then modal to it; <c>null</c> shows them on their own.</param>
-    public UpdaterUi(UpdateManager updateManager, Window? owner = null)
+    public UpdaterUI(UpdateManager updateManager, Window? owner = null)
     {
         ArgumentNullException.ThrowIfNull(updateManager);
         Presenter = new AvaloniaPresenter(updateManager, owner);

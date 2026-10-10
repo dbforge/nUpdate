@@ -16,7 +16,7 @@ public static class PackagePlatform
 
     public const string Linux = "linux";
 
-    public const string MacOs = "osx";
+    public const string MacOS = "osx";
 
     /// <summary>Every platform a package can name, each operating system followed by its runtime identifiers.</summary>
     public static IReadOnlyList<string> All { get; } =
@@ -24,7 +24,7 @@ public static class PackagePlatform
         Any,
         Windows, "win-x64", "win-x86", "win-arm64",
         Linux, "linux-x64", "linux-arm64",
-        MacOs, "osx-x64", "osx-arm64",
+        MacOS, "osx-x64", "osx-arm64",
     ];
 
     /// <summary>
@@ -60,7 +60,7 @@ public static class PackagePlatform
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return Windows;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            return MacOs;
+            return MacOS;
         return RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? Linux : "unix";
     }
 }

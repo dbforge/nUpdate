@@ -8,13 +8,13 @@ namespace nUpdate.UI.WindowsForms;
 /// <summary>
 ///     Runs the complete update process with the built-in Windows Forms dialogs. Create and use it on the UI thread.
 /// </summary>
-public sealed class UpdaterUi
+public sealed class UpdaterUI
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window the dialogs are centred on; <c>null</c> uses the active form.</param>
-    public UpdaterUi(UpdateManager updateManager, IWin32Window? owner = null)
+    public UpdaterUI(UpdateManager updateManager, IWin32Window? owner = null)
     {
         if (updateManager is null)
             throw new ArgumentNullException(nameof(updateManager));

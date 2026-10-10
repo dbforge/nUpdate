@@ -8,7 +8,7 @@ public interface IEnvironmentInfo
 
     bool IsWindows { get; }
 
-    bool IsMacOs { get; }
+    bool IsMacOS { get; }
 
     /// <summary>Whether a window can be shown: an interactive Windows session, a Linux session with an X11 or Wayland display, or macOS.</summary>
     bool HasDisplay { get; }

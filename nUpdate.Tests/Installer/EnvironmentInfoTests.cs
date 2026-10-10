@@ -25,7 +25,7 @@ public class EnvironmentInfoTests
         var environment = new EnvironmentInfo();
         environment.IsServiceContext.ShouldBe(!Environment.UserInteractive);
         environment.IsWindows.ShouldBe(OperatingSystem.IsWindows());
-        environment.IsMacOs.ShouldBe(OperatingSystem.IsMacOS());
+        environment.IsMacOS.ShouldBe(OperatingSystem.IsMacOS());
         environment.HasDisplay.ShouldBe(EnvironmentInfo.DetectDisplay(OperatingSystem.IsWindows(),
             OperatingSystem.IsMacOS(), !Environment.UserInteractive, Environment.GetEnvironmentVariable));
     }

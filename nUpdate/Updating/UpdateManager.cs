@@ -407,7 +407,7 @@ public sealed class UpdateManager : IDisposable
 
         var afterInstall = AfterInstall;
         var isWindows = PackagePlatform.IsWindows(Platform);
-        var bundle = PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOs
+        var bundle = PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOS
             ? FindBundle(executablePath)
             : null;
         if (!isWindows)

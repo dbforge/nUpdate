@@ -9,13 +9,13 @@ namespace nUpdate.UI.WPF;
 /// <summary>
 ///     Runs the complete update process with the built-in WPF dialogs. Create and use it on the UI thread.
 /// </summary>
-public sealed class UpdaterUi
+public sealed class UpdaterUI
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window that owns the dialogs; <c>null</c> centres them on the screen.</param>
-    public UpdaterUi(UpdateManager updateManager, Window? owner = null)
+    public UpdaterUI(UpdateManager updateManager, Window? owner = null)
     {
         if (updateManager is null)
             throw new ArgumentNullException(nameof(updateManager));

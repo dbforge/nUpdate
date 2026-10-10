@@ -14,17 +14,17 @@ public sealed class EnvironmentInfo : IEnvironmentInfo
     public bool IsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     [ExcludeFromCodeCoverage] // Thin wrapper over RuntimeInformation.
-    public bool IsMacOs => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+    public bool IsMacOS => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 
-    public bool HasDisplay => DetectDisplay(IsWindows, IsMacOs, IsServiceContext, Environment.GetEnvironmentVariable);
+    public bool HasDisplay => DetectDisplay(IsWindows, IsMacOS, IsServiceContext, Environment.GetEnvironmentVariable);
 
     /// <summary>Windows needs an interactive session, macOS always has its window server, Linux needs <c>DISPLAY</c> or <c>WAYLAND_DISPLAY</c>.</summary>
-    internal static bool DetectDisplay(bool isWindows, bool isMacOs, bool isServiceContext,
+    internal static bool DetectDisplay(bool isWindows, bool isMacOS, bool isServiceContext,
         Func<string, string?> variable)
     {
         if (isWindows)
             return !isServiceContext;
-        if (isMacOs)
+        if (isMacOS)
             return true;
         return !string.IsNullOrEmpty(variable("DISPLAY")) || !string.IsNullOrEmpty(variable("WAYLAND_DISPLAY"));
     }

@@ -78,7 +78,7 @@ public sealed class AvaloniaDialogTests : IDisposable
         _services.AddInstaller();
         var owner = new Window();
         owner.Show();
-        var ui = new UpdaterUi(_manager, owner);
+        var ui = new UpdaterUI(_manager, owner);
         var dialogs = new List<UpdateDialog>();
         ui.Presenter.DialogShown = dialogs.Add;
 
@@ -104,7 +104,7 @@ public sealed class AvaloniaDialogTests : IDisposable
     public async Task UpdaterUI_ShowsThatTheApplicationIsUpToDateWithoutAnOwner()
     {
         ServeNoUpdates();
-        var ui = new UpdaterUi(_manager);
+        var ui = new UpdaterUI(_manager);
         var dialogs = new List<UpdateDialog>();
         ui.Presenter.DialogShown = dialogs.Add;
 
@@ -122,14 +122,14 @@ public sealed class AvaloniaDialogTests : IDisposable
         dialogs.Clear();
         (await ui.RunAsync()).ShouldBe(UpdateFlowResult.NoUpdates);
         dialogs.ShouldBeEmpty();
-        Should.Throw<ArgumentNullException>(() => new UpdaterUi(null!));
+        Should.Throw<ArgumentNullException>(() => new UpdaterUI(null!));
     }
 
     [AvaloniaFact]
     public async Task UpdaterUI_ShowsErrorsWithTheirDetailsAndLetsTheUserDecline()
     {
         _services.Http.Text(HttpMethod.Get, FeedUri, "{broken");
-        var ui = new UpdaterUi(_manager);
+        var ui = new UpdaterUI(_manager);
         var dialogs = new List<UpdateDialog>();
         ui.Presenter.DialogShown = dialogs.Add;
 
