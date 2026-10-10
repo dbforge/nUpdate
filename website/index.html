@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nUpdate 5: signed updates for .NET on Windows, Linux and macOS</title>
+  <meta name="description" content="nUpdate keeps your .NET application up to date from your own server: signed packages per platform, verified before they run, installed by a self-contained installer on Windows, Linux and macOS.">
+  <meta property="og:title" content="nUpdate 5">
+  <meta property="og:description" content="Signed, self-hosted updates for .NET applications on Windows, Linux and macOS.">
+  <meta property="og:image" content="img/nupdate-icon.png">
+  <link rel="icon" href="img/nupdate-icon.png">
+  <!-- The chosen theme, before the first paint; without a choice the page follows the system. -->
+  <script>
+    try {
+      const theme = localStorage.getItem('nupdate-theme');
+      if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+    } catch {}
+    document.documentElement.classList.add('can-theme');
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#top" aria-label="nUpdate home">
+        <img src="img/nupdate-icon.png" alt="" width="32" height="32">
+        <span>nUpdate</span>
+        <span class="badge">v5</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#features">Features</a>
+        <a href="#code">Code</a>
+        <a href="api.html">API</a>
+        <a href="#administration">Administration</a>
+      </nav>
+      <div class="theme-switch" role="group" aria-label="Colour theme">
+        <button type="button" data-theme-choice="system" aria-pressed="true" aria-label="Follow the system" title="System">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" d="M2 3h12v8H2zM6 14h4M8 11v3"/></svg>
+        </button>
+        <button type="button" data-theme-choice="light" aria-pressed="false" aria-label="Light" title="Light">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>
+        </button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Dark" title="Dark">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7Z"/></svg>
+        </button>
+      </div>
+      <a class="button button-ghost github" href="https://github.com/dbforge/nUpdate" aria-label="nUpdate on GitHub">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg>
+        <span class="github-label">GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero: the installer itself is the picture. -->
+    <section class="hero" id="top">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow load-in" style="--i:0">nUpdate 5 release candidate · MIT licensed · .NET Standard 2.0</p>
+          <h1 class="load-in" style="--i:1">Signed updates for .NET apps on <span class="os-word">Windows</span>, <span class="os-word">Linux</span> and <span class="os-word">macOS</span>.</h1>
+          <p class="lede load-in" style="--i:2">Publish packages from nUpdate Administration to your own server. A few lines of C# find, verify and install them, and the installer needs no .NET on the machine.</p>
+          <div class="hero-actions load-in" style="--i:3">
+            <a class="button button-primary" href="#code">Get started</a>
+            <a class="button button-ghost" href="https://github.com/dbforge/nUpdate/releases">Download Administration</a>
+          </div>
+        </div>
+
+        <div class="hero-demo load-in" style="--i:2">
+          <div class="os-switch" role="tablist" aria-label="Operating system">
+            <button type="button" role="tab" data-os="win" aria-selected="true">Windows</button>
+            <button type="button" role="tab" data-os="linux" aria-selected="false">Linux</button>
+            <button type="button" role="tab" data-os="mac" aria-selected="false">macOS</button>
+          </div>
+          <div class="installer" data-os="win" aria-live="off">
+            <div class="chrome">
+              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <img class="chrome-icon" src="img/aurora-icon.svg" alt="" width="16" height="16">
+              <span class="chrome-title">Updating Aurora</span>
+              <span class="controls" aria-hidden="true"><i class="c-min"></i><i class="c-max"></i><i class="c-close"></i></span>
+            </div>
+            <div class="installer-body">
+              <img src="img/aurora-icon.svg" alt="" width="44" height="44">
+              <div class="installer-main">
+                <strong>Updating Aurora</strong>
+                <span class="status" id="installer-status">Copying Aurora.exe...</span>
+                <div class="bar-row">
+                  <div class="bar" id="installer-bar"><span style="width:64%"></span></div>
+                  <span class="percent" id="installer-percent">64 %</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="demo-caption">Installer from <code id="installer-rid">nUpdate.Installer/win-x64/</code>, self-contained, with your app's icon, or no window at all.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="facts" aria-label="At a glance">
+      <ul class="wrap fact-row">
+        <li><span>Platforms</span>win · linux · osx, x64 and arm64</li>
+        <li><span>Verified</span>size, SHA-512, RSA-PSS</li>
+        <li><span>Runs in</span>Framework 4.6.2+, .NET 6+</li>
+        <li><span>Hosting</span>any web server, your own</li>
+      </ul>
+    </section>
+
+    <!-- How it works: a real sequence, so it is numbered. -->
+    <section class="section" id="how">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2>From your build to your users in three steps.</h2>
+        </header>
+        <div class="pipeline reveal" aria-hidden="true">
+          <div class="track"><span class="parcel"><img src="img/nupdate-icon.png" alt="" width="34" height="34"></span></div>
+        </div>
+        <ol class="steps">
+          <li class="step reveal">
+            <span class="step-no">1</span>
+            <h3>Publish</h3>
+            <p>nUpdate Administration builds one zip per platform, signs it with your project's key and uploads it with <code>nupdate.json</code> over SFTP, FTPS or FTP.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-no">2</span>
+            <h3>Check</h3>
+            <p><code>UpdateManager</code> reads the feed, picks the zip for its runtime identifier and checks size, SHA-512, the RSA-PSS signature and the manifest before anything runs.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-no">3</span>
+            <h3>Install</h3>
+            <p>The installer waits for your app to close, runs your operations, replaces the files and restarts it, with a small window or, on a server, without one.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Platforms: the real file-selection rule, interactive. -->
+    <section class="section section-tint" id="platforms">
+      <div class="wrap split">
+        <header class="section-head reveal">
+          <p class="eyebrow">One version, a build per platform</p>
+          <h2>Every client takes the file that fits it best.</h2>
+          <p>A client looks for its runtime identifier, then its operating system, then <code>any</code>. A version without a fitting file is simply not offered. Pick a client to see which file of version 2.2.0 it installs.</p>
+        </header>
+        <div class="resolver reveal">
+          <div class="clients" role="radiogroup" aria-label="Client runtime identifier">
+            <button type="button" role="radio" aria-checked="true" data-rid="win-x64">win-x64</button>
+            <button type="button" role="radio" aria-checked="false" data-rid="win-arm64">win-arm64</button>
+            <button type="button" role="radio" aria-checked="false" data-rid="linux-arm64">linux-arm64</button>
+            <button type="button" role="radio" aria-checked="false" data-rid="osx-arm64">osx-arm64</button>
+            <button type="button" role="radio" aria-checked="false" data-rid="osx-x64">osx-x64</button>
+          </div>
+          <div class="feed">
+            <div class="feed-head"><span>packages/2.2.0/</span><span>nupdate.json</span></div>
+            <ul class="files">
+              <li data-platform="win-x64"><span class="file">win-x64.zip</span><span class="size">48.1 MB</span></li>
+              <li data-platform="win"><span class="file">win.zip</span><span class="size">31.7 MB</span></li>
+              <li data-platform="linux"><span class="file">linux.zip</span><span class="size">29.4 MB</span></li>
+              <li data-platform="osx-arm64"><span class="file">osx-arm64.zip</span><span class="size">52.9 MB</span></li>
+              <li data-platform="any"><span class="file">any.zip</span><span class="size">17.5 MB</span></li>
+            </ul>
+          </div>
+          <p class="verdict" id="verdict" aria-live="polite"><strong>win-x64</strong> takes <code>win-x64.zip</code>: the exact runtime identifier.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow">What you get</p>
+          <h2>Built for apps that run for years on machines you never see.</h2>
+        </header>
+        <div class="feature-grid">
+          <article class="feature feature-wide reveal">
+            <div>
+              <h3>Nothing runs before it is verified</h3>
+              <p>Every package is checked against the feed and your key before the installer starts. The signed manifest must also name your project, the version and the platform, so a feed cannot hand out a relabelled package.</p>
+            </div>
+            <ul class="checks" aria-label="Checks for every package">
+              <li>Size matches the feed</li>
+              <li>SHA-512 hash matches</li>
+              <li>RSA-PSS signature, PEM key</li>
+              <li>Manifest names project, version, platform</li>
+            </ul>
+          </article>
+          <article class="feature reveal">
+            <h3>An installer without .NET</h3>
+            <p>Self-contained single files for win, linux and osx on x64 and arm64. A small window that follows light and dark mode, or none at all for services and servers. Every run writes <code>install.log</code>.</p>
+          </article>
+          <article class="feature reveal">
+            <h3>macOS bundles in one step</h3>
+            <p>The installer builds <code>MyApp.app.new</code> next to your app and swaps the two atomically, so the bundle is never half there and its signature stays intact.</p>
+          </article>
+          <article class="feature feature-wide feature-stacked reveal">
+            <div>
+              <h3>Channels and staged rollouts</h3>
+              <p>Offer betas to the users who want them, ship to one ring or region first and mark updates that must not be skipped. A beta channel also receives release candidates and releases.</p>
+            </div>
+            <pre class="snippet"><code data-lang="cs">manager.MinimumStability = Stability.Beta;
+manager.RolloutConditions["Ring"] = "early";</code></pre>
+          </article>
+          <article class="feature reveal">
+            <h3>Your look, or ours</h3>
+            <p>Update dialogs for Windows Forms, WPF and Avalonia, or your own on the same update flow. Even the installer window can be your own executable.</p>
+          </article>
+          <article class="feature reveal">
+            <h3>Operations during the update</h3>
+            <p>Delete and rename files, start and stop processes everywhere. Registry keys and services on Windows. Wait for a migration tool and fail the update if it fails.</p>
+          </article>
+          <article class="feature reveal">
+            <h3>Your server, your data</h3>
+            <p>Packages and the feed are plain files on any web server. Download statistics are optional, through a small PHP and MySQL endpoint you host yourself.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tint" id="code">
+      <div class="wrap split split-code">
+        <header class="section-head reveal">
+          <p class="eyebrow">Get started</p>
+          <h2>Add two packages. Write a few lines.</h2>
+          <p>The library targets .NET Standard 2.0, so it runs in .NET Framework 4.6.2 apps as well as on .NET 10. The installer package copies the right installer next to your app on build.</p>
+          <p class="small"><a href="api.html">Browse the API</a> · <a href="https://github.com/dbforge/nUpdate#usage">Read the guide on GitHub</a></p>
+        </header>
+        <div class="get-started reveal">
+          <div class="install-list" aria-label="Install the packages">
+            <div class="install-row">
+              <code id="install-library">dotnet add package nUpdate</code>
+              <button class="copy" type="button" data-copy="#install-library" aria-label="Copy the command for the nUpdate package">Copy</button>
+            </div>
+            <div class="install-row">
+              <code id="install-installer">dotnet add package nUpdate.UpdateInstaller.UI.Avalonia</code>
+              <button class="copy" type="button" data-copy="#install-installer" aria-label="Copy the command for the installer package">Copy</button>
+            </div>
+          </div>
+        <div class="code-card" data-tabs>
+          <div class="tab-row" role="tablist" aria-label="Code examples">
+            <button type="button" role="tab" aria-selected="true" aria-controls="code-check" id="tab-check">Check and install</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="code-dialogs" id="tab-dialogs">With dialogs</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="code-project" id="tab-project">Project file</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="code-installer" id="tab-installer">Own installer</button>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="code-check" aria-labelledby="tab-check">
+<pre><code data-lang="cs">[assembly: ApplicationVersion("1.0.0")]
+
+var manager = new UpdateManager(
+    new Uri("https://example.com/updates/nupdate.json"),
+    publicKey);
+
+if (await manager.CheckForUpdatesAsync())
+{
+    await manager.DownloadAsync(progress);
+    if (await manager.VerifyAsync())
+        manager.StartInstaller(); // installs and restarts the app
+}</code></pre>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="code-dialogs" aria-labelledby="tab-dialogs" hidden>
+<pre><code data-lang="cs">// nUpdate.UI.WindowsForms, nUpdate.UI.WPF or nUpdate.UI.Avalonia
+var updaterUI = new UpdaterUI(manager, this)
+{
+    UseHiddenSearch = true // stay quiet when there is nothing new
+};
+var result = await updaterUI.RunAsync();
+
+// Brand the installer window too
+manager.InstallerIcon = Path.Combine(
+    AppContext.BaseDirectory, "app-256.png");
+manager.InstallerAccentColor = "#2E7D32";</code></pre>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="code-project" aria-labelledby="tab-project" hidden>
+<pre><code data-lang="xml">&lt;ItemGroup&gt;
+  &lt;PackageReference Include="nUpdate" Version="5.0.0-rc.1" /&gt;
+  &lt;PackageReference Include="nUpdate.UpdateInstaller.UI.Avalonia"
+                    Version="5.0.0-rc.1" /&gt;
+&lt;/ItemGroup&gt;
+
+&lt;!-- The installers you ship, copied to nUpdate.Installer/&lt;rid&gt;/ --&gt;
+&lt;PropertyGroup&gt;
+  &lt;nUpdateInstallerRuntimes&gt;win-x64;osx-arm64&lt;/nUpdateInstallerRuntimes&gt;
+&lt;/PropertyGroup&gt;</code></pre>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="code-installer" aria-labelledby="tab-installer" hidden>
+<pre><code data-lang="cs">// A whole installer on nUpdate.UpdateInstaller
+[STAThread]
+static int Main(string[] args) =&gt;
+    InstallerHost.Run(args, session =&gt; new MyWindow(session));
+
+sealed class MyWindow(InstallerSession session)
+    : WindowProgressReporter(session)
+{
+    protected override void ShowProgress(float progress, string text)
+    {
+        /* your progress bar */
+    }
+
+    // RunWindow, Post, AskAboutLockedFile, ShowError, Finish
+}</code></pre>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="administration">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow">nUpdate Administration</p>
+          <h2>Build, sign and publish from Windows, Linux or macOS.</h2>
+          <p>A project is a folder you can copy to any machine. Secrets are encrypted with a project password, servers are trusted by fingerprint, and download statistics come from a small PHP and MySQL endpoint. Published packages stay editable: change their files or operations, and nUpdate Administration builds the changed platforms again and replaces them on the server. It follows the light or dark mode of your system.</p>
+        </header>
+        <!-- Line icons of nUpdate Administration, on its 16-unit grid -->
+        <svg class="sprite" aria-hidden="true" focusable="false">
+          <symbol id="i-package" viewBox="0 0 16 16"><path d="M8 1.75l5.5 3v6.5L8 14.25l-5.5-3v-6.5zM2.5 4.75L8 7.75l5.5-3M8 7.75v6.5"/></symbol>
+          <symbol id="i-overview" viewBox="0 0 16 16"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"/></symbol>
+          <symbol id="i-chart" viewBox="0 0 16 16"><path d="M2.5 13.5h11M4.5 11V8.5M8 11V4.5M11.5 11V6.75"/></symbol>
+          <symbol id="i-history" viewBox="0 0 16 16"><path d="M13.75 8a5.75 5.75 0 1 1-11.5 0a5.75 5.75 0 1 1 11.5 0M8 5v3.25l2.25 1.5"/></symbol>
+          <symbol id="i-settings" viewBox="0 0 16 16"><path d="M2.5 4.5h6M11.5 4.5h2M2.5 11.5h2M7.5 11.5h6M11.5 4.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 1 1 3 0M7.5 11.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 1 1 3 0"/></symbol>
+          <symbol id="i-search" viewBox="0 0 16 16"><path d="M11.25 7a4.25 4.25 0 1 1-8.5 0a4.25 4.25 0 1 1 8.5 0M10.25 10.25l3.25 3.25"/></symbol>
+          <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3.25v9.5M3.25 8h9.5"/></symbol>
+          <symbol id="i-upload" viewBox="0 0 16 16"><path d="M8 10.25V2.75M5 5.5l3-3 3 3M2.75 10.25v2c0 .55.45 1 1 1h8.5c.55 0 1-.45 1-1v-2"/></symbol>
+          <symbol id="i-edit" viewBox="0 0 16 16"><path d="M10.25 2.75l3 3-7.75 7.75H2.5v-3z"/></symbol>
+          <symbol id="i-delete" viewBox="0 0 16 16"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 9h6.3l.6-9"/></symbol>
+          <symbol id="i-file" viewBox="0 0 16 16"><path d="M4 1.75h5.25L12 4.5v9.75H4zM9.25 1.75V4.5H12"/></symbol>
+          <symbol id="i-close" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></symbol>
+          <symbol id="i-undo" viewBox="0 0 16 16"><path d="M5.5 3.5L2.5 6.5l3 3M2.5 6.5h7a3.5 3.5 0 0 1 0 7H7"/></symbol>
+          <symbol id="i-info" viewBox="0 0 16 16"><path d="M14 8A6 6 0 1 1 2 8a6 6 0 1 1 12 0M8 7.25v3.75M8 5.1v.01"/></symbol>
+          <symbol id="i-changelog" viewBox="0 0 16 16"><path d="M3 3.5h10M3 6.5h10M3 9.5h7M3 12.5h5"/></symbol>
+          <symbol id="i-operations" viewBox="0 0 16 16"><path d="M2.25 3.25h11.5v9.5H2.25zM5 6.5l2 1.5-2 1.5M8.5 10h2.5"/></symbol>
+          <symbol id="i-availability" viewBox="0 0 16 16"><path d="M13.75 8a5.75 5.75 0 1 1-11.5 0a5.75 5.75 0 1 1 11.5 0M5.5 8l1.75 1.75L10.75 6.25"/></symbol>
+          <symbol id="i-globe" viewBox="0 0 16 16"><path d="M2.25 8h11.5M8 2.25c1.6 1.6 2.4 3.6 2.4 5.75S9.6 12.15 8 13.75M8 2.25C6.4 3.85 5.6 5.85 5.6 8s.8 4.15 2.4 5.75M13.75 8a5.75 5.75 0 1 1-11.5 0a5.75 5.75 0 1 1 11.5 0"/></symbol>
+          <symbol id="i-folder" viewBox="0 0 16 16"><path d="M2 5.25c0-.83.67-1.5 1.5-1.5h2.6l1.4 1.5h5c.83 0 1.5.67 1.5 1.5v5.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5z"/></symbol>
+          <symbol id="i-refresh" viewBox="0 0 16 16"><path d="M14.8 3v3.75h-3.75M13.26 9.86a5.58 5.58 0 1 1-1.31-5.8l2.87 2.7"/></symbol>
+          <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7"/></symbol>
+          <symbol id="i-server" viewBox="0 0 16 16"><path d="M2.5 2.75h11v4.5h-11zM2.5 8.75h11v4.5h-11zM5 5h.01M5 11h.01"/></symbol>
+          <symbol id="i-down" viewBox="0 0 16 16"><path d="M4.5 6.25L8 9.75l3.5-3.5"/></symbol>
+          <symbol id="i-back" viewBox="0 0 16 16"><path d="M9.75 4.5L6.25 8l3.5 3.5"/></symbol>
+        </svg>
+        <div class="showcase reveal" data-tabs>
+          <div class="tab-row" role="tablist" aria-label="Administration screens">
+            <button type="button" role="tab" aria-selected="true" aria-controls="shot-packages" id="tab-packages">Packages</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="shot-editor" id="tab-editor">Edit package</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="shot-statistics" id="tab-statistics">Statistics</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="shot-migration" id="tab-migration">Migration</button>
+          </div>
+          <div class="stage">
+
+            <div class="tab-panel" role="tabpanel" id="shot-packages" aria-labelledby="tab-packages">
+              <div class="w11" role="img" aria-label="The packages of the project Aurora: 2.2.0-beta.1 local only, 2.1.0, 2.0.1 and 2.0.0 released. 2.2.0-beta.1 is selected, with its platforms win-x64, linux-x64 and osx-arm64, its changelog and the buttons Publish, Edit and Delete.">
+                <div class="w11-title"><img src="img/nupdate-icon.png" alt="" width="16" height="16"><span>Aurora - nUpdate Administration</span><span class="w11-caption"><i class="min"></i><i class="max"></i><i class="close"></i></span></div>
+                <div class="app">
+                  <div class="rail">
+                    <div class="rail-project"><span class="tile">A</span><span class="rail-name"><strong>Aurora</strong><span>https://updates.example.com/aurora</span></span></div>
+                    <span class="rail-item is-active"><svg class="i"><use href="#i-package"/></svg>Packages<b class="count">4</b></span>
+                    <span class="rail-item"><svg class="i"><use href="#i-overview"/></svg>Overview</span>
+                    <span class="rail-item"><svg class="i"><use href="#i-chart"/></svg>Statistics</span>
+                    <span class="rail-item"><svg class="i"><use href="#i-history"/></svg>History</span>
+                    <span class="rail-item rail-foot"><svg class="i"><use href="#i-settings"/></svg>Settings</span>
+                  </div>
+                  <div class="page">
+                    <div class="page-head">
+                      <div class="heading"><strong>Packages</strong><span>What the users of your application can install.</span></div>
+                      <span class="field field-search"><svg class="i"><use href="#i-search"/></svg>Search</span>
+                      <span class="btn btn-primary"><svg class="i"><use href="#i-plus"/></svg>New package</span>
+                    </div>
+                    <div class="pkg-body">
+                      <div class="tbl pkg-table">
+                        <div class="tbl-row tbl-head"><span>Version</span><span>State</span><span>Description</span><span>Created</span></div>
+                        <div class="tbl-row is-selected"><b>2.2.0-beta.1</b><span class="pill">Local only</span><span>Beta of the new importer</span><span>10/6/2026</span></div>
+                        <div class="tbl-row"><b>2.1.0</b><span class="pill pill-ok">Released</span><span>Dark mode, faster start-up</span><span>10/5/2026</span></div>
+                        <div class="tbl-row"><b>2.0.1</b><span class="pill pill-ok">Released</span><span>Fixes the crash when exporting notes</span><span>9/21/2026</span></div>
+                        <div class="tbl-row"><b>2.0.0</b><span class="pill pill-ok">Released</span><span>New reporting module</span><span>9/2/2026</span></div>
+                      </div>
+                      <div class="details">
+                        <div class="details-head"><strong>2.2.0-beta.1</strong><span class="pill">Local only</span></div>
+                        <span class="details-sub">Beta of the new importer</span>
+                        <div class="details-actions"><span class="btn btn-primary"><svg class="i"><use href="#i-upload"/></svg>Publish</span><span class="btn"><svg class="i"><use href="#i-edit"/></svg>Edit</span><span class="btn btn-icon btn-danger"><svg class="i"><use href="#i-delete"/></svg></span></div>
+                        <div class="props">
+                          <span>Platforms</span><span class="platforms"><span class="pill pill-accent">win-x64</span><span class="pill pill-accent">linux-x64</span><span class="pill pill-accent">osx-arm64</span></span>
+                          <span>Size</span><span>52.8 MB</span>
+                          <span>Rollout</span><span>Everyone</span>
+                          <span>After the update</span><span>As the application decides</span>
+                          <span>Created</span><span>10/6/2026 1:00 PM</span>
+                        </div>
+                        <span class="label">Changelog</span>
+                        <div class="changelog">- A new importer for CSV and Excel files<br>- Dark mode follows the system<br>- Starts twice as fast</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="statusbar"><span>4 packages</span><span><svg class="i"><use href="#i-server"/></svg>Sftp deploy@updates.example.com:22/updates/aurora</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" role="tabpanel" id="shot-editor" aria-labelledby="tab-editor" hidden>
+              <div class="w11" role="img" aria-label="Editing the published package 2.1.0 of Aurora: the files for Windows x64, with plugins/Importer.dll added, Aurora.Core.dll changed and Legacy.Export.dll removed. Save and publish builds the changed platforms again and replaces them on the server.">
+                <div class="w11-title"><img src="img/nupdate-icon.png" alt="" width="16" height="16"><span>Edit package 2.1.0 of Aurora</span><span class="w11-caption"><i class="min"></i><i class="max"></i><i class="close"></i></span></div>
+                <div class="app">
+                  <div class="rail">
+                    <div class="rail-version"><strong>2.1.0</strong><span class="pill pill-ok">Released</span></div>
+                    <span class="rail-item"><svg class="i"><use href="#i-settings"/></svg>General</span>
+                    <span class="rail-item"><svg class="i"><use href="#i-changelog"/></svg>Changelog<em class="hint">2 languages</em></span>
+                    <span class="rail-item is-active"><svg class="i"><use href="#i-file"/></svg>Files<em class="hint">3 changes</em></span>
+                    <span class="rail-item"><svg class="i"><use href="#i-operations"/></svg>Operations<em class="hint">2</em></span>
+                    <span class="rail-item"><svg class="i"><use href="#i-availability"/></svg>Availability</span>
+                    <span class="rail-item"><svg class="i"><use href="#i-globe"/></svg>Rollout<em class="hint">Everyone</em></span>
+                  </div>
+                  <div class="page page-pad">
+                    <div class="page-head"><div class="heading"><strong>Files</strong><span>What the installer copies onto the client, per platform and folder.</span></div></div>
+                    <div class="notice"><svg class="i"><use href="#i-info"/></svg><span>2.1.0 is published. Saving builds the package files you changed again, signs them and replaces them on the server. Clients that already run 2.1.0 keep what they installed.</span></div>
+                    <div class="seg"><span class="is-active">Windows x64<em>6</em></span><span>Linux x64<em>5</em></span><span>macOS Apple silicon<em>5</em></span></div>
+                    <div class="file-tools"><span>Into</span><span class="field field-combo">Program<svg class="i"><use href="#i-down"/></svg></span><span class="field field-sub">Sub folder (optional)</span><span class="btn"><svg class="i"><use href="#i-plus"/></svg>Add files...</span><span class="btn"><svg class="i"><use href="#i-folder"/></svg>Add folder...</span></div>
+                    <div class="tbl file-table">
+                      <div class="tbl-row tbl-head"><span>Name</span><span>Folder</span><span>Size</span><span>Change</span><span></span></div>
+                      <div class="tbl-row"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>Aurora.exe</span><span class="mono">%program%</span><span class="muted">2.40 MB</span><span class="muted">Unchanged</span><svg class="i"><use href="#i-close"/></svg></div>
+                      <div class="tbl-row"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>Aurora.Core.dll</span><span class="mono">%program%</span><span class="muted">1.16 MB</span><span class="pill pill-warn">Changed</span><svg class="i"><use href="#i-close"/></svg></div>
+                      <div class="tbl-row"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>Aurora.Reports.dll</span><span class="mono">%program%</span><span class="muted">640 KB</span><span class="muted">Unchanged</span><svg class="i"><use href="#i-close"/></svg></div>
+                      <div class="tbl-row is-removed"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>Legacy.Export.dll</span><span class="mono">%program%</span><span class="muted">210 KB</span><span class="pill pill-bad">Removed</span><svg class="i"><use href="#i-undo"/></svg></div>
+                      <div class="tbl-row"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>Aurora/settings.default.json</span><span class="mono">%appdata%</span><span class="muted">4.00 KB</span><span class="muted">Unchanged</span><svg class="i"><use href="#i-close"/></svg></div>
+                      <div class="tbl-row is-selected"><span class="file-name"><svg class="i"><use href="#i-file"/></svg>plugins/Importer.dll</span><span class="mono">%program%</span><span class="muted">380 KB</span><span class="pill pill-accent">Added</span><svg class="i"><use href="#i-close"/></svg></div>
+                    </div>
+                  </div>
+                  <div class="actionbar"><span class="grow">Windows x64: 1 file added, 1 file changed, 1 file removed, operations changed</span><span class="btn">Cancel</span><span class="btn btn-primary"><svg class="i"><use href="#i-upload"/></svg>Save and publish</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" role="tabpanel" id="shot-statistics" aria-labelledby="tab-statistics" hidden>
+              <div class="w11" role="img" aria-label="Download statistics of Aurora: 4,812 downloads across four versions, from 266 for 1.9.4 to 1,930 for 2.1.0">
+                <div class="w11-title"><img src="img/nupdate-icon.png" alt="" width="16" height="16"><span>Aurora - nUpdate Administration</span><span class="w11-caption"><i class="min"></i><i class="max"></i><i class="close"></i></span></div>
+                <div class="app">
+                  <div class="rail">
+                    <div class="rail-project"><span class="tile">A</span><span class="rail-name"><strong>Aurora</strong><span>https://updates.example.com/aurora</span></span></div>
+                    <span class="rail-item"><svg class="i"><use href="#i-package"/></svg>Packages<b class="count">4</b></span>
+                    <span class="rail-item"><svg class="i"><use href="#i-overview"/></svg>Overview</span>
+                    <span class="rail-item is-active"><svg class="i"><use href="#i-chart"/></svg>Statistics</span>
+                    <span class="rail-item"><svg class="i"><use href="#i-history"/></svg>History</span>
+                    <span class="rail-item rail-foot"><svg class="i"><use href="#i-settings"/></svg>Settings</span>
+                  </div>
+                  <div class="page">
+                    <div class="page-head">
+                      <div class="heading"><strong>Statistics</strong><span>Downloads per version, as your server's statistics endpoint counted them.</span></div>
+                      <span class="muted">Last updated 10/10/2026 5:13 PM</span>
+                      <span class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh</span>
+                    </div>
+                    <div class="stats-body">
+                      <div class="stats-side">
+                        <div class="card total"><span class="label">Total downloads</span><strong>4,812</strong><span class="muted">across 4 versions</span></div>
+                        <div class="card tbl dl-table">
+                          <div class="tbl-row tbl-head"><span>Version</span><span>Downloads</span></div>
+                          <div class="tbl-row"><span>1.9.4</span><span>266</span></div>
+                          <div class="tbl-row"><span>2.0.0</span><span>1,104</span></div>
+                          <div class="tbl-row"><span>2.0.1</span><span>1,512</span></div>
+                          <div class="tbl-row"><span>2.1.0</span><span>1,930</span></div>
+                        </div>
+                      </div>
+                      <div class="card chart">
+                        <div class="chart-y"><span>2,000</span><span>1,900</span><span>1,800</span><span>1,700</span><span>1,600</span><span>1,500</span><span>1,400</span><span>1,300</span><span>1,200</span><span>1,100</span><span>1,000</span><span>900</span><span>800</span><span>700</span><span>600</span><span>500</span><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span></div>
+                        <div class="chart-plot">
+                          <div style="--v:266"><i></i><span>1.9.4</span></div>
+                          <div style="--v:1104"><i></i><span>2.0.0</span></div>
+                          <div style="--v:1512"><i></i><span>2.0.1</span></div>
+                          <div style="--v:1930"><i></i><span>2.1.0</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="statusbar"><span>4 packages</span><span><svg class="i"><use href="#i-server"/></svg>Sftp deploy@updates.example.com:22/updates/aurora</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" role="tabpanel" id="shot-migration" aria-labelledby="tab-migration" hidden>
+              <div class="w11" role="img" aria-label="The migration assistant moving Aurora to nUpdate 5, at the step Packages: all three packages of updates.json are selected, 2.0.0.0, 2.0.1.0 and 2.1.0.0, with their new versions 2.0.0, 2.0.1 and 2.1.0">
+                <div class="w11-title"><img src="img/nupdate-icon.png" alt="" width="16" height="16"><span>Move Aurora to nUpdate 5</span><span class="w11-caption"><i class="min"></i><i class="max"></i><i class="close"></i></span></div>
+                <div class="app">
+                  <div class="rail rail-steps">
+                    <span class="rail-item is-done"><b class="step-dot"><svg class="i"><use href="#i-check"/></svg></b>What changes</span>
+                    <span class="rail-item is-active"><b class="step-dot">2</b>Packages</span>
+                    <span class="rail-item"><b class="step-dot">3</b>Statistics</span>
+                    <span class="rail-item"><b class="step-dot">4</b>Migrate</span>
+                    <span class="rail-item"><b class="step-dot">5</b>Side by side</span>
+                  </div>
+                  <div class="page page-pad">
+                    <div class="page-head"><div class="heading"><strong>Packages</strong></div></div>
+                    <p class="muted">Every package of updates.json with the version it gets in nUpdate 5. Applications built with nUpdate 5 only install versions newer than their own, so packages older than your first nUpdate 5 release only complete the history; you can leave them out.</p>
+                    <span class="mig-count">3 of 3 packages to migrate selected.</span>
+                    <div class="mig-list">
+                      <div class="mig-card"><span class="checkbox"><svg class="i"><use href="#i-check"/></svg></span><strong>2.0.0.0 → 2.0.0</strong><span>14 files, 1 operation, 17.5 MB, downloaded from https://updates.example.com/aurora/2.0.0.0/package.zip.</span></div>
+                      <div class="mig-card"><span class="checkbox"><svg class="i"><use href="#i-check"/></svg></span><strong>2.0.1.0 → 2.0.1</strong><span>3 files, 1 operation, 2.00 MB, downloaded from https://updates.example.com/aurora/2.0.1.0/package.zip.</span></div>
+                      <div class="mig-card"><span class="checkbox"><svg class="i"><use href="#i-check"/></svg></span><strong>2.1.0.0 → 2.1.0</strong><span>9 files, 1 operation, 7.01 MB, downloaded from https://updates.example.com/aurora/2.1.0.0/package.zip.</span><span>Operation 2 (Scripts Create) has no counterpart in nUpdate 5 and is left out.</span></div>
+                    </div>
+                  </div>
+                  <div class="actionbar"><span class="btn grow">Close</span><span class="btn"><svg class="i"><use href="#i-refresh"/></svg>Read the server again</span><span class="btn"><svg class="i"><use href="#i-back"/></svg>Back</span><span class="btn btn-primary">Continue</span></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section migrate">
+      <div class="wrap migrate-card reveal">
+        <div>
+          <p class="eyebrow">Coming from nUpdate 4?</p>
+          <h2>Move over while both versions keep running.</h2>
+        </div>
+        <ul>
+          <li>The migration assistant converts projects of nUpdate 3 and 4, and the old feed stays online for clients that have not updated yet.</li>
+          <li>Versions get one canonical spelling: <code>1.2.0.0b1</code> becomes <code>1.2.0-beta.1</code>.</li>
+          <li>x86 and x64 packages become <code>win-x86</code> and <code>win-x64</code>; ready for Linux and macOS builds next to them.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <section class="support" aria-labelledby="support-title">
+    <div class="wrap support-row reveal">
+      <div>
+        <h2 id="support-title">Keep nUpdate going.</h2>
+        <p>nUpdate is free and MIT licensed, built and maintained in spare time. If it keeps your users up to date, a donation helps it keep going.</p>
+      </div>
+      <a class="button button-primary" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=dominic%2ebeger%40hotmail%2ede&amp;lc=DE&amp;item_name=nUpdate&amp;no_note=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.6 3 5 6.6 5c2 0 3.6 1.1 4.4 2.6h2C13.8 6.1 15.4 5 17.4 5 21 5 23.1 8.6 21.6 11.8 19.5 16.4 12 21 12 21Z"/></svg>
+        Donate with PayPal
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div class="brand">
+        <img src="img/nupdate-icon.png" alt="" width="28" height="28">
+        <span>nUpdate</span>
+      </div>
+      <nav aria-label="Footer">
+        <a href="https://github.com/dbforge/nUpdate">GitHub</a>
+        <a href="https://github.com/dbforge/nUpdate/releases">Releases</a>
+        <a href="https://www.nuget.org/packages/nUpdate">NuGet</a>
+        <a href="https://github.com/dbforge/nUpdate/blob/master/LICENSE">MIT License</a>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=dominic%2ebeger%40hotmail%2ede&amp;lc=DE&amp;item_name=nUpdate&amp;no_note=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" target="_blank" rel="noopener">Donate</a>
+        <a href="imprint.html">Legal notice</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+      <p class="small">© 2016–2026 Dominic Beger and contributors.</p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>

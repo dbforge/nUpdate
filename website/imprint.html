@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legal notice · nUpdate</title>
+  <meta name="description" content="The legal notice (Impressum) of the nUpdate website.">
+  <meta property="og:title" content="Legal notice · nUpdate">
+  <meta property="og:description" content="Signed, self-hosted updates for .NET applications on Windows, Linux and macOS.">
+  <meta property="og:image" content="img/nupdate-icon.png">
+  <link rel="icon" href="img/nupdate-icon.png">
+  <!-- The chosen theme, before the first paint; without a choice the page follows the system. -->
+  <script>
+    try {
+      const theme = localStorage.getItem('nupdate-theme');
+      if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+    } catch {}
+    document.documentElement.classList.add('can-theme');
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="index.html" aria-label="nUpdate home">
+        <img src="img/nupdate-icon.png" alt="" width="32" height="32">
+        <span>nUpdate</span>
+        <span class="badge">v5</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#platforms">Platforms</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#code">Code</a>
+        <a href="api.html">API</a>
+        <a href="index.html#administration">Administration</a>
+      </nav>
+      <div class="theme-switch" role="group" aria-label="Colour theme">
+        <button type="button" data-theme-choice="system" aria-pressed="true" aria-label="Follow the system" title="System">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" d="M2 3h12v8H2zM6 14h4M8 11v3"/></svg>
+        </button>
+        <button type="button" data-theme-choice="light" aria-pressed="false" aria-label="Light" title="Light">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>
+        </button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Dark" title="Dark">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7Z"/></svg>
+        </button>
+      </div>
+      <a class="button button-ghost github" href="https://github.com/dbforge/nUpdate" aria-label="nUpdate on GitHub">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg>
+        <span class="github-label">GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section legal-page">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">nUpdate · Impressum</p>
+          <h1>Legal notice</h1>
+          <nav class="lang-switch" aria-label="Language">
+            <a href="#de" lang="de">Deutsch</a>
+            <a href="#en">English</a>
+          </nav>
+        </header>
+
+        <article class="legal" id="de" lang="de">
+          <h2>Impressum</h2>
+          <h3>Angaben gemäß § 5 DDG</h3>
+          <address>
+            Dominic Beger<br>
+            Software Solutions<br>
+            Herbststraße 25A<br>
+            86830 Schwabmünchen<br>
+            Deutschland
+          </address>
+
+          <h3>Kontakt</h3>
+          <p>Telefon: <a href="tel:+4982328002009">08232 8002009</a><br>
+            E-Mail: <a href="mailto:info@dominic-beger.de">info@dominic-beger.de</a></p>
+
+          <h3>Umsatzsteuer-ID</h3>
+          <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE325688412</p>
+
+          <h3>Verbraucherstreitbeilegung</h3>
+          <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+        </article>
+
+        <article class="legal" id="en">
+          <h2>Legal notice</h2>
+          <p class="legal-note">A translation for convenience; the German version above is binding.</p>
+          <h3>Information according to § 5 DDG (German Digital Services Act)</h3>
+          <address>
+            Dominic Beger<br>
+            Software Solutions<br>
+            Herbststraße 25A<br>
+            86830 Schwabmünchen<br>
+            Germany
+          </address>
+
+          <h3>Contact</h3>
+          <p>Phone: <a href="tel:+4982328002009">+49 8232 8002009</a><br>
+            Email: <a href="mailto:info@dominic-beger.de">info@dominic-beger.de</a></p>
+
+          <h3>VAT ID</h3>
+          <p>VAT identification number according to § 27a of the German VAT Act: DE325688412</p>
+
+          <h3>Consumer dispute resolution</h3>
+          <p>We are neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <div class="brand">
+        <img src="img/nupdate-icon.png" alt="" width="28" height="28">
+        <span>nUpdate</span>
+      </div>
+      <nav aria-label="Footer">
+        <a href="https://github.com/dbforge/nUpdate">GitHub</a>
+        <a href="https://github.com/dbforge/nUpdate/releases">Releases</a>
+        <a href="https://www.nuget.org/packages/nUpdate">NuGet</a>
+        <a href="https://github.com/dbforge/nUpdate/blob/master/LICENSE">MIT License</a>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=dominic%2ebeger%40hotmail%2ede&amp;lc=DE&amp;item_name=nUpdate&amp;no_note=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" target="_blank" rel="noopener">Donate</a>
+        <a href="imprint.html" aria-current="page">Legal notice</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+      <p class="small">© 2016–2026 Dominic Beger and contributors.</p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>

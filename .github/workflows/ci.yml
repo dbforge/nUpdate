@@ -49,6 +49,10 @@ jobs:
       - name: Build
         run: dotnet build nUpdate.sln --configuration Release --no-restore
 
+      # Every public type and member of the packages needs an entry on website/api.html (tools/ApiDocsCheck).
+      - name: API page documents the public API
+        run: bash tools/ci/api-docs-check.sh
+
       - name: Tests (unit and Docker integration)
         env:
           NUPDATE_REQUIRE_DOCKER: "1" # fail instead of skipping the Docker tests when the daemon does not answer
