@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package metadata">
-    <Version>5.0.0</Version>
+    <Version>5.0.0-rc.1</Version>
     <Authors>Dominic Beger</Authors>
     <Company>Dominic Beger Software Solutions</Company>
     <Copyright>© Dominic Beger 2013-2026</Copyright>

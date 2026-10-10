@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- In your own installer: <PackageReference Include="nUpdate.UpdateInstaller" Version="5.0.0" /> -->
+    <!-- In your own installer: <PackageReference Include="nUpdate.UpdateInstaller" Version="5.0.0-rc.1" /> -->
     <ProjectReference Include="../../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj"/>
   </ItemGroup>
 

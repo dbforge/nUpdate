@@ -112,7 +112,7 @@ jobs:
 
       - name: List the installers in the package
         run: |
-          unzip -l artifacts/packages/nUpdate.UpdateInstaller.UI.Avalonia.5.0.0.nupkg | tee artifacts/installer-package.txt
+          unzip -l artifacts/packages/nUpdate.UpdateInstaller.UI.Avalonia.[0-9]*.nupkg | tee artifacts/installer-package.txt
           test "$(grep -c 'installer/.*/nUpdate.UpdateInstaller.UI.Avalonia' artifacts/installer-package.txt)" -eq 7
           ls -la artifacts/packages
 

@@ -74,9 +74,11 @@ hands them to the installer, with a ready-made user interface or one of your own
 
 ## Installation
 
+nUpdate 5 is a release candidate: 5.0.0-rc.1 is complete and tested, but details may still change before 5.0.0.
+
 ```
-dotnet add package nUpdate --version 5.0.0
-dotnet add package nUpdate.UpdateInstaller.UI.Avalonia --version 5.0.0
+dotnet add package nUpdate --version 5.0.0-rc.1
+dotnet add package nUpdate.UpdateInstaller.UI.Avalonia --version 5.0.0-rc.1
 ```
 
 `nUpdate.UpdateInstaller.UI.Avalonia` carries the built-in installer for seven runtime identifiers. On build it copies
@@ -121,9 +123,9 @@ process, set `ApplicationExecutablePath` to the absolute path of the executable,
 ### 3. Update, with the integrated user interface…
 
 ```
-dotnet add package nUpdate.UI.WindowsForms --version 5.0.0
-dotnet add package nUpdate.UI.WPF --version 5.0.0
-dotnet add package nUpdate.UI.Avalonia --version 5.0.0
+dotnet add package nUpdate.UI.WindowsForms --version 5.0.0-rc.1
+dotnet add package nUpdate.UI.WPF --version 5.0.0-rc.1
+dotnet add package nUpdate.UI.Avalonia --version 5.0.0-rc.1
 ```
 
 Each package provides an `UpdaterUI` class. Create and use it on the UI thread:

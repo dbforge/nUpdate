@@ -112,7 +112,7 @@ public partial class MainWindowViewModel(
     partial void OnSearchTextChanged(string value) => Filter();
 
     public string Version =>
-        $"nUpdate Administration {typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3)}";
+        $"nUpdate Administration {AdministrationVersion.Text}";
 
     public async Task InitializeAsync(string? projectPath = null)
     {
