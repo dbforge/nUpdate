@@ -69,7 +69,7 @@ public sealed class InstallEngine
             foreach (var package in packages)
             {
                 _dispatcher.Execute(package.Manifest.Operations.Where(o => o.RunBeforeFileReplacement), context);
-                CopyRoots(package.Directory, copier, context, options);
+                CopyRoots(package, copier, context, options);
                 _dispatcher.Execute(package.Manifest.Operations.Where(o => !o.RunBeforeFileReplacement), context);
             }
 
@@ -242,10 +242,11 @@ public sealed class InstallEngine
         return manifest;
     }
 
-    private void CopyRoots(string packageDirectory, DirectoryCopier copier, OperationContext context,
+    private void CopyRoots(ExtractedPackage package, DirectoryCopier copier, OperationContext context,
         InstallerOptions options)
     {
         var fileSystem = _services.FileSystem;
+        var packageDirectory = package.Directory;
         var targets = new Dictionary<PackageRoot, string?>
         {
             [PackageRoot.Program] = options.Application.ProgramDirectory,
@@ -270,14 +271,54 @@ public sealed class InstallEngine
             }
 
             if (root == PackageRoot.Program && !string.IsNullOrEmpty(options.Application.Bundle))
-                ReplaceBundle(source, target, copier, context);
+            {
+                ReplaceBundle(source, target, copier, context, package.Manifest);
+            }
             else
+            {
                 copier.Copy(source, target, context);
+                ApplyCodeSignatures(package.Manifest, root, target, context);
+            }
         }
     }
 
-    /// <summary>Builds the new bundle next to the installed one, swaps the two and deletes the old one.</summary>
-    private void ReplaceBundle(string source, string bundle, DirectoryCopier copier, OperationContext context)
+    /// <summary>
+    ///     Sets the macOS code signature attributes the manifest stores for the files of a root on their copies. A file
+    ///     that does not get them still works, but its bundle no longer verifies, so a failure is a warning.
+    /// </summary>
+    private void ApplyCodeSignatures(PackageManifest manifest, PackageRoot root, string target, OperationContext context)
+    {
+        var fileSystem = _services.FileSystem;
+        var prefix = PackageLayout.FolderName(root) + "/";
+        var directory = fileSystem.Path.GetFullPath(target).TrimEnd(fileSystem.Path.DirectorySeparatorChar)
+                        + fileSystem.Path.DirectorySeparatorChar;
+        foreach (var file in manifest.CodeSignatures.Where(s => s.Key.StartsWith(prefix, StringComparison.Ordinal)))
+        {
+            var path = fileSystem.Path.GetFullPath(fileSystem.Path.Combine(directory,
+                file.Key.Substring(prefix.Length).Replace('/', fileSystem.Path.DirectorySeparatorChar)));
+            // Only files the package installed below the root: the manifest is signed, but a stray name changes nothing.
+            if (!path.StartsWith(directory, StringComparison.Ordinal) || !fileSystem.File.Exists(path))
+                continue;
+            foreach (var attribute in file.Value)
+            {
+                try
+                {
+                    _services.CodeSignatures.Write(path, attribute.Key, Convert.FromBase64String(attribute.Value));
+                }
+                catch (Exception ex) when (ex is IOException or ArgumentException or FormatException)
+                {
+                    Warn(context.Reporter, context.Progress.Percentage, ex.Message);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Builds the new bundle next to the installed one, with its code signature attributes, swaps the two and deletes
+    ///     the old one.
+    /// </summary>
+    private void ReplaceBundle(string source, string bundle, DirectoryCopier copier, OperationContext context,
+        PackageManifest manifest)
     {
         var fileSystem = _services.FileSystem;
         var replacement = bundle.TrimEnd('/') + ".new";
@@ -286,6 +327,7 @@ public sealed class InstallEngine
         try
         {
             copier.Copy(source, replacement, context);
+            ApplyCodeSignatures(manifest, PackageRoot.Program, replacement, context);
         }
         catch (Exception)
         {

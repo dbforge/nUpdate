@@ -29,6 +29,7 @@ public sealed class TestInstallerServices
         EnvironmentInfo.HasDisplay.Returns(true);
         FilePermissions = Substitute.For<IFilePermissions>();
         DirectorySwap = Substitute.For<IDirectorySwap>();
+        CodeSignatures = Substitute.For<ICodeSignatureAttributes>();
         EventLog = Substitute.For<IEventLog>();
         Registry = Substitute.For<IRegistry>();
         ServiceController = Substitute.For<IServiceController>();
@@ -46,6 +47,7 @@ public sealed class TestInstallerServices
             SpecialFolders = SpecialFolders,
             EnvironmentInfo = EnvironmentInfo,
             DirectorySwap = DirectorySwap,
+            CodeSignatures = CodeSignatures,
             EventLog = EventLog,
             ErrorOutput = ErrorOutput,
             Clock = () => new DateTimeOffset(2026, 10, 7, 12, 0, 0, TimeSpan.Zero),
@@ -56,6 +58,8 @@ public sealed class TestInstallerServices
     }
 
     public MockFileSystem FileSystem { get; }
+
+    public ICodeSignatureAttributes CodeSignatures { get; }
 
     public ISpecialFolders SpecialFolders { get; }
 
@@ -116,10 +120,14 @@ public sealed class TestInstallerServices
 
     /// <summary>Writes a package zip with the given entries (relative paths inside the zip), a manifest and optional operations.</summary>
     public string AddPackage(string version, IDictionary<string, string> files,
-        IEnumerable<Operation>? operations = null, IDictionary<string, int>? modes = null)
+        IEnumerable<Operation>? operations = null, IDictionary<string, int>? modes = null,
+        Dictionary<string, Dictionary<string, string>>? codeSignatures = null)
     {
         var path = FileSystem.Path.Combine(PackagesDirectory, $"{version}.zip");
-        FileSystem.AddFile(path, new MockFileData(BuildZip(files, Manifest(version, operations), modes)));
+        var manifest = Manifest(version, operations);
+        if (codeSignatures is not null)
+            manifest.CodeSignatures = codeSignatures;
+        FileSystem.AddFile(path, new MockFileData(BuildZip(files, manifest, modes)));
         return path;
     }
 

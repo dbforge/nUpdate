@@ -234,6 +234,7 @@ public sealed class PublishedInstallerTests : IDisposable
         File.ReadAllText(System.IO.Path.Combine(bundle, "Contents", "Info.plist"))
             .ShouldContain("<string>2.0</string>");
         File.Exists(System.IO.Path.Combine(bundle, "Contents", "Resources", "old.txt")).ShouldBeFalse();
+        File.ReadAllText(System.IO.Path.Combine(bundle, "Contents", "MacOS", "Demo.dll")).ShouldBe("assembly 2.0");
         Directory.Exists(bundle + ".new").ShouldBeFalse();
         Run("codesign", $"--verify --deep --strict \"{bundle}\"").ExitCode.ShouldBe(0);
         var started = Run(executable, "still starts");
@@ -264,6 +265,8 @@ public sealed class PublishedInstallerTests : IDisposable
             "#include <stdio.h>\nint main(int argc, char **argv) { for (int i = 1; i < argc; i++) printf(i > 1 ? \" %s\" : \"%s\", argv[i]); printf(\"\\n\"); return 0; }\n");
         Run("cc", $"-o \"{System.IO.Path.Combine(macOs, "Demo")}\" \"{source}\"").ExitCode.ShouldBe(0);
         File.Delete(source);
+        // Like a .NET assembly next to the executable: codesign keeps its signature in extended attributes.
+        File.WriteAllText(System.IO.Path.Combine(macOs, "Demo.dll"), $"assembly {version}");
         Run("codesign", $"--force --deep --sign - \"{bundle}\"").ExitCode.ShouldBe(0);
     }
 

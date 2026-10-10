@@ -45,8 +45,9 @@ public sealed partial class PackageFileItem : ObservableObject
     /// <param name="size">The size of the file in bytes, 0 when unknown.</param>
     /// <param name="isOriginal">Whether the file belongs to the existing package being edited.</param>
     /// <param name="unixMode">The Unix permissions the existing package stores for the file, if any.</param>
+    /// <param name="codeSignature">The macOS code signature attributes the existing package stores for the file, if any.</param>
     public PackageFileItem(PackageRoot root, string relativePath, string sourcePath, long size, bool isOriginal,
-        int? unixMode = null)
+        int? unixMode = null, IReadOnlyDictionary<string, string>? codeSignature = null)
     {
         Root = root;
         RelativePath = relativePath;
@@ -54,6 +55,7 @@ public sealed partial class PackageFileItem : ObservableObject
         Size = size;
         _originalSourcePath = isOriginal ? sourcePath : null;
         UnixMode = unixMode;
+        CodeSignature = codeSignature;
     }
 
     public PackageRoot Root { get; }
@@ -64,6 +66,9 @@ public sealed partial class PackageFileItem : ObservableObject
 
     /// <summary>The Unix permissions the existing package stores for the file; they stay while the file is unchanged.</summary>
     public int? UnixMode { get; }
+
+    /// <summary>The macOS code signature attributes the existing package stores for the file; they stay while it is unchanged.</summary>
+    public IReadOnlyDictionary<string, string>? CodeSignature { get; }
 
     public string Display => $"{Root}/{RelativePath}";
 
@@ -343,7 +348,7 @@ public partial class PackageEditorViewModel : DialogViewModel
                 var platform = new PlatformItemViewModel(content.Platform, isNew: false);
                 foreach (var file in content.Files)
                     platform.Files.Add(new PackageFileItem(file.Root, file.RelativePath, file.SourcePath,
-                        SizeOf(file.SourcePath), isOriginal: true, file.UnixMode));
+                        SizeOf(file.SourcePath), isOriginal: true, file.UnixMode, file.CodeSignature));
                 foreach (var operation in content.Operations)
                     platform.Operations.Add(Track(OperationEditorViewModel.FromOperation(operation)));
                 platform.KeepOperationsAsOriginal();
@@ -919,8 +924,14 @@ public partial class PackageEditorViewModel : DialogViewModel
         {
             var package = definition.GetOrAddPlatform(platform.Platform);
             foreach (var file in platform.Files.Where(f => !f.IsRemoved))
+            {
+                var unchanged = file.Change == FileChange.Unchanged;
                 package.Files.Add(new PackageFileEntry(file.Root, file.RelativePath, file.SourcePath)
-                { UnixMode = file.Change == FileChange.Unchanged ? file.UnixMode : null });
+                {
+                    UnixMode = unchanged ? file.UnixMode : null,
+                    CodeSignature = unchanged ? file.CodeSignature : null,
+                });
+            }
             foreach (var operation in platform.Operations)
                 package.Operations.Add(operation.ToOperation());
         }

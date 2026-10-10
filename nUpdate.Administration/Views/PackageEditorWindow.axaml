@@ -309,7 +309,7 @@
               <c:Icon DockPanel.Dock="Left" Data="{StaticResource IconInfo}" Width="18" Height="18" VerticalAlignment="Top"
                       Margin="0,1,12,0" />
               <TextBlock
-                Text="For an app that runs from a bundle, Program is the whole .app: add the .app folder to Program without a sub folder, and the package carries the complete signed bundle, which replaces the installed one. Packages cannot contain symbolic links, such as Versions/Current of embedded frameworks." />
+                Text="For an app that runs from a bundle, Program is the whole .app: add the .app folder to Program without a sub folder, and the package carries the complete signed bundle, which replaces the installed one. Create the package on a Mac: the signatures of files in Contents/MacOS that are not executables live in extended attributes, which only a Mac can read. Packages cannot contain symbolic links, such as Versions/Current of embedded frameworks." />
             </DockPanel>
           </Border>
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">

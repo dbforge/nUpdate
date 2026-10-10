@@ -320,7 +320,8 @@ public sealed class PublishService(
                 _fileSystem.Path.Combine(workingDirectory, file.Platform), cancellationToken).ConfigureAwait(false);
             var platform = definition.GetOrAddPlatform(file.Platform);
             platform.Files.AddRange(content.Entries.Select(e =>
-                new PackageFileEntry(e.Root, e.RelativePath, e.ExtractedPath!) { UnixMode = e.Mode == 0 ? null : e.Mode }));
+                new PackageFileEntry(e.Root, e.RelativePath, e.ExtractedPath!)
+                { UnixMode = e.Mode == 0 ? null : e.Mode, CodeSignature = e.CodeSignature }));
             platform.Operations.AddRange(content.Manifest?.Operations ?? []);
         }
 

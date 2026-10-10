@@ -30,7 +30,7 @@ public sealed class PackageContent(IReadOnlyList<PackageContentEntry> entries, P
 }
 
 public sealed class PackageContentEntry(PackageRoot root, string relativePath, long size, string? extractedPath = null,
-    int mode = 0)
+    int mode = 0, IReadOnlyDictionary<string, string>? codeSignature = null)
 {
     public PackageRoot Root { get; } = root;
 
@@ -43,6 +43,9 @@ public sealed class PackageContentEntry(PackageRoot root, string relativePath, l
 
     /// <summary>The Unix permissions (rwxrwxrwx bits) the zip stores for the file, or 0 when it stores none.</summary>
     public int Mode { get; } = mode;
+
+    /// <summary>The macOS code signature attributes the manifest stores for the file, or <c>null</c>.</summary>
+    public IReadOnlyDictionary<string, string>? CodeSignature { get; } = codeSignature;
 }
 
 public sealed class PackageContentReader : IPackageContentReader
@@ -83,7 +86,7 @@ public sealed class PackageContentReader : IPackageContentReader
     private async Task<PackageContent> ReadEntriesAsync(string packagePath, string? targetDirectory,
         CancellationToken cancellationToken)
     {
-        var entries = new List<PackageContentEntry>();
+        var files = new List<(PackageRoot Root, string RelativePath, long Size, string? ExtractedPath, int Mode, string Name)>();
         PackageManifest? manifest = null;
 
         using var stream = _fileSystem.File.OpenRead(packagePath);
@@ -107,9 +110,13 @@ public sealed class PackageContentReader : IPackageContentReader
             var extractedPath = targetDirectory is null
                 ? null
                 : await ExtractEntryAsync(entry, mode, targetDirectory, cancellationToken).ConfigureAwait(false);
-            entries.Add(new PackageContentEntry(root, relativePath, entry.Length, extractedPath, mode));
+            files.Add((root, relativePath, entry.Length, extractedPath, mode, entry.FullName));
         }
 
+        // The manifest may come before or after the files, so their signatures are looked up once it is read.
+        var entries = files.Select(f => new PackageContentEntry(f.Root, f.RelativePath, f.Size, f.ExtractedPath, f.Mode,
+                manifest?.CodeSignatures.GetValueOrDefault(f.Name)))
+            .ToList();
         return new PackageContent(entries, manifest);
     }
 
