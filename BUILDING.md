@@ -162,6 +162,7 @@ osx-arm64. Coverage, test results, packages and the published administration are
 | `nUpdate.UI.WindowsForms`, `nUpdate.UI.WPF` | net462, net8.0-windows | The built-in client user interfaces for Windows. |
 | `nUpdate.UI.Avalonia` | net8.0 | The built-in client user interface for Avalonia. |
 | `samples/CustomInstaller` | net8.0-windows | Sample of an installer of your own with a WPF window. |
+| `samples/Aurora` | net10.0 | Sample application for trying updates against your own web and FTP server; `samples/Aurora/publish.sh <version>` publishes it with the installer (a signed `Aurora.app` on macOS). See its README. |
 | `nUpdate.Administration.TransferInterface` | net10.0 | Transfer provider contract, also for plugins. |
 | `nUpdate.Administration.Core` | net10.0 | Project folders and format 6 files (with the migration of every earlier format), project passwords, packages and feeds, publishing, the statistics API v2 client and script, the migration of legacy feeds, security. |
 | `nUpdate.Administration` | net10.0 | The Avalonia administration app. |

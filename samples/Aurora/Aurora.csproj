@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- The version this build declares to nUpdate; publish.sh builds others with -p:Version=1.1.0. -->
+    <Version>1.0.0</Version>
+    <Description>Sample application for trying nUpdate on your own server: it checks a feed with nUpdate.UI.Avalonia and installs what it finds.</Description>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    Published as one self-contained file per runtime identifier, like the installer: on macOS every file in
+    Contents/MacOS is then Mach-O code with an embedded signature, which an update package keeps (signatures of other
+    files there live in extended attributes, which a zip loses).
+  -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>none</DebugType>
+    <!-- No symbols or documentation of the referenced projects next to the executable. -->
+    <AllowedReferenceRelatedFileExtensions>.none</AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="nUpdate.ApplicationVersionAttribute">
+      <_Parameter1>$(Version)</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia"/>
+    <PackageReference Include="Avalonia.Desktop"/>
+    <PackageReference Include="Avalonia.Themes.Fluent"/>
+    <PackageReference Include="Avalonia.Fonts.Inter"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- In your own application: PackageReferences to nUpdate, nUpdate.UI.Avalonia and nUpdate.UpdateInstaller.UI.Avalonia. -->
+    <ProjectReference Include="../../nUpdate/nUpdate.csproj"/>
+    <ProjectReference Include="../../nUpdate.UI.Avalonia/nUpdate.UI.Avalonia.csproj"/>
+  </ItemGroup>
+
+  <!--
+    The package nUpdate.UpdateInstaller.UI.Avalonia copies the installer next to the application. A project reference
+    brings no package, so publishing Aurora for a runtime identifier also publishes the installer for it into
+    nUpdate.Installer/<rid>/, where UpdateManager looks for it.
+  -->
+  <Target Name="PublishNUpdateInstaller" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' != ''">
+    <PropertyGroup>
+      <_AuroraInstallerProject>$(MSBuildThisFileDirectory)../../nUpdate.UpdateInstaller.UI.Avalonia/nUpdate.UpdateInstaller.UI.Avalonia.csproj</_AuroraInstallerProject>
+      <_AuroraInstallerDirectory>$(PublishDir)nUpdate.Installer/$(RuntimeIdentifier)</_AuroraInstallerDirectory>
+      <_AuroraDotnet>dotnet</_AuroraDotnet>
+      <_AuroraDotnet Condition="'$(DOTNET_HOST_PATH)' != ''">"$(DOTNET_HOST_PATH)"</_AuroraDotnet>
+    </PropertyGroup>
+    <Exec Command="$(_AuroraDotnet) publish &quot;$(_AuroraInstallerProject)&quot; --configuration $(Configuration) --runtime $(RuntimeIdentifier) --output &quot;$(_AuroraInstallerDirectory)&quot; -p:AllowedReferenceRelatedFileExtensions=.none -p:PublishDocumentationFile=false"/>
+  </Target>
+
+</Project>
