@@ -22,5 +22,6 @@ and filters the members. Update it when the public API changes.
 The Administration screens are rebuilt in HTML in a Windows 11 frame, after the real windows (texts, layout,
 colours); they follow light and dark mode and scale down on narrow screens.
 
-Before going live, self-host the three fonts (Schibsted Grotesk, Instrument Sans, JetBrains Mono, all under the SIL
-Open Font License) instead of loading them from Google Fonts.
+The fonts (Schibsted Grotesk, Instrument Sans, JetBrains Mono and Inter, all under the SIL Open Font License) are
+served from `fonts/`, Latin and Latin Extended only, with their licenses; the pages load nothing from other servers,
+which the privacy policy relies on.
