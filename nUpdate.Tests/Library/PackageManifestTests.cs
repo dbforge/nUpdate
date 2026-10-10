@@ -34,5 +34,20 @@ public class PackageManifestTests
         restored.Platform.ShouldBe("osx-arm64");
         new PackageManifest().Touches.ShouldBeEmpty();
         new PackageManifest().Platform.ShouldBe(PackagePlatform.Any);
+        new PackageManifest().CodeSignatures.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void CodeSignatures_KeepEntryAndAttributeNamesAsTheyAre()
+    {
+        var manifest = new PackageManifest();
+        manifest.CodeSignatures["Program/Contents/MacOS/App.dll"] =
+            new Dictionary<string, string> { ["com.apple.cs.CodeDirectory"] = "AQI=" };
+
+        var json = Serializer.Serialize(manifest);
+
+        json.ShouldContain("\"codeSignatures\":{\"Program/Contents/MacOS/App.dll\":{\"com.apple.cs.CodeDirectory\":\"AQI=\"}}");
+        Serializer.Deserialize<PackageManifest>(json)!.CodeSignatures["Program/Contents/MacOS/App.dll"]
+            ["com.apple.cs.CodeDirectory"].ShouldBe("AQI=");
     }
 }

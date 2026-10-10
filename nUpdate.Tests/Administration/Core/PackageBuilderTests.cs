@@ -3,6 +3,7 @@ using System.IO.Compression;
 using nUpdate.Administration.Core.Packages;
 using nUpdate.Operations;
 using nUpdate.Packaging;
+using nUpdate.Platform;
 using nUpdate.Tests.Administration.Support;
 using nUpdate.Updating;
 
@@ -72,6 +73,32 @@ public class PackageBuilderTests
     }
 
     [Fact]
+    public async Task Build_StoresTheCodeSignatureAttributesOfTheFiles()
+    {
+        // macOS keeps the signature of a file in Contents/MacOS that is no Mach-O in extended attributes, which a zip loses.
+        var signatures = Substitute.For<ICodeSignatureAttributes>();
+        var dll = _context.AddSourceFile("App.dll", "assembly");
+        signatures.Read(dll).Returns(new Dictionary<string, byte[]> { ["com.apple.cs.CodeDirectory"] = [1, 2] });
+        signatures.Read(Arg.Is<string>(p => p != dll)).Returns(new Dictionary<string, byte[]>());
+        var builder = new PackageBuilder(_context.FileSystem, () => AdminTestContext.Now, false, signatures);
+        var package = new PlatformPackage("osx-arm64");
+        package.Files.Add(new PackageFileEntry(PackageRoot.Program, "Contents/MacOS/App.dll", dll));
+        package.Files.Add(new PackageFileEntry(PackageRoot.Program, "Contents/MacOS/Kept.dll",
+                _context.AddSourceFile("Kept.dll", "kept"))
+        { CodeSignature = new Dictionary<string, string> { ["com.apple.cs.CodeSignature"] = "Aw==" } });
+        package.Files.Add(new PackageFileEntry(PackageRoot.Program, "Contents/Info.plist",
+            _context.AddSourceFile("Info.plist", "<plist/>")));
+
+        var manifest = await builder.BuildAsync(package, new UpdateVersion("1.0.0"), Guid.Empty, "/out/osx.zip");
+
+        manifest.CodeSignatures.Keys.ShouldBe(["Program/Contents/MacOS/App.dll", "Program/Contents/MacOS/Kept.dll"],
+            ignoreOrder: true);
+        manifest.CodeSignatures["Program/Contents/MacOS/App.dll"]["com.apple.cs.CodeDirectory"].ShouldBe("AQI=");
+        manifest.CodeSignatures["Program/Contents/MacOS/Kept.dll"]["com.apple.cs.CodeSignature"].ShouldBe("Aw==");
+        signatures.DidNotReceive().Read(Arg.Is<string>(p => p.EndsWith("Kept.dll", StringComparison.Ordinal)));
+    }
+
+    [Fact]
     public async Task Build_StoresTheGivenModeInsteadOfDetectingOne()
     {
         var builder = new PackageBuilder(_context.FileSystem, () => AdminTestContext.Now, isWindows: true);
@@ -124,6 +151,8 @@ public class PackageBuilderTests
         await Should.ThrowAsync<ArgumentException>(() => builder.BuildAsync(missing, version, Guid.Empty, " "));
         Should.Throw<ArgumentNullException>(() => new PackageBuilder(null!));
         Should.Throw<ArgumentNullException>(() => new PackageBuilder(_context.FileSystem, null!, false));
+        Should.Throw<ArgumentNullException>(() =>
+            new PackageBuilder(_context.FileSystem, () => AdminTestContext.Now, false, null!));
 
         (await builder.BuildAsync(new PlatformPackage("any"), new UpdateVersion("2.0.0"), Guid.Empty, "pkg-in-cwd.zip"))
             .CreatedAt.ShouldBeGreaterThan(AdminTestContext.Now);

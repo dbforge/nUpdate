@@ -585,11 +585,16 @@ public class PackageEditorTests
         _context.FileSystem.AddFile("/build/new.dll", new MockFileData("new"));
         var content = new PackageDefinition(new UpdateVersion("2.0.0"));
         var windows = content.GetOrAddPlatform("win-x64");
-        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe", "/work/win-x64/Program/app.exe"));
+        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe", "/work/win-x64/Program/app.exe")
+        { CodeSignature = new Dictionary<string, string> { ["com.apple.cs.CodeDirectory"] = "AQ==" } });
         windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "old.dll", "/work/win-x64/Program/old.dll"));
         windows.Operations.Add(new StartProcessOperation { Path = "%program%/app.exe", WaitForExit = true });
         content.GetOrAddPlatform("linux-x64").Files
-            .Add(new PackageFileEntry(PackageRoot.Program, "app", "/work/linux-x64/Program/app") { UnixMode = 0x1ED });
+            .Add(new PackageFileEntry(PackageRoot.Program, "app", "/work/linux-x64/Program/app")
+            {
+                UnixMode = 0x1ED,
+                CodeSignature = new Dictionary<string, string> { ["com.apple.cs.CodeDirectory"] = "Ag==" },
+            });
         content.GetOrAddPlatform("osx-arm64").Files
             .Add(new PackageFileEntry(PackageRoot.Program, "app", "/work/osx-arm64/Program/app"));
         var entry = new PackageInfo { Version = new UpdateVersion("2.0.0"), Changelog = { ["en"] = "Two" } };
@@ -654,7 +659,9 @@ public class PackageEditorTests
                 r.Package.Platforms.Select(p => p.Platform).SequenceEqual(new[] { "win-x64", "linux-x64", "win-arm64" }) &&
                 r.Package.Platforms[0].Files.Single().SourcePath == "/build/app.exe" &&
                 r.Package.Platforms[0].Files.Single().UnixMode == null &&
+                r.Package.Platforms[0].Files.Single().CodeSignature == null && // replaced: signed anew
                 r.Package.Platforms[1].Files.Single().UnixMode == 0x1ED &&
+                r.Package.Platforms[1].Files.Single().CodeSignature!["com.apple.cs.CodeDirectory"] == "Ag==" &&
                 r.Package.Platforms[0].Operations.Cast<StartProcessOperation>().Single().FailOnError),
             Arg.Is<IReadOnlyCollection<string>>(c => c.SequenceEqual(new[] { "win-x64", "win-arm64" })),
             Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>());

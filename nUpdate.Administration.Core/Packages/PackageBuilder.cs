@@ -2,6 +2,7 @@ using System.IO.Abstractions;
 using System.IO.Compression;
 using System.Text;
 using nUpdate.Packaging;
+using nUpdate.Platform;
 using nUpdate.Updating;
 
 namespace nUpdate.Administration.Core.Packages;
@@ -15,6 +16,7 @@ public sealed class PackageBuilder : IPackageBuilder
     private readonly IFileSystem _fileSystem;
     private readonly Func<DateTimeOffset> _now;
     private readonly bool _isWindows;
+    private readonly ICodeSignatureAttributes _signatures;
 
     public PackageBuilder(IFileSystem fileSystem)
         : this(fileSystem, () => DateTimeOffset.UtcNow, OperatingSystem.IsWindows())
@@ -25,10 +27,21 @@ public sealed class PackageBuilder : IPackageBuilder
     /// <param name="now">The creation time written into the manifest.</param>
     /// <param name="isWindows">Whether files lack Unix permissions, so executables are recognized by content.</param>
     public PackageBuilder(IFileSystem fileSystem, Func<DateTimeOffset> now, bool isWindows)
+        : this(fileSystem, now, isWindows, new CodeSignatureAttributes())
+    {
+    }
+
+    /// <param name="fileSystem">The file system the files are read from and the package is written to.</param>
+    /// <param name="now">The creation time written into the manifest.</param>
+    /// <param name="isWindows">Whether files lack Unix permissions, so executables are recognized by content.</param>
+    /// <param name="signatures">Reads the macOS code signature attributes of the files, which only a Mac has.</param>
+    public PackageBuilder(IFileSystem fileSystem, Func<DateTimeOffset> now, bool isWindows,
+        ICodeSignatureAttributes signatures)
     {
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _now = now ?? throw new ArgumentNullException(nameof(now));
         _isWindows = isWindows;
+        _signatures = signatures ?? throw new ArgumentNullException(nameof(signatures));
     }
 
     public async Task<PackageManifest> BuildAsync(PlatformPackage package, UpdateVersion version, Guid projectId,
@@ -44,6 +57,7 @@ public sealed class PackageBuilder : IPackageBuilder
             throw new InvalidOperationException(
                 $"The {package.Platform} package contains the entry \"{duplicates[0]}\" more than once.");
         var entries = new List<(PackageFileEntry File, int Mode)>();
+        var signatures = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
         foreach (var file in package.Files)
         {
             if (!_fileSystem.File.Exists(file.SourcePath))
@@ -54,6 +68,10 @@ public sealed class PackageBuilder : IPackageBuilder
                 throw new InvalidOperationException(
                     $"\"{file.SourcePath}\" is a symbolic link. Packages cannot contain links; add the file it points to instead.");
             entries.Add((file, file.UnixMode ?? UnixModeDetector.Detect(_fileSystem, file.SourcePath, _isWindows)));
+            var signature = file.CodeSignature ?? _signatures.Read(file.SourcePath)
+                .ToDictionary(a => a.Key, a => Convert.ToBase64String(a.Value), StringComparer.Ordinal);
+            if (signature.Count > 0)
+                signatures[file.EntryName] = new Dictionary<string, string>(signature, StringComparer.Ordinal);
         }
 
         var manifest = new PackageManifest
@@ -62,7 +80,8 @@ public sealed class PackageBuilder : IPackageBuilder
             Version = version,
             Platform = package.Platform,
             CreatedAt = _now(),
-            Operations = package.Operations.ToList()
+            Operations = package.Operations.ToList(),
+            CodeSignatures = signatures,
         };
         var manifestJson = Serializer.Serialize(manifest, indented: true);
 

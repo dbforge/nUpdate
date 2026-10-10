@@ -787,7 +787,7 @@ public class PublishServiceTests
     }
 
     [Fact]
-    public async Task OpenPackage_LeavesTheModeToTheBuilderWhenTheZipStoresNone()
+    public async Task OpenPackage_TakesTheStoredCodeSignaturesAndLeavesAMissingModeToTheBuilder()
     {
         var (project, _, _) = await CreateAsync(publish: false);
         using (var stream = _context.FileSystem.File.Create(project.PackageFilePath(Rebuilt, "any")))
@@ -795,13 +795,20 @@ public class PublishServiceTests
         {
             var entry = archive.CreateEntry("Program/app.dll");
             entry.ExternalAttributes = 0; // as written on Windows
-            await using var output = entry.Open();
-            output.WriteByte(1);
+            await using (var output = entry.Open())
+                output.WriteByte(1);
+            var manifest = new PackageManifest();
+            manifest.CodeSignatures["Program/app.dll"] =
+                new Dictionary<string, string> { ["com.apple.cs.CodeDirectory"] = "AQ==" };
+            await using var writer = new StreamWriter(archive.CreateEntry(PackageLayout.ManifestFileName).Open());
+            await writer.WriteAsync(Serializer.Serialize(manifest));
         }
 
         var definition = await _service.OpenPackageAsync(project, Rebuilt, "/edit");
 
-        definition.Platforms.Single().Files.Single().UnixMode.ShouldBeNull();
+        var file = definition.Platforms.Single().Files.Single();
+        file.UnixMode.ShouldBeNull();
+        file.CodeSignature!["com.apple.cs.CodeDirectory"].ShouldBe("AQ=="); // kept for a rebuild, also off macOS
     }
 
     [Fact]

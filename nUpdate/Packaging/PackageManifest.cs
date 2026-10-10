@@ -21,6 +21,13 @@ public sealed class PackageManifest
 
     public List<Operation> Operations { get; set; } = [];
 
+    /// <summary>
+    ///     The macOS code signature attributes of package files, by entry name (<c>Program/Contents/MacOS/App.dll</c>)
+    ///     and attribute name, as Base64; see <see cref="Platform.ICodeSignatureAttributes" />. The installer sets them on
+    ///     the installed files.
+    /// </summary>
+    public Dictionary<string, Dictionary<string, string>> CodeSignatures { get; set; } = new(StringComparer.Ordinal);
+
     /// <summary>The areas the operations touch, in a stable order, for the feed's <c>touches</c>.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public IReadOnlyList<OperationArea> Touches => Operations.Select(o => o.Area).Distinct().OrderBy(a => a).ToList();

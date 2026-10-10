@@ -213,9 +213,17 @@ When the application runs from a bundle (`MyApp.app/Contents/MacOS/MyApp`), `Pro
 bundle. Add the signed `.app` folder to `Program` on a macOS platform in nUpdate Administration; the installer builds
 the new bundle next to the installed one as `MyApp.app.new`, swaps the two in one step and deletes the old one, so the
 signature of what you shipped stays intact. Packages cannot contain symbolic links, so a bundle with embedded
-frameworks (`Versions/Current`) has to be flattened first. The built-in installer for `osx-x64` and `osx-arm64` is
-signed ad hoc. When
-you sign and notarize your application, sign the installer as part of the bundle:
+frameworks (`Versions/Current`) has to be flattened first.
+
+`codesign` keeps the signature of a file in `Contents/MacOS` that is not Mach-O code, such as a .NET assembly next to
+the executable, in extended attributes, which a zip cannot hold. nUpdate Administration therefore writes these
+attributes (`com.apple.cs.*`) into the package's manifest, and the installer sets them on the new bundle before the
+swap. Only a Mac can read them: create the package of a macOS bundle in nUpdate Administration on a Mac, or publish
+your application as a single file, so that `Contents/MacOS` holds only Mach-O code. When you change files of a
+published package later, the ones you keep keep their attributes.
+
+The built-in installer for `osx-x64` and `osx-arm64` is signed ad hoc. When you sign and notarize your application,
+sign the installer as part of the bundle:
 
 ```
 codesign --force --options runtime --timestamp --entitlements installer.entitlements \

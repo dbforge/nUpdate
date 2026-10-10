@@ -498,7 +498,11 @@ public class InstallEngineTests
                 {
                     Directory = "%program%/Contents/Resources", Files = ["cache.bin"], RunBeforeFileReplacement = true
                 }
-            ]);
+            ],
+            codeSignatures: new Dictionary<string, Dictionary<string, string>>
+            {
+                ["Program/Contents/MacOS/App"] = new() { ["com.apple.cs.CodeDirectory"] = "Bw==" },
+            });
         var (options, bundle) = BundleOptions(package);
         fs.AddFile(bundle + "/Contents/Info.plist", new MockFileData("plist v1"));
         fs.AddFile(bundle + "/Contents/MacOS/App", new MockFileData("binary v1"));
@@ -515,6 +519,10 @@ public class InstallEngineTests
             .ShouldBeFalse(); // the bundle is the package's, nothing of the old one survives
         fs.Directory.Exists(bundle + ".new").ShouldBeFalse();
         fs.File.ReadAllText(fs.Path.Combine(_services.Root("appdata"), "App", "settings.json")).ShouldBe("{}");
+        // The signature attributes go onto the new bundle before it is swapped in.
+        _services.CodeSignatures.Received(1).Write(
+            fs.Path.GetFullPath(fs.Path.Combine(bundle + ".new", "Contents", "MacOS", "App")), "com.apple.cs.CodeDirectory",
+            Arg.Is<byte[]>(b => b.SequenceEqual(new byte[] { 7 })));
         _services.Reporter.Operations[1].Text.ShouldBe("Deleting file \"cache.bin\"...");
         _services.ProcessService.Received().Start(options.Application.ExecutablePath, "");
     }
@@ -578,5 +586,63 @@ public class InstallEngineTests
         fs.Directory.Exists(bundle + ".new").ShouldBeFalse();
         fs.File.ReadAllText(bundle + "/Contents/Info.plist").ShouldBe("plist v1");
         _services.DirectorySwap.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Run_SetsTheCodeSignatureAttributesOfTheInstalledFiles()
+    {
+        var fs = _services.FileSystem;
+        var outside = fs.Path.Combine(fs.Path.GetDirectoryName(_services.AppDirectory)!, "outside.dll");
+        fs.AddFile(outside, new MockFileData("not the package's"));
+        var package = _services.AddPackage("1.1.0", new Dictionary<string, string>
+        {
+            ["Program/lib/App.dll"] = "dll",
+            ["AppData/App/settings.json"] = "{}",
+        }, codeSignatures: new Dictionary<string, Dictionary<string, string>>
+        {
+            ["Program/lib/App.dll"] = new()
+            {
+                ["com.apple.cs.CodeDirectory"] = Convert.ToBase64String([1, 2]),
+                ["com.apple.cs.CodeSignature"] = Convert.ToBase64String([3]),
+            },
+            ["AppData/App/settings.json"] = new() { ["com.apple.cs.CodeDirectory"] = Convert.ToBase64String([4]) },
+            ["Program/missing.dll"] = new() { ["com.apple.cs.CodeDirectory"] = "AQ==" },
+            ["Program/../outside.dll"] = new() { ["com.apple.cs.CodeDirectory"] = "AQ==" },
+        });
+
+        var result = new InstallEngine(_services.Services).Run(_services.Options(package), _services.Reporter);
+
+        result.Error?.ToString().ShouldBeNull();
+        var dll = fs.Path.GetFullPath(AppFile(fs.Path.Combine("lib", "App.dll")));
+        _services.CodeSignatures.Received(1).Write(dll, "com.apple.cs.CodeDirectory",
+            Arg.Is<byte[]>(b => b.SequenceEqual(new byte[] { 1, 2 })));
+        _services.CodeSignatures.Received(1).Write(dll, "com.apple.cs.CodeSignature",
+            Arg.Is<byte[]>(b => b.SequenceEqual(new byte[] { 3 })));
+        _services.CodeSignatures.Received(1).Write(
+            fs.Path.GetFullPath(fs.Path.Combine(_services.Root("appdata"), "App", "settings.json")),
+            "com.apple.cs.CodeDirectory", Arg.Is<byte[]>(b => b.SequenceEqual(new byte[] { 4 })));
+        _services.CodeSignatures.ReceivedWithAnyArgs(3).Write(default!, default!, default!);
+    }
+
+    [Fact]
+    public void Run_WarnsAboutCodeSignatureAttributesItCannotSet()
+    {
+        var package = _services.AddPackage("1.1.0", new Dictionary<string, string> { ["Program/App.dll"] = "dll" },
+            codeSignatures: new Dictionary<string, Dictionary<string, string>>
+            {
+                ["Program/App.dll"] = new()
+                {
+                    ["com.apple.cs.CodeDirectory"] = "AQ==",
+                    ["com.apple.cs.CodeSignature"] = "not Base64!",
+                },
+            });
+        _services.CodeSignatures.When(c => c.Write(Arg.Any<string>(), "com.apple.cs.CodeDirectory", Arg.Any<byte[]>()))
+            .Do(_ => throw new IOException("Operation not permitted"));
+
+        var result = new InstallEngine(_services.Services).Run(_services.Options(package), _services.Reporter);
+
+        result.Error?.ToString().ShouldBeNull(); // the application still works; its bundle no longer verifies
+        _services.Reporter.Operations.Select(o => o.Text).ShouldContain("Warning: Operation not permitted");
+        _services.Reporter.Operations.Count(o => o.Text.StartsWith("Warning: ", StringComparison.Ordinal)).ShouldBe(2);
     }
 }

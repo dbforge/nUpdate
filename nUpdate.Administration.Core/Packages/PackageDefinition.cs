@@ -81,6 +81,13 @@ public sealed class PackageFileEntry
     /// </summary>
     public int? UnixMode { get; init; }
 
+    /// <summary>
+    ///     The macOS code signature attributes to store for the file (name and Base64 value), or <c>null</c> to read them
+    ///     from the file, which only works on a Mac. An unchanged file of an existing package keeps the ones it was stored
+    ///     with.
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? CodeSignature { get; init; }
+
     /// <summary>The entry name inside the zip, for example <c>Program/bin/app.dll</c>.</summary>
     public string EntryName => $"{PackageLayout.FolderName(Root)}/{RelativePath}";
 

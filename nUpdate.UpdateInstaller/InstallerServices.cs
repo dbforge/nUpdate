@@ -35,6 +35,9 @@ public sealed class InstallerServices
     /// <summary>Replaces a macOS application bundle as a whole.</summary>
     public IDirectorySwap DirectorySwap { get; set; }
 
+    /// <summary>Sets the macOS code signature attributes the package manifest stores, which a zip cannot carry.</summary>
+    public ICodeSignatureAttributes CodeSignatures { get; set; } = new CodeSignatureAttributes();
+
     /// <summary>Receives failures of a windowless run on Windows.</summary>
     public IEventLog EventLog { get; set; } = new WindowsEventLog();
 

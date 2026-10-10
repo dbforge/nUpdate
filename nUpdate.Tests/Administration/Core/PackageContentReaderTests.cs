@@ -24,6 +24,8 @@ public class PackageContentReaderTests
             archive.CreateEntry("Program/");
             Write(archive, "Unknown/x.txt", "x", 0);
             var manifest = new PackageManifest { Operations = [new TerminateProcessOperation { ProcessName = "app" }] };
+            manifest.CodeSignatures["Program/bin/app"] =
+                new Dictionary<string, string> { ["com.apple.cs.CodeDirectory"] = "AQ==" };
             Write(archive, PackageLayout.ManifestFileName, Serializer.Serialize(manifest), 0);
         }
 
@@ -93,6 +95,8 @@ public class PackageContentReaderTests
             .ExtractAsync("/p/win.zip", "/work");
 
         content.Entries.Count.ShouldBe(2);
+        content.Entries[0].CodeSignature!["com.apple.cs.CodeDirectory"].ShouldBe("AQ=="); // the manifest's, by entry name
+        content.Entries[1].CodeSignature.ShouldBeNull();
         _context.FileSystem.File.ReadAllText(content.Entries[0].ExtractedPath!).ShouldBe("binary");
         content.Entries[0].Mode.ShouldBe(0x1E8); // reported, so a rebuild on Windows can store it again
         new PackageContentEntry(PackageRoot.Temp, "a", 1).Mode.ShouldBe(0);
