@@ -1,0 +1,35 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aurora.App"
+             Name="Aurora"
+             RequestedThemeVariant="Default">
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.section">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Opacity" Value="0.7" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.mono">
+      <Setter Property="FontFamily" Value="Menlo,Cascadia Code,Consolas,DejaVu Sans Mono,monospace" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="TextBox.mono">
+      <Setter Property="FontFamily" Value="Menlo,Cascadia Code,Consolas,DejaVu Sans Mono,monospace" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="Border.panel">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="16" />
+    </Style>
+  </Application.Styles>
+</Application>

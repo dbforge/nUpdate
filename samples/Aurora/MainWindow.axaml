@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Aurora.MainWindow"
+        Title="Aurora" Width="640" Height="720" MinWidth="520" MinHeight="560"
+        WindowStartupLocation="CenterScreen">
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="20">
+      <DockPanel>
+        <Border DockPanel.Dock="Right" VerticalAlignment="Center" CornerRadius="8" Padding="12,4"
+                Background="{DynamicResource SystemAccentColor}">
+          <TextBlock Name="VersionText" FontSize="16" FontWeight="SemiBold" Foreground="White" />
+        </Border>
+        <StackPanel Spacing="4">
+          <TextBlock Classes="title" Text="Aurora" />
+          <TextBlock Classes="muted" Text="A sample application for trying nUpdate with your own server." />
+        </StackPanel>
+      </DockPanel>
+
+      <Border Classes="panel">
+        <StackPanel Spacing="12">
+          <TextBlock Classes="section" Text="Update source" />
+          <StackPanel Spacing="4">
+            <TextBlock Text="Feed URL" />
+            <TextBox Name="FeedUrlBox" Classes="mono" PlaceholderText="http://localhost/aurora/nupdate.json" />
+            <TextBlock Classes="muted" FontSize="12"
+                       Text="The update URL of the project in nUpdate Administration, followed by nupdate.json." />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <TextBlock Text="Public key" />
+            <TextBox Name="PublicKeyBox" Classes="mono" AcceptsReturn="True" TextWrapping="Wrap" Height="130"
+                     PlaceholderText="-----BEGIN PUBLIC KEY-----" />
+            <TextBlock Classes="muted" FontSize="12"
+                       Text="nUpdate Administration, Overview, Copy public key." />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="Least stable version to install" VerticalAlignment="Center" />
+            <ComboBox Name="StabilityBox" MinWidth="170" />
+          </StackPanel>
+          <CheckBox Name="CheckOnStartBox" Content="Check for updates when Aurora starts" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="panel">
+        <StackPanel Spacing="12">
+          <TextBlock Classes="section" Text="Updates" />
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button Name="CheckButton" Classes="accent" Content="Check for updates" Click="OnCheckClicked" />
+            <CheckBox Name="HiddenSearchBox" Content="Say nothing when Aurora is up to date" />
+          </StackPanel>
+          <TextBlock Name="ResultText" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="panel">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="section" Text="Diagnostics" />
+          <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+            <TextBlock Grid.Row="0" Classes="muted" Text="Executable" />
+            <SelectableTextBlock Grid.Row="0" Grid.Column="1" Name="ExecutableText" Classes="mono" TextWrapping="Wrap" />
+            <TextBlock Grid.Row="1" Classes="muted" Text="Installer" />
+            <SelectableTextBlock Grid.Row="1" Grid.Column="1" Name="InstallerText" Classes="mono" TextWrapping="Wrap" />
+            <TextBlock Grid.Row="2" Classes="muted" Text="Platform" />
+            <SelectableTextBlock Grid.Row="2" Grid.Column="1" Name="PlatformText" Classes="mono" />
+            <TextBlock Grid.Row="3" Classes="muted" Text="Settings" />
+            <SelectableTextBlock Grid.Row="3" Grid.Column="1" Name="SettingsText" Classes="mono" TextWrapping="Wrap" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</Window>
