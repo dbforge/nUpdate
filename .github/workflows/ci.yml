@@ -92,6 +92,30 @@ jobs:
           name: test-results-linux
           path: TestResults/**/*.trx
 
+      # Self-contained, so users need no .NET; packed as tarballs, which keep the executable bit.
+      - name: Publish nUpdate Administration for Linux
+        run: |
+          bash tools/ci/administration-linux.sh linux-x64 artifacts/administration-linux
+          bash tools/ci/administration-linux.sh linux-arm64 artifacts/administration-linux
+
+      # Under Xvfb, with a home folder of its own; still running after 15 seconds means it started.
+      - name: Start nUpdate Administration for linux-x64
+        run: |
+          mkdir -p "$RUNNER_TEMP/administration" "$RUNNER_TEMP/home"
+          tar -xzf artifacts/administration-linux/nUpdate-Administration-linux-x64.tar.gz -C "$RUNNER_TEMP/administration"
+          HOME="$RUNNER_TEMP/home" xvfb-run -a bash tools/ci/check-starts.sh 15 \
+            "$RUNNER_TEMP/administration/nUpdate-Administration/nUpdate.Administration"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: administration-linux-x64
+          path: artifacts/administration-linux/nUpdate-Administration-linux-x64.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: administration-linux-arm64
+          path: artifacts/administration-linux/nUpdate-Administration-linux-arm64.tar.gz
+
   packages:
     name: Packages and the Linux installer
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
@@ -194,6 +218,11 @@ jobs:
       - name: Publish nUpdate Administration
         run: dotnet publish nUpdate.Administration/nUpdate.Administration.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/administration-win-x64
 
+      # Still running after 15 seconds means it started; the runner has a desktop session.
+      - name: Start nUpdate Administration
+        shell: bash
+        run: bash tools/ci/check-starts.sh 15 artifacts/administration-win-x64/nUpdate.Administration.exe
+
       - uses: actions/upload-artifact@v4
         with:
           name: administration-win-x64
@@ -241,11 +270,30 @@ jobs:
           dotnet build nUpdate.Tests/nUpdate.Tests.csproj --configuration Release
           dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build -- --filter-trait "Category=PublishedInstaller"
 
-      # Self-contained and signed ad hoc; zipped with ditto, which keeps the extended attributes the signature needs.
-      - name: Build the nUpdate Administration bundle
-        run: bash tools/ci/administration-macos-app.sh osx-arm64 artifacts/administration-osx-arm64
+      # Self-contained and signed ad hoc, for Apple silicon and Intel; zipped with ditto, which keeps the extended
+      # attributes the signature needs.
+      - name: Build the nUpdate Administration bundles
+        run: |
+          bash tools/ci/administration-macos-app.sh osx-arm64 artifacts/administration-osx-arm64
+          bash tools/ci/administration-macos-app.sh osx-x64 artifacts/administration-osx-x64
+
+      # Each with a home folder of its own; still running after 15 seconds means it started. The runner is an Apple
+      # silicon Mac, so the Intel bundle runs under Rosetta.
+      - name: Start the nUpdate Administration bundles
+        run: |
+          if ! arch -x86_64 /usr/bin/true 2> /dev/null; then sudo softwareupdate --install-rosetta --agree-to-license; fi
+          mkdir -p "$RUNNER_TEMP/home"
+          for rid in osx-arm64 osx-x64; do
+            HOME="$RUNNER_TEMP/home" bash tools/ci/check-starts.sh 15 \
+              "artifacts/administration-$rid/nUpdate Administration.app/Contents/MacOS/nUpdate.Administration"
+          done
 
       - uses: actions/upload-artifact@v4
         with:
           name: administration-osx-arm64
           path: artifacts/administration-osx-arm64/nUpdate-Administration-osx-arm64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: administration-osx-x64
+          path: artifacts/administration-osx-x64/nUpdate-Administration-osx-x64.zip

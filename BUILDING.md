@@ -122,12 +122,13 @@ machine, `dotnet run --project tools/WinFormsScreenshots -- <folder>` does the s
 
 ## The macOS bundle of nUpdate Administration
 
-`tools/ci/administration-macos-app.sh <rid> <folder>` runs on a Mac. It publishes nUpdate Administration
-self-contained for `osx-arm64` or `osx-x64` and builds `<folder>/nUpdate Administration.app`: the published files in
-`Contents/MacOS`, `nUpdate.Administration/Assets/nUpdate.icns` as the icon and an `Info.plist` with the version from
+`tools/ci/administration-macos-app.sh <rid> <folder>` runs on a Mac. It publishes nUpdate Administration self-contained
+for `osx-arm64` or `osx-x64` and builds `<folder>/nUpdate Administration.app`: the published files in `Contents/MacOS`,
+`nUpdate.Administration/Assets/nUpdate.icns` as the icon and an `Info.plist` with the version from
 `Directory.Build.props`. It signs the bundle ad hoc, verifies the signature and zips the bundle to
-`<folder>/nUpdate-Administration-<rid>.zip`. The macOS job of CI uploads that zip for osx-arm64 as the artifact
-`administration-osx-arm64`.
+`<folder>/nUpdate-Administration-<rid>.zip`. The macOS job of CI builds both, starts each for 15 seconds
+(`tools/ci/check-starts.sh`; the Intel bundle under Rosetta) and uploads the zips as the artifacts
+`administration-osx-arm64` and `administration-osx-x64`.
 
 ```bash
 bash tools/ci/administration-macos-app.sh osx-arm64 artifacts/administration-osx-arm64
@@ -139,6 +140,20 @@ allow it under System Settings > Privacy & Security or remove the quarantine wit
 `xattr -dr com.apple.quarantine "nUpdate Administration.app"`. The icon is made from `nUpdate.png` with Pillow, in
 `nUpdate.Administration/Assets`: `python3 -c "from PIL import Image; Image.open('nUpdate.png').save('nUpdate.icns')"`.
 It is not an Avalonia resource of the app.
+
+## nUpdate Administration for Linux
+
+`tools/ci/administration-linux.sh <rid> <folder>` publishes nUpdate Administration self-contained for `linux-x64` or
+`linux-arm64` and packs it to `<folder>/nUpdate-Administration-<rid>.tar.gz`, with the folder `nUpdate-Administration`
+inside. A tarball keeps the executable bit of `nUpdate.Administration`, which the zip of a GitHub Actions artifact would
+drop. The Linux job of CI builds both, starts the x64 build under Xvfb for 15 seconds (`tools/ci/check-starts.sh`) and
+uploads them as the artifacts `administration-linux-x64` and `administration-linux-arm64`.
+
+```bash
+bash tools/ci/administration-linux.sh linux-x64 artifacts/administration-linux
+tar -xzf artifacts/administration-linux/nUpdate-Administration-linux-x64.tar.gz
+./nUpdate-Administration/nUpdate.Administration
+```
 
 ## The API page
 
@@ -157,14 +172,14 @@ as documentation comment IDs. Each entry of the page lists the IDs it documents 
 
 `.github/workflows/ci.yml` runs on every push and on pull requests from forks. The Linux job checks the formatting,
 checks that the API page documents the public API, runs every test including the Docker integration tests and the
-headless scenarios, merges the coverage reports and applies the coverage gate. The packages job packs the NuGet packages
-on Linux (publishing the installer for all seven runtime identifiers), builds a consumer project against them and runs
-the published-installer tests with the linux-x64 installer. The Windows job runs the tests without Docker (including the
-Windows-only adapter tests), the consumer project and the published-installer tests with the win-x64 installer, and
-publishes nUpdate Administration for win-x64. The macOS job (Apple silicon) checks the signature of the osx-arm64
-installer, runs the published-installer tests, including the bundle swap, and builds the macOS bundle of nUpdate
-Administration for osx-arm64. Coverage, test results, packages and the published administration are uploaded as
-artifacts.
+headless scenarios, merges the coverage reports, applies the coverage gate and publishes nUpdate Administration for
+linux-x64 and linux-arm64. The packages job packs the NuGet packages on Linux (publishing the installer for all seven
+runtime identifiers), builds a consumer project against them and runs the published-installer tests with the linux-x64
+installer. The Windows job runs the tests without Docker (including the Windows-only adapter tests), the consumer
+project and the published-installer tests with the win-x64 installer, and publishes nUpdate Administration for win-x64
+and starts it. The macOS job (Apple silicon) checks the signature of the osx-arm64 installer, runs the
+published-installer tests, including the bundle swap, and builds the macOS bundles of nUpdate Administration for
+osx-arm64 and osx-x64. Coverage, test results, packages and the published administration are uploaded as artifacts.
 
 ## Layout
 
