@@ -3,7 +3,7 @@ using nUpdate.UpdateInstaller.Abstractions;
 namespace nUpdate.UpdateInstaller.Platform;
 
 /// <summary>Special folders from <see cref="Environment" />.</summary>
-public sealed class SystemSpecialFolders : ISpecialFolders
+internal sealed class SystemSpecialFolders : ISpecialFolders
 {
     public string ApplicationData => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 

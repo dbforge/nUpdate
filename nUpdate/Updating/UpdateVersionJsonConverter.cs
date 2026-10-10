@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 namespace nUpdate.Updating;
 
 /// <summary>Writes an <see cref="UpdateVersion" /> as its canonical string and reads it back.</summary>
-public sealed class UpdateVersionJsonConverter : JsonConverter<UpdateVersion>
+internal sealed class UpdateVersionJsonConverter : JsonConverter<UpdateVersion>
 {
     public override void WriteJson(JsonWriter writer, UpdateVersion? value, JsonSerializer serializer)
     {

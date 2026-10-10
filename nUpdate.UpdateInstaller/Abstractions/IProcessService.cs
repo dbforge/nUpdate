@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller.Abstractions;
 
 /// <summary>Process control for the host application and for process operations.</summary>
-public interface IProcessService
+internal interface IProcessService
 {
     /// <summary>Waits for the process to exit. Returns <c>false</c> when the timeout elapsed first. A process that no longer exists counts as exited.</summary>
     bool WaitForExit(int processId, TimeSpan timeout);

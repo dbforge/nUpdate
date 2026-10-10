@@ -1,7 +1,7 @@
 namespace nUpdate.UI.WindowsForms.Controls;
 
 /// <summary>A thin separator line.</summary>
-public class Line : Control
+internal class Line : Control
 {
     public enum Alignment
     {

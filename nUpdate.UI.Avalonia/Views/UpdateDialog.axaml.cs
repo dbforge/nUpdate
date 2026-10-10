@@ -5,7 +5,7 @@ using nUpdate.UI.Avalonia.ViewModels;
 namespace nUpdate.UI.Avalonia.Views;
 
 /// <summary>Hosts one dialog of the update process; its view model decides when it closes.</summary>
-public partial class UpdateDialog : Window
+internal partial class UpdateDialog : Window
 {
     /// <summary>The nUpdate blue of the installer window, used when the application set no accent color.</summary>
     public static readonly Color DefaultAccent = Color.Parse("#1B4F9C");

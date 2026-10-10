@@ -156,7 +156,7 @@ osx-arm64. Coverage, test results, packages and the published administration are
 
 | Project | Target | Purpose |
 |---|---|---|
-| `nUpdate` | netstandard2.0 | The client library (`UpdateManager`, `UpdateFlow`, `PackagePlatform`) and the contracts shared with the installer and the administration: `UpdateFeed` (`nupdate.json`), `PackageManifest` (`manifest.json`), typed operations, `InstallerOptions`, `IProgressReporter` for installer windows, PEM keys and RSA-PSS signing. |
+| `nUpdate` | netstandard2.0 | The client library (`UpdateManager`, `UpdateFlow`) and the contracts shared with the installer and the administration: `UpdateFeed` (`nupdate.json`), `PackageManifest` (`manifest.json`), typed operations, `InstallerOptions`, `IProgressReporter` for installer windows, PEM keys and RSA-PSS signing. |
 | `nUpdate.UpdateInstaller` | netstandard2.0 | The installer base library: the engine, `InstallerHost`, `WindowProgressReporter` as the base of installer windows, the windowless and logging reporters, the system adapters. |
 | `nUpdate.UpdateInstaller.UI.Avalonia` | net10.0 | The built-in installer executable (Avalonia window), published self-contained per runtime identifier. |
 | `nUpdate.UI.WindowsForms`, `nUpdate.UI.WPF` | net462, net8.0-windows | The built-in client user interfaces for Windows. |

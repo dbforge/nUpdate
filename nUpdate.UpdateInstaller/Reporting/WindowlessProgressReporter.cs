@@ -7,7 +7,7 @@ namespace nUpdate.UpdateInstaller.Reporting;
 ///     is retried two seconds later, until the engine's <see cref="InstallerServices.MaxLockedFileAttempts" /> aborts the
 ///     update; failures go to the error output and, on Windows, to the event log. Everything else is in <c>install.log</c>.
 /// </summary>
-public sealed class WindowlessProgressReporter(InstallerServices services) : IProgressReporter, IDisposable
+internal sealed class WindowlessProgressReporter(InstallerServices services) : IProgressReporter, IDisposable
 {
     /// <summary>The pause before a locked file is tried again.</summary>
     public static readonly TimeSpan LockedFileDelay = TimeSpan.FromSeconds(2);

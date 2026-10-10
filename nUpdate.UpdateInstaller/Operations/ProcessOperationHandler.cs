@@ -4,7 +4,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Starts processes, optionally waiting for them and failing on an error exit code, and terminates processes.</summary>
-public sealed class ProcessOperationHandler : IOperationHandler
+internal sealed class ProcessOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Processes;
 

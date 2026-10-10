@@ -4,7 +4,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Deletes and renames files.</summary>
-public sealed class FileOperationHandler : IOperationHandler
+internal sealed class FileOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Files;
 

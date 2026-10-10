@@ -13,7 +13,7 @@ namespace nUpdate.UpdateInstaller;
 ///     <see cref="IProgressReporter.Initialize" />. For a macOS bundle the <c>Program</c> root is built next to the
 ///     installed bundle and swapped in as a whole.
 /// </summary>
-public sealed class InstallEngine
+internal sealed class InstallEngine
 {
     private readonly InstallerServices _services;
     private readonly OperationDispatcher _dispatcher;

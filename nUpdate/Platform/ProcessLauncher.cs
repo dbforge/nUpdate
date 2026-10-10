@@ -7,7 +7,7 @@ namespace nUpdate.Platform;
 
 /// <summary>Starts processes with <see cref="Process.Start(ProcessStartInfo)" />, on Windows optionally elevated via UAC.</summary>
 [ExcludeFromCodeCoverage] // Starts a real process; verified through the Windows end-to-end run.
-public sealed class ProcessLauncher : IProcessLauncher
+internal sealed class ProcessLauncher : IProcessLauncher
 {
     private const int ErrorCancelled = 1223;
 

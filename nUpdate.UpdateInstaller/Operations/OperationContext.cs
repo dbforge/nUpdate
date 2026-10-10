@@ -3,7 +3,7 @@ using nUpdate.Installer;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>What an operation handler needs besides the operation itself.</summary>
-public sealed class OperationContext(
+internal sealed class OperationContext(
     InstallerOptions options,
     InstallerServices services,
     PathPlaceholderResolver paths,

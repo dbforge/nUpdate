@@ -50,7 +50,7 @@ public enum PackageRoot
 }
 
 /// <summary>The names inside a package zip, shared by the Administration that builds packages and the installer that reads them.</summary>
-public static class PackageLayout
+internal static class PackageLayout
 {
     public const string ManifestFileName = "manifest.json";
 

@@ -4,7 +4,7 @@ using nUpdate.Installer;
 namespace nUpdate.UpdateInstaller.Reporting;
 
 /// <summary>Writes everything the engine reports to <see cref="InstallLog" /> and passes it on.</summary>
-public sealed class LoggingProgressReporter(IProgressReporter inner, InstallLog log) : IProgressReporter
+internal sealed class LoggingProgressReporter(IProgressReporter inner, InstallLog log) : IProgressReporter
 {
     private readonly IProgressReporter _inner = inner ?? throw new ArgumentNullException(nameof(inner));
     private readonly InstallLog _log = log ?? throw new ArgumentNullException(nameof(log));

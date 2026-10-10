@@ -4,7 +4,7 @@ using nUpdate.Operations;
 namespace nUpdate.UpdateInstaller.Operations;
 
 /// <summary>Creates and deletes registry keys, sets and deletes values.</summary>
-public sealed class RegistryOperationHandler : IOperationHandler
+internal sealed class RegistryOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Registry;
 

@@ -6,7 +6,7 @@ namespace nUpdate.Platform;
 ///     in them, and a zip does not carry extended attributes: nUpdate Administration writes them into the package
 ///     manifest and the installer sets them again, so the replaced bundle still verifies.
 /// </summary>
-public interface ICodeSignatureAttributes
+internal interface ICodeSignatureAttributes
 {
     /// <summary>The code signature attributes of the file by name; empty off macOS and for a file without any.</summary>
     IReadOnlyDictionary<string, byte[]> Read(string path);

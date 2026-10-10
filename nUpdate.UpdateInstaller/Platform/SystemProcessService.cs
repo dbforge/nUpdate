@@ -7,7 +7,7 @@ namespace nUpdate.UpdateInstaller.Platform;
 
 /// <summary>Process control through <see cref="Process" />.</summary>
 [ExcludeFromCodeCoverage] // Starts, waits for and kills real processes; verified by the published-installer runs on every system.
-public sealed class SystemProcessService : IProcessService
+internal sealed class SystemProcessService : IProcessService
 {
     private const int ErrorCancelled = 1223;
 

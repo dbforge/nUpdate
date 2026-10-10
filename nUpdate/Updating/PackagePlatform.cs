@@ -8,7 +8,7 @@ namespace nUpdate.Updating;
 ///     (<c>win</c>, <c>linux</c>, <c>osx</c>) and <c>any</c>. A client takes the file of its own runtime identifier, else
 ///     the one of its operating system, else the one for any platform.
 /// </summary>
-public static class PackagePlatform
+internal static class PackagePlatform
 {
     public const string Any = "any";
 

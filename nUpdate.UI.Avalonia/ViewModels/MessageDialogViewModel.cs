@@ -4,7 +4,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>A message with a Close button: that the application is up to date, or an error with its details.</summary>
-public sealed class MessageDialogViewModel : DialogViewModel
+internal sealed class MessageDialogViewModel : DialogViewModel
 {
     internal MessageDialogViewModel(UpdateManager updateManager, string caption, string text,
         Exception? exception = null)

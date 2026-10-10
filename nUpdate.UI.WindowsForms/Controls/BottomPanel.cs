@@ -18,7 +18,7 @@ namespace nUpdate.UI.WindowsForms.Controls;
 )]
 [ToolboxItem(true)]
 [ToolboxBitmap(typeof(Panel))]
-public class BottomPanel
+internal class BottomPanel
     : Panel
 {
     /// <summary>

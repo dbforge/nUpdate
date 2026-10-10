@@ -5,7 +5,7 @@ using nUpdate.UpdateInstaller.Abstractions;
 namespace nUpdate.UpdateInstaller.Platform;
 
 /// <summary>Environment facts from <see cref="Environment" /> and <see cref="RuntimeInformation" />.</summary>
-public sealed class EnvironmentInfo : IEnvironmentInfo
+internal sealed class EnvironmentInfo : IEnvironmentInfo
 {
     [ExcludeFromCodeCoverage] // Thin wrapper over Environment.
     public bool IsServiceContext => !Environment.UserInteractive;

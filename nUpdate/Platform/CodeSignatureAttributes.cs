@@ -5,7 +5,7 @@ using System.Text;
 namespace nUpdate.Platform;
 
 /// <summary>Reads and writes the code signature attributes with the C library of macOS; elsewhere there are none.</summary>
-public sealed class CodeSignatureAttributes : ICodeSignatureAttributes
+internal sealed class CodeSignatureAttributes : ICodeSignatureAttributes
 {
     /// <summary>The prefix of the attributes <c>codesign</c> writes; others, such as the quarantine flag, are never copied.</summary>
     public const string Prefix = "com.apple.cs.";

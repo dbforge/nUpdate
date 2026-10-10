@@ -6,7 +6,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.WPF.ViewModel;
 
 /// <summary>Runs the download while the dialog is open and shows its progress.</summary>
-public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
+internal sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
 {
     private readonly Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> _download;
     private readonly DialogOperation<bool> _operation = new();

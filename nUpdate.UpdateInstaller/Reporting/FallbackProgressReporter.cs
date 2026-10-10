@@ -6,7 +6,7 @@ namespace nUpdate.UpdateInstaller.Reporting;
 ///     Reports to a window and switches to a windowless reporter for good as soon as the window fails: when it cannot
 ///     be opened (no display server after all) or when one of its methods throws. The update itself never notices.
 /// </summary>
-public sealed class FallbackProgressReporter(IProgressReporter window, IProgressReporter fallback, InstallLog log)
+internal sealed class FallbackProgressReporter(IProgressReporter window, IProgressReporter fallback, InstallLog log)
     : IProgressReporter
 {
     private readonly IProgressReporter _window = window ?? throw new ArgumentNullException(nameof(window));

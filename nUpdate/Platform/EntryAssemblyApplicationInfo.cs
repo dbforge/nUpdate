@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace nUpdate.Platform;
 
 /// <summary>Derives the application information from the entry assembly and the running process.</summary>
-public sealed class EntryAssemblyApplicationInfo : IApplicationInfo
+internal sealed class EntryAssemblyApplicationInfo : IApplicationInfo
 {
     private const string DotnetHostName = "dotnet";
     private readonly Assembly? _assembly;

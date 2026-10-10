@@ -5,7 +5,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.Avalonia.ViewModels;
 
 /// <summary>Runs the search while the dialog is open; cancelling stops the search and closes the dialog.</summary>
-public sealed class SearchDialogViewModel : DialogViewModel, IDisposable
+internal sealed class SearchDialogViewModel : DialogViewModel, IDisposable
 {
     private readonly Func<CancellationToken, Task<bool>> _search;
     private readonly DialogOperation<bool> _operation = new();

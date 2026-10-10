@@ -7,7 +7,7 @@ namespace nUpdate.UpdateInstaller;
 ///     Resolves paths that start with <c>%program%</c>, <c>%appdata%</c>, <c>%temp%</c> or <c>%desktop%</c>.
 ///     Paths without a placeholder are returned unchanged.
 /// </summary>
-public sealed class PathPlaceholderResolver
+internal sealed class PathPlaceholderResolver
 {
     private readonly IFileSystem _fileSystem;
     private readonly Dictionary<string, string> _roots;

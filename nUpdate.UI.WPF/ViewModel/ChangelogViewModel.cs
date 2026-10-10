@@ -5,7 +5,7 @@ using nUpdate.Updating;
 namespace nUpdate.UI.WPF.ViewModel;
 
 /// <summary>Lists the found updates with their changelog and lets the user start the installation.</summary>
-public sealed class ChangelogViewModel : DialogViewModel
+internal sealed class ChangelogViewModel : DialogViewModel
 {
     internal ChangelogViewModel(UpdateManager updateManager)
         : base(updateManager)

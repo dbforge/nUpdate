@@ -1,7 +1,7 @@
 namespace nUpdate.UpdateInstaller;
 
 /// <summary>The outcome of an installer run.</summary>
-public sealed class InstallResult
+internal sealed class InstallResult
 {
     private InstallResult(bool succeeded, Exception? error)
     {

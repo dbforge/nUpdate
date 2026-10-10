@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:nUpdate.UI.Avalonia.ViewModels"
-        x:Class="nUpdate.UI.Avalonia.Views.UpdateDialog"
+        x:Class="nUpdate.UI.Avalonia.Views.UpdateDialog" x:ClassModifier="internal"
         x:DataType="vm:DialogViewModel"
         Title="{Binding Title}" Width="520" SizeToContent="Height" CanResize="False"
         WindowStartupLocation="CenterOwner">

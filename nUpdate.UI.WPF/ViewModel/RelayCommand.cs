@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace nUpdate.UI.WPF.ViewModel;
 
-public sealed class RelayCommand(Action execute, Func<bool>? canExecute = null) : ICommand
+internal sealed class RelayCommand(Action execute, Func<bool>? canExecute = null) : ICommand
 {
     public event EventHandler? CanExecuteChanged
     {

@@ -7,7 +7,10 @@ using nUpdate.UpdateInstaller.Windows;
 
 namespace nUpdate.UpdateInstaller;
 
-/// <summary>The external dependencies of <see cref="InstallEngine" /> and <see cref="InstallerHost" />, with production defaults.</summary>
+/// <summary>
+///     The limits of an installer run, for <see cref="InstallerHost.Run" />. It also holds the system services the
+///     installer works with, which nUpdate's tests replace.
+/// </summary>
 public sealed class InstallerServices
 {
     public InstallerServices()
@@ -18,37 +21,37 @@ public sealed class InstallerServices
         DirectorySwap = new DirectorySwap(FileSystem, EnvironmentInfo.IsMacOS);
     }
 
-    public IFileSystem FileSystem { get; set; }
+    internal IFileSystem FileSystem { get; set; }
 
-    public IPackageExtractor PackageExtractor { get; set; }
+    internal IPackageExtractor PackageExtractor { get; set; }
 
-    public IRegistry Registry { get; set; } = new WindowsRegistry();
+    internal IRegistry Registry { get; set; } = new WindowsRegistry();
 
-    public IServiceController ServiceController { get; set; } = new WindowsServiceController();
+    internal IServiceController ServiceController { get; set; } = new WindowsServiceController();
 
-    public IProcessService ProcessService { get; set; } = new SystemProcessService();
+    internal IProcessService ProcessService { get; set; } = new SystemProcessService();
 
-    public ISpecialFolders SpecialFolders { get; set; } = new SystemSpecialFolders();
+    internal ISpecialFolders SpecialFolders { get; set; } = new SystemSpecialFolders();
 
-    public IEnvironmentInfo EnvironmentInfo { get; set; }
+    internal IEnvironmentInfo EnvironmentInfo { get; set; }
 
     /// <summary>Replaces a macOS application bundle as a whole.</summary>
-    public IDirectorySwap DirectorySwap { get; set; }
+    internal IDirectorySwap DirectorySwap { get; set; }
 
     /// <summary>Sets the macOS code signature attributes the package manifest stores, which a zip cannot carry.</summary>
-    public ICodeSignatureAttributes CodeSignatures { get; set; } = new CodeSignatureAttributes();
+    internal ICodeSignatureAttributes CodeSignatures { get; set; } = new CodeSignatureAttributes();
 
     /// <summary>Receives failures of a windowless run on Windows.</summary>
-    public IEventLog EventLog { get; set; } = new WindowsEventLog();
+    internal IEventLog EventLog { get; set; } = new WindowsEventLog();
 
     /// <summary>Where a windowless run reports failures besides the log file.</summary>
-    public TextWriter ErrorOutput { get; set; } = Console.Error;
+    internal TextWriter ErrorOutput { get; set; } = Console.Error;
 
     /// <summary>The time written into <c>install.log</c>.</summary>
-    public Func<DateTimeOffset> Clock { get; set; } = () => DateTimeOffset.Now;
+    internal Func<DateTimeOffset> Clock { get; set; } = () => DateTimeOffset.Now;
 
     /// <summary>Pauses a windowless run before it retries a locked file.</summary>
-    public Action<TimeSpan> Delay { get; set; } = Thread.Sleep;
+    internal Action<TimeSpan> Delay { get; set; } = Thread.Sleep;
 
     /// <summary>How long to wait for the host application to exit before continuing anyway.</summary>
     public TimeSpan HostExitTimeout { get; set; } = TimeSpan.FromMinutes(2);
@@ -57,7 +60,7 @@ public sealed class InstallerServices
     public int MaxLockedFileAttempts { get; set; } = 5;
 
     /// <summary>The handlers for the operation areas. One handler per area.</summary>
-    public List<IOperationHandler> OperationHandlers { get; set; } =
+    internal List<IOperationHandler> OperationHandlers { get; set; } =
     [
         new FileOperationHandler(),
         new RegistryOperationHandler(),

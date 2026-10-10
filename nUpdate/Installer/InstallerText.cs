@@ -32,7 +32,7 @@ public enum InstallerText
 }
 
 /// <summary>English fallback texts for <see cref="InstallerText" />, the defaults of <see cref="UpdateTexts" />.</summary>
-public static class InstallerTexts
+internal static class InstallerTexts
 {
     private static readonly Dictionary<string, string>
         English = InstallerTextMapper.ToInstallerTexts(new UpdateTexts());
