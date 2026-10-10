@@ -377,7 +377,9 @@ code { font-family: var(--font-mono); font-size: 0.86em; background: var(--sunke
 .install-list { display: grid; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
 .install-row { display: flex; align-items: center; min-width: 0; }
 .install-row + .install-row { border-top: 1px solid var(--line); }
-.install-row code { flex: 1; min-width: 0; border: 0; background: none; padding: 12px 16px; font-size: 0.86rem; white-space: nowrap; overflow-x: auto; }
+/* The commands wrap at their spaces and the dots of package names; wrapped lines hang under the command, not the prompt. */
+.install-row code { flex: 1; min-width: 0; border: 0; background: none; padding: 12px 16px 12px calc(16px + 2ch); text-indent: -2ch; font-size: 0.86rem; white-space: normal; overflow-wrap: anywhere; }
+.install-row code .nobreak { white-space: nowrap; }
 .install-row code::before { content: "$ "; color: var(--ink-soft); }
 .copy {
   font: 600 0.82rem/1 var(--font-body); color: var(--ink-soft); background: var(--sunken);
