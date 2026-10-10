@@ -643,6 +643,23 @@ pre { margin: 0; }
 .api-example code, .api-snippet code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
 .api-page { padding-top: 56px; }
 .api-page h1 { font-size: var(--step-3); font-weight: 700; }
+
+/* Legal notice and privacy policy: one reading column, German first, the English translation below. */
+.legal-page { padding-top: 56px; }
+.legal-page h1 { font-size: var(--step-3); font-weight: 700; }
+.legal-page .section-head { margin-bottom: 32px; }
+.lang-switch { display: flex; flex-wrap: wrap; gap: 8px; }
+.lang-switch a { font-size: 0.92rem; color: var(--ink-soft); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; }
+.lang-switch a:hover { color: var(--ink); border-color: var(--ink-soft); }
+.legal { max-width: 46rem; display: grid; gap: 12px; line-height: 1.65; scroll-margin-top: 96px; }
+.legal + .legal { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 48px; }
+.legal h2 { font-size: var(--step-2); }
+.legal h3 { font-size: var(--step-0); margin-top: 16px; }
+.legal address { font-style: normal; }
+.legal ul { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
+.legal code { font-family: var(--font-mono); font-size: 0.88em; background: var(--sunken); border-radius: 4px; padding: 1px 5px; }
+.legal-note { color: var(--ink-soft); font-size: 0.92rem; }
+.footer-row nav a[aria-current="page"] { color: var(--ink); }
 .api-page .section-head p:not(.eyebrow) { font-size: var(--step-0); line-height: 1.6; }
 
 /* Administration showcase: the real screens, rebuilt in a Windows 11 frame. They follow the page's theme, as the app follows the system's. */

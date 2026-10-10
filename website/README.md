@@ -9,6 +9,9 @@ python3 -m http.server --directory website 8000
 
 - `index.html`: the homepage. Its code samples are the real API.
 - `api.html`: the API reference, linked from the homepage.
+- `imprint.html` and `privacy.html`: the legal notice (Impressum) and the privacy policy, in German with an English
+  translation, linked from every footer. The privacy policy states that the site sets no cookies and loads nothing from
+  other servers; keep it that way, or update the policy.
 - `styles.css`: colours as tokens with a dark variant that follows the system setting, and the animations, which stop
   under "reduce motion".
 - `main.js`: the installer window cycling through Windows, Linux and macOS, the platform picker (the real rule:
