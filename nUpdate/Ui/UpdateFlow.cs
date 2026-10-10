@@ -65,7 +65,8 @@ public sealed class UpdateFlow
         }
         catch (Exception exception)
         {
-            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForSearch(exception, texts), exception).ConfigureAwait(true);
+            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForSearch(exception, texts), exception)
+                .ConfigureAwait(true);
             return UpdateFlowResult.Failed;
         }
 
@@ -81,13 +82,17 @@ public sealed class UpdateFlow
 
         if (!UpdateSizeCheck.HasEnoughSpace(_fileSystem, _manager.TotalDownloadSize, out var bytesToFree))
         {
-            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForInsufficientDiskSpace(_manager.TotalDownloadSize, bytesToFree, texts), null).ConfigureAwait(true);
+            await _presenter
+                .ShowErrorAsync(
+                    UpdateErrorMessages.ForInsufficientDiskSpace(_manager.TotalDownloadSize, bytesToFree, texts), null)
+                .ConfigureAwait(true);
             return UpdateFlowResult.InsufficientDiskSpace;
         }
 
         try
         {
-            await _presenter.RunDownloadAsync((progress, token) => DownloadAsync(progress, token, cancellationToken)).ConfigureAwait(true);
+            await _presenter.RunDownloadAsync((progress, token) => DownloadAsync(progress, token, cancellationToken))
+                .ConfigureAwait(true);
         }
         catch (OperationCanceledException)
         {
@@ -95,7 +100,8 @@ public sealed class UpdateFlow
         }
         catch (Exception exception)
         {
-            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForDownload(exception, texts), exception).ConfigureAwait(true);
+            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForDownload(exception, texts), exception)
+                .ConfigureAwait(true);
             return UpdateFlowResult.Failed;
         }
 
@@ -110,7 +116,8 @@ public sealed class UpdateFlow
         }
         catch (Exception exception)
         {
-            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForVerification(exception, texts), exception).ConfigureAwait(true);
+            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForVerification(exception, texts), exception)
+                .ConfigureAwait(true);
             return UpdateFlowResult.Failed;
         }
 
@@ -127,7 +134,8 @@ public sealed class UpdateFlow
         }
         catch (Exception exception)
         {
-            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForInstall(exception, texts), exception).ConfigureAwait(true);
+            await _presenter.ShowErrorAsync(UpdateErrorMessages.ForInstall(exception, texts), exception)
+                .ConfigureAwait(true);
             return UpdateFlowResult.Failed;
         }
 
@@ -140,7 +148,8 @@ public sealed class UpdateFlow
         return await _manager.CheckForUpdatesAsync(linked.Token).ConfigureAwait(false);
     }
 
-    private async Task DownloadAsync(IProgress<UpdateDownloadProgress> progress, CancellationToken dialogToken, CancellationToken outerToken)
+    private async Task DownloadAsync(IProgress<UpdateDownloadProgress> progress, CancellationToken dialogToken,
+        CancellationToken outerToken)
     {
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(dialogToken, outerToken);
         await _manager.DownloadAsync(progress, linked.Token).ConfigureAwait(false);

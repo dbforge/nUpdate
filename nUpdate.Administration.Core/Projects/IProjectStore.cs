@@ -16,7 +16,8 @@ public interface IProjectStore
     /// </summary>
     /// <exception cref="Exceptions.UnsupportedFormatException">The file's format is unknown.</exception>
     /// <exception cref="InvalidDataException">The file is not valid.</exception>
-    Task<ProjectLoadResult> LoadAsync(string path, string? password = null, CancellationToken cancellationToken = default);
+    Task<ProjectLoadResult> LoadAsync(string path, string? password = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Writes the project file and makes sure it is registered.</summary>
     Task SaveAsync(UpdateProject project, CancellationToken cancellationToken = default);
@@ -46,23 +47,19 @@ public enum SecretsState
 }
 
 /// <summary>A loaded project plus the secrets that could be recovered from the file.</summary>
-public sealed class ProjectLoadResult
+public sealed class ProjectLoadResult(
+    UpdateProject project,
+    ProjectSecrets secrets,
+    bool migrated,
+    SecretsState secretsState)
 {
-    public ProjectLoadResult(UpdateProject project, ProjectSecrets secrets, bool migrated, SecretsState secretsState)
-    {
-        Project = project ?? throw new ArgumentNullException(nameof(project));
-        Secrets = secrets ?? throw new ArgumentNullException(nameof(secrets));
-        Migrated = migrated;
-        SecretsState = secretsState;
-    }
-
-    public UpdateProject Project { get; }
+    public UpdateProject Project { get; } = project ?? throw new ArgumentNullException(nameof(project));
 
     /// <summary>The secrets; those that could not be read are <c>null</c>.</summary>
-    public ProjectSecrets Secrets { get; }
+    public ProjectSecrets Secrets { get; } = secrets ?? throw new ArgumentNullException(nameof(secrets));
 
     /// <summary>True when the file was in an older format. The project has no <c>secrets</c> yet; saving it with a project password writes the current format.</summary>
-    public bool Migrated { get; }
+    public bool Migrated { get; } = migrated;
 
-    public SecretsState SecretsState { get; }
+    public SecretsState SecretsState { get; } = secretsState;
 }

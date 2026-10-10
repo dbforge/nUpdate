@@ -37,7 +37,8 @@ internal static class ApplicationIcon
 
         try
         {
-            var source = Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            var source =
+                Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             source.Freeze();
             return source;
         }

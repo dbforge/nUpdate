@@ -6,26 +6,21 @@ using Newtonsoft.Json.Linq;
 namespace nUpdate.Operations;
 
 /// <summary>The data type of a registry value.</summary>
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "The names are the registry's own.")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name",
+    Justification = "The names are the registry's own.")]
 public enum RegistryValueKind
 {
-    [EnumMember(Value = "string")]
-    String,
+    [EnumMember(Value = "string")] String,
 
-    [EnumMember(Value = "expandString")]
-    ExpandString,
+    [EnumMember(Value = "expandString")] ExpandString,
 
-    [EnumMember(Value = "dword")]
-    DWord,
+    [EnumMember(Value = "dword")] DWord,
 
-    [EnumMember(Value = "qword")]
-    QWord,
+    [EnumMember(Value = "qword")] QWord,
 
-    [EnumMember(Value = "multiString")]
-    MultiString,
+    [EnumMember(Value = "multiString")] MultiString,
 
-    [EnumMember(Value = "binary")]
-    Binary,
+    [EnumMember(Value = "binary")] Binary,
 }
 
 /// <summary>
@@ -34,31 +29,27 @@ public enum RegistryValueKind
 ///     for multi-strings and <c>byte[]</c> for binary values.
 /// </summary>
 [JsonConverter(typeof(RegistryValueJsonConverter))]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "The factory methods are named after the registry kinds.")]
-public sealed class RegistryValue
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name",
+    Justification = "The factory methods are named after the registry kinds.")]
+public sealed class RegistryValue(string name, RegistryValueKind kind, object? value)
 {
-    public RegistryValue(string name, RegistryValueKind kind, object? value)
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Kind = kind;
-        Value = Check(kind, value);
-    }
+    public string Name { get; } = name ?? throw new ArgumentNullException(nameof(name));
 
-    public string Name { get; }
+    public RegistryValueKind Kind { get; } = kind;
 
-    public RegistryValueKind Kind { get; }
-
-    public object? Value { get; }
+    public object? Value { get; } = Check(kind, value);
 
     public static RegistryValue String(string name, string value) => new(name, RegistryValueKind.String, value);
 
-    public static RegistryValue ExpandString(string name, string value) => new(name, RegistryValueKind.ExpandString, value);
+    public static RegistryValue ExpandString(string name, string value) =>
+        new(name, RegistryValueKind.ExpandString, value);
 
     public static RegistryValue DWord(string name, long value) => new(name, RegistryValueKind.DWord, value);
 
     public static RegistryValue QWord(string name, long value) => new(name, RegistryValueKind.QWord, value);
 
-    public static RegistryValue MultiString(string name, params string[] values) => new(name, RegistryValueKind.MultiString, values);
+    public static RegistryValue MultiString(string name, params string[] values) =>
+        new(name, RegistryValueKind.MultiString, values);
 
     public static RegistryValue Binary(string name, byte[] value) => new(name, RegistryValueKind.Binary, value);
 
@@ -73,7 +64,11 @@ public sealed class RegistryValue
             RegistryValueKind.Binary => value is byte[],
             _ => throw new ArgumentOutOfRangeException(nameof(kind)),
         };
-        return valid ? value : throw new ArgumentException($"A {kind} registry value cannot hold {(value is long number ? number.ToString(System.Globalization.CultureInfo.InvariantCulture) : value?.GetType().Name ?? "null")}.", nameof(value));
+        return valid
+            ? value
+            : throw new ArgumentException(
+                $"A {kind} registry value cannot hold {(value is long number ? number.ToString(System.Globalization.CultureInfo.InvariantCulture) : value?.GetType().Name ?? "null")}.",
+                nameof(value));
     }
 }
 
@@ -119,7 +114,8 @@ public sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
         writer.WriteEndObject();
     }
 
-    public override RegistryValue? ReadJson(JsonReader reader, Type objectType, RegistryValue? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override RegistryValue? ReadJson(JsonReader reader, Type objectType, RegistryValue? existingValue,
+        bool hasExistingValue, JsonSerializer serializer)
     {
         if (reader is null)
             throw new ArgumentNullException(nameof(reader));
@@ -127,9 +123,14 @@ public sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
             return null;
 
         var json = JObject.Load(reader);
-        var name = json["name"]?.Type == JTokenType.String ? (string)json["name"]! : throw new JsonSerializationException("A registry value needs a \"name\".");
-        var kindText = json["kind"]?.Type == JTokenType.String ? (string)json["kind"]! : throw new JsonSerializationException($"The registry value \"{name}\" needs a \"kind\".");
-        var kind = ParseKind(kindText) ?? throw new JsonSerializationException($"\"{kindText}\" is not a registry value kind.");
+        var name = json["name"]?.Type == JTokenType.String
+            ? (string)json["name"]!
+            : throw new JsonSerializationException("A registry value needs a \"name\".");
+        var kindText = json["kind"]?.Type == JTokenType.String
+            ? (string)json["kind"]!
+            : throw new JsonSerializationException($"The registry value \"{name}\" needs a \"kind\".");
+        var kind = ParseKind(kindText) ??
+                   throw new JsonSerializationException($"\"{kindText}\" is not a registry value kind.");
         var token = json["value"];
         try
         {
@@ -155,7 +156,8 @@ public sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
         [RegistryValueKind.Binary] = "binary",
     };
 
-    private static readonly Dictionary<string, RegistryValueKind> Kinds = Names.ToDictionary(pair => pair.Value, pair => pair.Key, StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, RegistryValueKind> Kinds =
+        Names.ToDictionary(pair => pair.Value, pair => pair.Key, StringComparer.OrdinalIgnoreCase);
 
     private static string KindName(RegistryValueKind kind) => Names[kind];
 
@@ -164,18 +166,23 @@ public sealed class RegistryValueJsonConverter : JsonConverter<RegistryValue>
     private static object? ReadValue(RegistryValueKind kind, JToken? token, string name)
     {
         if (token is null || token.Type == JTokenType.Null)
-            return kind is RegistryValueKind.String or RegistryValueKind.ExpandString ? null : throw new JsonSerializationException($"The registry value \"{name}\" has no value.");
+            return kind is RegistryValueKind.String or RegistryValueKind.ExpandString
+                ? null
+                : throw new JsonSerializationException($"The registry value \"{name}\" has no value.");
         switch (kind)
         {
             case RegistryValueKind.DWord:
             case RegistryValueKind.QWord:
-                return long.TryParse(token.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var number)
+                return long.TryParse(token.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture,
+                    out var number)
                     ? number
-                    : throw new JsonSerializationException($"The registry value \"{name}\" is not a number in the range of a {kind}.");
+                    : throw new JsonSerializationException(
+                        $"The registry value \"{name}\" is not a number in the range of a {kind}.");
             case RegistryValueKind.MultiString:
                 return token.Type == JTokenType.Array
                     ? token.Select(item => item.ToString()).ToArray()
-                    : throw new JsonSerializationException($"The registry value \"{name}\" must be an array of strings.");
+                    : throw new JsonSerializationException(
+                        $"The registry value \"{name}\" must be an array of strings.");
             case RegistryValueKind.Binary:
                 return Convert.FromBase64String(token.ToString());
             default:

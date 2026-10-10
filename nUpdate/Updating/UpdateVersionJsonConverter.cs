@@ -15,7 +15,8 @@ public sealed class UpdateVersionJsonConverter : JsonConverter<UpdateVersion>
             writer.WriteValue(value.ToString());
     }
 
-    public override UpdateVersion? ReadJson(JsonReader reader, Type objectType, UpdateVersion? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override UpdateVersion? ReadJson(JsonReader reader, Type objectType, UpdateVersion? existingValue,
+        bool hasExistingValue, JsonSerializer serializer)
     {
         if (reader is null)
             throw new ArgumentNullException(nameof(reader));
@@ -24,6 +25,9 @@ public sealed class UpdateVersionJsonConverter : JsonConverter<UpdateVersion>
         if (reader.TokenType != JsonToken.String)
             throw new JsonSerializationException($"A version must be a string, not {reader.TokenType}.");
         var text = (string)reader.Value!;
-        return UpdateVersion.TryParse(text, out var version) ? version : throw new JsonSerializationException($"\"{text}\" is not a valid version. {UpdateVersion.FormatDescription}");
+        return UpdateVersion.TryParse(text, out var version)
+            ? version
+            : throw new JsonSerializationException(
+                $"\"{text}\" is not a valid version. {UpdateVersion.FormatDescription}");
     }
 }

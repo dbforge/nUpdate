@@ -27,7 +27,8 @@ public sealed class EntryAssemblyApplicationInfo : IApplicationInfo
     }
 
     public string ProductName =>
-        _assembly?.GetName().Name ?? (_mainModulePath is null ? "Application" : FileNameWithoutExtension(_mainModulePath));
+        _assembly?.GetName().Name ??
+        (_mainModulePath is null ? "Application" : FileNameWithoutExtension(_mainModulePath));
 
     /// <summary>
     ///     The application's executable: the process image, unless the application was started through the dotnet host,
@@ -80,7 +81,8 @@ public sealed class EntryAssemblyApplicationInfo : IApplicationInfo
         {
             return Process.GetCurrentProcess().MainModule?.FileName;
         }
-        catch (Exception exception) when (exception is Win32Exception or InvalidOperationException or NotSupportedException or PlatformNotSupportedException)
+        catch (Exception exception) when (exception is Win32Exception or InvalidOperationException
+                                              or NotSupportedException or PlatformNotSupportedException)
         {
             return null;
         }

@@ -27,19 +27,20 @@ public abstract class Operation
     public static bool IsWindowsOnly(OperationArea area) => area is OperationArea.Registry or OperationArea.Services;
 
     /// <summary>The discriminator of every operation class, so readers and editors can enumerate them.</summary>
-    public static IReadOnlyDictionary<string, Type> Types { get; } = new Dictionary<string, Type>(StringComparer.Ordinal)
-    {
-        [DeleteFilesOperation.TypeName] = typeof(DeleteFilesOperation),
-        [RenameFileOperation.TypeName] = typeof(RenameFileOperation),
-        [CreateRegistryKeysOperation.TypeName] = typeof(CreateRegistryKeysOperation),
-        [DeleteRegistryKeysOperation.TypeName] = typeof(DeleteRegistryKeysOperation),
-        [SetRegistryValuesOperation.TypeName] = typeof(SetRegistryValuesOperation),
-        [DeleteRegistryValuesOperation.TypeName] = typeof(DeleteRegistryValuesOperation),
-        [StartProcessOperation.TypeName] = typeof(StartProcessOperation),
-        [TerminateProcessOperation.TypeName] = typeof(TerminateProcessOperation),
-        [StartServiceOperation.TypeName] = typeof(StartServiceOperation),
-        [StopServiceOperation.TypeName] = typeof(StopServiceOperation),
-    };
+    public static IReadOnlyDictionary<string, Type> Types { get; } =
+        new Dictionary<string, Type>(StringComparer.Ordinal)
+        {
+            [DeleteFilesOperation.TypeName] = typeof(DeleteFilesOperation),
+            [RenameFileOperation.TypeName] = typeof(RenameFileOperation),
+            [CreateRegistryKeysOperation.TypeName] = typeof(CreateRegistryKeysOperation),
+            [DeleteRegistryKeysOperation.TypeName] = typeof(DeleteRegistryKeysOperation),
+            [SetRegistryValuesOperation.TypeName] = typeof(SetRegistryValuesOperation),
+            [DeleteRegistryValuesOperation.TypeName] = typeof(DeleteRegistryValuesOperation),
+            [StartProcessOperation.TypeName] = typeof(StartProcessOperation),
+            [TerminateProcessOperation.TypeName] = typeof(TerminateProcessOperation),
+            [StartServiceOperation.TypeName] = typeof(StartServiceOperation),
+            [StopServiceOperation.TypeName] = typeof(StopServiceOperation),
+        };
 }
 
 /// <summary>Deletes files from a directory of the client. Placeholders such as <c>%program%</c> are expanded by the installer.</summary>

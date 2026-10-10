@@ -16,20 +16,34 @@ public sealed class MigrationAssistantTests
     private bool _cleanedUp;
 
     private static LegacyFeedEntry Entry(string literal, bool statistics = false) =>
-        new(LegacyVersion.Parse(literal), literal) { UseStatistics = statistics, PackageUri = new Uri($"https://updates.example.com/demo/{literal}/p.zip") };
+        new(LegacyVersion.Parse(literal), literal)
+        { UseStatistics = statistics, PackageUri = new Uri($"https://updates.example.com/demo/{literal}/p.zip") };
 
-    private static MigrationPackage Ready(string literal, bool statistics = false, string? source = null, IReadOnlyList<string>? skipped = null, IReadOnlyList<string>? warnings = null) =>
-        MigrationPackage.Ready(Entry(literal, statistics), source ?? $"https://updates.example.com/demo/{literal}/p.zip", "/tmp/p.zip", 2048, 3, skipped ?? [],
+    private static MigrationPackage Ready(string literal, bool statistics = false, string? source = null,
+        IReadOnlyList<string>? skipped = null, IReadOnlyList<string>? warnings = null) =>
+        MigrationPackage.Ready(Entry(literal, statistics),
+            source ?? $"https://updates.example.com/demo/{literal}/p.zip", "/tmp/p.zip", 2048, 3, skipped ?? [],
             new LegacyOperationConversion([new TerminateProcessOperation { ProcessName = "app" }], warnings ?? []));
 
     /// <summary>A plan with a migrated, a ready and a broken package, as the migrator would prepare it.</summary>
     private MigrationPlan Plan(UpdateProject project, UpdateFeed? feed = null, params MigrationPackage[] packages) =>
-        new(project.Id, true, feed, packages.Length > 0 ? packages : [MigrationPackage.Migrated(Entry("0.9.0.0")), Ready("1.0.0.0", statistics: true), MigrationPackage.Failed(Entry("1.1.0.0b2"), "https://updates.example.com/demo/1.1.0.0b2/p.zip", "404")],
+        new(project.Id, true, feed,
+            packages.Length > 0
+                ? packages
+                :
+                [
+                    MigrationPackage.Migrated(Entry("0.9.0.0")), Ready("1.0.0.0", statistics: true),
+                    MigrationPackage.Failed(Entry("1.1.0.0b2"), "https://updates.example.com/demo/1.1.0.0b2/p.zip",
+                        "404")
+                ],
             () => _cleanedUp = true);
 
-    private async Task<MigrationViewModel> AssistantAsync(UpdateProject project, ProjectSecrets secrets, MigrationPlan plan)
+    private async Task<MigrationViewModel> AssistantAsync(UpdateProject project, ProjectSecrets secrets,
+        MigrationPlan plan)
     {
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(plan);
+        _context.Migrator
+            .PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(plan);
         var assistant = _context.Factory.Create<MigrationViewModel>(project, secrets);
         await assistant.InitializeAsync();
         return assistant;
@@ -61,22 +75,31 @@ public sealed class MigrationAssistantTests
 
         // A project with statistics, an existing feed, no statistics in the old feed and no remembered project file.
         var other = AppTestContext.NewProject(statistics: true);
-        var feed = new UpdateFeed { ProjectId = other.Id, Packages = [new PackageInfo { Version = new UpdateVersion("0.9.0") }] };
-        var second = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true), Plan(other, feed, Ready("1.0.0.0")));
-        second.ServerState.ShouldBe(["updates.json with 1 package, which applications built with nUpdate 3 or 4 read.", "nupdate.json with 1 package, which applications built with nUpdate 5 read."]);
-        second.AddedItems.ShouldContain(i => i.StartsWith("nupdate-statistics.php and nupdate-statistics.config.php", StringComparison.Ordinal));
+        var feed = new UpdateFeed
+        { ProjectId = other.Id, Packages = [new PackageInfo { Version = new UpdateVersion("0.9.0") }] };
+        var second = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true),
+            Plan(other, feed, Ready("1.0.0.0")));
+        second.ServerState.ShouldBe([
+            "updates.json with 1 package, which applications built with nUpdate 3 or 4 read.",
+            "nupdate.json with 1 package, which applications built with nUpdate 5 read."
+        ]);
+        second.AddedItems.ShouldContain(i =>
+            i.StartsWith("nupdate-statistics.php and nupdate-statistics.config.php", StringComparison.Ordinal));
         second.KeptItems.Count.ShouldBe(2);
         second.Packages.Single().Include.ShouldBeTrue();
         second.MigrationSummary.ShouldContain("nupdate.json is written with 2 packages.");
-        second.MigrationSummary.ShouldContain("nupdate-statistics.php is uploaded and the versions are registered in it.");
-        var both = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true), Plan(other, null, Ready("1.0.0.0"), Ready("1.1.0.0")));
+        second.MigrationSummary.ShouldContain(
+            "nupdate-statistics.php is uploaded and the versions are registered in it.");
+        var both = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true),
+            Plan(other, null, Ready("1.0.0.0"), Ready("1.1.0.0")));
         both.MigrationSummary[0].ShouldBe("2 packages (1.0.0, 1.1.0) are repacked, signed and uploaded to packages/.");
         both.Packages[0].Include = false;
         both.Packages[1].Include = false;
         both.MigrationSummary.ShouldContain("nupdate-statistics.php is uploaded.");
         second.KeptItems[1].ShouldStartWith("The project and the package copies of nUpdate Administration 4");
 
-        var empty = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true), new MigrationPlan(other.Id, false, null, []));
+        var empty = await AssistantAsync(other, AppTestContext.NewSecrets(statistics: true),
+            new MigrationPlan(other.Id, false, null, []));
         empty.ServerState[0].ShouldStartWith("No updates.json");
         empty.KeptItems[0].ShouldContain("if there are any");
         empty.SelectionSummary.ShouldBe("updates.json lists no packages.");
@@ -88,19 +111,26 @@ public sealed class MigrationAssistantTests
         var project = AppTestContext.NewProject();
         var assistant = await AssistantAsync(project, AppTestContext.NewSecrets(), Plan(project, null,
             MigrationPackage.Migrated(Entry("0.9.0.0")),
-            Ready("1.0.0.0", source: "/data/Projects/Demo/1.0.0.0/p.zip", skipped: ["notes.txt"], warnings: ["Operation 2 is left out."]),
+            Ready("1.0.0.0", source: "/data/Projects/Demo/1.0.0.0/p.zip", skipped: ["notes.txt"],
+                warnings: ["Operation 2 is left out."]),
             Ready("1.1.0.0b2"),
-            MigrationPackage.Failed(Entry("1.2.0.0"), null, "The package is neither on this computer nor named in updates.json.")));
+            MigrationPackage.Failed(Entry("1.2.0.0"), null,
+                "The package is neither on this computer nor named in updates.json.")));
         await assistant.ContinueCommand.ExecuteAsync(null);
         assistant.IsPackagesStep.ShouldBeTrue();
 
         var packages = assistant.Packages;
-        packages.Select(p => p.Title).ShouldBe(["0.9.0.0 → 0.9.0", "1.0.0.0 → 1.0.0", "1.1.0.0b2 → 1.1.0-beta.2", "1.2.0.0 → 1.2.0"]);
+        packages.Select(p => p.Title).ShouldBe([
+            "0.9.0.0 → 0.9.0", "1.0.0.0 → 1.0.0", "1.1.0.0b2 → 1.1.0-beta.2", "1.2.0.0 → 1.2.0"
+        ]);
         packages[0].AlreadyMigrated.ShouldBeTrue();
         packages[0].Details.ShouldBe("Already in nupdate.json.");
         packages[0].HasNotes.ShouldBeFalse();
-        packages[1].Details.ShouldBe("3 files, 1 operation, 2.00 KB, from this computer (/data/Projects/Demo/1.0.0.0/p.zip).");
-        packages[1].Notes.ShouldBe(["Operation 2 is left out.", "Left out because they are outside the folders the installer knows: notes.txt."]);
+        packages[1].Details
+            .ShouldBe("3 files, 1 operation, 2.00 KB, from this computer (/data/Projects/Demo/1.0.0.0/p.zip).");
+        packages[1].Notes.ShouldBe([
+            "Operation 2 is left out.", "Left out because they are outside the folders the installer knows: notes.txt."
+        ]);
         packages[2].Details.ShouldStartWith("3 files, 1 operation, 2.00 KB, downloaded from https://");
         packages[3].Details.ShouldBe("Cannot be migrated.");
         packages[3].Notes.Single().ShouldContain("neither on this computer");
@@ -115,7 +145,8 @@ public sealed class MigrationAssistantTests
         packages[3].Include = true;
         packages[3].Include.ShouldBeFalse();
         assistant.SelectionSummary.ShouldBe("1 of 3 packages to migrate selected.");
-        new MigrationPackageItemViewModel(MigrationPackage.Failed(Entry("2.0.0.0"), "https://x/p.zip", "gone")).Details.ShouldBe("Cannot be migrated from https://x/p.zip.");
+        new MigrationPackageItemViewModel(MigrationPackage.Failed(Entry("2.0.0.0"), "https://x/p.zip", "gone")).Details
+            .ShouldBe("Cannot be migrated from https://x/p.zip.");
         Should.Throw<ArgumentNullException>(() => new MigrationPackageItemViewModel(null!));
     }
 
@@ -157,7 +188,8 @@ public sealed class MigrationAssistantTests
         assistant.IsMigrateStep.ShouldBeTrue();
         assistant.ErrorMessage.ShouldBeNull();
 
-        var withoutStatistics = await AssistantAsync(AppTestContext.NewProject(), AppTestContext.NewSecrets(), Plan(project));
+        var withoutStatistics =
+            await AssistantAsync(AppTestContext.NewProject(), AppTestContext.NewSecrets(), Plan(project));
         withoutStatistics.StatisticsDetails.ShouldBeEmpty();
         withoutStatistics.StatisticsProblem.ShouldBeNull();
     }
@@ -185,8 +217,12 @@ public sealed class MigrationAssistantTests
         ]);
 
         // A failure keeps the assistant on this step and explains it.
-        _context.Migrator.RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
-            .Returns(_ => Task.FromException<IReadOnlyList<UpdateVersion>>(new PipelineException("Uploading 1.0.0", new TransferException("quota"), [])), _ => Task.FromResult<IReadOnlyList<UpdateVersion>>([new UpdateVersion("1.0.0")]));
+        _context.Migrator.RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(
+                _ => Task.FromException<IReadOnlyList<UpdateVersion>>(new PipelineException("Uploading 1.0.0",
+                    new TransferException("quota"), [])),
+                _ => Task.FromResult<IReadOnlyList<UpdateVersion>>([new UpdateVersion("1.0.0")]));
         await assistant.ContinueCommand.ExecuteAsync(null);
         assistant.IsMigrateStep.ShouldBeTrue();
         assistant.ErrorMessage!.ShouldContain("quota");
@@ -199,7 +235,8 @@ public sealed class MigrationAssistantTests
         assistant.Steps.Take(4).ShouldAllBe(s => s.IsDone);
         assistant.BackCommand.CanExecute(null).ShouldBeFalse();
         assistant.ContinueText.ShouldBe("Done");
-        assistant.SideBySideIntroduction.ShouldStartWith("The migration is done. 1 package of updates.json is not in nupdate.json, so applications built with nUpdate 5 do not see it;");
+        assistant.SideBySideIntroduction.ShouldStartWith(
+            "The migration is done. 1 package of updates.json is not in nupdate.json, so applications built with nUpdate 5 do not see it;");
         assistant.CanReload.ShouldBeFalse();
         assistant.IsMigrating.ShouldBeFalse();
 
@@ -243,9 +280,14 @@ public sealed class MigrationAssistantTests
         var plan = Plan(project);
         var assistant = await AssistantAsync(project, secrets, plan);
         assistant.Step = MigrationViewModel.MigrateStep;
-        _context.Migrator.RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
-            .Returns(_ => Task.FromException<IReadOnlyList<UpdateVersion>>(new PipelineException("Uploading 1.0.0", new UntrustedServerException("unknown certificate", "fp", "CN=ftp"), [])), _ => Task.FromResult<IReadOnlyList<UpdateVersion>>([]));
-        _context.Dialogs.ConfirmAsync("Unknown certificate", Arg.Any<string>(), "Trust", Arg.Any<string>()).Returns(true);
+        _context.Migrator.RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(
+                _ => Task.FromException<IReadOnlyList<UpdateVersion>>(new PipelineException("Uploading 1.0.0",
+                    new UntrustedServerException("unknown certificate", "fp", "CN=ftp"), [])),
+                _ => Task.FromResult<IReadOnlyList<UpdateVersion>>([]));
+        _context.Dialogs.ConfirmAsync("Unknown certificate", Arg.Any<string>(), "Trust", Arg.Any<string>())
+            .Returns(true);
 
         await assistant.ContinueCommand.ExecuteAsync(null);
 
@@ -258,11 +300,13 @@ public sealed class MigrationAssistantTests
     {
         var project = AppTestContext.NewProject();
         var feed = new UpdateFeed { ProjectId = project.Id };
-        var assistant = await AssistantAsync(project, AppTestContext.NewSecrets(), Plan(project, feed, MigrationPackage.Migrated(Entry("1.0.0.0b3"))));
+        var assistant = await AssistantAsync(project, AppTestContext.NewSecrets(),
+            Plan(project, feed, MigrationPackage.Migrated(Entry("1.0.0.0b3"))));
 
         assistant.IsSideBySideStep.ShouldBeTrue();
         assistant.SelectionSummary.ShouldBe("Every package of updates.json is in nupdate.json already.");
-        assistant.SideBySideIntroduction.ShouldStartWith("Every package of updates.json is in nupdate.json. Follow these steps");
+        assistant.SideBySideIntroduction.ShouldStartWith(
+            "Every package of updates.json is in nupdate.json. Follow these steps");
         assistant.ClientSnippet.ShouldContain(project.FeedUri.ToString());
         // The build that moves the users over declares a version above every old package, never the installed one.
         assistant.VersionExample.ShouldContain("ApplicationVersion(\"1.1.0\")");
@@ -279,7 +323,8 @@ public sealed class MigrationAssistantTests
         await assistant.CopySnippetCommand.ExecuteAsync(null);
         await _context.Clipboard.Received().SetTextAsync(assistant.ClientSnippet);
 
-        var empty = await AssistantAsync(project, AppTestContext.NewSecrets(), new MigrationPlan(project.Id, false, feed, []));
+        var empty = await AssistantAsync(project, AppTestContext.NewSecrets(),
+            new MigrationPlan(project.Id, false, feed, []));
         empty.VersionExample.ShouldContain("ApplicationVersion(\"1.2.0\")");
         empty.VersionExample.ShouldNotContain("higher than");
         empty.BridgeRelease.ShouldContain("(1.2.0.0 for 1.2.0)");
@@ -293,25 +338,39 @@ public sealed class MigrationAssistantTests
         var assistant = await AssistantAsync(project, secrets, Plan(project));
         assistant.CheckStatus.ShouldBe("Not checked yet.");
         var uri = new Uri("https://updates.example.com/demo/packages/1.0.0/win.zip");
-        _context.FeedChecker.CheckAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(
-            new FeedCheckResult(null, [new PackageCheck(new UpdateVersion("1.0.0"), "win", uri, null)], true, null),
-            new FeedCheckResult("There is no nupdate.json.", [new PackageCheck(new UpdateVersion("1.1.0"), "win-x64", uri, "The SHA-512 hash does not match the feed.")], true, "no PATH_INFO"),
-            new FeedCheckResult(null, [], false, null));
+        _context.FeedChecker
+            .CheckAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(
+                new FeedCheckResult(null, [new PackageCheck(new UpdateVersion("1.0.0"), "win", uri, null)], true, null),
+                new FeedCheckResult("There is no nupdate.json.",
+                [
+                    new PackageCheck(new UpdateVersion("1.1.0"), "win-x64", uri,
+                        "The SHA-512 hash does not match the feed.")
+                ], true, "no PATH_INFO"),
+                new FeedCheckResult(null, [], false, null));
 
         await assistant.CheckFeedCommand.ExecuteAsync(null);
         assistant.CheckSucceeded.ShouldBe(true);
         assistant.CheckStatus.ShouldBe("An application built with nUpdate 5 can update from this server.");
-        assistant.CheckResults.ShouldBe(["✓ 1.0.0 (win): downloaded, size, hash, signature and manifest are fine.", "✓ nupdate-statistics.php answers."]);
+        assistant.CheckResults.ShouldBe([
+            "✓ 1.0.0 (win): downloaded, size, hash, signature and manifest are fine.",
+            "✓ nupdate-statistics.php answers."
+        ]);
 
         await assistant.CheckFeedCommand.ExecuteAsync(null);
         assistant.CheckSucceeded.ShouldBe(false);
         assistant.CheckStatus.ShouldContain("would run into the problems");
-        assistant.CheckResults.ShouldBe(["✗ There is no nupdate.json.", "✗ 1.1.0 (win-x64): The SHA-512 hash does not match the feed.", "✗ nupdate-statistics.php: no PATH_INFO"]);
+        assistant.CheckResults.ShouldBe([
+            "✗ There is no nupdate.json.", "✗ 1.1.0 (win-x64): The SHA-512 hash does not match the feed.",
+            "✗ nupdate-statistics.php: no PATH_INFO"
+        ]);
 
         await assistant.CheckFeedCommand.ExecuteAsync(null);
         assistant.CheckResults.ShouldBeEmpty();
 
-        _context.FeedChecker.CheckAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).ThrowsAsync(new InvalidOperationException("broken"));
+        _context.FeedChecker
+            .CheckAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new InvalidOperationException("broken"));
         await assistant.CheckFeedCommand.ExecuteAsync(null);
         assistant.CheckSucceeded.ShouldBe(false);
         assistant.CheckStatus.ShouldBe("broken");
@@ -322,8 +381,10 @@ public sealed class MigrationAssistantTests
     {
         var project = AppTestContext.NewProject();
         var secrets = AppTestContext.NewSecrets();
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
-            .Returns(_ => Task.FromException<MigrationPlan>(new HttpRequestException("offline")), _ => Task.FromResult(Plan(project)));
+        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromException<MigrationPlan>(new HttpRequestException("offline")),
+                _ => Task.FromResult(Plan(project)));
         var assistant = _context.Factory.Create<MigrationViewModel>(project, secrets);
         assistant.ServerState.ShouldBeEmpty();
         assistant.MigrationSummary.ShouldBeEmpty();
@@ -340,7 +401,8 @@ public sealed class MigrationAssistantTests
         assistant.IsPrepared.ShouldBeTrue();
         assistant.ErrorMessage.ShouldBeNull();
         await assistant.InitializeAsync(); // once read, the plan stays
-        await _context.Migrator.Received(2).PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>());
+        await _context.Migrator.Received(2).PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(),
+            Arg.Any<CancellationToken>());
 
         await assistant.ContinueCommand.ExecuteAsync(null);
         assistant.BackCommand.Execute(null);
@@ -350,12 +412,18 @@ public sealed class MigrationAssistantTests
 
         _context.Factory.Create<MigrationViewModel>(project, secrets).Dispose(); // nothing prepared, nothing to delete
         var c = _context;
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(null!, c.FeedChecker, c.Dialogs, c.Clipboard, project, secrets));
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(c.Migrator, null!, c.Dialogs, c.Clipboard, project, secrets));
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(c.Migrator, c.FeedChecker, null!, c.Clipboard, project, secrets));
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, null!, project, secrets));
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, c.Clipboard, null!, secrets));
-        Should.Throw<ArgumentNullException>(() => new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, c.Clipboard, project, null!));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(null!, c.FeedChecker, c.Dialogs, c.Clipboard, project, secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(c.Migrator, null!, c.Dialogs, c.Clipboard, project, secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(c.Migrator, c.FeedChecker, null!, c.Clipboard, project, secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, null!, project, secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, c.Clipboard, null!, secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new MigrationViewModel(c.Migrator, c.FeedChecker, c.Dialogs, c.Clipboard, project, null!));
     }
 
     [Fact]
@@ -364,8 +432,12 @@ public sealed class MigrationAssistantTests
         var project = AppTestContext.NewProject();
         var secrets = AppTestContext.NewSecrets();
         var cleaned = new List<string>();
-        MigrationPlan NewPlan(string name, params string[] unreadable) => new(project.Id, true, null, [Ready("1.0.0.0")], () => cleaned.Add(name), unreadable);
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+
+        MigrationPlan NewPlan(string name, params string[] unreadable) => new(project.Id, true, null,
+            [Ready("1.0.0.0")], () => cleaned.Add(name), unreadable);
+
+        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(),
+                Arg.Any<CancellationToken>())
             .Returns(NewPlan("first"), NewPlan("second", "garbage"));
         var assistant = _context.Factory.Create<MigrationViewModel>(project, secrets);
         await assistant.InitializeAsync();
@@ -376,11 +448,14 @@ public sealed class MigrationAssistantTests
 
         cleaned.ShouldBe(["first"]);
         assistant.Packages.Single().Include.ShouldBeTrue();
-        assistant.ServerState.ShouldContain("updates.json has entries whose version nUpdate 5 cannot read; they are left out: garbage.");
+        assistant.ServerState.ShouldContain(
+            "updates.json has entries whose version nUpdate 5 cannot read; they are left out: garbage.");
 
         // Closed while the server is read: the plan that comes in afterwards is deleted at once.
         var pending = new TaskCompletionSource<MigrationPlan>();
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(pending.Task);
+        _context.Migrator
+            .PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(pending.Task);
         var closing = _context.Factory.Create<MigrationViewModel>(project, secrets);
         var reading = closing.InitializeAsync();
         closing.Dispose();
@@ -389,7 +464,8 @@ public sealed class MigrationAssistantTests
         cleaned.ShouldBe(["first", "late"]);
         closing.IsPrepared.ShouldBeFalse();
         await closing.InitializeAsync();
-        await _context.Migrator.Received(3).PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>());
+        await _context.Migrator.Received(3).PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(),
+            Arg.Any<CancellationToken>());
     }
 
     [AvaloniaFact]
@@ -398,9 +474,13 @@ public sealed class MigrationAssistantTests
         var project = AppTestContext.NewProject();
         var secrets = AppTestContext.NewSecrets();
         var plan = Plan(project);
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(plan);
+        _context.Migrator
+            .PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(plan);
         var running = new TaskCompletionSource<IReadOnlyList<UpdateVersion>>();
-        _context.Migrator.RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(running.Task);
+        _context.Migrator
+            .RunAsync(project, secrets, plan, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(running.Task);
         var assistant = _context.Factory.Create<MigrationViewModel>(project, secrets);
         var window = new MigrationWindow { DataContext = assistant };
         window.Show();
@@ -426,7 +506,9 @@ public sealed class MigrationAssistantTests
     {
         var project = AppTestContext.NewProject(statistics: true);
         var secrets = AppTestContext.NewSecrets(statistics: true);
-        _context.Migrator.PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns(Plan(project));
+        _context.Migrator
+            .PrepareAsync(project, secrets, Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(Plan(project));
         var assistant = _context.Factory.Create<MigrationViewModel>(project, secrets);
         var window = new MigrationWindow { DataContext = assistant };
 
@@ -436,7 +518,11 @@ public sealed class MigrationAssistantTests
         assistant.IsPrepared.ShouldBeTrue();
         window.ServerStateList.ItemCount.ShouldBe(3);
         window.ReloadButton.IsVisible.ShouldBeTrue();
-        foreach (var step in new[] { MigrationViewModel.PackagesStep, MigrationViewModel.StatisticsStep, MigrationViewModel.MigrateStep, MigrationViewModel.SideBySideStep })
+        foreach (var step in new[]
+                 {
+                     MigrationViewModel.PackagesStep, MigrationViewModel.StatisticsStep, MigrationViewModel.MigrateStep,
+                     MigrationViewModel.SideBySideStep
+                 })
         {
             assistant.Step = step;
             window.UpdateLayout();
@@ -451,6 +537,7 @@ public sealed class MigrationAssistantTests
         var bare = new MigrationWindow();
         bare.Show();
         bare.Close();
-        new nUpdate.Administration.Views.Controls.WizardRail { Steps = assistant.Steps }.Steps.ShouldBe(assistant.Steps);
+        new nUpdate.Administration.Views.Controls.WizardRail { Steps = assistant.Steps }.Steps
+            .ShouldBe(assistant.Steps);
     }
 }

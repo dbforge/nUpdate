@@ -19,7 +19,8 @@ public sealed class UpdateProject
 
     /// <summary>Whether the text is an absolute http(s) URL, which is what clients can download updates from.</summary>
     public static bool IsValidUpdateUrl(string? url) =>
-        Uri.TryCreate(url?.Trim(), UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        Uri.TryCreate(url?.Trim(), UriKind.Absolute, out var uri) &&
+        (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
 
     /// <summary>The URL with a trailing slash, so relative paths resolve below it.</summary>
     public static string NormalizeUpdateUrl(string url)
@@ -105,7 +106,8 @@ public sealed class UpdateProject
     }
 
     /// <summary>The local package zip of a platform: <c>packages/&lt;version&gt;/&lt;platform&gt;/&lt;platform&gt;.zip</c>.</summary>
-    public string PackageFilePath(UpdateVersion version, string platform) => System.IO.Path.Combine(PlatformDirectory(version, platform), PackageLayout.PackageFileName(platform));
+    public string PackageFilePath(UpdateVersion version, string platform) =>
+        System.IO.Path.Combine(PlatformDirectory(version, platform), PackageLayout.PackageFileName(platform));
 
     public UpdatePackage? FindPackage(UpdateVersion version)
     {

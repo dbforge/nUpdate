@@ -27,7 +27,8 @@ public class DirectorySwapTests
     {
         _fileSystem.AddFile("/apps/App.app/Contents/old.txt", new MockFileData("old"));
 
-        Should.Throw<DirectoryNotFoundException>(() => new DirectorySwap(_fileSystem, atomic: false).Swap("/apps/App.app", "/apps/missing.new"));
+        Should.Throw<DirectoryNotFoundException>(() =>
+            new DirectorySwap(_fileSystem, atomic: false).Swap("/apps/App.app", "/apps/missing.new"));
 
         _fileSystem.File.ReadAllText("/apps/App.app/Contents/old.txt").ShouldBe("old");
         _fileSystem.Directory.Exists("/apps/App.app" + DirectorySwap.ParkedSuffix).ShouldBeFalse();
@@ -45,7 +46,8 @@ public class DirectorySwapTests
         new DirectorySwap(fileSystem, atomic: false).Swap("/apps/App.app", "/apps/App.app.new");
 
         directory.Received(1).Move("/apps/App.app", parked);
-        directory.Received(1).Move("/apps/App.app.new", "/apps/App.app"); // the new one is in place; the old one stays parked
+        directory.Received(1)
+            .Move("/apps/App.app.new", "/apps/App.app"); // the new one is in place; the old one stays parked
     }
 
     [Fact]

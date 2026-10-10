@@ -26,45 +26,45 @@ public class ProjectStoreTests
     }
 
     public static string LegacyProjectJson(bool saveCredentials, string keyPassword, string ivPassword) => $$"""
-        {
-          "ApplicationId": 7, "AssemblyVersionPath": "C:\\app\\app.exe", "ConfigVersion": "v3",
-          "FtpDirectory": "/updates", "FtpHost": "ftp.example.com", "FtpNetworkVersion": 0,
-          "FtpPassword": "{{LegacyAesCredentialDecryptor.Encrypt("ftp-pw", keyPassword, ivPassword)}}",
-          "FtpPort": 2121, "FtpProtocol": 1, "FtpTransferAssemblyFilePath": "", "FtpUsePassiveMode": false, "FtpUsername": "ftpuser",
-          "Guid": "12345678-1234-1234-1234-123456789abc",
-          "HttpAuthenticationCredentials": { "UserName": "web", "Password": "webpw", "Domain": "" },
-          "Log": [ { "Entry": 0, "EntryTime": "2020-01-02 03:04:05", "PackageVersion": "1.0.0.0", "Project": null, "Username": "DOM\\user" },
-                   { "Entry": "Upload", "EntryTime": "garbage", "PackageVersion": null, "Username": "u2" } ],
-          "Name": "Legacy", "Packages": [ { "Version": "1.0.0.0", "Description": "first", "IsReleased": true, "LocalPackagePath": "x" }, { "Version": "1.1.0.0b2", "IsReleased": false } ],
-          "Path": "C:\\projects\\Legacy.nupdproj",
-          "PrivateKey": "{{XmlKeys.PrivateXml}}",
-          "Proxy": { "Address": "http://proxy:8080", "BypassList": [], "BypassProxyOnLocal": false, "UseDefaultCredentials": false },
-          "ProxyPassword": "{{LegacyAesCredentialDecryptor.Encrypt("proxy-pw", keyPassword, ivPassword)}}", "ProxyUsername": "proxyuser",
-          "PublicKey": "{{XmlKeys.PublicXml}}",
-          "SaveCredentials": {{(saveCredentials ? "true" : "false")}},
-          "SqlDatabaseName": "stats", "SqlPassword": "{{LegacyAesCredentialDecryptor.Encrypt("sql-pw", keyPassword, ivPassword)}}",
-          "SqlUsername": "sqluser", "SqlWebUrl": "db.example.com", "UpdateUrl": "https://updates.example.com/legacy", "UseStatistics": true
-        }
-        """;
+          {
+            "ApplicationId": 7, "AssemblyVersionPath": "C:\\app\\app.exe", "ConfigVersion": "v3",
+            "FtpDirectory": "/updates", "FtpHost": "ftp.example.com", "FtpNetworkVersion": 0,
+            "FtpPassword": "{{LegacyAesCredentialDecryptor.Encrypt("ftp-pw", keyPassword, ivPassword)}}",
+            "FtpPort": 2121, "FtpProtocol": 1, "FtpTransferAssemblyFilePath": "", "FtpUsePassiveMode": false, "FtpUsername": "ftpuser",
+            "Guid": "12345678-1234-1234-1234-123456789abc",
+            "HttpAuthenticationCredentials": { "UserName": "web", "Password": "webpw", "Domain": "" },
+            "Log": [ { "Entry": 0, "EntryTime": "2020-01-02 03:04:05", "PackageVersion": "1.0.0.0", "Project": null, "Username": "DOM\\user" },
+                     { "Entry": "Upload", "EntryTime": "garbage", "PackageVersion": null, "Username": "u2" } ],
+            "Name": "Legacy", "Packages": [ { "Version": "1.0.0.0", "Description": "first", "IsReleased": true, "LocalPackagePath": "x" }, { "Version": "1.1.0.0b2", "IsReleased": false } ],
+            "Path": "C:\\projects\\Legacy.nupdproj",
+            "PrivateKey": "{{XmlKeys.PrivateXml}}",
+            "Proxy": { "Address": "http://proxy:8080", "BypassList": [], "BypassProxyOnLocal": false, "UseDefaultCredentials": false },
+            "ProxyPassword": "{{LegacyAesCredentialDecryptor.Encrypt("proxy-pw", keyPassword, ivPassword)}}", "ProxyUsername": "proxyuser",
+            "PublicKey": "{{XmlKeys.PublicXml}}",
+            "SaveCredentials": {{(saveCredentials ? "true" : "false")}},
+            "SqlDatabaseName": "stats", "SqlPassword": "{{LegacyAesCredentialDecryptor.Encrypt("sql-pw", keyPassword, ivPassword)}}",
+            "SqlUsername": "sqluser", "SqlWebUrl": "db.example.com", "UpdateUrl": "https://updates.example.com/legacy", "UseStatistics": true
+          }
+          """;
 
     private string V5ProjectJson(bool saveCredentials) => $$"""
-        {
-          "ConfigVersion": "v5", "Id": "12345678-1234-1234-1234-123456789abc", "Name": "Five", "UpdateUrl": "https://updates.example.com/five/",
-          "AssemblyVersionPath": null,
-          "Transfer": { "Protocol": 3, "Host": "sftp.example.com", "Port": 2222, "Directory": "/five", "Username": "deploy",
-                        "ProtectedPassword": "{{_context.Protector.Protect("sftp-pw")}}", "UsePassiveMode": true, "TrustedCertificateFingerprint": null,
-                        "SftpPrivateKeyPath": "/keys/id", "ProtectedSftpKeyPassphrase": "{{_context.Protector.Protect("phrase")}}", "TrustedHostKeyFingerprint": "ab:cd",
-                        "PluginAssemblyPath": null, "Proxy": { "Address": "http://proxy", "Username": "pu", "ProtectedPassword": "{{_context.Protector.Protect("proxy-pw")}}" } },
-          "HttpAuthentication": { "Username": "web", "ProtectedPassword": "{{_context.Protector.Protect("web-pw")}}" },
-          "Statistics": { "Enabled": true, "EndpointUrl": "https://updates.example.com/five/statistics.php", "ProtectedAdminSecret": "{{_context.Protector.Protect("admin")}}",
-                          "Database": { "Host": "db", "Name": "stats", "Username": "dbu", "ProtectedPassword": "{{_context.Protector.Protect("db-pw")}}" } },
-          "ProtectedPrivateKey": "{{_context.Protector.Protect(XmlKeys.PrivateXml)}}",
-          "PublicKey": "{{XmlKeys.PublicXml}}",
-          "SaveCredentials": {{(saveCredentials ? "true" : "false")}},
-          "Packages": [ { "LiteralVersion": "1.0.0.0", "Description": "first", "IsReleased": true, "Created": "2026-01-02T03:04:05+00:00" }, { "LiteralVersion": "", "IsReleased": false } ],
-          "Log": [ { "Kind": "Upload", "Time": "2026-01-02T03:04:05+00:00", "PackageVersion": "1.0.0.0", "Username": "u" }, { "Kind": 3, "Time": "x", "PackageVersion": null, "Username": "u" } ]
-        }
-        """;
+                                                            {
+                                                              "ConfigVersion": "v5", "Id": "12345678-1234-1234-1234-123456789abc", "Name": "Five", "UpdateUrl": "https://updates.example.com/five/",
+                                                              "AssemblyVersionPath": null,
+                                                              "Transfer": { "Protocol": 3, "Host": "sftp.example.com", "Port": 2222, "Directory": "/five", "Username": "deploy",
+                                                                            "ProtectedPassword": "{{_context.Protector.Protect("sftp-pw")}}", "UsePassiveMode": true, "TrustedCertificateFingerprint": null,
+                                                                            "SftpPrivateKeyPath": "/keys/id", "ProtectedSftpKeyPassphrase": "{{_context.Protector.Protect("phrase")}}", "TrustedHostKeyFingerprint": "ab:cd",
+                                                                            "PluginAssemblyPath": null, "Proxy": { "Address": "http://proxy", "Username": "pu", "ProtectedPassword": "{{_context.Protector.Protect("proxy-pw")}}" } },
+                                                              "HttpAuthentication": { "Username": "web", "ProtectedPassword": "{{_context.Protector.Protect("web-pw")}}" },
+                                                              "Statistics": { "Enabled": true, "EndpointUrl": "https://updates.example.com/five/statistics.php", "ProtectedAdminSecret": "{{_context.Protector.Protect("admin")}}",
+                                                                              "Database": { "Host": "db", "Name": "stats", "Username": "dbu", "ProtectedPassword": "{{_context.Protector.Protect("db-pw")}}" } },
+                                                              "ProtectedPrivateKey": "{{_context.Protector.Protect(XmlKeys.PrivateXml)}}",
+                                                              "PublicKey": "{{XmlKeys.PublicXml}}",
+                                                              "SaveCredentials": {{(saveCredentials ? "true" : "false")}},
+                                                              "Packages": [ { "LiteralVersion": "1.0.0.0", "Description": "first", "IsReleased": true, "Created": "2026-01-02T03:04:05+00:00" }, { "LiteralVersion": "", "IsReleased": false } ],
+                                                              "Log": [ { "Kind": "Upload", "Time": "2026-01-02T03:04:05+00:00", "PackageVersion": "1.0.0.0", "Username": "u" }, { "Kind": 3, "Time": "x", "PackageVersion": null, "Username": "u" } ]
+                                                            }
+                                                            """;
 
     [Fact]
     public async Task List_IsEmptyWithoutFile_AndSaveRegisters()
@@ -78,7 +78,8 @@ public class ProjectStoreTests
         entries.Single().Id.ShouldBe(project.Id);
         entries.Single().Path.ShouldBe(project.Path);
         _context.FileSystem.File.Exists(project.Path).ShouldBeTrue();
-        _context.FileSystem.File.ReadAllText(project.Path).ShouldStartWith("{" + Environment.NewLine + "  \"format\": 6,");
+        _context.FileSystem.File.ReadAllText(project.Path)
+            .ShouldStartWith("{" + Environment.NewLine + "  \"format\": 6,");
 
         var loaded = await _context.Store.LoadAsync(project.Path);
         loaded.Migrated.ShouldBeFalse();
@@ -127,22 +128,29 @@ public class ProjectStoreTests
     }
 
     [Theory]
-    [InlineData("https://stats.example.com/api.php", "https://updates.example.com/five/", "https://stats.example.com/api.php")]
-    [InlineData("https://updates.example.com/five/statistics.php", "not a url", "https://updates.example.com/five/statistics.php")]
+    [InlineData("https://stats.example.com/api.php", "https://updates.example.com/five/",
+        "https://stats.example.com/api.php")]
+    [InlineData("https://updates.example.com/five/statistics.php", "not a url",
+        "https://updates.example.com/five/statistics.php")]
     [InlineData("  ", "https://updates.example.com/five/", null)]
-    public async Task Load_KeepsACustomStatisticsEndpointOfA50PreRelease(string endpoint, string updateUrl, string? expected)
+    public async Task Load_KeepsACustomStatisticsEndpointOfA50PreRelease(string endpoint, string updateUrl,
+        string? expected)
     {
         var json = V5ProjectJson(true)
-            .Replace("\"EndpointUrl\": \"https://updates.example.com/five/statistics.php\"", $"\"EndpointUrl\": \"{endpoint}\"", StringComparison.Ordinal)
-            .Replace("\"UpdateUrl\": \"https://updates.example.com/five/\"", $"\"UpdateUrl\": \"{updateUrl}\"", StringComparison.Ordinal);
+            .Replace("\"EndpointUrl\": \"https://updates.example.com/five/statistics.php\"",
+                $"\"EndpointUrl\": \"{endpoint}\"", StringComparison.Ordinal)
+            .Replace("\"UpdateUrl\": \"https://updates.example.com/five/\"", $"\"UpdateUrl\": \"{updateUrl}\"",
+                StringComparison.Ordinal);
         _context.FileSystem.AddFile("/old/Custom/Custom.nupdproj", new MockFileData(json));
-        (await _context.Store.LoadAsync("/old/Custom/Custom.nupdproj")).Project.Statistics.EndpointUrl.ShouldBe(expected);
+        (await _context.Store.LoadAsync("/old/Custom/Custom.nupdproj")).Project.Statistics.EndpointUrl
+            .ShouldBe(expected);
     }
 
     [Fact]
     public async Task List_TakesOverTheProjectListOfAdministration4WithoutChangingIt()
     {
-        const string legacyList = """[{"Name":"Old","Path":"/old/Old.nupdproj"},{"Name":"Pathless"},{"Name":null,"Path":"/old/Nameless.nupdproj"},"junk"]""";
+        const string legacyList =
+            """[{"Name":"Old","Path":"/old/Old.nupdproj"},{"Name":"Pathless"},{"Name":null,"Path":"/old/Nameless.nupdproj"},"junk"]""";
         _context.FileSystem.AddFile(_context.Paths.LegacyProjectsConfigFile, new MockFileData(legacyList));
 
         var entries = await _context.Store.ListAsync();
@@ -157,7 +165,8 @@ public class ProjectStoreTests
         (await _context.Store.ListAsync()).Select(e => e.Name).ShouldBe(["Old"]);
 
         // From then on only this version's list counts, so projects added in nUpdate Administration 4 later are not picked up.
-        _context.FileSystem.File.WriteAllText(_context.Paths.LegacyProjectsConfigFile, """[{"Name":"Later","Path":"/old/Later.nupdproj"}]""");
+        _context.FileSystem.File.WriteAllText(_context.Paths.LegacyProjectsConfigFile,
+            """[{"Name":"Later","Path":"/old/Later.nupdproj"}]""");
         (await _context.Store.ListAsync()).Select(e => e.Name).ShouldBe(["Old"]);
         _context.FileSystem.File.WriteAllText(_context.Paths.ProjectsConfigFile, """{"format":1,"projects":null}""");
         (await _context.Store.ListAsync()).ShouldBeEmpty();
@@ -219,7 +228,9 @@ public class ProjectStoreTests
     [Fact]
     public async Task Load_MigratesV3WithSavedCredentials()
     {
-        _context.FileSystem.AddFile("/old/Legacy.nupdproj", new MockFileData(LegacyProjectJson(true, LegacyAesCredentialDecryptor.BuiltInKeyPassword, LegacyAesCredentialDecryptor.BuiltInIvPassword)));
+        _context.FileSystem.AddFile("/old/Legacy.nupdproj",
+            new MockFileData(LegacyProjectJson(true, LegacyAesCredentialDecryptor.BuiltInKeyPassword,
+                LegacyAesCredentialDecryptor.BuiltInIvPassword)));
 
         var result = await _context.Store.LoadAsync("/old/Legacy.nupdproj");
 
@@ -277,7 +288,8 @@ public class ProjectStoreTests
     [Fact]
     public async Task Load_MigratesV3WithMasterPassword()
     {
-        _context.FileSystem.AddFile("/old/Legacy.nupdproj", new MockFileData(LegacyProjectJson(false, "master", "ftpuser")));
+        _context.FileSystem.AddFile("/old/Legacy.nupdproj",
+            new MockFileData(LegacyProjectJson(false, "master", "ftpuser")));
 
         var withoutPassword = await _context.Store.LoadAsync("/old/Legacy.nupdproj");
         withoutPassword.Secrets.TransferPassword.ShouldBeNull();
@@ -338,7 +350,8 @@ public class ProjectStoreTests
     [Fact]
     public async Task Load_ReportsV5SecretsOfAnotherMachineAndSparseFiles()
     {
-        var foreign = V5ProjectJson(true).Replace(_context.Protector.Protect("sftp-pw"), "foreign", StringComparison.Ordinal);
+        var foreign = V5ProjectJson(true)
+            .Replace(_context.Protector.Protect("sftp-pw"), "foreign", StringComparison.Ordinal);
         _context.FileSystem.AddFile("/old/Five.nupdproj", new MockFileData(V5ProjectJson(true)));
         var json = JObject.Parse(_context.FileSystem.File.ReadAllText("/old/Five.nupdproj"));
         json["Transfer"]!["ProtectedPassword"] = "foreign";
@@ -349,7 +362,8 @@ public class ProjectStoreTests
         result.Secrets.PrivateKey.ShouldBe(TestKeys.PrivateKey);
         foreign.ShouldNotBeNull();
 
-        _context.FileSystem.AddFile("/old/Sparse.nupdproj", new MockFileData("""{"ConfigVersion":"v5","SaveCredentials":false}"""));
+        _context.FileSystem.AddFile("/old/Sparse.nupdproj",
+            new MockFileData("""{"ConfigVersion":"v5","SaveCredentials":false}"""));
         var sparse = await _context.Store.LoadAsync("/old/Sparse.nupdproj");
         sparse.SecretsState.ShouldBe(SecretsState.NotSaved);
         sparse.Project.Id.ShouldNotBe(Guid.Empty);
@@ -361,7 +375,9 @@ public class ProjectStoreTests
         sparse.Secrets.PrivateKey.ShouldBeNull();
         sparse.Project.UpdateUrl.ShouldBe("");
 
-        _context.FileSystem.AddFile("/old/Pem.nupdproj", new MockFileData("""{"ConfigVersion":"v5","Name":null,"PublicKey":"-----BEGIN PUBLIC KEY-----\nAAAA\n-----END PUBLIC KEY-----","Transfer":{"Protocol":"Ftp","Host":null,"Proxy":{"Address":null}},"HttpAuthentication":{"Username":null},"Statistics":{"Database":{"Name":null}},"Packages":[{"LiteralVersion":"1.0","Description":null}],"Log":[{"Username":null}]}"""));
+        _context.FileSystem.AddFile("/old/Pem.nupdproj",
+            new MockFileData(
+                """{"ConfigVersion":"v5","Name":null,"PublicKey":"-----BEGIN PUBLIC KEY-----\nAAAA\n-----END PUBLIC KEY-----","Transfer":{"Protocol":"Ftp","Host":null,"Proxy":{"Address":null}},"HttpAuthentication":{"Username":null},"Statistics":{"Database":{"Name":null}},"Packages":[{"LiteralVersion":"1.0","Description":null}],"Log":[{"Username":null}]}"""));
         var pem = await _context.Store.LoadAsync("/old/Pem.nupdproj");
         pem.Project.PublicKey.ShouldStartWith("-----BEGIN PUBLIC KEY-----");
         pem.Project.Transfer.Protocol.ShouldBe(TransferProtocol.Ftp);
@@ -382,7 +398,9 @@ public class ProjectStoreTests
         _context.FileSystem.AddFile("/p/future.nupdproj", new MockFileData("""{"ConfigVersion":"v9"}"""));
         _context.FileSystem.AddFile("/p/format9.nupdproj", new MockFileData("""{"format":9}"""));
         _context.FileSystem.AddFile("/p/formatx.nupdproj", new MockFileData("""{"format":"six"}"""));
-        _context.FileSystem.AddFile("/p/nulls.nupdproj", new MockFileData("""{"format":6,"transfer":null,"statistics":null,"packages":null,"log":null,"secrets":null}"""));
+        _context.FileSystem.AddFile("/p/nulls.nupdproj",
+            new MockFileData(
+                """{"format":6,"transfer":null,"statistics":null,"packages":null,"log":null,"secrets":null}"""));
         await Should.ThrowAsync<InvalidDataException>(() => _context.Store.LoadAsync("/p/broken.nupdproj"));
         await Should.ThrowAsync<UnsupportedFormatException>(() => _context.Store.LoadAsync("/p/future.nupdproj"));
         await Should.ThrowAsync<UnsupportedFormatException>(() => _context.Store.LoadAsync("/p/format9.nupdproj"));
@@ -395,8 +413,10 @@ public class ProjectStoreTests
         Should.Throw<ArgumentNullException>(() => new ProjectStore(null!, _context.Paths, _context.Protector));
         Should.Throw<ArgumentNullException>(() => new ProjectStore(_context.FileSystem, null!, _context.Protector));
         Should.Throw<ArgumentNullException>(() => new ProjectStore(_context.FileSystem, _context.Paths, null!));
-        Should.Throw<ArgumentNullException>(() => new ProjectLoadResult(null!, new ProjectSecrets(), false, SecretsState.Loaded));
-        Should.Throw<ArgumentNullException>(() => new ProjectLoadResult(new UpdateProject(), null!, false, SecretsState.Loaded));
+        Should.Throw<ArgumentNullException>(() =>
+            new ProjectLoadResult(null!, new ProjectSecrets(), false, SecretsState.Loaded));
+        Should.Throw<ArgumentNullException>(() =>
+            new ProjectLoadResult(new UpdateProject(), null!, false, SecretsState.Loaded));
     }
 
     [Theory]
@@ -405,7 +425,9 @@ public class ProjectStoreTests
     [InlineData("v3")]
     public async Task Load_MigratesEveryShippedFormatVersion(string configVersion)
     {
-        var json = LegacyProjectJson(true, LegacyAesCredentialDecryptor.BuiltInKeyPassword, LegacyAesCredentialDecryptor.BuiltInIvPassword).Replace("\"ConfigVersion\": \"v3\"", $"\"ConfigVersion\": \"{configVersion}\"");
+        var json = LegacyProjectJson(true, LegacyAesCredentialDecryptor.BuiltInKeyPassword,
+                LegacyAesCredentialDecryptor.BuiltInIvPassword)
+            .Replace("\"ConfigVersion\": \"v3\"", $"\"ConfigVersion\": \"{configVersion}\"");
         _context.FileSystem.AddFile("/old/Legacy.nupdproj", new MockFileData(json));
         var result = await _context.Store.LoadAsync("/old/Legacy.nupdproj");
         result.Migrated.ShouldBeTrue();
@@ -418,22 +440,23 @@ public class ProjectStoreTests
     {
         // Before 1.0 Beta 2 there was no ConfigVersion and package versions were objects whose stage counted 0 = Release, 1 = Beta, 2 = Alpha.
         const string json = """
-            {"Name":"Ancient","Guid":"12345678-1234-1234-1234-123456789abc","UpdateUrl":"https://updates.example.com/ancient/","FtpHost":"h","FtpUsername":"u","FtpProtocol":0,"SaveCredentials":true,
-             "PublicKey":"pk","NewestPackage":"1.1.0.0",
-             "Packages":[
-               {"Version":{"Major":1,"Minor":0,"Build":0,"Revision":0,"DevelopmentalStage":0,"DevelopmentBuild":0},"Description":"first","IsReleased":true},
-               {"Version":{"Major":1,"Minor":1,"Build":0,"Revision":0,"DevelopmentalStage":1,"DevelopmentBuild":2},"IsReleased":false},
-               {"Version":{"Major":1,"Minor":2},"DevelopmentalStage":2},
-               {"Version":{"Major":1,"Minor":3,"DevelopmentalStage":2,"DevelopmentBuild":1}},
-               {"Version":7}],
-             "Log":[{"Entry":0,"EntryTime":"2015-01-02 03:04:05","PackageVersion":"1.0.0.0"}]}
-            """;
+                            {"Name":"Ancient","Guid":"12345678-1234-1234-1234-123456789abc","UpdateUrl":"https://updates.example.com/ancient/","FtpHost":"h","FtpUsername":"u","FtpProtocol":0,"SaveCredentials":true,
+                             "PublicKey":"pk","NewestPackage":"1.1.0.0",
+                             "Packages":[
+                               {"Version":{"Major":1,"Minor":0,"Build":0,"Revision":0,"DevelopmentalStage":0,"DevelopmentBuild":0},"Description":"first","IsReleased":true},
+                               {"Version":{"Major":1,"Minor":1,"Build":0,"Revision":0,"DevelopmentalStage":1,"DevelopmentBuild":2},"IsReleased":false},
+                               {"Version":{"Major":1,"Minor":2},"DevelopmentalStage":2},
+                               {"Version":{"Major":1,"Minor":3,"DevelopmentalStage":2,"DevelopmentBuild":1}},
+                               {"Version":7}],
+                             "Log":[{"Entry":0,"EntryTime":"2015-01-02 03:04:05","PackageVersion":"1.0.0.0"}]}
+                            """;
         _context.FileSystem.AddFile("/old/Ancient.nupdproj", new MockFileData(json));
 
         var result = await _context.Store.LoadAsync("/old/Ancient.nupdproj");
 
         result.Migrated.ShouldBeTrue();
-        result.Project.Packages.Select(p => p.Version.ToString()).ShouldBe(["1.0.0", "1.1.0-beta.2", "1.2.0", "1.3.0-alpha.1"]);
+        result.Project.Packages.Select(p => p.Version.ToString())
+            .ShouldBe(["1.0.0", "1.1.0-beta.2", "1.2.0", "1.3.0-alpha.1"]);
         result.Project.Log.Single().User.ShouldBe("");
         ProjectMigrator.IsV3(null).ShouldBeTrue();
         ProjectMigrator.IsV3("V3").ShouldBeTrue();
@@ -446,6 +469,7 @@ public class ProjectStoreTests
     public async Task Load_RejectsTheUnreleased2017Format()
     {
         _context.FileSystem.AddFile("/old/four.nupdproj", new MockFileData("""{"ConfigVersion":"4","Name":"Four"}"""));
-        (await Should.ThrowAsync<UnsupportedFormatException>(() => _context.Store.LoadAsync("/old/four.nupdproj"))).Message.ShouldContain("\"4\"");
+        (await Should.ThrowAsync<UnsupportedFormatException>(() => _context.Store.LoadAsync("/old/four.nupdproj")))
+            .Message.ShouldContain("\"4\"");
     }
 }

@@ -10,12 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all"/>
   </ItemGroup>
 
   <!-- PolySharp back-fills the C# language support types the older frameworks lack. -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="PolySharp" PrivateAssets="all" />
+    <PackageReference Include="PolySharp" PrivateAssets="all"/>
   </ItemGroup>
 
 </Project>

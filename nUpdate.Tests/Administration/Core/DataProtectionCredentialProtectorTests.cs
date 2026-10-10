@@ -13,7 +13,8 @@ public class DataProtectionCredentialProtectorTests
         var protectedText = protector.Protect("secret");
         protectedText.ShouldNotBe("secret");
         protector.Unprotect(protectedText).ShouldBe("secret");
-        Should.Throw<CryptographicException>(() => new DataProtectionCredentialProtector(new EphemeralDataProtectionProvider()).Unprotect(protectedText));
+        Should.Throw<CryptographicException>(() =>
+            new DataProtectionCredentialProtector(new EphemeralDataProtectionProvider()).Unprotect(protectedText));
         Should.Throw<ArgumentNullException>(() => protector.Protect(null!));
         Should.Throw<ArgumentNullException>(() => protector.Unprotect(null!));
         Should.Throw<ArgumentNullException>(() => new DataProtectionCredentialProtector(null!));

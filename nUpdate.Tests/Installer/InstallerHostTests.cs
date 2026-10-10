@@ -69,6 +69,7 @@ public class InstallerHostTests
     public void Run_StaysWindowlessWhenAskedOrWithoutDisplay()
     {
         var created = 0;
+
         IProgressReporter Window(InstallerSession _)
         {
             created++;
@@ -85,7 +86,8 @@ public class InstallerHostTests
     [Fact]
     public void Run_FallsBackWhenTheWindowCannotBeCreatedOrOpened()
     {
-        InstallerHost.Run([Prepare()], _ => throw new InvalidOperationException("no theme"), _services.Services).ShouldBe(InstallerHost.Succeeded);
+        InstallerHost.Run([Prepare()], _ => throw new InvalidOperationException("no theme"), _services.Services)
+            .ShouldBe(InstallerHost.Succeeded);
 
         var window = Substitute.For<IProgressReporter>();
         window.When(w => w.Initialize()).Do(_ => throw new InvalidOperationException("XOpenDisplay failed"));
@@ -97,10 +99,12 @@ public class InstallerHostTests
     public void Run_ReportsAFailedUpdate()
     {
         var package = _services.AddPackage("1.1.0", new Dictionary<string, string> { ["Program/app.dll"] = "new" });
-        var options = _services.Options(package, _services.FileSystem.Path.Combine(_services.PackagesDirectory, "missing.zip"));
+        var options = _services.Options(package,
+            _services.FileSystem.Path.Combine(_services.PackagesDirectory, "missing.zip"));
         var window = new RecordingReporter();
 
-        InstallerHost.Run([_services.WriteOptions(options)], _ => window, _services.Services).ShouldBe(InstallerHost.Failed);
+        InstallerHost.Run([_services.WriteOptions(options)], _ => window, _services.Services)
+            .ShouldBe(InstallerHost.Failed);
 
         window.Failures.ShouldHaveSingleItem().ShouldBeOfType<FileNotFoundException>();
     }
@@ -149,11 +153,13 @@ public class InstallerHostTests
         fs.File.ReadAllText(LogPath).ShouldContain("Error while initializing the installer.");
         fs.File.ReadAllText(LogPath).ShouldContain("FileNotFoundException");
 
-        InstallerHost.Run([fs.Path.Combine(_services.Root("nowhere"), "options.json")], Window, _services.Services).ShouldBe(InstallerHost.CouldNotStart);
+        InstallerHost.Run([fs.Path.Combine(_services.Root("nowhere"), "options.json")], Window, _services.Services)
+            .ShouldBe(InstallerHost.CouldNotStart);
         fs.File.Exists(fs.Path.Combine(_services.Root("nowhere"), InstallerHost.LogFileName)).ShouldBeFalse();
 
         fs.AddFile(fs.Path.Combine(_services.PackagesDirectory, "broken.json"), new MockFileData("{"));
-        InstallerHost.Run([fs.Path.Combine(_services.PackagesDirectory, "broken.json")], Window, _services.Services).ShouldBe(InstallerHost.CouldNotStart);
+        InstallerHost.Run([fs.Path.Combine(_services.PackagesDirectory, "broken.json")], Window, _services.Services)
+            .ShouldBe(InstallerHost.CouldNotStart);
         _services.EventLog.Received().WriteError(Arg.Is<string>(m => m.Contains("not valid JSON")));
 
         Should.Throw<ArgumentNullException>(() => InstallerHost.Run(null!, Window, _services.Services));
@@ -168,7 +174,8 @@ public class InstallerHostTests
         {
             var missing = Path.Combine(folder, "missing.json");
             // A window that cannot be created leaves the windowless reporter, whether or not this machine has a display.
-            InstallerHost.Run([missing], _ => throw new InvalidOperationException("no window")).ShouldBe(InstallerHost.CouldNotStart);
+            InstallerHost.Run([missing], _ => throw new InvalidOperationException("no window"))
+                .ShouldBe(InstallerHost.CouldNotStart);
             File.ReadAllText(Path.Combine(folder, InstallerHost.LogFileName)).ShouldContain("does not exist");
         }
         finally

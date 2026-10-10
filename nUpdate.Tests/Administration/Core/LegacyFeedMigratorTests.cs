@@ -8,7 +8,6 @@ using nUpdate.Administration.Core.Publishing;
 using nUpdate.Administration.Core.Statistics;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Operations;
-using nUpdate.Packaging;
 using nUpdate.Tests.Administration.Support;
 using nUpdate.Tests.Support;
 using nUpdate.Updating;
@@ -35,7 +34,8 @@ public class LegacyFeedMigratorTests
     }
 
     /// <summary>Prepares the migration and runs it with every ready package, as the assistant does when the user keeps the selection.</summary>
-    private async Task<IReadOnlyList<UpdateVersion>> MigrateAsync(UpdateProject project, ProjectSecrets secrets, IProgress<PipelineProgress>? progress = null)
+    private async Task<IReadOnlyList<UpdateVersion>> MigrateAsync(UpdateProject project, ProjectSecrets secrets,
+        IProgress<PipelineProgress>? progress = null)
     {
         using var plan = await _context.Migrator.PrepareAsync(project, secrets);
         return await _context.Migrator.RunAsync(project, secrets, plan, progress);
@@ -74,15 +74,19 @@ public class LegacyFeedMigratorTests
     {
         var project = _context.NewProject(statistics: true);
         var secrets = AdminTestContext.NewSecrets(statistics: true);
-        project.Packages.Add(new UpdatePackage { Version = new UpdateVersion("1.0.0"), Released = true, Description = "first" });
-        var firstZip = LegacyZip(true, ("Program/app.exe", "v1"), ("Program/sub/lib.dll", "l"), ("operations.json.bak", "x"));
+        project.Packages.Add(new UpdatePackage
+        { Version = new UpdateVersion("1.0.0"), Released = true, Description = "first" });
+        var firstZip = LegacyZip(true, ("Program/app.exe", "v1"), ("Program/sub/lib.dll", "l"),
+            ("operations.json.bak", "x"));
         var secondZip = LegacyZip(false, ("AppData/settings.json", "{}"));
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(firstZip), Sign(secondZip)));
         _context.ServeFeed(null);
         // 1.0.0.0 is available locally in the layout of the 5.0 pre-releases; 1.1.0.0b2 has to be downloaded.
         var legacyFolder = _context.FileSystem.Path.Combine(project.Folder, "1.0.0.0");
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"), new MockFileData(firstZip));
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", secondZip);
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"),
+            new MockFileData(firstZip));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            secondZip);
         var progress = new List<PipelineProgress>();
 
         var migrated = await MigrateAsync(project, secrets, new SyncProgress<PipelineProgress>(progress));
@@ -95,19 +99,25 @@ public class LegacyFeedMigratorTests
         // The old copy stays for nUpdate Administration 4, which may keep publishing to updates.json for a while.
         _context.FileSystem.Directory.Exists(legacyFolder).ShouldBeTrue();
 
-        var content = await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(first, "win"));
+        var content =
+            await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(first, "win"));
         content.Entries.Select(e => e.RelativePath).ShouldBe(["app.exe", "sub/lib.dll"]);
         content.Manifest!.ProjectId.ShouldBe(project.Id);
         content.Manifest.Version.ShouldBe(first);
         content.Manifest.CreatedAt.ShouldBe(AdminTestContext.Now);
         content.Manifest.Platform.ShouldBe("win");
         content.Manifest.Operations.Count.ShouldBe(10); // the C# script is left out
-        using (var archive = new ZipArchive(new MemoryStream(_context.FileSystem.File.ReadAllBytes(project.PackageFilePath(first, "win")))))
+        using (var archive =
+               new ZipArchive(
+                   new MemoryStream(_context.FileSystem.File.ReadAllBytes(project.PackageFilePath(first, "win")))))
             archive.Entries.Select(e => e.FullName).ShouldNotContain("operations.json");
-        var secondContent = await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(second, "win-x64"));
+        var secondContent =
+            await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(second, "win-x64"));
         secondContent.Manifest!.Operations.Single().ShouldBeOfType<TerminateProcessOperation>();
         secondContent.Manifest.Platform.ShouldBe("win-x64");
-        _context.FileSystem.File.Exists(_context.FileSystem.Path.Combine(project.PlatformDirectory(second, "win-x64"), "manifest.json")).ShouldBeTrue();
+        _context.FileSystem.File
+            .Exists(_context.FileSystem.Path.Combine(project.PlatformDirectory(second, "win-x64"), "manifest.json"))
+            .ShouldBeTrue();
 
         var entry = (await _context.Feeds.LoadEntryAsync(project, second))!;
         var file = entry.Files.Single();
@@ -115,7 +125,8 @@ public class LegacyFeedMigratorTests
         file.Path.ShouldBe("packages/1.1.0-beta.2/win-x64.zip");
         file.Size.ShouldBe(_context.FileSystem.FileInfo.New(project.PackageFilePath(second, "win-x64")).Length);
         file.Sha512.ShouldBe(_context.Signer.Hash(project.PackageFilePath(second, "win-x64")));
-        _context.Signer.Verify(project.PackageFilePath(second, "win-x64"), TestKeys.PublicKey, file.Signature.Value).ShouldBeTrue();
+        _context.Signer.Verify(project.PackageFilePath(second, "win-x64"), TestKeys.PublicKey, file.Signature.Value)
+            .ShouldBeTrue();
         file.Touches.ShouldBe([OperationArea.Processes]);
         entry.Necessary.ShouldBeTrue();
         entry.Rollout.Conditions.Single().Key.ShouldBe("R");
@@ -125,22 +136,34 @@ public class LegacyFeedMigratorTests
         entry.Statistics.Url.ShouldBe("nupdate-statistics.php");
         (await _context.Feeds.LoadEntryAsync(project, first))!.Statistics!.Enabled.ShouldBeFalse();
 
-        _uploadedFiles.ShouldBe(["packages/1.0.0/win.zip", "packages/1.1.0-beta.2/win-x64.zip", "nupdate.json", "nupdate-statistics.php", "nupdate-statistics.config.php"]);
+        _uploadedFiles.ShouldBe([
+            "packages/1.0.0/win.zip", "packages/1.1.0-beta.2/win-x64.zip", "nupdate.json", "nupdate-statistics.php",
+            "nupdate-statistics.config.php"
+        ]);
         await _context.Transfer.Received().CreateDirectoryAsync("packages/1.0.0", Arg.Any<CancellationToken>());
         await _context.Transfer.Received().CreateDirectoryAsync("packages/1.1.0-beta.2", Arg.Any<CancellationToken>());
         _uploadedFeeds.Single().ProjectId.ShouldBe(project.Id);
         _uploadedFeeds.Single().Packages.Select(p => p.Version).ShouldBe([first, second]);
         _uploadedFeeds.Single().Packages.ShouldAllBe(p => p.PublishedAt == AdminTestContext.Now);
-        await _context.Statistics.Received().VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.AdminSecret == "admin-secret" && e.Project == project), Arg.Any<CancellationToken>());
-        await _context.Statistics.Received().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id, first, Arg.Any<CancellationToken>());
-        await _context.Statistics.Received().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id, second, Arg.Any<CancellationToken>());
+        await _context.Statistics.Received()
+            .VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.AdminSecret == "admin-secret" && e.Project == project),
+                Arg.Any<CancellationToken>());
+        await _context.Statistics.Received().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id, first,
+            Arg.Any<CancellationToken>());
+        await _context.Statistics.Received().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id, second,
+            Arg.Any<CancellationToken>());
         await _context.Transfer.DidNotReceive().DeleteFileAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
         await _context.Transfer.DidNotReceive().DeleteDirectoryAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
 
-        project.Packages.Select(p => $"{p.Version}:{p.Released}:{p.Description}").ShouldBe(["1.0.0:True:first", "1.1.0-beta.2:True:"]);
+        project.Packages.Select(p => $"{p.Version}:{p.Released}:{p.Description}")
+            .ShouldBe(["1.0.0:True:first", "1.1.0-beta.2:True:"]);
         project.Log.Select(l => l.Kind).ShouldBe([LogEntryKind.Migrate, LogEntryKind.Migrate]);
         (await _context.Store.LoadAsync(project.Path)).Project.Packages.Count.ShouldBe(2);
-        progress.Select(p => p.StepName).ShouldBe(["Repacking 1.0.0", "Uploading 1.0.0", "Repacking 1.1.0-beta.2", "Uploading 1.1.0-beta.2", "Uploading the feed", "Setting up the statistics", "Registering the versions in the statistics", "Updating the project", "Done"]);
+        progress.Select(p => p.StepName).ShouldBe([
+            "Repacking 1.0.0", "Uploading 1.0.0", "Repacking 1.1.0-beta.2", "Uploading 1.1.0-beta.2",
+            "Uploading the feed", "Setting up the statistics", "Registering the versions in the statistics",
+            "Updating the project", "Done"
+        ]);
     }
 
     [Fact]
@@ -150,16 +173,29 @@ public class LegacyFeedMigratorTests
         var secrets = AdminTestContext.NewSecrets();
         var second = LegacyZip(false);
         _context.ServeLegacyFeed(LegacyFeedJson("false", "old", Sign(second)));
-        var existing = new PackageInfo { Version = new UpdateVersion("1.0.0"), Files = [new PackageFile { Platform = "win", Path = "packages/1.0.0/win.zip", Size = 1, Sha512 = "h", Signature = new PackageSignature { Value = "s" } }] };
+        var existing = new PackageInfo
+        {
+            Version = new UpdateVersion("1.0.0"),
+            Files =
+            [
+                new PackageFile
+                {
+                    Platform = "win", Path = "packages/1.0.0/win.zip", Size = 1, Sha512 = "h",
+                    Signature = new PackageSignature { Value = "s" }
+                }
+            ]
+        };
         _context.ServeFeed(new UpdateFeed { ProjectId = project.Id, Packages = [existing] });
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
 
         using (var plan = await _context.Migrator.PrepareAsync(project, secrets))
         {
             plan.LegacyFeedPresent.ShouldBeTrue();
             plan.ExistingFeed.ShouldNotBeNull();
             plan.IsComplete.ShouldBeFalse();
-            plan.Packages.Select(p => (p.Version.ToString(), p.AlreadyMigrated, p.Include)).ShouldBe([("1.0.0", true, false), ("1.1.0-beta.2", false, true)]);
+            plan.Packages.Select(p => (p.Version.ToString(), p.AlreadyMigrated, p.Include))
+                .ShouldBe([("1.0.0", true, false), ("1.1.0-beta.2", false, true)]);
             plan.Pending.Single().LiteralVersion.ShouldBe("1.1.0.0b2");
             plan.Packages[0].Include = true; // a migrated package cannot be included again
             plan.Packages[0].Include.ShouldBeFalse();
@@ -172,7 +208,14 @@ public class LegacyFeedMigratorTests
 
         // Everything is in nupdate.json: the plan says so and running it changes nothing.
         _uploadedFeeds.Clear();
-        _context.ServeFeed(new UpdateFeed { ProjectId = project.Id, Packages = [existing, new PackageInfo { Version = new UpdateVersion("1.1.0-beta.2"), Files = existing.Files }] });
+        _context.ServeFeed(new UpdateFeed
+        {
+            ProjectId = project.Id,
+            Packages =
+            [
+                existing, new PackageInfo { Version = new UpdateVersion("1.1.0-beta.2"), Files = existing.Files }
+            ]
+        });
         using (var plan = await _context.Migrator.PrepareAsync(project, secrets))
         {
             plan.IsComplete.ShouldBeTrue();
@@ -200,8 +243,10 @@ public class LegacyFeedMigratorTests
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(first), Sign(second)));
         _context.ServeFeed(null);
         _context.Http.Bytes("https://updates.example.com/demo/1.0.0.0/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", first);
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
-        _context.Transfer.UploadFileAsync(Arg.Any<string>(), "nupdate.json", null, Arg.Any<CancellationToken>()).Returns(_ => throw new TransferException("quota"));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
+        _context.Transfer.UploadFileAsync(Arg.Any<string>(), "nupdate.json", null, Arg.Any<CancellationToken>())
+            .Returns(_ => throw new TransferException("quota"));
 
         var ex = await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
 
@@ -222,10 +267,24 @@ public class LegacyFeedMigratorTests
         var secrets = AdminTestContext.NewSecrets(statistics: true);
         var second = LegacyZip(false);
         _context.ServeLegacyFeed(LegacyFeedJson("false", "old", Sign(second)));
-        var existing = new PackageInfo { Version = new UpdateVersion("1.0.0"), Files = [new PackageFile { Platform = "win", Path = "packages/1.0.0/win.zip", Size = 1, Sha512 = "h", Signature = new PackageSignature { Value = "s" } }] };
+        var existing = new PackageInfo
+        {
+            Version = new UpdateVersion("1.0.0"),
+            Files =
+            [
+                new PackageFile
+                {
+                    Platform = "win", Path = "packages/1.0.0/win.zip", Size = 1, Sha512 = "h",
+                    Signature = new PackageSignature { Value = "s" }
+                }
+            ]
+        };
         _context.ServeFeed(new UpdateFeed { ProjectId = project.Id, Packages = [existing] });
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
-        _context.Statistics.RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<UpdateVersion>(), Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("db"));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
+        _context.Statistics
+            .RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<UpdateVersion>(),
+                Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("db"));
 
         var ex = await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
 
@@ -244,8 +303,11 @@ public class LegacyFeedMigratorTests
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(first), Sign(second)));
         _context.ServeFeed(null);
         _context.Http.Bytes("https://updates.example.com/demo/1.0.0.0/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", first);
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
-        _context.Statistics.RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<UpdateVersion>(), Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("db"));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
+        _context.Statistics
+            .RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<UpdateVersion>(),
+                Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("db"));
 
         await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
 
@@ -263,8 +325,10 @@ public class LegacyFeedMigratorTests
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(first), Sign(second)));
         _context.ServeFeed(new UpdateFeed { ProjectId = project.Id });
         _context.Http.Bytes("https://updates.example.com/demo/1.0.0.0/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", first);
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
-        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("old script"));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
+        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new StatisticsException("old script"));
 
         var ex = await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
 
@@ -285,9 +349,12 @@ public class LegacyFeedMigratorTests
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(first), Sign(second)));
         _context.ServeFeed(null);
         var legacyFolder = _context.FileSystem.Path.Combine(_context.Paths.Root, "Projects", project.Name, "1.0.0.0");
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"), new MockFileData(first));
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
-        project.Path = _context.FileSystem.Path.Combine(_context.FileSystem.Path.GetTempPath(), "locked", "project.nupdproj");
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"),
+            new MockFileData(first));
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
+        project.Path =
+            _context.FileSystem.Path.Combine(_context.FileSystem.Path.GetTempPath(), "locked", "project.nupdproj");
         _context.FileSystem.AddDirectory(project.Path); // a directory where the file should go makes the save fail
 
         var ex = await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
@@ -304,11 +371,14 @@ public class LegacyFeedMigratorTests
     {
         var project = _context.NewProject();
         var secrets = AdminTestContext.NewSecrets();
-        var zip = LegacyZip(false, ("Program/app.exe", "v1"), ("Program/../escape.txt", "x"), ("Nowhere/file.txt", "y"));
-        _context.ServeLegacyFeed($"[{Entry("1.0.0.0", "https://updates.example.com/demo/missing.zip", zip, serve: false)}]");
+        var zip = LegacyZip(false, ("Program/app.exe", "v1"), ("Program/../escape.txt", "x"),
+            ("Nowhere/file.txt", "y"));
+        _context.ServeLegacyFeed(
+            $"[{Entry("1.0.0.0", "https://updates.example.com/demo/missing.zip", zip, serve: false)}]");
         _context.ServeFeed(null);
         var legacyFolder = _context.FileSystem.Path.Combine(_context.Paths.Root, "Projects", project.Name, "1.0.0.0");
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"), new MockFileData(zip));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(legacyFolder, $"{project.Id}.zip"),
+            new MockFileData(zip));
 
         using (var plan = await _context.Migrator.PrepareAsync(project, secrets))
         {
@@ -320,7 +390,9 @@ public class LegacyFeedMigratorTests
         }
 
         _context.FileSystem.Directory.Exists(legacyFolder).ShouldBeTrue();
-        var content = await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(new UpdateVersion("1.0.0"), "win"));
+        var content =
+            await new PackageContentReader(_context.FileSystem).ReadAsync(
+                project.PackageFilePath(new UpdateVersion("1.0.0"), "win"));
         content.Entries.Select(e => e.RelativePath).ShouldBe(["app.exe"]);
     }
 
@@ -344,23 +416,28 @@ public class LegacyFeedMigratorTests
 
         var genuine = LegacyZip(false, ("Program/a.txt", "genuine"));
         _context.ServeLegacyFeed($$"""
-            [{"LiteralVersion":"1.0","UpdatePackageUri":null,"Signature":"c2ln"},
-             {"LiteralVersion":"1.1","UpdatePackageUri":"https://updates.example.com/demo/missing.zip","Signature":"c2ln"},
-             {{Entry("1.2", "https://updates.example.com/demo/broken.zip", [1, 2, 3])}},
-             {"LiteralVersion":"1.3","UpdatePackageUri":"https://updates.example.com/demo/slow.zip","Signature":"c2ln"},
-             {{Entry("1.4", "https://updates.example.com/demo/badops.zip", badOperations)}},
-             {"LiteralVersion":"1.5","UpdatePackageUri":"https://updates.example.com/demo/unsigned.zip"},
-             {"LiteralVersion":"1.7"},
-             {{Entry("1.6", "https://updates.example.com/demo/tampered.zip", genuine, serve: false)}}]
-            """);
-        _context.Http.Text(HttpMethod.Get, "https://updates.example.com/demo/missing.zip", "gone", HttpStatusCode.NotFound);
-        _context.Http.On(r => r.RequestUri!.ToString() == "https://updates.example.com/demo/slow.zip", (_, _) => throw new TaskCanceledException("timeout"));
-        _context.Http.Bytes("https://updates.example.com/demo/tampered.zip", LegacyZip(false, ("Program/a.txt", "changed on the way")));
+                                   [{"LiteralVersion":"1.0","UpdatePackageUri":null,"Signature":"c2ln"},
+                                    {"LiteralVersion":"1.1","UpdatePackageUri":"https://updates.example.com/demo/missing.zip","Signature":"c2ln"},
+                                    {{Entry("1.2", "https://updates.example.com/demo/broken.zip", [1, 2, 3])}},
+                                    {"LiteralVersion":"1.3","UpdatePackageUri":"https://updates.example.com/demo/slow.zip","Signature":"c2ln"},
+                                    {{Entry("1.4", "https://updates.example.com/demo/badops.zip", badOperations)}},
+                                    {"LiteralVersion":"1.5","UpdatePackageUri":"https://updates.example.com/demo/unsigned.zip"},
+                                    {"LiteralVersion":"1.7"},
+                                    {{Entry("1.6", "https://updates.example.com/demo/tampered.zip", genuine, serve: false)}}]
+                                   """);
+        _context.Http.Text(HttpMethod.Get, "https://updates.example.com/demo/missing.zip", "gone",
+            HttpStatusCode.NotFound);
+        _context.Http.On(r => r.RequestUri!.ToString() == "https://updates.example.com/demo/slow.zip",
+            (_, _) => throw new TaskCanceledException("timeout"));
+        _context.Http.Bytes("https://updates.example.com/demo/tampered.zip",
+            LegacyZip(false, ("Program/a.txt", "changed on the way")));
 
         var progress = new List<PipelineProgress>();
-        using var plan = await _context.Migrator.PrepareAsync(project, secrets, new SyncProgress<PipelineProgress>(progress));
+        using var plan =
+            await _context.Migrator.PrepareAsync(project, secrets, new SyncProgress<PipelineProgress>(progress));
 
-        plan.Packages.Select(p => p.Version.ToString()).ShouldBe(["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"]);
+        plan.Packages.Select(p => p.Version.ToString())
+            .ShouldBe(["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"]);
         plan.Packages.ShouldAllBe(p => !p.CanInclude && !p.Include && p.Problem != null);
         plan.Packages[0].Problem!.ShouldContain("neither on this computer nor named in updates.json");
         plan.Packages[0].Source.ShouldBeNull();
@@ -375,7 +452,10 @@ public class LegacyFeedMigratorTests
         plan.Packages[7].Source.ShouldBeNull();
         plan.Packages[0].Include = true;
         plan.Packages[0].Include.ShouldBeFalse();
-        progress.Select(p => p.StepName).ShouldBe(["Reading the feeds on the server", "Reading 1.0.0", "Reading 1.1.0", "Reading 1.2.0", "Reading 1.3.0", "Reading 1.4.0", "Reading 1.5.0", "Reading 1.6.0", "Reading 1.7.0"]);
+        progress.Select(p => p.StepName).ShouldBe([
+            "Reading the feeds on the server", "Reading 1.0.0", "Reading 1.1.0", "Reading 1.2.0", "Reading 1.3.0",
+            "Reading 1.4.0", "Reading 1.5.0", "Reading 1.6.0", "Reading 1.7.0"
+        ]);
 
         // Nothing can be carried over and the server has no nupdate.json: the migration starts an empty one.
         (await _context.Migrator.RunAsync(project, secrets, plan)).ShouldBeEmpty();
@@ -392,21 +472,25 @@ public class LegacyFeedMigratorTests
         _context.ServeFeed(null);
         var zip = LegacyZip(false, ("Program/a.txt", "a"));
         _context.ServeLegacyFeed($$"""
-            [{{Entry("1.0.0.0", "https://updates.example.com/demo/a.zip", zip)}},
-             {{Entry("1.0", "https://updates.example.com/demo/b.zip", zip)}},
-             {{Entry("2.0.0.0", "https://updates.example.com/demo/c.zip", zip)}},
-             {"LiteralVersion":"not a version","UpdatePackageUri":"https://updates.example.com/demo/d.zip"}]
-            """);
+                                   [{{Entry("1.0.0.0", "https://updates.example.com/demo/a.zip", zip)}},
+                                    {{Entry("1.0", "https://updates.example.com/demo/b.zip", zip)}},
+                                    {{Entry("2.0.0.0", "https://updates.example.com/demo/c.zip", zip)}},
+                                    {"LiteralVersion":"not a version","UpdatePackageUri":"https://updates.example.com/demo/d.zip"}]
+                                   """);
         // The user created 2.0.0 in this project already, for example the release that moves the users to nUpdate 5.
-        _context.FileSystem.AddFile(project.PackageFilePath(new UpdateVersion("2.0.0"), "any"), new MockFileData("mine"));
+        _context.FileSystem.AddFile(project.PackageFilePath(new UpdateVersion("2.0.0"), "any"),
+            new MockFileData("mine"));
 
         using var plan = await _context.Migrator.PrepareAsync(project, secrets);
 
         plan.UnreadableVersions.ShouldBe(["not a version"]);
-        plan.Packages.Select(p => (p.LiteralVersion, p.CanInclude)).ShouldBe([("1.0.0.0", true), ("1.0", false), ("2.0.0.0", false)]);
-        plan.Packages[1].Problem.ShouldBe("updates.json lists this version twice, as 1.0.0.0 and 1.0; only 1.0.0.0 is migrated.");
+        plan.Packages.Select(p => (p.LiteralVersion, p.CanInclude))
+            .ShouldBe([("1.0.0.0", true), ("1.0", false), ("2.0.0.0", false)]);
+        plan.Packages[1].Problem
+            .ShouldBe("updates.json lists this version twice, as 1.0.0.0 and 1.0; only 1.0.0.0 is migrated.");
         plan.Packages[2].Problem!.ShouldContain("has a package 2.0.0 of its own already");
-        _context.FileSystem.File.ReadAllText(project.PackageFilePath(new UpdateVersion("2.0.0"), "any")).ShouldBe("mine");
+        _context.FileSystem.File.ReadAllText(project.PackageFilePath(new UpdateVersion("2.0.0"), "any"))
+            .ShouldBe("mine");
     }
 
     [Fact]
@@ -417,7 +501,8 @@ public class LegacyFeedMigratorTests
         var genuine = LegacyZip(false, ("Program/a.txt", "genuine"));
         _context.ServeLegacyFeed($"[{Entry("1.0.0.0", "https://updates.example.com/demo/p.zip", genuine)}]");
         _context.ServeFeed(null);
-        var local = _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectDataDirectory(project.Name), "1.0.0.0", $"{project.Id}.zip");
+        var local = _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectDataDirectory(project.Name), "1.0.0.0",
+            $"{project.Id}.zip");
         _context.FileSystem.AddFile(local, new MockFileData(LegacyZip(false, ("Program/a.txt", "edited later"))));
 
         using var plan = await _context.Migrator.PrepareAsync(project, secrets);
@@ -436,7 +521,8 @@ public class LegacyFeedMigratorTests
         _context.ServeLegacyFeed(LegacyFeedJson("false", Sign(first), Sign(second)));
         _context.ServeFeed(null);
         _context.Http.Bytes("https://updates.example.com/demo/1.0.0.0/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", first);
-        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip", second);
+        _context.Http.Bytes("https://updates.example.com/demo/1.1.0.0b2/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.zip",
+            second);
 
         using var plan = await _context.Migrator.PrepareAsync(project, secrets);
         plan.LegacyStatisticsUsed.ShouldBeTrue();
@@ -449,7 +535,8 @@ public class LegacyFeedMigratorTests
 
         (await _context.Migrator.RunAsync(project, secrets, plan)).ShouldBe([new UpdateVersion("1.1.0-beta.2")]);
         _uploadedFeeds.Single().Packages.Select(p => p.Version.ToString()).ShouldBe(["1.1.0-beta.2"]);
-        await _context.Statistics.DidNotReceive().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id, new UpdateVersion("1.0.0"), Arg.Any<CancellationToken>());
+        await _context.Statistics.DidNotReceive().RegisterVersionAsync(Arg.Any<StatisticsEndpoint>(), project.Id,
+            new UpdateVersion("1.0.0"), Arg.Any<CancellationToken>());
         project.Packages.Select(p => p.Version.ToString()).ShouldBe(["1.1.0-beta.2"]);
     }
 
@@ -465,7 +552,10 @@ public class LegacyFeedMigratorTests
         var progress = new List<PipelineProgress>();
 
         // Without a private key: nothing has to be signed.
-        (await _context.Migrator.RunAsync(project, new ProjectSecrets { TransferPassword = "x", StatisticsAdminSecret = "admin-secret", StatisticsDatabasePassword = "pw" }, plan, new SyncProgress<PipelineProgress>(progress))).ShouldBeEmpty();
+        (await _context.Migrator.RunAsync(project,
+            new ProjectSecrets
+            { TransferPassword = "x", StatisticsAdminSecret = "admin-secret", StatisticsDatabasePassword = "pw" },
+            plan, new SyncProgress<PipelineProgress>(progress))).ShouldBeEmpty();
 
         progress.Select(p => p.StepName).ShouldBe(["Uploading the feed", "Setting up the statistics", "Done"]);
         _uploadedFeeds.Single().Packages.ShouldBeEmpty();
@@ -478,7 +568,8 @@ public class LegacyFeedMigratorTests
         var project = _context.NewProject();
         var secrets = AdminTestContext.NewSecrets();
         var q = LegacyZip(false);
-        _context.ServeLegacyFeed($"[{Entry("1.0.0.0", "https://updates.example.com/demo/p.zip", LegacyZip(false, ("Program/a.txt", "a")))},{Entry("1.1.0.0", "https://updates.example.com/demo/q.zip", q, serve: false)}]");
+        _context.ServeLegacyFeed(
+            $"[{Entry("1.0.0.0", "https://updates.example.com/demo/p.zip", LegacyZip(false, ("Program/a.txt", "a")))},{Entry("1.1.0.0", "https://updates.example.com/demo/q.zip", q, serve: false)}]");
         _context.ServeFeed(null);
 
         var plan = await PrepareWithQAsync(q);
@@ -495,8 +586,10 @@ public class LegacyFeedMigratorTests
             cancellation.Cancel();
             throw new TaskCanceledException();
         });
-        await Should.ThrowAsync<OperationCanceledException>(() => _context.Migrator.PrepareAsync(project, secrets, null, cancellation.Token));
-        _context.FileSystem.Directory.GetDirectories(_context.FileSystem.Path.GetTempPath(), "nupdate-migration-*").ShouldBeEmpty();
+        await Should.ThrowAsync<OperationCanceledException>(() =>
+            _context.Migrator.PrepareAsync(project, secrets, null, cancellation.Token));
+        _context.FileSystem.Directory.GetDirectories(_context.FileSystem.Path.GetTempPath(), "nupdate-migration-*")
+            .ShouldBeEmpty();
 
         async Task<MigrationPlan> PrepareWithQAsync(byte[] zip)
         {
@@ -513,23 +606,33 @@ public class LegacyFeedMigratorTests
         _context.ServeFeed(null);
         using var plan = await _context.Migrator.PrepareAsync(project, AdminTestContext.NewSecrets());
 
-        (await Should.ThrowAsync<InvalidOperationException>(() => _context.Migrator.RunAsync(project, new ProjectSecrets(), plan))).Message.ShouldContain("private key");
+        (await Should.ThrowAsync<InvalidOperationException>(() =>
+            _context.Migrator.RunAsync(project, new ProjectSecrets(), plan))).Message.ShouldContain("private key");
         var withStatistics = _context.NewProject(statistics: true);
-        await Should.ThrowAsync<InvalidOperationException>(() => _context.Migrator.RunAsync(withStatistics, AdminTestContext.NewSecrets(), plan));
+        await Should.ThrowAsync<InvalidOperationException>(() =>
+            _context.Migrator.RunAsync(withStatistics, AdminTestContext.NewSecrets(), plan));
         var other = _context.NewProject();
         other.Id = Guid.NewGuid();
-        (await Should.ThrowAsync<ArgumentException>(() => _context.Migrator.RunAsync(other, AdminTestContext.NewSecrets(), plan))).Message.ShouldContain("another project");
+        (await Should.ThrowAsync<ArgumentException>(() =>
+                _context.Migrator.RunAsync(other, AdminTestContext.NewSecrets(), plan))).Message
+            .ShouldContain("another project");
 
-        _context.Http.Text(HttpMethod.Get, "https://updates.example.com/demo/updates.json", "boom", HttpStatusCode.InternalServerError);
-        await Should.ThrowAsync<HttpRequestException>(() => _context.Migrator.PrepareAsync(project, AdminTestContext.NewSecrets()));
+        _context.Http.Text(HttpMethod.Get, "https://updates.example.com/demo/updates.json", "boom",
+            HttpStatusCode.InternalServerError);
+        await Should.ThrowAsync<HttpRequestException>(() =>
+            _context.Migrator.PrepareAsync(project, AdminTestContext.NewSecrets()));
 
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.PrepareAsync(null!, AdminTestContext.NewSecrets()));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.PrepareAsync(null!, AdminTestContext.NewSecrets()));
         await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.PrepareAsync(project, null!));
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.RunAsync(null!, AdminTestContext.NewSecrets(), plan));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.RunAsync(null!, AdminTestContext.NewSecrets(), plan));
         await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.RunAsync(project, null!, plan));
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.RunAsync(project, AdminTestContext.NewSecrets(), null!));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.RunAsync(project, AdminTestContext.NewSecrets(), null!));
         Should.Throw<ArgumentNullException>(() => LegacyFeedMigrator.BuildEntry(null!, project));
-        Should.Throw<ArgumentNullException>(() => LegacyFeedMigrator.BuildEntry(new LegacyFeedEntry(new UpdateVersion("1.0.0"), "1.0"), null!));
+        Should.Throw<ArgumentNullException>(() =>
+            LegacyFeedMigrator.BuildEntry(new LegacyFeedEntry(new UpdateVersion("1.0.0"), "1.0"), null!));
     }
 
     [Fact]
@@ -546,8 +649,10 @@ public class LegacyFeedMigratorTests
             writer.Write("a");
         }
 
-        _context.ServeLegacyFeed($"[{Entry("1.0.0.0", "https://updates.example.com/demo/1.0.0.0/p.zip", stream.ToArray())}]");
-        _context.Transfer.ConnectAsync(Arg.Any<CancellationToken>()).Returns(_ => throw new TransferException("refused"));
+        _context.ServeLegacyFeed(
+            $"[{Entry("1.0.0.0", "https://updates.example.com/demo/1.0.0.0/p.zip", stream.ToArray())}]");
+        _context.Transfer.ConnectAsync(Arg.Any<CancellationToken>())
+            .Returns(_ => throw new TransferException("refused"));
 
         var ex = await Should.ThrowAsync<PipelineException>(() => MigrateAsync(project, secrets));
 
@@ -570,17 +675,22 @@ public class LegacyFeedMigratorTests
         var dataFolder = _context.Paths.LegacyProjectDataDirectory(project.Name);
         var besideOldFile = _context.FileSystem.Path.Combine(oldFolder, "1.1.0.0b2");
         _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(preRelease, zip), new MockFileData("z"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.1.0.0b2", zip), new MockFileData("z"));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.1.0.0b2", zip),
+            new MockFileData("z"));
         _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(besideOldFile, zip), new MockFileData("z"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", "other-project.zip"), new MockFileData("z"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "statistics.php"), new MockFileData("<?php"));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", "other-project.zip"),
+            new MockFileData("z"));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "statistics.php"),
+            new MockFileData("<?php"));
 
         var files = await _context.Migrator.FindLegacyFilesAsync(project, secrets);
 
         files.ServerFiles.ShouldBe(["updates.json", "statistics.php"]);
         files.ServerDirectories.ShouldBe(["1.0.0.0", "1.1.0.0b2"]);
         // Only the version folders that hold this project's zip; never the data folder as a whole.
-        files.LocalDirectories.ShouldBe([preRelease, besideOldFile, _context.FileSystem.Path.Combine(dataFolder, "1.1.0.0b2")]);
+        files.LocalDirectories.ShouldBe([
+            preRelease, besideOldFile, _context.FileSystem.Path.Combine(dataFolder, "1.1.0.0b2")
+        ]);
         files.IsEmpty.ShouldBeFalse();
         files.ServerOnly().LocalDirectories.ShouldBeEmpty();
         files.ServerOnly().ServerDirectories.Count.ShouldBe(2);
@@ -589,15 +699,21 @@ public class LegacyFeedMigratorTests
         var inside = _context.NewProject();
         inside.Path = _context.FileSystem.Path.Combine(dataFolder, "1.1.0.0b2", "nested", "project.nupdproj");
         inside.LegacyProjectFile = _context.FileSystem.Path.Combine(preRelease, "Legacy.nupdproj");
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(inside.Folder, "1.0.0.0", zip), new MockFileData("z"));
-        (await _context.Migrator.FindLegacyFilesAsync(inside, secrets)).LocalDirectories.ShouldBe([_context.FileSystem.Path.Combine(inside.Folder, "1.0.0.0")]);
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(inside.Folder, "1.0.0.0", zip),
+            new MockFileData("z"));
+        (await _context.Migrator.FindLegacyFilesAsync(inside, secrets)).LocalDirectories.ShouldBe([
+            _context.FileSystem.Path.Combine(inside.Folder, "1.0.0.0")
+        ]);
         var nearOldFile = _context.NewProject();
         nearOldFile.LegacyProjectFile = _context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", "Old.nupdproj");
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", zip), new MockFileData("z"));
-        (await _context.Migrator.FindLegacyFilesAsync(nearOldFile, secrets)).LocalDirectories.ShouldNotContain(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0"));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", zip),
+            new MockFileData("z"));
+        (await _context.Migrator.FindLegacyFilesAsync(nearOldFile, secrets)).LocalDirectories.ShouldNotContain(
+            _context.FileSystem.Path.Combine(dataFolder, "1.0.0.0"));
         var isTheFolder = _context.NewProject();
         isTheFolder.Path = _context.FileSystem.Path.Combine(dataFolder, "1.0.0.0", "project.nupdproj");
-        (await _context.Migrator.FindLegacyFilesAsync(isTheFolder, secrets)).LocalDirectories.ShouldNotContain(_context.FileSystem.Path.Combine(dataFolder, "1.0.0.0"));
+        (await _context.Migrator.FindLegacyFilesAsync(isTheFolder, secrets)).LocalDirectories.ShouldNotContain(
+            _context.FileSystem.Path.Combine(dataFolder, "1.0.0.0"));
 
         // Without the old feed and script there is nothing to retire.
         _context.ServeLegacyFeed(null);
@@ -622,11 +738,18 @@ public class LegacyFeedMigratorTests
         project.Name = name;
         _context.ServeLegacyFeed(LegacyFeedJson("false", "old", "old"));
         // Where an unchecked name would lead: the data folder itself or a sibling of the project's folder.
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(_context.Paths.Root, "1.0.0.0", $"{project.Id}.zip"), new MockFileData("z"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(_context.Paths.LegacyProjectsDirectory, "1.0.0.0", $"{project.Id}.zip"), new MockFileData("z"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(_context.Paths.LegacyProjectsDirectory, name, "1.0.0.0", $"{project.Id}.zip"), new MockFileData("z"));
+        _context.FileSystem.AddFile(
+            _context.FileSystem.Path.Combine(_context.Paths.Root, "1.0.0.0", $"{project.Id}.zip"),
+            new MockFileData("z"));
+        _context.FileSystem.AddFile(
+            _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectsDirectory, "1.0.0.0", $"{project.Id}.zip"),
+            new MockFileData("z"));
+        _context.FileSystem.AddFile(
+            _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectsDirectory, name, "1.0.0.0",
+                $"{project.Id}.zip"), new MockFileData("z"));
 
-        (await _context.Migrator.FindLegacyFilesAsync(project, AdminTestContext.NewSecrets())).LocalDirectories.ShouldBeEmpty();
+        (await _context.Migrator.FindLegacyFilesAsync(project, AdminTestContext.NewSecrets())).LocalDirectories
+            .ShouldBeEmpty();
     }
 
     [Fact]
@@ -637,7 +760,8 @@ public class LegacyFeedMigratorTests
         var local = _context.FileSystem.Path.Combine(_context.Paths.Root, "Projects", "Demo");
         _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(local, "1.0.0.0", "x.zip"), new MockFileData("z"));
 
-        await _context.Migrator.DeleteLegacyFilesAsync(project, secrets, new LegacyFiles(["statistics.php", "updates.json"], ["1.0.0.0"], [local, "/does/not/exist"]));
+        await _context.Migrator.DeleteLegacyFilesAsync(project, secrets,
+            new LegacyFiles(["statistics.php", "updates.json"], ["1.0.0.0"], [local, "/does/not/exist"]));
 
         Received.InOrder(() =>
         {
@@ -649,17 +773,23 @@ public class LegacyFeedMigratorTests
 
         // The connection drops before updates.json is gone: the feed is still there to list the folders for the next attempt.
         _context.Transfer.ClearReceivedCalls();
-        _context.Transfer.DeleteDirectoryAsync("1.1.0.0", Arg.Any<CancellationToken>()).Returns(_ => throw new TransferException("dropped"));
-        await Should.ThrowAsync<TransferException>(() => _context.Migrator.DeleteLegacyFilesAsync(project, secrets, new LegacyFiles(["updates.json"], ["1.1.0.0"], [])));
+        _context.Transfer.DeleteDirectoryAsync("1.1.0.0", Arg.Any<CancellationToken>())
+            .Returns(_ => throw new TransferException("dropped"));
+        await Should.ThrowAsync<TransferException>(() =>
+            _context.Migrator.DeleteLegacyFilesAsync(project, secrets,
+                new LegacyFiles(["updates.json"], ["1.1.0.0"], [])));
         await _context.Transfer.DidNotReceive().DeleteFileAsync("updates.json", Arg.Any<CancellationToken>());
 
         // Only local files: no connection.
         _context.TransferFactory.ClearReceivedCalls();
         await _context.Migrator.DeleteLegacyFilesAsync(project, secrets, new LegacyFiles([], [], []));
         _context.TransferFactory.DidNotReceiveWithAnyArgs().Create(default!, default!);
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.DeleteLegacyFilesAsync(null!, secrets, new LegacyFiles([], [], [])));
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.DeleteLegacyFilesAsync(project, null!, new LegacyFiles([], [], [])));
-        await Should.ThrowAsync<ArgumentNullException>(() => _context.Migrator.DeleteLegacyFilesAsync(project, secrets, null!));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.DeleteLegacyFilesAsync(null!, secrets, new LegacyFiles([], [], [])));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.DeleteLegacyFilesAsync(project, null!, new LegacyFiles([], [], [])));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _context.Migrator.DeleteLegacyFilesAsync(project, secrets, null!));
         Should.Throw<ArgumentNullException>(() => new LegacyFiles(null!, [], []));
         Should.Throw<ArgumentNullException>(() => new LegacyFiles([], null!, []));
         Should.Throw<ArgumentNullException>(() => new LegacyFiles([], [], null!));
@@ -669,17 +799,28 @@ public class LegacyFeedMigratorTests
     public void Constructor_ValidatesArguments()
     {
         var c = _context;
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(null!, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, null!, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, null!, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, null!, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, null!, c.TransferFactory, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, null!, c.Statistics, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, null!, c.Store, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, null!, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, null!));
-        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger, null!));
-        new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger).ShouldNotBeNull();
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(null!, c.Paths, c.HttpClientFactory, c.Feeds,
+            c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, null!, c.HttpClientFactory,
+            c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, null!, c.Feeds,
+            c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            null!, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, null!, c.TransferFactory, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, c.Signer, null!, c.Statistics, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, c.Signer, c.TransferFactory, null!, c.Store, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, c.Signer, c.TransferFactory, c.Statistics, null!, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, null!));
+        Should.Throw<ArgumentNullException>(() => new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory,
+            c.Feeds, c.Signer, c.TransferFactory, c.Statistics, c.Store, c.Logger, null!));
+        new LegacyFeedMigrator(c.FileSystem, c.Paths, c.HttpClientFactory, c.Feeds, c.Signer, c.TransferFactory,
+            c.Statistics, c.Store, c.Logger).ShouldNotBeNull();
         new MigrationStatus(false, false).NeedsMigration.ShouldBeFalse();
     }
 }

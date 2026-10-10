@@ -10,7 +10,8 @@ public static class RemotePath
         ArgumentNullException.ThrowIfNull(relativePath);
 
         var parts = new List<string>();
-        foreach (var part in (baseDirectory + "/" + relativePath).Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var part in (baseDirectory + "/" + relativePath).Replace('\\', '/')
+                 .Split('/', StringSplitOptions.RemoveEmptyEntries))
         {
             if (part == ".")
                 continue;

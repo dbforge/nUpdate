@@ -11,7 +11,7 @@ namespace nUpdate.UpdateInstaller;
 ///     A window implements <see cref="RunWindow" /> and <see cref="Post" />; the other abstract members show something
 ///     and are only called on the UI thread.
 /// </remarks>
-public abstract class WindowProgressReporter : IProgressReporter, IDisposable
+public abstract class WindowProgressReporter(InstallerSession session) : IProgressReporter, IDisposable
 {
     private readonly ManualResetEventSlim _ready = new();
     private readonly ManualResetEventSlim _closed = new();
@@ -20,13 +20,8 @@ public abstract class WindowProgressReporter : IProgressReporter, IDisposable
     private bool _terminated;
     private (float Progress, string Text)? _pending;
 
-    protected WindowProgressReporter(InstallerSession session)
-    {
-        Session = session ?? throw new ArgumentNullException(nameof(session));
-    }
-
     /// <summary>The options and the log of this run.</summary>
-    public InstallerSession Session { get; }
+    public InstallerSession Session { get; } = session ?? throw new ArgumentNullException(nameof(session));
 
     /// <summary>Shows the window and returns when it has closed.</summary>
     public void Initialize()
@@ -43,7 +38,8 @@ public abstract class WindowProgressReporter : IProgressReporter, IDisposable
         }
     }
 
-    public void ReportUnpackingProgress(float progress, string currentFile) => Report(progress, Session.Options.Text(InstallerText.Copying, currentFile));
+    public void ReportUnpackingProgress(float progress, string currentFile) =>
+        Report(progress, Session.Options.Text(InstallerText.Copying, currentFile));
 
     public void ReportOperationProgress(float progress, string currentOperation) => Report(progress, currentOperation);
 

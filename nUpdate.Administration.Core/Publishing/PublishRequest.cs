@@ -6,20 +6,13 @@ using nUpdate.Updating;
 namespace nUpdate.Administration.Core.Publishing;
 
 /// <summary>What the user entered for a new package.</summary>
-public sealed class PublishRequest
+public sealed class PublishRequest(UpdateProject project, ProjectSecrets secrets, PackageDefinition package)
 {
-    public PublishRequest(UpdateProject project, ProjectSecrets secrets, PackageDefinition package)
-    {
-        Project = project ?? throw new ArgumentNullException(nameof(project));
-        Secrets = secrets ?? throw new ArgumentNullException(nameof(secrets));
-        Package = package ?? throw new ArgumentNullException(nameof(package));
-    }
+    public UpdateProject Project { get; } = project ?? throw new ArgumentNullException(nameof(project));
 
-    public UpdateProject Project { get; }
+    public ProjectSecrets Secrets { get; } = secrets ?? throw new ArgumentNullException(nameof(secrets));
 
-    public ProjectSecrets Secrets { get; }
-
-    public PackageDefinition Package { get; }
+    public PackageDefinition Package { get; } = package ?? throw new ArgumentNullException(nameof(package));
 
     public string Description { get; set; } = string.Empty;
 
@@ -49,7 +42,8 @@ public sealed class PublishRequest
 public class MigrationRequiredException : InvalidOperationException
 {
     public MigrationRequiredException()
-        : base("The server still has the updates.json of nUpdate 3 or 4 and no nupdate.json. Migrate the published packages first.")
+        : base(
+            "The server still has the updates.json of nUpdate 3 or 4 and no nupdate.json. Migrate the published packages first.")
     {
     }
 

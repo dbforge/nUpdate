@@ -1,12 +1,9 @@
 using System.Globalization;
-using nUpdate.Administration.Core.Migration;
 using nUpdate.Administration.Core.Models;
 using nUpdate.Administration.Core.Packages;
 using nUpdate.Administration.Core.Projects;
 using nUpdate.Administration.Core.Publishing;
 using nUpdate.Administration.Core.Security;
-using nUpdate.Administration.Core.Statistics;
-using nUpdate.Administration.TransferInterface;
 using nUpdate.Installer;
 using nUpdate.Operations;
 using nUpdate.Packaging;
@@ -22,19 +19,15 @@ namespace nUpdate.Tests.Integration;
 /// <summary>Administration publishes over FTP or SFTP, the client library updates over HTTP, the installer applies, the statistics count, legacy projects migrate.</summary>
 [Collection(ServerCollectionFixture.Name)]
 [Trait("Category", "Integration")]
-public sealed class EndToEndTests : IDisposable
+public sealed class EndToEndTests(ServerFixture server) : IDisposable
 {
     private const string ProjectPassword = "integration-password";
-    private readonly IntegrationContext _context;
-
-    public EndToEndTests(ServerFixture server)
-    {
-        _context = new IntegrationContext(server);
-    }
+    private readonly IntegrationContext _context = new(server);
 
     public void Dispose() => _context.Dispose();
 
-    private static UpdateManagerServices ClientServices(string product, string? executablePath = null, IProcessLauncher? launcher = null)
+    private static UpdateManagerServices ClientServices(string product, string? executablePath = null,
+        IProcessLauncher? launcher = null)
     {
         var applicationInfo = Substitute.For<IApplicationInfo>();
         applicationInfo.ProductName.Returns(product + "-" + Guid.NewGuid().ToString("N"));
@@ -68,14 +61,22 @@ public sealed class EndToEndTests : IDisposable
             Folder = _context.ProjectFolder("Integration"),
             UpdateUrl = _context.Server.HttpBaseUrl,
             Transfer = transfer,
-            Secrets = new ProjectSecrets { TransferPassword = ServerFixture.FtpPassword, StatisticsDatabasePassword = ServerFixture.DbPassword },
-            Statistics = new StatisticsSettings { Enabled = true, Database = new StatisticsDatabaseSettings { Host = "mysql", Name = ServerFixture.DbName, Username = ServerFixture.DbUser } },
+            Secrets = new ProjectSecrets
+            { TransferPassword = ServerFixture.FtpPassword, StatisticsDatabasePassword = ServerFixture.DbPassword },
+            Statistics = new StatisticsSettings
+            {
+                Enabled = true,
+                Database = new StatisticsDatabaseSettings
+                { Host = "mysql", Name = ServerFixture.DbName, Username = ServerFixture.DbUser }
+            },
             ProjectPassword = ProjectPassword,
         });
         var project = created.Project;
         var secrets = created.Secrets;
         project.Path.ShouldBe(Path.Combine(_context.ProjectFolder("Integration"), "project.nupdproj"));
-        using (var unauthorized = await _context.HttpClient.GetAsync(_context.Server.HttpBaseUrl + "nupdate-statistics.php/v2/projects/" + project.Id + "/statistics"))
+        using (var unauthorized = await _context.HttpClient.GetAsync(_context.Server.HttpBaseUrl +
+                                                                     "nupdate-statistics.php/v2/projects/" +
+                                                                     project.Id + "/statistics"))
         {
             unauthorized.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
             (await unauthorized.Content.ReadAsStringAsync()).ShouldContain("\"code\":\"unauthorized\"");
@@ -87,10 +88,13 @@ public sealed class EndToEndTests : IDisposable
         // --- Administration: publish a package ---
         var definition = new PackageDefinition(new UpdateVersion("1.1.0"));
         var windows = definition.GetOrAddPlatform("win");
-        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe", _context.WriteFile("app.exe", "version 1.1")));
-        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "lib/helper.dll", _context.WriteFile("helper.dll", "helper 1.1")));
+        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe",
+            _context.WriteFile("app.exe", "version 1.1")));
+        windows.Files.Add(new PackageFileEntry(PackageRoot.Program, "lib/helper.dll",
+            _context.WriteFile("helper.dll", "helper 1.1")));
         windows.Operations.Add(new DeleteFilesOperation { Directory = "%program%", Files = ["obsolete.dll"] });
-        definition.GetOrAddPlatform("linux").Files.Add(new PackageFileEntry(PackageRoot.Program, "app", _context.WriteFile("app", "linux 1.1")));
+        definition.GetOrAddPlatform("linux").Files
+            .Add(new PackageFileEntry(PackageRoot.Program, "app", _context.WriteFile("app", "linux 1.1")));
         var request = new PublishRequest(project, secrets, definition) { Description = "First update" };
         request.Changelog[new CultureInfo("en")] = "Everything is better.";
         var package = await _context.Publisher.CreatePackageAsync(request);
@@ -99,7 +103,8 @@ public sealed class EndToEndTests : IDisposable
         var remote = (await _context.Feeds.LoadRemoteAsync(project, secrets))!;
         remote.ProjectId.ShouldBe(project.Id);
         remote.Packages.Single().Version.ShouldBe(new UpdateVersion("1.1.0"));
-        remote.Packages.Single().Files.Select(f => f.Path).ShouldBe(["packages/1.1.0/win.zip", "packages/1.1.0/linux.zip"]);
+        remote.Packages.Single().Files.Select(f => f.Path)
+            .ShouldBe(["packages/1.1.0/win.zip", "packages/1.1.0/linux.zip"]);
         remote.Packages.Single().Files[0].Touches.ShouldBe([OperationArea.Files]);
         remote.Packages.Single().Files[1].Touches.ShouldBeEmpty();
         (await _context.StatusAsync("packages/1.1.0/win.zip")).ShouldBe(System.Net.HttpStatusCode.OK);
@@ -122,7 +127,8 @@ public sealed class EndToEndTests : IDisposable
         Directory.CreateDirectory(installerDirectory);
         File.WriteAllText(Path.Combine(installerDirectory, "installer.exe"), "stub");
 
-        using var manager = new UpdateManager(project.FeedUri, TestKeys.PublicKey, services: ClientServices("IntegrationApp", Path.Combine(appDirectory, "app.exe"), launcher))
+        using var manager = new UpdateManager(project.FeedUri, TestKeys.PublicKey,
+            services: ClientServices("IntegrationApp", Path.Combine(appDirectory, "app.exe"), launcher))
         {
             InstallerPath = Path.Combine(installerDirectory, "installer.exe"),
             DefaultAfterInstall = AfterInstall.KeepRunning,
@@ -143,7 +149,12 @@ public sealed class EndToEndTests : IDisposable
         specialFolders.ApplicationData.Returns(Path.Combine(_context.Root, "appdata"));
         specialFolders.Temp.Returns(Path.Combine(_context.Root, "temp"));
         specialFolders.Desktop.Returns(Path.Combine(_context.Root, "desktop"));
-        var installerServices = new InstallerServices { ProcessService = Substitute.For<IProcessService>(), SpecialFolders = specialFolders, EnvironmentInfo = Substitute.For<IEnvironmentInfo>() };
+        var installerServices = new InstallerServices
+        {
+            ProcessService = Substitute.For<IProcessService>(),
+            SpecialFolders = specialFolders,
+            EnvironmentInfo = Substitute.For<IEnvironmentInfo>()
+        };
         var result = new InstallEngine(installerServices).Run(options, reporter);
         result.Succeeded.ShouldBeTrue(result.Error?.ToString());
         File.ReadAllText(Path.Combine(appDirectory, "app.exe")).ShouldBe("version 1.1");
@@ -176,7 +187,8 @@ public sealed class EndToEndTests : IDisposable
         var reopened = await _context.Store.LoadAsync(project.Path, ProjectPassword);
         reopened.SecretsState.ShouldBe(SecretsState.Loaded);
         reopened.Secrets.TransferPassword.ShouldBe(ServerFixture.FtpPassword);
-        await _context.Projects.DeleteAsync(reopened.Project, reopened.Secrets, deleteLocalFiles: true, deleteServerFiles: true);
+        await _context.Projects.DeleteAsync(reopened.Project, reopened.Secrets, deleteLocalFiles: true,
+            deleteServerFiles: true);
         (await _context.StatusAsync("nupdate-statistics.php")).ShouldBe(System.Net.HttpStatusCode.NotFound);
         (await _context.StatusAsync("nupdate.json")).ShouldBe(System.Net.HttpStatusCode.NotFound);
         Directory.Exists(project.Folder).ShouldBeFalse();
@@ -200,7 +212,8 @@ public sealed class EndToEndTests : IDisposable
             Statistics = new StatisticsSettings { Enabled = false },
         });
         var definition = new PackageDefinition(new UpdateVersion("2.0.0-beta.1"));
-        definition.GetOrAddPlatform("any").Files.Add(new PackageFileEntry(PackageRoot.Program, "readme.txt", _context.WriteFile("readme.txt", "sftp")));
+        definition.GetOrAddPlatform("any").Files.Add(new PackageFileEntry(PackageRoot.Program, "readme.txt",
+            _context.WriteFile("readme.txt", "sftp")));
         var request = new PublishRequest(created.Project, created.Secrets, definition);
         request.Changelog[new CultureInfo("en")] = "Mirror test.";
         await _context.Publisher.CreatePackageAsync(request);
@@ -210,7 +223,9 @@ public sealed class EndToEndTests : IDisposable
         entry.Files.Single().Path = _context.Server.HttpBaseUrl + "packages/2.0.0-beta.1/any.zip";
         await _context.Publisher.UpdateEntryAsync(created.Project, created.Secrets, entry);
 
-        using var manager = new UpdateManager(created.Project.FeedUri, TestKeys.PublicKey, services: ClientServices("SftpApp")) { MinimumStability = Stability.Any };
+        using var manager =
+            new UpdateManager(created.Project.FeedUri, TestKeys.PublicKey, services: ClientServices("SftpApp"))
+            { MinimumStability = Stability.Any };
         (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
         manager.AvailableUpdates.Single().Files.Single().Path.ShouldStartWith(_context.Server.HttpBaseUrl);
         await manager.DownloadAsync();
@@ -227,20 +242,26 @@ public sealed class EndToEndTests : IDisposable
 
         // --- The server as nUpdate 4 left it: updates.json plus 1.0.0.0/<id>.zip; the project file on disk in the v3 layout ---
         await using (var ftp = await _context.ConnectTrustedAsync(transfer, IntegrationContext.FtpCredentials))
-            await LegacyServer.PublishAsync(ftp, _context, projectId, "1.0.0.0", LegacyServer.Zip(("Program/app.exe", "version 1.0")));
+            await LegacyServer.PublishAsync(ftp, _context, projectId, "1.0.0.0",
+                LegacyServer.Zip(("Program/app.exe", "version 1.0")));
         var legacyFolder = Path.Combine(_context.Root, "legacy-project");
         Directory.CreateDirectory(legacyFolder);
         var legacyFile = Path.Combine(legacyFolder, "Legacy.nupdproj");
-        var json = nUpdate.Tests.Administration.Core.ProjectStoreTests.LegacyProjectJson(true, LegacyAesCredentialDecryptor.BuiltInKeyPassword, LegacyAesCredentialDecryptor.BuiltInIvPassword)
+        var json = nUpdate.Tests.Administration.Core.ProjectStoreTests.LegacyProjectJson(true,
+                LegacyAesCredentialDecryptor.BuiltInKeyPassword, LegacyAesCredentialDecryptor.BuiltInIvPassword)
             .Replace("\"UseStatistics\": true", "\"UseStatistics\": false", StringComparison.Ordinal)
-            .Replace("\"UpdateUrl\": \"https://updates.example.com/legacy\"", $"\"UpdateUrl\": \"{_context.Server.HttpBaseUrl}\"", StringComparison.Ordinal)
-            .Replace("\"FtpHost\": \"ftp.example.com\"", $"\"FtpHost\": \"{_context.Server.FtpHost}\"", StringComparison.Ordinal)
+            .Replace("\"UpdateUrl\": \"https://updates.example.com/legacy\"",
+                $"\"UpdateUrl\": \"{_context.Server.HttpBaseUrl}\"", StringComparison.Ordinal)
+            .Replace("\"FtpHost\": \"ftp.example.com\"", $"\"FtpHost\": \"{_context.Server.FtpHost}\"",
+                StringComparison.Ordinal)
             .Replace("\"FtpPort\": 2121", $"\"FtpPort\": {_context.Server.FtpPort}", StringComparison.Ordinal)
             .Replace("\"FtpProtocol\": 1", "\"FtpProtocol\": 0", StringComparison.Ordinal)
             .Replace("\"FtpUsePassiveMode\": false", "\"FtpUsePassiveMode\": true", StringComparison.Ordinal)
             .Replace("\"FtpDirectory\": \"/updates\"", "\"FtpDirectory\": \"/\"", StringComparison.Ordinal)
-            .Replace("\"FtpUsername\": \"ftpuser\"", $"\"FtpUsername\": \"{ServerFixture.FtpUser}\"", StringComparison.Ordinal)
-            .Replace("\"Proxy\": { \"Address\": \"http://proxy:8080\"", "\"Proxy\": { \"Address\": \"\"", StringComparison.Ordinal);
+            .Replace("\"FtpUsername\": \"ftpuser\"", $"\"FtpUsername\": \"{ServerFixture.FtpUser}\"",
+                StringComparison.Ordinal)
+            .Replace("\"Proxy\": { \"Address\": \"http://proxy:8080\"", "\"Proxy\": { \"Address\": \"\"",
+                StringComparison.Ordinal);
         await File.WriteAllTextAsync(legacyFile, json);
 
         // --- Opening converts the file; the secrets of the old project are recovered ---
@@ -257,12 +278,14 @@ public sealed class EndToEndTests : IDisposable
         // The old file sat in a folder that is not the project's own, so the converted project gets one named after it.
         project.Path.ShouldBe(Path.Combine(legacyFolder, "Legacy", "project.nupdproj"));
         File.Exists(legacyFile).ShouldBeTrue();
-        (await _context.Store.LoadAsync(project.Path, ProjectPassword)).Secrets.PrivateKey.ShouldBe(TestKeys.PrivateKey);
+        (await _context.Store.LoadAsync(project.Path, ProjectPassword)).Secrets.PrivateKey
+            .ShouldBe(TestKeys.PrivateKey);
 
         // --- Nothing can be published until the server is migrated ---
         (await _context.Migrator.CheckAsync(project, secrets)).NeedsMigration.ShouldBeTrue();
         var definition = new PackageDefinition(new UpdateVersion("1.1.0"));
-        definition.GetOrAddPlatform("win").Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe", _context.WriteFile("app-1.1.exe", "version 1.1")));
+        definition.GetOrAddPlatform("win").Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe",
+            _context.WriteFile("app-1.1.exe", "version 1.1")));
         var request = new PublishRequest(project, secrets, definition);
         request.Changelog[new CultureInfo("en")] = "After the migration.";
         var refused = await Should.ThrowAsync<PipelineException>(() => _context.Publisher.CreatePackageAsync(request));
@@ -289,17 +312,22 @@ public sealed class EndToEndTests : IDisposable
         var file = entry.Files.Single();
         file.Platform.ShouldBe("win");
         file.Touches.ShouldBe([OperationArea.Files, OperationArea.Processes]);
-        _context.Signer.Verify(project.PackageFilePath(entry.Version, "win"), project.PublicKey, file.Signature.Value).ShouldBeTrue();
-        var content = await new PackageContentReader(_context.FileSystem).ReadAsync(project.PackageFilePath(entry.Version, "win"));
+        _context.Signer.Verify(project.PackageFilePath(entry.Version, "win"), project.PublicKey, file.Signature.Value)
+            .ShouldBeTrue();
+        var content =
+            await new PackageContentReader(_context.FileSystem).ReadAsync(
+                project.PackageFilePath(entry.Version, "win"));
         content.Manifest!.Operations.Select(o => o.Type).ShouldBe(["deleteFiles", "terminateProcess"]);
         project.FindPackage(entry.Version)!.Released.ShouldBeTrue();
 
         // --- The feed checks out the way a client sees it ---
-        var check = await new FeedChecker(_context.FileSystem, _context.HttpClientFactory, _context.Feeds, _context.Signer, _context.Statistics).CheckAsync(project, secrets);
+        var check = await new FeedChecker(_context.FileSystem, _context.HttpClientFactory, _context.Feeds,
+            _context.Signer, _context.Statistics).CheckAsync(project, secrets);
         check.Succeeded.ShouldBeTrue(string.Join("; ", check.Packages.Select(p => p.Problem)) + check.FeedProblem);
 
         // --- A 5.0 client updates from the migrated feed ---
-        using (var manager = new UpdateManager(project.FeedUri, project.PublicKey, services: ClientServices("LegacyApp"), currentVersion: new UpdateVersion("0.9.0")))
+        using (var manager = new UpdateManager(project.FeedUri, project.PublicKey,
+                   services: ClientServices("LegacyApp"), currentVersion: new UpdateVersion("0.9.0")))
         {
             (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
             manager.AvailableUpdates.Single().Version.ShouldBe(new UpdateVersion("1.0.0"));
@@ -310,7 +338,8 @@ public sealed class EndToEndTests : IDisposable
 
         // --- Publishing works now, and the legacy files can be removed once every client has moved ---
         await _context.Publisher.CreatePackageAsync(request);
-        (await _context.Feeds.LoadRemoteAsync(project, secrets))!.Packages.Select(p => p.Version.ToString()).ShouldBe(["1.0.0", "1.1.0"]);
+        (await _context.Feeds.LoadRemoteAsync(project, secrets))!.Packages.Select(p => p.Version.ToString())
+            .ShouldBe(["1.0.0", "1.1.0"]);
         var legacy = await _context.Migrator.FindLegacyFilesAsync(project, secrets);
         legacy.ServerFiles.ShouldBe(["updates.json"]);
         legacy.ServerDirectories.ShouldBe(["1.0.0.0"]);

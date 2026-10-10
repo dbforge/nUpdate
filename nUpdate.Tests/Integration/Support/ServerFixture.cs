@@ -1,6 +1,5 @@
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Images;
 using DotNet.Testcontainers.Networks;
 using DotNet.Testcontainers.Volumes;
 
@@ -54,7 +53,8 @@ public sealed class ServerFixture : IAsyncLifetime
         if (!DockerAvailable)
         {
             if (DockerRequired)
-                throw new InvalidOperationException("NUPDATE_REQUIRE_DOCKER is 1, but \"docker info\" failed or did not answer within a minute.");
+                throw new InvalidOperationException(
+                    "NUPDATE_REQUIRE_DOCKER is 1, but \"docker info\" failed or did not answer within a minute.");
             return;
         }
 
@@ -86,8 +86,12 @@ public sealed class ServerFixture : IAsyncLifetime
             .WithEnvironment("TLS_C", "DE")
             .WithPortBinding(21, true)
             .WithEnvironment("FTP_PASSIVE_PORTS", $"{PassivePortStart}:{PassivePortStart + PassivePortCount - 1}")
-            .WithPortBinding(PassivePortStart, PassivePortStart).WithPortBinding(PassivePortStart + 1, PassivePortStart + 1).WithPortBinding(PassivePortStart + 2, PassivePortStart + 2)
-            .WithPortBinding(PassivePortStart + 3, PassivePortStart + 3).WithPortBinding(PassivePortStart + 4, PassivePortStart + 4).WithPortBinding(PassivePortStart + 5, PassivePortStart + 5)
+            .WithPortBinding(PassivePortStart, PassivePortStart)
+            .WithPortBinding(PassivePortStart + 1, PassivePortStart + 1)
+            .WithPortBinding(PassivePortStart + 2, PassivePortStart + 2)
+            .WithPortBinding(PassivePortStart + 3, PassivePortStart + 3)
+            .WithPortBinding(PassivePortStart + 4, PassivePortStart + 4)
+            .WithPortBinding(PassivePortStart + 5, PassivePortStart + 5)
             .WithVolumeMount(_volume, VolumePath)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(21))
             .Build();
@@ -139,14 +143,19 @@ public sealed class ServerFixture : IAsyncLifetime
     public async Task ResetAsync()
     {
         await _php!.ExecAsync(["sh", "-c", "rm -rf /var/www/html/* /var/www/html/.[!.]* 2>/dev/null; true"]);
-        await _mysql!.ExecAsync(["mysql", $"-u{DbUser}", $"-p{DbPassword}", DbName, "-e", "DROP TABLE IF EXISTS nupdate_download; DROP TABLE IF EXISTS nupdate_version; DROP TABLE IF EXISTS nupdate_application;"]);
+        await _mysql!.ExecAsync([
+            "mysql", $"-u{DbUser}", $"-p{DbPassword}", DbName, "-e",
+            "DROP TABLE IF EXISTS nupdate_download; DROP TABLE IF EXISTS nupdate_version; DROP TABLE IF EXISTS nupdate_application;"
+        ]);
     }
 
     private static bool ProbeDocker()
     {
         try
         {
-            using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("docker", "info") { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false })!;
+            using var process = System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo("docker", "info")
+                { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false })!;
             // Drain both streams, so a long answer cannot fill a pipe and keep docker from exiting.
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -175,7 +184,8 @@ public sealed class ServerCollectionFixture : ICollectionFixture<ServerFixture>
 /// <summary>Skips a test when Docker is not available instead of failing it.</summary>
 public sealed class DockerFactAttribute : FactAttribute
 {
-    public DockerFactAttribute([System.Runtime.CompilerServices.CallerFilePath] string? sourceFilePath = null, [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = -1)
+    public DockerFactAttribute([System.Runtime.CompilerServices.CallerFilePath] string? sourceFilePath = null,
+        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = -1)
         : base(sourceFilePath, sourceLineNumber)
     {
         if (!ServerFixture.DockerAvailable && !ServerFixture.DockerRequired)

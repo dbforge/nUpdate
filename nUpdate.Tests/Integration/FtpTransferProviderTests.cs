@@ -5,14 +5,9 @@ namespace nUpdate.Tests.Integration;
 
 [Collection(ServerCollectionFixture.Name)]
 [Trait("Category", "Integration")]
-public sealed class FtpTransferProviderTests : IDisposable
+public sealed class FtpTransferProviderTests(ServerFixture server) : IDisposable
 {
-    private readonly IntegrationContext _context;
-
-    public FtpTransferProviderTests(ServerFixture server)
-    {
-        _context = new IntegrationContext(server);
-    }
+    private readonly IntegrationContext _context = new(server);
 
     public void Dispose() => _context.Dispose();
 
@@ -20,7 +15,8 @@ public sealed class FtpTransferProviderTests : IDisposable
     public async Task FtpTransferProvider_SupportsTheWholeContract()
     {
         await _context.Server.ResetAsync();
-        await using var ftp = await _context.ConnectTrustedAsync(_context.FtpSettings(), IntegrationContext.FtpCredentials);
+        await using var ftp =
+            await _context.ConnectTrustedAsync(_context.FtpSettings(), IntegrationContext.FtpCredentials);
         await TransferContract.ExerciseAsync(_context, ftp, "ftp");
     }
 
@@ -49,8 +45,11 @@ public sealed class FtpTransferProviderTests : IDisposable
     [DockerFact]
     public async Task Connect_RejectsWrongCredentialsAndUnreachableHosts()
     {
-        await using (var wrongPassword = _context.TransferFactory.Create(_context.FtpSettings(), new TransferCredentials { Password = "nope" }))
-            (await Should.ThrowAsync<TransferException>(() => wrongPassword.ConnectAsync())).Message.ShouldContain("rejected");
+        await using (var wrongPassword =
+                     _context.TransferFactory.Create(_context.FtpSettings(),
+                         new TransferCredentials { Password = "nope" }))
+            (await Should.ThrowAsync<TransferException>(() => wrongPassword.ConnectAsync())).Message
+                .ShouldContain("rejected");
 
         var unreachable = _context.FtpSettings();
         unreachable.Port = 1;
@@ -62,7 +61,8 @@ public sealed class FtpTransferProviderTests : IDisposable
     public async Task UploadFile_UploadIsServedOverHttp()
     {
         await _context.Server.ResetAsync();
-        await using (var ftp = await _context.ConnectTrustedAsync(_context.FtpSettings(), IntegrationContext.FtpCredentials))
+        await using (var ftp = await _context.ConnectTrustedAsync(_context.FtpSettings(),
+                         IntegrationContext.FtpCredentials))
             await ftp.UploadFileAsync(_context.WriteFile("via-ftp.txt", "ftp"), "via-ftp.txt");
 
         (await _context.HttpClient.GetStringAsync(_context.Server.HttpBaseUrl + "via-ftp.txt")).ShouldBe("ftp");

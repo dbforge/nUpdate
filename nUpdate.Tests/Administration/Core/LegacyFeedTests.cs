@@ -31,13 +31,21 @@ public class LegacyFeedTests
         entries[1].Operations!.Count.ShouldBe(1);
 
         LegacyFeed.Parse(" ").ShouldBeEmpty();
-        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"x86","RolloutConditionMode":"All","Changelog":null,"UpdatePackageUri":"relative"}]""").Single().Platform.ShouldBe("win-x86");
-        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"nope","RolloutConditionMode":"AtLeastOne"}]""").Single().Rollout.Mode.ShouldBe(RolloutConditionMode.Any);
+        LegacyFeed.Parse(
+                """[{"LiteralVersion":"2.0","Architecture":"x86","RolloutConditionMode":"All","Changelog":null,"UpdatePackageUri":"relative"}]""")
+            .Single().Platform.ShouldBe("win-x86");
+        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"nope","RolloutConditionMode":"AtLeastOne"}]""")
+            .Single().Rollout.Mode.ShouldBe(RolloutConditionMode.Any);
         LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"x64"}]""").Single().Platform.ShouldBe("win-x64");
-        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"Independent"}]""").Single().Platform.ShouldBe("win");
-        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":0,"RolloutConditionMode":0}]""").Single().Platform.ShouldBe("win-x86");
+        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":"Independent"}]""").Single().Platform
+            .ShouldBe("win");
+        LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":0,"RolloutConditionMode":0}]""").Single().Platform
+            .ShouldBe("win-x86");
         LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":1}]""").Single().Platform.ShouldBe("win-x64");
-        var sparse = LegacyFeed.Parse("""[{"LiteralVersion":"2.0","Architecture":null,"Changelog":{"en":null},"RolloutConditions":[{"Key":"k","Value":null}]}]""").Single();
+        var sparse = LegacyFeed
+            .Parse(
+                """[{"LiteralVersion":"2.0","Architecture":null,"Changelog":{"en":null},"RolloutConditions":[{"Key":"k","Value":null}]}]""")
+            .Single();
         sparse.Platform.ShouldBe("win");
         sparse.Changelog["en"].ShouldBe("");
         sparse.Rollout.Conditions.Single().Value.ShouldBe("");
@@ -54,7 +62,10 @@ public class LegacyFeedTests
     public void Parse_LeavesOutWhatItCannotRead()
     {
         var unreadable = new List<string>();
-        var entries = LegacyFeed.Parse("""[{"LiteralVersion":"x"},{"LiteralVersion":"1.0","NecessaryUpdate":"true","UseStatistics":"maybe","Signature":7,"RolloutConditions":[{"Key":"k","Value":"v","IsNegativeCondition":"no"}]}]""", unreadable);
+        var entries =
+            LegacyFeed.Parse(
+                """[{"LiteralVersion":"x"},{"LiteralVersion":"1.0","NecessaryUpdate":"true","UseStatistics":"maybe","Signature":7,"RolloutConditions":[{"Key":"k","Value":"v","IsNegativeCondition":"no"}]}]""",
+                unreadable);
         unreadable.ShouldBe(["x"]);
         entries.Single().Necessary.ShouldBeTrue();
         entries.Single().UseStatistics.ShouldBeFalse();

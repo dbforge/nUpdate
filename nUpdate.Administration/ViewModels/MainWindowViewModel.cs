@@ -71,14 +71,21 @@ public sealed partial class ProjectCardViewModel(ProjectRegistration registratio
 }
 
 /// <summary>The project list: open, create and forget projects.</summary>
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel(
+    IProjectStore store,
+    IProjectService projects,
+    IProjectPasswordStore passwords,
+    IDialogService dialogs,
+    IFilePickerService files,
+    ViewModelFactory factory)
+    : ViewModelBase
 {
-    private readonly IProjectStore _store;
-    private readonly IProjectService _projects;
-    private readonly IProjectPasswordStore _passwords;
-    private readonly IDialogService _dialogs;
-    private readonly IFilePickerService _files;
-    private readonly ViewModelFactory _factory;
+    private readonly IProjectStore _store = store ?? throw new ArgumentNullException(nameof(store));
+    private readonly IProjectService _projects = projects ?? throw new ArgumentNullException(nameof(projects));
+    private readonly IProjectPasswordStore _passwords = passwords ?? throw new ArgumentNullException(nameof(passwords));
+    private readonly IDialogService _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
+    private readonly IFilePickerService _files = files ?? throw new ArgumentNullException(nameof(files));
+    private readonly ViewModelFactory _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
     /// <summary>The files of the projects whose windows are open, so that a project is not opened twice.</summary>
     private readonly HashSet<string> _openProjectFiles = new(StringComparer.Ordinal);
@@ -88,18 +95,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(ForgetSelectedCommand))]
     private ProjectCardViewModel? _selectedProject;
 
-    [ObservableProperty]
-    private string _status = string.Empty;
-
-    public MainWindowViewModel(IProjectStore store, IProjectService projects, IProjectPasswordStore passwords, IDialogService dialogs, IFilePickerService files, ViewModelFactory factory)
-    {
-        _store = store ?? throw new ArgumentNullException(nameof(store));
-        _projects = projects ?? throw new ArgumentNullException(nameof(projects));
-        _passwords = passwords ?? throw new ArgumentNullException(nameof(passwords));
-        _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
-        _files = files ?? throw new ArgumentNullException(nameof(files));
-        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-    }
+    [ObservableProperty] private string _status = string.Empty;
 
     /// <summary>Filters <see cref="VisibleProjects" /> by name, folder and update URL.</summary>
     [ObservableProperty] private string _searchText = string.Empty;
@@ -115,7 +111,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value) => Filter();
 
-    public string Version => $"nUpdate Administration {typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3)}";
+    public string Version =>
+        $"nUpdate Administration {typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3)}";
 
     public async Task InitializeAsync(string? projectPath = null)
     {
@@ -142,7 +139,8 @@ public partial class MainWindowViewModel : ViewModelBase
             foreach (var card in Projects.ToList())
                 await DescribeAsync(card);
         }
-        catch (Exception ex) when (ex is IOException or InvalidDataException or UnsupportedFormatException or Newtonsoft.Json.JsonException)
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnsupportedFormatException
+                                       or Newtonsoft.Json.JsonException)
         {
             await _dialogs.ShowErrorAsync("Error while reading the project list", ex.Message);
         }
@@ -190,7 +188,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task ForgetSelectedAsync()
     {
         var selected = SelectedProject!;
-        if (!await _dialogs.ConfirmAsync("Remove from list", $"Remove \"{selected.Name}\" from the list? The project folder stays where it is.", "Remove"))
+        if (!await _dialogs.ConfirmAsync("Remove from list",
+                $"Remove \"{selected.Name}\" from the list? The project folder stays where it is.", "Remove"))
             return;
         try
         {
@@ -248,7 +247,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (!ProjectSecretsProtection.IsComplete(loaded.Project, loaded.Secrets))
         {
-            var credentials = _factory.Create<CredentialsViewModel>(loaded.Project, loaded.Secrets, CredentialsMode.Secrets);
+            var credentials =
+                _factory.Create<CredentialsViewModel>(loaded.Project, loaded.Secrets, CredentialsMode.Secrets);
             if (!await _dialogs.ShowDialogAsync(credentials))
                 return;
         }
@@ -272,7 +272,8 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         else
         {
-            await _store.RegisterAsync(new ProjectRegistration(loaded.Project.Id, loaded.Project.Name, loaded.Project.Path));
+            await _store.RegisterAsync(new ProjectRegistration(loaded.Project.Id, loaded.Project.Name,
+                loaded.Project.Path));
         }
 
         await RefreshAsync();
@@ -294,7 +295,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 return unlocked;
         }
 
-        var credentials = _factory.Create<CredentialsViewModel>(loaded.Project, loaded.Secrets, CredentialsMode.ProjectPassword);
+        var credentials =
+            _factory.Create<CredentialsViewModel>(loaded.Project, loaded.Secrets, CredentialsMode.ProjectPassword);
         if (!await _dialogs.ShowDialogAsync(credentials))
             return null;
         if (credentials.EnteredPassword is { } password && credentials.RememberPassword)
@@ -329,7 +331,8 @@ public partial class MainWindowViewModel : ViewModelBase
         card.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || card.Path.Contains(word, StringComparison.OrdinalIgnoreCase)
         || card.UpdateUrl.Contains(word, StringComparison.OrdinalIgnoreCase);
 
-    private void OpenProjectWindow(ProjectLoadResult loaded, string openedPath) => _ = ShowProjectWindowAsync(loaded, openedPath);
+    private void OpenProjectWindow(ProjectLoadResult loaded, string openedPath) =>
+        _ = ShowProjectWindowAsync(loaded, openedPath);
 
     /// <summary>Shows the project window and refreshes the list when the project is renamed and once the window closes, since it may have been deleted.</summary>
     private async Task ShowProjectWindowAsync(ProjectLoadResult loaded, string openedPath)
@@ -378,5 +381,6 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     private static bool IsLoadError(Exception ex) =>
-        ex is IOException or UnauthorizedAccessException or InvalidDataException or UnsupportedFormatException or FormatException or Newtonsoft.Json.JsonException;
+        ex is IOException or UnauthorizedAccessException or InvalidDataException or UnsupportedFormatException
+            or FormatException or Newtonsoft.Json.JsonException;
 }

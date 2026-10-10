@@ -16,10 +16,14 @@ public class ProjectSecretsProtectionTests
         var project = _context.NewProject(statistics: true);
         ProjectSecretsProtection.IsComplete(project, new ProjectSecrets()).ShouldBeFalse();
         ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k" }).ShouldBeFalse();
-        ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k", TransferPassword = "t" }).ShouldBeFalse();
-        ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k", TransferPassword = "t", StatisticsAdminSecret = "a" }).ShouldBeTrue();
+        ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k", TransferPassword = "t" })
+            .ShouldBeFalse();
+        ProjectSecretsProtection.IsComplete(project,
+                new ProjectSecrets { PrivateKey = "k", TransferPassword = "t", StatisticsAdminSecret = "a" })
+            .ShouldBeTrue();
         project.Statistics.Enabled = false;
-        ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k", TransferPassword = "t" }).ShouldBeTrue();
+        ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k", TransferPassword = "t" })
+            .ShouldBeTrue();
         project.Transfer.Protocol = TransferProtocol.Sftp;
         project.Transfer.SftpPrivateKeyPath = "/key";
         ProjectSecretsProtection.IsComplete(project, new ProjectSecrets { PrivateKey = "k" }).ShouldBeTrue();

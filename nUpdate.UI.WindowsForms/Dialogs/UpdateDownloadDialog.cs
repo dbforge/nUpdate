@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Windows.Forms;
 using nUpdate.Ui;
 using nUpdate.Updating;
 
@@ -11,7 +10,8 @@ internal sealed partial class UpdateDownloadDialog : BaseDialog
     private readonly Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> _download;
     private readonly DialogOperation<bool> _operation = new();
 
-    internal UpdateDownloadDialog(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
+    internal UpdateDownloadDialog(UpdateManager updateManager,
+        Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         : base(updateManager)
     {
         _download = download ?? throw new ArgumentNullException(nameof(download));
@@ -51,7 +51,9 @@ internal sealed partial class UpdateDownloadDialog : BaseDialog
 
     private void ShowProgress(float percentage)
     {
-        downloadProgressBar.Value = Math.Max(downloadProgressBar.Minimum, Math.Min(downloadProgressBar.Maximum, (int)percentage));
-        infoLabel.Text = string.Format(CultureInfo.CurrentCulture, Localization.DownloadingInfo, Math.Round(percentage, 1));
+        downloadProgressBar.Value = Math.Max(downloadProgressBar.Minimum,
+            Math.Min(downloadProgressBar.Maximum, (int)percentage));
+        infoLabel.Text = string.Format(CultureInfo.CurrentCulture, Localization.DownloadingInfo,
+            Math.Round(percentage, 1));
     }
 }

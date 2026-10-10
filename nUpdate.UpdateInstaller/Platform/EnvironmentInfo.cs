@@ -19,7 +19,8 @@ public sealed class EnvironmentInfo : IEnvironmentInfo
     public bool HasDisplay => DetectDisplay(IsWindows, IsMacOS, IsServiceContext, Environment.GetEnvironmentVariable);
 
     /// <summary>Windows needs an interactive session, macOS always has its window server, Linux needs <c>DISPLAY</c> or <c>WAYLAND_DISPLAY</c>.</summary>
-    internal static bool DetectDisplay(bool isWindows, bool isMacOS, bool isServiceContext, Func<string, string?> variable)
+    internal static bool DetectDisplay(bool isWindows, bool isMacOS, bool isServiceContext,
+        Func<string, string?> variable)
     {
         if (isWindows)
             return !isServiceContext;

@@ -55,8 +55,10 @@ public sealed class ProjectHttpClientFactory : IProjectHttpClientFactory
         }
 
         client.Timeout = TimeSpan.FromSeconds(60);
-        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", $"nUpdate.Administration/{typeof(ProjectHttpClientFactory).Assembly.GetName().Version!.ToString(2)}");
-        client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
+        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+            $"nUpdate.Administration/{typeof(ProjectHttpClientFactory).Assembly.GetName().Version!.ToString(2)}");
+        client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+        { NoCache = true };
         return client;
     }
 }

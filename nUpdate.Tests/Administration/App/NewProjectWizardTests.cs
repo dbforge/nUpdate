@@ -19,7 +19,8 @@ public class NewProjectWizardTests
     public async Task NewProject_WalksThroughTheStepsAndValidatesEachOne()
     {
         var viewModel = _context.Factory.Create<NewProjectViewModel>();
-        viewModel.Steps.Select(s => s.Title).ShouldBe(["General", "Authentication", "Transfer", "Statistics", "Security"]);
+        viewModel.Steps.Select(s => s.Title)
+            .ShouldBe(["General", "Authentication", "Transfer", "Statistics", "Security"]);
         viewModel.Steps.Select(s => s.Marker).ShouldBe(["1", "2", "3", "4", "5"]);
         viewModel.Steps[0].IsCurrent.ShouldBeTrue();
         viewModel.IsGeneralStep.ShouldBeTrue();
@@ -85,10 +86,15 @@ public class NewProjectWizardTests
         viewModel.ErrorMessage.ShouldBe("The passwords do not match.");
         viewModel.ProjectPasswordConfirmation = "project-pw";
         var result = AppTestContext.Loaded(AppTestContext.NewProject(), new ProjectSecrets());
-        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>()).Returns(result);
+        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(),
+            Arg.Any<CancellationToken>()).Returns(result);
         await viewModel.ContinueCommand.ExecuteAsync(null);
         viewModel.Result.ShouldBe(result);
-        await _context.Projects.Received().CreateAsync(Arg.Is<NewProjectRequest>(r => r.ProjectPassword == "project-pw" && r.Folder == _context.Paths.SuggestedProjectFolder("P")), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>());
+        await _context.Projects.Received()
+            .CreateAsync(
+                Arg.Is<NewProjectRequest>(r =>
+                    r.ProjectPassword == "project-pw" && r.Folder == _context.Paths.SuggestedProjectFolder("P")),
+                Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -131,22 +137,30 @@ public class NewProjectWizardTests
         viewModel.Statistics.Enabled = false;
         viewModel.SaveCredentials = false;
 
-        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(), Arg.Any<CancellationToken>()).ThrowsAsync(new TransferException("down"));
+        _context.Projects
+            .TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(),
+                Arg.Any<CancellationToken>()).ThrowsAsync(new TransferException("down"));
         await viewModel.CreateCommand.ExecuteAsync(null);
         viewModel.ErrorMessage.ShouldBe("down");
         closed.ShouldBeEmpty();
 
         viewModel.TestConnectionFirst = false;
         var result = AppTestContext.Loaded(AppTestContext.NewProject(), new ProjectSecrets());
-        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>()).Returns(result);
+        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(),
+            Arg.Any<CancellationToken>()).Returns(result);
         await viewModel.CreateCommand.ExecuteAsync(null);
         viewModel.Result.ShouldBe(result);
         closed.ShouldBe([true]);
         await _context.Projects.Received().CreateAsync(Arg.Is<NewProjectRequest>(r =>
-            r.Name == "P" && r.Folder == "/projects/p" && r.HttpAuthentication!.Username == "web" && r.Secrets.HttpAuthenticationPassword == "wp" && r.Secrets.TransferPassword == "p"
-            && !r.TestConnection && r.KeySize == 8192 && r.ProjectPassword == null), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>());
+                r.Name == "P" && r.Folder == "/projects/p" && r.HttpAuthentication!.Username == "web" &&
+                r.Secrets.HttpAuthenticationPassword == "wp" && r.Secrets.TransferPassword == "p"
+                && !r.TestConnection && r.KeySize == 8192 && r.ProjectPassword == null),
+            Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>());
 
-        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>()).ThrowsAsync(new PipelineException("Saving the project", new IOException("full"), []));
+        _context.Projects
+            .CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(),
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(new PipelineException("Saving the project", new IOException("full"), []));
         viewModel.UseHttpAuthentication = false;
         viewModel.HttpPassword = "";
         await viewModel.CreateCommand.ExecuteAsync(null);

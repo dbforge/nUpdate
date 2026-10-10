@@ -14,7 +14,8 @@ public static class ProjectSecretsProtection
     {
         ArgumentNullException.ThrowIfNull(secrets);
         ArgumentException.ThrowIfNullOrEmpty(password);
-        return Convert.ToBase64String(PasswordProtectedData.Encrypt(Encoding.UTF8.GetBytes(Serializer.Serialize(secrets)), password));
+        return Convert.ToBase64String(
+            PasswordProtectedData.Encrypt(Encoding.UTF8.GetBytes(Serializer.Serialize(secrets)), password));
     }
 
     /// <exception cref="CryptographicException">The password is wrong.</exception>
@@ -51,7 +52,8 @@ public static class ProjectSecretsProtection
         ArgumentNullException.ThrowIfNull(secrets);
         if (string.IsNullOrEmpty(secrets.PrivateKey))
             return false;
-        if (project.Transfer.Protocol != TransferProtocol.Sftp || string.IsNullOrEmpty(project.Transfer.SftpPrivateKeyPath))
+        if (project.Transfer.Protocol != TransferProtocol.Sftp ||
+            string.IsNullOrEmpty(project.Transfer.SftpPrivateKeyPath))
         {
             if (string.IsNullOrEmpty(secrets.TransferPassword))
                 return false;

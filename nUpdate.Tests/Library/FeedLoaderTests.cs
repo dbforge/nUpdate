@@ -11,41 +11,41 @@ namespace nUpdate.Tests.Library;
 public class FeedLoaderTests
 {
     private const string FeedJson = """
-        {
-          "format": 1,
-          "projectId": "8f3c0a2e-5b1d-4e8a-9c7f-2d6b1e4a9f10",
-          "packages": [
-            {
-              "version": "2.1.0-beta.1",
-              "publishedAt": "2026-10-05T14:12:00+00:00",
-              "necessary": true,
-              "afterInstall": "close",
-              "changelog": { "en": "English", "de-DE": "Deutsch" },
-              "unsupportedVersions": ["1.0.0"],
-              "rollout": { "mode": "all", "conditions": [{ "key": "Region", "value": "EU", "negated": false }] },
-              "files": [
-                {
-                  "platform": "win-x64",
-                  "path": "packages/2.1.0-beta.1/win-x64.zip",
-                  "size": 1234,
-                  "sha512": "aGFzaA==",
-                  "signature": { "algorithm": "rsa-pss-sha512", "value": "c2ln" },
-                  "touches": ["files", "registry"]
-                },
-                {
-                  "platform": "linux",
-                  "path": "packages/2.1.0-beta.1/linux.zip",
-                  "size": 1000,
-                  "sha512": "aGFzaA==",
-                  "signature": { "algorithm": "rsa-pss-sha512", "value": "c2ln" },
-                  "touches": null
-                }
-              ],
-              "statistics": { "url": "statistics.php", "enabled": true }
-            }
-          ]
-        }
-        """;
+                                    {
+                                      "format": 1,
+                                      "projectId": "8f3c0a2e-5b1d-4e8a-9c7f-2d6b1e4a9f10",
+                                      "packages": [
+                                        {
+                                          "version": "2.1.0-beta.1",
+                                          "publishedAt": "2026-10-05T14:12:00+00:00",
+                                          "necessary": true,
+                                          "afterInstall": "close",
+                                          "changelog": { "en": "English", "de-DE": "Deutsch" },
+                                          "unsupportedVersions": ["1.0.0"],
+                                          "rollout": { "mode": "all", "conditions": [{ "key": "Region", "value": "EU", "negated": false }] },
+                                          "files": [
+                                            {
+                                              "platform": "win-x64",
+                                              "path": "packages/2.1.0-beta.1/win-x64.zip",
+                                              "size": 1234,
+                                              "sha512": "aGFzaA==",
+                                              "signature": { "algorithm": "rsa-pss-sha512", "value": "c2ln" },
+                                              "touches": ["files", "registry"]
+                                            },
+                                            {
+                                              "platform": "linux",
+                                              "path": "packages/2.1.0-beta.1/linux.zip",
+                                              "size": 1000,
+                                              "sha512": "aGFzaA==",
+                                              "signature": { "algorithm": "rsa-pss-sha512", "value": "c2ln" },
+                                              "touches": null
+                                            }
+                                          ],
+                                          "statistics": { "url": "statistics.php", "enabled": true }
+                                        }
+                                      ]
+                                    }
+                                    """;
 
     [Fact]
     public void Parse_ReadsEveryField()
@@ -82,40 +82,82 @@ public class FeedLoaderTests
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("  "));
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("null"));
         Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("{not json")).Message.ShouldContain("not valid JSON");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"nope"}]}""")).Message.ShouldContain("nope");
-        Should.Throw<UnsupportedFormatException>(() => FeedLoader.Parse("""{"format":2,"packages":[]}""")).Message.ShouldContain("format 2");
-        Should.Throw<UnsupportedFormatException>(() => FeedLoader.Parse("""[{"LiteralVersion":"1.0"}]""")).Message.ShouldContain("nUpdate 3 or 4");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("{\"format\":1,\"packages\":[" + Package("1.0.0", "a", "x") + "," + Package("1.0.0+build.2", "b", "y") + "]}")).Message.ShouldContain("more than once");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", path: ""))).Message.ShouldContain("any file of the package \"1.0.0\" has no path");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", signature: ""))).Message.ShouldContain("no signature");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", platform: " "))).Message.ShouldContain("without a platform");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"nope"}]}"""))
+            .Message.ShouldContain("nope");
+        Should.Throw<UnsupportedFormatException>(() => FeedLoader.Parse("""{"format":2,"packages":[]}""")).Message
+            .ShouldContain("format 2");
+        Should.Throw<UnsupportedFormatException>(() => FeedLoader.Parse("""[{"LiteralVersion":"1.0"}]""")).Message
+            .ShouldContain("nUpdate 3 or 4");
+        Should.Throw<InvalidFeedException>(() =>
+            FeedLoader.Parse("{\"format\":1,\"packages\":[" + Package("1.0.0", "a", "x") + "," +
+                             Package("1.0.0+build.2", "b", "y") + "]}")).Message.ShouldContain("more than once");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", path: ""))).Message
+            .ShouldContain("any file of the package \"1.0.0\" has no path");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", signature: ""))).Message
+            .ShouldContain("no signature");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse(Entry("1.0.0", platform: " "))).Message
+            .ShouldContain("without a platform");
         FeedLoader.Parse("""{"format":1,"packages":[]}""").Packages.ShouldBeEmpty();
         FeedLoader.Parse("""{"format":1,"packages":null}""").Packages.ShouldBeEmpty();
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[null]}""")).Message.ShouldContain("without a version");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":null}]}""")).Message.ShouldContain("without a version");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":null}]}""")).Message.ShouldContain("has no files");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[]}]}""")).Message.ShouldContain("has no files");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[null]}]}""")).Message.ShouldContain("without a platform");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"win","path":"p","signature":null}]}]}""")).Message.ShouldContain("no signature");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"win","path":"p","signature":{"value":"s"}},{"platform":"WIN","path":"q","signature":{"value":"s"}}]}]}""")).Message.ShouldContain("more than one file for the platform \"WIN\"");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"unsupportedVersions":[null]}]}""")).Message.ShouldContain("empty entry");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"rollout":{"conditions":[null]}}]}""")).Message.ShouldContain("empty entry");
-        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"keepRunning"}]}""")).Message.ShouldContain("can only ask to restart");
-        FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"restart"}]}""").Packages.Single().AfterInstall.ShouldBe(AfterInstall.Restart);
-        var sparse = FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"},"touches":null}],"changelog":null,"unsupportedVersions":null,"rollout":null}]}""").Packages.Single();
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[null]}""")).Message
+            .ShouldContain("without a version");
+        Should.Throw<InvalidFeedException>(() => FeedLoader.Parse("""{"format":1,"packages":[{"version":null}]}"""))
+            .Message.ShouldContain("without a version");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":null}]}""")).Message
+            .ShouldContain("has no files");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[]}]}""")).Message
+            .ShouldContain("has no files");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[null]}]}""")).Message
+            .ShouldContain("without a platform");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse(
+                    """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"win","path":"p","signature":null}]}]}"""))
+            .Message.ShouldContain("no signature");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse(
+                    """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"win","path":"p","signature":{"value":"s"}},{"platform":"WIN","path":"q","signature":{"value":"s"}}]}]}"""))
+            .Message.ShouldContain("more than one file for the platform \"WIN\"");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse(
+                    """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"unsupportedVersions":[null]}]}"""))
+            .Message.ShouldContain("empty entry");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse(
+                    """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"rollout":{"conditions":[null]}}]}"""))
+            .Message.ShouldContain("empty entry");
+        Should.Throw<InvalidFeedException>(() =>
+                FeedLoader.Parse(
+                    """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"keepRunning"}]}"""))
+            .Message.ShouldContain("can only ask to restart");
+        FeedLoader
+            .Parse(
+                """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"afterInstall":"restart"}]}""")
+            .Packages.Single().AfterInstall.ShouldBe(AfterInstall.Restart);
+        var sparse = FeedLoader
+            .Parse(
+                """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"},"touches":null}],"changelog":null,"unsupportedVersions":null,"rollout":null}]}""")
+            .Packages.Single();
         sparse.AfterInstall.ShouldBeNull();
         sparse.Changelog.ShouldBeEmpty();
         sparse.UnsupportedVersions.ShouldBeEmpty();
         sparse.Rollout.Conditions.ShouldBeEmpty();
         sparse.Files.Single().Touches.ShouldBeEmpty();
-        FeedLoader.Parse("""{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"rollout":{"mode":"all","conditions":null}}]}""").Packages.Single().Rollout.Conditions.ShouldBeEmpty();
+        FeedLoader
+            .Parse(
+                """{"format":1,"packages":[{"version":"1.0.0","files":[{"platform":"any","path":"p","signature":{"value":"s"}}],"rollout":{"mode":"all","conditions":null}}]}""")
+            .Packages.Single().Rollout.Conditions.ShouldBeEmpty();
     }
 
-    private static string Entry(string version, string path = "packages/x.zip", string signature = "c2ln", string platform = "any") =>
+    private static string Entry(string version, string path = "packages/x.zip", string signature = "c2ln",
+        string platform = "any") =>
         "{\"format\":1,\"packages\":[" + Package(version, path, signature, platform) + "]}";
 
     private static string Package(string version, string path, string signature, string platform = "any") =>
-        "{\"version\":\"" + version + "\",\"files\":[{\"platform\":\"" + platform + "\",\"path\":\"" + path + "\",\"size\":1,\"sha512\":\"x\",\"signature\":{\"value\":\"" + signature + "\"}}]}";
+        "{\"version\":\"" + version + "\",\"files\":[{\"platform\":\"" + platform + "\",\"path\":\"" + path +
+        "\",\"size\":1,\"sha512\":\"x\",\"signature\":{\"value\":\"" + signature + "\"}}]}";
 
     [Fact]
     public void FromFile_ReadsThroughFileSystem()
@@ -134,7 +176,8 @@ public class FeedLoaderTests
         (await FeedLoader.LoadAsync(client, new Uri("https://h/u/nupdate.json"))).Packages.Count.ShouldBe(1);
 
         http.Text(HttpMethod.Get, "https://h/u/missing.json", "", HttpStatusCode.NotFound);
-        (await Should.ThrowAsync<HttpRequestException>(() => FeedLoader.LoadAsync(client, new Uri("https://h/u/missing.json")))).Message.ShouldContain("404");
+        (await Should.ThrowAsync<HttpRequestException>(() =>
+            FeedLoader.LoadAsync(client, new Uri("https://h/u/missing.json")))).Message.ShouldContain("404");
         await Should.ThrowAsync<ArgumentNullException>(() => FeedLoader.LoadAsync(client, null!));
         await Should.ThrowAsync<ArgumentNullException>(() => FeedLoader.LoadAsync(null!, new Uri("https://h")));
     }

@@ -30,7 +30,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     private sealed class WpfPresenter(UpdateManager updateManager, Window? owner) : IUpdateFlowPresenter
     {
@@ -43,7 +44,8 @@ public sealed class UpdaterUI
 
         public Task ShowNoUpdatesAsync()
         {
-            ShowMessage(updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo, MessageBoxImage.Information);
+            ShowMessage(updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo,
+                MessageBoxImage.Information);
             return Task.CompletedTask;
         }
 

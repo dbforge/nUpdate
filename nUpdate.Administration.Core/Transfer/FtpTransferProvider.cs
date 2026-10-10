@@ -31,7 +31,9 @@ public sealed class FtpTransferProvider : ITransferProvider
             {
                 ProxyHost = proxy.Host,
                 ProxyPort = proxy.Port,
-                ProxyCredentials = string.IsNullOrEmpty(settings.Proxy!.Username) ? null : new NetworkCredential(settings.Proxy.Username, credentials.ProxyPassword ?? string.Empty),
+                ProxyCredentials = string.IsNullOrEmpty(settings.Proxy!.Username)
+                    ? null
+                    : new NetworkCredential(settings.Proxy.Username, credentials.ProxyPassword ?? string.Empty),
                 FtpHost = settings.Host,
                 FtpPort = settings.Port,
                 FtpCredentials = ftpCredentials,
@@ -42,7 +44,9 @@ public sealed class FtpTransferProvider : ITransferProvider
             TransferProtocol.FtpsImplicit => FtpEncryptionMode.Implicit,
             _ => FtpEncryptionMode.None,
         };
-        _client.Config.DataConnectionType = settings.UsePassiveMode ? FtpDataConnectionType.AutoPassive : FtpDataConnectionType.AutoActive;
+        _client.Config.DataConnectionType = settings.UsePassiveMode
+            ? FtpDataConnectionType.AutoPassive
+            : FtpDataConnectionType.AutoActive;
         _client.Config.ValidateAnyCertificate = false;
         _client.Config.RetryAttempts = 2;
         _client.ValidateCertificate += OnValidateCertificate;
@@ -58,7 +62,8 @@ public sealed class FtpTransferProvider : ITransferProvider
         {
             if (ex is FtpAuthenticationException)
                 throw new TransferException($"The FTP server \"{_settings.Host}\" rejected the credentials.", ex);
-            throw new TransferException($"The FTP server \"{_settings.Host}:{_settings.Port}\" could not be reached: {ex.Message}", ex);
+            throw new TransferException(
+                $"The FTP server \"{_settings.Host}:{_settings.Port}\" could not be reached: {ex.Message}", ex);
         }
     }
 
@@ -68,11 +73,14 @@ public sealed class FtpTransferProvider : ITransferProvider
     public Task<bool> DirectoryExistsAsync(string remotePath, CancellationToken cancellationToken = default) =>
         Guard(() => _client.DirectoryExists(Absolute(remotePath), cancellationToken));
 
-    public Task<IReadOnlyList<ServerItem>> ListAsync(string remotePath, bool recursive, CancellationToken cancellationToken = default) =>
+    public Task<IReadOnlyList<ServerItem>> ListAsync(string remotePath, bool recursive,
+        CancellationToken cancellationToken = default) =>
         Guard<IReadOnlyList<ServerItem>>(async () =>
         {
-            var items = await _client.GetListing(Absolute(remotePath), recursive ? FtpListOption.Recursive : FtpListOption.Auto, cancellationToken).ConfigureAwait(false);
-            return items.Select(item => new ServerItem(item.Name, item.FullName, item.Size, item.Modified == DateTime.MinValue ? null : item.Modified,
+            var items = await _client.GetListing(Absolute(remotePath),
+                recursive ? FtpListOption.Recursive : FtpListOption.Auto, cancellationToken).ConfigureAwait(false);
+            return items.Select(item => new ServerItem(item.Name, item.FullName, item.Size,
+                item.Modified == DateTime.MinValue ? null : item.Modified,
                 item.Type switch
                 {
                     FtpObjectType.Directory => ServerItemType.Directory,
@@ -103,23 +111,34 @@ public sealed class FtpTransferProvider : ITransferProvider
     public Task RenameAsync(string remotePath, string newRemotePath, CancellationToken cancellationToken = default) =>
         Guard(() => _client.Rename(Absolute(remotePath), Absolute(newRemotePath), cancellationToken));
 
-    public Task UploadFileAsync(string localPath, string remotePath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default) =>
+    public Task UploadFileAsync(string localPath, string remotePath, IProgress<TransferProgress>? progress = null,
+        CancellationToken cancellationToken = default) =>
         Guard(async () =>
         {
             var total = _fileSystem.FileInfo.New(localPath).Length;
-            var status = await _client.UploadFile(localPath, Absolute(remotePath), FtpRemoteExists.Overwrite, true, FtpVerify.None,
-                progress is null ? null : new Progress<FtpProgress>(p => progress.Report(new TransferProgress(p.TransferredBytes, total))), cancellationToken).ConfigureAwait(false);
+            var status = await _client.UploadFile(localPath, Absolute(remotePath), FtpRemoteExists.Overwrite, true,
+                FtpVerify.None,
+                progress is null
+                    ? null
+                    : new Progress<FtpProgress>(p => progress.Report(new TransferProgress(p.TransferredBytes, total))),
+                cancellationToken).ConfigureAwait(false);
             if (status == FtpStatus.Failed)
                 throw new TransferException($"Uploading \"{remotePath}\" failed.");
         });
 
-    public Task DownloadFileAsync(string remotePath, string localPath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default) =>
+    public Task DownloadFileAsync(string remotePath, string localPath, IProgress<TransferProgress>? progress = null,
+        CancellationToken cancellationToken = default) =>
         Guard(async () =>
         {
             var path = Absolute(remotePath);
-            var total = progress is null ? 0 : Math.Max(0, await _client.GetFileSize(path, 0, cancellationToken).ConfigureAwait(false));
+            var total = progress is null
+                ? 0
+                : Math.Max(0, await _client.GetFileSize(path, 0, cancellationToken).ConfigureAwait(false));
             var status = await _client.DownloadFile(localPath, path, FtpLocalExists.Overwrite, FtpVerify.None,
-                progress is null ? null : new Progress<FtpProgress>(p => progress.Report(new TransferProgress(p.TransferredBytes, total))), cancellationToken).ConfigureAwait(false);
+                progress is null
+                    ? null
+                    : new Progress<FtpProgress>(p => progress.Report(new TransferProgress(p.TransferredBytes, total))),
+                cancellationToken).ConfigureAwait(false);
             if (status == FtpStatus.Failed)
                 throw new TransferException($"Downloading \"{remotePath}\" failed.");
         });
@@ -141,7 +160,8 @@ public sealed class FtpTransferProvider : ITransferProvider
 
     // A failed TLS handshake on a data connection surfaces as an AuthenticationException.
     private static bool IsTransferError(Exception ex) =>
-        ex is FtpException or IOException or System.Net.Sockets.SocketException or TimeoutException or System.Security.Authentication.AuthenticationException;
+        ex is FtpException or IOException or System.Net.Sockets.SocketException or TimeoutException
+            or System.Security.Authentication.AuthenticationException;
 
     private Task Guard(Func<Task> action) => TransferGuard.RunAsync(action, IsTransferError, Describe);
 
@@ -159,14 +179,22 @@ public sealed class FtpTransferProvider : ITransferProvider
             return;
         }
 
-        var fingerprint = e.Certificate is null ? string.Empty : Convert.ToHexString(new X509Certificate2(e.Certificate).GetCertHash(System.Security.Cryptography.HashAlgorithmName.SHA256)).ToLowerInvariant();
-        if (!string.IsNullOrEmpty(_settings.TrustedCertificateFingerprint) && string.Equals(fingerprint, _settings.TrustedCertificateFingerprint, StringComparison.OrdinalIgnoreCase))
+        var fingerprint = e.Certificate is null
+            ? string.Empty
+            : Convert.ToHexString(
+                    new X509Certificate2(e.Certificate).GetCertHash(System.Security.Cryptography.HashAlgorithmName
+                        .SHA256))
+                .ToLowerInvariant();
+        if (!string.IsNullOrEmpty(_settings.TrustedCertificateFingerprint) && string.Equals(fingerprint,
+                _settings.TrustedCertificateFingerprint, StringComparison.OrdinalIgnoreCase))
         {
             e.Accept = true;
             return;
         }
 
         e.Accept = false;
-        throw new UntrustedServerException($"The certificate of \"{_settings.Host}\" is not trusted ({e.PolicyErrors}).", fingerprint, e.Certificate?.Subject ?? string.Empty);
+        throw new UntrustedServerException(
+            $"The certificate of \"{_settings.Host}\" is not trusted ({e.PolicyErrors}).", fingerprint,
+            e.Certificate?.Subject ?? string.Empty);
     }
 }

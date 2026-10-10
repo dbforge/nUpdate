@@ -20,7 +20,8 @@ public class ProjectPasswordStoreTests
         await _context.Passwords.SetAsync(id, "pw2");
         (await _context.Passwords.GetAsync(id)).ShouldBe("pw2");
 
-        var other = new ProjectPasswordStore(_context.FileSystem, _context.Paths, new DataProtectionCredentialProtector(new EphemeralDataProtectionProvider()));
+        var other = new ProjectPasswordStore(_context.FileSystem, _context.Paths,
+            new DataProtectionCredentialProtector(new EphemeralDataProtectionProvider()));
         (await other.GetAsync(id)).ShouldBeNull();
 
         await _context.Passwords.RemoveAsync(id);
@@ -36,7 +37,8 @@ public class ProjectPasswordStoreTests
 
         await Should.ThrowAsync<ArgumentException>(() => _context.Passwords.SetAsync(id, ""));
         Should.Throw<ArgumentNullException>(() => new ProjectPasswordStore(null!, _context.Paths, _context.Protector));
-        Should.Throw<ArgumentNullException>(() => new ProjectPasswordStore(_context.FileSystem, null!, _context.Protector));
+        Should.Throw<ArgumentNullException>(() =>
+            new ProjectPasswordStore(_context.FileSystem, null!, _context.Protector));
         Should.Throw<ArgumentNullException>(() => new ProjectPasswordStore(_context.FileSystem, _context.Paths, null!));
     }
 }

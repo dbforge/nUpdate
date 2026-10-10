@@ -8,26 +8,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Localization\*.json" LogicalName="nUpdate.Localization.%(Filename).json" />
+    <EmbeddedResource Include="Localization\*.json" LogicalName="nUpdate.Localization.%(Filename).json"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="System.Security.Cryptography.Cng" />
+    <PackageReference Include="Newtonsoft.Json"/>
     <PackageReference Include="System.Formats.Asn1"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+    <PackageReference Include="System.Security.Cryptography.Cng"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="nUpdate.Tests" />
-    <InternalsVisibleTo Include="nUpdate.UpdateInstaller" />
-    <InternalsVisibleTo Include="nUpdate.Administration.Core" />
-    <InternalsVisibleTo Include="nUpdate.Administration" />
-    <InternalsVisibleTo Include="nUpdate.UI.WindowsForms" />
-    <InternalsVisibleTo Include="nUpdate.UI.WPF" />
-    <InternalsVisibleTo Include="nUpdate.UI.Avalonia" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="nUpdate.Tests"/>
+    <InternalsVisibleTo Include="nUpdate.UpdateInstaller"/>
+    <InternalsVisibleTo Include="nUpdate.Administration.Core"/>
+    <InternalsVisibleTo Include="nUpdate.Administration"/>
+    <InternalsVisibleTo Include="nUpdate.UI.WindowsForms"/>
+    <InternalsVisibleTo Include="nUpdate.UI.WPF"/>
+    <InternalsVisibleTo Include="nUpdate.UI.Avalonia"/>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 
 </Project>

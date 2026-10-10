@@ -17,72 +17,63 @@ public interface IFeedChecker
     ///     against the feed and the project's public key, and asks the statistics API whether it answers. Problems are
     ///     reported in the result, not thrown.
     /// </summary>
-    Task<FeedCheckResult> CheckAsync(UpdateProject project, ProjectSecrets secrets, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task<FeedCheckResult> CheckAsync(UpdateProject project, ProjectSecrets secrets,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>The outcome of <see cref="IFeedChecker.CheckAsync" />.</summary>
-public sealed class FeedCheckResult
+public sealed class FeedCheckResult(
+    string? feedProblem,
+    IReadOnlyList<PackageCheck> packages,
+    bool statisticsChecked,
+    string? statisticsProblem)
 {
-    public FeedCheckResult(string? feedProblem, IReadOnlyList<PackageCheck> packages, bool statisticsChecked, string? statisticsProblem)
-    {
-        FeedProblem = feedProblem;
-        Packages = packages ?? throw new ArgumentNullException(nameof(packages));
-        StatisticsChecked = statisticsChecked;
-        StatisticsProblem = statisticsProblem;
-    }
-
     /// <summary>Why <c>nupdate.json</c> could not be read, or <c>null</c>.</summary>
-    public string? FeedProblem { get; }
+    public string? FeedProblem { get; } = feedProblem;
 
-    public IReadOnlyList<PackageCheck> Packages { get; }
+    public IReadOnlyList<PackageCheck> Packages { get; } =
+        packages ?? throw new ArgumentNullException(nameof(packages));
 
     /// <summary>The project has statistics, so the API was asked.</summary>
-    public bool StatisticsChecked { get; }
+    public bool StatisticsChecked { get; } = statisticsChecked;
 
-    public string? StatisticsProblem { get; }
+    public string? StatisticsProblem { get; } = statisticsProblem;
 
     public bool Succeeded => FeedProblem is null && Packages.All(p => p.Problem is null) && StatisticsProblem is null;
 }
 
 /// <summary>The check of one package file of the feed.</summary>
-public sealed class PackageCheck
+public sealed class PackageCheck(UpdateVersion version, string platform, Uri uri, string? problem)
 {
-    public PackageCheck(UpdateVersion version, string platform, Uri uri, string? problem)
-    {
-        Version = version ?? throw new ArgumentNullException(nameof(version));
-        Platform = platform ?? throw new ArgumentNullException(nameof(platform));
-        Uri = uri ?? throw new ArgumentNullException(nameof(uri));
-        Problem = problem;
-    }
+    public UpdateVersion Version { get; } = version ?? throw new ArgumentNullException(nameof(version));
 
-    public UpdateVersion Version { get; }
+    public string Platform { get; } = platform ?? throw new ArgumentNullException(nameof(platform));
 
-    public string Platform { get; }
-
-    public Uri Uri { get; }
+    public Uri Uri { get; } = uri ?? throw new ArgumentNullException(nameof(uri));
 
     /// <summary>What a client would reject, or <c>null</c> when the package is fine.</summary>
-    public string? Problem { get; }
+    public string? Problem { get; } = problem;
 }
 
-public sealed class FeedChecker : IFeedChecker
+public sealed class FeedChecker(
+    IFileSystem fileSystem,
+    IProjectHttpClientFactory httpClientFactory,
+    IFeedStore feeds,
+    IPackageSigner signer,
+    IStatisticsApi statistics)
+    : IFeedChecker
 {
-    private readonly IFileSystem _fileSystem;
-    private readonly IProjectHttpClientFactory _httpClientFactory;
-    private readonly IFeedStore _feeds;
-    private readonly IPackageSigner _signer;
-    private readonly IStatisticsApi _statistics;
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
-    public FeedChecker(IFileSystem fileSystem, IProjectHttpClientFactory httpClientFactory, IFeedStore feeds, IPackageSigner signer, IStatisticsApi statistics)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-        _feeds = feeds ?? throw new ArgumentNullException(nameof(feeds));
-        _signer = signer ?? throw new ArgumentNullException(nameof(signer));
-        _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
-    }
+    private readonly IProjectHttpClientFactory _httpClientFactory =
+        httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
-    public async Task<FeedCheckResult> CheckAsync(UpdateProject project, ProjectSecrets secrets, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
+    private readonly IFeedStore _feeds = feeds ?? throw new ArgumentNullException(nameof(feeds));
+    private readonly IPackageSigner _signer = signer ?? throw new ArgumentNullException(nameof(signer));
+    private readonly IStatisticsApi _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
+
+    public async Task<FeedCheckResult> CheckAsync(UpdateProject project, ProjectSecrets secrets,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -107,12 +98,16 @@ public sealed class FeedChecker : IFeedChecker
         }
 
         var packages = new List<PackageCheck>();
-        var files = (feed?.Packages ?? []).OrderBy(p => p.Version).SelectMany(p => p.Files.Select(f => (Package: p, File: f))).ToList();
+        var files = (feed?.Packages ?? []).OrderBy(p => p.Version)
+            .SelectMany(p => p.Files.Select(f => (Package: p, File: f))).ToList();
         for (var i = 0; i < files.Count; i++)
         {
             var (package, file) = files[i];
-            progress?.Report(new PipelineProgress($"Checking {package.Version} for {file.Platform}", i + 1, files.Count + 1));
-            packages.Add(await CheckPackageAsync(project, secrets, feed!.ProjectId, package.Version, file, cancellationToken).ConfigureAwait(false));
+            progress?.Report(new PipelineProgress($"Checking {package.Version} for {file.Platform}", i + 1,
+                files.Count + 1));
+            packages.Add(
+                await CheckPackageAsync(project, secrets, feed!.ProjectId, package.Version, file, cancellationToken)
+                    .ConfigureAwait(false));
         }
 
         string? statisticsProblem = null;
@@ -121,21 +116,26 @@ public sealed class FeedChecker : IFeedChecker
         return new FeedCheckResult(feedProblem, packages, project.Statistics.Enabled, statisticsProblem);
     }
 
-    private async Task<PackageCheck> CheckPackageAsync(UpdateProject project, ProjectSecrets secrets, Guid feedProjectId, UpdateVersion version, PackageFile file,
+    private async Task<PackageCheck> CheckPackageAsync(UpdateProject project, ProjectSecrets secrets,
+        Guid feedProjectId, UpdateVersion version, PackageFile file,
         CancellationToken cancellationToken)
     {
         // Like the client: an absolute http(s) URL as it is, anything else relative to the feed.
-        var uri = Uri.TryCreate(file.Path, UriKind.Absolute, out var absolute) && (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps)
+        var uri = Uri.TryCreate(file.Path, UriKind.Absolute, out var absolute) &&
+                  (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps)
             ? absolute
             : new Uri(project.FeedUri, file.Path);
         var path = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), $"nupdate-check-{Guid.NewGuid():N}.zip");
         try
         {
             using (var client = _httpClientFactory.Create(project, secrets))
-            using (var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
+            using (var response = await client
+                       .GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                       .ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode)
-                    return new PackageCheck(version, file.Platform, uri, $"The server answered {(int)response.StatusCode} ({response.ReasonPhrase}).");
+                    return new PackageCheck(version, file.Platform, uri,
+                        $"The server answered {(int)response.StatusCode} ({response.ReasonPhrase}).");
                 await using var target = _fileSystem.File.Create(path);
                 await response.Content.CopyToAsync(target, cancellationToken).ConfigureAwait(false);
             }
@@ -158,7 +158,8 @@ public sealed class FeedChecker : IFeedChecker
     }
 
     /// <summary>The checks of <c>UpdateManager.DownloadAsync</c> and <c>VerifyAsync</c>, in the same order.</summary>
-    private string? Verify(UpdateProject project, Guid feedProjectId, UpdateVersion version, PackageFile file, string path)
+    private string? Verify(UpdateProject project, Guid feedProjectId, UpdateVersion version, PackageFile file,
+        string path)
     {
         var size = _fileSystem.FileInfo.New(path).Length;
         if (size != file.Size)
@@ -196,13 +197,15 @@ public sealed class FeedChecker : IFeedChecker
         }
     }
 
-    private async Task<string?> CheckStatisticsAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken)
+    private async Task<string?> CheckStatisticsAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(secrets.StatisticsAdminSecret))
             return "The statistics admin secret is missing. Enter it in the project credentials.";
         try
         {
-            await _statistics.VerifyAsync(PublishService.Endpoint(project, secrets), cancellationToken).ConfigureAwait(false);
+            await _statistics.VerifyAsync(PublishService.Endpoint(project, secrets), cancellationToken)
+                .ConfigureAwait(false);
             return null;
         }
         catch (StatisticsException ex)

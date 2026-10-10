@@ -43,7 +43,8 @@ public sealed class InstallEngine
                 throw new InvalidDataException("The installer options name no packages.");
             workingDirectory = fileSystem.Path.GetDirectoryName(options.Packages[0].Path) ?? string.Empty;
             if (workingDirectory.Length == 0)
-                throw new InvalidDataException($"The package directory of \"{options.Packages[0].Path}\" could not be determined.");
+                throw new InvalidDataException(
+                    $"The package directory of \"{options.Packages[0].Path}\" could not be determined.");
             foreach (var package in options.Packages)
             {
                 if (!fileSystem.File.Exists(package.Path))
@@ -52,14 +53,17 @@ public sealed class InstallEngine
 
             if (options.Host.ProcessId is { } hostProcessId)
             {
-                reporter.ReportOperationProgress(0f, options.Text(InstallerText.WaitingForApplication, options.Application.Name));
+                reporter.ReportOperationProgress(0f,
+                    options.Text(InstallerText.WaitingForApplication, options.Application.Name));
                 _services.ProcessService.WaitForExit(hostProcessId, _services.HostExitTimeout);
             }
 
             var progress = new ProgressTracker();
             var context = new OperationContext(options, _services,
-                new PathPlaceholderResolver(fileSystem, options.Application.ProgramDirectory, _services.SpecialFolders), progress, reporter);
-            var copier = new DirectoryCopier(fileSystem, _services.MaxLockedFileAttempts, probeLocks: _services.EnvironmentInfo.IsWindows);
+                new PathPlaceholderResolver(fileSystem, options.Application.ProgramDirectory, _services.SpecialFolders),
+                progress, reporter);
+            var copier = new DirectoryCopier(fileSystem, _services.MaxLockedFileAttempts,
+                probeLocks: _services.EnvironmentInfo.IsWindows);
 
             var packages = Prepare(options, workingDirectory, copier, progress);
             foreach (var package in packages)
@@ -93,7 +97,8 @@ public sealed class InstallEngine
     {
         if (arguments is null)
             throw new ArgumentNullException(nameof(arguments));
-        return string.Join(" ", arguments.Where(a => a.When == outcome || a.When == ArgumentCondition.Always).Select(a => Quote(a.Value)));
+        return string.Join(" ",
+            arguments.Where(a => a.When == outcome || a.When == ArgumentCondition.Always).Select(a => Quote(a.Value)));
     }
 
     private static string Quote(string argument)
@@ -128,7 +133,8 @@ public sealed class InstallEngine
     }
 
     /// <summary>Cleans up and restarts the host. Both are best effort: a clean-up problem is a warning, a failed restart an error.</summary>
-    private void Finish(InstallerOptions options, string workingDirectory, IProgressReporter reporter, ArgumentCondition outcome)
+    private void Finish(InstallerOptions options, string workingDirectory, IProgressReporter reporter,
+        ArgumentCondition outcome)
     {
         CleanUp(workingDirectory, reporter);
         try
@@ -170,23 +176,28 @@ public sealed class InstallEngine
         }
     }
 
-    private List<ExtractedPackage> Prepare(InstallerOptions options, string workingDirectory, DirectoryCopier copier, ProgressTracker progress)
+    private List<ExtractedPackage> Prepare(InstallerOptions options, string workingDirectory, DirectoryCopier copier,
+        ProgressTracker progress)
     {
         var fileSystem = _services.FileSystem;
         var packages = new List<ExtractedPackage>();
         foreach (var package in options.Packages)
         {
-            var directory = fileSystem.Path.Combine(workingDirectory, fileSystem.Path.GetFileNameWithoutExtension(package.Path));
+            var directory = fileSystem.Path.Combine(workingDirectory,
+                fileSystem.Path.GetFileNameWithoutExtension(package.Path));
             // A folder left by an earlier, failed run must not contribute stale files.
             if (fileSystem.Directory.Exists(directory))
                 fileSystem.Directory.Delete(directory, recursive: true);
             _services.PackageExtractor.Extract(package.Path, directory);
-            var manifest = ReadManifest(fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName), package.Path);
+            var manifest = ReadManifest(fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName),
+                package.Path);
             if (!_services.EnvironmentInfo.IsWindows && manifest.Operations.Any(o => o.RequiresWindows))
-                throw new InvalidDataException($"The package {manifest.Version} contains registry or service operations, which only exist on Windows.");
+                throw new InvalidDataException(
+                    $"The package {manifest.Version} contains registry or service operations, which only exist on Windows.");
             CheckBundle(options, directory, manifest);
 
-            progress.AddTasks(PackageLayout.Roots.Sum(root => copier.CountFiles(fileSystem.Path.Combine(directory, PackageLayout.FolderName(root)))));
+            progress.AddTasks(PackageLayout.Roots.Sum(root =>
+                copier.CountFiles(fileSystem.Path.Combine(directory, PackageLayout.FolderName(root)))));
             progress.AddTasks(_dispatcher.CountTasks(manifest.Operations));
             packages.Add(new ExtractedPackage(manifest, directory));
         }
@@ -201,7 +212,8 @@ public sealed class InstallEngine
             return;
         var fileSystem = _services.FileSystem;
         var program = fileSystem.Path.Combine(packageDirectory, PackageLayout.FolderName(PackageRoot.Program));
-        if (fileSystem.Directory.Exists(program) && !fileSystem.File.Exists(fileSystem.Path.Combine(program, "Contents", "Info.plist")))
+        if (fileSystem.Directory.Exists(program) &&
+            !fileSystem.File.Exists(fileSystem.Path.Combine(program, "Contents", "Info.plist")))
         {
             throw new InvalidDataException(
                 $"The package {manifest.Version} replaces the application bundle, but its Program folder is not a complete bundle (Contents/Info.plist is missing).");
@@ -211,7 +223,8 @@ public sealed class InstallEngine
     private PackageManifest ReadManifest(string manifestPath, string packagePath)
     {
         if (!_services.FileSystem.File.Exists(manifestPath))
-            throw new InvalidDataException($"The package \"{packagePath}\" has no {PackageLayout.ManifestFileName}. It was not created by nUpdate Administration 5.");
+            throw new InvalidDataException(
+                $"The package \"{packagePath}\" has no {PackageLayout.ManifestFileName}. It was not created by nUpdate Administration 5.");
         PackageManifest? manifest;
         try
         {
@@ -219,7 +232,8 @@ public sealed class InstallEngine
         }
         catch (Newtonsoft.Json.JsonException ex)
         {
-            throw new InvalidDataException($"The manifest of the package \"{packagePath}\" is not valid: {ex.Message}", ex);
+            throw new InvalidDataException($"The manifest of the package \"{packagePath}\" is not valid: {ex.Message}",
+                ex);
         }
 
         if (manifest is null)
@@ -228,7 +242,8 @@ public sealed class InstallEngine
         return manifest;
     }
 
-    private void CopyRoots(string packageDirectory, DirectoryCopier copier, OperationContext context, InstallerOptions options)
+    private void CopyRoots(string packageDirectory, DirectoryCopier copier, OperationContext context,
+        InstallerOptions options)
     {
         var fileSystem = _services.FileSystem;
         var targets = new Dictionary<PackageRoot, string?>
@@ -236,7 +251,8 @@ public sealed class InstallEngine
             [PackageRoot.Program] = options.Application.ProgramDirectory,
             [PackageRoot.AppData] = _services.SpecialFolders.ApplicationData,
             [PackageRoot.Temp] = _services.SpecialFolders.Temp,
-            [PackageRoot.Desktop] = _services.EnvironmentInfo.IsServiceContext ? null : _services.SpecialFolders.Desktop,
+            [PackageRoot.Desktop] =
+                _services.EnvironmentInfo.IsServiceContext ? null : _services.SpecialFolders.Desktop,
         };
 
         foreach (var root in PackageLayout.Roots)
@@ -279,7 +295,8 @@ public sealed class InstallEngine
 
         _services.DirectorySwap.Swap(bundle, replacement);
         if (!TryDeleteDirectory(replacement))
-            Warn(context.Reporter, context.Progress.Percentage, $"The previous bundle could not be deleted from \"{replacement}\".");
+            Warn(context.Reporter, context.Progress.Percentage,
+                $"The previous bundle could not be deleted from \"{replacement}\".");
     }
 
     private void CleanUp(string workingDirectory, IProgressReporter reporter)

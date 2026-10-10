@@ -19,14 +19,18 @@ public sealed class FeedCheckerTests
     public FeedCheckerTests()
     {
         _project = _context.NewProject();
-        _checker = new FeedChecker(_context.FileSystem, _context.HttpClientFactory, _context.Feeds, _context.Signer, _context.Statistics);
+        _checker = new FeedChecker(_context.FileSystem, _context.HttpClientFactory, _context.Feeds, _context.Signer,
+            _context.Statistics);
     }
 
     /// <summary>Serves a correctly signed package and returns its feed entry.</summary>
-    private PackageInfo Serve(string version, byte[]? zip = null, string? path = null, Guid? projectId = null, string platform = "any", string? manifestPlatform = null)
+    private PackageInfo Serve(string version, byte[]? zip = null, string? path = null, Guid? projectId = null,
+        string platform = "any", string? manifestPlatform = null)
     {
-        zip ??= TestPackages.Build(version, projectId ?? _project.Id, [1, 2, 3], platform: manifestPlatform ?? platform);
-        var local = _context.FileSystem.Path.Combine(_context.FileSystem.Path.GetTempPath(), $"signed-{version}-{platform}.zip");
+        zip ??= TestPackages.Build(version, projectId ?? _project.Id, [1, 2, 3],
+            platform: manifestPlatform ?? platform);
+        var local = _context.FileSystem.Path.Combine(_context.FileSystem.Path.GetTempPath(),
+            $"signed-{version}-{platform}.zip");
         _context.FileSystem.AddFile(local, new MockFileData(zip));
         path ??= $"packages/{version}/{platform}.zip";
         _context.Http.Bytes(path.StartsWith("http", StringComparison.Ordinal) ? path : Base + path, zip);
@@ -56,7 +60,8 @@ public sealed class FeedCheckerTests
         _context.ServeFeed(new UpdateFeed { ProjectId = _project.Id, Packages = [absolute, relative] });
         var progress = new List<nUpdate.Administration.Core.Publishing.PipelineProgress>();
 
-        var result = await _checker.CheckAsync(_project, AdminTestContext.NewSecrets(), new SyncProgress<PipelineProgress>(progress));
+        var result = await _checker.CheckAsync(_project, AdminTestContext.NewSecrets(),
+            new SyncProgress<PipelineProgress>(progress));
 
         result.Succeeded.ShouldBeTrue();
         result.FeedProblem.ShouldBeNull();
@@ -67,8 +72,11 @@ public sealed class FeedCheckerTests
         ]);
         result.StatisticsChecked.ShouldBeFalse();
         result.StatisticsProblem.ShouldBeNull();
-        progress.Select(p => p.StepName).ShouldBe(["Reading nupdate.json", "Checking 1.0.0 for any", "Checking 1.0.0 for linux-arm64", "Checking 1.1.0 for any"]);
-        _context.FileSystem.Directory.GetFiles(_context.FileSystem.Path.GetTempPath(), "nupdate-check-*").ShouldBeEmpty();
+        progress.Select(p => p.StepName).ShouldBe([
+            "Reading nupdate.json", "Checking 1.0.0 for any", "Checking 1.0.0 for linux-arm64", "Checking 1.1.0 for any"
+        ]);
+        _context.FileSystem.Directory.GetFiles(_context.FileSystem.Path.GetTempPath(), "nupdate-check-*")
+            .ShouldBeEmpty();
     }
 
     [Fact]
@@ -92,10 +100,20 @@ public sealed class FeedCheckerTests
         var notAZip = Serve("1.8.0", [1, 2, 3, 4]);
         var badManifest = Serve("1.9.0", TestPackages.Build("1.9.0", _project.Id, [1], manifestJson: "{broken"));
         var unreachable = Serve("2.0.0");
-        _context.Http.On(r => r.RequestUri!.ToString() == Base + "packages/2.0.0/any.zip", (_, _) => throw new HttpRequestException("connection reset"));
+        _context.Http.On(r => r.RequestUri!.ToString() == Base + "packages/2.0.0/any.zip",
+            (_, _) => throw new HttpRequestException("connection reset"));
         var slow = Serve("2.1.0");
-        _context.Http.On(r => r.RequestUri!.ToString() == Base + "packages/2.1.0/any.zip", (_, _) => throw new TaskCanceledException("timeout"));
-        _context.ServeFeed(new UpdateFeed { ProjectId = _project.Id, Packages = [missing, resized, rehashed, unsigned, garbled, foreignAlgorithm, noManifest, otherProject, otherPlatform, notAZip, badManifest, unreachable, slow] });
+        _context.Http.On(r => r.RequestUri!.ToString() == Base + "packages/2.1.0/any.zip",
+            (_, _) => throw new TaskCanceledException("timeout"));
+        _context.ServeFeed(new UpdateFeed
+        {
+            ProjectId = _project.Id,
+            Packages =
+            [
+                missing, resized, rehashed, unsigned, garbled, foreignAlgorithm, noManifest, otherProject,
+                otherPlatform, notAZip, badManifest, unreachable, slow
+            ]
+        });
 
         var result = await _checker.CheckAsync(_project, AdminTestContext.NewSecrets());
 
@@ -132,12 +150,15 @@ public sealed class FeedCheckerTests
         (await _checker.CheckAsync(_project, secrets)).FeedProblem!.ShouldContain("format 9");
         _context.Http.Text(HttpMethod.Get, Base + "nupdate.json", "error", HttpStatusCode.InternalServerError);
         (await _checker.CheckAsync(_project, secrets)).FeedProblem!.ShouldContain("500");
-        _context.Http.On(r => r.RequestUri!.ToString() == Base + "nupdate.json", (_, _) => throw new TaskCanceledException("timeout"));
-        (await _checker.CheckAsync(_project, secrets)).FeedProblem.ShouldBe($"{Base}nupdate.json did not answer in time.");
+        _context.Http.On(r => r.RequestUri!.ToString() == Base + "nupdate.json",
+            (_, _) => throw new TaskCanceledException("timeout"));
+        (await _checker.CheckAsync(_project, secrets)).FeedProblem.ShouldBe(
+            $"{Base}nupdate.json did not answer in time.");
 
         using var cancelled = new CancellationTokenSource();
         cancelled.Cancel();
-        await Should.ThrowAsync<OperationCanceledException>(() => _checker.CheckAsync(_project, secrets, null, cancelled.Token));
+        await Should.ThrowAsync<OperationCanceledException>(() =>
+            _checker.CheckAsync(_project, secrets, null, cancelled.Token));
     }
 
     [Fact]
@@ -153,26 +174,36 @@ public sealed class FeedCheckerTests
         var fine = await _checker.CheckAsync(project, AdminTestContext.NewSecrets(statistics: true));
         fine.StatisticsProblem.ShouldBeNull();
         fine.Succeeded.ShouldBeTrue();
-        await _context.Statistics.Received().VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.Uri.ToString() == Base + "nupdate-statistics.php"), Arg.Any<CancellationToken>());
+        await _context.Statistics.Received()
+            .VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.Uri.ToString() == Base + "nupdate-statistics.php"),
+                Arg.Any<CancellationToken>());
 
-        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("no PATH_INFO"));
-        (await _checker.CheckAsync(project, AdminTestContext.NewSecrets(statistics: true))).StatisticsProblem.ShouldBe("no PATH_INFO");
+        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new StatisticsException("no PATH_INFO"));
+        (await _checker.CheckAsync(project, AdminTestContext.NewSecrets(statistics: true))).StatisticsProblem.ShouldBe(
+            "no PATH_INFO");
     }
 
     [Fact]
     public async Task Constructor_ValidatesArguments()
     {
         var c = _context;
-        Should.Throw<ArgumentNullException>(() => new FeedChecker(null!, c.HttpClientFactory, c.Feeds, c.Signer, c.Statistics));
-        Should.Throw<ArgumentNullException>(() => new FeedChecker(c.FileSystem, null!, c.Feeds, c.Signer, c.Statistics));
-        Should.Throw<ArgumentNullException>(() => new FeedChecker(c.FileSystem, c.HttpClientFactory, null!, c.Signer, c.Statistics));
-        Should.Throw<ArgumentNullException>(() => new FeedChecker(c.FileSystem, c.HttpClientFactory, c.Feeds, null!, c.Statistics));
-        Should.Throw<ArgumentNullException>(() => new FeedChecker(c.FileSystem, c.HttpClientFactory, c.Feeds, c.Signer, null!));
+        Should.Throw<ArgumentNullException>(() =>
+            new FeedChecker(null!, c.HttpClientFactory, c.Feeds, c.Signer, c.Statistics));
+        Should.Throw<ArgumentNullException>(() =>
+            new FeedChecker(c.FileSystem, null!, c.Feeds, c.Signer, c.Statistics));
+        Should.Throw<ArgumentNullException>(() =>
+            new FeedChecker(c.FileSystem, c.HttpClientFactory, null!, c.Signer, c.Statistics));
+        Should.Throw<ArgumentNullException>(() =>
+            new FeedChecker(c.FileSystem, c.HttpClientFactory, c.Feeds, null!, c.Statistics));
+        Should.Throw<ArgumentNullException>(() =>
+            new FeedChecker(c.FileSystem, c.HttpClientFactory, c.Feeds, c.Signer, null!));
         await Should.ThrowAsync<ArgumentNullException>(() => _checker.CheckAsync(null!, new ProjectSecrets()));
         await Should.ThrowAsync<ArgumentNullException>(() => _checker.CheckAsync(_project, null!));
         Should.Throw<ArgumentNullException>(() => new FeedCheckResult(null, null!, false, null));
         Should.Throw<ArgumentNullException>(() => new PackageCheck(null!, "any", new Uri("https://x/"), null));
-        Should.Throw<ArgumentNullException>(() => new PackageCheck(new UpdateVersion("1.0.0"), null!, new Uri("https://x/"), null));
+        Should.Throw<ArgumentNullException>(() =>
+            new PackageCheck(new UpdateVersion("1.0.0"), null!, new Uri("https://x/"), null));
         Should.Throw<ArgumentNullException>(() => new PackageCheck(new UpdateVersion("1.0.0"), "any", null!, null));
     }
 }

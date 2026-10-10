@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using nUpdate.Updating;
 
 namespace nUpdate.UI.WindowsForms.Dialogs;

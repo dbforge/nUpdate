@@ -69,7 +69,8 @@ public sealed class InstallerWindowViewModel : INotifyPropertyChanged
         private set => Set(ref _isIndeterminate, value);
     }
 
-    public string PercentageText => IsIndeterminate ? string.Empty : Math.Round(Progress).ToString(CultureInfo.CurrentCulture) + " %";
+    public string PercentageText =>
+        IsIndeterminate ? string.Empty : Math.Round(Progress).ToString(CultureInfo.CurrentCulture) + " %";
 
     public bool IsAskingAboutLockedFile
     {

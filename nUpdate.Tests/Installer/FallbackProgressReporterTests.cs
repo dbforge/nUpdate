@@ -56,7 +56,8 @@ public class FallbackProgressReporterTests
         fallback.Unpacking.Single().Text.ShouldBe("a");
         fallback.Terminated.ShouldBe(1);
         var log = _logs.FileSystem.GetFile("/tmp/install.log").TextContents;
-        log.ShouldContain("The installer window failed; continuing without it: System.InvalidOperationException: XOpenDisplay failed");
+        log.ShouldContain(
+            "The installer window failed; continuing without it: System.InvalidOperationException: XOpenDisplay failed");
         log.ShouldContain("The installer window could not be closed");
     }
 
@@ -64,7 +65,8 @@ public class FallbackProgressReporterTests
     public void FallbackProgressReporter_SwitchesWhenAWindowCallThrows()
     {
         var window = Substitute.For<IProgressReporter>();
-        window.When(w => w.ReportOperationProgress(Arg.Any<float>(), Arg.Any<string>())).Do(_ => throw new InvalidOperationException("window gone"));
+        window.When(w => w.ReportOperationProgress(Arg.Any<float>(), Arg.Any<string>()))
+            .Do(_ => throw new InvalidOperationException("window gone"));
         window.ReportLockedFile(Arg.Any<string>(), Arg.Any<int>()).Returns(_ => throw new InvalidOperationException());
         var fallback = new RecordingReporter();
         var reporter = new FallbackProgressReporter(window, fallback, _logs.Log(null));
@@ -90,7 +92,8 @@ public class FallbackProgressReporterTests
         var window = Substitute.For<IProgressReporter>();
         var fallback = new RecordingReporter();
         var reporter = new FallbackProgressReporter(window, fallback, _logs.Log(null));
-        window.When(w => w.ReportOperationProgress(Arg.Any<float>(), Arg.Any<string>())).Do(_ => throw new InvalidOperationException("window gone"));
+        window.When(w => w.ReportOperationProgress(Arg.Any<float>(), Arg.Any<string>()))
+            .Do(_ => throw new InvalidOperationException("window gone"));
         window.When(w => w.Initialize()).Do(_ => reporter.ReportOperationProgress(5, "while the window was up"));
 
         reporter.Initialize();

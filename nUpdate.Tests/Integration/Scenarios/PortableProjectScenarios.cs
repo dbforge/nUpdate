@@ -9,13 +9,8 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>A project is a folder: it can be moved, copied to another computer and opened there with its project password.</summary>
-public sealed class PortableProjectScenarios : ScenarioTest
+public sealed class PortableProjectScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public PortableProjectScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     [AvaloniaFact]
     public Task Opens_a_project_folder_that_was_moved() => Scenario(async () =>
     {
@@ -40,7 +35,8 @@ public sealed class PortableProjectScenarios : ScenarioTest
             var window = await App.WindowAsync<ProjectWindow>();
             window.Title.ShouldBe("Trade Updater - nUpdate Administration");
             App.Dialogs.Open.OfType<CredentialsWindow>().ShouldBeEmpty();
-            window.PackageGrid.ItemsSource!.Cast<PackageItemViewModel>().Select(p => (p.Version, p.State)).ShouldBe([("1.0.0", "Local only")]);
+            window.PackageGrid.ItemsSource!.Cast<PackageItemViewModel>().Select(p => (p.Version, p.State))
+                .ShouldBe([("1.0.0", "Local only")]);
             User.SelectPage(window.Nav, "Overview");
             window.FolderBox.Text!.ShouldBe(moved);
         });
@@ -87,7 +83,8 @@ public sealed class PortableProjectScenarios : ScenarioTest
             await App.ClosedAsync(unlock);
             (await App.WindowAsync<ProjectWindow>()).Title.ShouldStartWith("Trade Updater");
         });
-        await And("the password is remembered for the next time", async () => (await App.Passwords.GetAsync(created.Project.Id)).ShouldBe(AdministrationApp.ProjectPassword));
+        await And("the password is remembered for the next time",
+            async () => (await App.Passwords.GetAsync(created.Project.Id)).ShouldBe(AdministrationApp.ProjectPassword));
     });
 
     [AvaloniaFact]

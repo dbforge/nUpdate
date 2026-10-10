@@ -6,24 +6,24 @@ using nUpdate.Administration.TransferInterface;
 namespace nUpdate.Administration.Core.Transfer;
 
 /// <summary>Creates the built-in FTP/FTPS/SFTP providers or loads a plugin's factory.</summary>
-public sealed class TransferProviderFactory : ITransferProviderFactory
+public sealed class TransferProviderFactory(IFileSystem fileSystem, Func<string, Assembly> assemblyLoader)
+    : ITransferProviderFactory
 {
-    private readonly IFileSystem _fileSystem;
-    private readonly Func<string, Assembly> _assemblyLoader;
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+
+    private readonly Func<string, Assembly> _assemblyLoader =
+        assemblyLoader ?? throw new ArgumentNullException(nameof(assemblyLoader));
 
     public TransferProviderFactory(IFileSystem fileSystem)
         : this(fileSystem, LoadAssembly)
     {
     }
 
-    public TransferProviderFactory(IFileSystem fileSystem, Func<string, Assembly> assemblyLoader)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _assemblyLoader = assemblyLoader ?? throw new ArgumentNullException(nameof(assemblyLoader));
-    }
-
     public IReadOnlyCollection<TransferProtocol> SupportedProtocols { get; } =
-        [TransferProtocol.Ftp, TransferProtocol.FtpsExplicit, TransferProtocol.FtpsImplicit, TransferProtocol.Sftp, TransferProtocol.Plugin];
+    [
+        TransferProtocol.Ftp, TransferProtocol.FtpsExplicit, TransferProtocol.FtpsImplicit, TransferProtocol.Sftp,
+        TransferProtocol.Plugin
+    ];
 
     public ITransferProvider Create(TransferSettings settings, TransferCredentials credentials)
     {
@@ -34,7 +34,8 @@ public sealed class TransferProviderFactory : ITransferProviderFactory
 
         return settings.Protocol switch
         {
-            TransferProtocol.Ftp or TransferProtocol.FtpsExplicit or TransferProtocol.FtpsImplicit => new FtpTransferProvider(settings, credentials, _fileSystem),
+            TransferProtocol.Ftp or TransferProtocol.FtpsExplicit or TransferProtocol.FtpsImplicit =>
+                new FtpTransferProvider(settings, credentials, _fileSystem),
             TransferProtocol.Sftp => new SftpTransferProvider(settings, credentials, _fileSystem),
             TransferProtocol.Plugin => LoadPluginFactory(settings).Create(settings, credentials),
             _ => throw new NotSupportedException($"The transfer protocol {settings.Protocol} is not supported."),
@@ -48,7 +49,8 @@ public sealed class TransferProviderFactory : ITransferProviderFactory
         if (string.IsNullOrWhiteSpace(settings.PluginAssemblyPath))
             throw new InvalidOperationException("The project uses a transfer plugin but names no plugin assembly.");
         if (!_fileSystem.File.Exists(settings.PluginAssemblyPath))
-            throw new FileNotFoundException($"The transfer plugin \"{settings.PluginAssemblyPath}\" does not exist.", settings.PluginAssemblyPath);
+            throw new FileNotFoundException($"The transfer plugin \"{settings.PluginAssemblyPath}\" does not exist.",
+                settings.PluginAssemblyPath);
         return FromAssembly(_assemblyLoader(settings.PluginAssemblyPath));
     }
 
@@ -56,7 +58,8 @@ public sealed class TransferProviderFactory : ITransferProviderFactory
     {
         ArgumentNullException.ThrowIfNull(assembly);
         var attribute = assembly.GetCustomAttribute<ServiceProviderAttribute>()
-                        ?? throw new InvalidOperationException($"The assembly \"{assembly.GetName().Name}\" has no {nameof(ServiceProviderAttribute)}.");
+                        ?? throw new InvalidOperationException(
+                            $"The assembly \"{assembly.GetName().Name}\" has no {nameof(ServiceProviderAttribute)}.");
         return FromProvider((IServiceProvider)Activator.CreateInstance(attribute.ServiceType)!);
     }
 
@@ -64,7 +67,8 @@ public sealed class TransferProviderFactory : ITransferProviderFactory
     {
         ArgumentNullException.ThrowIfNull(provider);
         return provider.GetService(typeof(ITransferProviderFactory)) as ITransferProviderFactory
-               ?? throw new InvalidOperationException("The plugin's service provider does not offer an ITransferProviderFactory.");
+               ?? throw new InvalidOperationException(
+                   "The plugin's service provider does not offer an ITransferProviderFactory.");
     }
 
     [ExcludeFromCodeCoverage] // Loads an arbitrary assembly from disk.

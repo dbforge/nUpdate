@@ -1,7 +1,4 @@
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
 using nUpdate.Ui;
 using nUpdate.UI.WindowsForms.Win32;
 using nUpdate.Updating;

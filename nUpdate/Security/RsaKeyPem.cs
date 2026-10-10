@@ -11,7 +11,9 @@ internal static class RsaKeyPem
 {
     private const string PublicLabel = "PUBLIC KEY";
     private const string PrivateLabel = "PRIVATE KEY";
-    private static readonly byte[] RsaAlgorithmIdentifier = [0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00];
+
+    private static readonly byte[] RsaAlgorithmIdentifier =
+        [0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00];
 
     public static string EncodePublic(RSAParameters parameters)
     {
@@ -24,8 +26,10 @@ internal static class RsaKeyPem
     {
         if (parameters.D is null)
             throw new ArgumentException("The parameters hold no private key.", nameof(parameters));
-        var rsaPrivateKey = Sequence(Integer([0]), Integer(parameters.Modulus), Integer(parameters.Exponent), Integer(parameters.D),
-            Integer(parameters.P), Integer(parameters.Q), Integer(parameters.DP), Integer(parameters.DQ), Integer(parameters.InverseQ));
+        var rsaPrivateKey = Sequence(Integer([0]), Integer(parameters.Modulus), Integer(parameters.Exponent),
+            Integer(parameters.D),
+            Integer(parameters.P), Integer(parameters.Q), Integer(parameters.DP), Integer(parameters.DQ),
+            Integer(parameters.InverseQ));
         var pkcs8 = Sequence(Integer([0]), RsaAlgorithmIdentifier, OctetString(rsaPrivateKey));
         return Pem(PrivateLabel, pkcs8);
     }
@@ -93,7 +97,8 @@ internal static class RsaKeyPem
         var body = pem.Substring(start + begin.Length, stop - start - begin.Length);
         try
         {
-            return Convert.FromBase64String(body.Replace("\r", string.Empty).Replace("\n", string.Empty).Replace(" ", string.Empty));
+            return Convert.FromBase64String(body.Replace("\r", string.Empty).Replace("\n", string.Empty)
+                .Replace(" ", string.Empty));
         }
         catch (FormatException ex)
         {
@@ -147,15 +152,9 @@ internal static class RsaKeyPem
     }
 
     /// <summary>Walks a DER byte sequence one element at a time.</summary>
-    private sealed class DerReader
+    private sealed class DerReader(byte[] data)
     {
-        private readonly byte[] _data;
         private int _position;
-
-        public DerReader(byte[] data)
-        {
-            _data = data;
-        }
 
         public DerReader Sequence() => new(Read(0x30));
 
@@ -181,38 +180,39 @@ internal static class RsaKeyPem
         /// <summary>Skips the next element whatever it is.</summary>
         public void Skip()
         {
-            if (_position >= _data.Length)
+            if (_position >= data.Length)
                 throw new ArgumentException("The key ends unexpectedly.");
-            Read(_data[_position]);
+            Read(data[_position]);
         }
 
         private byte[] Read(byte expectedTag)
         {
-            if (_position >= _data.Length)
+            if (_position >= data.Length)
                 throw new ArgumentException("The key ends unexpectedly.");
-            var tag = _data[_position++];
+            var tag = data[_position++];
             if (tag != expectedTag)
-                throw new ArgumentException($"The key has an unexpected element 0x{tag:X2} where 0x{expectedTag:X2} was expected.");
+                throw new ArgumentException(
+                    $"The key has an unexpected element 0x{tag:X2} where 0x{expectedTag:X2} was expected.");
 
-            if (_position >= _data.Length)
+            if (_position >= data.Length)
                 throw new ArgumentException("The key ends unexpectedly.");
-            var length = (int)_data[_position++];
+            var length = (int)data[_position++];
             if ((length & 0x80) != 0)
             {
                 var count = length & 0x7F;
                 if (count is 0 or > 3)
                     throw new ArgumentException("The key has an unsupported length encoding.");
-                if (_position + count > _data.Length)
+                if (_position + count > data.Length)
                     throw new ArgumentException("The key ends unexpectedly.");
                 length = 0;
                 for (var i = 0; i < count; i++)
-                    length = (length << 8) | _data[_position++];
+                    length = (length << 8) | data[_position++];
             }
 
-            if (length > _data.Length - _position)
+            if (length > data.Length - _position)
                 throw new ArgumentException("The key ends unexpectedly.");
             var content = new byte[length];
-            Array.Copy(_data, _position, content, 0, length);
+            Array.Copy(data, _position, content, 0, length);
             _position += length;
             return content;
         }

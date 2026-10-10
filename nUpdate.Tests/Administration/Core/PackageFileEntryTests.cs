@@ -29,7 +29,11 @@ public class PackageFileEntryTests
         PackageFileEntry.TryParseEntryName("AppData/settings.json", out root, out _).ShouldBeTrue();
         root.ShouldBe(PackageRoot.AppData);
 
-        foreach (var rejected in new[] { null, "", "Program/", "Program", "program/app.dll", "Unknown/x.txt", "manifest.json", "Program//x", "Program/./x", "Program/../x", "Program/sub\\x", "Program/c:x" })
+        foreach (var rejected in new[]
+                 {
+                     null, "", "Program/", "Program", "program/app.dll", "Unknown/x.txt", "manifest.json", "Program//x",
+                     "Program/./x", "Program/../x", "Program/sub\\x", "Program/c:x"
+                 })
             PackageFileEntry.TryParseEntryName(rejected!, out _, out _).ShouldBeFalse(rejected ?? "<null>");
     }
 }

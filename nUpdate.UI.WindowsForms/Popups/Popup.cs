@@ -1,6 +1,3 @@
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace nUpdate.UI.WindowsForms.Popups;
 
 /// <summary>Shows a message in the style of a task dialog, optionally with the exception behind it.</summary>
@@ -12,7 +9,8 @@ internal static class Popup
     /// <param name="message">The text.</param>
     /// <param name="exception">An exception whose full text the user can copy from the context menu.</param>
     /// <param name="buttons">The buttons to offer.</param>
-    public static DialogResult Show(IWin32Window? owner, Icon icon, string title, string message, Exception? exception = null,
+    public static DialogResult Show(IWin32Window? owner, Icon icon, string title, string message,
+        Exception? exception = null,
         PopupButtons buttons = PopupButtons.Ok)
     {
         using var dialog = new PopupDialog

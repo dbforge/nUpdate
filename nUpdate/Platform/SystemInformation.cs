@@ -7,7 +7,8 @@ namespace nUpdate.Platform;
 public sealed class SystemInformation : ISystemInformation
 {
     [ExcludeFromCodeCoverage] // Thin wrapper over Environment; the mapping is tested through OperatingSystemNames.
-    public string OperatingSystemName => OperatingSystemNames.FromVersion(Environment.OSVersion.Platform, Environment.OSVersion.Version);
+    public string OperatingSystemName =>
+        OperatingSystemNames.FromVersion(Environment.OSVersion.Platform, Environment.OSVersion.Version);
 
     public string RuntimeIdentifier => PackagePlatform.Current;
 }

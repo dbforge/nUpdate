@@ -9,20 +9,14 @@ public interface IProjectLogger
     void Write(UpdateProject project, LogEntryKind kind, UpdateVersion? version);
 }
 
-public sealed class ProjectLogger : IProjectLogger
+public sealed class ProjectLogger(Func<DateTimeOffset> now, Func<string> userName) : IProjectLogger
 {
-    private readonly Func<DateTimeOffset> _now;
-    private readonly Func<string> _userName;
+    private readonly Func<DateTimeOffset> _now = now ?? throw new ArgumentNullException(nameof(now));
+    private readonly Func<string> _userName = userName ?? throw new ArgumentNullException(nameof(userName));
 
     public ProjectLogger()
         : this(() => DateTimeOffset.UtcNow, DefaultUserName)
     {
-    }
-
-    public ProjectLogger(Func<DateTimeOffset> now, Func<string> userName)
-    {
-        _now = now ?? throw new ArgumentNullException(nameof(now));
-        _userName = userName ?? throw new ArgumentNullException(nameof(userName));
     }
 
     public void Write(UpdateProject project, LogEntryKind kind, UpdateVersion? version)
@@ -35,8 +29,11 @@ public sealed class ProjectLogger : IProjectLogger
     public static string FormatUserName(string? domain, string machineName, string userName)
     {
         ArgumentNullException.ThrowIfNull(userName);
-        return string.IsNullOrEmpty(domain) || string.Equals(domain, machineName, StringComparison.OrdinalIgnoreCase) ? userName : $"{domain}\\{userName}";
+        return string.IsNullOrEmpty(domain) || string.Equals(domain, machineName, StringComparison.OrdinalIgnoreCase)
+            ? userName
+            : $"{domain}\\{userName}";
     }
 
-    private static string DefaultUserName() => FormatUserName(Environment.UserDomainName, Environment.MachineName, Environment.UserName);
+    private static string DefaultUserName() =>
+        FormatUserName(Environment.UserDomainName, Environment.MachineName, Environment.UserName);
 }

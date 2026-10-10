@@ -11,18 +11,17 @@ namespace CustomInstaller;
 ///     <see cref="WindowProgressReporter" /> takes care of the threads: it calls the members that show something on the
 ///     window's thread.
 /// </summary>
-public sealed class WpfProgressReporter : WindowProgressReporter
+public sealed class WpfProgressReporter(InstallerSession session) : WindowProgressReporter(session)
 {
-    private readonly TextBlock _status = new() { TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 0, 0, 8) };
-    private readonly TextBlock _percentage = new() { HorizontalAlignment = HorizontalAlignment.Right, Visibility = Visibility.Collapsed };
+    private readonly TextBlock _status = new()
+    { TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 0, 0, 8) };
+
+    private readonly TextBlock _percentage = new()
+    { HorizontalAlignment = HorizontalAlignment.Right, Visibility = Visibility.Collapsed };
+
     private readonly ProgressBar _progress = new() { Height = 22, Minimum = 0, Maximum = 100, IsIndeterminate = true };
     private Window? _window;
     private bool _allowClose;
-
-    public WpfProgressReporter(InstallerSession session)
-        : base(session)
-    {
-    }
 
     private InstallerOptions Options => Session.Options;
 
@@ -63,7 +62,9 @@ public sealed class WpfProgressReporter : WindowProgressReporter
     protected override void AskAboutLockedFile(string filePath, Action<LockedFileDecision> answer)
     {
         var message = Options.Text(InstallerText.FileInUseError, filePath);
-        var result = MessageBox.Show(_window!, message + Environment.NewLine + Environment.NewLine + "Yes retries, No skips the file, Cancel aborts the update.",
+        var result = MessageBox.Show(_window!,
+            message + Environment.NewLine + Environment.NewLine +
+            "Yes retries, No skips the file, Cancel aborts the update.",
             _window!.Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
         answer(result switch
         {
@@ -77,8 +78,10 @@ public sealed class WpfProgressReporter : WindowProgressReporter
     {
         var message = exception.Message;
         if (Session.LogFilePath is not null)
-            message += Environment.NewLine + Environment.NewLine + Options.Text(InstallerText.LogFileHint, Session.LogFilePath);
-        MessageBox.Show(_window!, message, Options.Text(InstallerText.UpdatingErrorCaption), MessageBoxButton.OK, MessageBoxImage.Error);
+            message += Environment.NewLine + Environment.NewLine +
+                       Options.Text(InstallerText.LogFileHint, Session.LogFilePath);
+        MessageBox.Show(_window!, message, Options.Text(InstallerText.UpdatingErrorCaption), MessageBoxButton.OK,
+            MessageBoxImage.Error);
         closed();
     }
 

@@ -8,7 +8,8 @@ public class RegistryValueConverterTests
     [Fact]
     public void ToRegistryValue_ConvertsEveryKind()
     {
-        RegistryValueConverter.ToRegistryValue(RegistryValue.Binary("n", [1, 2, 255])).ShouldBe(new byte[] { 1, 2, 255 });
+        RegistryValueConverter.ToRegistryValue(RegistryValue.Binary("n", [1, 2, 255]))
+            .ShouldBe(new byte[] { 1, 2, 255 });
         RegistryValueConverter.ToRegistryValue(RegistryValue.MultiString("n", ["a", "b"])).ShouldBe(new[] { "a", "b" });
         RegistryValueConverter.ToRegistryValue(RegistryValue.DWord("n", 42)).ShouldBe(42);
         RegistryValueConverter.ToRegistryValue(RegistryValue.QWord("n", 44)).ShouldBe(44L);

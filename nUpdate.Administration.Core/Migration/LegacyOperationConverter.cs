@@ -5,18 +5,13 @@ using nUpdate.Operations;
 namespace nUpdate.Administration.Core.Migration;
 
 /// <summary>The typed operations of a legacy operation list and what could not be converted.</summary>
-public sealed class LegacyOperationConversion
+public sealed class LegacyOperationConversion(IReadOnlyList<Operation> operations, IReadOnlyList<string> warnings)
 {
-    public LegacyOperationConversion(IReadOnlyList<Operation> operations, IReadOnlyList<string> warnings)
-    {
-        Operations = operations ?? throw new ArgumentNullException(nameof(operations));
-        Warnings = warnings ?? throw new ArgumentNullException(nameof(warnings));
-    }
-
-    public IReadOnlyList<Operation> Operations { get; }
+    public IReadOnlyList<Operation> Operations { get; } =
+        operations ?? throw new ArgumentNullException(nameof(operations));
 
     /// <summary>One sentence per operation or registry value that is left out, numbered like the old list.</summary>
-    public IReadOnlyList<string> Warnings { get; }
+    public IReadOnlyList<string> Warnings { get; } = warnings ?? throw new ArgumentNullException(nameof(warnings));
 }
 
 /// <summary>
@@ -26,7 +21,9 @@ public sealed class LegacyOperationConversion
 public static class LegacyOperationConverter
 {
     private static readonly string[] Areas = ["Files", "Registry", "Processes", "Services", "Scripts"];
-    private static readonly string[] Methods = ["Create", "Delete", "Rename", "SetValue", "DeleteValue", "Start", "Stop", "Execute"];
+
+    private static readonly string[] Methods =
+        ["Create", "Delete", "Rename", "SetValue", "DeleteValue", "Start", "Stop", "Execute"];
 
     /// <summary>Converts a list; entries that are not objects, name an unknown combination or carry unreadable registry values are reported and left out.</summary>
     public static LegacyOperationConversion Convert(JArray? operations)
@@ -48,7 +45,8 @@ public static class LegacyOperationConverter
             {
                 operation = Convert(legacy, number, warnings);
             }
-            catch (Exception ex) when (ex is FormatException or OverflowException or InvalidCastException or ArgumentException)
+            catch (Exception ex) when (ex is FormatException or OverflowException or InvalidCastException
+                                           or ArgumentException)
             {
                 warnings.Add($"Operation {number} cannot be read and is left out: {ex.Message}");
                 continue;
@@ -57,7 +55,8 @@ public static class LegacyOperationConverter
             if (operation is not null)
                 result.Add(operation);
             else
-                warnings.Add($"Operation {number} ({Describe(legacy["Area"], Areas)} {Describe(legacy["Method"], Methods)}) has no counterpart in nUpdate 5 and is left out.");
+                warnings.Add(
+                    $"Operation {number} ({Describe(legacy["Area"], Areas)} {Describe(legacy["Method"], Methods)}) has no counterpart in nUpdate 5 and is left out.");
         }
 
         return new LegacyOperationConversion(result, warnings);
@@ -84,7 +83,8 @@ public static class LegacyOperationConverter
             ("Files", "Rename") => new RenameFileOperation { Path = value, NewName = Text(value2) },
             ("Registry", "Create") => new CreateRegistryKeysOperation { Key = value, SubKeys = Strings(value2) },
             ("Registry", "Delete") => new DeleteRegistryKeysOperation { Key = value, SubKeys = Strings(value2) },
-            ("Registry", "SetValue") => new SetRegistryValuesOperation { Key = value, Values = RegistryValues(value2, number, warnings) },
+            ("Registry", "SetValue") => new SetRegistryValuesOperation
+            { Key = value, Values = RegistryValues(value2, number, warnings) },
             ("Registry", "DeleteValue") => new DeleteRegistryValuesOperation { Key = value, Names = Strings(value2) },
             ("Processes", "Start") => new StartProcessOperation { Path = value, Arguments = Text(value2) },
             ("Processes", "Stop") => new TerminateProcessOperation { ProcessName = value },
@@ -109,7 +109,8 @@ public static class LegacyOperationConverter
     }
 
     /// <summary>The name of an area or method for a warning: the known name, else what the file says.</summary>
-    private static string Describe(JToken? token, string[] names) => Name(token, names) ?? (Text(token) is { Length: > 0 } raw ? raw : "?");
+    private static string Describe(JToken? token, string[] names) =>
+        Name(token, names) ?? (Text(token) is { Length: > 0 } raw ? raw : "?");
 
     private static List<string> Strings(JToken? token) => token switch
     {
@@ -133,7 +134,8 @@ public static class LegacyOperationConverter
             if (RegistryValue(name, kind, First(item, "Value", "value", "Item2")) is { } value)
                 values.Add(value);
             else
-                warnings.Add($"Operation {number}: the registry value \"{name}\" cannot be read as {kind} and is left out.");
+                warnings.Add(
+                    $"Operation {number}: the registry value \"{name}\" cannot be read as {kind} and is left out.");
         }
 
         return values;
@@ -147,7 +149,8 @@ public static class LegacyOperationConverter
             {
                 RegistryValueKind.DWord => Operations.RegistryValue.DWord(name, Number(value)),
                 RegistryValueKind.QWord => Operations.RegistryValue.QWord(name, Number(value)),
-                RegistryValueKind.MultiString => Operations.RegistryValue.MultiString(name, value is JArray array ? array.Select(t => t.ToString()).ToArray() : Split(value)),
+                RegistryValueKind.MultiString => Operations.RegistryValue.MultiString(name,
+                    value is JArray array ? array.Select(t => t.ToString()).ToArray() : Split(value)),
                 RegistryValueKind.Binary => Operations.RegistryValue.Binary(name, Bytes(value)),
                 RegistryValueKind.ExpandString => Operations.RegistryValue.ExpandString(name, Text(value)),
                 _ => Operations.RegistryValue.String(name, Text(value)),
@@ -175,7 +178,9 @@ public static class LegacyOperationConverter
             };
         }
 
-        return Enum.TryParse<RegistryValueKind>(Text(token), ignoreCase: true, out var kind) ? kind : RegistryValueKind.String;
+        return Enum.TryParse<RegistryValueKind>(Text(token), ignoreCase: true, out var kind)
+            ? kind
+            : RegistryValueKind.String;
     }
 
     /// <summary>The text of a token: strings as they are, other values as compact JSON, missing and null as empty.</summary>
@@ -187,14 +192,18 @@ public static class LegacyOperationConverter
         _ => value.ToString(Newtonsoft.Json.Formatting.None),
     };
 
-    private static long Number(JToken? value) => value is { Type: JTokenType.Integer } ? value.Value<long>() : long.Parse(Text(value), NumberStyles.Integer, CultureInfo.InvariantCulture);
+    private static long Number(JToken? value) => value is { Type: JTokenType.Integer }
+        ? value.Value<long>()
+        : long.Parse(Text(value), NumberStyles.Integer, CultureInfo.InvariantCulture);
 
-    private static string[] Split(JToken? value) => Text(value).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    private static string[] Split(JToken? value) =>
+        Text(value).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     private static byte[] Bytes(JToken? value)
     {
         if (value is JArray array)
-            return array.Select(t => byte.Parse(t.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture)).ToArray();
+            return array.Select(t => byte.Parse(t.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture))
+                .ToArray();
         var text = Text(value);
         var parts = text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (parts.All(p => byte.TryParse(p, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)))

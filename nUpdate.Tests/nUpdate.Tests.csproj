@@ -15,19 +15,19 @@
       Support/        helpers shared by all of them
   -->
   <ItemGroup>
-    <PackageReference Include="Avalonia.Headless.XUnit" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Testcontainers" />
+    <PackageReference Include="Avalonia.Headless.XUnit"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="Testcontainers"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
-    <ProjectReference Include="../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj" Condition="'$(LibraryOnly)' != 'true'" />
-    <ProjectReference Include="../nUpdate.UpdateInstaller.UI.Avalonia/nUpdate.UpdateInstaller.UI.Avalonia.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'" />
-    <ProjectReference Include="../nUpdate.UI.Avalonia/nUpdate.UI.Avalonia.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'" />
-    <ProjectReference Include="../nUpdate.Administration.Core/nUpdate.Administration.Core.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'" />
-    <ProjectReference Include="../nUpdate.Administration/nUpdate.Administration.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true' And '$(AdminCoreOnly)' != 'true'" />
+    <ProjectReference Include="../nUpdate/nUpdate.csproj"/>
+    <ProjectReference Include="../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj" Condition="'$(LibraryOnly)' != 'true'"/>
+    <ProjectReference Include="../nUpdate.UpdateInstaller.UI.Avalonia/nUpdate.UpdateInstaller.UI.Avalonia.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'"/>
+    <ProjectReference Include="../nUpdate.UI.Avalonia/nUpdate.UI.Avalonia.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'"/>
+    <ProjectReference Include="../nUpdate.Administration.Core/nUpdate.Administration.Core.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true'"/>
+    <ProjectReference Include="../nUpdate.Administration/nUpdate.Administration.csproj" Condition="'$(LibraryOnly)' != 'true' And '$(InstallerOnly)' != 'true' And '$(AdminCoreOnly)' != 'true'"/>
   </ItemGroup>
 
   <!-- dotnet build -p:LibraryOnly=true compiles and runs only the tests of the nUpdate library,
@@ -35,20 +35,20 @@
        -p:AdminCoreOnly=true everything but the Administration app and the Docker-backed integration tests,
        -p:SkipIntegration=true everything but the Docker-backed integration tests. -->
   <ItemGroup Condition="'$(LibraryOnly)' == 'true'">
-    <Compile Remove="Installer/**;InstallerUi/**;ClientUi/**;Administration/**;Integration/**" />
+    <Compile Remove="Installer/**;InstallerUi/**;ClientUi/**;Administration/**;Integration/**"/>
   </ItemGroup>
   <ItemGroup Condition="'$(InstallerOnly)' == 'true'">
-    <Compile Remove="InstallerUi/**;ClientUi/**;Administration/**;Integration/**" />
+    <Compile Remove="InstallerUi/**;ClientUi/**;Administration/**;Integration/**"/>
   </ItemGroup>
   <ItemGroup Condition="'$(AdminCoreOnly)' == 'true'">
-    <Compile Remove="Administration/App/**;Integration/**" />
+    <Compile Remove="Administration/App/**;Integration/**"/>
   </ItemGroup>
   <ItemGroup Condition="'$(SkipIntegration)' == 'true'">
-    <Compile Remove="Integration/**" />
+    <Compile Remove="Integration/**"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Integration/Docker/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Integration/Docker/**" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
 </Project>

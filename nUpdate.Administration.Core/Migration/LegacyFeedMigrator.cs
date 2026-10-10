@@ -13,19 +13,13 @@ using nUpdate.Updating;
 namespace nUpdate.Administration.Core.Migration;
 
 /// <summary>Whether a project's server still needs the 5.0 migration.</summary>
-public sealed class MigrationStatus
+public sealed class MigrationStatus(bool legacyFeedPresent, bool feedPresent)
 {
-    public MigrationStatus(bool legacyFeedPresent, bool feedPresent)
-    {
-        LegacyFeedPresent = legacyFeedPresent;
-        FeedPresent = feedPresent;
-    }
-
     /// <summary>The server has an <c>updates.json</c> written by nUpdate Administration 3.x or 4.x.</summary>
-    public bool LegacyFeedPresent { get; }
+    public bool LegacyFeedPresent { get; } = legacyFeedPresent;
 
     /// <summary>The server has a <c>nupdate.json</c>.</summary>
-    public bool FeedPresent { get; }
+    public bool FeedPresent { get; } = feedPresent;
 
     /// <summary>Only the legacy feed exists: nothing can be published until the packages are migrated.</summary>
     public bool NeedsMigration => LegacyFeedPresent && !FeedPresent;
@@ -37,14 +31,16 @@ public sealed class MigrationStatus
 /// </summary>
 public interface ILegacyFeedMigrator
 {
-    Task<MigrationStatus> CheckAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default);
+    Task<MigrationStatus> CheckAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Reads <c>updates.json</c> and <c>nupdate.json</c> and, for every package that is not in <c>nupdate.json</c> yet,
     ///     finds the old zip (the local copy, else a download) and reads its files and operations, so the migration can
     ///     be reviewed before anything changes. A package that cannot be found or read is reported in the plan.
     /// </summary>
-    Task<MigrationPlan> PrepareAsync(UpdateProject project, ProjectSecrets secrets, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task<MigrationPlan> PrepareAsync(UpdateProject project, ProjectSecrets secrets,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Repacks, re-signs and uploads the included packages of the plan to <c>packages/&lt;version&gt;/&lt;platform&gt;.zip</c>, writes
@@ -53,16 +49,19 @@ public interface ILegacyFeedMigrator
     ///     Nothing of nUpdate 3 and 4 is changed, on the server or on this computer.
     /// </summary>
     /// <returns>The versions that were migrated.</returns>
-    Task<IReadOnlyList<UpdateVersion>> RunAsync(UpdateProject project, ProjectSecrets secrets, MigrationPlan plan, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<UpdateVersion>> RunAsync(UpdateProject project, ProjectSecrets secrets, MigrationPlan plan,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     What nUpdate 3 and 4 left for the project: <c>updates.json</c>, the package folders and <c>statistics.php</c> on the
     ///     server, the local package copies of nUpdate Administration 4 and of the 5.0 pre-releases on this computer.
     /// </summary>
-    Task<LegacyFiles> FindLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default);
+    Task<LegacyFiles> FindLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Deletes the given legacy files; <c>updates.json</c> goes last, so a run that is interrupted can be repeated.</summary>
-    Task DeleteLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, LegacyFiles files, CancellationToken cancellationToken = default);
+    Task DeleteLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, LegacyFiles files,
+        CancellationToken cancellationToken = default);
 }
 
 public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
@@ -81,14 +80,19 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
     private readonly IProjectLogger _logger;
     private readonly Func<DateTimeOffset> _now;
 
-    public LegacyFeedMigrator(IFileSystem fileSystem, AdministrationPaths paths, IProjectHttpClientFactory httpClientFactory, IFeedStore feeds, IPackageSigner signer,
-        ITransferProviderFactory transferFactory, IStatisticsApi statistics, IProjectStore projects, IProjectLogger logger)
-        : this(fileSystem, paths, httpClientFactory, feeds, signer, transferFactory, statistics, projects, logger, () => DateTimeOffset.UtcNow)
+    public LegacyFeedMigrator(IFileSystem fileSystem, AdministrationPaths paths,
+        IProjectHttpClientFactory httpClientFactory, IFeedStore feeds, IPackageSigner signer,
+        ITransferProviderFactory transferFactory, IStatisticsApi statistics, IProjectStore projects,
+        IProjectLogger logger)
+        : this(fileSystem, paths, httpClientFactory, feeds, signer, transferFactory, statistics, projects, logger,
+            () => DateTimeOffset.UtcNow)
     {
     }
 
-    public LegacyFeedMigrator(IFileSystem fileSystem, AdministrationPaths paths, IProjectHttpClientFactory httpClientFactory, IFeedStore feeds, IPackageSigner signer,
-        ITransferProviderFactory transferFactory, IStatisticsApi statistics, IProjectStore projects, IProjectLogger logger, Func<DateTimeOffset> now)
+    public LegacyFeedMigrator(IFileSystem fileSystem, AdministrationPaths paths,
+        IProjectHttpClientFactory httpClientFactory, IFeedStore feeds, IPackageSigner signer,
+        ITransferProviderFactory transferFactory, IStatisticsApi statistics, IProjectStore projects,
+        IProjectLogger logger, Func<DateTimeOffset> now)
     {
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _paths = paths ?? throw new ArgumentNullException(nameof(paths));
@@ -103,25 +107,30 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
         _deployer = new StatisticsDeployer(_fileSystem, _transferFactory, _statistics);
     }
 
-    public async Task<MigrationStatus> CheckAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default)
+    public async Task<MigrationStatus> CheckAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
         var legacy = await _feeds.LegacyFeedExistsAsync(project, secrets, cancellationToken).ConfigureAwait(false);
-        var current = await _feeds.LoadRemoteAsync(project, secrets, cancellationToken).ConfigureAwait(false) is not null;
+        var current =
+            await _feeds.LoadRemoteAsync(project, secrets, cancellationToken).ConfigureAwait(false) is not null;
         return new MigrationStatus(legacy, current);
     }
 
-    public async Task<MigrationPlan> PrepareAsync(UpdateProject project, ProjectSecrets secrets, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task<MigrationPlan> PrepareAsync(UpdateProject project, ProjectSecrets secrets,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
         progress?.Report(new PipelineProgress("Reading the feeds on the server", 0, 1));
         var unreadable = new List<string>();
-        var legacyEntries = await LoadLegacyFeedAsync(project, secrets, unreadable, cancellationToken).ConfigureAwait(false);
+        var legacyEntries = await LoadLegacyFeedAsync(project, secrets, unreadable, cancellationToken)
+            .ConfigureAwait(false);
         var feed = await _feeds.LoadRemoteAsync(project, secrets, cancellationToken).ConfigureAwait(false);
         var entries = (legacyEntries ?? []).OrderBy(e => e.Version).ToList();
-        var downloads = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), "nupdate-migration-" + Guid.NewGuid().ToString("N"));
+        var downloads = _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(),
+            "nupdate-migration-" + Guid.NewGuid().ToString("N"));
         var packages = new List<MigrationPackage>();
         try
         {
@@ -137,18 +146,21 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
                 // Two spellings of one version would land in the same packages/<version>/ folder and twice in nupdate.json.
                 if (packages.FirstOrDefault(p => p.Version == legacy.Version) is { } first)
                 {
-                    packages.Add(MigrationPackage.Failed(legacy, null, $"updates.json lists this version twice, as {first.LiteralVersion} and {legacy.LiteralVersion}; only {first.LiteralVersion} is migrated."));
+                    packages.Add(MigrationPackage.Failed(legacy, null,
+                        $"updates.json lists this version twice, as {first.LiteralVersion} and {legacy.LiteralVersion}; only {first.LiteralVersion} is migrated."));
                     continue;
                 }
 
                 if (_fileSystem.Directory.Exists(project.PackageDirectory(legacy.Version)))
                 {
-                    packages.Add(MigrationPackage.Failed(legacy, null, $"This project has a package {legacy.Version} of its own already ({project.PackageDirectory(legacy.Version)}). Publish or delete it instead of migrating the old one."));
+                    packages.Add(MigrationPackage.Failed(legacy, null,
+                        $"This project has a package {legacy.Version} of its own already ({project.PackageDirectory(legacy.Version)}). Publish or delete it instead of migrating the old one."));
                     continue;
                 }
 
                 progress?.Report(new PipelineProgress($"Reading {legacy.Version}", i + 1, entries.Count + 1));
-                packages.Add(await AnalyzeAsync(project, secrets, legacy, downloads, cancellationToken).ConfigureAwait(false));
+                packages.Add(await AnalyzeAsync(project, secrets, legacy, downloads, cancellationToken)
+                    .ConfigureAwait(false));
             }
         }
         catch
@@ -157,10 +169,12 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             throw;
         }
 
-        return new MigrationPlan(project.Id, legacyEntries is not null, feed, packages, () => DeleteDirectory(downloads), unreadable);
+        return new MigrationPlan(project.Id, legacyEntries is not null, feed, packages,
+            () => DeleteDirectory(downloads), unreadable);
     }
 
-    public async Task<IReadOnlyList<UpdateVersion>> RunAsync(UpdateProject project, ProjectSecrets secrets, MigrationPlan plan, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<UpdateVersion>> RunAsync(UpdateProject project, ProjectSecrets secrets,
+        MigrationPlan plan, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -172,7 +186,9 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             return [];
         var privateKey = included.Count == 0
             ? string.Empty
-            : secrets.PrivateKey ?? throw new InvalidOperationException("The private key of the project is missing. Enter the project credentials first.");
+            : secrets.PrivateKey ??
+              throw new InvalidOperationException(
+                  "The private key of the project is missing. Enter the project credentials first.");
         var statisticsEndpoint = project.Statistics.Enabled ? PublishService.Endpoint(project, secrets) : null;
 
         var previous = plan.ExistingFeed;
@@ -188,7 +204,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             var packagePath = project.PackageFilePath(package.Version, file.Platform);
             pipeline.Add($"Repacking {package.Version}", async ct =>
             {
-                var manifest = await RepackAsync(package, project.Id, file.Platform, packagePath, ct).ConfigureAwait(false);
+                var manifest = await RepackAsync(package, project.Id, file.Platform, packagePath, ct)
+                    .ConfigureAwait(false);
                 file.Touches = manifest.Touches.ToList();
                 file.Size = _fileSystem.FileInfo.New(packagePath).Length;
                 file.Sha512 = _signer.Hash(packagePath);
@@ -202,13 +219,17 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             pipeline.Add($"Uploading {package.Version}", async ct =>
             {
                 await using var transfer = await ConnectAsync(project, secrets, ct).ConfigureAwait(false);
-                await transfer.CreateDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), ct).ConfigureAwait(false);
+                await transfer.CreateDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), ct)
+                    .ConfigureAwait(false);
                 await transfer.UploadFileAsync(packagePath, file.Path, null, ct).ConfigureAwait(false);
                 entries.Add(entry);
             }, async () =>
             {
-                await using var transfer = await ConnectAsync(project, secrets, CancellationToken.None).ConfigureAwait(false);
-                await transfer.DeleteDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), CancellationToken.None).ConfigureAwait(false);
+                await using var transfer =
+                    await ConnectAsync(project, secrets, CancellationToken.None).ConfigureAwait(false);
+                await transfer
+                    .DeleteDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), CancellationToken.None)
+                    .ConfigureAwait(false);
             });
         }
 
@@ -217,12 +238,14 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             var publishedAt = _now();
             foreach (var entry in entries)
                 entry.PublishedAt = publishedAt;
-            var updated = new UpdateFeed { ProjectId = project.Id, Packages = feed.Packages.Concat(entries).OrderBy(p => p.Version).ToList() };
+            var updated = new UpdateFeed
+            { ProjectId = project.Id, Packages = feed.Packages.Concat(entries).OrderBy(p => p.Version).ToList() };
             await using var transfer = await ConnectAsync(project, secrets, ct).ConfigureAwait(false);
             await _feeds.UploadAsync(transfer, updated, ct).ConfigureAwait(false);
         }, async () =>
         {
-            await using var transfer = await ConnectAsync(project, secrets, CancellationToken.None).ConfigureAwait(false);
+            await using var transfer =
+                await ConnectAsync(project, secrets, CancellationToken.None).ConfigureAwait(false);
             if (previous is not null)
                 await _feeds.UploadAsync(transfer, previous, CancellationToken.None).ConfigureAwait(false);
             else
@@ -237,7 +260,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
                 pipeline.Add("Registering the versions in the statistics", async ct =>
                 {
                     foreach (var entry in entries)
-                        await _statistics.RegisterVersionAsync(statisticsEndpoint, project.Id, entry.Version, ct).ConfigureAwait(false);
+                        await _statistics.RegisterVersionAsync(statisticsEndpoint, project.Id, entry.Version, ct)
+                            .ConfigureAwait(false);
                 });
             }
         }
@@ -291,7 +315,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
         return migrated;
     }
 
-    public async Task<LegacyFiles> FindLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default)
+    public async Task<LegacyFiles> FindLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -306,7 +331,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
 
         await using (var transfer = await ConnectAsync(project, secrets, cancellationToken).ConfigureAwait(false))
         {
-            if (await transfer.FileExistsAsync(StatisticsScript.LegacyScriptFileName, cancellationToken).ConfigureAwait(false))
+            if (await transfer.FileExistsAsync(StatisticsScript.LegacyScriptFileName, cancellationToken)
+                    .ConfigureAwait(false))
                 serverFiles.Add(StatisticsScript.LegacyScriptFileName);
         }
 
@@ -314,12 +340,14 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
         var local = (entries ?? []).SelectMany(e => LegacyPackageDirectories(project, e))
             .Distinct(StringComparer.Ordinal)
             .Where(d => _fileSystem.File.Exists(_fileSystem.Path.Combine(d, $"{project.Id}.zip")))
-            .Where(d => !Contains(d, project.Folder) && (project.LegacyProjectFile is null || !Contains(d, project.LegacyProjectFile)))
+            .Where(d => !Contains(d, project.Folder) &&
+                        (project.LegacyProjectFile is null || !Contains(d, project.LegacyProjectFile)))
             .ToList();
         return new LegacyFiles(serverFiles, serverDirectories, local);
     }
 
-    public async Task DeleteLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, LegacyFiles files, CancellationToken cancellationToken = default)
+    public async Task DeleteLegacyFilesAsync(UpdateProject project, ProjectSecrets secrets, LegacyFiles files,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -348,29 +376,42 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             Changelog = new Dictionary<string, string>(legacy.Changelog, StringComparer.OrdinalIgnoreCase),
             UnsupportedVersions = legacy.UnsupportedVersions.ToList(),
             Rollout = legacy.Rollout,
-            Files = [new PackageFile { Platform = legacy.Platform, Path = PackageLayout.RemotePackagePath(legacy.Version, legacy.Platform) }],
-            Statistics = project.Statistics.Enabled ? new PackageStatistics { Url = PublishService.StatisticsUrl(project), Enabled = legacy.UseStatistics } : null,
+            Files =
+            [
+                new PackageFile
+                {
+                    Platform = legacy.Platform, Path = PackageLayout.RemotePackagePath(legacy.Version, legacy.Platform)
+                }
+            ],
+            Statistics = project.Statistics.Enabled
+                ? new PackageStatistics { Url = PublishService.StatisticsUrl(project), Enabled = legacy.UseStatistics }
+                : null,
         };
     }
 
     /// <summary>The entries of <c>updates.json</c>, or <c>null</c> when the server has none; entries without a readable version go to <paramref name="unreadable" />.</summary>
-    private async Task<List<LegacyFeedEntry>?> LoadLegacyFeedAsync(UpdateProject project, ProjectSecrets secrets, ICollection<string> unreadable, CancellationToken cancellationToken)
+    private async Task<List<LegacyFeedEntry>?> LoadLegacyFeedAsync(UpdateProject project, ProjectSecrets secrets,
+        ICollection<string> unreadable, CancellationToken cancellationToken)
     {
         using var client = _httpClientFactory.Create(project, secrets);
-        using var response = await client.GetAsync(project.Resolve(LegacyFeed.FileName), cancellationToken).ConfigureAwait(false);
+        using var response = await client.GetAsync(project.Resolve(LegacyFeed.FileName), cancellationToken)
+            .ConfigureAwait(false);
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             return null;
         response.EnsureSuccessStatusCode();
-        return LegacyFeed.Parse(await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false), unreadable);
+        return LegacyFeed.Parse(await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false),
+            unreadable);
     }
 
     /// <summary>Whether <paramref name="path" /> is <paramref name="directory" /> or lies below it.</summary>
     private bool Contains(string directory, string path)
     {
-        var parent = _fileSystem.Path.GetFullPath(directory).TrimEnd(_fileSystem.Path.DirectorySeparatorChar, _fileSystem.Path.AltDirectorySeparatorChar);
+        var parent = _fileSystem.Path.GetFullPath(directory).TrimEnd(_fileSystem.Path.DirectorySeparatorChar,
+            _fileSystem.Path.AltDirectorySeparatorChar);
         var child = _fileSystem.Path.GetFullPath(path);
         return string.Equals(child, parent, StringComparison.OrdinalIgnoreCase)
-               || child.StartsWith(parent + _fileSystem.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+               || child.StartsWith(parent + _fileSystem.Path.DirectorySeparatorChar,
+                   StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -381,7 +422,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
     private IEnumerable<string> LegacyPackageDirectories(UpdateProject project, LegacyFeedEntry legacy)
     {
         yield return _fileSystem.Path.Combine(project.Folder, legacy.LiteralVersion);
-        if (project.LegacyProjectFile is { } legacyFile && _fileSystem.Path.GetDirectoryName(legacyFile) is { Length: > 0 } legacyFolder)
+        if (project.LegacyProjectFile is { } legacyFile && _fileSystem.Path.GetDirectoryName(legacyFile) is
+            { Length: > 0 } legacyFolder)
             yield return _fileSystem.Path.Combine(legacyFolder, legacy.LiteralVersion);
         if (LegacyDataDirectory(project) is { } data)
             yield return _fileSystem.Path.Combine(data, legacy.LiteralVersion);
@@ -394,7 +436,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
     private string? LegacyDataDirectory(UpdateProject project)
     {
         var name = project.Name;
-        if (string.IsNullOrWhiteSpace(name) || name.TrimEnd('.', ' ').Length != name.Length || name.IndexOfAny(['/', '\\', ':', '\0']) >= 0)
+        if (string.IsNullOrWhiteSpace(name) || name.TrimEnd('.', ' ').Length != name.Length ||
+            name.IndexOfAny(['/', '\\', ':', '\0']) >= 0)
             return null;
         return _paths.LegacyProjectDataDirectory(name);
     }
@@ -403,33 +446,43 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
     ///     Finds or downloads the old zip, checks that it carries the signature <c>updates.json</c> names for it (so nothing
     ///     the old clients would reject gets signed anew) and reads what the new package will contain.
     /// </summary>
-    private async Task<MigrationPackage> AnalyzeAsync(UpdateProject project, ProjectSecrets secrets, LegacyFeedEntry legacy, string downloads, CancellationToken cancellationToken)
+    private async Task<MigrationPackage> AnalyzeAsync(UpdateProject project, ProjectSecrets secrets,
+        LegacyFeedEntry legacy, string downloads, CancellationToken cancellationToken)
     {
         if (legacy.Signature is null)
-            return MigrationPackage.Failed(legacy, legacy.PackageUri?.ToString(), "updates.json has no signature for this package, so it cannot be checked before it is signed for nUpdate 5.");
-        var local = LegacyPackageDirectories(project, legacy).Select(d => _fileSystem.Path.Combine(d, $"{project.Id}.zip")).FirstOrDefault(f => _fileSystem.File.Exists(f) && IsSigned(project, legacy, f));
+            return MigrationPackage.Failed(legacy, legacy.PackageUri?.ToString(),
+                "updates.json has no signature for this package, so it cannot be checked before it is signed for nUpdate 5.");
+        var local = LegacyPackageDirectories(project, legacy)
+            .Select(d => _fileSystem.Path.Combine(d, $"{project.Id}.zip"))
+            .FirstOrDefault(f => _fileSystem.File.Exists(f) && IsSigned(project, legacy, f));
         var source = local ?? legacy.PackageUri?.ToString();
         if (source is null)
-            return MigrationPackage.Failed(legacy, null, "The package is neither on this computer nor named in updates.json.");
+            return MigrationPackage.Failed(legacy, null,
+                "The package is neither on this computer nor named in updates.json.");
         try
         {
-            var path = local ?? await DownloadAsync(project, secrets, legacy.PackageUri!, downloads, cancellationToken).ConfigureAwait(false);
+            var path = local ?? await DownloadAsync(project, secrets, legacy.PackageUri!, downloads, cancellationToken)
+                .ConfigureAwait(false);
             if (local is null && !IsSigned(project, legacy, path))
-                return MigrationPackage.Failed(legacy, source, "The downloaded zip does not carry the signature updates.json names for it, so it may have been changed. It is not migrated.");
+                return MigrationPackage.Failed(legacy, source,
+                    "The downloaded zip does not carry the signature updates.json names for it, so it may have been changed. It is not migrated.");
             LegacyOperationConversion operations;
             List<string> files;
             await using (var stream = _fileSystem.File.OpenRead(path))
             using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 operations = archive.GetEntry(LegacyOperationsFileName) is { } operationsEntry
-                    ? LegacyOperationConverter.Convert(await ReadArrayAsync(operationsEntry, cancellationToken).ConfigureAwait(false))
+                    ? LegacyOperationConverter.Convert(await ReadArrayAsync(operationsEntry, cancellationToken)
+                        .ConfigureAwait(false))
                     : LegacyOperationConverter.Convert(legacy.Operations);
                 files = archive.Entries.Where(e => !e.FullName.EndsWith('/')).Select(e => e.FullName).ToList();
             }
 
             var packaged = files.Count(f => PackageFileEntry.TryParseEntryName(f, out _, out _));
-            var skipped = files.Where(f => f != LegacyOperationsFileName && !PackageFileEntry.TryParseEntryName(f, out _, out _)).ToList();
-            return MigrationPackage.Ready(legacy, source, path, _fileSystem.FileInfo.New(path).Length, packaged, skipped, operations);
+            var skipped = files.Where(f =>
+                f != LegacyOperationsFileName && !PackageFileEntry.TryParseEntryName(f, out _, out _)).ToList();
+            return MigrationPackage.Ready(legacy, source, path, _fileSystem.FileInfo.New(path).Length, packaged,
+                skipped, operations);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
@@ -448,10 +501,12 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
         return LegacySignature.Verify(stream, project.PublicKey, legacy.Signature);
     }
 
-    private async Task<string> DownloadAsync(UpdateProject project, ProjectSecrets secrets, Uri uri, string downloads, CancellationToken cancellationToken)
+    private async Task<string> DownloadAsync(UpdateProject project, ProjectSecrets secrets, Uri uri, string downloads,
+        CancellationToken cancellationToken)
     {
         using var client = _httpClientFactory.Create(project, secrets);
-        using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         _fileSystem.Directory.CreateDirectory(downloads);
         var path = _fileSystem.Path.Combine(downloads, Guid.NewGuid().ToString("N") + ".zip");
@@ -461,9 +516,17 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
     }
 
     /// <summary>Writes the new zip: the files below the known roots plus a manifest with the converted operations.</summary>
-    private async Task<PackageManifest> RepackAsync(MigrationPackage package, Guid projectId, string platform, string packagePath, CancellationToken cancellationToken)
+    private async Task<PackageManifest> RepackAsync(MigrationPackage package, Guid projectId, string platform,
+        string packagePath, CancellationToken cancellationToken)
     {
-        var manifest = new PackageManifest { ProjectId = projectId, Version = package.Version, Platform = platform, CreatedAt = _now(), Operations = package.Operations.ToList() };
+        var manifest = new PackageManifest
+        {
+            ProjectId = projectId,
+            Version = package.Version,
+            Platform = platform,
+            CreatedAt = _now(),
+            Operations = package.Operations.ToList()
+        };
         var manifestJson = Serializer.Serialize(manifest, indented: true);
 
         var directory = _fileSystem.Path.GetDirectoryName(packagePath)!;
@@ -473,7 +536,8 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
         await using (var output = _fileSystem.File.Create(packagePath))
         using (var target = new ZipArchive(output, ZipArchiveMode.Create))
         {
-            foreach (var entry in source.Entries.Where(e => !e.FullName.EndsWith('/') && PackageFileEntry.TryParseEntryName(e.FullName, out _, out _)))
+            foreach (var entry in source.Entries.Where(e =>
+                         !e.FullName.EndsWith('/') && PackageFileEntry.TryParseEntryName(e.FullName, out _, out _)))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var copy = target.CreateEntry(entry.FullName, CompressionLevel.Optimal);
@@ -482,11 +546,14 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
                 await from.CopyToAsync(to, cancellationToken).ConfigureAwait(false);
             }
 
-            using var manifestStream = target.CreateEntry(PackageLayout.ManifestFileName, CompressionLevel.Optimal).Open();
-            await manifestStream.WriteAsync(Encoding.UTF8.GetBytes(manifestJson), cancellationToken).ConfigureAwait(false);
+            using var manifestStream =
+                target.CreateEntry(PackageLayout.ManifestFileName, CompressionLevel.Optimal).Open();
+            await manifestStream.WriteAsync(Encoding.UTF8.GetBytes(manifestJson), cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        await _fileSystem.File.WriteAllTextAsync(_fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName), manifestJson, cancellationToken).ConfigureAwait(false);
+        await _fileSystem.File.WriteAllTextAsync(_fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName),
+            manifestJson, cancellationToken).ConfigureAwait(false);
         return manifest;
     }
 
@@ -496,14 +563,18 @@ public sealed class LegacyFeedMigrator : ILegacyFeedMigrator
             _fileSystem.Directory.Delete(directory, recursive: true);
     }
 
-    private static async Task<Newtonsoft.Json.Linq.JArray?> ReadArrayAsync(ZipArchiveEntry entry, CancellationToken cancellationToken)
+    private static async Task<Newtonsoft.Json.Linq.JArray?> ReadArrayAsync(ZipArchiveEntry entry,
+        CancellationToken cancellationToken)
     {
         using var reader = new StreamReader(entry.Open(), Encoding.UTF8);
         var content = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-        return string.IsNullOrWhiteSpace(content) ? null : Newtonsoft.Json.Linq.JToken.Parse(content) as Newtonsoft.Json.Linq.JArray;
+        return string.IsNullOrWhiteSpace(content)
+            ? null
+            : Newtonsoft.Json.Linq.JToken.Parse(content) as Newtonsoft.Json.Linq.JArray;
     }
 
-    private async Task<ITransferProvider> ConnectAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken)
+    private async Task<ITransferProvider> ConnectAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken)
     {
         var transfer = _transferFactory.Create(project.Transfer, secrets.ToTransferCredentials());
         Exception? failure = null;

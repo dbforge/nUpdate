@@ -23,21 +23,29 @@ public class OperationTests
     [Fact]
     public void Operation_Serialization_KeepsEveryField()
     {
-        var delete = OperationJson.RoundTrip(new DeleteFilesOperation { Directory = "%program%", Files = ["a.txt", "b.txt"], RunBeforeFileReplacement = true }).ShouldBeOfType<DeleteFilesOperation>();
+        var delete = OperationJson.RoundTrip(new DeleteFilesOperation
+        { Directory = "%program%", Files = ["a.txt", "b.txt"], RunBeforeFileReplacement = true })
+            .ShouldBeOfType<DeleteFilesOperation>();
         delete.Directory.ShouldBe("%program%");
         delete.Files.ShouldBe(["a.txt", "b.txt"]);
         delete.RunBeforeFileReplacement.ShouldBeTrue();
         delete.Area.ShouldBe(OperationArea.Files);
 
-        var rename = OperationJson.RoundTrip(new RenameFileOperation { Path = "%program%/a.dll", NewName = "b.dll" }).ShouldBeOfType<RenameFileOperation>();
+        var rename = OperationJson.RoundTrip(new RenameFileOperation { Path = "%program%/a.dll", NewName = "b.dll" })
+            .ShouldBeOfType<RenameFileOperation>();
         rename.Path.ShouldBe("%program%/a.dll");
         rename.NewName.ShouldBe("b.dll");
 
-        OperationJson.RoundTrip(new CreateRegistryKeysOperation { Key = "HKCU\\x", SubKeys = ["a"] }).ShouldBeOfType<CreateRegistryKeysOperation>().SubKeys.ShouldBe(["a"]);
-        OperationJson.RoundTrip(new DeleteRegistryKeysOperation { Key = "HKCU\\x", SubKeys = ["b"] }).ShouldBeOfType<DeleteRegistryKeysOperation>().Area.ShouldBe(OperationArea.Registry);
-        OperationJson.RoundTrip(new DeleteRegistryValuesOperation { Key = "HKCU\\x", Names = ["Mode"] }).ShouldBeOfType<DeleteRegistryValuesOperation>().Names.ShouldBe(["Mode"]);
+        OperationJson.RoundTrip(new CreateRegistryKeysOperation { Key = "HKCU\\x", SubKeys = ["a"] })
+            .ShouldBeOfType<CreateRegistryKeysOperation>().SubKeys.ShouldBe(["a"]);
+        OperationJson.RoundTrip(new DeleteRegistryKeysOperation { Key = "HKCU\\x", SubKeys = ["b"] })
+            .ShouldBeOfType<DeleteRegistryKeysOperation>().Area.ShouldBe(OperationArea.Registry);
+        OperationJson.RoundTrip(new DeleteRegistryValuesOperation { Key = "HKCU\\x", Names = ["Mode"] })
+            .ShouldBeOfType<DeleteRegistryValuesOperation>().Names.ShouldBe(["Mode"]);
 
-        var process = OperationJson.RoundTrip(new StartProcessOperation { Path = "tool.exe", Arguments = "--quiet", WaitForExit = true, FailOnError = true }).ShouldBeOfType<StartProcessOperation>();
+        var process = OperationJson.RoundTrip(new StartProcessOperation
+        { Path = "tool.exe", Arguments = "--quiet", WaitForExit = true, FailOnError = true })
+            .ShouldBeOfType<StartProcessOperation>();
         process.Arguments.ShouldBe("--quiet");
         process.WaitForExit.ShouldBeTrue();
         process.FailOnError.ShouldBeTrue();
@@ -45,16 +53,20 @@ public class OperationTests
         process.RequiresWindows.ShouldBeFalse();
         Serializer.Serialize(new StartProcessOperation()).ShouldContain("\"waitForExit\":false,\"failOnError\":false");
         Serializer.Serialize(new StartProcessOperation()).ShouldNotContain("requiresWindows");
-        OperationJson.RoundTrip(new TerminateProcessOperation { ProcessName = "tool" }).ShouldBeOfType<TerminateProcessOperation>().ProcessName.ShouldBe("tool");
+        OperationJson.RoundTrip(new TerminateProcessOperation { ProcessName = "tool" })
+            .ShouldBeOfType<TerminateProcessOperation>().ProcessName.ShouldBe("tool");
 
-        var service = OperationJson.RoundTrip(new StartServiceOperation { ServiceName = "svc", Arguments = ["-a"] }).ShouldBeOfType<StartServiceOperation>();
+        var service = OperationJson.RoundTrip(new StartServiceOperation { ServiceName = "svc", Arguments = ["-a"] })
+            .ShouldBeOfType<StartServiceOperation>();
         service.Arguments.ShouldBe(["-a"]);
         service.Area.ShouldBe(OperationArea.Services);
-        OperationJson.RoundTrip(new StopServiceOperation { ServiceName = "svc" }).ShouldBeOfType<StopServiceOperation>().ServiceName.ShouldBe("svc");
+        OperationJson.RoundTrip(new StopServiceOperation { ServiceName = "svc" }).ShouldBeOfType<StopServiceOperation>()
+            .ServiceName.ShouldBe("svc");
         service.RequiresWindows.ShouldBeTrue();
         new SetRegistryValuesOperation().RequiresWindows.ShouldBeTrue();
         new DeleteFilesOperation().RequiresWindows.ShouldBeFalse();
-        Enum.GetValues<OperationArea>().Where(Operation.IsWindowsOnly).ShouldBe([OperationArea.Registry, OperationArea.Services]);
+        Enum.GetValues<OperationArea>().Where(Operation.IsWindowsOnly)
+            .ShouldBe([OperationArea.Registry, OperationArea.Services]);
     }
 
     [Fact]

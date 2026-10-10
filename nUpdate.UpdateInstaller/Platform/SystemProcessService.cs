@@ -36,7 +36,8 @@ public sealed class SystemProcessService : IProcessService
     {
         try
         {
-            using var process = Process.Start(new ProcessStartInfo { FileName = fileName, Arguments = arguments, UseShellExecute = true });
+            using var process = Process.Start(new ProcessStartInfo
+            { FileName = fileName, Arguments = arguments, UseShellExecute = true });
             return true;
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorCancelled)
@@ -47,7 +48,8 @@ public sealed class SystemProcessService : IProcessService
 
     public int Run(string fileName, string arguments)
     {
-        using var process = Process.Start(new ProcessStartInfo { FileName = fileName, Arguments = arguments, UseShellExecute = true });
+        using var process = Process.Start(new ProcessStartInfo
+        { FileName = fileName, Arguments = arguments, UseShellExecute = true });
         if (process is null)
             return 0; // the shell handed the file to an application that was already running: nothing to wait for
         process.WaitForExit();

@@ -14,5 +14,6 @@ public interface IPackageBuilder
     /// <returns>The manifest the package carries.</returns>
     /// <exception cref="InvalidOperationException">An entry is listed twice or a file is a symbolic link.</exception>
     /// <exception cref="FileNotFoundException">A file does not exist.</exception>
-    Task<PackageManifest> BuildAsync(PlatformPackage package, UpdateVersion version, Guid projectId, string packagePath, CancellationToken cancellationToken = default);
+    Task<PackageManifest> BuildAsync(PlatformPackage package, UpdateVersion version, Guid projectId, string packagePath,
+        CancellationToken cancellationToken = default);
 }

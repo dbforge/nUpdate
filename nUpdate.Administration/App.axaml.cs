@@ -26,8 +26,10 @@ public sealed class App : Application
             dialogs.Owner = window;
             ReportUnhandledExceptions(dialogs);
             desktop.MainWindow = window;
-            var initialProject = desktop.Args?.FirstOrDefault(arg => arg.EndsWith(".nupdproj", StringComparison.OrdinalIgnoreCase));
-            window.Opened += async (_, _) => await services.GetRequiredService<MainWindowViewModel>().InitializeAsync(initialProject);
+            var initialProject =
+                desktop.Args?.FirstOrDefault(arg => arg.EndsWith(".nupdproj", StringComparison.OrdinalIgnoreCase));
+            window.Opened += async (_, _) =>
+                await services.GetRequiredService<MainWindowViewModel>().InitializeAsync(initialProject);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -48,7 +50,8 @@ public sealed class App : Application
         TaskScheduler.UnobservedTaskException += (_, e) =>
         {
             e.SetObserved();
-            Avalonia.Threading.Dispatcher.UIThread.Post(() => _ = dialogs.ShowErrorAsync("Unexpected error", e.Exception.GetBaseException().Message));
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                _ = dialogs.ShowErrorAsync("Unexpected error", e.Exception.GetBaseException().Message));
         };
     }
 }

@@ -5,16 +5,11 @@ using nUpdate.Updating;
 namespace nUpdate.Administration.Core.Packages;
 
 /// <summary>Everything needed to build the package files of a version: one per platform.</summary>
-public sealed class PackageDefinition
+public sealed class PackageDefinition(UpdateVersion version)
 {
     private readonly List<PlatformPackage> _platforms = [];
 
-    public PackageDefinition(UpdateVersion version)
-    {
-        Version = version ?? throw new ArgumentNullException(nameof(version));
-    }
-
-    public UpdateVersion Version { get; }
+    public UpdateVersion Version { get; } = version ?? throw new ArgumentNullException(nameof(version));
 
     /// <summary>The package file of each platform, see <see cref="PackagePlatform" />; each platform once.</summary>
     public IReadOnlyList<PlatformPackage> Platforms => _platforms;
@@ -37,7 +32,9 @@ public sealed class PlatformPackage
     public PlatformPackage(string platform)
     {
         if (!PackagePlatform.IsKnown(platform))
-            throw new ArgumentException($"\"{platform}\" is not a platform nUpdate knows. Use one of {string.Join(", ", PackagePlatform.All)}.", nameof(platform));
+            throw new ArgumentException(
+                $"\"{platform}\" is not a platform nUpdate knows. Use one of {string.Join(", ", PackagePlatform.All)}.",
+                nameof(platform));
         Platform = platform;
     }
 
@@ -59,12 +56,14 @@ public sealed class PackageFileEntry
     public PackageFileEntry(PackageRoot root, string relativePath, string sourcePath)
     {
         Root = root;
-        RelativePath = (relativePath ?? throw new ArgumentNullException(nameof(relativePath))).Replace('\\', '/').TrimStart('/');
+        RelativePath = (relativePath ?? throw new ArgumentNullException(nameof(relativePath))).Replace('\\', '/')
+            .TrimStart('/');
         SourcePath = sourcePath ?? throw new ArgumentNullException(nameof(sourcePath));
         if (RelativePath.Length == 0)
             throw new ArgumentException("The relative path is empty.", nameof(relativePath));
         if (RelativePath.Split('/').Any(part => part is "." or ".."))
-            throw new ArgumentException("The relative path must not contain '.' or '..' segments.", nameof(relativePath));
+            throw new ArgumentException("The relative path must not contain '.' or '..' segments.",
+                nameof(relativePath));
     }
 
     public PackageRoot Root { get; }
@@ -97,9 +96,11 @@ public sealed class PackageFileEntry
         if (string.IsNullOrEmpty(entryName) || entryName.EndsWith('/'))
             return false;
         var segments = entryName.Split('/');
-        if (segments.Length < 2 || segments.Any(segment => segment is "" or "." or ".." || segment.IndexOfAny(['\\', ':']) >= 0))
+        if (segments.Length < 2 ||
+            segments.Any(segment => segment is "" or "." or ".." || segment.IndexOfAny(['\\', ':']) >= 0))
             return false;
-        var match = PackageLayout.Roots.FirstOrDefault(r => string.Equals(PackageLayout.FolderName(r), segments[0], StringComparison.Ordinal));
+        var match = PackageLayout.Roots.FirstOrDefault(r =>
+            string.Equals(PackageLayout.FolderName(r), segments[0], StringComparison.Ordinal));
         if (!string.Equals(PackageLayout.FolderName(match), segments[0], StringComparison.Ordinal))
             return false;
         root = match;

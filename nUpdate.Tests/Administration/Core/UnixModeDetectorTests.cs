@@ -32,7 +32,13 @@ public class UnixModeDetectorTests
             UnixModeDetector.Detect(fs, path, isWindows: true).ShouldBe(FilePermissions.ExecutableMode, path);
         }
 
-        foreach (var (path, bytes) in new Dictionary<string, byte[]> { ["/src/readme.txt"] = "hello"u8.ToArray(), ["/src/empty"] = [], ["/src/one"] = [0x23], ["/src/app.dll"] = [0x4D, 0x5A, 0x90, 0] })
+        foreach (var (path, bytes) in new Dictionary<string, byte[]>
+        {
+            ["/src/readme.txt"] = "hello"u8.ToArray(),
+            ["/src/empty"] = [],
+            ["/src/one"] = [0x23],
+            ["/src/app.dll"] = [0x4D, 0x5A, 0x90, 0]
+        })
         {
             fs.AddFile(path, new MockFileData(bytes));
             UnixModeDetector.Detect(fs, path, isWindows: true).ShouldBe(FilePermissions.RegularMode, path);
@@ -47,10 +53,14 @@ public class UnixModeDetectorTests
     {
         var fs = _context.FileSystem;
         fs.AddFile("/src/tool", new MockFileData("plain text") { UnixMode = (UnixFileMode)Convert.ToInt32("750", 8) });
-        fs.AddFile("/src/secret", new MockFileData([0x7F, 0x45, 0x4C, 0x46]) { UnixMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.SetUser });
+        fs.AddFile("/src/secret",
+            new MockFileData([0x7F, 0x45, 0x4C, 0x46])
+            { UnixMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.SetUser });
         UnixModeDetector.Detect(fs, "/src/tool", isWindows: false).ShouldBe(Convert.ToInt32("750", 8));
-        UnixModeDetector.Detect(fs, "/src/secret", isWindows: false).ShouldBe(Convert.ToInt32("600", 8)); // only the permission bits
+        UnixModeDetector.Detect(fs, "/src/secret", isWindows: false)
+            .ShouldBe(Convert.ToInt32("600", 8)); // only the permission bits
         fs.AddFile("/src/mounted", new MockFileData("x") { UnixMode = (UnixFileMode)Convert.ToInt32("777", 8) });
-        UnixModeDetector.Detect(fs, "/src/mounted", isWindows: false).ShouldBe(Convert.ToInt32("755", 8)); // never writable by others
+        UnixModeDetector.Detect(fs, "/src/mounted", isWindows: false)
+            .ShouldBe(Convert.ToInt32("755", 8)); // never writable by others
     }
 }

@@ -50,7 +50,8 @@ public class WindowsRegistryTests
             registry.DeleteSubKey(SoftwareKey, name);
             Registry.CurrentUser.OpenSubKey($@"Software\{name}").ShouldBeNull();
 
-            Should.Throw<InvalidOperationException>(() => registry.SetValue($@"{keyPath}\Nope", RegistryValue.String("x", "y")));
+            Should.Throw<InvalidOperationException>(() =>
+                registry.SetValue($@"{keyPath}\Nope", RegistryValue.String("x", "y")));
         }
         finally
         {

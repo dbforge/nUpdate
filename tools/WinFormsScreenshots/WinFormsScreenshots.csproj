@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../nUpdate.UI.WindowsForms/nUpdate.UI.WindowsForms.csproj" />
+    <ProjectReference Include="../../nUpdate.UI.WindowsForms/nUpdate.UI.WindowsForms.csproj"/>
   </ItemGroup>
 
 </Project>

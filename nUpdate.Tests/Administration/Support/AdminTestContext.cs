@@ -21,7 +21,8 @@ public sealed class AdminTestContext
     {
         FileSystem = new MockFileSystem();
         var temp = FileSystem.Path.GetTempPath();
-        Paths = new AdministrationPaths(FileSystem, FileSystem.Path.Combine(temp, "nupdate-admin"), FileSystem.Path.Combine(temp, "nupdate-projects"));
+        Paths = new AdministrationPaths(FileSystem, FileSystem.Path.Combine(temp, "nupdate-admin"),
+            FileSystem.Path.Combine(temp, "nupdate-projects"));
         Protector = new DataProtectionCredentialProtector(new EphemeralDataProtectionProvider());
         Http = new StubHttpMessageHandler();
         HttpClientFactory = new ProjectHttpClientFactory(Http);
@@ -39,7 +40,8 @@ public sealed class AdminTestContext
         Signer = new PackageSigner(FileSystem);
         Builder = new PackageBuilder(FileSystem, () => Now, OperatingSystem.IsWindows());
         ContentReader = new PackageContentReader(FileSystem, OperatingSystem.IsWindows());
-        Migrator = new LegacyFeedMigrator(FileSystem, Paths, HttpClientFactory, Feeds, Signer, TransferFactory, Statistics, Store, Logger, () => Now);
+        Migrator = new LegacyFeedMigrator(FileSystem, Paths, HttpClientFactory, Feeds, Signer, TransferFactory,
+            Statistics, Store, Logger, () => Now);
     }
 
     public MockFileSystem FileSystem { get; }
@@ -86,11 +88,19 @@ public sealed class AdminTestContext
             UpdateUrl = "https://updates.example.com/demo/",
             PublicKey = TestKeys.PublicKey,
             Path = FileSystem.Path.Combine(ProjectFolder(name), UpdateProject.FileName),
-            Transfer = new TransferSettings { Protocol = TransferProtocol.Ftp, Port = 21, Host = "ftp.example.com", Username = "user", Directory = "/demo" },
+            Transfer = new TransferSettings
+            {
+                Protocol = TransferProtocol.Ftp,
+                Port = 21,
+                Host = "ftp.example.com",
+                Username = "user",
+                Directory = "/demo"
+            },
         };
         project.Statistics.Enabled = statistics;
         if (statistics)
-            project.Statistics.Database = new StatisticsDatabaseSettings { Host = "db.example.com", Name = "stats", Username = "sqluser" };
+            project.Statistics.Database = new StatisticsDatabaseSettings
+            { Host = "db.example.com", Name = "stats", Username = "sqluser" };
         return project;
     }
 
@@ -114,7 +124,8 @@ public sealed class AdminTestContext
     public void ServeFeed(Updating.UpdateFeed? feed)
     {
         if (feed is null)
-            Http.Text(HttpMethod.Get, "https://updates.example.com/demo/nupdate.json", "not found", System.Net.HttpStatusCode.NotFound);
+            Http.Text(HttpMethod.Get, "https://updates.example.com/demo/nupdate.json", "not found",
+                System.Net.HttpStatusCode.NotFound);
         else
             Http.Text(HttpMethod.Get, "https://updates.example.com/demo/nupdate.json", Serializer.Serialize(feed));
     }
@@ -123,7 +134,8 @@ public sealed class AdminTestContext
     public void ServeLegacyFeed(string? json)
     {
         if (json is null)
-            Http.Text(HttpMethod.Get, "https://updates.example.com/demo/updates.json", "not found", System.Net.HttpStatusCode.NotFound);
+            Http.Text(HttpMethod.Get, "https://updates.example.com/demo/updates.json", "not found",
+                System.Net.HttpStatusCode.NotFound);
         else
             Http.Text(HttpMethod.Get, "https://updates.example.com/demo/updates.json", json);
     }

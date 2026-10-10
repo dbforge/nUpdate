@@ -56,10 +56,12 @@ public sealed class PackageInfo
         if (runtimeIdentifier is null)
             throw new ArgumentNullException(nameof(runtimeIdentifier));
 
-        return FileFor(runtimeIdentifier) ?? FileFor(PackagePlatform.OperatingSystemOf(runtimeIdentifier)) ?? FileFor(PackagePlatform.Any);
+        return FileFor(runtimeIdentifier) ?? FileFor(PackagePlatform.OperatingSystemOf(runtimeIdentifier)) ??
+            FileFor(PackagePlatform.Any);
     }
 
-    private PackageFile? FileFor(string platform) => Files.FirstOrDefault(f => string.Equals(f.Platform, platform, StringComparison.OrdinalIgnoreCase));
+    private PackageFile? FileFor(string platform) =>
+        Files.FirstOrDefault(f => string.Equals(f.Platform, platform, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>The changelog of the culture, falling back to its parent, then to English, then to the first entry, then to an empty string.</summary>
     public string GetChangelog(CultureInfo culture)

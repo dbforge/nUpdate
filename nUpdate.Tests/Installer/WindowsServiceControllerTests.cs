@@ -13,7 +13,9 @@ public class WindowsServiceControllerTests
     public void WindowsServiceController_ReportsUnknownServices()
     {
         var controller = new WindowsServiceController();
-        Should.Throw<InvalidOperationException>(() => controller.StopService("nUpdate-no-such-service-" + Guid.NewGuid().ToString("N")));
-        Should.Throw<InvalidOperationException>(() => controller.StartService("nUpdate-no-such-service-" + Guid.NewGuid().ToString("N"), []));
+        Should.Throw<InvalidOperationException>(() =>
+            controller.StopService("nUpdate-no-such-service-" + Guid.NewGuid().ToString("N")));
+        Should.Throw<InvalidOperationException>(() =>
+            controller.StartService("nUpdate-no-such-service-" + Guid.NewGuid().ToString("N"), []));
     }
 }

@@ -39,12 +39,21 @@ public sealed class AvaloniaDialogTests : IDisposable
         {
             Version = new UpdateVersion("1.1.0"),
             Changelog = { ["en"] = "Faster start." },
-            Files = [new PackageFile { Path = "packages/1.1.0/any.zip", Size = package.Length, Sha512 = TestKeys.Sha512(package), Signature = new PackageSignature { Value = TestKeys.Sign(package) }, Touches = [nUpdate.Operations.OperationArea.Processes] }],
+            Files =
+            [
+                new PackageFile
+                {
+                    Path = "packages/1.1.0/any.zip", Size = package.Length, Sha512 = TestKeys.Sha512(package),
+                    Signature = new PackageSignature { Value = TestKeys.Sign(package) },
+                    Touches = [nUpdate.Operations.OperationArea.Processes]
+                }
+            ],
         };
         _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed { Packages = [info] }));
     }
 
-    private void ServeNoUpdates() => _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed()));
+    private void ServeNoUpdates() =>
+        _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed()));
 
     private static T Find<T>(Window window, string name) where T : Control =>
         window.GetVisualDescendants().OfType<T>().Single(c => c.Name == name);
@@ -83,7 +92,9 @@ public sealed class AvaloniaDialogTests : IDisposable
         Find<Button>(confirm, "InstallButton").Command!.Execute(null);
 
         (await run.WaitAsync(TimeSpan.FromSeconds(30))).ShouldBe(UpdateFlowResult.InstallerStarted);
-        dialogs.Select(d => d.DataContext!.GetType().Name).ShouldBe([nameof(SearchDialogViewModel), nameof(NewUpdateDialogViewModel), nameof(DownloadDialogViewModel)]);
+        dialogs.Select(d => d.DataContext!.GetType().Name).ShouldBe([
+            nameof(SearchDialogViewModel), nameof(NewUpdateDialogViewModel), nameof(DownloadDialogViewModel)
+        ]);
         dialogs.ShouldAllBe(d => !d.IsVisible);
         _services.ProcessLauncher.ReceivedCalls().Count().ShouldBe(1);
         ui.UseHiddenSearch.ShouldBeFalse();
@@ -214,7 +225,14 @@ public sealed class AvaloniaDialogTests : IDisposable
                 Necessary = true,
                 AfterInstall = version == "1.2.0" ? AfterInstall.Close : null,
                 Changelog = { ["en"] = $"Changes in {version}." },
-                Files = [new PackageFile { Path = $"packages/{version}/any.zip", Size = 1000, Sha512 = "x", Signature = new PackageSignature { Value = "s" } }],
+                Files =
+                [
+                    new PackageFile
+                    {
+                        Path = $"packages/{version}/any.zip", Size = 1000, Sha512 = "x",
+                        Signature = new PackageSignature { Value = "s" }
+                    }
+                ],
             });
         }
 
@@ -247,10 +265,12 @@ public sealed class AvaloniaDialogTests : IDisposable
         Should.Throw<ArgumentNullException>(() => new MessageDialogViewModel(null!, "c", "t"));
         Should.Throw<ArgumentNullException>(() => new UpdateDialog(null!));
         new UpdateDialog().DataContext.ShouldBeNull();
-        new UpdateDialog().Resources["AccentButtonBackground"].ShouldBeOfType<Avalonia.Media.SolidColorBrush>().Color.ShouldBe(UpdateDialog.DefaultAccent);
+        new UpdateDialog().Resources["AccentButtonBackground"].ShouldBeOfType<Avalonia.Media.SolidColorBrush>().Color
+            .ShouldBe(UpdateDialog.DefaultAccent);
         var message = new MessageDialogViewModel(_manager, "c", "t");
         _manager.InstallerAccentColor = "#2E7D32";
-        new UpdateDialog(message).Resources["UpdateAccentBrush"].ShouldBeOfType<Avalonia.Media.SolidColorBrush>().Color.ShouldBe(Avalonia.Media.Color.Parse("#2E7D32"));
+        new UpdateDialog(message).Resources["UpdateAccentBrush"].ShouldBeOfType<Avalonia.Media.SolidColorBrush>().Color
+            .ShouldBe(Avalonia.Media.Color.Parse("#2E7D32"));
         message.OnClosing().ShouldBeTrue();
         message.Texts.ShouldBe(_manager.Texts);
     }

@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
@@ -19,19 +18,19 @@ namespace WinFormsScreenshots;
 internal static class Program
 {
     private const string Feed = """
-        {
-          "format": 1,
-          "packages": [
-            {
-              "version": "2.2.0",
-              "changelog": { "en": "- A new importer for CSV and Excel files\n- Dark mode follows the system\n- Starts twice as fast" },
-              "files": [
-                { "platform": "any", "path": "packages/2.2.0/any.zip", "size": 18400000, "sha512": "x", "signature": { "value": "s" }, "touches": ["processes"] }
-              ]
-            }
-          ]
-        }
-        """;
+                                {
+                                  "format": 1,
+                                  "packages": [
+                                    {
+                                      "version": "2.2.0",
+                                      "changelog": { "en": "- A new importer for CSV and Excel files\n- Dark mode follows the system\n- Starts twice as fast" },
+                                      "files": [
+                                        { "platform": "any", "path": "packages/2.2.0/any.zip", "size": 18400000, "sha512": "x", "signature": { "value": "s" }, "touches": ["processes"] }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                """;
 
     /// <summary>The title font of Windows 11, then of Windows 10.</summary>
     private static readonly string[] TitleFonts = ["Segoe UI Variable Text", "Segoe UI"];
@@ -46,8 +45,10 @@ internal static class Program
         Application.SetCompatibleTextRenderingDefault(false);
 
         using var rsa = RSA.Create(2048);
-        var services = new UpdateManagerServices { HttpClient = new HttpClient(new FeedHandler()), ApplicationInfo = new Aurora() };
-        using var manager = new UpdateManager(new Uri("https://updates.example.com/aurora/nupdate.json"), rsa.ExportSubjectPublicKeyInfoPem(),
+        var services = new UpdateManagerServices
+        { HttpClient = new HttpClient(new FeedHandler()), ApplicationInfo = new Aurora() };
+        using var manager = new UpdateManager(new Uri("https://updates.example.com/aurora/nupdate.json"),
+            rsa.ExportSubjectPublicKeyInfoPem(),
             currentVersion: new UpdateVersion("2.1.0"), services: services);
         if (!manager.CheckForUpdatesAsync().GetAwaiter().GetResult())
         {
@@ -55,7 +56,8 @@ internal static class Program
             return 1;
         }
 
-        using var dialog = new NewUpdateDialog(manager) { StartPosition = FormStartPosition.Manual, Location = new Point(48, 48), TopMost = true };
+        using var dialog = new NewUpdateDialog(manager)
+        { StartPosition = FormStartPosition.Manual, Location = new Point(48, 48), TopMost = true };
         dialog.Show();
         for (var i = 0; i < 40; i++)
         {
@@ -116,8 +118,14 @@ internal static class Program
 
         using (var font = new Font(TitleFonts.FirstOrDefault(IsInstalled) ?? FontFamily.GenericSansSerif.Name, 9f))
         using (var brush = new SolidBrush(ink))
-        using (var format = new StringFormat { LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
-            graphics.DrawString(title, font, brush, new RectangleF(textLeft, window.Y + 1, window.Right - 1 - 46 - textLeft, titleBar), format);
+        using (var format = new StringFormat
+        {
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.EllipsisCharacter,
+            FormatFlags = StringFormatFlags.NoWrap
+        })
+            graphics.DrawString(title, font, brush,
+                new RectangleF(textLeft, window.Y + 1, window.Right - 1 - 46 - textLeft, titleBar), format);
 
         using (var pen = new Pen(ink, 1f))
         {
@@ -126,7 +134,8 @@ internal static class Program
             graphics.DrawLine(pen, centre.X + 4.25f, centre.Y - 4.25f, centre.X - 4.25f, centre.Y + 4.25f);
         }
 
-        graphics.DrawImage(content, new Rectangle(window.X + 1, window.Y + 1 + titleBar, content.Width, content.Height));
+        graphics.DrawImage(content,
+            new Rectangle(window.X + 1, window.Y + 1 + titleBar, content.Width, content.Height));
         graphics.ResetClip();
         using (var pen = new Pen(Color.FromArgb(0xC9, 0xCC, 0xD1), 1f))
             graphics.DrawPath(pen, outline);
@@ -154,7 +163,8 @@ internal static class Program
     /// <summary>Answers every request with the sample feed.</summary>
     private sealed class FeedHandler : HttpMessageHandler
     {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+            CancellationToken cancellationToken) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(Feed) });
     }
 

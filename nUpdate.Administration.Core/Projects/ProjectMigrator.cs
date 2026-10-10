@@ -6,7 +6,6 @@ using nUpdate.Administration.Core.Models;
 using nUpdate.Administration.Core.Security;
 using nUpdate.Administration.TransferInterface;
 using nUpdate.Security;
-using nUpdate.Updating;
 
 namespace nUpdate.Administration.Core.Projects;
 
@@ -17,7 +16,7 @@ namespace nUpdate.Administration.Core.Projects;
 ///     Keys are converted from XML to PEM. The recovered secrets are returned in memory; they are written back once the
 ///     user chooses a project password.
 /// </summary>
-public sealed class ProjectMigrator
+public sealed class ProjectMigrator(ICredentialProtector protector)
 {
     private static readonly string[] V3Versions = ["1b2", "3b2", "v3"];
 
@@ -25,14 +24,10 @@ public sealed class ProjectMigrator
     public static bool IsV3(string? configVersion) =>
         configVersion is null || V3Versions.Contains(configVersion, StringComparer.OrdinalIgnoreCase);
 
-    public static bool IsV5(string? configVersion) => string.Equals(configVersion, "v5", StringComparison.OrdinalIgnoreCase);
+    public static bool IsV5(string? configVersion) =>
+        string.Equals(configVersion, "v5", StringComparison.OrdinalIgnoreCase);
 
-    private readonly ICredentialProtector _protector;
-
-    public ProjectMigrator(ICredentialProtector protector)
-    {
-        _protector = protector ?? throw new ArgumentNullException(nameof(protector));
-    }
+    private readonly ICredentialProtector _protector = protector ?? throw new ArgumentNullException(nameof(protector));
 
     /// <param name="legacy">The parsed 3.x/4.x project file.</param>
     /// <param name="masterPassword">
@@ -67,7 +62,9 @@ public sealed class ProjectMigrator
 
         var updateUrl = legacy.Value<string>("UpdateUrl") ?? string.Empty;
         var useStatistics = legacy.Value<bool?>("UseStatistics") ?? false;
-        var proxyAddress = legacy["Proxy"]?.Type == JTokenType.Object ? legacy["Proxy"]!.Value<string>("Address") : null;
+        var proxyAddress = legacy["Proxy"]?.Type == JTokenType.Object
+            ? legacy["Proxy"]!.Value<string>("Address")
+            : null;
 
         var project = new UpdateProject
         {
@@ -87,7 +84,8 @@ public sealed class ProjectMigrator
                 PluginAssemblyPath = NullIfEmpty(legacy.Value<string>("FtpTransferAssemblyFilePath")),
                 Proxy = string.IsNullOrEmpty(proxyAddress)
                     ? null
-                    : new ProxySettings { Address = proxyAddress, Username = NullIfEmpty(legacy.Value<string>("ProxyUsername")) },
+                    : new ProxySettings
+                    { Address = proxyAddress, Username = NullIfEmpty(legacy.Value<string>("ProxyUsername")) },
             },
             Statistics = new StatisticsSettings
             {
@@ -109,7 +107,8 @@ public sealed class ProjectMigrator
 
         var credentials = legacy["HttpAuthenticationCredentials"];
         if (credentials?.Type == JTokenType.Object && !string.IsNullOrEmpty(credentials.Value<string>("UserName")))
-            project.HttpAuthentication = new HttpAuthenticationSettings { Username = credentials.Value<string>("UserName")! };
+            project.HttpAuthentication = new HttpAuthenticationSettings
+            { Username = credentials.Value<string>("UserName")! };
 
         foreach (var package in legacy["Packages"]?.OfType<JObject>() ?? [])
         {
@@ -129,8 +128,13 @@ public sealed class ProjectMigrator
             project.Log.Add(new LogEntry
             {
                 Kind = ParseKind(entry["Entry"]),
-                At = DateTimeOffset.TryParse(entry.Value<string>("EntryTime"), CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var time) ? time : DateTimeOffset.MinValue,
-                Version = LegacyVersion.TryParse(entry.Value<string>("PackageVersion"), out var logVersion) ? logVersion : null,
+                At = DateTimeOffset.TryParse(entry.Value<string>("EntryTime"), CultureInfo.CurrentCulture,
+                    DateTimeStyles.AssumeLocal, out var time)
+                    ? time
+                    : DateTimeOffset.MinValue,
+                Version = LegacyVersion.TryParse(entry.Value<string>("PackageVersion"), out var logVersion)
+                    ? logVersion
+                    : null,
                 User = entry.Value<string>("Username") ?? string.Empty,
             });
         }
@@ -139,13 +143,16 @@ public sealed class ProjectMigrator
         {
             TransferPassword = Decrypt(legacy.Value<string>("FtpPassword")),
             ProxyPassword = Decrypt(legacy.Value<string>("ProxyPassword")),
-            HttpAuthenticationPassword = credentials?.Type == JTokenType.Object ? NullIfEmpty(credentials.Value<string>("Password")) : null,
+            HttpAuthenticationPassword = credentials?.Type == JTokenType.Object
+                ? NullIfEmpty(credentials.Value<string>("Password"))
+                : null,
             StatisticsDatabasePassword = useStatistics ? Decrypt(legacy.Value<string>("SqlPassword")) : null,
             // The statistics API of 3.x and 4.x had no admin secret; the migration deploys the new script with this one.
             StatisticsAdminSecret = useStatistics ? SecretGenerator.CreateSecret() : null,
             PrivateKey = ConvertKey(legacy.Value<string>("PrivateKey"), isPrivate: true),
         };
-        return new ProjectLoadResult(project, secrets, migrated: true, failed ? SecretsState.Unreadable : SecretsState.Loaded);
+        return new ProjectLoadResult(project, secrets, migrated: true,
+            failed ? SecretsState.Unreadable : SecretsState.Loaded);
     }
 
     /// <summary>Converts a file written by the 5.0 pre-releases: PascalCase names, literal versions, secrets protected per user and machine.</summary>
@@ -195,9 +202,14 @@ public sealed class ProjectMigrator
                 SftpPrivateKeyPath = transfer.Value<string>("SftpPrivateKeyPath"),
                 TrustedHostKeyFingerprint = transfer.Value<string>("TrustedHostKeyFingerprint"),
                 PluginAssemblyPath = transfer.Value<string>("PluginAssemblyPath"),
-                Proxy = proxy is null ? null : new ProxySettings { Address = Text(proxy["Address"]), Username = proxy.Value<string>("Username") },
+                Proxy = proxy is null
+                    ? null
+                    : new ProxySettings
+                    { Address = Text(proxy["Address"]), Username = proxy.Value<string>("Username") },
             },
-            HttpAuthentication = authentication is null ? null : new HttpAuthenticationSettings { Username = Text(authentication["Username"]) },
+            HttpAuthentication = authentication is null
+                ? null
+                : new HttpAuthenticationSettings { Username = Text(authentication["Username"]) },
             Statistics = new StatisticsSettings
             {
                 Enabled = statistics.Value<bool?>("Enabled") ?? false,
@@ -232,7 +244,9 @@ public sealed class ProjectMigrator
             {
                 Kind = ParseEnum(entry["Kind"], LogEntryKind.Edit),
                 At = ParseTime(entry.Value<string>("Time")),
-                Version = LegacyVersion.TryParse(entry.Value<string>("PackageVersion"), out var logVersion) ? logVersion : null,
+                Version = LegacyVersion.TryParse(entry.Value<string>("PackageVersion"), out var logVersion)
+                    ? logVersion
+                    : null,
                 User = Text(entry["Username"]),
             });
         }
@@ -248,7 +262,8 @@ public sealed class ProjectMigrator
             StatisticsDatabasePassword = Unprotect(database?["ProtectedPassword"]),
             PrivateKey = ConvertKey(Unprotect(legacy["ProtectedPrivateKey"]), isPrivate: true),
         };
-        return new ProjectLoadResult(project, secrets, migrated: true, failed ? SecretsState.Unreadable : saved ? SecretsState.Loaded : SecretsState.NotSaved);
+        return new ProjectLoadResult(project, secrets, migrated: true,
+            failed ? SecretsState.Unreadable : saved ? SecretsState.Loaded : SecretsState.NotSaved);
     }
 
     /// <summary>Converts an RSA key from the XML form earlier versions stored to PEM. Text that is not XML is returned unchanged.</summary>
@@ -271,7 +286,8 @@ public sealed class ProjectMigrator
         if (token is not JObject version)
             return token?.Type == JTokenType.String ? token.ToString() : string.Empty;
 
-        var numbers = $"{version.Value<int?>("Major") ?? 0}.{version.Value<int?>("Minor") ?? 0}.{version.Value<int?>("Build") ?? 0}.{version.Value<int?>("Revision") ?? 0}";
+        var numbers =
+            $"{version.Value<int?>("Major") ?? 0}.{version.Value<int?>("Minor") ?? 0}.{version.Value<int?>("Build") ?? 0}.{version.Value<int?>("Revision") ?? 0}";
         var stage = version.Value<int?>("DevelopmentalStage") ?? 0;
         var developmentBuild = version.Value<int?>("DevelopmentBuild") ?? 0;
         return stage switch
@@ -290,15 +306,19 @@ public sealed class ProjectMigrator
     {
         if (string.IsNullOrWhiteSpace(endpoint))
             return null;
-        if (UpdateProject.IsValidUpdateUrl(updateUrl) && string.Equals(endpoint, new Uri(new Uri(NormalizeUrl(updateUrl)), Statistics.StatisticsScript.LegacyScriptFileName).ToString(), StringComparison.OrdinalIgnoreCase))
+        if (UpdateProject.IsValidUpdateUrl(updateUrl) && string.Equals(endpoint,
+                new Uri(new Uri(NormalizeUrl(updateUrl)), Statistics.StatisticsScript.LegacyScriptFileName).ToString(),
+                StringComparison.OrdinalIgnoreCase))
             return null;
         return endpoint;
     }
 
     /// <summary>The text of a token; missing and null read as empty.</summary>
-    private static string Text(JToken? token) => token is null || token.Type == JTokenType.Null ? string.Empty : token.ToString();
+    private static string Text(JToken? token) =>
+        token is null || token.Type == JTokenType.Null ? string.Empty : token.ToString();
 
-    private static string NormalizeUrl(string url) => string.IsNullOrWhiteSpace(url) ? url : UpdateProject.NormalizeUpdateUrl(url);
+    private static string NormalizeUrl(string url) =>
+        string.IsNullOrWhiteSpace(url) ? url : UpdateProject.NormalizeUpdateUrl(url);
 
     private static TransferProtocol MapProtocol(int legacyProtocol) => legacyProtocol switch
     {
@@ -312,7 +332,9 @@ public sealed class ProjectMigrator
     {
         if (token is { Type: JTokenType.Integer })
             return (LogEntryKind)token.Value<int>();
-        return Enum.TryParse<LogEntryKind>(token?.ToString(), ignoreCase: true, out var kind) ? kind : LogEntryKind.Edit;
+        return Enum.TryParse<LogEntryKind>(token?.ToString(), ignoreCase: true, out var kind)
+            ? kind
+            : LogEntryKind.Edit;
     }
 
     private static T ParseEnum<T>(JToken? token, T fallback)
@@ -324,7 +346,9 @@ public sealed class ProjectMigrator
     }
 
     private static DateTimeOffset ParseTime(string? text) =>
-        DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var time) ? time : DateTimeOffset.MinValue;
+        DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var time)
+            ? time
+            : DateTimeOffset.MinValue;
 
     private static string? NullIfEmpty(string? value) => string.IsNullOrEmpty(value) ? null : value;
 }

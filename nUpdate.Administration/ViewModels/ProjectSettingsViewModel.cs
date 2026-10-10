@@ -14,36 +14,29 @@ public partial class ProjectSettingsViewModel : DialogViewModel
     private readonly ViewModelFactory _factory;
     private readonly IDialogService _dialogs;
 
-    [ObservableProperty]
-    private string _name;
+    [ObservableProperty] private string _name;
 
-    [ObservableProperty]
-    private string _updateUrl;
+    [ObservableProperty] private string _updateUrl;
 
-    [ObservableProperty]
-    private bool _useHttpAuthentication;
+    [ObservableProperty] private bool _useHttpAuthentication;
 
-    [ObservableProperty]
-    private string _httpUsername;
+    [ObservableProperty] private string _httpUsername;
 
-    [ObservableProperty]
-    private string _httpPassword;
+    [ObservableProperty] private string _httpPassword;
 
-    [ObservableProperty]
-    private bool _saveCredentials;
+    [ObservableProperty] private bool _saveCredentials;
 
     /// <summary>A new project password; empty keeps the remembered one.</summary>
-    [ObservableProperty]
-    private string _projectPassword = string.Empty;
+    [ObservableProperty] private string _projectPassword = string.Empty;
 
-    [ObservableProperty]
-    private string _projectPasswordConfirmation = string.Empty;
+    [ObservableProperty] private string _projectPasswordConfirmation = string.Empty;
 
-    [ObservableProperty]
-    private string? _assemblyVersionPath;
+    [ObservableProperty] private string? _assemblyVersionPath;
 
-    public ProjectSettingsViewModel(IProjectService projects, IProjectPasswordStore passwords, ViewModelFactory factory, IDialogService dialogs,
-        TransferSettingsEditorViewModel transfer, StatisticsSettingsEditorViewModel statistics, UpdateProject project, ProjectSecrets secrets)
+    public ProjectSettingsViewModel(IProjectService projects, IProjectPasswordStore passwords, ViewModelFactory factory,
+        IDialogService dialogs,
+        TransferSettingsEditorViewModel transfer, StatisticsSettingsEditorViewModel statistics, UpdateProject project,
+        ProjectSecrets secrets)
     {
         _projects = projects ?? throw new ArgumentNullException(nameof(projects));
         _passwords = passwords ?? throw new ArgumentNullException(nameof(passwords));
@@ -76,7 +69,9 @@ public partial class ProjectSettingsViewModel : DialogViewModel
     public string Folder => Project.Folder;
 
     /// <summary>The password fields are only needed when the file holds no secrets yet or the password is to be changed.</summary>
-    public string PasswordHint => string.IsNullOrEmpty(Project.Secrets) ? "Choose a project password." : "Leave the password empty to keep the current one.";
+    public string PasswordHint => string.IsNullOrEmpty(Project.Secrets)
+        ? "Choose a project password."
+        : "Leave the password empty to keep the current one.";
 
     public string? Validate()
     {
@@ -87,7 +82,8 @@ public partial class ProjectSettingsViewModel : DialogViewModel
         if (UseHttpAuthentication && string.IsNullOrWhiteSpace(HttpUsername))
             return "Enter the user name for the HTTP authentication.";
         if (SaveCredentials && (ProjectPassword.Length > 0 || string.IsNullOrEmpty(Project.Secrets)))
-            return ProjectPasswordViewModel.Validate(true, ProjectPassword, ProjectPasswordConfirmation) ?? Transfer.Validate() ?? Statistics.Validate();
+            return ProjectPasswordViewModel.Validate(true, ProjectPassword, ProjectPasswordConfirmation) ??
+                   Transfer.Validate() ?? Statistics.Validate();
         return Transfer.Validate() ?? Statistics.Validate();
     }
 
@@ -106,12 +102,16 @@ public partial class ProjectSettingsViewModel : DialogViewModel
             var password = await ResolvePasswordAsync();
             Project.UpdateUrl = UpdateProject.NormalizeUpdateUrl(UpdateUrl);
             Project.Transfer = Transfer.ToSettings();
-            Project.HttpAuthentication = UseHttpAuthentication ? new HttpAuthenticationSettings { Username = HttpUsername.Trim() } : null;
+            Project.HttpAuthentication = UseHttpAuthentication
+                ? new HttpAuthenticationSettings { Username = HttpUsername.Trim() }
+                : null;
             Project.Statistics = Statistics.ToSettings();
-            Project.AssemblyVersionPath = string.IsNullOrWhiteSpace(AssemblyVersionPath) ? null : AssemblyVersionPath.Trim();
+            Project.AssemblyVersionPath =
+                string.IsNullOrWhiteSpace(AssemblyVersionPath) ? null : AssemblyVersionPath.Trim();
             Transfer.ApplySecrets(Secrets);
             Statistics.ApplySecrets(Secrets);
-            Secrets.HttpAuthenticationPassword = UseHttpAuthentication && !string.IsNullOrEmpty(HttpPassword) ? HttpPassword : null;
+            Secrets.HttpAuthenticationPassword =
+                UseHttpAuthentication && !string.IsNullOrEmpty(HttpPassword) ? HttpPassword : null;
             try
             {
                 // The rename goes first: it is checked against the project list and only touches the name, so a
@@ -139,7 +139,9 @@ public partial class ProjectSettingsViewModel : DialogViewModel
             return null;
         if (ProjectPassword.Length > 0)
             return ProjectPassword;
-        return await _passwords.GetAsync(Project.Id) ?? throw new InvalidOperationException("The project password is not known on this machine. Enter a new project password.");
+        return await _passwords.GetAsync(Project.Id) ??
+               throw new InvalidOperationException(
+                   "The project password is not known on this machine. Enter a new project password.");
     }
 
     /// <summary>Opens the migration assistant from the settings, for projects where it was postponed.</summary>
@@ -152,26 +154,15 @@ public partial class ProjectSettingsViewModel : DialogViewModel
     }
 
     /// <summary>The editable state of a project and its secrets, so a failed save can be undone in memory.</summary>
-    private sealed class Snapshot
+    private sealed class Snapshot(UpdateProject project, ProjectSecrets secrets)
     {
-        private readonly string _updateUrl;
-        private readonly TransferInterface.TransferSettings _transfer;
-        private readonly HttpAuthenticationSettings? _httpAuthentication;
-        private readonly StatisticsSettings _statistics;
-        private readonly string? _secretsBlob;
-        private readonly string? _assemblyVersionPath;
-        private readonly ProjectSecrets _secrets;
-
-        public Snapshot(UpdateProject project, ProjectSecrets secrets)
-        {
-            _updateUrl = project.UpdateUrl;
-            _transfer = project.Transfer;
-            _httpAuthentication = project.HttpAuthentication;
-            _statistics = project.Statistics;
-            _secretsBlob = project.Secrets;
-            _assemblyVersionPath = project.AssemblyVersionPath;
-            _secrets = secrets.Clone();
-        }
+        private readonly string _updateUrl = project.UpdateUrl;
+        private readonly TransferInterface.TransferSettings _transfer = project.Transfer;
+        private readonly HttpAuthenticationSettings? _httpAuthentication = project.HttpAuthentication;
+        private readonly StatisticsSettings _statistics = project.Statistics;
+        private readonly string? _secretsBlob = project.Secrets;
+        private readonly string? _assemblyVersionPath = project.AssemblyVersionPath;
+        private readonly ProjectSecrets _secrets = secrets.Clone();
 
         public void Restore(UpdateProject project, ProjectSecrets secrets)
         {
@@ -188,11 +179,15 @@ public partial class ProjectSettingsViewModel : DialogViewModel
     [RelayCommand]
     private async Task DeleteProjectAsync()
     {
-        if (!await _dialogs.ConfirmAsync("Delete project", $"Delete the project \"{Project.Name}\"? This removes it from the list and deletes its folder.", "Delete"))
+        if (!await _dialogs.ConfirmAsync("Delete project",
+                $"Delete the project \"{Project.Name}\"? This removes it from the list and deletes its folder.",
+                "Delete"))
             return;
         var deleteServerFiles = await _dialogs.ConfirmAsync("Delete server files",
-            "Also delete the published packages, the feed, the statistics script and any legacy files from the server? Clients will no longer find updates.", "Delete on server", "Keep");
-        var ok = await RunBusyAsync("Deleting...", _ => _projects.DeleteAsync(Project, Secrets, deleteLocalFiles: true, deleteServerFiles: deleteServerFiles));
+            "Also delete the published packages, the feed, the statistics script and any legacy files from the server? Clients will no longer find updates.",
+            "Delete on server", "Keep");
+        var ok = await RunBusyAsync("Deleting...",
+            _ => _projects.DeleteAsync(Project, Secrets, deleteLocalFiles: true, deleteServerFiles: deleteServerFiles));
         if (ok)
         {
             Deleted = true;

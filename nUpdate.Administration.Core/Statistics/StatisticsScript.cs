@@ -20,7 +20,8 @@ public static class StatisticsScript
     public static string Script { get; } = ReadEmbedded();
 
     /// <summary>Renders the configuration the script includes. The admin secret is stored as a SHA-256 hash.</summary>
-    public static string RenderConfig(string dbHost, string dbName, string dbUser, string dbPassword, string adminSecret)
+    public static string RenderConfig(string dbHost, string dbName, string dbUser, string dbPassword,
+        string adminSecret)
     {
         ArgumentNullException.ThrowIfNull(dbHost);
         ArgumentNullException.ThrowIfNull(dbName);
@@ -37,12 +38,14 @@ public static class StatisticsScript
                $"$nupdateAdminSecretHash = {Quote(SecretGenerator.HashSecret(adminSecret))};\n";
     }
 
-    private static string Quote(string value) => "'" + value.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("'", "\\'", StringComparison.Ordinal) + "'";
+    private static string Quote(string value) => "'" + value.Replace("\\", "\\\\", StringComparison.Ordinal)
+        .Replace("'", "\\'", StringComparison.Ordinal) + "'";
 
     private static string ReadEmbedded()
     {
         // The script is embedded by the project file; a missing resource is a build defect, not a runtime condition.
-        using var stream = typeof(StatisticsScript).GetTypeInfo().Assembly.GetManifestResourceStream("nUpdate.Administration.Core.Resources.nupdate-statistics.php")!;
+        using var stream = typeof(StatisticsScript).GetTypeInfo().Assembly
+            .GetManifestResourceStream("nUpdate.Administration.Core.Resources.nupdate-statistics.php")!;
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }

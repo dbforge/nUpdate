@@ -23,8 +23,11 @@ for (var i = 0; i < args.Length; i++)
                 return Fail($"Invalid requirement \"{spec}\". Expected <assembly>=<line%>[,<branch%>].");
             var parts = spec[(eq + 1)..].Split(',');
             if (!double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var line)
-                || parts.Length > 2 || (parts.Length == 2 && !double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out _)))
-                return Fail($"Invalid requirement \"{spec}\". Expected <assembly>=<line%>[,<branch%>] with numeric percentages.");
+                || parts.Length > 2 || (parts.Length == 2 &&
+                                        !double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture,
+                                            out _)))
+                return Fail(
+                    $"Invalid requirement \"{spec}\". Expected <assembly>=<line%>[,<branch%>] with numeric percentages.");
             var branch = parts.Length > 1 ? double.Parse(parts[1], CultureInfo.InvariantCulture) : line;
             requirements[spec[..eq]] = (line, branch);
             break;
@@ -41,7 +44,9 @@ if (reports.Count == 0)
     return Fail("No coverage report given.");
 
 // file -> line number -> (hits, branch covered, branch total)
-var assemblies = new Dictionary<string, Dictionary<(string File, int Line), (int Hits, int BranchCovered, int BranchTotal)>>(StringComparer.OrdinalIgnoreCase);
+var assemblies =
+    new Dictionary<string, Dictionary<(string File, int Line), (int Hits, int BranchCovered, int BranchTotal)>>(
+        StringComparer.OrdinalIgnoreCase);
 
 foreach (var report in reports)
 {
@@ -79,7 +84,8 @@ foreach (var report in reports)
 
                 var key = (file, number);
                 if (lines.TryGetValue(key, out var existing))
-                    lines[key] = (existing.Hits + hits, Math.Max(existing.BranchCovered, covered), Math.Max(existing.BranchTotal, total));
+                    lines[key] = (existing.Hits + hits, Math.Max(existing.BranchCovered, covered),
+                        Math.Max(existing.BranchTotal, total));
                 else
                     lines[key] = (hits, covered, total);
             }
@@ -98,15 +104,18 @@ foreach (var (assembly, lines) in assemblies.OrderBy(pair => pair.Key, StringCom
     var branchPercent = branchTotal == 0 ? 100 : 100.0 * branchCovered / branchTotal;
 
     var required = requirements.TryGetValue(assembly, out var r) ? r : ((double, double)?)null;
-    var ok = required is null || (linePercent >= required.Value.Item1 - 1e-9 && branchPercent >= required.Value.Item2 - 1e-9);
+    var ok = required is null ||
+             (linePercent >= required.Value.Item1 - 1e-9 && branchPercent >= required.Value.Item2 - 1e-9);
     failed |= !ok;
 
-    Console.WriteLine($"{(ok ? "PASS" : "FAIL")} {assembly}: line {linePercent:F2}% ({lineCovered}/{lineTotal}), branch {branchPercent:F2}% ({branchCovered}/{branchTotal})"
+    Console.WriteLine(
+        $"{(ok ? "PASS" : "FAIL")} {assembly}: line {linePercent:F2}% ({lineCovered}/{lineTotal}), branch {branchPercent:F2}% ({branchCovered}/{branchTotal})"
         + (required is null ? " (no threshold)" : $" required {required.Value.Item1}% / {required.Value.Item2}%"));
 
     if (showUncovered || !ok)
     {
-        foreach (var ((file, number), (hits, covered, total)) in lines.OrderBy(p => p.Key.File, StringComparer.Ordinal).ThenBy(p => p.Key.Line))
+        foreach (var ((file, number), (hits, covered, total)) in lines.OrderBy(p => p.Key.File, StringComparer.Ordinal)
+                     .ThenBy(p => p.Key.Line))
         {
             if (hits == 0)
                 Console.WriteLine($"    uncovered line   {file}:{number}");

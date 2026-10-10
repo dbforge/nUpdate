@@ -1,6 +1,3 @@
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace nUpdate.UI.WindowsForms;
 
 /// <summary>The icon of the host application's executable, shown in the dialogs' title bars.</summary>

@@ -10,17 +10,13 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The project settings dialog: general data, transfer, statistics and deleting the project.</summary>
-public sealed class ProjectSettingsScenarios : ScenarioTest
+public sealed class ProjectSettingsScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public ProjectSettingsScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     private ProjectLoadResult _project = null!;
     private ProjectWindow _projectWindow = null!;
 
-    private async Task<ProjectSettingsWindow> OpenSettingsAsync(string name = "Trade Updater", TransferProtocol protocol = TransferProtocol.Sftp, string? releasedPackage = null)
+    private async Task<ProjectSettingsWindow> OpenSettingsAsync(string name = "Trade Updater",
+        TransferProtocol protocol = TransferProtocol.Sftp, string? releasedPackage = null)
     {
         _project = await App.ExistingProjectAsync(name, protocol);
         if (releasedPackage is not null)
@@ -30,7 +26,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         return await App.WindowAsync<ProjectSettingsWindow>();
     }
 
-    private static ProjectSettingsViewModel ViewModel(ProjectSettingsWindow settings) => (ProjectSettingsViewModel)settings.DataContext!;
+    private static ProjectSettingsViewModel ViewModel(ProjectSettingsWindow settings) =>
+        (ProjectSettingsViewModel)settings.DataContext!;
 
     [AvaloniaFact]
     public Task Shows_the_current_settings_and_validates_changes() => Scenario(async () =>
@@ -94,12 +91,15 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         });
         await Then("the project window and the list carry the new name while the folder stays", async () =>
         {
-            await User.WaitUntil(() => _projectWindow.Title == "Trade Updater Pro - nUpdate Administration", "the project window title");
-            await User.WaitUntil(() => App.ListedProjects.Contains("Trade Updater Pro"), "the project list to follow the rename");
+            await User.WaitUntil(() => _projectWindow.Title == "Trade Updater Pro - nUpdate Administration",
+                "the project window title");
+            await User.WaitUntil(() => App.ListedProjects.Contains("Trade Updater Pro"),
+                "the project list to follow the rename");
             App.ListedProjects.ShouldBe(["Trade Updater Pro"]);
             Directory.Exists(App.ProjectFolder("Trade Updater")).ShouldBeTrue();
             File.Exists(App.ProjectFile("Trade Updater")).ShouldBeTrue();
-            File.Exists(_project.Project.PackageFilePath(new nUpdate.Updating.UpdateVersion("1.0.0"), "any")).ShouldBeTrue();
+            File.Exists(_project.Project.PackageFilePath(new nUpdate.Updating.UpdateVersion("1.0.0"), "any"))
+                .ShouldBeTrue();
             (await App.SavedAsync("Trade Updater")).Project.Name.ShouldBe("Trade Updater Pro");
         });
     });
@@ -117,7 +117,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         {
             User.Type(settings.NameBox, "Other");
             User.Click(settings.SaveButton);
-            await User.WaitUntil(() => settings.ErrorText.IsEffectivelyVisible || !settings.IsVisible, "the save to finish");
+            await User.WaitUntil(() => settings.ErrorText.IsEffectivelyVisible || !settings.IsVisible,
+                "the save to finish");
         });
         await Then("the dialog refuses and nothing changed", () =>
         {
@@ -152,7 +153,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         });
         await Then("the project uses FTP from now on", async () =>
         {
-            _projectWindow.TransferBox.Text!.ShouldBe($"Ftp {ServerFixture.FtpUser}@{Context.Server.FtpHost}:{Context.Server.FtpPort}/");
+            _projectWindow.TransferBox.Text!.ShouldBe(
+                $"Ftp {ServerFixture.FtpUser}@{Context.Server.FtpHost}:{Context.Server.FtpPort}/");
             var saved = await App.SavedAsync("Trade Updater");
             saved.Project.Transfer.Protocol.ShouldBe(TransferProtocol.Ftp);
             saved.Secrets.TransferPassword.ShouldBe(ServerFixture.FtpPassword);
@@ -163,7 +165,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
     public Task Enables_statistics_for_an_existing_project() => Scenario(async () =>
     {
         ProjectSettingsWindow settings = null!;
-        await Given("the settings of an FTP project without statistics", async () => settings = await OpenSettingsAsync(protocol: TransferProtocol.Ftp));
+        await Given("the settings of an FTP project without statistics",
+            async () => settings = await OpenSettingsAsync(protocol: TransferProtocol.Ftp));
         await When("the user enables statistics with the database and saves", async () =>
         {
             User.Check(User.Find<ToggleSwitch>(settings, "EnabledBox"), true);
@@ -176,7 +179,9 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         });
         await Then("the statistics script is on the server and the Statistics tab works", async () =>
         {
-            using var response = await Context.HttpClient.GetAsync(Context.Server.HttpBaseUrl + "nupdate-statistics.php/v2/projects/" + _project.Project.Id + "/statistics");
+            using var response = await Context.HttpClient.GetAsync(Context.Server.HttpBaseUrl +
+                                                                   "nupdate-statistics.php/v2/projects/" +
+                                                                   _project.Project.Id + "/statistics");
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
             var saved = await App.SavedAsync("Trade Updater");
             saved.Project.Statistics.Enabled.ShouldBeTrue();
@@ -184,7 +189,10 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
             User.SelectPage(_projectWindow.Nav, "Statistics");
             _projectWindow.RefreshStatisticsButton.IsEffectivelyEnabled.ShouldBeTrue();
             User.Click(_projectWindow.RefreshStatisticsButton);
-            await User.WaitUntil(() => _projectWindow.StatisticsStatusText.Text != "Loading..." && _projectWindow.StatisticsUpdatedText.Text?.StartsWith("Last updated", StringComparison.Ordinal) == true, "the statistics to load");
+            await User.WaitUntil(
+                () => _projectWindow.StatisticsStatusText.Text != "Loading..." &&
+                      _projectWindow.StatisticsUpdatedText.Text?.StartsWith("Last updated", StringComparison.Ordinal) ==
+                      true, "the statistics to load");
             ((ProjectViewModel)_projectWindow.DataContext!).TotalDownloads.ShouldBe(0);
         });
     });
@@ -203,7 +211,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
         });
         await Then("the file opens with the new password only", async () =>
         {
-            (await App.Store.LoadAsync(App.ProjectFile("Trade Updater"), AdministrationApp.ProjectPassword)).SecretsState.ShouldBe(SecretsState.Unreadable);
+            (await App.Store.LoadAsync(App.ProjectFile("Trade Updater"), AdministrationApp.ProjectPassword))
+                .SecretsState.ShouldBe(SecretsState.Unreadable);
             var saved = await App.Store.LoadAsync(App.ProjectFile("Trade Updater"), "another-password");
             saved.SecretsState.ShouldBe(SecretsState.Loaded);
             saved.Secrets.TransferPassword.ShouldBe(ServerFixture.SftpPassword);
@@ -215,7 +224,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
     public Task Deletes_the_project_including_the_server_files() => Scenario(async () =>
     {
         ProjectSettingsWindow settings = null!;
-        await Given("the settings of a project with a released package", async () => settings = await OpenSettingsAsync(releasedPackage: "1.0.0"));
+        await Given("the settings of a project with a released package",
+            async () => settings = await OpenSettingsAsync(releasedPackage: "1.0.0"));
         await When("the user deletes the project and the files on the server", async () =>
         {
             User.Click(settings.DeleteButton);
@@ -245,7 +255,8 @@ public sealed class ProjectSettingsScenarios : ScenarioTest
     public Task Deletes_the_project_but_keeps_the_server_files() => Scenario(async () =>
     {
         ProjectSettingsWindow settings = null!;
-        await Given("the settings of a project with a released package", async () => settings = await OpenSettingsAsync(releasedPackage: "1.0.0"));
+        await Given("the settings of a project with a released package",
+            async () => settings = await OpenSettingsAsync(releasedPackage: "1.0.0"));
         await When("the user deletes the project but keeps the server files", async () =>
         {
             User.Click(settings.DeleteButton);

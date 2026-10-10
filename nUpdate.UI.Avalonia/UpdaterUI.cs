@@ -33,7 +33,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     /// <summary>Shows the dialogs of <see cref="UpdateFlow" /> as Avalonia windows.</summary>
     internal sealed class AvaloniaPresenter(UpdateManager updateManager, Window? owner) : IUpdateFlowPresenter
@@ -49,9 +50,11 @@ public sealed class UpdaterUI
         }
 
         public Task ShowNoUpdatesAsync() =>
-            ShowAsync(new MessageDialogViewModel(updateManager, updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo));
+            ShowAsync(new MessageDialogViewModel(updateManager, updateManager.Texts.NoUpdatesTitle,
+                updateManager.Texts.NoUpdatesInfo));
 
-        public async Task<bool> ConfirmInstallAsync() => await ShowAsync(new NewUpdateDialogViewModel(updateManager)) == true;
+        public async Task<bool> ConfirmInstallAsync() =>
+            await ShowAsync(new NewUpdateDialogViewModel(updateManager)) == true;
 
         public async Task RunDownloadAsync(Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         {

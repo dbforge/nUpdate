@@ -70,18 +70,18 @@ dotnet_naming_style.i_pascal.capitalization = pascal_case
 dotnet_naming_style.i_pascal.required_prefix = I
 
 # Analyzer tuning
-dotnet_diagnostic.CA1062.severity = none   # nullable annotations cover argument null checks
-dotnet_diagnostic.CA1031.severity = none   # catching general exceptions is intentional at boundaries
-dotnet_diagnostic.CA1848.severity = none   # LoggerMessage delegates are overkill here
-dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait is handled per project where it matters
-dotnet_diagnostic.CA1303.severity = none   # no resource-based literals
-dotnet_diagnostic.CA1054.severity = none   # Uri-typed parameters are used where sensible
+dotnet_diagnostic.CA1062.severity = none # nullable annotations cover argument null checks
+dotnet_diagnostic.CA1031.severity = none # catching general exceptions is intentional at boundaries
+dotnet_diagnostic.CA1848.severity = none # LoggerMessage delegates are overkill here
+dotnet_diagnostic.CA2007.severity = none # ConfigureAwait is handled per project where it matters
+dotnet_diagnostic.CA1303.severity = none # no resource-based literals
+dotnet_diagnostic.CA1054.severity = none # Uri-typed parameters are used where sensible
 dotnet_diagnostic.CA1056.severity = none
-dotnet_diagnostic.CA1002.severity = none   # List<T> in DTOs serialized with Newtonsoft
-dotnet_diagnostic.CA2227.severity = none   # settable collections in DTOs
-dotnet_diagnostic.CA1819.severity = none   # arrays in DTOs
-dotnet_diagnostic.CA1707.severity = none   # test method names use underscores
-dotnet_diagnostic.IDE0130.severity = none  # folders do not have to match namespaces 1:1
+dotnet_diagnostic.CA1002.severity = none # List<T> in DTOs serialized with Newtonsoft
+dotnet_diagnostic.CA2227.severity = none # settable collections in DTOs
+dotnet_diagnostic.CA1819.severity = none # arrays in DTOs
+dotnet_diagnostic.CA1707.severity = none # test method names use underscores
+dotnet_diagnostic.IDE0130.severity = none # folders do not have to match namespaces 1:1
 
 [nUpdate.Tests/**.cs]
 dotnet_diagnostic.xUnit1051.severity = none
@@ -93,4 +93,4 @@ dotnet_diagnostic.CA1816.severity = none
 dotnet_diagnostic.CA1515.severity = none
 
 [nUpdate.Administration/**.cs]
-dotnet_diagnostic.CA1822.severity = none   # bindable members must be instance members
+dotnet_diagnostic.CA1822.severity = none # bindable members must be instance members

@@ -13,5 +13,6 @@ public sealed class TestInstallLogs
     public InstallLog Log(string? path = "/tmp/install.log") => new(FileSystem, path, () => Noon);
 
     /// <summary>The lines of a log the installer still holds open.</summary>
-    public string[] ReadLog(string path) => FileSystem.GetFile(path).TextContents.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+    public string[] ReadLog(string path) => FileSystem.GetFile(path).TextContents
+        .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 }

@@ -18,7 +18,8 @@ public class AdministrationPathsTests
         paths.KeyRingDirectory.ShouldBe(fs.Path.Combine(paths.Root, "keys"));
         paths.SuggestedProjectFolder("X").ShouldBe(fs.Path.Combine(paths.DefaultProjectsDirectory, "X"));
         AdministrationPaths.Default(fs).Root.ShouldEndWith(AdministrationPaths.ApplicationFolderName);
-        AdministrationPaths.Default(fs).DefaultProjectsDirectory.ShouldEndWith(AdministrationPaths.DefaultProjectsFolderName);
+        AdministrationPaths.Default(fs).DefaultProjectsDirectory
+            .ShouldEndWith(AdministrationPaths.DefaultProjectsFolderName);
         Should.Throw<ArgumentNullException>(() => AdministrationPaths.Default(null!));
         Should.Throw<ArgumentNullException>(() => new AdministrationPaths(null!, "/r", "/p"));
         Should.Throw<ArgumentNullException>(() => new AdministrationPaths(fs, null!, "/p"));

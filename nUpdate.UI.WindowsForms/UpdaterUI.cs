@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Windows.Forms;
 using nUpdate.Ui;
 using nUpdate.UI.WindowsForms.Dialogs;
 using nUpdate.UI.WindowsForms.Popups;
@@ -31,7 +29,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     private sealed class WinFormsPresenter(UpdateManager updateManager, IWin32Window? owner) : IUpdateFlowPresenter
     {

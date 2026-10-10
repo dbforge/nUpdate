@@ -11,7 +11,8 @@ public class UpdateManagerServicesTests
         var services = new UpdateManagerServices();
         services.HttpClient.ShouldBeNull();
         services.FileSystem.ShouldBeOfType<System.IO.Abstractions.FileSystem>();
-        services.SystemInformation.ShouldBeOfType<SystemInformation>().RuntimeIdentifier.ShouldBe(PackagePlatform.Current);
+        services.SystemInformation.ShouldBeOfType<SystemInformation>().RuntimeIdentifier
+            .ShouldBe(PackagePlatform.Current);
         services.ApplicationInfo.ShouldBeOfType<EntryAssemblyApplicationInfo>();
         services.ProcessLauncher.ShouldBeOfType<ProcessLauncher>();
         services.FilePermissions.ShouldBeOfType<FilePermissions>();

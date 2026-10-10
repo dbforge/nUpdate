@@ -9,7 +9,8 @@ public class RegistryValueTests
     {
         Should.Throw<ArgumentNullException>(() => new RegistryValue(null!, RegistryValueKind.String, "x"));
         Should.Throw<ArgumentException>(() => new RegistryValue("n", RegistryValueKind.DWord, "text"));
-        Should.Throw<ArgumentException>(() => RegistryValue.DWord("n", (long)uint.MaxValue + 1)).Message.ShouldContain("4294967296");
+        Should.Throw<ArgumentException>(() => RegistryValue.DWord("n", (long)uint.MaxValue + 1)).Message
+            .ShouldContain("4294967296");
         Should.Throw<ArgumentException>(() => RegistryValue.DWord("n", (long)int.MinValue - 1));
         RegistryValue.DWord("n", uint.MaxValue).Value.ShouldBe((long)uint.MaxValue);
         RegistryValue.DWord("n", int.MinValue).Value.ShouldBe((long)int.MinValue);

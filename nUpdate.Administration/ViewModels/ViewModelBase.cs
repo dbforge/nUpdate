@@ -10,22 +10,18 @@ public abstract class ViewModelBase : ObservableObject
 /// <summary>A view model shown in its own window that can be accepted or cancelled.</summary>
 public abstract partial class DialogViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private string _title = string.Empty;
+    [ObservableProperty] private string _title = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsIdle))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool _isBusy;
 
-    [ObservableProperty]
-    private string _busyText = string.Empty;
+    [ObservableProperty] private string _busyText = string.Empty;
 
-    [ObservableProperty]
-    private double _progress;
+    [ObservableProperty] private double _progress;
 
-    [ObservableProperty]
-    private string? _errorMessage;
+    [ObservableProperty] private string? _errorMessage;
 
     /// <summary>Raised with <c>true</c> when the dialog was accepted, <c>false</c> when cancelled.</summary>
     public event EventHandler<bool>? CloseRequested;
@@ -41,7 +37,8 @@ public abstract partial class DialogViewModel : ViewModelBase
     protected void Close(bool accepted) => CloseRequested?.Invoke(this, accepted);
 
     /// <summary>Runs an operation with the busy indicator and shows failures inline instead of throwing.</summary>
-    protected async Task<bool> RunBusyAsync(string busyText, Func<IProgress<Core.Publishing.PipelineProgress>, Task> action)
+    protected async Task<bool> RunBusyAsync(string busyText,
+        Func<IProgress<Core.Publishing.PipelineProgress>, Task> action)
     {
         ArgumentNullException.ThrowIfNull(action);
         IsBusy = true;
@@ -75,7 +72,9 @@ public abstract partial class DialogViewModel : ViewModelBase
     ///     Like <see cref="RunBusyAsync" />; when the server presents a certificate or host key that is not trusted yet,
     ///     asks whether to trust it, stores the fingerprint in the transfer settings and runs the operation again.
     /// </summary>
-    protected async Task<bool> RunTrustingAsync(Services.IDialogService dialogs, TransferInterface.TransferSettings transfer, string busyText, Func<IProgress<Core.Publishing.PipelineProgress>, Task> action)
+    protected async Task<bool> RunTrustingAsync(Services.IDialogService dialogs,
+        TransferInterface.TransferSettings transfer, string busyText,
+        Func<IProgress<Core.Publishing.PipelineProgress>, Task> action)
     {
         ArgumentNullException.ThrowIfNull(dialogs);
         ArgumentNullException.ThrowIfNull(transfer);
@@ -83,7 +82,10 @@ public abstract partial class DialogViewModel : ViewModelBase
             return true;
         var untrusted = LastError switch
         {
-            Core.Publishing.PipelineException { InnerException: TransferInterface.UntrustedServerException inner } => inner,
+            Core.Publishing.PipelineException
+            {
+                InnerException: TransferInterface.UntrustedServerException inner
+            } => inner,
             TransferInterface.UntrustedServerException direct => direct,
             _ => null,
         };
@@ -92,7 +94,9 @@ public abstract partial class DialogViewModel : ViewModelBase
 
         var isSftp = transfer.Protocol == TransferInterface.TransferProtocol.Sftp;
         var what = isSftp ? "host key" : "certificate";
-        if (!await dialogs.ConfirmAsync($"Unknown {what}", $"{untrusted.Message}{Environment.NewLine}{Environment.NewLine}{untrusted.Subject}{Environment.NewLine}SHA-256: {untrusted.Fingerprint}{Environment.NewLine}{Environment.NewLine}Trust this {what} from now on?", "Trust"))
+        if (!await dialogs.ConfirmAsync($"Unknown {what}",
+                $"{untrusted.Message}{Environment.NewLine}{Environment.NewLine}{untrusted.Subject}{Environment.NewLine}SHA-256: {untrusted.Fingerprint}{Environment.NewLine}{Environment.NewLine}Trust this {what} from now on?",
+                "Trust"))
             return false;
         if (isSftp)
             transfer.TrustedHostKeyFingerprint = untrusted.Fingerprint;
@@ -109,7 +113,8 @@ public abstract partial class DialogViewModel : ViewModelBase
         {
             var text = pipeline.Message;
             if (pipeline.CompensationErrors.Count > 0)
-                text += Environment.NewLine + "Rolling back failed too: " + string.Join("; ", pipeline.CompensationErrors.Select(e => e.Message));
+                text += Environment.NewLine + "Rolling back failed too: " +
+                        string.Join("; ", pipeline.CompensationErrors.Select(e => e.Message));
             return text;
         }
 

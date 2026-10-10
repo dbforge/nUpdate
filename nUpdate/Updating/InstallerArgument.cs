@@ -16,16 +16,10 @@ public enum ArgumentCondition
 }
 
 /// <summary>A command line argument the installer passes to the application when it restarts it.</summary>
-public sealed class InstallerArgument
+[method: JsonConstructor]
+public sealed class InstallerArgument(string value, ArgumentCondition when = ArgumentCondition.Always)
 {
-    [JsonConstructor]
-    public InstallerArgument(string value, ArgumentCondition when = ArgumentCondition.Always)
-    {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-        When = when;
-    }
+    public string Value { get; } = value ?? throw new ArgumentNullException(nameof(value));
 
-    public string Value { get; }
-
-    public ArgumentCondition When { get; }
+    public ArgumentCondition When { get; } = when;
 }

@@ -39,9 +39,12 @@ public sealed class AppTestContext
         Provider = services.BuildServiceProvider();
         Factory = Provider.GetRequiredService<ViewModelFactory>();
         Store.ListAsync(Arg.Any<CancellationToken>()).Returns([]);
-        Statistics.GetStatisticsAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(new ProjectStatistics());
-        Migrator.CheckAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<CancellationToken>()).Returns(new MigrationStatus(false, true));
-        Migrator.RunAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<MigrationPlan>(), Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns([]);
+        Statistics.GetStatisticsAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(new ProjectStatistics());
+        Migrator.CheckAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<CancellationToken>())
+            .Returns(new MigrationStatus(false, true));
+        Migrator.RunAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<MigrationPlan>(),
+            Arg.Any<IProgress<PipelineProgress>?>(), Arg.Any<CancellationToken>()).Returns([]);
         Passwords.GetAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((string?)null);
     }
 
@@ -70,13 +73,16 @@ public sealed class AppTestContext
 
     public MockFileSystem FileSystem { get; } = new();
 
-    public AdministrationPaths Paths => new(FileSystem, FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), "nupdate-app"), FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), "nupdate-app-projects"));
+    public AdministrationPaths Paths => new(FileSystem,
+        FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), "nupdate-app"),
+        FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), "nupdate-app-projects"));
 
     public ServiceProvider Provider { get; }
 
     public ViewModelFactory Factory { get; }
 
-    public static UpdateProject NewProject(bool statistics = false) => new AdminTestContext().NewProject(statistics: statistics);
+    public static UpdateProject NewProject(bool statistics = false) =>
+        new AdminTestContext().NewProject(statistics: statistics);
 
     public static ProjectSecrets NewSecrets(bool statistics = false) => AdminTestContext.NewSecrets(statistics);
 

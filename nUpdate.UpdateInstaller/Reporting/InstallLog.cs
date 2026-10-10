@@ -43,7 +43,10 @@ public sealed class InstallLog : IDisposable
                 return;
             try
             {
-                _writer ??= new StreamWriter(_fileSystem.FileStream.New(Path!, FileMode.Append, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(false)) { AutoFlush = true };
+                _writer ??= new StreamWriter(
+                    _fileSystem.FileStream.New(Path!, FileMode.Append, FileAccess.Write, FileShare.ReadWrite),
+                    new UTF8Encoding(false))
+                { AutoFlush = true };
                 _writer.WriteLine(line);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

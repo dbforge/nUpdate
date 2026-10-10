@@ -13,8 +13,18 @@ public class TouchesFormatterTests
         var texts = new UpdateTexts();
         var packages = new[]
         {
-            new PackageInfo { Files = [new PackageFile { Platform = "win", Touches = [OperationArea.Services, OperationArea.Files] }, new PackageFile { Platform = "linux", Touches = [OperationArea.Processes] }] },
-            new PackageInfo { Files = [new PackageFile { Platform = "any", Touches = [OperationArea.Files, OperationArea.Registry] }] },
+            new PackageInfo
+            {
+                Files =
+                [
+                    new PackageFile { Platform = "win", Touches = [OperationArea.Services, OperationArea.Files] },
+                    new PackageFile { Platform = "linux", Touches = [OperationArea.Processes] }
+                ]
+            },
+            new PackageInfo
+            {
+                Files = [new PackageFile { Platform = "any", Touches = [OperationArea.Files, OperationArea.Registry] }]
+            },
             new PackageInfo { Files = [new PackageFile { Platform = "osx" }] },
             new PackageInfo(),
         };

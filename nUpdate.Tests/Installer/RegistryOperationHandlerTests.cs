@@ -32,7 +32,8 @@ public class RegistryOperationHandlerTests
             Key = key,
             Values =
             [
-                RegistryValue.DWord("N", 1), new RegistryValue("M", RegistryValueKind.String, null), RegistryValue.MultiString("L", ["a", "b"]),
+                RegistryValue.DWord("N", 1), new RegistryValue("M", RegistryValueKind.String, null),
+                RegistryValue.MultiString("L", ["a", "b"]),
                 RegistryValue.Binary("B", [1, 2]), RegistryValue.ExpandString("E", "%TEMP%"),
             ],
         };
@@ -46,9 +47,12 @@ public class RegistryOperationHandlerTests
         _services.Registry.Received().DeleteValue(key, "N");
 
         _services.Reporter.Operations.Select(o => o.Text).ShouldBe([
-            "Creating registry subkey \"A\"...", "Creating registry subkey \"B\"...", "Deleting registry subkey \"A\"...",
-            "Setting value of \"N\" in the registry to \"1\"...", "Setting value of \"M\" in the registry to \"\"...", "Setting value of \"L\" in the registry to \"a, b\"...",
-            "Setting value of \"B\" in the registry to \"AQI=\"...", "Setting value of \"E\" in the registry to \"%TEMP%\"...", "Deleting name-value-pair \"N\"...",
+            "Creating registry subkey \"A\"...", "Creating registry subkey \"B\"...",
+            "Deleting registry subkey \"A\"...",
+            "Setting value of \"N\" in the registry to \"1\"...", "Setting value of \"M\" in the registry to \"\"...",
+            "Setting value of \"L\" in the registry to \"a, b\"...",
+            "Setting value of \"B\" in the registry to \"AQI=\"...",
+            "Setting value of \"E\" in the registry to \"%TEMP%\"...", "Deleting name-value-pair \"N\"...",
         ]);
         handler.CountTasks(new StartProcessOperation { Path = "x" }).ShouldBe(1);
         Should.Throw<NotSupportedException>(() => handler.Execute(new StartProcessOperation { Path = "x" }, context));

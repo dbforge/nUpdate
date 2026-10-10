@@ -66,7 +66,8 @@ public sealed class DirectorySwap : IDirectorySwap
 
     [ExcludeFromCodeCoverage] // macOS only; verified by the macOS published-installer run.
     private static bool SwapAtomically(string current, string replacement) =>
-        NativeMethods.renamex_np(Encoding.UTF8.GetBytes(replacement + "\0"), Encoding.UTF8.GetBytes(current + "\0"), NativeMethods.RenameSwap) == 0;
+        NativeMethods.renamex_np(Encoding.UTF8.GetBytes(replacement + "\0"), Encoding.UTF8.GetBytes(current + "\0"),
+            NativeMethods.RenameSwap) == 0;
 
     private static class NativeMethods
     {

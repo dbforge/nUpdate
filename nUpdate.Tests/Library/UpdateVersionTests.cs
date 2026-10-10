@@ -175,7 +175,11 @@ public class UpdateVersionTests
     [Fact]
     public void CompareTo_FollowsSemVerPrecedenceForLabels()
     {
-        var ordered = new[] { "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0" }
+        var ordered = new[]
+            {
+                "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11",
+                "1.0.0-rc.1", "1.0.0"
+            }
             .Select(v => new UpdateVersion(v)).ToList();
         for (var i = 0; i < ordered.Count - 1; i++)
             (ordered[i] < ordered[i + 1]).ShouldBeTrue($"{ordered[i]} < {ordered[i + 1]}");
@@ -252,7 +256,11 @@ public class UpdateVersionTests
     [Fact]
     public void Max_FindsTheHighestAndMinTheLowestVersion()
     {
-        var versions = new[] { "1.0.0", "1.1.0", "1.2.0-alpha.1", "1.3.0-beta.1", "1.2.0-beta.3", "1.3.0-beta.3", "1.3.0.1-beta.97", "1.1.1" }
+        var versions = new[]
+            {
+                "1.0.0", "1.1.0", "1.2.0-alpha.1", "1.3.0-beta.1", "1.2.0-beta.3", "1.3.0-beta.3", "1.3.0.1-beta.97",
+                "1.1.1"
+            }
             .Select(v => new UpdateVersion(v)).ToList();
 
         UpdateVersion.Max(versions).ToString().ShouldBe("1.3.0.1-beta.97");
@@ -266,7 +274,8 @@ public class UpdateVersionTests
     [Fact]
     public void CompareTo_IsUsedForSorting()
     {
-        var sorted = new[] { "2.0.0", "1.0.0-beta", "1.0.0", "1.0.0-alpha" }.Select(v => new UpdateVersion(v)).OrderBy(v => v).ToList();
+        var sorted = new[] { "2.0.0", "1.0.0-beta", "1.0.0", "1.0.0-alpha" }.Select(v => new UpdateVersion(v))
+            .OrderBy(v => v).ToList();
         sorted.Select(v => v.ToString()).ShouldBe(["1.0.0-alpha", "1.0.0-beta", "1.0.0", "2.0.0"]);
     }
 
@@ -281,8 +290,11 @@ public class UpdateVersionTests
         new UpdateVersion(1, 2, 3, 4, null, null).IsPreRelease.ShouldBeFalse();
         new UpdateVersion(1, 2, 3).ToString().ShouldBe("1.2.3");
         new UpdateVersion(1, 0, 0, 0, null, "007").BuildMetadata.ShouldBe("007");
-        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, "bad label", null)).Message.ShouldContain("pre-release label");
-        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, "beta.01", null)).Message.ShouldContain("leading zeros");
-        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, null, "bad meta")).Message.ShouldContain("build metadata");
+        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, "bad label", null)).Message
+            .ShouldContain("pre-release label");
+        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, "beta.01", null)).Message
+            .ShouldContain("leading zeros");
+        Should.Throw<ArgumentException>(() => new UpdateVersion(1, 0, 0, 0, null, "bad meta")).Message
+            .ShouldContain("build metadata");
     }
 }

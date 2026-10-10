@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using nUpdate.Ui;
 using nUpdate.Updating;
 

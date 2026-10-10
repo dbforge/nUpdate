@@ -47,21 +47,26 @@ public static class PackageLayout
 {
     public const string ManifestFileName = "manifest.json";
 
-    public static IReadOnlyList<PackageRoot> Roots { get; } = [PackageRoot.Program, PackageRoot.AppData, PackageRoot.Temp, PackageRoot.Desktop];
+    public static IReadOnlyList<PackageRoot> Roots { get; } =
+        [PackageRoot.Program, PackageRoot.AppData, PackageRoot.Temp, PackageRoot.Desktop];
 
     /// <summary>The folder name of a root inside the zip, for example <c>Program</c>.</summary>
-    public static string FolderName(PackageRoot root) => Enum.IsDefined(typeof(PackageRoot), root) ? root.ToString() : throw new ArgumentOutOfRangeException(nameof(root));
+    public static string FolderName(PackageRoot root) => Enum.IsDefined(typeof(PackageRoot), root)
+        ? root.ToString()
+        : throw new ArgumentOutOfRangeException(nameof(root));
 
     /// <summary>The folder below the feed that holds the package files.</summary>
     public const string PackagesFolderName = "packages";
 
     /// <summary>The file name of the package file of a platform, on the server and locally: <c>win-x64.zip</c>.</summary>
-    public static string PackageFileName(string platform) => platform is null ? throw new ArgumentNullException(nameof(platform)) : $"{platform}.zip";
+    public static string PackageFileName(string platform) =>
+        platform is null ? throw new ArgumentNullException(nameof(platform)) : $"{platform}.zip";
 
     /// <summary>The folder of a version relative to the feed on the server: <c>packages/2.1.0</c>.</summary>
     public static string RemoteVersionDirectory(UpdateVersion version) =>
         version is null ? throw new ArgumentNullException(nameof(version)) : $"{PackagesFolderName}/{version}";
 
     /// <summary>The path of a package file relative to the feed on the server: <c>packages/2.1.0/win-x64.zip</c>.</summary>
-    public static string RemotePackagePath(UpdateVersion version, string platform) => $"{RemoteVersionDirectory(version)}/{PackageFileName(platform)}";
+    public static string RemotePackagePath(UpdateVersion version, string platform) =>
+        $"{RemoteVersionDirectory(version)}/{PackageFileName(platform)}";
 }

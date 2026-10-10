@@ -1,24 +1,16 @@
-using System.Net.Http;
 using System.Text;
 using nUpdate.Updating;
 
 namespace nUpdate.Statistics;
 
 /// <summary>The body a client posts to <c>/v2/downloads</c> after downloading a package.</summary>
-internal sealed class DownloadReport
+internal sealed class DownloadReport(Guid projectId, UpdateVersion version, string os)
 {
-    public DownloadReport(Guid projectId, UpdateVersion version, string os)
-    {
-        ProjectId = projectId;
-        Version = version ?? throw new ArgumentNullException(nameof(version));
-        Os = os ?? throw new ArgumentNullException(nameof(os));
-    }
+    public Guid ProjectId { get; } = projectId;
 
-    public Guid ProjectId { get; }
+    public UpdateVersion Version { get; } = version ?? throw new ArgumentNullException(nameof(version));
 
-    public UpdateVersion Version { get; }
-
-    public string Os { get; }
+    public string Os { get; } = os ?? throw new ArgumentNullException(nameof(os));
 }
 
 /// <summary>Talks to the statistics API v2 of a project.</summary>
@@ -34,12 +26,15 @@ internal static class StatisticsApi
         if (route is null)
             throw new ArgumentNullException(nameof(route));
         var path = route.Trim('/');
-        return new Uri(endpoint.ToString().TrimEnd('/') + "/v" + Version.ToString(System.Globalization.CultureInfo.InvariantCulture) + (path.Length == 0 ? string.Empty : "/" + path));
+        return new Uri(endpoint.ToString().TrimEnd('/') + "/v" +
+                       Version.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                       (path.Length == 0 ? string.Empty : "/" + path));
     }
 
     /// <summary>Posts a download report.</summary>
     /// <exception cref="HttpRequestException">The endpoint did not accept the report.</exception>
-    public static async Task ReportDownloadAsync(HttpClient httpClient, Uri endpoint, DownloadReport report, CancellationToken cancellationToken = default)
+    public static async Task ReportDownloadAsync(HttpClient httpClient, Uri endpoint, DownloadReport report,
+        CancellationToken cancellationToken = default)
     {
         if (httpClient is null)
             throw new ArgumentNullException(nameof(httpClient));
@@ -47,7 +42,8 @@ internal static class StatisticsApi
             throw new ArgumentNullException(nameof(report));
 
         using var content = new StringContent(Serializer.Serialize(report), Encoding.UTF8, "application/json");
-        using var response = await httpClient.PostAsync(Route(endpoint, "downloads"), content, cancellationToken).ConfigureAwait(false);
+        using var response = await httpClient.PostAsync(Route(endpoint, "downloads"), content, cancellationToken)
+            .ConfigureAwait(false);
         if (response.IsSuccessStatusCode)
             return;
 

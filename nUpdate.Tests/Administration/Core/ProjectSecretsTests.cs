@@ -8,7 +8,8 @@ public class ProjectSecretsTests
     [Fact]
     public void ToTransferCredentials_CopiesTheTransferSecrets()
     {
-        var credentials = new ProjectSecrets { TransferPassword = "p", SftpKeyPassphrase = "k", ProxyPassword = "x" }.ToTransferCredentials();
+        var credentials = new ProjectSecrets { TransferPassword = "p", SftpKeyPassphrase = "k", ProxyPassword = "x" }
+            .ToTransferCredentials();
         credentials.Password.ShouldBe("p");
         credentials.SftpKeyPassphrase.ShouldBe("k");
         credentials.ProxyPassword.ShouldBe("x");

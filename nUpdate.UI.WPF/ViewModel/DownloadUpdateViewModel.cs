@@ -13,7 +13,8 @@ public sealed class DownloadUpdateViewModel : DialogViewModel, IDisposable
     private double _progressPercentage;
     private string _infoText = string.Empty;
 
-    internal DownloadUpdateViewModel(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
+    internal DownloadUpdateViewModel(UpdateManager updateManager,
+        Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         : base(updateManager)
     {
         _download = download ?? throw new ArgumentNullException(nameof(download));

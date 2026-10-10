@@ -8,11 +8,15 @@ using nUpdate.Administration.TransferInterface;
 namespace nUpdate.Administration.ViewModels;
 
 /// <summary>Edits <see cref="TransferSettings" /> plus the matching secrets; shared by the new-project and settings dialogs.</summary>
-public partial class TransferSettingsEditorViewModel : ViewModelBase
+public partial class TransferSettingsEditorViewModel(
+    IProjectService projects,
+    IDialogService dialogs,
+    IFilePickerService files)
+    : ViewModelBase
 {
-    private readonly IProjectService _projects;
-    private readonly IDialogService _dialogs;
-    private readonly IFilePickerService _files;
+    private readonly IProjectService _projects = projects ?? throw new ArgumentNullException(nameof(projects));
+    private readonly IDialogService _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
+    private readonly IFilePickerService _files = files ?? throw new ArgumentNullException(nameof(files));
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsFtp))]
@@ -20,69 +24,49 @@ public partial class TransferSettingsEditorViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsPlugin))]
     private TransferProtocol _protocol = TransferProtocol.Sftp;
 
-    [ObservableProperty]
-    private string _host = string.Empty;
+    [ObservableProperty] private string _host = string.Empty;
 
-    [ObservableProperty]
-    private int _port = 22;
+    [ObservableProperty] private int _port = 22;
 
-    [ObservableProperty]
-    private string _directory = "/";
+    [ObservableProperty] private string _directory = "/";
 
-    [ObservableProperty]
-    private string _username = string.Empty;
+    [ObservableProperty] private string _username = string.Empty;
 
-    [ObservableProperty]
-    private string _password = string.Empty;
+    [ObservableProperty] private string _password = string.Empty;
 
-    [ObservableProperty]
-    private bool _usePassiveMode = true;
+    [ObservableProperty] private bool _usePassiveMode = true;
 
-    [ObservableProperty]
-    private string? _trustedCertificateFingerprint;
+    [ObservableProperty] private string? _trustedCertificateFingerprint;
 
-    [ObservableProperty]
-    private string _sftpPrivateKeyPath = string.Empty;
+    [ObservableProperty] private string _sftpPrivateKeyPath = string.Empty;
 
-    [ObservableProperty]
-    private string _sftpKeyPassphrase = string.Empty;
+    [ObservableProperty] private string _sftpKeyPassphrase = string.Empty;
 
-    [ObservableProperty]
-    private string? _trustedHostKeyFingerprint;
+    [ObservableProperty] private string? _trustedHostKeyFingerprint;
 
-    [ObservableProperty]
-    private string _pluginAssemblyPath = string.Empty;
+    [ObservableProperty] private string _pluginAssemblyPath = string.Empty;
 
-    [ObservableProperty]
-    private bool _useProxy;
+    [ObservableProperty] private bool _useProxy;
 
-    [ObservableProperty]
-    private string _proxyAddress = string.Empty;
+    [ObservableProperty] private string _proxyAddress = string.Empty;
 
-    [ObservableProperty]
-    private string _proxyUsername = string.Empty;
+    [ObservableProperty] private string _proxyUsername = string.Empty;
 
-    [ObservableProperty]
-    private string _proxyPassword = string.Empty;
+    [ObservableProperty] private string _proxyPassword = string.Empty;
 
-    [ObservableProperty]
-    private string? _testResult;
+    [ObservableProperty] private string? _testResult;
 
-    [ObservableProperty]
-    private bool _isTesting;
-
-    public TransferSettingsEditorViewModel(IProjectService projects, IDialogService dialogs, IFilePickerService files)
-    {
-        _projects = projects ?? throw new ArgumentNullException(nameof(projects));
-        _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
-        _files = files ?? throw new ArgumentNullException(nameof(files));
-    }
+    [ObservableProperty] private bool _isTesting;
 
     /// <summary>SFTP first: it is the recommended protocol and the default for new projects.</summary>
     public IReadOnlyList<TransferProtocol> Protocols { get; } =
-        [TransferProtocol.Sftp, TransferProtocol.FtpsExplicit, TransferProtocol.FtpsImplicit, TransferProtocol.Ftp, TransferProtocol.Plugin];
+    [
+        TransferProtocol.Sftp, TransferProtocol.FtpsExplicit, TransferProtocol.FtpsImplicit, TransferProtocol.Ftp,
+        TransferProtocol.Plugin
+    ];
 
-    public bool IsFtp => Protocol is TransferProtocol.Ftp or TransferProtocol.FtpsExplicit or TransferProtocol.FtpsImplicit;
+    public bool IsFtp =>
+        Protocol is TransferProtocol.Ftp or TransferProtocol.FtpsExplicit or TransferProtocol.FtpsImplicit;
 
     public bool IsSftp => Protocol == TransferProtocol.Sftp;
 
@@ -134,7 +118,11 @@ public partial class TransferSettingsEditorViewModel : ViewModelBase
         TrustedHostKeyFingerprint = TrustedHostKeyFingerprint,
         PluginAssemblyPath = string.IsNullOrWhiteSpace(PluginAssemblyPath) ? null : PluginAssemblyPath.Trim(),
         Proxy = UseProxy && !string.IsNullOrWhiteSpace(ProxyAddress)
-            ? new ProxySettings { Address = ProxyAddress.Trim(), Username = string.IsNullOrWhiteSpace(ProxyUsername) ? null : ProxyUsername.Trim() }
+            ? new ProxySettings
+            {
+                Address = ProxyAddress.Trim(),
+                Username = string.IsNullOrWhiteSpace(ProxyUsername) ? null : ProxyUsername.Trim()
+            }
             : null,
     };
 
@@ -176,7 +164,8 @@ public partial class TransferSettingsEditorViewModel : ViewModelBase
     [RelayCommand]
     private async Task BrowsePluginAsync()
     {
-        var path = await _files.PickFileAsync("Choose the transfer plugin", new FileTypeFilter("Assemblies", "*.dll", "*.exe"), FileTypeFilter.All);
+        var path = await _files.PickFileAsync("Choose the transfer plugin",
+            new FileTypeFilter("Assemblies", "*.dll", "*.exe"), FileTypeFilter.All);
         if (path is not null)
             PluginAssemblyPath = path;
     }
@@ -211,7 +200,8 @@ public partial class TransferSettingsEditorViewModel : ViewModelBase
                 {
                     var what = IsSftp ? "host key" : "certificate";
                     var trust = await _dialogs.ConfirmAsync($"Unknown {what}",
-                        $"{ex.Message}{Environment.NewLine}{Environment.NewLine}{ex.Subject}{Environment.NewLine}SHA-256: {ex.Fingerprint}{Environment.NewLine}{Environment.NewLine}Trust this {what}?", "Trust", "Cancel");
+                        $"{ex.Message}{Environment.NewLine}{Environment.NewLine}{ex.Subject}{Environment.NewLine}SHA-256: {ex.Fingerprint}{Environment.NewLine}{Environment.NewLine}Trust this {what}?",
+                        "Trust", "Cancel");
                     if (!trust)
                     {
                         TestResult = $"The {what} was not trusted.";
@@ -223,7 +213,8 @@ public partial class TransferSettingsEditorViewModel : ViewModelBase
                     else
                         TrustedCertificateFingerprint = ex.Fingerprint;
                 }
-                catch (Exception ex) when (ex is TransferException or InvalidOperationException or FileNotFoundException or NotSupportedException or ArgumentException or UriFormatException)
+                catch (Exception ex) when (ex is TransferException or InvalidOperationException or FileNotFoundException
+                                               or NotSupportedException or ArgumentException or UriFormatException)
                 {
                     TestResult = ex.Message;
                     return false;

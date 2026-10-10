@@ -16,15 +16,20 @@ internal sealed class UpdateSummary
         var culture = CultureInfo.CurrentCulture;
         var texts = manager.Texts;
         var packages = manager.AvailableUpdates;
-        Header = string.Format(culture, packages.Count > 1 ? texts.NewUpdatesTitle : texts.NewUpdateTitle, packages.Count);
+        Header = string.Format(culture, packages.Count > 1 ? texts.NewUpdatesTitle : texts.NewUpdateTitle,
+            packages.Count);
         InfoText = string.Format(culture, texts.NewUpdateInfo, manager.ApplicationName);
-        AvailableVersionsText = string.Format(culture, texts.AvailableVersions, VersionRangeFormatter.Format(packages.Select(p => p.Version)));
+        AvailableVersionsText = string.Format(culture, texts.AvailableVersions,
+            VersionRangeFormatter.Format(packages.Select(p => p.Version)));
         CurrentVersionText = string.Format(culture, texts.CurrentVersion, manager.CurrentVersion.ToString());
-        UpdateSizeText = string.Format(culture, texts.TotalSize, ByteSizeFormatter.Format(manager.TotalDownloadSize, culture));
+        UpdateSizeText = string.Format(culture, texts.TotalSize,
+            ByteSizeFormatter.Format(manager.TotalDownloadSize, culture));
         var touches = TouchesFormatter.Describe(packages, manager.Platform, texts);
         TouchesText = $"{texts.Touches} {(touches.Count == 0 ? "-" : string.Join(", ", touches))}";
         ChangelogText = ChangelogFormatter.Format(packages, manager.Culture, newLine);
-        AfterInstallText = manager.AfterInstall == AfterInstall.Close ? string.Format(culture, texts.StaysClosedAfterUpdate, manager.ApplicationName) : null;
+        AfterInstallText = manager.AfterInstall == AfterInstall.Close
+            ? string.Format(culture, texts.StaysClosedAfterUpdate, manager.ApplicationName)
+            : null;
     }
 
     public string Header { get; }

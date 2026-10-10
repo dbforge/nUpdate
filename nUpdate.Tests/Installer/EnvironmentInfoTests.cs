@@ -12,10 +12,11 @@ public class EnvironmentInfoTests
     [InlineData(false, false, false, null, "wayland-0", true)]
     [InlineData(false, false, false, "", "", false)]
     [InlineData(false, false, false, null, null, false)]
-    public void DetectDisplay_FollowsTheSystem(bool windows, bool macOS, bool serviceContext, string? display, string? wayland, bool expected)
+    public void DetectDisplay_FollowsTheSystem(bool windows, bool macOs, bool serviceContext, string? display,
+        string? wayland, bool expected)
     {
         var variables = new Dictionary<string, string?> { ["DISPLAY"] = display, ["WAYLAND_DISPLAY"] = wayland };
-        EnvironmentInfo.DetectDisplay(windows, macOS, serviceContext, name => variables[name]).ShouldBe(expected);
+        EnvironmentInfo.DetectDisplay(windows, macOs, serviceContext, name => variables[name]).ShouldBe(expected);
     }
 
     [Fact]
@@ -25,6 +26,7 @@ public class EnvironmentInfoTests
         environment.IsServiceContext.ShouldBe(!Environment.UserInteractive);
         environment.IsWindows.ShouldBe(OperatingSystem.IsWindows());
         environment.IsMacOS.ShouldBe(OperatingSystem.IsMacOS());
-        environment.HasDisplay.ShouldBe(EnvironmentInfo.DetectDisplay(OperatingSystem.IsWindows(), OperatingSystem.IsMacOS(), !Environment.UserInteractive, Environment.GetEnvironmentVariable));
+        environment.HasDisplay.ShouldBe(EnvironmentInfo.DetectDisplay(OperatingSystem.IsWindows(),
+            OperatingSystem.IsMacOS(), !Environment.UserInteractive, Environment.GetEnvironmentVariable));
     }
 }

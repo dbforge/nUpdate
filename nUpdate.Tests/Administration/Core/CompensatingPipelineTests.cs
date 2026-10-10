@@ -11,8 +11,20 @@ public class CompensatingPipelineTests
         var log = new List<string>();
         var progress = new List<PipelineProgress>();
         var pipeline = new CompensatingPipeline()
-            .Add("one", _ => { log.Add("one"); return Task.CompletedTask; }, () => { log.Add("undo one"); return Task.CompletedTask; })
-            .Add("two", _ => { log.Add("two"); return Task.CompletedTask; });
+            .Add("one", _ =>
+            {
+                log.Add("one");
+                return Task.CompletedTask;
+            }, () =>
+            {
+                log.Add("undo one");
+                return Task.CompletedTask;
+            })
+            .Add("two", _ =>
+            {
+                log.Add("two");
+                return Task.CompletedTask;
+            });
         pipeline.Steps.Count.ShouldBe(2);
 
         await pipeline.RunAsync(new SyncProgress<PipelineProgress>(progress));
@@ -29,11 +41,39 @@ public class CompensatingPipelineTests
     {
         var log = new List<string>();
         var pipeline = new CompensatingPipeline()
-            .Add("one", _ => { log.Add("one"); return Task.CompletedTask; }, () => { log.Add("undo one"); return Task.CompletedTask; })
-            .Add("two", _ => { log.Add("two"); return Task.CompletedTask; }, () => { log.Add("undo two"); throw new InvalidOperationException("undo failed"); })
-            .Add("three", _ => { log.Add("three"); return Task.CompletedTask; })
-            .Add("four", _ => throw new IOException("boom"), () => { log.Add("never"); return Task.CompletedTask; })
-            .Add("five", _ => { log.Add("five"); return Task.CompletedTask; });
+            .Add("one", _ =>
+            {
+                log.Add("one");
+                return Task.CompletedTask;
+            }, () =>
+            {
+                log.Add("undo one");
+                return Task.CompletedTask;
+            })
+            .Add("two", _ =>
+            {
+                log.Add("two");
+                return Task.CompletedTask;
+            }, () =>
+            {
+                log.Add("undo two");
+                throw new InvalidOperationException("undo failed");
+            })
+            .Add("three", _ =>
+            {
+                log.Add("three");
+                return Task.CompletedTask;
+            })
+            .Add("four", _ => throw new IOException("boom"), () =>
+            {
+                log.Add("never");
+                return Task.CompletedTask;
+            })
+            .Add("five", _ =>
+            {
+                log.Add("five");
+                return Task.CompletedTask;
+            });
 
         var ex = await Should.ThrowAsync<PipelineException>(() => pipeline.RunAsync());
 
@@ -50,8 +90,24 @@ public class CompensatingPipelineTests
     {
         var log = new List<string>();
         var pipeline = new CompensatingPipeline()
-            .Add("one", _ => { log.Add("one"); return Task.CompletedTask; }, () => { log.Add("undo one"); return Task.CompletedTask; })
-            .Add("two halves", _ => { log.Add("first half"); throw new IOException("second half failed"); }, () => { log.Add("undo two"); return Task.CompletedTask; }, compensatesOwnFailure: true);
+            .Add("one", _ =>
+            {
+                log.Add("one");
+                return Task.CompletedTask;
+            }, () =>
+            {
+                log.Add("undo one");
+                return Task.CompletedTask;
+            })
+            .Add("two halves", _ =>
+            {
+                log.Add("first half");
+                throw new IOException("second half failed");
+            }, () =>
+            {
+                log.Add("undo two");
+                return Task.CompletedTask;
+            }, compensatesOwnFailure: true);
         pipeline.Steps[1].CompensatesOwnFailure.ShouldBeTrue();
         pipeline.Steps[0].CompensatesOwnFailure.ShouldBeFalse();
 
@@ -86,7 +142,11 @@ public class CompensatingPipelineTests
         var ran = false;
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        var pipeline = new CompensatingPipeline().Add("one", _ => { ran = true; return Task.CompletedTask; });
+        var pipeline = new CompensatingPipeline().Add("one", _ =>
+        {
+            ran = true;
+            return Task.CompletedTask;
+        });
         var ex = await Should.ThrowAsync<PipelineException>(() => pipeline.RunAsync(cancellationToken: cts.Token));
         ex.InnerException.ShouldBeOfType<OperationCanceledException>();
         ran.ShouldBeFalse();

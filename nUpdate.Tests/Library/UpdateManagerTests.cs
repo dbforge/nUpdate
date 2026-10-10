@@ -28,12 +28,16 @@ public class UpdateManagerTests
     }
 
     /// <summary>Serves a package zip with the payload and a matching manifest and returns the feed entry that announces it.</summary>
-    private PackageInfo Publish(string version, byte[] payload, bool statistics = false, bool necessary = false, byte[]? served = null, Guid? manifestProject = null,
-        string? manifestVersion = null, string platform = PackagePlatform.Any, string? manifestPlatform = null, AfterInstall? afterInstall = null)
+    private PackageInfo Publish(string version, byte[] payload, bool statistics = false, bool necessary = false,
+        byte[]? served = null, Guid? manifestProject = null,
+        string? manifestVersion = null, string platform = PackagePlatform.Any, string? manifestPlatform = null,
+        AfterInstall? afterInstall = null)
     {
         var path = $"packages/{new UpdateVersion(version)}/{platform}.zip";
-        var package = TestPackages.Build(manifestVersion ?? version, manifestProject ?? ProjectId, payload, platform: manifestPlatform ?? platform);
-        _services.Http.Bytes("https://h/u/" + path, served is null ? package : TestPackages.Build(version, ProjectId, served, platform: platform));
+        var package = TestPackages.Build(manifestVersion ?? version, manifestProject ?? ProjectId, payload,
+            platform: manifestPlatform ?? platform);
+        _services.Http.Bytes("https://h/u/" + path,
+            served is null ? package : TestPackages.Build(version, ProjectId, served, platform: platform));
         return new PackageInfo
         {
             Version = new UpdateVersion(version),
@@ -45,12 +49,21 @@ public class UpdateManagerTests
     }
 
     private static PackageFile File(string path, byte[] package, string platform = PackagePlatform.Any) =>
-        new() { Platform = platform, Path = path, Size = package.Length, Sha512 = TestKeys.Sha512(package), Signature = new PackageSignature { Value = TestKeys.Sign(package) } };
+        new()
+        {
+            Platform = platform,
+            Path = path,
+            Size = package.Length,
+            Sha512 = TestKeys.Sha512(package),
+            Signature = new PackageSignature { Value = TestKeys.Sign(package) }
+        };
 
     private void ServeFeed(params PackageInfo[] packages) =>
-        _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed { ProjectId = ProjectId, Packages = packages.ToList() }));
+        _services.Http.Text(HttpMethod.Get, FeedUri,
+            Serializer.Serialize(new UpdateFeed { ProjectId = ProjectId, Packages = packages.ToList() }));
 
-    private IEnumerable<string> Warnings() => _services.Logger.Entries.Where(e => e.Level == LogLevel.Warning).Select(e => e.Message);
+    private IEnumerable<string> Warnings() =>
+        _services.Logger.Entries.Where(e => e.Level == LogLevel.Warning).Select(e => e.Message);
 
     // --- construction ---
 
@@ -74,7 +87,8 @@ public class UpdateManagerTests
     public void ApplicationExecutablePath_MustBeAbsolute(string path)
     {
         using var manager = Create();
-        Should.Throw<ArgumentException>(() => manager.ApplicationExecutablePath = path).Message.ShouldContain("must be absolute");
+        Should.Throw<ArgumentException>(() => manager.ApplicationExecutablePath = path).Message
+            .ShouldContain("must be absolute");
         manager.ApplicationExecutablePath.ShouldBe(_services.ApplicationInfo.ExecutablePath);
     }
 
@@ -87,7 +101,8 @@ public class UpdateManagerTests
         manager.CurrentVersion.ShouldBe(new UpdateVersion("1.0.0"));
         manager.ApplicationName.ShouldBe("TestApp");
         manager.ApplicationExecutablePath.ShouldBe(_services.ApplicationInfo.ExecutablePath);
-        manager.DownloadDirectory.ShouldBe(_services.FileSystem.Path.Combine(_services.FileSystem.Path.GetTempPath(), "nUpdate", "TestApp"));
+        manager.DownloadDirectory.ShouldBe(
+            _services.FileSystem.Path.Combine(_services.FileSystem.Path.GetTempPath(), "nUpdate", "TestApp"));
         manager.PublicKey.ShouldBe(TestKeys.PublicKey);
         manager.FeedUri.ToString().ShouldBe(FeedUri);
         manager.AvailableUpdates.ShouldBeEmpty();
@@ -116,12 +131,15 @@ public class UpdateManagerTests
     public void Constructor_ValidatesArguments()
     {
         Should.Throw<ArgumentNullException>(() => new UpdateManager(null!, TestKeys.PublicKey));
-        Should.Throw<ArgumentException>(() => new UpdateManager(new Uri("relative", UriKind.Relative), TestKeys.PublicKey));
-        Should.Throw<ArgumentNullException>(() => new UpdateManager(new Uri(FeedUri), " ", services: _services.Build()));
+        Should.Throw<ArgumentException>(() =>
+            new UpdateManager(new Uri("relative", UriKind.Relative), TestKeys.PublicKey));
+        Should.Throw<ArgumentNullException>(() =>
+            new UpdateManager(new Uri(FeedUri), " ", services: _services.Build()));
         Create(new CultureInfo("fr-FR")).Culture.Name.ShouldBe("fr-FR");
 
         _services.ApplicationInfo.DeclaredVersion.Returns((string?)null);
-        Should.Throw<InvalidOperationException>(() => Create()).Message.ShouldContain(nameof(ApplicationVersionAttribute));
+        Should.Throw<InvalidOperationException>(() => Create()).Message
+            .ShouldContain(nameof(ApplicationVersionAttribute));
         _services.ApplicationInfo.DeclaredVersion.Returns("1.0.0");
         Create(current: null).CurrentVersion.ShouldBe(new UpdateVersion("1.0.0"));
         // An attribute still written the nUpdate 4 way is reported with the form that is expected now.
@@ -135,7 +153,8 @@ public class UpdateManagerTests
     public void Constructor_UsesProductionServicesWhenNoneGiven()
     {
         // The entry assembly of the test host has no ApplicationVersionAttribute, so a version must be given.
-        using var manager = new UpdateManager(new Uri(FeedUri), TestKeys.PublicKey, currentVersion: new UpdateVersion("1.0.0"));
+        using var manager = new UpdateManager(new Uri(FeedUri), TestKeys.PublicKey,
+            currentVersion: new UpdateVersion("1.0.0"));
         manager.ApplicationName.ShouldNotBeNullOrEmpty();
     }
 
@@ -219,7 +238,8 @@ public class UpdateManagerTests
         manager.AcceptedPreReleaseLabels.Add("nightly");
         manager.RolloutConditions["Region"] = "eu";
         (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
-        manager.AvailableUpdates.Select(c => c.Version.ToString()).ShouldBe(["1.1.0-beta.1", "1.1.0-nightly.2", "1.2.0"]);
+        manager.AvailableUpdates.Select(c => c.Version.ToString())
+            .ShouldBe(["1.1.0-beta.1", "1.1.0-nightly.2", "1.2.0"]);
 
         regional.Files[0].Platform = "linux";
         ServeFeed(regional);
@@ -243,7 +263,8 @@ public class UpdateManagerTests
         manager.AvailableUpdates.Single().Version.ShouldBe(new UpdateVersion("1.1.0"));
         manager.TotalDownloadSize.ShouldBe(arm.Files[0].Size);
         await manager.DownloadAsync();
-        _services.Http.Requests.Select(r => r.RequestUri!.ToString()).ShouldContain("https://h/u/packages/1.1.0/linux-arm64.zip");
+        _services.Http.Requests.Select(r => r.RequestUri!.ToString())
+            .ShouldContain("https://h/u/packages/1.1.0/linux-arm64.zip");
         (await manager.VerifyAsync()).ShouldBeTrue();
 
         _services.SystemInformation.RuntimeIdentifier.Returns("linux-x64");
@@ -269,9 +290,12 @@ public class UpdateManagerTests
 
         (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
         await manager.DownloadAsync();
-        _services.Http.Requests.Select(r => r.RequestUri!.ToString()).ShouldContain("https://h/u/packages/1.1.0/any.zip");
-        _services.Http.Requests.Select(r => r.RequestUri!.ToString()).ShouldContain("https://mirror/elsewhere/1.2.0.zip");
-        _services.Http.Requests.Select(r => r.RequestUri!.ToString()).ShouldContain("https://h/u/packages/1.3.0/any.zip");
+        _services.Http.Requests.Select(r => r.RequestUri!.ToString())
+            .ShouldContain("https://h/u/packages/1.1.0/any.zip");
+        _services.Http.Requests.Select(r => r.RequestUri!.ToString())
+            .ShouldContain("https://mirror/elsewhere/1.2.0.zip");
+        _services.Http.Requests.Select(r => r.RequestUri!.ToString())
+            .ShouldContain("https://h/u/packages/1.3.0/any.zip");
     }
 
     [Fact]
@@ -281,7 +305,8 @@ public class UpdateManagerTests
         ServeFeed(oversized);
         using var manager = Create();
         await manager.CheckForUpdatesAsync();
-        (await Should.ThrowAsync<InvalidPackageException>(() => manager.DownloadAsync())).Message.ShouldContain("larger");
+        (await Should.ThrowAsync<InvalidPackageException>(() => manager.DownloadAsync())).Message
+            .ShouldContain("larger");
         manager.DownloadedPackages.ShouldBeEmpty();
     }
 
@@ -326,7 +351,8 @@ public class UpdateManagerTests
         _services.Http.On(r => r.Method == HttpMethod.Get, (_, _) =>
         {
             cts.Cancel();
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(Serializer.Serialize(new UpdateFeed())) });
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            { Content = new StringContent(Serializer.Serialize(new UpdateFeed())) });
         });
         _services.Http.On(HttpMethod.Get, FeedUri, (_, token) =>
         {
@@ -354,7 +380,8 @@ public class UpdateManagerTests
     {
         var first = Package(1, 100);
         var second = Package(2, 200);
-        ServeFeed(Publish("1.1.0", first, statistics: true, necessary: true), Publish("1.2.0", second, statistics: true));
+        ServeFeed(Publish("1.1.0", first, statistics: true, necessary: true),
+            Publish("1.2.0", second, statistics: true));
         _services.Http.On(HttpMethod.Post, ReportUri, _ => new HttpResponseMessage(HttpStatusCode.NoContent));
         using var manager = Create();
         await manager.CheckForUpdatesAsync();
@@ -363,8 +390,10 @@ public class UpdateManagerTests
         await manager.DownloadAsync(new SynchronousProgress(reports));
 
         manager.DownloadedPackages.Count.ShouldBe(2);
-        _services.FileSystem.File.ReadAllBytes(manager.DownloadedPackages[new UpdateVersion("1.1.0")]).ShouldBe(TestPackages.Build("1.1.0", ProjectId, first));
-        _services.FileSystem.File.ReadAllBytes(manager.DownloadedPackages[new UpdateVersion("1.2.0")]).ShouldBe(TestPackages.Build("1.2.0", ProjectId, second));
+        _services.FileSystem.File.ReadAllBytes(manager.DownloadedPackages[new UpdateVersion("1.1.0")])
+            .ShouldBe(TestPackages.Build("1.1.0", ProjectId, first));
+        _services.FileSystem.File.ReadAllBytes(manager.DownloadedPackages[new UpdateVersion("1.2.0")])
+            .ShouldBe(TestPackages.Build("1.2.0", ProjectId, second));
         manager.DownloadedPackages[new UpdateVersion("1.1.0")].ShouldEndWith("1.1.0.zip");
         reports.Last().BytesReceived.ShouldBe(manager.TotalDownloadSize);
         reports.Last().TotalBytesToReceive.ShouldBe(manager.TotalDownloadSize);
@@ -467,7 +496,8 @@ public class UpdateManagerTests
         var wrongSize = Publish("1.2.0", package, necessary: true, served: Package(1, 150));
         ServeFeed(wrongSize);
         await manager.CheckForUpdatesAsync();
-        (await Should.ThrowAsync<InvalidPackageException>(() => manager.DownloadAsync())).Message.ShouldContain("bytes, but the feed announced");
+        (await Should.ThrowAsync<InvalidPackageException>(() => manager.DownloadAsync())).Message.ShouldContain(
+            "bytes, but the feed announced");
     }
 
     [Fact]
@@ -494,12 +524,15 @@ public class UpdateManagerTests
     {
         _services.Http.On(HttpMethod.Get, FeedUri, (_, _) => throw new TaskCanceledException("timed out"));
         using var manager = Create();
-        (await Should.ThrowAsync<HttpRequestException>(() => manager.CheckForUpdatesAsync())).Message.ShouldContain("timed out");
+        (await Should.ThrowAsync<HttpRequestException>(() => manager.CheckForUpdatesAsync())).Message
+            .ShouldContain("timed out");
 
         ServeFeed(Publish("1.1.0", Package(1)));
         await manager.CheckForUpdatesAsync();
-        _services.Http.On(HttpMethod.Get, "https://h/u/packages/1.1.0/any.zip", (_, _) => throw new TaskCanceledException("timed out"));
-        (await Should.ThrowAsync<HttpRequestException>(() => manager.DownloadAsync())).Message.ShouldContain("packages/1.1.0/any.zip");
+        _services.Http.On(HttpMethod.Get, "https://h/u/packages/1.1.0/any.zip",
+            (_, _) => throw new TaskCanceledException("timed out"));
+        (await Should.ThrowAsync<HttpRequestException>(() => manager.DownloadAsync())).Message.ShouldContain(
+            "packages/1.1.0/any.zip");
         manager.DownloadedPackages.ShouldBeEmpty();
     }
 
@@ -510,7 +543,8 @@ public class UpdateManagerTests
         using var manager = Create();
         var fs = _services.FileSystem;
         fs.AddFile(fs.Path.Combine(manager.DownloadDirectory, "0.9.0.zip"), new MockFileData("stale"));
-        fs.AddFile(fs.Path.Combine(manager.DownloadDirectory, "pinned.zip"), new MockFileData("stale") { Attributes = FileAttributes.ReadOnly });
+        fs.AddFile(fs.Path.Combine(manager.DownloadDirectory, "pinned.zip"),
+            new MockFileData("stale") { Attributes = FileAttributes.ReadOnly });
         await manager.CheckForUpdatesAsync();
 
         using var cts = new CancellationTokenSource();
@@ -609,7 +643,12 @@ public class UpdateManagerTests
 
         // Packages without a manifest, or with an unreadable one, are not accepted either.
         var legacy = TestPackages.WithoutManifest(Package(1));
-        var legacyEntry = new PackageInfo { Version = new UpdateVersion("2.0.0"), Necessary = true, Files = [File("packages/2.0.0/any.zip", legacy)] };
+        var legacyEntry = new PackageInfo
+        {
+            Version = new UpdateVersion("2.0.0"),
+            Necessary = true,
+            Files = [File("packages/2.0.0/any.zip", legacy)]
+        };
         _services.Http.Bytes("https://h/u/packages/2.0.0/any.zip", legacy);
         ServeFeed(legacyEntry);
         await manager.CheckForUpdatesAsync();
@@ -617,7 +656,12 @@ public class UpdateManagerTests
         (await manager.VerifyAsync()).ShouldBeFalse();
 
         var broken = TestPackages.Build("2.0.0", ProjectId, Package(1), manifestJson: "{broken");
-        var brokenEntry = new PackageInfo { Version = new UpdateVersion("2.0.0"), Necessary = true, Files = [File("packages/2.0.0/any.zip", broken)] };
+        var brokenEntry = new PackageInfo
+        {
+            Version = new UpdateVersion("2.0.0"),
+            Necessary = true,
+            Files = [File("packages/2.0.0/any.zip", broken)]
+        };
         _services.Http.Bytes("https://h/u/packages/2.0.0/any.zip", broken);
         ServeFeed(brokenEntry);
         await manager.CheckForUpdatesAsync();
@@ -626,7 +670,12 @@ public class UpdateManagerTests
         Warnings().ShouldContain(w => w.Contains("manifest", StringComparison.OrdinalIgnoreCase));
 
         var notAZip = Package(5);
-        var notAZipEntry = new PackageInfo { Version = new UpdateVersion("2.0.0"), Necessary = true, Files = [File("packages/2.0.0/any.zip", notAZip)] };
+        var notAZipEntry = new PackageInfo
+        {
+            Version = new UpdateVersion("2.0.0"),
+            Necessary = true,
+            Files = [File("packages/2.0.0/any.zip", notAZip)]
+        };
         _services.Http.Bytes("https://h/u/packages/2.0.0/any.zip", notAZip);
         ServeFeed(notAZipEntry);
         await manager.CheckForUpdatesAsync();
@@ -661,7 +710,8 @@ public class UpdateManagerTests
     public async Task Verify_ThrowsForInvalidPublicKey()
     {
         ServeFeed(Publish("1.1.0", Package(1)));
-        using var manager = new UpdateManager(new Uri(FeedUri), "<RSAKeyValue><Modulus>AQ==</Modulus></RSAKeyValue>", services: _services.Build());
+        using var manager = new UpdateManager(new Uri(FeedUri), "<RSAKeyValue><Modulus>AQ==</Modulus></RSAKeyValue>",
+            services: _services.Build());
         await manager.CheckForUpdatesAsync();
         await manager.DownloadAsync();
         await Should.ThrowAsync<ArgumentException>(() => manager.VerifyAsync());
@@ -670,7 +720,8 @@ public class UpdateManagerTests
     // --- install ---
 
     private InstallerOptions StartedOptions() =>
-        Serializer.Deserialize<InstallerOptions>(_services.FileSystem.File.ReadAllText(((string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[1]!).Trim('"')))!;
+        Serializer.Deserialize<InstallerOptions>(_services.FileSystem.File.ReadAllText(
+            ((string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[1]!).Trim('"')))!;
 
     [Fact]
     public async Task StartInstaller_CopiesInstallerWritesOptionsStartsElevatedAndTerminates()
@@ -693,9 +744,11 @@ public class UpdateManagerTests
         var optionsPath = ((string)arguments[1]!).Trim('"');
         _services.FileSystem.File.Exists(optionsPath).ShouldBeTrue();
         var copied = _services.FileSystem.Path.GetDirectoryName(exePath)!;
-        _services.FileSystem.File.Exists(_services.FileSystem.Path.Combine(copied, "de", "resources.dll")).ShouldBeTrue();
+        _services.FileSystem.File.Exists(_services.FileSystem.Path.Combine(copied, "de", "resources.dll"))
+            .ShouldBeTrue();
         _services.FileSystem.File.Exists(_services.FileSystem.Path.Combine(copied, "extra.dll")).ShouldBeTrue();
-        _services.FilePermissions.DidNotReceive().CanWrite(Arg.Any<string>()); // Windows has no write check; setting the mode does nothing there
+        _services.FilePermissions.DidNotReceive()
+            .CanWrite(Arg.Any<string>()); // Windows has no write check; setting the mode does nothing there
 
         var options = StartedOptions();
         options.Format.ShouldBe(InstallerOptions.CurrentFormat);
@@ -722,10 +775,12 @@ public class UpdateManagerTests
     {
         using var manager = Create();
         var fs = _services.FileSystem;
-        manager.InstallerPath.ShouldBe(fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "win-x64", "nUpdate.UpdateInstaller.UI.Avalonia.exe"));
+        manager.InstallerPath.ShouldBe(fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "win-x64",
+            "nUpdate.UpdateInstaller.UI.Avalonia.exe"));
 
         _services.SystemInformation.RuntimeIdentifier.Returns("linux-arm64");
-        manager.InstallerPath.ShouldBe(fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "linux-arm64", "nUpdate.UpdateInstaller.UI.Avalonia"));
+        manager.InstallerPath.ShouldBe(fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "linux-arm64",
+            "nUpdate.UpdateInstaller.UI.Avalonia"));
 
         manager.InstallerPath = "/opt/my/installer";
         manager.InstallerPath.ShouldBe("/opt/my/installer");
@@ -735,7 +790,8 @@ public class UpdateManagerTests
         manager.ApplicationExecutablePath = null;
         manager.InstallerPath.ShouldBeNull();
         manager.ApplicationExecutablePath = "/";
-        manager.InstallerPath.ShouldBe(fs.Path.Combine("nUpdate.Installer", "linux-arm64", "nUpdate.UpdateInstaller.UI.Avalonia"));
+        manager.InstallerPath.ShouldBe(fs.Path.Combine("nUpdate.Installer", "linux-arm64",
+            "nUpdate.UpdateInstaller.UI.Avalonia"));
     }
 
     [Fact]
@@ -793,7 +849,9 @@ public class UpdateManagerTests
     {
         _services.SystemInformation.RuntimeIdentifier.Returns("linux-x64");
         var fs = _services.FileSystem;
-        fs.AddFile(fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "linux-x64", "nUpdate.UpdateInstaller.UI.Avalonia"), new MockFileData("elf"));
+        fs.AddFile(
+            fs.Path.Combine(_services.AppDirectory, "nUpdate.Installer", "linux-x64",
+                "nUpdate.UpdateInstaller.UI.Avalonia"), new MockFileData("elf"));
         ServeFeed(Publish("1.1.0", Package(1)));
         using var manager = Create();
         manager.RunInstallerAsAdmin.ShouldBeTrue();
@@ -820,7 +878,8 @@ public class UpdateManagerTests
         _services.SystemInformation.RuntimeIdentifier.Returns("linux-x64");
         _services.FilePermissions.CanWrite(Arg.Any<string>()).Returns(true);
         var fs = _services.FileSystem;
-        fs.AddFile("/opt/Tool.app/Contents/MacOS/nUpdate.Installer/linux-x64/nUpdate.UpdateInstaller.UI.Avalonia", new MockFileData("elf"));
+        fs.AddFile("/opt/Tool.app/Contents/MacOS/nUpdate.Installer/linux-x64/nUpdate.UpdateInstaller.UI.Avalonia",
+            new MockFileData("elf"));
         ServeFeed(Publish("1.1.0", Package(1)));
         using var manager = Create();
         manager.ApplicationExecutablePath = "/opt/Tool.app/Contents/MacOS/tool";
@@ -837,7 +896,9 @@ public class UpdateManagerTests
     {
         _services.SystemInformation.RuntimeIdentifier.Returns("osx-arm64");
         var fs = _services.FileSystem;
-        fs.AddFile("/Applications/Test App.app/Contents/MacOS/nUpdate.Installer/osx-arm64/nUpdate.UpdateInstaller.UI.Avalonia", new MockFileData("macho"));
+        fs.AddFile(
+            "/Applications/Test App.app/Contents/MacOS/nUpdate.Installer/osx-arm64/nUpdate.UpdateInstaller.UI.Avalonia",
+            new MockFileData("macho"));
         ServeFeed(Publish("1.1.0", Package(1)));
         using var manager = Create();
         manager.ApplicationExecutablePath = "/Applications/Test App.app/Contents/MacOS/TestApp";
@@ -847,7 +908,8 @@ public class UpdateManagerTests
         // The paths are macOS paths; the expectations go through the file system so the test also passes on Windows.
         var applications = fs.Path.GetDirectoryName("/Applications/Test App.app")!;
         _services.FilePermissions.CanWrite(applications).Returns(false);
-        Should.Throw<UnauthorizedAccessException>(() => manager.StartInstaller()).Message.ShouldContain($"\"{applications}\"");
+        Should.Throw<UnauthorizedAccessException>(() => manager.StartInstaller()).Message
+            .ShouldContain($"\"{applications}\"");
         _services.FilePermissions.CanWrite(applications).Returns(true);
         manager.StartInstaller().ShouldBeTrue();
         var application = StartedOptions().Application;
@@ -895,11 +957,13 @@ public class UpdateManagerTests
         await manager.CheckForUpdatesAsync();
         manager.AfterInstall.ShouldBe(AfterInstall.KeepRunning);
 
-        ServeFeed(Publish("1.1.0", Package(1), necessary: true), Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
+        ServeFeed(Publish("1.1.0", Package(1), necessary: true),
+            Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
         await manager.CheckForUpdatesAsync();
         manager.AfterInstall.ShouldBe(AfterInstall.Restart);
 
-        ServeFeed(Publish("1.1.0", Package(1), necessary: true, afterInstall: AfterInstall.Close), Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
+        ServeFeed(Publish("1.1.0", Package(1), necessary: true, afterInstall: AfterInstall.Close),
+            Publish("1.2.0", Package(2), afterInstall: AfterInstall.Restart));
         await manager.CheckForUpdatesAsync();
         manager.AfterInstall.ShouldBe(AfterInstall.Close);
 
@@ -988,7 +1052,8 @@ public class UpdateManagerTests
         await manager.DownloadAsync();
 
         manager.StartInstaller().ShouldBeTrue();
-        fs.Path.GetDirectoryName((string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[0]!).ShouldBe(folder);
+        fs.Path.GetDirectoryName((string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[0]!)
+            .ShouldBe(folder);
         fs.Directory.Exists(alternative).ShouldBeFalse();
         fs.Directory.Exists(stuck).ShouldBeTrue();
         others.ShouldAllBe(other => fs.Directory.Exists(other));
@@ -1023,7 +1088,9 @@ public class UpdateManagerTests
         var started = (string)_services.ProcessLauncher.ReceivedCalls().Single().GetArguments()[0]!;
         started.ShouldEndWith("MyInstaller.exe");
         started.ShouldContain("nUpdate Installer");
-        _services.FileSystem.File.Exists(_services.FileSystem.Path.Combine(_services.FileSystem.Path.GetDirectoryName(started)!, "MyInstaller.dll")).ShouldBeTrue();
+        _services.FileSystem.File
+            .Exists(_services.FileSystem.Path.Combine(_services.FileSystem.Path.GetDirectoryName(started)!,
+                "MyInstaller.dll")).ShouldBeTrue();
     }
 
     [Fact]
@@ -1036,11 +1103,13 @@ public class UpdateManagerTests
         await manager.CheckForUpdatesAsync();
         await manager.DownloadAsync();
         var ex = Should.Throw<FileNotFoundException>(() => manager.StartInstaller());
-        ex.Message.ShouldContain(_services.FileSystem.Path.Combine("nUpdate.Installer", "win-x64", "nUpdate.UpdateInstaller.UI.Avalonia.exe"));
+        ex.Message.ShouldContain(_services.FileSystem.Path.Combine("nUpdate.Installer", "win-x64",
+            "nUpdate.UpdateInstaller.UI.Avalonia.exe"));
         ex.Message.ShouldContain("InstallerPath");
 
         manager.ApplicationExecutablePath = null;
-        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message.ShouldContain("Environment.ProcessPath");
+        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message
+            .ShouldContain("Environment.ProcessPath");
     }
 
     [Fact]
@@ -1055,7 +1124,8 @@ public class UpdateManagerTests
         await manager.CheckForUpdatesAsync();
         await manager.DownloadAsync();
 
-        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message.ShouldContain("no application folder");
+        Should.Throw<InvalidOperationException>(() => manager.StartInstaller()).Message
+            .ShouldContain("no application folder");
         _services.ProcessLauncher.ReceivedCalls().ShouldBeEmpty();
     }
 

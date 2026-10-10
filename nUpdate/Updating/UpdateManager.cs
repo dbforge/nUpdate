@@ -2,7 +2,6 @@ using System.Globalization;
 using System.IO.Abstractions;
 using System.IO.Compression;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
@@ -29,7 +28,7 @@ public sealed class UpdateManager : IDisposable
     public const string BuiltInInstallerName = "nUpdate.UpdateInstaller.UI.Avalonia";
 
     /// <summary>The name of the installer icon in the installer's temp folder.</summary>
-    internal const string InstallerIconFileName = "installer-icon.png";
+    private const string InstallerIconFileName = "installer-icon.png";
 
     private const string OptionsFileName = "installer-options.json";
 
@@ -57,7 +56,8 @@ public sealed class UpdateManager : IDisposable
     /// <param name="culture">The culture of the texts. Defaults to English.</param>
     /// <param name="currentVersion">The installed version. Defaults to the <see cref="ApplicationVersionAttribute" /> of the entry assembly.</param>
     /// <param name="services">External dependencies; defaults to the production implementations.</param>
-    public UpdateManager(Uri feedUri, string publicKey, CultureInfo? culture = null, UpdateVersion? currentVersion = null, UpdateManagerServices? services = null)
+    public UpdateManager(Uri feedUri, string publicKey, CultureInfo? culture = null,
+        UpdateVersion? currentVersion = null, UpdateManagerServices? services = null)
     {
         FeedUri = feedUri ?? throw new ArgumentNullException(nameof(feedUri));
         if (!feedUri.IsAbsoluteUri)
@@ -73,7 +73,8 @@ public sealed class UpdateManager : IDisposable
         var applicationInfo = _services.ApplicationInfo;
         ApplicationName = applicationInfo.ProductName;
         // A path the process cannot tell (empty, or relative) counts as unknown, so StartInstaller asks for it clearly.
-        _applicationExecutablePath = IsAbsolutePath(applicationInfo.ExecutablePath) ? applicationInfo.ExecutablePath : null;
+        _applicationExecutablePath =
+            IsAbsolutePath(applicationInfo.ExecutablePath) ? applicationInfo.ExecutablePath : null;
         CurrentVersion = currentVersion ?? ParseDeclaredVersion(applicationInfo.DeclaredVersion);
         Texts = _localizationProvider.Load(LocalizationProvider.DefaultCulture);
         if (culture is not null)
@@ -123,7 +124,9 @@ public sealed class UpdateManager : IDisposable
         get => _applicationExecutablePath;
         set => _applicationExecutablePath = value is null || IsAbsolutePath(value)
             ? value
-            : throw new ArgumentException($"The executable path must be absolute, such as Path.Combine(AppContext.BaseDirectory, \"MyApp.exe\"); \"{value}\" is not.", nameof(value));
+            : throw new ArgumentException(
+                $"The executable path must be absolute, such as Path.Combine(AppContext.BaseDirectory, \"MyApp.exe\"); \"{value}\" is not.",
+                nameof(value));
     }
 
     /// <summary>
@@ -159,11 +162,13 @@ public sealed class UpdateManager : IDisposable
         get => _installerAccentColor;
         set => _installerAccentColor = value is null || IsColor(value)
             ? value
-            : throw new ArgumentException($"\"{value}\" is not a color. Write it as #RRGGBB or #AARRGGBB.", nameof(value));
+            : throw new ArgumentException($"\"{value}\" is not a color. Write it as #RRGGBB or #AARRGGBB.",
+                nameof(value));
     }
 
     /// <summary>The folder downloaded packages are stored in.</summary>
-    public string DownloadDirectory => _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), "nUpdate", ApplicationName);
+    public string DownloadDirectory =>
+        _fileSystem.Path.Combine(_fileSystem.Path.GetTempPath(), "nUpdate", ApplicationName);
 
     /// <summary>The least stable versions this client installs, for example <see cref="Stability.Beta" /> for betas, release candidates and releases. Defaults to releases only.</summary>
     public Stability MinimumStability { get; set; }
@@ -175,7 +180,8 @@ public sealed class UpdateManager : IDisposable
     public bool ReportDownloads { get; set; } = true;
 
     /// <summary>What this client is, matched against the packages' rollout conditions.</summary>
-    public IDictionary<string, string> RolloutConditions { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
+    public IDictionary<string, string> RolloutConditions { get; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
 
     /// <summary>Applied to the HTTP client when it is created on first use.</summary>
     public IWebProxy? Proxy { get; set; }
@@ -205,7 +211,9 @@ public sealed class UpdateManager : IDisposable
             // Closed wins: a package that needs the application closed, for example for a manual step, is not outvoted.
             if (AvailableUpdates.Any(p => p.AfterInstall == AfterInstall.Close))
                 return AfterInstall.Close;
-            return AvailableUpdates.Any(p => p.AfterInstall == AfterInstall.Restart) ? AfterInstall.Restart : DefaultAfterInstall;
+            return AvailableUpdates.Any(p => p.AfterInstall == AfterInstall.Restart)
+                ? AfterInstall.Restart
+                : DefaultAfterInstall;
         }
     }
 
@@ -278,7 +286,8 @@ public sealed class UpdateManager : IDisposable
     /// <exception cref="HttpRequestException">A package could not be downloaded or the server stopped responding.</exception>
     /// <exception cref="InvalidPackageException">A downloaded package does not match the feed.</exception>
     /// <exception cref="OperationCanceledException">The download was cancelled; partial files are deleted.</exception>
-    public async Task DownloadAsync(IProgress<UpdateDownloadProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task DownloadAsync(IProgress<UpdateDownloadProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         ThrowIfDisposed();
         if (AvailableUpdates.Count == 0)
@@ -302,7 +311,9 @@ public sealed class UpdateManager : IDisposable
                 _downloadedPackages[package.Version] = filePath;
                 current = _packageUris[package.Version];
 
-                using var response = await client.GetAsync(current, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                using var response = await client
+                    .GetAsync(current, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 using var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA512);
@@ -310,11 +321,13 @@ public sealed class UpdateManager : IDisposable
                 using (var output = _fileSystem.File.Create(filePath))
                 {
                     int read;
-                    while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                    while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken)
+                               .ConfigureAwait(false)) > 0)
                     {
                         length += read;
                         if (length > file.Size)
-                            throw new InvalidPackageException($"The package \"{package.Version}\" is larger than the {file.Size} bytes the feed announced.");
+                            throw new InvalidPackageException(
+                                $"The package \"{package.Version}\" is larger than the {file.Size} bytes the feed announced.");
                         await output.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
                         hash.AppendData(buffer, 0, read);
                         received += read;
@@ -323,9 +336,12 @@ public sealed class UpdateManager : IDisposable
                 }
 
                 if (length != file.Size)
-                    throw new InvalidPackageException($"The package \"{package.Version}\" has {length} bytes, but the feed announced {file.Size}.");
-                if (!string.Equals(Convert.ToBase64String(hash.GetHashAndReset()), file.Sha512, StringComparison.Ordinal))
-                    throw new InvalidPackageException($"The package \"{package.Version}\" does not match the hash in the feed.");
+                    throw new InvalidPackageException(
+                        $"The package \"{package.Version}\" has {length} bytes, but the feed announced {file.Size}.");
+                if (!string.Equals(Convert.ToBase64String(hash.GetHashAndReset()), file.Sha512,
+                        StringComparison.Ordinal))
+                    throw new InvalidPackageException(
+                        $"The package \"{package.Version}\" does not match the hash in the feed.");
 
                 await ReportDownloadAsync(package, cancellationToken).ConfigureAwait(false);
             }
@@ -382,29 +398,36 @@ public sealed class UpdateManager : IDisposable
                                  $"The application's executable could not be determined. Set {nameof(ApplicationExecutablePath)} to its absolute path, for example Environment.ProcessPath.");
         var applicationDirectory = _fileSystem.Path.GetDirectoryName(executablePath);
         if (applicationDirectory is null || applicationDirectory.Length == 0)
-            throw new InvalidOperationException($"{nameof(ApplicationExecutablePath)} \"{executablePath}\" names no file in a folder, so there is no application folder to update.");
+            throw new InvalidOperationException(
+                $"{nameof(ApplicationExecutablePath)} \"{executablePath}\" names no file in a folder, so there is no application folder to update.");
         var installerPath = InstallerPath!; // never null once the executable path is known
         if (!_fileSystem.File.Exists(installerPath))
-            throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Texts.InstallerNotFound, installerPath), installerPath);
+            throw new FileNotFoundException(
+                string.Format(CultureInfo.CurrentCulture, Texts.InstallerNotFound, installerPath), installerPath);
 
         var afterInstall = AfterInstall;
         var isWindows = PackagePlatform.IsWindows(Platform);
-        var bundle = PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOS ? FindBundle(executablePath) : null;
+        var bundle = PackagePlatform.OperatingSystemOf(Platform) == PackagePlatform.MacOS
+            ? FindBundle(executablePath)
+            : null;
         if (!isWindows)
         {
             var writable = bundle is null ? applicationDirectory : _fileSystem.Path.GetDirectoryName(bundle)!;
             if (!_services.FilePermissions.CanWrite(writable))
-                throw new UnauthorizedAccessException(string.Format(CultureInfo.CurrentCulture, Texts.NoWriteAccess, ApplicationName, writable));
+                throw new UnauthorizedAccessException(string.Format(CultureInfo.CurrentCulture, Texts.NoWriteAccess,
+                    ApplicationName, writable));
         }
 
         var targetDirectory = PrepareInstallerDirectory();
         CopyDirectory(_fileSystem.Path.GetDirectoryName(installerPath)!, targetDirectory);
         var installer = _fileSystem.Path.Combine(targetDirectory, _fileSystem.Path.GetFileName(installerPath));
-        _services.FilePermissions.SetMode(installer, FilePermissions.ExecutableMode); // NuGet and copies do not always keep the execute bit
+        _services.FilePermissions.SetMode(installer,
+            FilePermissions.ExecutableMode); // NuGet and copies do not always keep the execute bit
 
         var options = new InstallerOptions
         {
-            Packages = _downloadedPackages.OrderBy(pair => pair.Key).Select(pair => new InstallerPackage { Path = pair.Value }).ToList(),
+            Packages = _downloadedPackages.OrderBy(pair => pair.Key)
+                .Select(pair => new InstallerPackage { Path = pair.Value }).ToList(),
             Application = new ApplicationOptions
             {
                 Name = ApplicationName,
@@ -414,7 +437,8 @@ public sealed class UpdateManager : IDisposable
             },
             Host = new HostOptions
             {
-                ProcessId = afterInstall == AfterInstall.KeepRunning ? null : _services.ApplicationInfo.CurrentProcessId,
+                ProcessId =
+                    afterInstall == AfterInstall.KeepRunning ? null : _services.ApplicationInfo.CurrentProcessId,
                 AfterInstall = afterInstall,
             },
             Arguments = Arguments.ToList(),
@@ -429,7 +453,8 @@ public sealed class UpdateManager : IDisposable
         var optionsPath = _fileSystem.Path.Combine(targetDirectory, OptionsFileName);
         _fileSystem.File.WriteAllText(optionsPath, Serializer.Serialize(options, indented: true));
 
-        var started = _services.ProcessLauncher.Start(installer, $"\"{optionsPath}\"", RunInstallerAsAdmin && isWindows);
+        var started =
+            _services.ProcessLauncher.Start(installer, $"\"{optionsPath}\"", RunInstallerAsAdmin && isWindows);
         if (!started)
         {
             DeleteDownloads();
@@ -474,7 +499,8 @@ public sealed class UpdateManager : IDisposable
         if (ApplicationExecutablePath is null)
             return null;
         var fileName = PackagePlatform.IsWindows(Platform) ? BuiltInInstallerName + ".exe" : BuiltInInstallerName;
-        return _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(ApplicationExecutablePath) ?? string.Empty, InstallerFolderName, Platform, fileName);
+        return _fileSystem.Path.Combine(_fileSystem.Path.GetDirectoryName(ApplicationExecutablePath) ?? string.Empty,
+            InstallerFolderName, Platform, fileName);
     }
 
     /// <summary>
@@ -498,7 +524,9 @@ public sealed class UpdateManager : IDisposable
         if (TryDeleteDirectory(folder))
             return folder;
         var alternative = folder + "-" + Guid.NewGuid().ToString("N");
-        _services.Logger.LogWarning("The installer folder {Folder} is still in use, so the installer runs from {Alternative}.", folder, alternative);
+        _services.Logger.LogWarning(
+            "The installer folder {Folder} is still in use, so the installer runs from {Alternative}.", folder,
+            alternative);
         return alternative;
     }
 
@@ -527,13 +555,15 @@ public sealed class UpdateManager : IDisposable
         }
     }
 
-    private bool IsAbsolutePath(string? path) => !string.IsNullOrWhiteSpace(path) && _fileSystem.Path.IsPathRooted(path);
+    private bool IsAbsolutePath(string? path) =>
+        !string.IsNullOrWhiteSpace(path) && _fileSystem.Path.IsPathRooted(path);
 
     /// <summary>The <c>.app</c> folder of an executable in <c>…/MyApp.app/Contents/MacOS/</c>, or <c>null</c>.</summary>
     internal static string? FindBundle(string executablePath)
     {
         var parts = executablePath.Split('/');
-        if (parts.Length < 4 || parts[parts.Length - 2] != "MacOS" || parts[parts.Length - 3] != "Contents" || !parts[parts.Length - 4].EndsWith(".app", StringComparison.OrdinalIgnoreCase))
+        if (parts.Length < 4 || parts[parts.Length - 2] != "MacOS" || parts[parts.Length - 3] != "Contents" ||
+            !parts[parts.Length - 4].EndsWith(".app", StringComparison.OrdinalIgnoreCase))
             return null;
         return string.Join("/", parts, 0, parts.Length - 3);
     }
@@ -545,7 +575,8 @@ public sealed class UpdateManager : IDisposable
             return null;
         if (!_fileSystem.File.Exists(InstallerIcon))
         {
-            _services.Logger.LogWarning("The installer icon {Path} does not exist; the installer shows its own.", InstallerIcon);
+            _services.Logger.LogWarning("The installer icon {Path} does not exist; the installer shows its own.",
+                InstallerIcon);
             return null;
         }
 
@@ -560,15 +591,18 @@ public sealed class UpdateManager : IDisposable
     private static UpdateVersion ParseDeclaredVersion(string? declaredVersion)
     {
         if (declaredVersion is null)
-            throw new InvalidOperationException($"No current version was given and the entry assembly has no {nameof(ApplicationVersionAttribute)}.");
+            throw new InvalidOperationException(
+                $"No current version was given and the entry assembly has no {nameof(ApplicationVersionAttribute)}.");
         if (!UpdateVersion.TryParse(declaredVersion, out var version))
-            throw new InvalidOperationException($"The {nameof(ApplicationVersionAttribute)} of the entry assembly declares \"{declaredVersion}\", which is not a valid version. {UpdateVersion.FormatDescription}");
+            throw new InvalidOperationException(
+                $"The {nameof(ApplicationVersionAttribute)} of the entry assembly declares \"{declaredVersion}\", which is not a valid version. {UpdateVersion.FormatDescription}");
         return version!;
     }
 
     /// <summary>An absolute http(s) URL as it is, anything else (including a root-relative path, which Unix would take for a file URI) relative to the feed.</summary>
     private Uri Resolve(string path) =>
-        Uri.TryCreate(path, UriKind.Absolute, out var absolute) && (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps)
+        Uri.TryCreate(path, UriKind.Absolute, out var absolute) &&
+        (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps)
             ? absolute
             : new Uri(FeedUri, path);
 
@@ -580,11 +614,14 @@ public sealed class UpdateManager : IDisposable
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (!_fileSystem.File.Exists(pair.Value))
-                throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Texts.PackageFileNotFound, pair.Key), pair.Value);
+                throw new FileNotFoundException(
+                    string.Format(CultureInfo.CurrentCulture, Texts.PackageFileNotFound, pair.Key), pair.Value);
 
             var file = _packageFiles[pair.Key];
-            if (!string.Equals(file.Signature.Algorithm, PackageSignature.RsaPssSha512, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidFeedException($"The package \"{pair.Key}\" is signed with \"{file.Signature.Algorithm}\", which this nUpdate does not verify.");
+            if (!string.Equals(file.Signature.Algorithm, PackageSignature.RsaPssSha512,
+                    StringComparison.OrdinalIgnoreCase))
+                throw new InvalidFeedException(
+                    $"The package \"{pair.Key}\" is signed with \"{file.Signature.Algorithm}\", which this nUpdate does not verify.");
 
             byte[] signature;
             try
@@ -663,17 +700,22 @@ public sealed class UpdateManager : IDisposable
 
     private async Task ReportDownloadAsync(PackageInfo package, CancellationToken cancellationToken)
     {
-        if (!ReportDownloads || package.Statistics is not { Enabled: true } statistics || string.IsNullOrWhiteSpace(statistics.Url))
+        if (!ReportDownloads || package.Statistics is not { Enabled: true } statistics ||
+            string.IsNullOrWhiteSpace(statistics.Url))
             return;
 
-        var report = new DownloadReport(_feed!.ProjectId, package.Version, _services.SystemInformation.OperatingSystemName);
+        var report = new DownloadReport(_feed!.ProjectId, package.Version,
+            _services.SystemInformation.OperatingSystemName);
         try
         {
-            await StatisticsApi.ReportDownloadAsync(GetHttpClient(), Resolve(statistics.Url), report, cancellationToken).ConfigureAwait(false);
+            await StatisticsApi.ReportDownloadAsync(GetHttpClient(), Resolve(statistics.Url), report, cancellationToken)
+                .ConfigureAwait(false);
         }
-        catch (Exception ex) when (ex is HttpRequestException or UriFormatException or NotSupportedException || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+        catch (Exception ex) when (ex is HttpRequestException or UriFormatException or NotSupportedException ||
+                                   (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
         {
-            _services.Logger.LogWarning(ex, "The download of {Version} could not be reported to {Endpoint}.", package.Version, statistics.Url);
+            _services.Logger.LogWarning(ex, "The download of {Version} could not be reported to {Endpoint}.",
+                package.Version, statistics.Url);
         }
     }
 
@@ -681,7 +723,8 @@ public sealed class UpdateManager : IDisposable
     {
         _fileSystem.Directory.CreateDirectory(target);
         foreach (var file in _fileSystem.Directory.GetFiles(source))
-            _fileSystem.File.Copy(file, _fileSystem.Path.Combine(target, _fileSystem.Path.GetFileName(file)), overwrite: true);
+            _fileSystem.File.Copy(file, _fileSystem.Path.Combine(target, _fileSystem.Path.GetFileName(file)),
+                overwrite: true);
         foreach (var directory in _fileSystem.Directory.GetDirectories(source))
             CopyDirectory(directory, _fileSystem.Path.Combine(target, _fileSystem.Path.GetFileName(directory)));
     }
@@ -733,7 +776,8 @@ public sealed class UpdateManager : IDisposable
     internal string UserAgent()
     {
         var library = typeof(UpdateManager).Assembly.GetName().Version!.ToString(2);
-        return $"{_services.ApplicationInfo.UserAgentProduct} ({_services.SystemInformation.OperatingSystemName}; {Platform}; nUpdate/{library})";
+        return
+            $"{_services.ApplicationInfo.UserAgentProduct} ({_services.SystemInformation.OperatingSystemName}; {Platform}; nUpdate/{library})";
     }
 
     private void ThrowIfDisposed()

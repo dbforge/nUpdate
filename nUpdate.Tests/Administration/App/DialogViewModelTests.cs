@@ -34,16 +34,20 @@ public class DialogViewModelTests
         viewModel.CancelCommand.Execute(null);
         accepted.ShouldBe([false]);
 
-        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>())
-            .ThrowsAsync(new PipelineException("step", new IOException("disk"), [new InvalidOperationException("undo")]));
+        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(),
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(
+                new PipelineException("step", new IOException("disk"), [new InvalidOperationException("undo")]));
         await viewModel.CreateCommand.ExecuteAsync(null);
         viewModel.ErrorMessage!.ShouldContain("disk");
         viewModel.ErrorMessage!.ShouldContain("Rolling back failed too: undo");
         viewModel.IsBusy.ShouldBeFalse();
         DialogViewModel.Describe(new InvalidOperationException("plain")).ShouldBe("plain");
-        DialogViewModel.Describe(new ArgumentException("A project named \"X\" already exists.", "newName")).ShouldBe("A project named \"X\" already exists.");
+        DialogViewModel.Describe(new ArgumentException("A project named \"X\" already exists.", "newName"))
+            .ShouldBe("A project named \"X\" already exists.");
         DialogViewModel.Describe(new ArgumentException("no parameter")).ShouldBe("no parameter");
-        DialogViewModel.Describe(new PipelineException("s", new IOException("io"), [])).ShouldNotContain("Rolling back");
+        DialogViewModel.Describe(new PipelineException("s", new IOException("io"), []))
+            .ShouldNotContain("Rolling back");
         Should.Throw<ArgumentNullException>(() => DialogViewModel.Describe(null!));
         Should.Throw<ArgumentNullException>(() => new ViewModelFactory(null!));
     }
@@ -53,7 +57,8 @@ public class DialogViewModelTests
     {
         var viewModel = ReadyWizard();
         var blocker = new TaskCompletionSource<ProjectLoadResult>();
-        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(), Arg.Any<CancellationToken>()).Returns(blocker.Task);
+        _context.Projects.CreateAsync(Arg.Any<NewProjectRequest>(), Arg.Any<IProgress<PipelineProgress>>(),
+            Arg.Any<CancellationToken>()).Returns(blocker.Task);
         viewModel.CancelCommand.CanExecute(null).ShouldBeTrue();
 
         var create = viewModel.CreateCommand.ExecuteAsync(null);

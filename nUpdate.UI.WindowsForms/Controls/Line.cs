@@ -1,6 +1,3 @@
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace nUpdate.UI.WindowsForms.Controls;
 
 /// <summary>A thin separator line.</summary>
