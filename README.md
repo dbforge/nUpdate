@@ -6,7 +6,7 @@
 
 **Signed, self-hosted updates for .NET applications**
 
-[![CI](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml/badge.svg)](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml) [![Release](https://img.shields.io/badge/release-v5.0-blue.svg)](https://github.com/dbforge/nUpdate/releases) [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%2010-512BD4.svg)](#requirements) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
+[![CI](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml/badge.svg)](https://github.com/dbforge/nUpdate/actions/workflows/ci.yml) [![Release](https://img.shields.io/badge/release-v5.0.0--rc.1-orange.svg)](https://github.com/dbforge/nUpdate/releases) [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%2010-512BD4.svg)](#requirements) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dominic%2ebeger%40hotmail%2ede&lc=DE&item_name=nUpdate&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 [Features](#features) · [Installation](#installation) · [Usage](#usage) · [Examples](#examples) · [Migrating to 5.0](#migrating-to-50) · [Building](BUILDING.md)
 
