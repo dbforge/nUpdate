@@ -16,6 +16,7 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="System.Security.Cryptography.Cng" />
+    <PackageReference Include="System.Formats.Asn1"/>
   </ItemGroup>
 
   <ItemGroup>
