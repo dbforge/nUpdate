@@ -8,34 +8,33 @@ public interface IStatisticsApi
     /// <summary>Checks that the endpoint answers with API version 2 and that the database is reachable.</summary>
     Task VerifyAsync(StatisticsEndpoint endpoint, CancellationToken cancellationToken = default);
 
-    Task RegisterVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version, CancellationToken cancellationToken = default);
+    Task RegisterVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version,
+        CancellationToken cancellationToken = default);
 
-    Task DeleteVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version, CancellationToken cancellationToken = default);
+    Task DeleteVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Removes every version and download of the project.</summary>
     Task DeleteProjectAsync(StatisticsEndpoint endpoint, Guid projectId, CancellationToken cancellationToken = default);
 
-    Task<ProjectStatistics> GetStatisticsAsync(StatisticsEndpoint endpoint, Guid projectId, CancellationToken cancellationToken = default);
+    Task<ProjectStatistics> GetStatisticsAsync(StatisticsEndpoint endpoint, Guid projectId,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>Where the statistics API lives and how to authenticate, plus the project whose proxy and HTTP authentication the requests go through.</summary>
-public sealed class StatisticsEndpoint
+public sealed class StatisticsEndpoint(
+    Uri uri,
+    string adminSecret,
+    Models.UpdateProject project,
+    Models.ProjectSecrets secrets)
 {
-    public StatisticsEndpoint(Uri uri, string adminSecret, Models.UpdateProject project, Models.ProjectSecrets secrets)
-    {
-        Uri = uri ?? throw new ArgumentNullException(nameof(uri));
-        AdminSecret = adminSecret ?? throw new ArgumentNullException(nameof(adminSecret));
-        Project = project ?? throw new ArgumentNullException(nameof(project));
-        Secrets = secrets ?? throw new ArgumentNullException(nameof(secrets));
-    }
+    public Uri Uri { get; } = uri ?? throw new ArgumentNullException(nameof(uri));
 
-    public Uri Uri { get; }
+    public string AdminSecret { get; } = adminSecret ?? throw new ArgumentNullException(nameof(adminSecret));
 
-    public string AdminSecret { get; }
+    public Models.UpdateProject Project { get; } = project ?? throw new ArgumentNullException(nameof(project));
 
-    public Models.UpdateProject Project { get; }
-
-    public Models.ProjectSecrets Secrets { get; }
+    public Models.ProjectSecrets Secrets { get; } = secrets ?? throw new ArgumentNullException(nameof(secrets));
 }
 
 /// <summary>Download statistics of one project.</summary>

@@ -13,12 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
+    <ProjectReference Include="../nUpdate/nUpdate.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <!-- Renders the update dialog for the README. -->
-    <InternalsVisibleTo Include="WinFormsScreenshots" />
+    <InternalsVisibleTo Include="WinFormsScreenshots"/>
   </ItemGroup>
 
 </Project>

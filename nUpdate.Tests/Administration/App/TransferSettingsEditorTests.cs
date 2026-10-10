@@ -53,7 +53,8 @@ public class TransferSettingsEditorTests
             PluginAssemblyPath = null,
             Proxy = new ProxySettings { Address = "http://proxy", Username = "pu" },
         };
-        editor.Load(settings, new ProjectSecrets { TransferPassword = "pw", SftpKeyPassphrase = "pass", ProxyPassword = "pp" });
+        editor.Load(settings,
+            new ProjectSecrets { TransferPassword = "pw", SftpKeyPassphrase = "pass", ProxyPassword = "pp" });
 
         editor.IsSftp.ShouldBeTrue();
         editor.IsFtp.ShouldBeFalse();
@@ -102,7 +103,13 @@ public class TransferSettingsEditorTests
     public void TransferEditor_LoadsSettingsWithoutOptionalParts()
     {
         var editor = _context.Factory.Create<TransferSettingsEditorViewModel>();
-        editor.Load(new TransferSettings { Protocol = TransferProtocol.Plugin, PluginAssemblyPath = "/p.dll", Proxy = new ProxySettings { Address = "http://p" } }, new ProjectSecrets());
+        editor.Load(
+            new TransferSettings
+            {
+                Protocol = TransferProtocol.Plugin,
+                PluginAssemblyPath = "/p.dll",
+                Proxy = new ProxySettings { Address = "http://p" }
+            }, new ProjectSecrets());
         editor.PluginAssemblyPath.ShouldBe("/p.dll");
         editor.SftpPrivateKeyPath.ShouldBe("");
         editor.Password.ShouldBe("");
@@ -188,15 +195,21 @@ public class TransferSettingsEditorTests
         editor.TestResult.ShouldBe("Connection successful.");
         editor.IsTesting.ShouldBeFalse();
 
-        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(), Arg.Any<CancellationToken>())
+        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(),
+                Arg.Any<CancellationToken>())
             .ThrowsAsync(new TransferException("refused"));
         (await editor.TestConnectionAsync()).ShouldBeFalse();
         editor.TestResult.ShouldBe("refused");
 
         var calls = 0;
-        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(), Arg.Any<CancellationToken>())
-            .Returns(_ => calls++ == 0 ? Task.FromException(new UntrustedServerException("unknown", "abc", "CN=h")) : Task.CompletedTask);
-        _context.Dialogs.ConfirmAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(),
+                Arg.Any<CancellationToken>())
+            .Returns(_ =>
+                calls++ == 0
+                    ? Task.FromException(new UntrustedServerException("unknown", "abc", "CN=h"))
+                    : Task.CompletedTask);
+        _context.Dialogs.ConfirmAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(true);
         (await editor.TestConnectionAsync()).ShouldBeTrue();
         editor.TrustedCertificateFingerprint.ShouldBe("abc");
 
@@ -206,12 +219,14 @@ public class TransferSettingsEditorTests
         editor.TrustedHostKeyFingerprint.ShouldBe("abc");
 
         calls = 0;
-        _context.Dialogs.ConfirmAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+        _context.Dialogs.ConfirmAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(false);
         (await editor.TestConnectionAsync()).ShouldBeFalse();
         editor.TestResult.ShouldBe("The host key was not trusted.");
 
         // Without a fingerprint there is nothing to trust; the exception is reported like any other transfer error.
-        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(), Arg.Any<CancellationToken>())
+        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(),
+                Arg.Any<CancellationToken>())
             .ThrowsAsync(new UntrustedServerException("no fingerprint"));
         (await editor.TestConnectionAsync()).ShouldBeFalse();
         editor.TestResult.ShouldBe("no fingerprint");
@@ -224,7 +239,8 @@ public class TransferSettingsEditorTests
         editor.Host = "h";
         editor.Username = "u";
         editor.Password = "p";
-        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(), Arg.Any<CancellationToken>())
+        _context.Projects.TestConnectionAsync(Arg.Any<TransferSettings>(), Arg.Any<TransferCredentials>(),
+                Arg.Any<CancellationToken>())
             .ThrowsAsync(new ArgumentException("bad proxy"));
         (await editor.TestConnectionAsync()).ShouldBeFalse();
         editor.TestResult.ShouldBe("bad proxy");

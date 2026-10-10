@@ -31,27 +31,39 @@ public sealed class PackageBuilder : IPackageBuilder
         _isWindows = isWindows;
     }
 
-    public async Task<PackageManifest> BuildAsync(PlatformPackage package, UpdateVersion version, Guid projectId, string packagePath, CancellationToken cancellationToken = default)
+    public async Task<PackageManifest> BuildAsync(PlatformPackage package, UpdateVersion version, Guid projectId,
+        string packagePath, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(version);
         ArgumentException.ThrowIfNullOrWhiteSpace(packagePath);
 
-        var duplicates = package.Files.GroupBy(f => f.EntryName, StringComparer.OrdinalIgnoreCase).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        var duplicates = package.Files.GroupBy(f => f.EntryName, StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         if (duplicates.Count > 0)
-            throw new InvalidOperationException($"The {package.Platform} package contains the entry \"{duplicates[0]}\" more than once.");
+            throw new InvalidOperationException(
+                $"The {package.Platform} package contains the entry \"{duplicates[0]}\" more than once.");
         var entries = new List<(PackageFileEntry File, int Mode)>();
         foreach (var file in package.Files)
         {
             if (!_fileSystem.File.Exists(file.SourcePath))
-                throw new FileNotFoundException($"The file \"{file.SourcePath}\" for package entry \"{file.EntryName}\" does not exist.", file.SourcePath);
+                throw new FileNotFoundException(
+                    $"The file \"{file.SourcePath}\" for package entry \"{file.EntryName}\" does not exist.",
+                    file.SourcePath);
             if (_fileSystem.FileInfo.New(file.SourcePath).LinkTarget is not null)
                 throw new InvalidOperationException(
                     $"\"{file.SourcePath}\" is a symbolic link. Packages cannot contain links; add the file it points to instead.");
             entries.Add((file, file.UnixMode ?? UnixModeDetector.Detect(_fileSystem, file.SourcePath, _isWindows)));
         }
 
-        var manifest = new PackageManifest { ProjectId = projectId, Version = version, Platform = package.Platform, CreatedAt = _now(), Operations = package.Operations.ToList() };
+        var manifest = new PackageManifest
+        {
+            ProjectId = projectId,
+            Version = version,
+            Platform = package.Platform,
+            CreatedAt = _now(),
+            Operations = package.Operations.ToList()
+        };
         var manifestJson = Serializer.Serialize(manifest, indented: true);
 
         var directory = _fileSystem.Path.GetDirectoryName(packagePath);
@@ -73,11 +85,14 @@ public sealed class PackageBuilder : IPackageBuilder
 
             var manifestEntry = archive.CreateEntry(PackageLayout.ManifestFileName, CompressionLevel.Optimal);
             using var manifestStream = manifestEntry.Open();
-            await manifestStream.WriteAsync(Encoding.UTF8.GetBytes(manifestJson), cancellationToken).ConfigureAwait(false);
+            await manifestStream.WriteAsync(Encoding.UTF8.GetBytes(manifestJson), cancellationToken)
+                .ConfigureAwait(false);
         }
 
         if (!string.IsNullOrEmpty(directory))
-            await _fileSystem.File.WriteAllTextAsync(_fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName), manifestJson, cancellationToken).ConfigureAwait(false);
+            await _fileSystem.File
+                .WriteAllTextAsync(_fileSystem.Path.Combine(directory, PackageLayout.ManifestFileName), manifestJson,
+                    cancellationToken).ConfigureAwait(false);
         return manifest;
     }
 }

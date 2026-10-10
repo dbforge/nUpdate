@@ -32,7 +32,10 @@ public sealed class UpdateTexts
     public string InstallerCopying { get; set; } = "Copying {0}...";
     public string InstallerInitializingError { get; set; } = "Error while initializing the installer.";
     public string InstallerUpdatingError { get; set; } = "Error while updating the application.";
-    public string InstallerFileInUse { get; set; } = "The installer cannot overwrite the file '{0}' because it is being used by another process. Close the applications that block it and try again.";
+
+    public string InstallerFileInUse { get; set; } =
+        "The installer cannot overwrite the file '{0}' because it is being used by another process. Close the applications that block it and try again.";
+
     public string RenamingFile { get; set; } = "Renaming file \"{0}\" to \"{1}\"...";
     public string DeletingFile { get; set; } = "Deleting file \"{0}\"...";
     public string CreatingRegistryKey { get; set; } = "Creating registry subkey \"{0}\"...";
@@ -55,11 +58,22 @@ public sealed class UpdateTexts
     public string VerificationError { get; set; } = "Error while checking the package's signature.";
     public string PackageNotFound { get; set; } = "The package file couldn't be found.";
     public string InvalidSignatureTitle { get; set; } = "Invalid signature data found.";
-    public string InvalidSignatureInfo { get; set; } = "nUpdate will cancel the installation of the update packages and delete them unrecoverably.";
-    public string InvalidSignatureData { get; set; } = "The signature of the update package is not a valid RSA-signature.";
+
+    public string InvalidSignatureInfo { get; set; } =
+        "nUpdate will cancel the installation of the update packages and delete them unrecoverably.";
+
+    public string InvalidSignatureData { get; set; } =
+        "The signature of the update package is not a valid RSA-signature.";
+
     public string PackageFileNotFound { get; set; } = "The update package of version \"{0}\" could not be found.";
     public string NotEnoughDiskSpaceTitle { get; set; } = "Not enough disk space.";
-    public string NotEnoughDiskSpaceInfo { get; set; } = "You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({0}). Please free a minimum of {1} to make sure the updates can be downloaded and installed without any problems.";
-    public string InstallerNotFound { get; set; } = "The update installer was not found at \"{0}\". Reference the nUpdate.UpdateInstaller.UI.Avalonia package or set InstallerPath to your own installer.";
-    public string NoWriteAccess { get; set; } = "{0} cannot be updated because this user may not change the files in \"{1}\". Ask an administrator to install the update or to give you write access to the folder.";
+
+    public string NotEnoughDiskSpaceInfo { get; set; } =
+        "You don't have enough disk space left on your drive and nUpdate is not able to download and install the available updates ({0}). Please free a minimum of {1} to make sure the updates can be downloaded and installed without any problems.";
+
+    public string InstallerNotFound { get; set; } =
+        "The update installer was not found at \"{0}\". Reference the nUpdate.UpdateInstaller.UI.Avalonia package or set InstallerPath to your own installer.";
+
+    public string NoWriteAccess { get; set; } =
+        "{0} cannot be updated because this user may not change the files in \"{1}\". Ask an administrator to install the update or to give you write access to the folder.";
 }

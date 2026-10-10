@@ -41,21 +41,21 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">
-    <PackageReference Include="xunit.v3.mtp-v2" />
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
-    <PackageReference Include="NSubstitute" />
-    <PackageReference Include="Shouldly" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
-    <Using Include="NSubstitute" />
-    <Using Include="NSubstitute.ExceptionExtensions" />
-    <Using Include="Shouldly" />
-    <Using Include="Xunit" />
+    <PackageReference Include="xunit.v3.mtp-v2"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
+    <PackageReference Include="NSubstitute"/>
+    <PackageReference Include="Shouldly"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers"/>
+    <Using Include="NSubstitute"/>
+    <Using Include="NSubstitute.ExceptionExtensions"/>
+    <Using Include="Shouldly"/>
+    <Using Include="Xunit"/>
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsPackable)' == 'true'">
-    <None Include="$(MSBuildThisFileDirectory)assets/nupdate-icon.png" Pack="true" PackagePath="/" Visible="false" />
-    <None Include="$(MSBuildThisFileDirectory)docs/nuget/README.md" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)assets/nupdate-icon.png" Pack="true" PackagePath="/" Visible="false"/>
+    <None Include="$(MSBuildThisFileDirectory)docs/nuget/README.md" Pack="true" PackagePath="/" Visible="false"/>
   </ItemGroup>
 
 </Project>

@@ -9,16 +9,16 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModel:UpdateSearchViewModel}">
-            <views:UpdateSearchView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:ChangelogViewModel}">
-            <views:ChangelogView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:DownloadUpdateViewModel}">
-            <views:DownloadUpdateView />
-        </DataTemplate>
-    </Window.Resources>
-    <ContentPresenter Content="{Binding}" />
+  <Window.Resources>
+    <DataTemplate DataType="{x:Type viewModel:UpdateSearchViewModel}">
+      <views:UpdateSearchView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModel:ChangelogViewModel}">
+      <views:ChangelogView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModel:DownloadUpdateViewModel}">
+      <views:DownloadUpdateView />
+    </DataTemplate>
+  </Window.Resources>
+  <ContentPresenter Content="{Binding}" />
 </Window>

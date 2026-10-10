@@ -52,16 +52,22 @@ public class InstallerOptionsReaderTests
     [InlineData(99, "newer")]
     public void Parse_RejectsOtherFormats(int format, string hint)
     {
-        Should.Throw<UnsupportedFormatException>(() => InstallerOptionsReader.Parse(Valid(o => o.Format = format))).Message.ShouldContain(hint);
+        Should.Throw<UnsupportedFormatException>(() => InstallerOptionsReader.Parse(Valid(o => o.Format = format)))
+            .Message.ShouldContain(hint);
     }
 
     [Fact]
     public void Parse_RejectsIncompleteOptions()
     {
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Packages.Clear()))).Message.ShouldContain("no packages");
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Packages[0].Path = " "))).Message.ShouldContain("without a path");
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Application.Directory = ""))).Message.ShouldContain("application directory");
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Application.ExecutablePath = ""))).Message.ShouldContain("executable");
+        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Packages.Clear()))).Message
+            .ShouldContain("no packages");
+        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Packages[0].Path = " ")))
+            .Message.ShouldContain("without a path");
+        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o => o.Application.Directory = "")))
+            .Message.ShouldContain("application directory");
+        Should.Throw<InvalidDataException>(() =>
+                InstallerOptionsReader.Parse(Valid(o => o.Application.ExecutablePath = ""))).Message
+            .ShouldContain("executable");
         Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse(Valid(o =>
         {
             o.Application.ExecutablePath = "";
@@ -78,9 +84,9 @@ public class InstallerOptionsReaderTests
     public void Parse_TreatsExplicitNullSectionsAsDefaults()
     {
         var options = InstallerOptionsReader.Parse("""
-            {"format":2,"packages":[{"path":"/p/1.0.0.zip"}],"application":{"directory":"/app","executablePath":"/app/a.exe"},
-             "host":null,"arguments":null,"ui":null,"texts":null}
-            """);
+                                                   {"format":2,"packages":[{"path":"/p/1.0.0.zip"}],"application":{"directory":"/app","executablePath":"/app/a.exe"},
+                                                    "host":null,"arguments":null,"ui":null,"texts":null}
+                                                   """);
         options.Host.AfterInstall.ShouldBe(AfterInstall.Restart);
         options.Host.ProcessId.ShouldBeNull();
         options.Arguments.ShouldBeEmpty();
@@ -88,11 +94,14 @@ public class InstallerOptionsReaderTests
         options.Texts.ShouldBeEmpty();
         options.Text(InstallerText.Copying).ShouldBe("Copying {0}...");
 
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse("""{"format":2,"packages":null,"application":null}"""))
+        Should.Throw<InvalidDataException>(() =>
+                InstallerOptionsReader.Parse("""{"format":2,"packages":null,"application":null}"""))
             .Message.ShouldContain("no packages");
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse("""{"format":2,"packages":[null],"application":null}"""))
+        Should.Throw<InvalidDataException>(() =>
+                InstallerOptionsReader.Parse("""{"format":2,"packages":[null],"application":null}"""))
             .Message.ShouldContain("without a path");
-        Should.Throw<InvalidDataException>(() => InstallerOptionsReader.Parse("""{"format":2,"packages":[{"path":"/p/1.zip"}],"application":null}"""))
+        Should.Throw<InvalidDataException>(() =>
+                InstallerOptionsReader.Parse("""{"format":2,"packages":[{"path":"/p/1.zip"}],"application":null}"""))
             .Message.ShouldContain("application directory");
     }
 
@@ -100,13 +109,14 @@ public class InstallerOptionsReaderTests
     public void Parse_ReadsCamelCaseEnumsAndArguments()
     {
         var options = InstallerOptionsReader.Parse("""
-            {"format":2,"packages":[{"path":"/p/1.0.0.zip"}],"application":{"name":"App","directory":"/app","executablePath":""},
-             "host":{"processId":12,"afterInstall":"keepRunning"},"arguments":[{"value":"--a","when":"failed"},{"value":"--b","when":"always"}],
-             "ui":{"showWindow":false,"accentColor":"#123456"},"texts":{"Copying":"Kopiere {0}..."}}
-            """);
+                                                   {"format":2,"packages":[{"path":"/p/1.0.0.zip"}],"application":{"name":"App","directory":"/app","executablePath":""},
+                                                    "host":{"processId":12,"afterInstall":"keepRunning"},"arguments":[{"value":"--a","when":"failed"},{"value":"--b","when":"always"}],
+                                                    "ui":{"showWindow":false,"accentColor":"#123456"},"texts":{"Copying":"Kopiere {0}..."}}
+                                                   """);
         options.Host.ProcessId.ShouldBe(12);
         options.Host.AfterInstall.ShouldBe(AfterInstall.KeepRunning);
-        options.Arguments.Select(a => (a.Value, a.When)).ShouldBe([("--a", ArgumentCondition.Failed), ("--b", ArgumentCondition.Always)]);
+        options.Arguments.Select(a => (a.Value, a.When))
+            .ShouldBe([("--a", ArgumentCondition.Failed), ("--b", ArgumentCondition.Always)]);
         options.Ui.ShowWindow.ShouldBeFalse();
         options.Ui.AccentColor.ShouldBe("#123456");
         options.Text(InstallerText.Copying).ShouldBe("Kopiere {0}...");

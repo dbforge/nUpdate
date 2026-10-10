@@ -11,7 +11,8 @@ public class ZipPackageExtractorTests
     [Fact]
     public void Extract_WritesEntriesAndDirectoriesThroughFileSystem()
     {
-        var zip = TestInstallerServices.BuildZip(new Dictionary<string, string> { ["Program/app.dll"] = "new", ["Program/sub/x.txt"] = "x", ["empty/"] = "" });
+        var zip = TestInstallerServices.BuildZip(new Dictionary<string, string>
+        { ["Program/app.dll"] = "new", ["Program/sub/x.txt"] = "x", ["empty/"] = "" });
         var fs = _services.FileSystem;
         fs.AddFile("/pkg/1.0.zip", new MockFileData(zip));
         new ZipPackageExtractor(fs, _services.FilePermissions).Extract("/pkg/1.0.zip", "/out/1.0/");
@@ -23,14 +24,18 @@ public class ZipPackageExtractorTests
     [Fact]
     public void Extract_RestoresTheStoredUnixModes()
     {
-        var files = new Dictionary<string, string> { ["Program/app"] = "elf", ["Program/readme.txt"] = "text", ["Program/legacy.dll"] = "dll" };
-        var modes = new Dictionary<string, int> { ["Program/app"] = 0x81ED /* regular file 0755 */, ["Program/readme.txt"] = 0x1A4 /* 0644 */ };
+        var files = new Dictionary<string, string>
+        { ["Program/app"] = "elf", ["Program/readme.txt"] = "text", ["Program/legacy.dll"] = "dll" };
+        var modes = new Dictionary<string, int>
+        { ["Program/app"] = 0x81ED /* regular file 0755 */, ["Program/readme.txt"] = 0x1A4 /* 0644 */ };
         var fs = _services.FileSystem;
         fs.AddFile("/pkg/1.0.zip", new MockFileData(TestInstallerServices.BuildZip(files, modes: modes)));
         new ZipPackageExtractor(fs, _services.FilePermissions).Extract("/pkg/1.0.zip", "/out");
 
-        _services.FilePermissions.Received(1).SetMode(fs.Path.Combine(fs.Path.GetFullPath("/out"), "Program", "app"), 0x1ED);
-        _services.FilePermissions.Received(1).SetMode(fs.Path.Combine(fs.Path.GetFullPath("/out"), "Program", "readme.txt"), 0x1A4);
+        _services.FilePermissions.Received(1)
+            .SetMode(fs.Path.Combine(fs.Path.GetFullPath("/out"), "Program", "app"), 0x1ED);
+        _services.FilePermissions.Received(1)
+            .SetMode(fs.Path.Combine(fs.Path.GetFullPath("/out"), "Program", "readme.txt"), 0x1A4);
         _services.FilePermissions.ReceivedCalls().Count().ShouldBe(2); // an entry without a mode keeps the default
     }
 
@@ -44,7 +49,8 @@ public class ZipPackageExtractorTests
         var zip = TestInstallerServices.BuildZip(new Dictionary<string, string> { [entry] = "x" });
         var fs = _services.FileSystem;
         fs.AddFile("/pkg/bad.zip", new MockFileData(zip));
-        Should.Throw<InvalidDataException>(() => new ZipPackageExtractor(fs, _services.FilePermissions).Extract("/pkg/bad.zip", "/out/1.0"));
+        Should.Throw<InvalidDataException>(() =>
+            new ZipPackageExtractor(fs, _services.FilePermissions).Extract("/pkg/bad.zip", "/out/1.0"));
         fs.AllFiles.Count(f => f.Contains("evil", StringComparison.Ordinal)).ShouldBe(0);
     }
 

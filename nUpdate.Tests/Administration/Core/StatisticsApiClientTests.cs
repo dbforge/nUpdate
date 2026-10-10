@@ -14,7 +14,9 @@ public sealed class StatisticsApiClientTests : IDisposable
     private readonly StubHttpMessageHandler _http = new();
     private readonly Guid _projectId = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
-    private static readonly UpdateProject Project = new() { Name = "Demo", UpdateUrl = "https://updates.example.com/demo/" };
+    private static readonly UpdateProject Project = new()
+    { Name = "Demo", UpdateUrl = "https://updates.example.com/demo/" };
+
     private static readonly ProjectSecrets Secrets = new();
 
     private StatisticsApiClient Client => new(new ProjectHttpClientFactory(_http));
@@ -27,9 +29,12 @@ public sealed class StatisticsApiClientTests : IDisposable
     public async Task StatisticsApiClient_UsesRestRoutesWithBearer()
     {
         _http.Text(HttpMethod.Get, Base, """{"api":"nupdate-statistics","version":2}""");
-        _http.On(r => r.Method == HttpMethod.Put, (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent)));
-        _http.On(r => r.Method == HttpMethod.Delete, (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent)));
-        _http.Text(HttpMethod.Get, $"{Base}/projects/{_projectId}/statistics", """{"total":3,"versions":[{"version":"1.0.0","downloads":3,"byOperatingSystem":{"Windows 11":2,"Linux":1}}]}""");
+        _http.On(r => r.Method == HttpMethod.Put,
+            (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent)));
+        _http.On(r => r.Method == HttpMethod.Delete,
+            (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent)));
+        _http.Text(HttpMethod.Get, $"{Base}/projects/{_projectId}/statistics",
+            """{"total":3,"versions":[{"version":"1.0.0","downloads":3,"byOperatingSystem":{"Windows 11":2,"Linux":1}}]}""");
 
         await Client.VerifyAsync(Secured);
         await Client.RegisterVersionAsync(Secured, _projectId, new UpdateVersion("1.0.0-beta.1+build.7"));
@@ -47,14 +52,16 @@ public sealed class StatisticsApiClientTests : IDisposable
             $"DELETE {Base}/projects/{_projectId}",
             $"GET {Base}/projects/{_projectId}/statistics",
         ]);
-        _http.Requests.ShouldAllBe(r => r.Headers.Authorization!.Scheme == "Bearer" && r.Headers.Authorization.Parameter == "s3cret");
+        _http.Requests.ShouldAllBe(r =>
+            r.Headers.Authorization!.Scheme == "Bearer" && r.Headers.Authorization.Parameter == "s3cret");
         _http.RequestBodies.ShouldAllBe(b => b == "");
     }
 
     [Fact]
     public async Task StatisticsApiClient_ReportsErrors()
     {
-        _http.Text(HttpMethod.Get, Base, """{"error":{"code":"unauthorized","message":"nope"}}""", HttpStatusCode.Unauthorized);
+        _http.Text(HttpMethod.Get, Base, """{"error":{"code":"unauthorized","message":"nope"}}""",
+            HttpStatusCode.Unauthorized);
         var ex = await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured));
         ex.Message.ShouldContain("401");
         ex.Message.ShouldContain("nope");
@@ -73,7 +80,8 @@ public sealed class StatisticsApiClientTests : IDisposable
         empty.Message.ShouldContain("\"error\"");
 
         _http.Text(HttpMethod.Get, Base, """{"api":"other","version":1}""");
-        (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Message.ShouldContain("version 2");
+        (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Message
+            .ShouldContain("version 2");
         _http.Text(HttpMethod.Get, Base, "<html>");
         (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Code.ShouldBeNull();
 
@@ -86,7 +94,8 @@ public sealed class StatisticsApiClientTests : IDisposable
         _http.On(r => r.RequestUri!.ToString() == Base, (_, _) => throw new HttpRequestException("down"));
         (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Message.ShouldContain("down");
         _http.On(r => r.RequestUri!.ToString() == Base, (_, _) => throw new TaskCanceledException("client timeout"));
-        (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Message.ShouldContain("did not respond in time");
+        (await Should.ThrowAsync<StatisticsException>(() => Client.VerifyAsync(Secured))).Message.ShouldContain(
+            "did not respond in time");
         using (var cancelled = new CancellationTokenSource())
         {
             cancelled.Cancel();

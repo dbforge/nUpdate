@@ -18,15 +18,19 @@ public static class LegacyVersion
 
     private static readonly Regex ShortForm = new(
         @"^(?<Numbers>[0-9]+(\.[0-9]+){0,3})" +
-        @"([- ](?<Label>" + Identifier + @"(\." + Identifier + @")*)|(?<Label>[A-Za-z][0-9A-Za-z-]*(\." + Identifier + @")*))?" +
+        @"([- ](?<Label>" + Identifier + @"(\." + Identifier + @")*)|(?<Label>[A-Za-z][0-9A-Za-z-]*(\." + Identifier +
+        @")*))?" +
         @"(\+(?<Meta>" + Identifier + @"(\." + Identifier + @")*))?$",
         RegexOptions.CultureInvariant);
 
     /// <summary>The <c>FullText</c> of nUpdate 4: <c>1.2.0.0 Beta 3</c>, or without a number when it was 0 (<c>1.2.0.0 ReleaseCandidate</c>).</summary>
-    private static readonly Regex LongForm = new(@"^(?<Numbers>[0-9]+(\.[0-9]+){0,3}) (?<Stage>Alpha|Beta|ReleaseCandidate)( (?<Build>[0-9]+))?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex LongForm =
+        new(@"^(?<Numbers>[0-9]+(\.[0-9]+){0,3}) (?<Stage>Alpha|Beta|ReleaseCandidate)( (?<Build>[0-9]+))?$",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     /// <summary>The stage shortcuts of nUpdate 3 and 4 with an optional number: <c>a</c>, <c>b3</c>, <c>rc.1</c>.</summary>
-    private static readonly Regex ClassicStage = new(@"^(?<Stage>a|b|rc)\.?(?<Build>[0-9]+)?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex ClassicStage = new(@"^(?<Stage>a|b|rc)\.?(?<Build>[0-9]+)?$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     /// <summary>Converts a version written by an earlier nUpdate; canonical versions are returned as they are.</summary>
     public static bool TryParse(string? text, [NotNullWhen(true)] out UpdateVersion? version)
@@ -51,7 +55,8 @@ public static class LegacyVersion
 
         var shortForm = ShortForm.Match(text);
         return shortForm.Success
-               && TryCreate(shortForm.Groups["Numbers"].Value, shortForm.Groups["Label"].Success ? shortForm.Groups["Label"].Value : null,
+               && TryCreate(shortForm.Groups["Numbers"].Value,
+                   shortForm.Groups["Label"].Success ? shortForm.Groups["Label"].Value : null,
                    shortForm.Groups["Meta"].Success ? shortForm.Groups["Meta"].Value : null, out version);
     }
 
@@ -59,10 +64,13 @@ public static class LegacyVersion
     public static UpdateVersion Parse(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
-        return TryParse(text, out var version) ? version : throw new InvalidDataException($"\"{text}\" is not a version of nUpdate 3, nUpdate 4 or nUpdate 5.");
+        return TryParse(text, out var version)
+            ? version
+            : throw new InvalidDataException($"\"{text}\" is not a version of nUpdate 3, nUpdate 4 or nUpdate 5.");
     }
 
-    private static bool TryCreate(string numbers, string? label, string? metadata, [NotNullWhen(true)] out UpdateVersion? version)
+    private static bool TryCreate(string numbers, string? label, string? metadata,
+        [NotNullWhen(true)] out UpdateVersion? version)
     {
         version = null;
         var parts = new int[4];
@@ -102,7 +110,8 @@ public static class LegacyVersion
                 return true;
             }
 
-            if (!int.TryParse(classic.Groups["Build"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var build))
+            if (!int.TryParse(classic.Groups["Build"].Value, NumberStyles.None, CultureInfo.InvariantCulture,
+                    out var build))
                 return false;
             normalized = build == 0 ? stage : stage + "." + build.ToString(CultureInfo.InvariantCulture);
             return true;

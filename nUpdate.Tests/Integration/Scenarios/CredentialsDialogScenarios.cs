@@ -6,13 +6,8 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The credentials dialog that appears when a project does not carry its secrets. Unlocking with the project password is in <see cref="PortableProjectScenarios" />.</summary>
-public sealed class CredentialsDialogScenarios : ScenarioTest
+public sealed class CredentialsDialogScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public CredentialsDialogScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     [AvaloniaFact]
     public Task Asks_for_the_credentials_of_a_project_that_does_not_store_them() => Scenario(async () =>
     {

@@ -9,18 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
-    <PackageReference Include="Microsoft.Win32.Registry" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" />
+    <PackageReference Include="Newtonsoft.Json"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
+    <PackageReference Include="Microsoft.Win32.Registry"/>
+    <PackageReference Include="System.ServiceProcess.ServiceController"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
+    <ProjectReference Include="../nUpdate/nUpdate.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="nUpdate.Tests" />
+    <InternalsVisibleTo Include="nUpdate.Tests"/>
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ public sealed class InstallerServices
         FileSystem = new FileSystem();
         PackageExtractor = new ZipPackageExtractor(FileSystem, new FilePermissions());
         EnvironmentInfo = new EnvironmentInfo();
-        DirectorySwap = new DirectorySwap(FileSystem, EnvironmentInfo.IsMacOS);
+        DirectorySwap = new DirectorySwap(FileSystem, EnvironmentInfo.IsMacOs);
     }
 
     public IFileSystem FileSystem { get; set; }

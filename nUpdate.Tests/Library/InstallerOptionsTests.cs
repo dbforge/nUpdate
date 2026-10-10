@@ -11,7 +11,13 @@ public class InstallerOptionsTests
         var options = new InstallerOptions
         {
             Packages = [new InstallerPackage { Path = "/tmp/1.0.0.zip" }],
-            Application = new ApplicationOptions { Name = "App", Directory = "/apps/App.app/Contents/MacOS", ExecutablePath = "/apps/App.app/Contents/MacOS/App", Bundle = "/apps/App.app" },
+            Application = new ApplicationOptions
+            {
+                Name = "App",
+                Directory = "/apps/App.app/Contents/MacOS",
+                ExecutablePath = "/apps/App.app/Contents/MacOS/App",
+                Bundle = "/apps/App.app"
+            },
             Host = new HostOptions { ProcessId = 42, AfterInstall = AfterInstall.Close },
             Arguments = [new InstallerArgument("--updated", ArgumentCondition.Succeeded)],
             Ui = new InstallerUiOptions { ShowWindow = false, IconPath = "/tmp/icon.png", AccentColor = "#336699" },

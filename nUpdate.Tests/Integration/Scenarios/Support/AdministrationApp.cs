@@ -36,7 +36,8 @@ public sealed class AdministrationApp : IDisposable
     public AdministrationApp(IntegrationContext context)
     {
         _context = context;
-        Paths = new AdministrationPaths(new FileSystem(), Path.Combine(context.Root, "app"), Path.Combine(context.Root, "app-projects"));
+        Paths = new AdministrationPaths(new FileSystem(), Path.Combine(context.Root, "app"),
+            Path.Combine(context.Root, "app-projects"));
         Provider = AppServices.Build(Paths, services =>
         {
             services.AddSingleton<IDialogService>(Dialogs);
@@ -106,12 +107,15 @@ public sealed class AdministrationApp : IDisposable
         return new Popup(Dialogs.Open.OfType<MessageWindow>().Last(w => w.IsVisible));
     }
 
-    public Task ClosedAsync(Window window) => User.WaitUntil(() => !window.IsVisible, $"the {window.GetType().Name} to close");
+    public Task ClosedAsync(Window window) =>
+        User.WaitUntil(() => !window.IsVisible, $"the {window.GetType().Name} to close");
 
-    public Task IdleAsync(DialogViewModel viewModel) => User.WaitUntil(() => !viewModel.IsBusy, $"{viewModel.GetType().Name} to finish");
+    public Task IdleAsync(DialogViewModel viewModel) =>
+        User.WaitUntil(() => !viewModel.IsBusy, $"{viewModel.GetType().Name} to finish");
 
     /// <summary>The names in the main window's project list, as shown.</summary>
-    public IReadOnlyList<string> ListedProjects => Main.ProjectList.Items.Cast<ProjectCardViewModel>().Select(p => p.Name).ToList();
+    public IReadOnlyList<string> ListedProjects =>
+        Main.ProjectList.Items.Cast<ProjectCardViewModel>().Select(p => p.Name).ToList();
 
     /// <summary>Transfer settings for the container servers, already trusting their host key or certificate.</summary>
     public async Task<TransferSettings> TrustedTransferAsync(TransferProtocol protocol)
@@ -125,10 +129,13 @@ public sealed class AdministrationApp : IDisposable
     public static TransferCredentials Credentials(TransferProtocol protocol) =>
         protocol == TransferProtocol.Sftp ? IntegrationContext.SftpCredentials : IntegrationContext.FtpCredentials;
 
-    public static string Password(TransferProtocol protocol) => protocol == TransferProtocol.Sftp ? ServerFixture.SftpPassword : ServerFixture.FtpPassword;
+    public static string Password(TransferProtocol protocol) => protocol == TransferProtocol.Sftp
+        ? ServerFixture.SftpPassword
+        : ServerFixture.FtpPassword;
 
     /// <summary>Creates a project with the real services, as a user did in an earlier session.</summary>
-    public async Task<ProjectLoadResult> ExistingProjectAsync(string name, TransferProtocol protocol = TransferProtocol.Sftp, bool statistics = false, bool saveCredentials = true)
+    public async Task<ProjectLoadResult> ExistingProjectAsync(string name,
+        TransferProtocol protocol = TransferProtocol.Sftp, bool statistics = false, bool saveCredentials = true)
     {
         var request = new NewProjectRequest
         {
@@ -136,9 +143,18 @@ public sealed class AdministrationApp : IDisposable
             Folder = ProjectFolder(name),
             UpdateUrl = _context.Server.HttpBaseUrl,
             Transfer = await TrustedTransferAsync(protocol),
-            Secrets = new ProjectSecrets { TransferPassword = Password(protocol), StatisticsDatabasePassword = statistics ? ServerFixture.DbPassword : null },
+            Secrets = new ProjectSecrets
+            {
+                TransferPassword = Password(protocol),
+                StatisticsDatabasePassword = statistics ? ServerFixture.DbPassword : null
+            },
             Statistics = statistics
-                ? new StatisticsSettings { Enabled = true, Database = new StatisticsDatabaseSettings { Host = "mysql", Name = ServerFixture.DbName, Username = ServerFixture.DbUser } }
+                ? new StatisticsSettings
+                {
+                    Enabled = true,
+                    Database = new StatisticsDatabaseSettings
+                    { Host = "mysql", Name = ServerFixture.DbName, Username = ServerFixture.DbUser }
+                }
                 : new StatisticsSettings(),
             ProjectPassword = saveCredentials ? ProjectPassword : null,
             KeySize = 2048,
@@ -150,11 +166,14 @@ public sealed class AdministrationApp : IDisposable
     }
 
     /// <summary>Adds a package to a project with the real services; <paramref name="publish" /> uploads it as well.</summary>
-    public async Task<UpdatePackage> ExistingPackageAsync(ProjectLoadResult project, string version, string description, bool publish)
+    public async Task<UpdatePackage> ExistingPackageAsync(ProjectLoadResult project, string version, string description,
+        bool publish)
     {
         var definition = new PackageDefinition(new UpdateVersion(version));
-        definition.GetOrAddPlatform("any").Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe", _context.WriteFile($"{version}/app.exe", $"version {version}")));
-        var request = new PublishRequest(project.Project, project.Secrets, definition) { Description = description, Publish = publish };
+        definition.GetOrAddPlatform("any").Files.Add(new PackageFileEntry(PackageRoot.Program, "app.exe",
+            _context.WriteFile($"{version}/app.exe", $"version {version}")));
+        var request = new PublishRequest(project.Project, project.Secrets, definition)
+        { Description = description, Publish = publish };
         request.Changelog[new CultureInfo("en")] = $"Changes in {version}.";
         return await Publisher.CreatePackageAsync(request);
     }
@@ -195,20 +214,16 @@ public sealed class AdministrationApp : IDisposable
 #pragma warning restore CA1822
 
 /// <summary>A message box as the user sees it: a title, a message and buttons.</summary>
-public sealed class Popup
+public sealed class Popup(MessageWindow window)
 {
-    public Popup(MessageWindow window)
-    {
-        Window = window;
-    }
-
-    public MessageWindow Window { get; }
+    public MessageWindow Window { get; } = window;
 
     public string Title => Window.Title ?? string.Empty;
 
     public string Message => Window.Message;
 
-    public IReadOnlyList<string> Buttons => Window.GetVisualDescendants().OfType<Button>().Select(b => b.Content?.ToString() ?? string.Empty).ToList();
+    public IReadOnlyList<string> Buttons => Window.GetVisualDescendants().OfType<Button>()
+        .Select(b => b.Content?.ToString() ?? string.Empty).ToList();
 
     public async Task ClickAsync(string button)
     {

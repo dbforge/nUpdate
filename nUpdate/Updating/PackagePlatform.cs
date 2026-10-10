@@ -16,7 +16,7 @@ public static class PackagePlatform
 
     public const string Linux = "linux";
 
-    public const string MacOS = "osx";
+    public const string MacOs = "osx";
 
     /// <summary>Every platform a package can name, each operating system followed by its runtime identifiers.</summary>
     public static IReadOnlyList<string> All { get; } =
@@ -24,7 +24,7 @@ public static class PackagePlatform
         Any,
         Windows, "win-x64", "win-x86", "win-arm64",
         Linux, "linux-x64", "linux-arm64",
-        MacOS, "osx-x64", "osx-arm64",
+        MacOs, "osx-x64", "osx-arm64",
     ];
 
     /// <summary>
@@ -34,7 +34,8 @@ public static class PackagePlatform
     public static string Current { get; } = Identify(CurrentOperatingSystem(), RuntimeInformation.ProcessArchitecture);
 
     /// <summary>Whether the name is one of <see cref="All" />.</summary>
-    public static bool IsKnown(string? platform) => platform is not null && All.Contains(platform, StringComparer.Ordinal);
+    public static bool IsKnown(string? platform) =>
+        platform is not null && All.Contains(platform, StringComparer.Ordinal);
 
     /// <summary>The operating system part of a platform: <c>win</c> for <c>win-x64</c> and for <c>win</c>.</summary>
     public static string OperatingSystemOf(string platform)
@@ -46,10 +47,12 @@ public static class PackagePlatform
     }
 
     /// <summary>Whether the platform is Windows or a Windows runtime identifier, where registry and service operations exist.</summary>
-    public static bool IsWindows(string platform) => string.Equals(OperatingSystemOf(platform), Windows, StringComparison.OrdinalIgnoreCase);
+    public static bool IsWindows(string platform) =>
+        string.Equals(OperatingSystemOf(platform), Windows, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The runtime identifier of an operating system name and a process architecture.</summary>
-    internal static string Identify(string operatingSystem, Architecture architecture) => operatingSystem + "-" + architecture.ToString().ToLowerInvariant();
+    internal static string Identify(string operatingSystem, Architecture architecture) =>
+        operatingSystem + "-" + architecture.ToString().ToLowerInvariant();
 
     [ExcludeFromCodeCoverage] // Each branch only runs on its own operating system.
     private static string CurrentOperatingSystem()
@@ -57,7 +60,7 @@ public static class PackagePlatform
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return Windows;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            return MacOS;
+            return MacOs;
         return RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? Linux : "unix";
     }
 }

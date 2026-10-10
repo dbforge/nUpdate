@@ -52,9 +52,11 @@ public sealed class PublishedInstallerTests : IDisposable
     }
 
     /// <summary>Copies the installer into a folder of its own, writes the options next to it and runs it like UpdateManager does.</summary>
-    private (int ExitCode, string Log) RunInstaller(ApplicationOptions application, params string[] packages) => RunInstaller(application, packages, showWindow: false);
+    private (int ExitCode, string Log) RunInstaller(ApplicationOptions application, params string[] packages) =>
+        RunInstaller(application, packages, showWindow: false);
 
-    private (int ExitCode, string Log) RunInstaller(ApplicationOptions application, string[] packages, bool showWindow, Action<ProcessStartInfo>? configure = null)
+    private (int ExitCode, string Log) RunInstaller(ApplicationOptions application, string[] packages, bool showWindow,
+        Action<ProcessStartInfo>? configure = null)
     {
         var source = Environment.GetEnvironmentVariable(PublishedInstallerFactAttribute.Variable)!;
         var folder = Path("nUpdate Installer");
@@ -74,7 +76,8 @@ public sealed class PublishedInstallerTests : IDisposable
         var optionsPath = System.IO.Path.Combine(folder, "installer-options.json");
         File.WriteAllText(optionsPath, Serializer.Serialize(options, indented: true));
 
-        var startInfo = new ProcessStartInfo(installer, $"\"{optionsPath}\"") { UseShellExecute = false, RedirectStandardError = true };
+        var startInfo = new ProcessStartInfo(installer, $"\"{optionsPath}\"")
+        { UseShellExecute = false, RedirectStandardError = true };
         configure?.Invoke(startInfo);
         using var process = Process.Start(startInfo)!;
         var errors = process.StandardError.ReadToEndAsync();
@@ -99,12 +102,21 @@ public sealed class PublishedInstallerTests : IDisposable
         package.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.txt", Write("build/app.txt", "version 2")));
         var tool = Write("build/tool", "#!/bin/sh\necho tool\n");
         if (!OperatingSystem.IsWindows())
-            File.SetUnixFileMode(tool, (UnixFileMode)FilePermissions.ExecutableMode); // the builder takes the mode of the source file
+            File.SetUnixFileMode(tool,
+                (UnixFileMode)FilePermissions.ExecutableMode); // the builder takes the mode of the source file
         package.Files.Add(new PackageFileEntry(PackageRoot.Program, "bin/tool", tool));
-        package.Files.Add(new PackageFileEntry(PackageRoot.Program, "data/settings.json", Write("build/settings.json", "{}")));
-        package.Operations.Add(new DeleteFilesOperation { Directory = "%program%", Files = ["obsolete.txt"], RunBeforeFileReplacement = true });
+        package.Files.Add(new PackageFileEntry(PackageRoot.Program, "data/settings.json",
+            Write("build/settings.json", "{}")));
+        package.Operations.Add(new DeleteFilesOperation
+        { Directory = "%program%", Files = ["obsolete.txt"], RunBeforeFileReplacement = true });
 
-        var (exitCode, log) = RunInstaller(new ApplicationOptions { Name = "Published", Directory = application, ExecutablePath = System.IO.Path.Combine(application, "app") },
+        var (exitCode, log) = RunInstaller(
+            new ApplicationOptions
+            {
+                Name = "Published",
+                Directory = application,
+                ExecutablePath = System.IO.Path.Combine(application, "app")
+            },
             await BuildPackageAsync(package, "1.1.0"));
 
         exitCode.ShouldBe(0, log);
@@ -133,7 +145,14 @@ public sealed class PublishedInstallerTests : IDisposable
         var good = await BuildPackageAsync(package, "1.1.0");
         var broken = Write("downloads/1.2.0.zip", "not a zip");
 
-        var (exitCode, log) = RunInstaller(new ApplicationOptions { Name = "Published", Directory = application, ExecutablePath = System.IO.Path.Combine(application, "app") }, good, broken);
+        var (exitCode, log) =
+            RunInstaller(
+                new ApplicationOptions
+                {
+                    Name = "Published",
+                    Directory = application,
+                    ExecutablePath = System.IO.Path.Combine(application, "app")
+                }, good, broken);
 
         exitCode.ShouldBe(1, log);
         File.ReadAllText(Path("app", "app.txt")).ShouldBe("version 1");
@@ -146,7 +165,13 @@ public sealed class PublishedInstallerTests : IDisposable
         Write("app/app.txt", "version 1");
         var package = new PlatformPackage(PackagePlatform.Any);
         package.Files.Add(new PackageFileEntry(PackageRoot.Program, "app.txt", Write("build/app.txt", "version 2")));
-        return (new ApplicationOptions { Name = "Published", Directory = application, ExecutablePath = System.IO.Path.Combine(application, "app") }, await BuildPackageAsync(package, "1.1.0"));
+        return (
+            new ApplicationOptions
+            {
+                Name = "Published",
+                Directory = application,
+                ExecutablePath = System.IO.Path.Combine(application, "app")
+            }, await BuildPackageAsync(package, "1.1.0"));
     }
 
     [PublishedInstallerFact(NeedsDisplay = true)]
@@ -180,7 +205,7 @@ public sealed class PublishedInstallerTests : IDisposable
         log.ShouldContain("The installer window failed; continuing without it");
     }
 
-    [PublishedInstallerFact(MacOSOnly = true)]
+    [PublishedInstallerFact(MacOsOnly = true)]
     public async Task Swaps_a_signed_macOS_bundle_that_still_verifies_and_starts()
     {
         // The installed bundle, version 1.0, with an ad-hoc signed echo as its executable.
@@ -193,7 +218,8 @@ public sealed class PublishedInstallerTests : IDisposable
         CreateBundle(staged, "2.0");
         var package = new PlatformPackage("osx-arm64");
         foreach (var file in Directory.GetFiles(staged, "*", SearchOption.AllDirectories))
-            package.Files.Add(new PackageFileEntry(PackageRoot.Program, System.IO.Path.GetRelativePath(staged, file), file));
+            package.Files.Add(new PackageFileEntry(PackageRoot.Program, System.IO.Path.GetRelativePath(staged, file),
+                file));
 
         var executable = System.IO.Path.Combine(bundle, "Contents", "MacOS", "Demo");
         var (exitCode, log) = RunInstaller(new ApplicationOptions
@@ -205,7 +231,8 @@ public sealed class PublishedInstallerTests : IDisposable
         }, await BuildPackageAsync(package, "2.0.0"));
 
         exitCode.ShouldBe(0, log);
-        File.ReadAllText(System.IO.Path.Combine(bundle, "Contents", "Info.plist")).ShouldContain("<string>2.0</string>");
+        File.ReadAllText(System.IO.Path.Combine(bundle, "Contents", "Info.plist"))
+            .ShouldContain("<string>2.0</string>");
         File.Exists(System.IO.Path.Combine(bundle, "Contents", "Resources", "old.txt")).ShouldBeFalse();
         Directory.Exists(bundle + ".new").ShouldBeFalse();
         Run("codesign", $"--verify --deep --strict \"{bundle}\"").ExitCode.ShouldBe(0);
@@ -216,32 +243,34 @@ public sealed class PublishedInstallerTests : IDisposable
 
     private static void CreateBundle(string bundle, string version)
     {
-        var macOS = System.IO.Path.Combine(bundle, "Contents", "MacOS");
-        Directory.CreateDirectory(macOS);
+        var macOs = System.IO.Path.Combine(bundle, "Contents", "MacOS");
+        Directory.CreateDirectory(macOs);
         File.WriteAllText(System.IO.Path.Combine(bundle, "Contents", "Info.plist"), $$"""
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-            <plist version="1.0">
-            <dict>
-              <key>CFBundleExecutable</key><string>Demo</string>
-              <key>CFBundleIdentifier</key><string>net.nupdate.demo</string>
-              <key>CFBundleName</key><string>Demo</string>
-              <key>CFBundlePackageType</key><string>APPL</string>
-              <key>CFBundleShortVersionString</key><string>{{version}}</string>
-            </dict>
-            </plist>
-            """);
+              <?xml version="1.0" encoding="UTF-8"?>
+              <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+              <plist version="1.0">
+              <dict>
+                <key>CFBundleExecutable</key><string>Demo</string>
+                <key>CFBundleIdentifier</key><string>net.nupdate.demo</string>
+                <key>CFBundleName</key><string>Demo</string>
+                <key>CFBundlePackageType</key><string>APPL</string>
+                <key>CFBundleShortVersionString</key><string>{{version}}</string>
+              </dict>
+              </plist>
+              """);
         // A Mach-O of its own, like echo: Apple's arm64e system binaries would not run once re-signed ad hoc.
         var source = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(bundle)!, $"demo-{version}.c");
-        File.WriteAllText(source, "#include <stdio.h>\nint main(int argc, char **argv) { for (int i = 1; i < argc; i++) printf(i > 1 ? \" %s\" : \"%s\", argv[i]); printf(\"\\n\"); return 0; }\n");
-        Run("cc", $"-o \"{System.IO.Path.Combine(macOS, "Demo")}\" \"{source}\"").ExitCode.ShouldBe(0);
+        File.WriteAllText(source,
+            "#include <stdio.h>\nint main(int argc, char **argv) { for (int i = 1; i < argc; i++) printf(i > 1 ? \" %s\" : \"%s\", argv[i]); printf(\"\\n\"); return 0; }\n");
+        Run("cc", $"-o \"{System.IO.Path.Combine(macOs, "Demo")}\" \"{source}\"").ExitCode.ShouldBe(0);
         File.Delete(source);
         Run("codesign", $"--force --deep --sign - \"{bundle}\"").ExitCode.ShouldBe(0);
     }
 
     private static (int ExitCode, string Output) Run(string fileName, string arguments)
     {
-        using var process = Process.Start(new ProcessStartInfo(fileName, arguments) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true })!;
+        using var process = Process.Start(new ProcessStartInfo(fileName, arguments)
+        { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true })!;
         var output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
         process.WaitForExit();
         return (process.ExitCode, output);
@@ -253,7 +282,8 @@ public sealed class PublishedInstallerFactAttribute : FactAttribute
 {
     public const string Variable = "NUPDATE_INSTALLER";
 
-    public PublishedInstallerFactAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
+    public PublishedInstallerFactAttribute([CallerFilePath] string? sourceFilePath = null,
+        [CallerLineNumber] int sourceLineNumber = -1)
         : base(sourceFilePath, sourceLineNumber)
     {
         var path = Environment.GetEnvironmentVariable(Variable);
@@ -262,7 +292,7 @@ public sealed class PublishedInstallerFactAttribute : FactAttribute
     }
 
     /// <summary>Skips the test on systems other than macOS.</summary>
-    public bool MacOSOnly
+    public bool MacOsOnly
     {
         get => false;
         init
@@ -289,7 +319,9 @@ public sealed class PublishedInstallerFactAttribute : FactAttribute
         get => false;
         init
         {
-            if (value && OperatingSystem.IsLinux() && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY")) && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY")))
+            if (value && OperatingSystem.IsLinux() &&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY")) &&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY")))
                 Skip ??= "This test needs a display.";
         }
     }

@@ -14,7 +14,8 @@ public static class AssemblyVersionReader
         {
             return AssemblyName.GetAssemblyName(assemblyPath).Version;
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or BadImageFormatException or ArgumentException or System.Security.SecurityException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or BadImageFormatException
+                                       or ArgumentException or System.Security.SecurityException)
         {
             return null;
         }

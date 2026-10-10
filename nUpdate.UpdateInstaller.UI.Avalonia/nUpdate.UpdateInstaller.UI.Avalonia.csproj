@@ -36,28 +36,28 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <TrimmerRootAssembly Include="Newtonsoft.Json" />
-    <TrimmerRootAssembly Include="nUpdate" />
-    <TrimmerRootAssembly Include="nUpdate.UpdateInstaller" />
+    <TrimmerRootAssembly Include="Newtonsoft.Json"/>
+    <TrimmerRootAssembly Include="nUpdate"/>
+    <TrimmerRootAssembly Include="nUpdate.UpdateInstaller"/>
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Assets\**"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="Avalonia"/>
+    <PackageReference Include="Avalonia.Desktop"/>
+    <PackageReference Include="Avalonia.Themes.Fluent"/>
+    <PackageReference Include="Avalonia.Fonts.Inter"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj" />
+    <ProjectReference Include="../nUpdate.UpdateInstaller/nUpdate.UpdateInstaller.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="nUpdate.Tests" />
+    <InternalsVisibleTo Include="nUpdate.Tests"/>
   </ItemGroup>
 
   <!--
@@ -70,21 +70,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build/nUpdate.UpdateInstaller.UI.Avalonia.targets" Pack="true" PackagePath="build/" />
+    <None Include="build/nUpdate.UpdateInstaller.UI.Avalonia.targets" Pack="true" PackagePath="build/"/>
   </ItemGroup>
 
   <Target Name="PublishInstallerBuilds" BeforeTargets="_GetPackageFiles" Condition="'$(_IsPacking)' == 'true'">
     <ItemGroup>
-      <_InstallerRuntime Include="$(nUpdateInstallerRuntimeIdentifiers)" />
+      <_InstallerRuntime Include="$(nUpdateInstallerRuntimeIdentifiers)"/>
     </ItemGroup>
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish"
-             Properties="Configuration=$(Configuration);RuntimeIdentifier=%(_InstallerRuntime.Identity);PublishDir=$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/;_IsPacking=true" />
+             Properties="Configuration=$(Configuration);RuntimeIdentifier=%(_InstallerRuntime.Identity);PublishDir=$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/;_IsPacking=true"/>
     <ItemGroup>
-      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName).exe" Condition="$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)" />
-      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName)" Condition="!$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)" />
-      <None Include="@(_InstallerExecutable)" Pack="true" PackagePath="installer/%(_InstallerExecutable.Runtime)/" />
+      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName).exe" Condition="$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)"/>
+      <_InstallerExecutable Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)installers/%(_InstallerRuntime.Identity)/$(AssemblyName)" Condition="!$([System.String]::Copy('%(_InstallerRuntime.Identity)').StartsWith('win'))" Runtime="%(_InstallerRuntime.Identity)"/>
+      <None Include="@(_InstallerExecutable)" Pack="true" PackagePath="installer/%(_InstallerExecutable.Runtime)/"/>
     </ItemGroup>
-    <Error Condition="!Exists('%(_InstallerExecutable.Identity)')" Text="The installer for %(_InstallerExecutable.Runtime) was not published to %(_InstallerExecutable.Identity)." />
+    <Error Condition="!Exists('%(_InstallerExecutable.Identity)')" Text="The installer for %(_InstallerExecutable.Runtime) was not published to %(_InstallerExecutable.Identity)."/>
   </Target>
 
 </Project>

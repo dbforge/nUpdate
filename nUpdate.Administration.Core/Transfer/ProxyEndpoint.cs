@@ -32,6 +32,7 @@ public sealed class ProxyEndpoint
             address = "http://" + address;
         if (!Uri.TryCreate(address, UriKind.Absolute, out var uri) || string.IsNullOrEmpty(uri.Host))
             throw new ArgumentException($"\"{settings.Address}\" is not a valid proxy address.", nameof(settings));
-        return new ProxyEndpoint(uri.Host, uri.IsDefaultPort && !address.EndsWith(":80", StringComparison.Ordinal) ? DefaultPort : uri.Port);
+        return new ProxyEndpoint(uri.Host,
+            uri.IsDefaultPort && !address.EndsWith(":80", StringComparison.Ordinal) ? DefaultPort : uri.Port);
     }
 }

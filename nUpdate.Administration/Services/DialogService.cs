@@ -27,11 +27,14 @@ public sealed class DialogService : IDialogService, IFilePickerService, IClipboa
     /// <summary>The main window; dialogs are owned by whichever window is active at the time they open.</summary>
     public Window? Owner { get; set; }
 
-    public Task ShowErrorAsync(string title, string message) => MessageWindow.ShowAsync(ActiveOwner, title, message, MessageWindow.Kind.Error);
+    public Task ShowErrorAsync(string title, string message) =>
+        MessageWindow.ShowAsync(ActiveOwner, title, message, MessageWindow.Kind.Error);
 
-    public Task ShowInfoAsync(string title, string message) => MessageWindow.ShowAsync(ActiveOwner, title, message, MessageWindow.Kind.Info);
+    public Task ShowInfoAsync(string title, string message) =>
+        MessageWindow.ShowAsync(ActiveOwner, title, message, MessageWindow.Kind.Info);
 
-    public Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK", string cancelText = "Cancel") =>
+    public Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK",
+        string cancelText = "Cancel") =>
         MessageWindow.ConfirmAsync(ActiveOwner, title, message, confirmText, cancelText);
 
     public async Task<bool> ShowDialogAsync(DialogViewModel viewModel)
@@ -55,30 +58,35 @@ public sealed class DialogService : IDialogService, IFilePickerService, IClipboa
     }
 
     private Window ActiveOwner =>
-        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows.FirstOrDefault(w => w.IsActive)
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows
+        .FirstOrDefault(w => w.IsActive)
         ?? Owner ?? throw new InvalidOperationException("The main window is not open yet.");
 
     public async Task<string?> PickFileAsync(string title, params FileTypeFilter[] filters)
     {
-        var files = await Storage().OpenFilePickerAsync(new FilePickerOpenOptions { Title = title, AllowMultiple = false, FileTypeFilter = Map(filters) });
+        var files = await Storage().OpenFilePickerAsync(new FilePickerOpenOptions
+        { Title = title, AllowMultiple = false, FileTypeFilter = Map(filters) });
         return files.Count > 0 ? files[0].TryGetLocalPath() : null;
     }
 
     public async Task<IReadOnlyList<string>> PickFilesAsync(string title, params FileTypeFilter[] filters)
     {
-        var files = await Storage().OpenFilePickerAsync(new FilePickerOpenOptions { Title = title, AllowMultiple = true, FileTypeFilter = Map(filters) });
+        var files = await Storage().OpenFilePickerAsync(new FilePickerOpenOptions
+        { Title = title, AllowMultiple = true, FileTypeFilter = Map(filters) });
         return files.Select(f => f.TryGetLocalPath()).Where(p => p is not null).Cast<string>().ToList();
     }
 
     public async Task<string?> PickFolderAsync(string title)
     {
-        var folders = await Storage().OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = title, AllowMultiple = false });
+        var folders = await Storage().OpenFolderPickerAsync(new FolderPickerOpenOptions
+        { Title = title, AllowMultiple = false });
         return folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
     }
 
     public async Task<string?> SaveFileAsync(string title, string suggestedFileName, params FileTypeFilter[] filters)
     {
-        var file = await Storage().SaveFilePickerAsync(new FilePickerSaveOptions { Title = title, SuggestedFileName = suggestedFileName, FileTypeChoices = Map(filters) });
+        var file = await Storage().SaveFilePickerAsync(new FilePickerSaveOptions
+        { Title = title, SuggestedFileName = suggestedFileName, FileTypeChoices = Map(filters) });
         return file?.TryGetLocalPath();
     }
 

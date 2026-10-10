@@ -19,7 +19,8 @@ public sealed class InstallerWindowReporter : WindowProgressReporter
     /// <param name="session">The options and the log of this run.</param>
     /// <param name="runWindow">Shows the window, calls the action once it is open and returns when it has closed.</param>
     /// <param name="post">Runs an action on the UI thread.</param>
-    internal InstallerWindowReporter(InstallerSession session, Action<InstallerWindowViewModel, Action> runWindow, Action<Action> post)
+    internal InstallerWindowReporter(InstallerSession session, Action<InstallerWindowViewModel, Action> runWindow,
+        Action<Action> post)
         : base(session)
     {
         ViewModel = new InstallerWindowViewModel(session);
@@ -35,7 +36,8 @@ public sealed class InstallerWindowReporter : WindowProgressReporter
 
     protected override void ShowProgress(float progress, string text) => ViewModel.Report(progress, text);
 
-    protected override void AskAboutLockedFile(string filePath, Action<LockedFileDecision> answer) => ViewModel.AskAboutLockedFile(filePath, answer);
+    protected override void AskAboutLockedFile(string filePath, Action<LockedFileDecision> answer) =>
+        ViewModel.AskAboutLockedFile(filePath, answer);
 
     protected override void ShowError(Exception exception, Action closed) => ViewModel.ShowError(exception, closed);
 

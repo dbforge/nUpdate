@@ -11,13 +11,8 @@ using nUpdate.Updating;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The Statistics and History tabs of the project window.</summary>
-public sealed class ProjectStatisticsAndHistoryScenarios : ScenarioTest
+public sealed class ProjectStatisticsAndHistoryScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public ProjectStatisticsAndHistoryScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     [AvaloniaFact]
     public Task Tells_when_statistics_are_disabled() => Scenario(async () =>
     {
@@ -52,14 +47,18 @@ public sealed class ProjectStatisticsAndHistoryScenarios : ScenarioTest
             User.SelectPage(window.Nav, "Statistics");
             User.Click(window.RefreshStatisticsButton);
             // The window already loads the statistics when it opens, so "Last updated" alone may belong to that load.
-            await User.WaitUntil(() => window.StatisticsStatusText.Text != "Loading..." && window.StatisticsUpdatedText.Text?.StartsWith("Last updated", StringComparison.Ordinal) == true, "the statistics to load");
+            await User.WaitUntil(
+                () => window.StatisticsStatusText.Text != "Loading..." &&
+                      window.StatisticsUpdatedText.Text?.StartsWith("Last updated", StringComparison.Ordinal) == true,
+                "the statistics to load");
         });
         await Then("the download is counted for the version", () =>
         {
             var viewModel = (ProjectViewModel)window.DataContext!;
             viewModel.TotalDownloads.ShouldBe(1);
             window.StatisticsStatusText.Text!.ShouldBe("across 1 version");
-            window.StatisticsGrid.ItemsSource!.Cast<VersionStatistics>().Select(v => (v.Version.ToString(), v.Downloads)).ShouldBe([("1.1.0", 1L)]);
+            window.StatisticsGrid.ItemsSource!.Cast<VersionStatistics>()
+                .Select(v => (v.Version.ToString(), v.Downloads)).ShouldBe([("1.1.0", 1L)]);
         });
     });
 
@@ -78,7 +77,9 @@ public sealed class ProjectStatisticsAndHistoryScenarios : ScenarioTest
         await Then("the entries are listed newest first with the user who made them", () =>
         {
             var rows = window.HistoryGrid.ItemsSource!.Cast<LogItemViewModel>().ToList();
-            rows.Select(r => (r.Kind, r.Version)).ShouldBe([("Delete", "1.0.0"), ("Upload", "1.0.0"), ("Create", "1.0.0"), ("Create", "-")]);
+            rows.Select(r => (r.Kind, r.Version)).ShouldBe([
+                ("Delete", "1.0.0"), ("Upload", "1.0.0"), ("Create", "1.0.0"), ("Create", "-")
+            ]);
             rows.ShouldAllBe(r => r.User.Contains(Environment.UserName, StringComparison.Ordinal));
             rows.ShouldAllBe(r => r.Time != "-");
         });
@@ -94,8 +95,10 @@ public sealed class ProjectStatisticsAndHistoryScenarios : ScenarioTest
         var systemInformation = Substitute.For<ISystemInformation>();
         systemInformation.RuntimeIdentifier.Returns("win-x64");
         systemInformation.OperatingSystemName.Returns("Windows 11");
-        var services = new UpdateManagerServices { ApplicationInfo = applicationInfo, SystemInformation = systemInformation };
-        using var manager = new UpdateManager(new Uri(Context.Server.HttpBaseUrl + "nupdate.json"), publicKey, services: services);
+        var services = new UpdateManagerServices
+        { ApplicationInfo = applicationInfo, SystemInformation = systemInformation };
+        using var manager = new UpdateManager(new Uri(Context.Server.HttpBaseUrl + "nupdate.json"), publicKey,
+            services: services);
         (await manager.CheckForUpdatesAsync()).ShouldBeTrue();
         await manager.DownloadAsync();
         manager.DeleteDownloads();

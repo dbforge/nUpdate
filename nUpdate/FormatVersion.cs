@@ -10,7 +10,10 @@ internal static class FormatVersion
     {
         if (actual == current)
             return;
-        var hint = actual > current ? "a newer version of nUpdate; update the library" : "an older version of nUpdate; open and migrate it with nUpdate Administration";
-        throw new UnsupportedFormatException($"The {documentName} has format {actual}, but this nUpdate reads format {current}. It was written by {hint}.");
+        var hint = actual > current
+            ? "a newer version of nUpdate; update the library"
+            : "an older version of nUpdate; open and migrate it with nUpdate Administration";
+        throw new UnsupportedFormatException(
+            $"The {documentName} has format {actual}, but this nUpdate reads format {current}. It was written by {hint}.");
     }
 }

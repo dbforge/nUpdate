@@ -15,7 +15,8 @@ public sealed class OperationDispatcher
         foreach (var handler in handlers)
         {
             if (_handlers.ContainsKey(handler.Area))
-                throw new ArgumentException($"There is more than one handler for the area {handler.Area}.", nameof(handlers));
+                throw new ArgumentException($"There is more than one handler for the area {handler.Area}.",
+                    nameof(handlers));
             _handlers[handler.Area] = handler;
         }
     }

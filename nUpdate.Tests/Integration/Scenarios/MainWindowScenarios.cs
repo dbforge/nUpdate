@@ -6,13 +6,8 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The main window: the list of known projects and the ways to open one.</summary>
-public sealed class MainWindowScenarios : ScenarioTest
+public sealed class MainWindowScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public MainWindowScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     [AvaloniaFact]
     public Task Starts_with_an_empty_project_list() => Scenario(async () =>
     {

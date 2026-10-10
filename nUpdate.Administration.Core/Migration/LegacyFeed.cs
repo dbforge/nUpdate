@@ -55,13 +55,18 @@ public static class LegacyFeed
                 {
                     Mode = ParseMode(item["RolloutConditionMode"]),
                     Conditions = (item["RolloutConditions"] as JArray ?? []).OfType<JObject>()
-                        .Select(c => new RolloutCondition(Text(c["Key"]), Text(c["Value"]), Flag(c["IsNegativeCondition"])))
+                        .Select(c =>
+                            new RolloutCondition(Text(c["Key"]), Text(c["Value"]), Flag(c["IsNegativeCondition"])))
                         .Where(c => c.Key.Length > 0).ToList(),
                 },
-                PackageUri = Uri.TryCreate(item.Value<string>("UpdatePackageUri"), UriKind.Absolute, out var uri) ? uri : null,
+                PackageUri = Uri.TryCreate(item.Value<string>("UpdatePackageUri"), UriKind.Absolute, out var uri)
+                    ? uri
+                    : null,
                 UseStatistics = Flag(item["UseStatistics"]),
                 Operations = item["Operations"] as JArray,
-                Signature = item["Signature"]?.Type == JTokenType.String && Text(item["Signature"]).Length > 0 ? Text(item["Signature"]) : null,
+                Signature = item["Signature"]?.Type == JTokenType.String && Text(item["Signature"]).Length > 0
+                    ? Text(item["Signature"])
+                    : null,
             });
         }
 
@@ -85,37 +90,39 @@ public static class LegacyFeed
     {
         if (token is { Type: JTokenType.Integer })
             return token.Value<int>() switch { 0 => "win-x86", 1 => "win-x64", _ => PackagePlatform.Windows };
-        return Text(token).ToUpperInvariant() switch { "X86" => "win-x86", "X64" => "win-x64", _ => PackagePlatform.Windows };
+        return Text(token).ToUpperInvariant() switch
+        {
+            "X86" => "win-x86",
+            "X64" => "win-x64",
+            _ => PackagePlatform.Windows
+        };
     }
 
     /// <summary><c>true</c> for JSON true or the text "true"; anything else, including garbage, is <c>false</c>.</summary>
     private static bool Flag(JToken? token) => string.Equals(Text(token), "true", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The text of a token; <c>null</c> and JSON null read as empty.</summary>
-    private static string Text(JToken? token) => token is null || token.Type == JTokenType.Null ? string.Empty : token.ToString();
+    private static string Text(JToken? token) =>
+        token is null || token.Type == JTokenType.Null ? string.Empty : token.ToString();
 
     private static RolloutConditionMode ParseMode(JToken? token)
     {
         // nUpdate 4: AtLeastOne = 0, All = 1.
         if (token is { Type: JTokenType.Integer })
             return token.Value<int>() == 1 ? RolloutConditionMode.All : RolloutConditionMode.Any;
-        return string.Equals(token?.ToString(), "All", StringComparison.OrdinalIgnoreCase) ? RolloutConditionMode.All : RolloutConditionMode.Any;
+        return string.Equals(token?.ToString(), "All", StringComparison.OrdinalIgnoreCase)
+            ? RolloutConditionMode.All
+            : RolloutConditionMode.Any;
     }
 }
 
 /// <summary>One entry of a legacy feed.</summary>
-public sealed class LegacyFeedEntry
+public sealed class LegacyFeedEntry(UpdateVersion version, string literalVersion)
 {
-    public LegacyFeedEntry(UpdateVersion version, string literalVersion)
-    {
-        Version = version ?? throw new ArgumentNullException(nameof(version));
-        LiteralVersion = literalVersion ?? throw new ArgumentNullException(nameof(literalVersion));
-    }
-
-    public UpdateVersion Version { get; }
+    public UpdateVersion Version { get; } = version ?? throw new ArgumentNullException(nameof(version));
 
     /// <summary>The version as the old file spelled it, which is also the name of the package folder on the server.</summary>
-    public string LiteralVersion { get; }
+    public string LiteralVersion { get; } = literalVersion ?? throw new ArgumentNullException(nameof(literalVersion));
 
     /// <summary>The platform of the package: <c>win-x86</c>, <c>win-x64</c> or <c>win</c>, since nUpdate 3 and 4 only ran on Windows.</summary>
     public string Platform { get; set; } = PackagePlatform.Windows;

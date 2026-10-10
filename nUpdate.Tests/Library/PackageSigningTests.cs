@@ -72,7 +72,8 @@ public class PackageSigningTests
         using var publicOnly = PackageSigning.FromXml(rsa.ToXmlString(false));
         publicOnly.PublicKeyPem.ShouldBe(fromXml.PublicKeyPem);
         Should.Throw<ArgumentNullException>(() => PackageSigning.FromXml(" "));
-        Should.Throw<ArgumentException>(() => PackageSigning.FromXml("<RSAKeyValue><Modulus>AQ==</Modulus></RSAKeyValue>"));
+        Should.Throw<ArgumentException>(() =>
+            PackageSigning.FromXml("<RSAKeyValue><Modulus>AQ==</Modulus></RSAKeyValue>"));
         Should.Throw<ArgumentException>(() => PackageSigning.FromXml("not xml"));
     }
 

@@ -9,34 +9,31 @@ namespace nUpdate.Administration.Core.Migration;
 ///     downloaded for the review are kept in a temporary folder until the plan is disposed, so the migration does not
 ///     download them again.
 /// </summary>
-public sealed class MigrationPlan : IDisposable
+public sealed class MigrationPlan(
+    Guid projectId,
+    bool legacyFeedPresent,
+    UpdateFeed? existingFeed,
+    IReadOnlyList<MigrationPackage> packages,
+    Action? cleanup = null,
+    IReadOnlyList<string>? unreadableVersions = null)
+    : IDisposable
 {
-    private readonly Action? _cleanup;
     private bool _disposed;
 
-    public MigrationPlan(Guid projectId, bool legacyFeedPresent, UpdateFeed? existingFeed, IReadOnlyList<MigrationPackage> packages, Action? cleanup = null, IReadOnlyList<string>? unreadableVersions = null)
-    {
-        ProjectId = projectId;
-        LegacyFeedPresent = legacyFeedPresent;
-        ExistingFeed = existingFeed;
-        Packages = packages ?? throw new ArgumentNullException(nameof(packages));
-        _cleanup = cleanup;
-        UnreadableVersions = unreadableVersions ?? [];
-    }
-
     /// <summary>Entries of <c>updates.json</c> whose version cannot be read; they are left out.</summary>
-    public IReadOnlyList<string> UnreadableVersions { get; }
+    public IReadOnlyList<string> UnreadableVersions { get; } = unreadableVersions ?? [];
 
-    public Guid ProjectId { get; }
+    public Guid ProjectId { get; } = projectId;
 
     /// <summary>The server has the <c>updates.json</c> of nUpdate 3 or 4.</summary>
-    public bool LegacyFeedPresent { get; }
+    public bool LegacyFeedPresent { get; } = legacyFeedPresent;
 
     /// <summary>The <c>nupdate.json</c> on the server, or <c>null</c> when there is none yet.</summary>
-    public UpdateFeed? ExistingFeed { get; }
+    public UpdateFeed? ExistingFeed { get; } = existingFeed;
 
     /// <summary>Every package of the legacy feed, in version order.</summary>
-    public IReadOnlyList<MigrationPackage> Packages { get; }
+    public IReadOnlyList<MigrationPackage> Packages { get; } =
+        packages ?? throw new ArgumentNullException(nameof(packages));
 
     /// <summary>The packages of the legacy feed that are not in <c>nupdate.json</c> yet.</summary>
     public IEnumerable<MigrationPackage> Pending => Packages.Where(p => !p.AlreadyMigrated);
@@ -55,7 +52,7 @@ public sealed class MigrationPlan : IDisposable
         if (_disposed)
             return;
         _disposed = true;
-        _cleanup?.Invoke();
+        cleanup?.Invoke();
     }
 }
 
@@ -80,7 +77,8 @@ public sealed class MigrationPackage
     }
 
     /// <summary>A package that can be migrated; it is included unless the user deselects it.</summary>
-    public static MigrationPackage Ready(LegacyFeedEntry legacy, string source, string sourcePath, long size, int fileCount, IReadOnlyList<string> skippedEntries, LegacyOperationConversion operations)
+    public static MigrationPackage Ready(LegacyFeedEntry legacy, string source, string sourcePath, long size,
+        int fileCount, IReadOnlyList<string> skippedEntries, LegacyOperationConversion operations)
     {
         ArgumentException.ThrowIfNullOrEmpty(source);
         ArgumentException.ThrowIfNullOrEmpty(sourcePath);
@@ -143,23 +141,22 @@ public sealed class MigrationPackage
 }
 
 /// <summary>What nUpdate 3 and 4 left for a project on the server and on this computer.</summary>
-public sealed class LegacyFiles
+public sealed class LegacyFiles(
+    IReadOnlyList<string> serverFiles,
+    IReadOnlyList<string> serverDirectories,
+    IReadOnlyList<string> localDirectories)
 {
-    public LegacyFiles(IReadOnlyList<string> serverFiles, IReadOnlyList<string> serverDirectories, IReadOnlyList<string> localDirectories)
-    {
-        ServerFiles = serverFiles ?? throw new ArgumentNullException(nameof(serverFiles));
-        ServerDirectories = serverDirectories ?? throw new ArgumentNullException(nameof(serverDirectories));
-        LocalDirectories = localDirectories ?? throw new ArgumentNullException(nameof(localDirectories));
-    }
-
     /// <summary><c>updates.json</c> and <c>statistics.php</c>, relative to the transfer directory.</summary>
-    public IReadOnlyList<string> ServerFiles { get; }
+    public IReadOnlyList<string> ServerFiles { get; } =
+        serverFiles ?? throw new ArgumentNullException(nameof(serverFiles));
 
     /// <summary>The package folders named after the old version spelling.</summary>
-    public IReadOnlyList<string> ServerDirectories { get; }
+    public IReadOnlyList<string> ServerDirectories { get; } =
+        serverDirectories ?? throw new ArgumentNullException(nameof(serverDirectories));
 
     /// <summary>The local package copies of nUpdate Administration 4 and of the 5.0 pre-releases.</summary>
-    public IReadOnlyList<string> LocalDirectories { get; }
+    public IReadOnlyList<string> LocalDirectories { get; } =
+        localDirectories ?? throw new ArgumentNullException(nameof(localDirectories));
 
     public bool IsEmpty => ServerFiles.Count == 0 && ServerDirectories.Count == 0 && LocalDirectories.Count == 0;
 

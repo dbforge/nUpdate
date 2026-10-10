@@ -17,7 +17,8 @@ public class ProjectServiceTests
 
     public ProjectServiceTests()
     {
-        _service = new ProjectService(_context.FileSystem, _context.Paths, _context.Store, _context.Passwords, _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger,
+        _service = new ProjectService(_context.FileSystem, _context.Paths, _context.Store, _context.Passwords,
+            _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger,
             _ => (TestKeys.PublicKey, TestKeys.PrivateKey));
         _context.Transfer.UploadFileAsync(Arg.Any<string>(), Arg.Any<string>(), null, Arg.Any<CancellationToken>())
             .Returns(call =>
@@ -35,7 +36,10 @@ public class ProjectServiceTests
         UpdateUrl = "https://updates.example.com/new",
         Transfer = new TransferSettings { Host = "ftp.example.com", Username = "u" },
         Secrets = new ProjectSecrets { TransferPassword = "pw", StatisticsDatabasePassword = "dbpw" },
-        Statistics = statistics ? new StatisticsSettings { Enabled = true, Database = new StatisticsDatabaseSettings { Name = "db", Username = "dbu" } } : new StatisticsSettings(),
+        Statistics = statistics
+            ? new StatisticsSettings
+            { Enabled = true, Database = new StatisticsDatabaseSettings { Name = "db", Username = "dbu" } }
+            : new StatisticsSettings(),
         ProjectPassword = "project-pw",
     };
 
@@ -49,7 +53,8 @@ public class ProjectServiceTests
         project.UpdateUrl.ShouldBe("https://updates.example.com/new/");
         project.PublicKey.ShouldBe(TestKeys.PublicKey);
         project.Statistics.EndpointUrl.ShouldBeNull();
-        project.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.ProjectFolder("New Project"), "project.nupdproj"));
+        project.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.ProjectFolder("New Project"),
+            "project.nupdproj"));
         _context.FileSystem.Directory.Exists(project.PackagesDirectory).ShouldBeTrue();
         result.Secrets.PrivateKey.ShouldBe(TestKeys.PrivateKey);
         result.Secrets.StatisticsAdminSecret.ShouldNotBeNullOrEmpty();
@@ -67,7 +72,11 @@ public class ProjectServiceTests
         _uploads[1].ShouldContain("$nupdateDbPassword = 'dbpw';");
         // Script and config are uploaded from temp files and never kept locally.
         _context.FileSystem.AllFiles.Any(f => f.EndsWith(".php", StringComparison.Ordinal)).ShouldBeFalse();
-        await _context.Statistics.Received().VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.AdminSecret == result.Secrets.StatisticsAdminSecret && e.Uri.ToString() == "https://updates.example.com/new/nupdate-statistics.php"), Arg.Any<CancellationToken>());
+        await _context.Statistics.Received().VerifyAsync(
+            Arg.Is<StatisticsEndpoint>(e =>
+                e.AdminSecret == result.Secrets.StatisticsAdminSecret &&
+                e.Uri.ToString() == "https://updates.example.com/new/nupdate-statistics.php"),
+            Arg.Any<CancellationToken>());
         await _context.Transfer.Received().ListAsync("", false, Arg.Any<CancellationToken>());
     }
 
@@ -80,19 +89,22 @@ public class ProjectServiceTests
         request.ProjectPassword = null;
         request.Folder = "/elsewhere/p";
         var result = await _service.CreateAsync(request);
-        result.Project.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.FileSystem.Path.GetFullPath("/elsewhere/p"), "project.nupdproj"));
+        result.Project.Path.ShouldBe(
+            _context.FileSystem.Path.Combine(_context.FileSystem.Path.GetFullPath("/elsewhere/p"), "project.nupdproj"));
         result.Project.Secrets.ShouldBeNull();
         result.SecretsState.ShouldBe(SecretsState.NotSaved);
         (await _context.Passwords.GetAsync(result.Project.Id)).ShouldBeNull();
         await _context.Transfer.DidNotReceive().ConnectAsync(Arg.Any<CancellationToken>());
-        await _context.Statistics.DidNotReceive().VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>());
+        await _context.Statistics.DidNotReceive()
+            .VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>());
         _context.FileSystem.Directory.Exists("/elsewhere/p/packages").ShouldBeTrue();
     }
 
     [Fact]
     public async Task Create_RollsBackWhenStatisticsSetupFails()
     {
-        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>()).Returns(_ => throw new StatisticsException("db down"));
+        _context.Statistics.VerifyAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new StatisticsException("db down"));
         var ex = await Should.ThrowAsync<PipelineException>(() => _service.CreateAsync(Request(statistics: true)));
         ex.FailedStep.ShouldBe("Setting up the statistics");
         _context.FileSystem.Directory.Exists(_context.ProjectFolder("New Project")).ShouldBeFalse();
@@ -104,8 +116,10 @@ public class ProjectServiceTests
     {
         var store = Substitute.For<IProjectStore>();
         store.ListAsync(Arg.Any<CancellationToken>()).Returns([]);
-        store.SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<CancellationToken>()).Returns(_ => throw new IOException("disk"));
-        var service = new ProjectService(_context.FileSystem, _context.Paths, store, _context.Passwords, _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger, _ => ("pub", "priv"));
+        store.SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new IOException("disk"));
+        var service = new ProjectService(_context.FileSystem, _context.Paths, store, _context.Passwords,
+            _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger, _ => ("pub", "priv"));
         _context.FileSystem.AddDirectory(_context.ProjectFolder("New Project"));
 
         var ex = await Should.ThrowAsync<PipelineException>(() => service.CreateAsync(Request()));
@@ -137,8 +151,10 @@ public class ProjectServiceTests
         noDb.Statistics.Database = null;
         await Should.ThrowAsync<ArgumentException>(() => _service.CreateAsync(noDb));
         var taken = Request();
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(taken.Folder, "project.nupdproj"), new System.IO.Abstractions.TestingHelpers.MockFileData("{}"));
-        (await Should.ThrowAsync<ArgumentException>(() => _service.CreateAsync(taken))).Message.ShouldContain("already holds");
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(taken.Folder, "project.nupdproj"),
+            new System.IO.Abstractions.TestingHelpers.MockFileData("{}"));
+        (await Should.ThrowAsync<ArgumentException>(() => _service.CreateAsync(taken))).Message.ShouldContain(
+            "already holds");
 
         await _context.Store.RegisterAsync(new ProjectRegistration(Guid.NewGuid(), "new project", "/x"));
         await Should.ThrowAsync<ArgumentException>(() => _service.CreateAsync(Request()));
@@ -150,8 +166,10 @@ public class ProjectServiceTests
         await _service.TestConnectionAsync(new TransferSettings { Host = "h" }, new TransferCredentials());
         await _context.Transfer.Received().ConnectAsync(Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DisposeAsync();
-        await Should.ThrowAsync<ArgumentNullException>(() => _service.TestConnectionAsync(null!, new TransferCredentials()));
-        await Should.ThrowAsync<ArgumentNullException>(() => _service.TestConnectionAsync(new TransferSettings(), null!));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _service.TestConnectionAsync(null!, new TransferCredentials()));
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _service.TestConnectionAsync(new TransferSettings(), null!));
     }
 
     [Fact]
@@ -182,7 +200,8 @@ public class ProjectServiceTests
     public async Task Save_ProtectsSecretsUnderThePasswordOrDropsThem()
     {
         var project = _context.NewProject();
-        await _service.SaveAsync(project, new ProjectSecrets { TransferPassword = "pw", PrivateKey = "k" }, "project-pw");
+        await _service.SaveAsync(project, new ProjectSecrets { TransferPassword = "pw", PrivateKey = "k" },
+            "project-pw");
         (await _context.Store.LoadAsync(project.Path, "project-pw")).Secrets.TransferPassword.ShouldBe("pw");
         (await _context.Passwords.GetAsync(project.Id)).ShouldBe("project-pw");
 
@@ -217,7 +236,8 @@ public class ProjectServiceTests
         _context.FileSystem.File.Exists(legacyFile).ShouldBeTrue();
         _context.FileSystem.Directory.Exists(path.Combine(old, "Demo", "packages")).ShouldBeTrue();
         (await _context.Store.LoadAsync(project.Path, "pw")).Secrets.PrivateKey.ShouldBe(TestKeys.PrivateKey);
-        (await _context.Store.ListAsync()).Select(r => $"{r.Name}={r.Path}").ShouldBe(["Demo=" + project.Path, "Other=" + otherFile]);
+        (await _context.Store.ListAsync()).Select(r => $"{r.Name}={r.Path}")
+            .ShouldBe(["Demo=" + project.Path, "Other=" + otherFile]);
         project.Log.Single().Kind.ShouldBe(LogEntryKind.Migrate);
 
         // An old file that is called project.nupdproj already is not overwritten: nUpdate Administration 4 keeps using it.
@@ -226,7 +246,8 @@ public class ProjectServiceTests
         await _context.Store.SaveAsync(current);
         var oldContent = _context.FileSystem.File.ReadAllText(currentOld);
         await _service.SaveMigratedAsync(current, secrets, null);
-        current.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.ProjectFolder("Current"), "Current", "project.nupdproj"));
+        current.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.ProjectFolder("Current"), "Current",
+            "project.nupdproj"));
         current.LegacyProjectFile.ShouldBe(currentOld);
         current.Secrets.ShouldBeNull();
         _context.FileSystem.File.ReadAllText(currentOld).ShouldBe(oldContent);
@@ -234,7 +255,8 @@ public class ProjectServiceTests
 
         // A file in the data folder of nUpdate Administration 4, which deletes that folder with the project, moves to the projects folder.
         var inData = _context.NewProject("Data");
-        inData.Path = _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectDataDirectory("Data"), "Data.nupdproj");
+        inData.Path =
+            _context.FileSystem.Path.Combine(_context.Paths.LegacyProjectDataDirectory("Data"), "Data.nupdproj");
         _context.FileSystem.AddFile(inData.Path, new System.IO.Abstractions.TestingHelpers.MockFileData("{legacy}"));
         await _service.SaveMigratedAsync(inData, secrets, null);
         inData.Path.ShouldBe(_context.FileSystem.Path.Combine(_context.ProjectFolder("Data"), "project.nupdproj"));
@@ -252,7 +274,8 @@ public class ProjectServiceTests
         clash.Id = Guid.NewGuid();
         clash.Path = _context.FileSystem.Path.Combine(_context.ProjectFolder("Current"), "Old.nupdproj");
         _context.FileSystem.AddFile(clash.Path, new System.IO.Abstractions.TestingHelpers.MockFileData("{legacy}"));
-        (await Should.ThrowAsync<InvalidOperationException>(() => _service.SaveMigratedAsync(clash, secrets, null))).Message.ShouldContain("another project");
+        (await Should.ThrowAsync<InvalidOperationException>(() => _service.SaveMigratedAsync(clash, secrets, null)))
+            .Message.ShouldContain("another project");
         (await _context.Store.LoadAsync(currentOld)).Project.Id.ShouldBe(current.Id);
         // The same project id in the target is fine (the conversion ran before and was interrupted).
         var again = _context.NewProject("Current");
@@ -262,7 +285,8 @@ public class ProjectServiceTests
 
         await Should.ThrowAsync<ArgumentNullException>(() => _service.SaveMigratedAsync(null!, secrets, null));
         await Should.ThrowAsync<ArgumentNullException>(() => _service.SaveMigratedAsync(project, null!, null));
-        await Should.ThrowAsync<ArgumentException>(() => _service.SaveMigratedAsync(new UpdateProject(), secrets, null));
+        await Should.ThrowAsync<ArgumentException>(() =>
+            _service.SaveMigratedAsync(new UpdateProject(), secrets, null));
     }
 
     [Fact]
@@ -274,18 +298,25 @@ public class ProjectServiceTests
         await _service.SetupStatisticsAsync(project, secrets);
         secrets.StatisticsAdminSecret.ShouldNotBeNullOrEmpty();
         _uploads.Count.ShouldBe(2);
-        await _context.Statistics.Received().VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.Uri.ToString() == "https://updates.example.com/demo/nupdate-statistics.php"), Arg.Any<CancellationToken>());
+        await _context.Statistics.Received()
+            .VerifyAsync(
+                Arg.Is<StatisticsEndpoint>(e =>
+                    e.Uri.ToString() == "https://updates.example.com/demo/nupdate-statistics.php"),
+                Arg.Any<CancellationToken>());
 
         var preset = _context.NewProject("Preset", statistics: true);
         preset.Statistics.Database = new StatisticsDatabaseSettings();
         preset.Statistics.EndpointUrl = "https://stats.example.com/x.php";
         await _service.SetupStatisticsAsync(preset, AdminTestContext.NewSecrets(statistics: true));
-        await _context.Statistics.Received().VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.Uri.ToString() == "https://stats.example.com/x.php"), Arg.Any<CancellationToken>());
+        await _context.Statistics.Received()
+            .VerifyAsync(Arg.Is<StatisticsEndpoint>(e => e.Uri.ToString() == "https://stats.example.com/x.php"),
+                Arg.Any<CancellationToken>());
 
         var invalid = _context.NewProject("Invalid", statistics: true);
         invalid.Statistics.Database = new StatisticsDatabaseSettings();
         invalid.UpdateUrl = "not a url";
-        await Should.ThrowAsync<InvalidOperationException>(() => _service.SetupStatisticsAsync(invalid, AdminTestContext.NewSecrets(statistics: true)));
+        await Should.ThrowAsync<InvalidOperationException>(() =>
+            _service.SetupStatisticsAsync(invalid, AdminTestContext.NewSecrets(statistics: true)));
 
         project.Statistics.Database = null;
         await Should.ThrowAsync<InvalidOperationException>(() => _service.SetupStatisticsAsync(project, secrets));
@@ -303,18 +334,21 @@ public class ProjectServiceTests
         project.Packages.Add(new UpdatePackage { Version = new UpdateVersion("1.0.0"), Released = true });
         project.Packages.Add(new UpdatePackage { Version = new UpdateVersion("1.1.0"), Released = false });
         await _service.SaveAsync(project, secrets, "pw");
-        _context.ServeLegacyFeed("""[{"LiteralVersion":"0.9.0.0","UpdatePackageUri":"https://updates.example.com/demo/0.9.0.0/p.zip"}]""");
+        _context.ServeLegacyFeed(
+            """[{"LiteralVersion":"0.9.0.0","UpdatePackageUri":"https://updates.example.com/demo/0.9.0.0/p.zip"}]""");
 
         await _service.DeleteAsync(project, secrets, deleteLocalFiles: true, deleteServerFiles: true);
 
-        await _context.Statistics.Received().DeleteProjectAsync(Arg.Any<StatisticsEndpoint>(), project.Id, Arg.Any<CancellationToken>());
+        await _context.Statistics.Received()
+            .DeleteProjectAsync(Arg.Any<StatisticsEndpoint>(), project.Id, Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DeleteDirectoryAsync("0.9.0.0", Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DeleteFileAsync("updates.json", Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DeleteDirectoryAsync("packages/1.0.0", Arg.Any<CancellationToken>());
         await _context.Transfer.DidNotReceive().DeleteFileAsync("packages/1.1.0.zip", Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DeleteFileAsync("nupdate.json", Arg.Any<CancellationToken>());
         await _context.Transfer.Received().DeleteFileAsync("nupdate-statistics.php", Arg.Any<CancellationToken>());
-        await _context.Transfer.Received().DeleteFileAsync("nupdate-statistics.config.php", Arg.Any<CancellationToken>());
+        await _context.Transfer.Received()
+            .DeleteFileAsync("nupdate-statistics.config.php", Arg.Any<CancellationToken>());
         (await _context.Store.ListAsync()).ShouldBeEmpty();
         (await _context.Passwords.GetAsync(project.Id)).ShouldBeNull();
         _context.FileSystem.Directory.Exists(project.Folder).ShouldBeFalse();
@@ -327,9 +361,11 @@ public class ProjectServiceTests
         await _service.SaveAsync(project, AdminTestContext.NewSecrets(), null);
         var foreign = _context.FileSystem.Path.Combine(project.Folder, "notes.txt");
         _context.FileSystem.AddFile(foreign, new System.IO.Abstractions.TestingHelpers.MockFileData("mine"));
-        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(project.PackagesDirectory, "1.0.0", "package.zip"), new System.IO.Abstractions.TestingHelpers.MockFileData("zip"));
+        _context.FileSystem.AddFile(_context.FileSystem.Path.Combine(project.PackagesDirectory, "1.0.0", "package.zip"),
+            new System.IO.Abstractions.TestingHelpers.MockFileData("zip"));
 
-        await _service.DeleteAsync(project, AdminTestContext.NewSecrets(), deleteLocalFiles: true, deleteServerFiles: false);
+        await _service.DeleteAsync(project, AdminTestContext.NewSecrets(), deleteLocalFiles: true,
+            deleteServerFiles: false);
 
         _context.FileSystem.File.Exists(project.Path).ShouldBeFalse();
         _context.FileSystem.Directory.Exists(project.PackagesDirectory).ShouldBeFalse();
@@ -342,15 +378,19 @@ public class ProjectServiceTests
     {
         var project = _context.NewProject(statistics: true);
         await _context.Store.SaveAsync(project);
-        await _service.DeleteAsync(project, AdminTestContext.NewSecrets(), deleteLocalFiles: false, deleteServerFiles: false);
+        await _service.DeleteAsync(project, AdminTestContext.NewSecrets(), deleteLocalFiles: false,
+            deleteServerFiles: false);
         _context.FileSystem.File.Exists(project.Path).ShouldBeTrue();
         await _context.Transfer.DidNotReceive().ConnectAsync(Arg.Any<CancellationToken>());
         (await _context.Store.ListAsync()).ShouldBeEmpty();
 
         var unsaved = _context.NewProject("Ghost", statistics: true);
-        await _service.DeleteAsync(unsaved, AdminTestContext.NewSecrets(), deleteLocalFiles: true, deleteServerFiles: true);
-        await _context.Statistics.DidNotReceive().DeleteProjectAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await Should.ThrowAsync<ArgumentNullException>(() => _service.DeleteAsync(null!, AdminTestContext.NewSecrets(), false, false));
+        await _service.DeleteAsync(unsaved, AdminTestContext.NewSecrets(), deleteLocalFiles: true,
+            deleteServerFiles: true);
+        await _context.Statistics.DidNotReceive().DeleteProjectAsync(Arg.Any<StatisticsEndpoint>(), Arg.Any<Guid>(),
+            Arg.Any<CancellationToken>());
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            _service.DeleteAsync(null!, AdminTestContext.NewSecrets(), false, false));
         await Should.ThrowAsync<ArgumentNullException>(() => _service.DeleteAsync(project, null!, false, false));
     }
 
@@ -358,22 +398,33 @@ public class ProjectServiceTests
     public void Constructor_ValidatesArguments()
     {
         var c = _context;
-        Should.Throw<ArgumentNullException>(() => new ProjectService(null!, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, null!, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, null!, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, null!, c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, null!, c.Statistics, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, null!, c.Migrator, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, null!, c.Logger));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, null!));
-        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, c.Logger, null!));
-        new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator, c.Logger).ShouldNotBeNull();
+        Should.Throw<ArgumentNullException>(() => new ProjectService(null!, c.Paths, c.Store, c.Passwords,
+            c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, null!, c.Store, c.Passwords,
+            c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, null!, c.Passwords,
+            c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, null!,
+            c.TransferFactory, c.Statistics, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() =>
+            new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, null!, c.Statistics, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords,
+            c.TransferFactory, null!, c.Migrator, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords,
+            c.TransferFactory, c.Statistics, null!, c.Logger));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords,
+            c.TransferFactory, c.Statistics, c.Migrator, null!));
+        Should.Throw<ArgumentNullException>(() => new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords,
+            c.TransferFactory, c.Statistics, c.Migrator, c.Logger, null!));
+        new ProjectService(c.FileSystem, c.Paths, c.Store, c.Passwords, c.TransferFactory, c.Statistics, c.Migrator,
+            c.Logger).ShouldNotBeNull();
     }
 
     [Fact]
     public async Task Create_GeneratesRealKeysByDefault()
     {
-        var service = new ProjectService(_context.FileSystem, _context.Paths, _context.Store, _context.Passwords, _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger);
+        var service = new ProjectService(_context.FileSystem, _context.Paths, _context.Store, _context.Passwords,
+            _context.TransferFactory, _context.Statistics, _context.Migrator, _context.Logger);
         var request = Request();
         request.KeySize = 1024;
         request.TestConnection = false;

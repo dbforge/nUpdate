@@ -21,7 +21,8 @@ public class StatisticsScriptTests
         config.ShouldContain("$nupdateDbName = 'na\\'me';");
         config.ShouldContain("$nupdateDbUser = 'us\\\\er';");
         config.ShouldContain("$nupdateDbPassword = 'p\\'w';");
-        config.ShouldContain("$nupdateAdminSecretHash = '" + nUpdate.Administration.Core.Security.SecretGenerator.HashSecret("secret") + "';");
+        config.ShouldContain("$nupdateAdminSecretHash = '" +
+                             nUpdate.Administration.Core.Security.SecretGenerator.HashSecret("secret") + "';");
         config.ShouldNotContain("secret'");
         Should.Throw<ArgumentNullException>(() => StatisticsScript.RenderConfig(null!, "n", "u", "p", "s"));
         Should.Throw<ArgumentNullException>(() => StatisticsScript.RenderConfig("h", null!, "u", "p", "s"));

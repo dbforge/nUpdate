@@ -16,7 +16,8 @@ public sealed class CompensatingPipeline
     /// <param name="execute">The work of the step.</param>
     /// <param name="compensate">Undoes the step, or <c>null</c> when there is nothing to undo.</param>
     /// <param name="compensatesOwnFailure">Whether <paramref name="compensate" /> also runs when this step itself fails, which it then must cope with.</param>
-    public CompensatingPipeline Add(string name, Func<CancellationToken, Task> execute, Func<Task>? compensate = null, bool compensatesOwnFailure = false)
+    public CompensatingPipeline Add(string name, Func<CancellationToken, Task> execute, Func<Task>? compensate = null,
+        bool compensatesOwnFailure = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(execute);
@@ -25,7 +26,8 @@ public sealed class CompensatingPipeline
     }
 
     /// <exception cref="PipelineException">A step failed; see <see cref="PipelineException.FailedStep" />.</exception>
-    public async Task RunAsync(IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task RunAsync(IProgress<PipelineProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         var completed = new Stack<PipelineStep>();
         for (var i = 0; i < _steps.Count; i++)
@@ -66,40 +68,29 @@ public sealed class CompensatingPipeline
     }
 }
 
-public sealed class PipelineStep
+public sealed class PipelineStep(
+    string name,
+    Func<CancellationToken, Task> execute,
+    Func<Task>? compensate,
+    bool compensatesOwnFailure = false)
 {
-    public PipelineStep(string name, Func<CancellationToken, Task> execute, Func<Task>? compensate, bool compensatesOwnFailure = false)
-    {
-        Name = name;
-        Execute = execute;
-        Compensate = compensate;
-        CompensatesOwnFailure = compensatesOwnFailure;
-    }
+    public string Name { get; } = name;
 
-    public string Name { get; }
+    public Func<CancellationToken, Task> Execute { get; } = execute;
 
-    public Func<CancellationToken, Task> Execute { get; }
-
-    public Func<Task>? Compensate { get; }
+    public Func<Task>? Compensate { get; } = compensate;
 
     /// <summary>Whether <see cref="Compensate" /> also runs when this step fails.</summary>
-    public bool CompensatesOwnFailure { get; }
+    public bool CompensatesOwnFailure { get; } = compensatesOwnFailure;
 }
 
-public sealed class PipelineProgress
+public sealed class PipelineProgress(string stepName, int stepIndex, int stepCount)
 {
-    public PipelineProgress(string stepName, int stepIndex, int stepCount)
-    {
-        StepName = stepName ?? throw new ArgumentNullException(nameof(stepName));
-        StepIndex = stepIndex;
-        StepCount = stepCount;
-    }
+    public string StepName { get; } = stepName ?? throw new ArgumentNullException(nameof(stepName));
 
-    public string StepName { get; }
+    public int StepIndex { get; } = stepIndex;
 
-    public int StepIndex { get; }
-
-    public int StepCount { get; }
+    public int StepCount { get; } = stepCount;
 
     public double Percentage => StepCount == 0 ? 100 : 100.0 * StepIndex / StepCount;
 }

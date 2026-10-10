@@ -43,7 +43,9 @@ public sealed class FilePermissionsTests : IDisposable
         File.GetUnixFileMode(file).ShouldBe((UnixFileMode)FilePermissions.ExecutableMode);
         permissions.SetMode(file, FilePermissions.RegularMode);
         File.GetUnixFileMode(file).ShouldBe((UnixFileMode)FilePermissions.RegularMode);
-        Should.Throw<IOException>(() => permissions.SetMode(Path.Combine(_directory, "missing"), FilePermissions.RegularMode)).Message.ShouldContain("missing");
+        Should.Throw<IOException>(() =>
+                permissions.SetMode(Path.Combine(_directory, "missing"), FilePermissions.RegularMode)).Message
+            .ShouldContain("missing");
     }
 
     [Fact]

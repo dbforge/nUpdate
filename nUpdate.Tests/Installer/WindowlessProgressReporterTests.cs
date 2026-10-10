@@ -15,11 +15,13 @@ public class WindowlessProgressReporterTests
         reporter.ReportUnpackingProgress(1, "a");
         reporter.ReportOperationProgress(1, "b");
         reporter.ReportLockedFile("/f", 1).ShouldBe(LockedFileDecision.Retry);
-        reporter.ReportLockedFile("/f", 2).ShouldBe(LockedFileDecision.Retry); // the engine's attempt limit ends the retries
+        reporter.ReportLockedFile("/f", 2)
+            .ShouldBe(LockedFileDecision.Retry); // the engine's attempt limit ends the retries
         _services.Delays.ShouldBe([TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)]);
 
         reporter.Fail(new IOException("disk full"));
-        _services.ErrorOutput.ToString().ShouldContain("nUpdate could not install the update: System.IO.IOException: disk full");
+        _services.ErrorOutput.ToString()
+            .ShouldContain("nUpdate could not install the update: System.IO.IOException: disk full");
         _services.EventLog.Received(1).WriteError(Arg.Is<string>(m => m.Contains("disk full")));
 
         _services.EnvironmentInfo.IsWindows.Returns(false);

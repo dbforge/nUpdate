@@ -37,7 +37,8 @@ public class DirectoryCopierTests
         fs.AddFile("/dst/locked.txt", new MockFileData("old") { AllowedFileShare = FileShare.None });
         var copier = new DirectoryCopier(fs, 3);
 
-        _services.Reporter.LockedFileDecision = (_, attempt) => attempt == 1 ? LockedFileDecision.Retry : LockedFileDecision.Skip;
+        _services.Reporter.LockedFileDecision =
+            (_, attempt) => attempt == 1 ? LockedFileDecision.Retry : LockedFileDecision.Skip;
         copier.Copy("/src", "/dst", _services.Context());
         fs.GetFile("/dst/locked.txt").TextContents.ShouldBe("old");
         _services.Reporter.LockedFiles.Select(l => l.Attempt).ShouldBe([1, 2]);
@@ -54,7 +55,8 @@ public class DirectoryCopierTests
         fs.File.Exists(locked + DirectoryCopier.TempSuffix).ShouldBeFalse();
 
         _services.Reporter.LockedFiles.Clear();
-        _services.Reporter.LockedFileDecision = (_, attempt) => attempt == 3 ? LockedFileDecision.Skip : LockedFileDecision.Retry;
+        _services.Reporter.LockedFileDecision =
+            (_, attempt) => attempt == 3 ? LockedFileDecision.Skip : LockedFileDecision.Retry;
         copier.Copy("/src", "/dst", _services.Context());
         _services.Reporter.LockedFiles.Count.ShouldBe(3);
 
@@ -75,7 +77,8 @@ public class DirectoryCopierTests
         fs.Directory.GetDirectories("/src").Returns([]);
         fs.Path.GetFileName("/src/a.txt").Returns("a.txt");
         fs.Path.Combine("/dst", "a.txt").Returns("/dst/a.txt");
-        fs.File.When(f => f.Copy("/src/a.txt", "/dst/a.txt" + DirectoryCopier.TempSuffix, true)).Do(_ => throw new IOException("disk full") { HResult = unchecked((int)0x80070070) });
+        fs.File.When(f => f.Copy("/src/a.txt", "/dst/a.txt" + DirectoryCopier.TempSuffix, true)).Do(_ =>
+            throw new IOException("disk full") { HResult = unchecked((int)0x80070070) });
         var copier = new DirectoryCopier(fs, 3);
         Should.Throw<IOException>(() => copier.Copy("/src", "/dst", _services.Context())).Message.ShouldBe("disk full");
     }
@@ -97,9 +100,12 @@ public class DirectoryCopierTests
         failing.Path.GetFileName("/src/a.txt").Returns("a.txt");
         failing.Path.Combine("/dst", "a.txt").Returns("/dst/a.txt");
         failing.File.Exists("/dst/a.txt").Returns(false);
-        failing.File.When(f => f.Move("/dst/a.txt" + DirectoryCopier.TempSuffix, "/dst/a.txt")).Do(_ => throw new UnauthorizedAccessException("denied"));
-        failing.File.When(f => f.Delete("/dst/a.txt" + DirectoryCopier.TempSuffix)).Do(_ => throw new IOException("busy"));
-        Should.Throw<UnauthorizedAccessException>(() => new DirectoryCopier(failing, 1).Copy("/src", "/dst", _services.Context()));
+        failing.File.When(f => f.Move("/dst/a.txt" + DirectoryCopier.TempSuffix, "/dst/a.txt"))
+            .Do(_ => throw new UnauthorizedAccessException("denied"));
+        failing.File.When(f => f.Delete("/dst/a.txt" + DirectoryCopier.TempSuffix))
+            .Do(_ => throw new IOException("busy"));
+        Should.Throw<UnauthorizedAccessException>(() =>
+            new DirectoryCopier(failing, 1).Copy("/src", "/dst", _services.Context()));
     }
 
     [Fact]
@@ -115,6 +121,7 @@ public class DirectoryCopierTests
         Should.Throw<ArgumentNullException>(() => DirectoryCopier.IsLockedFileError(null!));
         DirectoryCopier.IsLockedFileError(new IOException("x") { HResult = unchecked((int)0x80070020) }).ShouldBeTrue();
         DirectoryCopier.IsLockedFileError(new IOException("x") { HResult = unchecked((int)0x80070021) }).ShouldBeTrue();
-        DirectoryCopier.IsLockedFileError(new IOException("x") { HResult = unchecked((int)0x80070002) }).ShouldBeFalse();
+        DirectoryCopier.IsLockedFileError(new IOException("x") { HResult = unchecked((int)0x80070002) })
+            .ShouldBeFalse();
     }
 }

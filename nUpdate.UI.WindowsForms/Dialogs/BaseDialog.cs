@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using nUpdate.Localization;
 using nUpdate.Updating;
 

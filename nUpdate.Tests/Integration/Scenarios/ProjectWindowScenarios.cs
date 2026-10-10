@@ -11,20 +11,16 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The Packages tab of the project window and the buttons in its header.</summary>
-public sealed class ProjectWindowScenarios : ScenarioTest
+public sealed class ProjectWindowScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public ProjectWindowScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     private static List<(string Version, string State)> Rows(ProjectWindow window)
     {
         User.Pump();
         return window.PackageGrid.ItemsSource!.Cast<PackageItemViewModel>().Select(p => (p.Version, p.State)).ToList();
     }
 
-    private static bool ShowsText(Window window, string text) => window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == text);
+    private static bool ShowsText(Window window, string text) =>
+        window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == text);
 
     private static ProjectViewModel ViewModel(ProjectWindow window) => (ProjectViewModel)window.DataContext!;
 
@@ -38,12 +34,14 @@ public sealed class ProjectWindowScenarios : ScenarioTest
             await App.ExistingPackageAsync(project, "1.0.0", "First release", publish: true);
             await App.ExistingPackageAsync(project, "1.1.0", "Dark mode", publish: false);
         });
-        await When("the user opens the project", async () => window = await App.OpenListedProjectAsync("Trade Updater"));
+        await When("the user opens the project",
+            async () => window = await App.OpenListedProjectAsync("Trade Updater"));
         await Then("both packages are listed, newest first, with their state", () =>
         {
             Rows(window).ShouldBe([("1.1.0", "Local only"), ("1.0.0", "Released")]);
             ShowsText(window, "2 packages").ShouldBeTrue();
-            window.TransferBox.Text!.ShouldBe($"Sftp {ServerFixture.SftpUser}@{Context.Server.SftpHost}:{Context.Server.SftpPort}/updates");
+            window.TransferBox.Text!.ShouldBe(
+                $"Sftp {ServerFixture.SftpUser}@{Context.Server.SftpHost}:{Context.Server.SftpPort}/updates");
         });
         await And("the package buttons need a selection", () =>
         {
@@ -78,7 +76,8 @@ public sealed class ProjectWindowScenarios : ScenarioTest
         await When("the user searches for a word of a description", () => User.Type(window.SearchBox, "dark"));
         await Then("only the matching package is shown", () => Rows(window).Select(r => r.Version).ShouldBe(["1.1.0"]));
         await When("the user searches for a version prefix", () => User.Type(window.SearchBox, "1."));
-        await Then("both 1.x packages are shown", () => Rows(window).Select(r => r.Version).ShouldBe(["1.1.0", "1.0.0"]));
+        await Then("both 1.x packages are shown",
+            () => Rows(window).Select(r => r.Version).ShouldBe(["1.1.0", "1.0.0"]));
         await When("the search is cleared", () => User.Type(window.SearchBox, ""));
         await Then("all packages are shown again", () => Rows(window).Count.ShouldBe(3));
     });
@@ -126,7 +125,8 @@ public sealed class ProjectWindowScenarios : ScenarioTest
         await And("the history records the upload", () =>
         {
             User.SelectPage(window.Nav, "History");
-            window.HistoryGrid.ItemsSource!.Cast<LogItemViewModel>().Select(l => (l.Kind, l.Version)).ShouldContain(("Upload", "1.0.0"));
+            window.HistoryGrid.ItemsSource!.Cast<LogItemViewModel>().Select(l => (l.Kind, l.Version))
+                .ShouldContain(("Upload", "1.0.0"));
         });
     });
 
@@ -162,7 +162,8 @@ public sealed class ProjectWindowScenarios : ScenarioTest
             var remote = (await App.Feeds.LoadRemoteAsync(project.Project, project.Secrets))!;
             remote.Packages.Select(c => c.Version.ToString()).ShouldBe(["1.1.0"]);
             (await Context.StatusAsync("packages/1.0.0/any.zip")).ShouldBe(System.Net.HttpStatusCode.NotFound);
-            Directory.Exists(project.Project.PackageDirectory(new nUpdate.Updating.UpdateVersion("1.0.0"))).ShouldBeFalse();
+            Directory.Exists(project.Project.PackageDirectory(new nUpdate.Updating.UpdateVersion("1.0.0")))
+                .ShouldBeFalse();
         });
     });
 

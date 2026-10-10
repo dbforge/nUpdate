@@ -8,7 +8,8 @@ public sealed class ServiceOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Services;
 
-    public int CountTasks(Operation operation) => operation is null ? throw new ArgumentNullException(nameof(operation)) : 1;
+    public int CountTasks(Operation operation) =>
+        operation is null ? throw new ArgumentNullException(nameof(operation)) : 1;
 
     public void Execute(Operation operation, OperationContext context)
     {

@@ -19,7 +19,8 @@ public sealed class UpdateSummaryTests : IDisposable
 
     public void Dispose() => _manager.Dispose();
 
-    private async Task CheckAsync(params (string Version, OperationArea[] Touches, AfterInstall? AfterInstall)[] packages)
+    private async Task CheckAsync(
+        params (string Version, OperationArea[] Touches, AfterInstall? AfterInstall)[] packages)
     {
         var feed = new UpdateFeed
         {
@@ -29,7 +30,14 @@ public sealed class UpdateSummaryTests : IDisposable
                 Necessary = true,
                 AfterInstall = p.AfterInstall,
                 Changelog = { ["en"] = $"Changes in {p.Version}." },
-                Files = [new PackageFile { Path = $"packages/{p.Version}/any.zip", Size = 2048, Sha512 = "x", Signature = new PackageSignature { Value = "s" }, Touches = p.Touches.ToList() }],
+                Files =
+                [
+                    new PackageFile
+                    {
+                        Path = $"packages/{p.Version}/any.zip", Size = 2048, Sha512 = "x",
+                        Signature = new PackageSignature { Value = "s" }, Touches = p.Touches.ToList()
+                    }
+                ],
             }).ToList(),
         };
         _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(feed));

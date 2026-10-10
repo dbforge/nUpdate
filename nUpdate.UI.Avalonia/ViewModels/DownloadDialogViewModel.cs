@@ -13,7 +13,8 @@ public sealed class DownloadDialogViewModel : DialogViewModel, IDisposable
     private double _progress;
     private string _infoText = string.Empty;
 
-    internal DownloadDialogViewModel(UpdateManager updateManager, Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
+    internal DownloadDialogViewModel(UpdateManager updateManager,
+        Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         : base(updateManager)
     {
         _download = download ?? throw new ArgumentNullException(nameof(download));
@@ -59,6 +60,7 @@ public sealed class DownloadDialogViewModel : DialogViewModel, IDisposable
     internal void ShowProgress(float percentage)
     {
         Progress = percentage;
-        InfoText = string.Format(CultureInfo.CurrentCulture, Texts.DownloadingInfo, Math.Round(percentage, 1)).Replace("\n", " ", StringComparison.Ordinal);
+        InfoText = string.Format(CultureInfo.CurrentCulture, Texts.DownloadingInfo, Math.Round(percentage, 1))
+            .Replace("\n", " ", StringComparison.Ordinal);
     }
 }

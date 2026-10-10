@@ -8,7 +8,8 @@ namespace nUpdate.Administration.Core.Transfer;
 /// </summary>
 internal static class TransferGuard
 {
-    public static async Task RunAsync(Func<Task> action, Func<Exception, bool> isTransferError, Func<Exception, string> describe)
+    public static async Task RunAsync(Func<Task> action, Func<Exception, bool> isTransferError,
+        Func<Exception, string> describe)
     {
         try
         {
@@ -20,7 +21,8 @@ internal static class TransferGuard
         }
     }
 
-    public static async Task<T> RunAsync<T>(Func<Task<T>> action, Func<Exception, bool> isTransferError, Func<Exception, string> describe)
+    public static async Task<T> RunAsync<T>(Func<Task<T>> action, Func<Exception, bool> isTransferError,
+        Func<Exception, string> describe)
     {
         try
         {

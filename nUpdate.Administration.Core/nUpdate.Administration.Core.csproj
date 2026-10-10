@@ -5,27 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\nupdate-statistics.php" LogicalName="nUpdate.Administration.Core.Resources.nupdate-statistics.php" />
+    <EmbeddedResource Include="Resources\nupdate-statistics.php" LogicalName="nUpdate.Administration.Core.Resources.nupdate-statistics.php"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
-    <PackageReference Include="FluentFTP" />
-    <PackageReference Include="SSH.NET" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
+    <PackageReference Include="FluentFTP"/>
+    <PackageReference Include="SSH.NET"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate/nUpdate.csproj" />
-    <ProjectReference Include="../nUpdate.Administration.TransferInterface/nUpdate.Administration.TransferInterface.csproj" />
+    <ProjectReference Include="../nUpdate/nUpdate.csproj"/>
+    <ProjectReference Include="../nUpdate.Administration.TransferInterface/nUpdate.Administration.TransferInterface.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="nUpdate.Tests" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="nUpdate.Tests"/>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 
 </Project>

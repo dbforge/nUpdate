@@ -1,11 +1,7 @@
 using Avalonia.Headless.XUnit;
 using nUpdate.Administration.Core.Models;
-using nUpdate.Administration.Core.Projects;
-using nUpdate.Administration.Core.Publishing;
-using nUpdate.Administration.TransferInterface;
 using nUpdate.Administration.ViewModels;
 using nUpdate.Administration.Views;
-using nUpdate.Updating;
 
 namespace nUpdate.Tests.Administration.App;
 
@@ -78,19 +74,24 @@ public class ProjectSettingsTests
         await viewModel.SaveCommand.ExecuteAsync(null);
         project.AssemblyVersionPath.ShouldBeNull();
         await _context.Projects.Received().SaveAsync(project, secrets, "new-password", Arg.Any<CancellationToken>());
-        await _context.Projects.DidNotReceive().RenameAsync(Arg.Any<UpdateProject>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await _context.Projects.DidNotReceive().SetupStatisticsAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<CancellationToken>());
+        await _context.Projects.DidNotReceive()
+            .RenameAsync(Arg.Any<UpdateProject>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _context.Projects.DidNotReceive().SetupStatisticsAsync(Arg.Any<UpdateProject>(),
+            Arg.Any<ProjectSecrets>(), Arg.Any<CancellationToken>());
 
         viewModel.SaveCredentials = false;
         _context.Projects.ClearReceivedCalls();
         await viewModel.SaveCommand.ExecuteAsync(null);
         await _context.Projects.Received().SaveAsync(project, secrets, null, Arg.Any<CancellationToken>());
 
-        _context.Dialogs.ConfirmAsync("Delete project", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+        _context.Dialogs.ConfirmAsync("Delete project", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(false);
         await viewModel.DeleteProjectCommand.ExecuteAsync(null);
         viewModel.Deleted.ShouldBeFalse();
-        _context.Dialogs.ConfirmAsync("Delete project", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-        _context.Dialogs.ConfirmAsync("Delete server files", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+        _context.Dialogs.ConfirmAsync("Delete project", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(true);
+        _context.Dialogs.ConfirmAsync("Delete server files", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(true);
         await viewModel.DeleteProjectCommand.ExecuteAsync(null);
         viewModel.Deleted.ShouldBeTrue();
         await _context.Projects.Received().DeleteAsync(project, secrets, true, true, Arg.Any<CancellationToken>());
@@ -142,12 +143,15 @@ public class ProjectSettingsTests
         viewModel.UpdateUrl = "ftp://not-http/";
         await viewModel.SaveCommand.ExecuteAsync(null);
         viewModel.ErrorMessage!.ShouldContain("HTTP(S)");
-        await _context.Projects.DidNotReceive().SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+        await _context.Projects.DidNotReceive().SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(),
+            Arg.Any<string?>(), Arg.Any<CancellationToken>());
 
         viewModel.UpdateUrl = "https://new.example.com/u";
         viewModel.Transfer.Host = "new-host";
         viewModel.Transfer.Password = "changed";
-        _context.Projects.SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).ThrowsAsync(new IOException("disk full"));
+        _context.Projects
+            .SaveAsync(Arg.Any<UpdateProject>(), Arg.Any<ProjectSecrets>(), Arg.Any<string?>(),
+                Arg.Any<CancellationToken>()).ThrowsAsync(new IOException("disk full"));
         await viewModel.SaveCommand.ExecuteAsync(null);
 
         viewModel.ErrorMessage.ShouldBe("disk full");
@@ -185,7 +189,8 @@ public class ProjectSettingsTests
         // Closing the assistant without migrating changes nothing.
         _context.Dialogs.ShowDialogAsync(Arg.Any<MigrationViewModel>()).Returns(false);
         await viewModel.MigrateCommand.ExecuteAsync(null);
-        await _context.Dialogs.Received().ShowDialogAsync(Arg.Is<MigrationViewModel>(m => m.Project == project && m.Secrets == secrets));
+        await _context.Dialogs.Received()
+            .ShowDialogAsync(Arg.Is<MigrationViewModel>(m => m.Project == project && m.Secrets == secrets));
         viewModel.Migrated.ShouldBeFalse();
 
         _context.Dialogs.ShowDialogAsync(Arg.Do<MigrationViewModel>(m => m.Migrated = true)).Returns(true);
@@ -196,7 +201,12 @@ public class ProjectSettingsTests
     [AvaloniaFact]
     public void ProjectSettingsWindow_Loads()
     {
-        var settings = new ProjectSettingsWindow { DataContext = _context.Factory.Create<ProjectSettingsViewModel>(AppTestContext.NewProject(), AppTestContext.NewSecrets()) };
+        var settings = new ProjectSettingsWindow
+        {
+            DataContext =
+                _context.Factory.Create<ProjectSettingsViewModel>(AppTestContext.NewProject(),
+                    AppTestContext.NewSecrets())
+        };
         settings.Show();
         settings.NameBox.Text.ShouldBe("Demo");
         settings.SaveCredentialsBox.IsChecked = true;

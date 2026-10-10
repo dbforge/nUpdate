@@ -12,29 +12,29 @@
 
   <ItemGroup>
     <!-- nUpdate.icns is only the icon of the macOS bundle that tools/ci/administration-macos-app.sh builds. -->
-    <AvaloniaResource Include="Assets\**" Exclude="Assets\nUpdate.icns" />
+    <AvaloniaResource Include="Assets\**" Exclude="Assets\nUpdate.icns"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" />
-    <PackageReference Include="ScottPlot.Avalonia" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
+    <PackageReference Include="Avalonia"/>
+    <PackageReference Include="Avalonia.Desktop"/>
+    <PackageReference Include="Avalonia.Themes.Fluent"/>
+    <PackageReference Include="Avalonia.Fonts.Inter"/>
+    <PackageReference Include="Avalonia.Controls.DataGrid"/>
+    <PackageReference Include="ScottPlot.Avalonia"/>
+    <PackageReference Include="CommunityToolkit.Mvvm"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="Microsoft.Extensions.Logging"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../nUpdate.Administration.Core/nUpdate.Administration.Core.csproj" />
+    <ProjectReference Include="../nUpdate.Administration.Core/nUpdate.Administration.Core.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="nUpdate.Tests" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="nUpdate.Tests"/>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 
 </Project>

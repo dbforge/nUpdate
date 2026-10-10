@@ -13,7 +13,8 @@ public class PackageDefinitionTests
         definition.GetOrAddPlatform("linux").ShouldBeSameAs(linux);
         definition.GetOrAddPlatform("win-x64");
         definition.Platforms.Select(p => p.Platform).ShouldBe(["linux", "win-x64"]);
-        Should.Throw<ArgumentException>(() => new PlatformPackage("freebsd-x64")).Message.ShouldContain("not a platform nUpdate knows");
+        Should.Throw<ArgumentException>(() => new PlatformPackage("freebsd-x64")).Message
+            .ShouldContain("not a platform nUpdate knows");
         Should.Throw<ArgumentException>(() => new PlatformPackage(null!));
     }
 }

@@ -14,7 +14,8 @@ public interface ITransferProvider : IAsyncDisposable
 
     Task<bool> DirectoryExistsAsync(string remotePath, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<ServerItem>> ListAsync(string remotePath, bool recursive, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<ServerItem>> ListAsync(string remotePath, bool recursive,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Creates the directory and any missing parents.</summary>
     Task CreateDirectoryAsync(string remotePath, CancellationToken cancellationToken = default);
@@ -27,7 +28,9 @@ public interface ITransferProvider : IAsyncDisposable
 
     Task RenameAsync(string remotePath, string newRemotePath, CancellationToken cancellationToken = default);
 
-    Task UploadFileAsync(string localPath, string remotePath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task UploadFileAsync(string localPath, string remotePath, IProgress<TransferProgress>? progress = null,
+        CancellationToken cancellationToken = default);
 
-    Task DownloadFileAsync(string remotePath, string localPath, IProgress<TransferProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task DownloadFileAsync(string remotePath, string localPath, IProgress<TransferProgress>? progress = null,
+        CancellationToken cancellationToken = default);
 }

@@ -8,15 +8,9 @@ namespace nUpdate.Tests.Integration.Scenarios.Support;
 /// </summary>
 [Collection(ServerCollectionFixture.Name)]
 [Trait("Category", "Integration")]
-public abstract class ScenarioTest
+public abstract class ScenarioTest(ServerFixture server)
 {
-    private readonly ServerFixture _server;
     private readonly List<string> _steps = [];
-
-    protected ScenarioTest(ServerFixture server)
-    {
-        _server = server;
-    }
 
     /// <summary>The independent view of the servers and the temp folder, used to verify what the application did.</summary>
     protected IntegrationContext Context { get; private set; } = null!;
@@ -27,9 +21,10 @@ public abstract class ScenarioTest
     /// <summary>Runs a scenario: skips without Docker, starts the application, and tears it down afterwards.</summary>
     protected async Task Scenario(Func<Task> body)
     {
-        Assert.SkipUnless(ServerFixture.DockerAvailable || ServerFixture.DockerRequired, "Docker is not available on this machine.");
-        await _server.ResetAsync();
-        Context = new IntegrationContext(_server);
+        Assert.SkipUnless(ServerFixture.DockerAvailable || ServerFixture.DockerRequired,
+            "Docker is not available on this machine.");
+        await server.ResetAsync();
+        Context = new IntegrationContext(server);
         App = new AdministrationApp(Context);
         try
         {
@@ -51,13 +46,29 @@ public abstract class ScenarioTest
 
     protected Task And(string text, Func<Task> step) => Step("And", text, step);
 
-    protected Task Given(string text, Action step) => Step("Given", text, () => { step(); return Task.CompletedTask; });
+    protected Task Given(string text, Action step) => Step("Given", text, () =>
+    {
+        step();
+        return Task.CompletedTask;
+    });
 
-    protected Task When(string text, Action step) => Step("When", text, () => { step(); return Task.CompletedTask; });
+    protected Task When(string text, Action step) => Step("When", text, () =>
+    {
+        step();
+        return Task.CompletedTask;
+    });
 
-    protected Task Then(string text, Action step) => Step("Then", text, () => { step(); return Task.CompletedTask; });
+    protected Task Then(string text, Action step) => Step("Then", text, () =>
+    {
+        step();
+        return Task.CompletedTask;
+    });
 
-    protected Task And(string text, Action step) => Step("And", text, () => { step(); return Task.CompletedTask; });
+    protected Task And(string text, Action step) => Step("And", text, () =>
+    {
+        step();
+        return Task.CompletedTask;
+    });
 
     private async Task Step(string keyword, string text, Func<Task> step)
     {
@@ -77,10 +88,6 @@ public abstract class ScenarioTest
 }
 
 /// <summary>Names the step that failed and the steps before it, so the failure reads like the scenario.</summary>
-public sealed class ScenarioStepException : Exception
-{
-    public ScenarioStepException(string step, IReadOnlyList<string> steps, Exception inner)
-        : base($"Failed at: {step}{Environment.NewLine}{Environment.NewLine}Scenario so far:{Environment.NewLine}  {string.Join(Environment.NewLine + "  ", steps)}{Environment.NewLine}{Environment.NewLine}{inner.Message}", inner)
-    {
-    }
-}
+public sealed class ScenarioStepException(string step, IReadOnlyList<string> steps, Exception inner) : Exception(
+    $"Failed at: {step}{Environment.NewLine}{Environment.NewLine}Scenario so far:{Environment.NewLine}  {string.Join(Environment.NewLine + "  ", steps)}{Environment.NewLine}{Environment.NewLine}{inner.Message}",
+    inner);

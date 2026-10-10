@@ -100,16 +100,23 @@ public sealed class TestInstallerServices
     public InstallerOptions Options(params string[] packagePaths) => new()
     {
         Packages = packagePaths.Select(p => new InstallerPackage { Path = p }).ToList(),
-        Application = new ApplicationOptions { Name = "App", Directory = AppDirectory, ExecutablePath = FileSystem.Path.Combine(AppDirectory, "app.exe") },
+        Application = new ApplicationOptions
+        {
+            Name = "App",
+            Directory = AppDirectory,
+            ExecutablePath = FileSystem.Path.Combine(AppDirectory, "app.exe")
+        },
         Host = new HostOptions { ProcessId = 77, AfterInstall = AfterInstall.Restart },
     };
 
     public OperationContext Context(InstallerOptions? options = null, ProgressTracker? progress = null) =>
         new(options ?? Options(FileSystem.Path.Combine(PackagesDirectory, "1.0.0.0.zip")), Services,
-            new PathPlaceholderResolver(FileSystem, AppDirectory, SpecialFolders), progress ?? new ProgressTracker(), Reporter);
+            new PathPlaceholderResolver(FileSystem, AppDirectory, SpecialFolders), progress ?? new ProgressTracker(),
+            Reporter);
 
     /// <summary>Writes a package zip with the given entries (relative paths inside the zip), a manifest and optional operations.</summary>
-    public string AddPackage(string version, IDictionary<string, string> files, IEnumerable<Operation>? operations = null, IDictionary<string, int>? modes = null)
+    public string AddPackage(string version, IDictionary<string, string> files,
+        IEnumerable<Operation>? operations = null, IDictionary<string, int>? modes = null)
     {
         var path = FileSystem.Path.Combine(PackagesDirectory, $"{version}.zip");
         FileSystem.AddFile(path, new MockFileData(BuildZip(files, Manifest(version, operations), modes)));
@@ -127,7 +134,8 @@ public sealed class TestInstallerServices
     /// <param name="files">The entries and their text.</param>
     /// <param name="manifest">The manifest, or <c>null</c> for none.</param>
     /// <param name="modes">Unix modes per entry, stored the way nUpdate Administration stores them.</param>
-    public static byte[] BuildZip(IDictionary<string, string> files, PackageManifest? manifest = null, IDictionary<string, int>? modes = null)
+    public static byte[] BuildZip(IDictionary<string, string> files, PackageManifest? manifest = null,
+        IDictionary<string, int>? modes = null)
     {
         using var stream = new MemoryStream();
         using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
@@ -135,7 +143,8 @@ public sealed class TestInstallerServices
             foreach (var pair in files)
             {
                 var entry = archive.CreateEntry(pair.Key);
-                entry.ExternalAttributes = modes is not null && modes.TryGetValue(pair.Key, out var mode) ? mode << 16 : 0;
+                entry.ExternalAttributes =
+                    modes is not null && modes.TryGetValue(pair.Key, out var mode) ? mode << 16 : 0;
                 using var writer = new StreamWriter(entry.Open());
                 writer.Write(pair.Value);
             }
@@ -167,13 +176,15 @@ public sealed class RecordingReporter : IProgressReporter
 
     public bool Initialized { get; private set; }
 
-    public Func<string, int, LockedFileDecision> LockedFileDecision { get; set; } = (_, _) => nUpdate.Installer.LockedFileDecision.Abort;
+    public Func<string, int, LockedFileDecision> LockedFileDecision { get; set; } =
+        (_, _) => nUpdate.Installer.LockedFileDecision.Abort;
 
     public void Initialize() => Initialized = true;
 
     public void ReportUnpackingProgress(float progress, string currentFile) => Unpacking.Add((progress, currentFile));
 
-    public void ReportOperationProgress(float progress, string currentOperation) => Operations.Add((progress, currentOperation));
+    public void ReportOperationProgress(float progress, string currentOperation) =>
+        Operations.Add((progress, currentOperation));
 
     public LockedFileDecision ReportLockedFile(string filePath, int attempt)
     {

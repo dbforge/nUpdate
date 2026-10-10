@@ -10,7 +10,8 @@ namespace nUpdate.Tests.InstallerUi;
 
 public class InstallerWindowTests
 {
-    private static T Find<T>(Window window, string name) where T : Control => window.FindControl<T>(name).ShouldNotBeNull();
+    private static T Find<T>(Window window, string name) where T : Control =>
+        window.FindControl<T>(name).ShouldNotBeNull();
 
     [AvaloniaFact]
     public void Window_ShowsTheProgressAndCannotBeClosedWhileInstalling()
@@ -67,7 +68,8 @@ public class InstallerWindowTests
         window.Show();
         var acknowledged = false;
 
-        viewModel.ShowError(new UnauthorizedAccessException("Access to /opt/demo is denied."), () => acknowledged = true);
+        viewModel.ShowError(new UnauthorizedAccessException("Access to /opt/demo is denied."),
+            () => acknowledged = true);
         Dispatcher.UIThread.RunJobs();
 
         Find<StackPanel>(window, "ErrorPanel").IsVisible.ShouldBeTrue();
@@ -84,7 +86,9 @@ public class InstallerWindowTests
     public void Window_UsesTheAccentColorAndTheApplicationsIcon()
     {
         var icon = Path.Combine(Path.GetTempPath(), $"nupdate-icon-{Guid.NewGuid():N}.png");
-        using (var source = Avalonia.Platform.AssetLoader.Open(new Uri("avares://nUpdate.UpdateInstaller.UI.Avalonia/Assets/nUpdate.png")))
+        using (var source =
+               Avalonia.Platform.AssetLoader.Open(
+                   new Uri("avares://nUpdate.UpdateInstaller.UI.Avalonia/Assets/nUpdate.png")))
         using (var target = File.Create(icon))
             source.CopyTo(target);
         try
@@ -95,9 +99,12 @@ public class InstallerWindowTests
                 o.Ui.IconPath = icon;
             }));
             var window = new InstallerWindow(viewModel);
-            window.Resources["InstallerAccentBrush"].ShouldBeOfType<SolidColorBrush>().Color.ShouldBe(Color.Parse("#2E7D32"));
-            window.Resources["AccentButtonBackground"].ShouldBeOfType<SolidColorBrush>().Color.ShouldBe(Color.Parse("#2E7D32"));
-            new InstallerWindow().Resources["AccentButtonBackground"].ShouldBeOfType<SolidColorBrush>().Color.ShouldBe(InstallerWindow.DefaultAccent);
+            window.Resources["InstallerAccentBrush"].ShouldBeOfType<SolidColorBrush>().Color
+                .ShouldBe(Color.Parse("#2E7D32"));
+            window.Resources["AccentButtonBackground"].ShouldBeOfType<SolidColorBrush>().Color
+                .ShouldBe(Color.Parse("#2E7D32"));
+            new InstallerWindow().Resources["AccentButtonBackground"].ShouldBeOfType<SolidColorBrush>().Color
+                .ShouldBe(InstallerWindow.DefaultAccent);
             InstallerWindow.LoadCustomIcon(icon)!.PixelSize.Width.ShouldBe(256);
             window.Icon.ShouldNotBeNull();
         }

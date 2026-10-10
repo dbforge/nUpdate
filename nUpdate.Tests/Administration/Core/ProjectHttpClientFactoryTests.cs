@@ -19,8 +19,10 @@ public class ProjectHttpClientFactoryTests
         var real = new ProjectHttpClientFactory();
         using var plain = real.Create(project, secrets);
         plain.ShouldNotBeNull();
-        project.Transfer.Proxy = new nUpdate.Administration.TransferInterface.ProxySettings { Address = "http://proxy:8080", Username = "pu" };
-        project.HttpAuthentication = new nUpdate.Administration.Core.Models.HttpAuthenticationSettings { Username = "web" };
+        project.Transfer.Proxy = new nUpdate.Administration.TransferInterface.ProxySettings
+        { Address = "http://proxy:8080", Username = "pu" };
+        project.HttpAuthentication = new nUpdate.Administration.Core.Models.HttpAuthenticationSettings
+        { Username = "web" };
         using var configured = real.Create(project, secrets);
         configured.ShouldNotBeNull();
         project.Transfer.Proxy.Username = null;

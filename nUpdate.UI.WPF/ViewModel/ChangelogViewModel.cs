@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Reflection;
 using System.Windows.Input;
 using nUpdate.Ui;
 using nUpdate.Updating;

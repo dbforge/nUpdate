@@ -7,11 +7,11 @@ namespace nUpdate.Tests.Integration.Support;
 public static class LegacyServer
 {
     public const string LegacyOperations = """
-        [
-          {"Area":0,"Method":1,"Value":"%program%","Value2":["obsolete.dll"],"ExecuteBeforeReplacingFiles":false},
-          {"Area":2,"Method":6,"Value":"helper","Value2":null,"ExecuteBeforeReplacingFiles":true}
-        ]
-        """;
+                                           [
+                                             {"Area":0,"Method":1,"Value":"%program%","Value2":["obsolete.dll"],"ExecuteBeforeReplacingFiles":false},
+                                             {"Area":2,"Method":6,"Value":"helper","Value2":null,"ExecuteBeforeReplacingFiles":true}
+                                           ]
+                                           """;
 
     /// <summary>A package zip as the old administration built it: the four root folders, the files and operations.json.</summary>
     public static byte[] Zip(params (string Name, string Content)[] files)
@@ -39,30 +39,36 @@ public static class LegacyServer
     {
         using var rsa = System.Security.Cryptography.RSA.Create();
         rsa.ImportFromPem(nUpdate.Tests.Support.TestKeys.PrivateKey);
-        return Convert.ToBase64String(rsa.SignData(zip, System.Security.Cryptography.HashAlgorithmName.SHA512, System.Security.Cryptography.RSASignaturePadding.Pkcs1));
+        return Convert.ToBase64String(rsa.SignData(zip, System.Security.Cryptography.HashAlgorithmName.SHA512,
+            System.Security.Cryptography.RSASignaturePadding.Pkcs1));
     }
 
     /// <summary>The updates.json of nUpdate 4 for one package.</summary>
     public static string Feed(string baseUrl, Guid projectId, string literalVersion, string signature) => $$"""
-        [
-          {"LiteralVersion":"{{literalVersion}}","Architecture":2,"Changelog":{"en":"Legacy release","de-DE":"Alte Version"},"NecessaryUpdate":true,
-           "RolloutConditionMode":0,"RolloutConditions":null,"UnsupportedVersions":null,"Signature":"{{signature}}",
-           "UpdatePackageUri":"{{baseUrl}}{{literalVersion}}/{{projectId}}.zip","UpdatePhpFileUri":null,"UseStatistics":false,"ProjectId":"{{projectId}}"}
-        ]
-        """;
+          [
+            {"LiteralVersion":"{{literalVersion}}","Architecture":2,"Changelog":{"en":"Legacy release","de-DE":"Alte Version"},"NecessaryUpdate":true,
+             "RolloutConditionMode":0,"RolloutConditions":null,"UnsupportedVersions":null,"Signature":"{{signature}}",
+             "UpdatePackageUri":"{{baseUrl}}{{literalVersion}}/{{projectId}}.zip","UpdatePhpFileUri":null,"UseStatistics":false,"ProjectId":"{{projectId}}"}
+          ]
+          """;
 
     /// <summary>What answers at statistics.php for clients of nUpdate 4 in these tests; the migration must leave it alone.</summary>
     public const string StatisticsScriptOutput = "statistics of nUpdate 4";
 
     /// <summary>Uploads a stand-in for the statistics.php of nUpdate 4.</summary>
     public static Task PublishStatisticsScriptAsync(ITransferProvider transfer, IntegrationContext context) =>
-        transfer.UploadFileAsync(context.WriteFile("legacy/statistics.php", $"<?php echo '{StatisticsScriptOutput}';"), "statistics.php");
+        transfer.UploadFileAsync(context.WriteFile("legacy/statistics.php", $"<?php echo '{StatisticsScriptOutput}';"),
+            "statistics.php");
 
     /// <summary>Uploads the legacy feed and the package through the given connected provider.</summary>
-    public static async Task PublishAsync(ITransferProvider transfer, IntegrationContext context, Guid projectId, string literalVersion, byte[] zip)
+    public static async Task PublishAsync(ITransferProvider transfer, IntegrationContext context, Guid projectId,
+        string literalVersion, byte[] zip)
     {
         await transfer.CreateDirectoryAsync(literalVersion);
-        await transfer.UploadFileAsync(context.WriteBytes($"legacy/{literalVersion}/{projectId}.zip", zip), $"{literalVersion}/{projectId}.zip");
-        await transfer.UploadFileAsync(context.WriteFile("legacy/updates.json", Feed(context.Server.HttpBaseUrl, projectId, literalVersion, Sign(zip))), "updates.json");
+        await transfer.UploadFileAsync(context.WriteBytes($"legacy/{literalVersion}/{projectId}.zip", zip),
+            $"{literalVersion}/{projectId}.zip");
+        await transfer.UploadFileAsync(
+            context.WriteFile("legacy/updates.json",
+                Feed(context.Server.HttpBaseUrl, projectId, literalVersion, Sign(zip))), "updates.json");
     }
 }

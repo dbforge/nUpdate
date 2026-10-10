@@ -7,7 +7,8 @@ namespace nUpdate.Tests.Installer;
 
 public sealed class WindowProgressReporterTests
 {
-    private static InstallerSession Session() => new(new InstallerOptions { Application = new ApplicationOptions { Name = "Demo" } }, "/tmp/install.log");
+    private static InstallerSession Session() =>
+        new(new InstallerOptions { Application = new ApplicationOptions { Name = "Demo" } }, "/tmp/install.log");
 
     [Fact]
     public async Task WindowProgressReporter_ShowsTheLatestProgressFromBeforeItOpenedAndEverythingAfterwards()
@@ -74,7 +75,8 @@ public sealed class WindowProgressReporterTests
         Polling.WaitUntil(() => window.Answer is not null);
 
         window.GoAway(); // the display server goes away; nobody answers
-        (await Should.ThrowAsync<InvalidOperationException>(() => question.WaitAsync(TimeSpan.FromSeconds(10)))).Message.ShouldBe("The installer window was closed.");
+        (await Should.ThrowAsync<InvalidOperationException>(() => question.WaitAsync(TimeSpan.FromSeconds(10)))).Message
+            .ShouldBe("The installer window was closed.");
         await run.WaitAsync(TimeSpan.FromSeconds(10));
         Should.Throw<InvalidOperationException>(() => window.Fail(new IOException()));
     }
@@ -85,7 +87,8 @@ public sealed class WindowProgressReporterTests
         using var window = new TestWindow(Session(), new InvalidOperationException("XOpenDisplay failed"));
         Should.Throw<InvalidOperationException>(window.Initialize).Message.ShouldBe("XOpenDisplay failed");
 
-        Should.Throw<InvalidOperationException>(() => window.ReportLockedFile("/f", 1)).Message.ShouldBe("The installer window is not open.");
+        Should.Throw<InvalidOperationException>(() => window.ReportLockedFile("/f", 1)).Message
+            .ShouldBe("The installer window is not open.");
         Should.Throw<InvalidOperationException>(() => window.Fail(new IOException()));
         window.ReportOperationProgress(1, "ignored");
         window.Terminate();
@@ -94,7 +97,8 @@ public sealed class WindowProgressReporterTests
     }
 
     /// <summary>A window that opens when the test says so, records what it shows and closes when it finishes; posts run at once.</summary>
-    private sealed class TestWindow(InstallerSession session, Exception? openFailure = null) : WindowProgressReporter(session)
+    private sealed class TestWindow(InstallerSession session, Exception? openFailure = null)
+        : WindowProgressReporter(session)
     {
         private readonly ManualResetEventSlim _closed = new();
         private readonly ConcurrentQueue<string> _shown = new();

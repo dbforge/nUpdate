@@ -32,9 +32,12 @@ public sealed class IntegrationContext : IDisposable
         Statistics = new StatisticsApiClient(HttpClientFactory);
         Feeds = new FeedStore(FileSystem, HttpClientFactory);
         Signer = new PackageSigner(FileSystem);
-        Migrator = new LegacyFeedMigrator(FileSystem, Paths, HttpClientFactory, Feeds, Signer, TransferFactory, Statistics, Store, Logger);
-        Projects = new ProjectService(FileSystem, Paths, Store, Passwords, TransferFactory, Statistics, Migrator, Logger, _ => (nUpdate.Tests.Support.TestKeys.PublicKey, nUpdate.Tests.Support.TestKeys.PrivateKey));
-        Publisher = new PublishService(FileSystem, new PackageBuilder(FileSystem), Signer, Feeds, TransferFactory, Statistics, Store, Logger);
+        Migrator = new LegacyFeedMigrator(FileSystem, Paths, HttpClientFactory, Feeds, Signer, TransferFactory,
+            Statistics, Store, Logger);
+        Projects = new ProjectService(FileSystem, Paths, Store, Passwords, TransferFactory, Statistics, Migrator,
+            Logger, _ => (nUpdate.Tests.Support.TestKeys.PublicKey, nUpdate.Tests.Support.TestKeys.PrivateKey));
+        Publisher = new PublishService(FileSystem, new PackageBuilder(FileSystem), Signer, Feeds, TransferFactory,
+            Statistics, Store, Logger);
     }
 
     public ServerFixture Server { get; }
@@ -74,16 +77,17 @@ public sealed class IntegrationContext : IDisposable
     /// <summary>The folder a project of the name is created in.</summary>
     public string ProjectFolder(string name) => Paths.SuggestedProjectFolder(name);
 
-    public TransferSettings FtpSettings(TransferProtocol protocol = TransferProtocol.Ftp, string? trustedFingerprint = null) => new()
-    {
-        Protocol = protocol,
-        Host = Server.FtpHost,
-        Port = Server.FtpPort,
-        Username = ServerFixture.FtpUser,
-        Directory = "/",
-        UsePassiveMode = true,
-        TrustedCertificateFingerprint = trustedFingerprint,
-    };
+    public TransferSettings FtpSettings(TransferProtocol protocol = TransferProtocol.Ftp,
+        string? trustedFingerprint = null) => new()
+        {
+            Protocol = protocol,
+            Host = Server.FtpHost,
+            Port = Server.FtpPort,
+            Username = ServerFixture.FtpUser,
+            Directory = "/",
+            UsePassiveMode = true,
+            TrustedCertificateFingerprint = trustedFingerprint,
+        };
 
     public TransferSettings SftpSettings(string? trustedHostKey = null) => new()
     {

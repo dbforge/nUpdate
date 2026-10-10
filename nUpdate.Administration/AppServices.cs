@@ -32,7 +32,8 @@ public static class AppServices
         services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Information));
         services.AddSingleton<IFileSystem>(fileSystem);
         services.AddSingleton(paths);
-        services.AddSingleton<ICredentialProtector>(_ => DataProtectionCredentialProtector.CreateForDirectory(paths.KeyRingDirectory));
+        services.AddSingleton<ICredentialProtector>(_ =>
+            DataProtectionCredentialProtector.CreateForDirectory(paths.KeyRingDirectory));
         services.AddSingleton<IProjectHttpClientFactory, ProjectHttpClientFactory>();
         services.AddSingleton<IProjectStore, ProjectStore>();
         services.AddSingleton<IProjectPasswordStore, ProjectPasswordStore>();

@@ -44,8 +44,10 @@ public sealed class WindowsEventLog : IEventLog
 
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ReportEventW(IntPtr eventLog, ushort type, ushort category, uint eventId, IntPtr userSid, ushort numStrings, uint dataSize,
-            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] strings, IntPtr rawData);
+        public static extern bool ReportEventW(IntPtr eventLog, ushort type, ushort category, uint eventId,
+            IntPtr userSid, ushort numStrings, uint dataSize,
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)]
+            string[] strings, IntPtr rawData);
 
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

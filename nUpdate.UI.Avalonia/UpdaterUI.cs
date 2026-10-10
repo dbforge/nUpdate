@@ -10,13 +10,13 @@ namespace nUpdate.UI.Avalonia;
 ///     Runs the complete update process with the built-in Avalonia dialogs on Windows, Linux and macOS. Create and use it
 ///     on the UI thread.
 /// </summary>
-public sealed class UpdaterUI
+public sealed class UpdaterUi
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window that owns the dialogs, which are then modal to it; <c>null</c> shows them on their own.</param>
-    public UpdaterUI(UpdateManager updateManager, Window? owner = null)
+    public UpdaterUi(UpdateManager updateManager, Window? owner = null)
     {
         ArgumentNullException.ThrowIfNull(updateManager);
         Presenter = new AvaloniaPresenter(updateManager, owner);
@@ -33,7 +33,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     /// <summary>Shows the dialogs of <see cref="UpdateFlow" /> as Avalonia windows.</summary>
     internal sealed class AvaloniaPresenter(UpdateManager updateManager, Window? owner) : IUpdateFlowPresenter
@@ -49,9 +50,11 @@ public sealed class UpdaterUI
         }
 
         public Task ShowNoUpdatesAsync() =>
-            ShowAsync(new MessageDialogViewModel(updateManager, updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo));
+            ShowAsync(new MessageDialogViewModel(updateManager, updateManager.Texts.NoUpdatesTitle,
+                updateManager.Texts.NoUpdatesInfo));
 
-        public async Task<bool> ConfirmInstallAsync() => await ShowAsync(new NewUpdateDialogViewModel(updateManager)) == true;
+        public async Task<bool> ConfirmInstallAsync() =>
+            await ShowAsync(new NewUpdateDialogViewModel(updateManager)) == true;
 
         public async Task RunDownloadAsync(Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task> download)
         {

@@ -18,5 +18,7 @@ public sealed class UpdateDownloadProgress
     public long TotalBytesToReceive { get; }
 
     /// <summary>0 to 100. Zero when the total is unknown.</summary>
-    public float Percentage => TotalBytesToReceive == 0 ? 0 : Math.Min(100f, (float)(100.0 * BytesReceived / TotalBytesToReceive));
+    public float Percentage => TotalBytesToReceive == 0
+        ? 0
+        : Math.Min(100f, (float)(100.0 * BytesReceived / TotalBytesToReceive));
 }

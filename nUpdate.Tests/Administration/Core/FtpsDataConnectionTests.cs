@@ -24,20 +24,26 @@ public class FtpsDataConnectionTests
     [Fact]
     public void Describe_AdvisesOnAFailedHandshakeAndOnAMentionedReuse()
     {
-        var handshake = new IOException("The data connection failed.", new System.Security.Authentication.AuthenticationException("The remote party closed the stream."));
+        var handshake = new IOException("The data connection failed.",
+            new System.Security.Authentication.AuthenticationException("The remote party closed the stream."));
         FtpsDataConnection.Describe(handshake, TransferProtocol.FtpsExplicit).ShouldEndWith(FtpsDataConnection.Advice);
-        FtpsDataConnection.Describe(new IOException("TLS session reuse is required"), TransferProtocol.FtpsExplicit).ShouldEndWith(FtpsDataConnection.Advice);
+        FtpsDataConnection.Describe(new IOException("TLS session reuse is required"), TransferProtocol.FtpsExplicit)
+            .ShouldEndWith(FtpsDataConnection.Advice);
     }
 
     [Fact]
     public void Describe_LeavesOtherFailuresAsTheyAre()
     {
-        var refused = new FluentFTP.Exceptions.FtpCommandException("522", "SSL connection failed: session reuse required");
-        FtpsDataConnection.Describe(refused, TransferProtocol.Ftp).ShouldBe(refused.Message); // no TLS, no session to resume
+        var refused =
+            new FluentFTP.Exceptions.FtpCommandException("522", "SSL connection failed: session reuse required");
+        FtpsDataConnection.Describe(refused, TransferProtocol.Ftp)
+            .ShouldBe(refused.Message); // no TLS, no session to resume
         FtpsDataConnection.Describe(refused, TransferProtocol.Sftp).ShouldBe(refused.Message);
         var missing = new FluentFTP.Exceptions.FtpCommandException("550", "No such file or directory");
         FtpsDataConnection.Describe(missing, TransferProtocol.FtpsExplicit).ShouldBe(missing.Message);
-        FtpsDataConnection.Describe(new IOException("broken pipe", new TimeoutException()), TransferProtocol.FtpsExplicit).ShouldBe("broken pipe");
+        FtpsDataConnection
+            .Describe(new IOException("broken pipe", new TimeoutException()), TransferProtocol.FtpsExplicit)
+            .ShouldBe("broken pipe");
         Should.Throw<ArgumentNullException>(() => FtpsDataConnection.Describe(null!, TransferProtocol.FtpsExplicit));
     }
 }

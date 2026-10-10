@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Windows.Forms;
 using nUpdate.Ui;
 using nUpdate.UI.WindowsForms.Dialogs;
 using nUpdate.UI.WindowsForms.Popups;
@@ -10,13 +8,13 @@ namespace nUpdate.UI.WindowsForms;
 /// <summary>
 ///     Runs the complete update process with the built-in Windows Forms dialogs. Create and use it on the UI thread.
 /// </summary>
-public sealed class UpdaterUI
+public sealed class UpdaterUi
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window the dialogs are centred on; <c>null</c> uses the active form.</param>
-    public UpdaterUI(UpdateManager updateManager, IWin32Window? owner = null)
+    public UpdaterUi(UpdateManager updateManager, IWin32Window? owner = null)
     {
         if (updateManager is null)
             throw new ArgumentNullException(nameof(updateManager));
@@ -31,7 +29,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     private sealed class WinFormsPresenter(UpdateManager updateManager, IWin32Window? owner) : IUpdateFlowPresenter
     {

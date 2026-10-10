@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using nUpdate.Installer;
-using nUpdate.Updating;
 
 namespace nUpdate.UpdateInstaller;
 
@@ -51,8 +50,10 @@ public static class InstallerOptionsReader
             throw new InvalidDataException("The installer options contain a package without a path.");
         if (string.IsNullOrWhiteSpace(options.Application.Directory))
             throw new InvalidDataException("The installer options name no application directory.");
-        if (options.Host.AfterInstall != AfterInstall.KeepRunning && string.IsNullOrWhiteSpace(options.Application.ExecutablePath))
-            throw new InvalidDataException("The installer options name no application executable although the host application should be closed.");
+        if (options.Host.AfterInstall != AfterInstall.KeepRunning &&
+            string.IsNullOrWhiteSpace(options.Application.ExecutablePath))
+            throw new InvalidDataException(
+                "The installer options name no application executable although the host application should be closed.");
 
         return options;
     }

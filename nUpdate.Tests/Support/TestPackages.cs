@@ -12,7 +12,8 @@ public static class TestPackages
     private static readonly DateTimeOffset EntryTime = new(2026, 10, 7, 12, 0, 0, TimeSpan.Zero);
 
     /// <summary>A zip whose manifest names the version, project and platform, carrying the payload as <c>Program/payload.bin</c>.</summary>
-    public static byte[] Build(string version, Guid projectId, byte[] payload, string? manifestJson = null, string platform = PackagePlatform.Any)
+    public static byte[] Build(string version, Guid projectId, byte[] payload, string? manifestJson = null,
+        string platform = PackagePlatform.Any)
     {
         using var stream = new MemoryStream();
         using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
@@ -24,7 +25,13 @@ public static class TestPackages
             var manifest = archive.CreateEntry(PackageLayout.ManifestFileName, CompressionLevel.NoCompression);
             manifest.LastWriteTime = EntryTime;
             using var writer = new StreamWriter(manifest.Open(), new UTF8Encoding(false));
-            writer.Write(manifestJson ?? Serializer.Serialize(new PackageManifest { ProjectId = projectId, Version = new UpdateVersion(version), Platform = platform, CreatedAt = new DateTimeOffset(2026, 10, 7, 12, 0, 0, TimeSpan.Zero) }));
+            writer.Write(manifestJson ?? Serializer.Serialize(new PackageManifest
+            {
+                ProjectId = projectId,
+                Version = new UpdateVersion(version),
+                Platform = platform,
+                CreatedAt = new DateTimeOffset(2026, 10, 7, 12, 0, 0, TimeSpan.Zero)
+            }));
         }
 
         return stream.ToArray();

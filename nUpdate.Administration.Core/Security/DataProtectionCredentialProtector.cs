@@ -15,16 +15,20 @@ public sealed class DataProtectionCredentialProtector : ICredentialProtector
     }
 
     /// <summary>Creates a protector whose key ring lives in the given directory, DPAPI-wrapped on Windows.</summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "Platform-dependent branch; the Windows CI job exercises the DPAPI path.")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification =
+        "Platform-dependent branch; the Windows CI job exercises the DPAPI path.")]
     public static DataProtectionCredentialProtector CreateForDirectory(string keyRingDirectory)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(keyRingDirectory);
         var directory = new DirectoryInfo(keyRingDirectory);
-        return new DataProtectionCredentialProtector(OperatingSystem.IsWindows() ? CreateWindowsProvider(directory) : DataProtectionProvider.Create(directory));
+        return new DataProtectionCredentialProtector(OperatingSystem.IsWindows()
+            ? CreateWindowsProvider(directory)
+            : DataProtectionProvider.Create(directory));
     }
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "DPAPI is only available on Windows; exercised by the Windows CI job.")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification =
+        "DPAPI is only available on Windows; exercised by the Windows CI job.")]
     private static IDataProtectionProvider CreateWindowsProvider(DirectoryInfo directory) =>
         DataProtectionProvider.Create(directory, builder => builder.ProtectKeysWithDpapi());
 

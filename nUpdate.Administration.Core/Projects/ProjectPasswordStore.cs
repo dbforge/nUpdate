@@ -16,18 +16,15 @@ public interface IProjectPasswordStore
 }
 
 /// <summary>Keeps the passwords in <c>passwords.json</c>, each protected with the credential protector.</summary>
-public sealed class ProjectPasswordStore : IProjectPasswordStore
+public sealed class ProjectPasswordStore(
+    IFileSystem fileSystem,
+    AdministrationPaths paths,
+    ICredentialProtector protector)
+    : IProjectPasswordStore
 {
-    private readonly IFileSystem _fileSystem;
-    private readonly AdministrationPaths _paths;
-    private readonly ICredentialProtector _protector;
-
-    public ProjectPasswordStore(IFileSystem fileSystem, AdministrationPaths paths, ICredentialProtector protector)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _paths = paths ?? throw new ArgumentNullException(nameof(paths));
-        _protector = protector ?? throw new ArgumentNullException(nameof(protector));
-    }
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+    private readonly AdministrationPaths _paths = paths ?? throw new ArgumentNullException(nameof(paths));
+    private readonly ICredentialProtector _protector = protector ?? throw new ArgumentNullException(nameof(protector));
 
     public async Task<string?> GetAsync(Guid projectId, CancellationToken cancellationToken = default)
     {
@@ -63,7 +60,8 @@ public sealed class ProjectPasswordStore : IProjectPasswordStore
     {
         if (!_fileSystem.File.Exists(_paths.PasswordsFile))
             return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        var content = await _fileSystem.File.ReadAllTextAsync(_paths.PasswordsFile, cancellationToken).ConfigureAwait(false);
+        var content = await _fileSystem.File.ReadAllTextAsync(_paths.PasswordsFile, cancellationToken)
+            .ConfigureAwait(false);
         Dictionary<string, string>? entries = null;
         try
         {
@@ -80,6 +78,8 @@ public sealed class ProjectPasswordStore : IProjectPasswordStore
     private async Task WriteAsync(Dictionary<string, string> entries, CancellationToken cancellationToken)
     {
         _fileSystem.Directory.CreateDirectory(_paths.Root);
-        await _fileSystem.File.WriteAllTextAsync(_paths.PasswordsFile, Serializer.Serialize(entries, indented: true), cancellationToken).ConfigureAwait(false);
+        await _fileSystem.File
+            .WriteAllTextAsync(_paths.PasswordsFile, Serializer.Serialize(entries, indented: true), cancellationToken)
+            .ConfigureAwait(false);
     }
 }

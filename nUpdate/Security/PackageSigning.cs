@@ -45,7 +45,8 @@ internal sealed class PackageSigning : IDisposable
             rsa.FromXmlString(xml);
             return new PackageSigning(rsa);
         }
-        catch (Exception ex) when (ex is CryptographicException or System.Xml.XmlException or FormatException or ArgumentException or InvalidOperationException)
+        catch (Exception ex) when (ex is CryptographicException or System.Xml.XmlException or FormatException
+                                       or ArgumentException or InvalidOperationException)
         {
             rsa.Dispose();
             throw new ArgumentException("The key is not a valid RSA XML key.", nameof(xml), ex);
@@ -66,9 +67,11 @@ internal sealed class PackageSigning : IDisposable
 
     public byte[] Sign(byte[] data) => _rsa.SignData(data, HashAlgorithmName.SHA512, RSASignaturePadding.Pss);
 
-    public bool Verify(Stream data, byte[] signature) => _rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pss);
+    public bool Verify(Stream data, byte[] signature) =>
+        _rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pss);
 
-    public bool Verify(byte[] data, byte[] signature) => _rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pss);
+    public bool Verify(byte[] data, byte[] signature) =>
+        _rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pss);
 
     public void Dispose()
     {
@@ -96,5 +99,7 @@ internal sealed class PackageSigning : IDisposable
     // .NET Framework's default RSA implementation cannot do PSS padding; CNG can. Only reachable on .NET Framework.
     [ExcludeFromCodeCoverage]
     private static RSA CreateRsa() =>
-        RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal) ? new RSACng() : RSA.Create();
+        RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal)
+            ? new RSACng()
+            : RSA.Create();
 }

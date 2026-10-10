@@ -20,7 +20,8 @@ public class CredentialsDialogTests
         var stored = AppTestContext.NewSecrets(statistics: true);
         project.Secrets = ProjectSecretsProtection.Protect(stored, "pw");
         var secrets = new ProjectSecrets();
-        var viewModel = _context.Factory.Create<CredentialsViewModel>(project, secrets, CredentialsMode.ProjectPassword);
+        var viewModel =
+            _context.Factory.Create<CredentialsViewModel>(project, secrets, CredentialsMode.ProjectPassword);
         viewModel.Title.ShouldBe("Unlock Demo");
         viewModel.Mode.ShouldBe(CredentialsMode.ProjectPassword);
         viewModel.AsksForProjectPassword.ShouldBeTrue();
@@ -108,11 +109,16 @@ public class CredentialsDialogTests
             File.Delete(keyFile);
         }
 
-        Should.Throw<ArgumentNullException>(() => new CredentialsViewModel(_context.Files, null!, secrets, CredentialsMode.Secrets));
-        Should.Throw<ArgumentNullException>(() => new CredentialsViewModel(_context.Files, project, null!, CredentialsMode.Secrets));
-        Should.Throw<ArgumentNullException>(() => new CredentialsViewModel(null!, project, secrets, CredentialsMode.Secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new CredentialsViewModel(_context.Files, null!, secrets, CredentialsMode.Secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new CredentialsViewModel(_context.Files, project, null!, CredentialsMode.Secrets));
+        Should.Throw<ArgumentNullException>(() =>
+            new CredentialsViewModel(null!, project, secrets, CredentialsMode.Secrets));
         // Without encrypted secrets there is no password to ask for.
-        Should.Throw<ArgumentException>(() => new CredentialsViewModel(_context.Files, AppTestContext.NewProject(), secrets, CredentialsMode.ProjectPassword));
+        Should.Throw<ArgumentException>(() =>
+            new CredentialsViewModel(_context.Files, AppTestContext.NewProject(), secrets,
+                CredentialsMode.ProjectPassword));
     }
 
     [Fact]
@@ -131,7 +137,8 @@ public class CredentialsDialogTests
     [Fact]
     public async Task Credentials_ReportUnreadableKeyFiles()
     {
-        var viewModel = _context.Factory.Create<CredentialsViewModel>(AppTestContext.NewProject(), new ProjectSecrets(), CredentialsMode.Secrets);
+        var viewModel = _context.Factory.Create<CredentialsViewModel>(AppTestContext.NewProject(), new ProjectSecrets(),
+            CredentialsMode.Secrets);
         _context.Files.PickFileAsync(Arg.Any<string>(), Arg.Any<nUpdate.Administration.Services.FileTypeFilter[]>())
             .Returns(Path.Combine(Path.GetTempPath(), "nupdate-missing-" + Guid.NewGuid().ToString("N") + ".pem"));
         await viewModel.LoadPrivateKeyCommand.ExecuteAsync(null);
@@ -170,7 +177,11 @@ public class CredentialsDialogTests
     [AvaloniaFact]
     public void CredentialsWindow_BindsBothModes()
     {
-        var credentials = new CredentialsWindow { DataContext = _context.Factory.Create<CredentialsViewModel>(AppTestContext.NewProject(), new ProjectSecrets(), CredentialsMode.Secrets) };
+        var credentials = new CredentialsWindow
+        {
+            DataContext = _context.Factory.Create<CredentialsViewModel>(AppTestContext.NewProject(),
+                new ProjectSecrets(), CredentialsMode.Secrets)
+        };
         credentials.Show();
         credentials.TransferPasswordBox.Text = "pw";
         ((CredentialsViewModel)credentials.DataContext!).TransferPassword.ShouldBe("pw");
@@ -179,7 +190,12 @@ public class CredentialsDialogTests
 
         var locked = AppTestContext.NewProject();
         locked.Secrets = ProjectSecretsProtection.Protect(new ProjectSecrets(), "pw");
-        var unlock = new CredentialsWindow { DataContext = _context.Factory.Create<CredentialsViewModel>(locked, new ProjectSecrets(), CredentialsMode.ProjectPassword) };
+        var unlock = new CredentialsWindow
+        {
+            DataContext =
+                _context.Factory.Create<CredentialsViewModel>(locked, new ProjectSecrets(),
+                    CredentialsMode.ProjectPassword)
+        };
         unlock.Show();
         unlock.ProjectPasswordBox.Text = "pw";
         ((CredentialsViewModel)unlock.DataContext!).ProjectPassword.ShouldBe("pw");

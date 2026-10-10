@@ -8,7 +8,8 @@ public sealed class ProcessOperationHandler : IOperationHandler
 {
     public OperationArea Area => OperationArea.Processes;
 
-    public int CountTasks(Operation operation) => operation is null ? throw new ArgumentNullException(nameof(operation)) : 1;
+    public int CountTasks(Operation operation) =>
+        operation is null ? throw new ArgumentNullException(nameof(operation)) : 1;
 
     public void Execute(Operation operation, OperationContext context)
     {
@@ -26,7 +27,8 @@ public sealed class ProcessOperationHandler : IOperationHandler
                     context.Status(InstallerText.ProcessWaiting, start.Path);
                     var exitCode = context.Services.ProcessService.Run(path, start.Arguments);
                     if (start.FailOnError && exitCode != 0)
-                        throw new InvalidOperationException(context.Options.Text(InstallerText.ProcessExitCodeError, start.Path, exitCode));
+                        throw new InvalidOperationException(context.Options.Text(InstallerText.ProcessExitCodeError,
+                            start.Path, exitCode));
                 }
                 else
                 {

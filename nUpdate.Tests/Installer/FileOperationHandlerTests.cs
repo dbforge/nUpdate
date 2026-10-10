@@ -26,7 +26,8 @@ public class FileOperationHandlerTests
 
         fs.File.Exists(fs.Path.Combine(_services.AppDirectory, "old.dll")).ShouldBeFalse();
         fs.File.Exists(fs.Path.Combine(_services.AppDirectory, "keep.dll")).ShouldBeTrue();
-        _services.Reporter.Operations.Select(o => o.Text).ShouldBe(["Deleting file \"old.dll\"...", "Deleting file \"missing.dll\"..."]);
+        _services.Reporter.Operations.Select(o => o.Text)
+            .ShouldBe(["Deleting file \"old.dll\"...", "Deleting file \"missing.dll\"..."]);
         _services.Reporter.Operations.Last().Progress.ShouldBe(100f);
     }
 
@@ -45,10 +46,13 @@ public class FileOperationHandlerTests
         fs.File.ReadAllText(fs.Path.Combine(_services.AppDirectory, "b.txt")).ShouldBe("A");
         _services.Reporter.Operations.Single().Text.ShouldBe("Renaming file \"a.txt\" to \"b.txt\"...");
 
-        handler.Execute(new RenameFileOperation { Path = "%program%\\missing.txt", NewName = "c.txt" }, _services.Context());
+        handler.Execute(new RenameFileOperation { Path = "%program%\\missing.txt", NewName = "c.txt" },
+            _services.Context());
         fs.File.Exists(fs.Path.Combine(_services.AppDirectory, "c.txt")).ShouldBeFalse();
-        Should.Throw<InvalidOperationException>(() => handler.Execute(new RenameFileOperation { Path = "%program%\\x" }, _services.Context()));
-        Should.Throw<NotSupportedException>(() => handler.Execute(new StartProcessOperation { Path = "x" }, _services.Context()));
+        Should.Throw<InvalidOperationException>(() =>
+            handler.Execute(new RenameFileOperation { Path = "%program%\\x" }, _services.Context()));
+        Should.Throw<NotSupportedException>(() =>
+            handler.Execute(new StartProcessOperation { Path = "x" }, _services.Context()));
     }
 
     [Fact]

@@ -25,14 +25,17 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
     private const string MetadataIdentifier = "[0-9A-Za-z-]+";
 
     private static readonly Regex VersionPattern = new(
-        "^(?<Major>" + Number + @")\.(?<Minor>" + Number + @")\.(?<Build>" + Number + @")(\.(?<Revision>[1-9][0-9]*))?" +
+        "^(?<Major>" + Number + @")\.(?<Minor>" + Number + @")\.(?<Build>" + Number +
+        @")(\.(?<Revision>[1-9][0-9]*))?" +
         "(-(?<Pre>" + PreReleaseIdentifier + @"(\." + PreReleaseIdentifier + ")*))?" +
         @"(\+(?<Meta>" + MetadataIdentifier + @"(\." + MetadataIdentifier + ")*))?$",
         RegexOptions.CultureInvariant);
 
-    private static readonly Regex PreReleasePattern = new("^" + PreReleaseIdentifier + @"(\." + PreReleaseIdentifier + ")*$", RegexOptions.CultureInvariant);
+    private static readonly Regex PreReleasePattern =
+        new("^" + PreReleaseIdentifier + @"(\." + PreReleaseIdentifier + ")*$", RegexOptions.CultureInvariant);
 
-    private static readonly Regex MetadataPattern = new("^" + MetadataIdentifier + @"(\." + MetadataIdentifier + ")*$", RegexOptions.CultureInvariant);
+    private static readonly Regex MetadataPattern = new("^" + MetadataIdentifier + @"(\." + MetadataIdentifier + ")*$",
+        RegexOptions.CultureInvariant);
 
     /// <summary>Initializes the version <c>0.0.0</c>.</summary>
     public UpdateVersion()
@@ -73,8 +76,11 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
         Minor = NonNegative(minor, nameof(minor));
         Build = NonNegative(build, nameof(build));
         Revision = NonNegative(revision, nameof(revision));
-        PreRelease = Validate(preRelease, PreReleasePattern, "pre-release label: use dot-separated identifiers of letters, digits and hyphens, numbers without leading zeros", nameof(preRelease));
-        BuildMetadata = Validate(buildMetadata, MetadataPattern, "build metadata: use dot-separated identifiers of letters, digits and hyphens", nameof(buildMetadata));
+        PreRelease = Validate(preRelease, PreReleasePattern,
+            "pre-release label: use dot-separated identifiers of letters, digits and hyphens, numbers without leading zeros",
+            nameof(preRelease));
+        BuildMetadata = Validate(buildMetadata, MetadataPattern,
+            "build metadata: use dot-separated identifiers of letters, digits and hyphens", nameof(buildMetadata));
     }
 
     public int Major { get; }
@@ -94,7 +100,9 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
     public bool IsPreRelease => PreRelease is null ? false : true;
 
     /// <summary>The version without its pre-release label and metadata: the release a pre-release leads up to.</summary>
-    public UpdateVersion Release => PreRelease is null && BuildMetadata is null ? this : new UpdateVersion(Major, Minor, Build, Revision);
+    public UpdateVersion Release => PreRelease is null && BuildMetadata is null
+        ? this
+        : new UpdateVersion(Major, Minor, Build, Revision);
 
     /// <summary>The stage nUpdate recognises in the first identifier of the label.</summary>
     internal PreReleaseStage Stage
@@ -120,7 +128,8 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
         result = null;
         if (version is null || !TryParseCore(version, out var parsed))
             return false;
-        result = new UpdateVersion(parsed.Major, parsed.Minor, parsed.Build, parsed.Revision, parsed.PreRelease, parsed.BuildMetadata);
+        result = new UpdateVersion(parsed.Major, parsed.Minor, parsed.Build, parsed.Revision, parsed.PreRelease,
+            parsed.BuildMetadata);
         return true;
     }
 
@@ -238,7 +247,8 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
     public static bool operator >=(UpdateVersion? left, UpdateVersion? right) =>
         left is null ? right is null : left.CompareTo(right) >= 0;
 
-    private static bool TryParseCore(string version, out (int Major, int Minor, int Build, int Revision, string? PreRelease, string? BuildMetadata) parsed)
+    private static bool TryParseCore(string version,
+        out (int Major, int Minor, int Build, int Revision, string? PreRelease, string? BuildMetadata) parsed)
     {
         parsed = default;
         var match = VersionPattern.Match(version);
@@ -246,7 +256,8 @@ public sealed class UpdateVersion : IComparable<UpdateVersion>, IComparable, IEq
             return false;
 
         if (!TryPart(match.Groups["Major"], out var major) || !TryPart(match.Groups["Minor"], out var minor)
-            || !TryPart(match.Groups["Build"], out var build) || !TryPart(match.Groups["Revision"], out var revision))
+                                                           || !TryPart(match.Groups["Build"], out var build) ||
+                                                           !TryPart(match.Groups["Revision"], out var revision))
             return false;
 
         var pre = match.Groups["Pre"].Success ? match.Groups["Pre"].Value : null;

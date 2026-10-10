@@ -15,5 +15,6 @@ public sealed class InstallResult
 
     public static InstallResult Success { get; } = new(true, null);
 
-    public static InstallResult Failure(Exception error) => new(false, error ?? throw new ArgumentNullException(nameof(error)));
+    public static InstallResult Failure(Exception error) =>
+        new(false, error ?? throw new ArgumentNullException(nameof(error)));
 }

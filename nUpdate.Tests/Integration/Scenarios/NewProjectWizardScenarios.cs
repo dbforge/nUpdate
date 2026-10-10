@@ -9,13 +9,8 @@ using nUpdate.Tests.Integration.Support;
 namespace nUpdate.Tests.Integration.Scenarios;
 
 /// <summary>The new-project wizard: General, Authentication, Transfer, Statistics and Security.</summary>
-public sealed class NewProjectWizardScenarios : ScenarioTest
+public sealed class NewProjectWizardScenarios(ServerFixture server) : ScenarioTest(server)
 {
-    public NewProjectWizardScenarios(ServerFixture server)
-        : base(server)
-    {
-    }
-
     private async Task<NewProjectWindow> OpenWizardAsync()
     {
         User.Click(App.Main.NewProjectButton);
@@ -24,7 +19,8 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
 
     private static NewProjectViewModel ViewModel(NewProjectWindow wizard) => (NewProjectViewModel)wizard.DataContext!;
 
-    private static string CurrentStep(NewProjectWindow wizard) => ViewModel(wizard).Steps.Single(s => s.IsCurrent).Title;
+    private static string CurrentStep(NewProjectWindow wizard) =>
+        ViewModel(wizard).Steps.Single(s => s.IsCurrent).Title;
 
     private void FillTransfer(NewProjectWindow wizard, TransferProtocol protocol, string? password = null)
     {
@@ -81,7 +77,8 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
             User.Check(wizard.UseHttpAuthenticationBox, true);
             User.Click(wizard.ContinueButton);
         });
-        await Then("the wizard asks for the user name", () => wizard.ErrorText.Text!.ShouldContain("user name for the HTTP authentication"));
+        await Then("the wizard asks for the user name",
+            () => wizard.ErrorText.Text!.ShouldContain("user name for the HTTP authentication"));
         await When("authentication is switched off again", () =>
         {
             User.Check(wizard.UseHttpAuthenticationBox, false);
@@ -89,7 +86,8 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
         });
         await Then("the Transfer step is shown", () => CurrentStep(wizard).ShouldBe("Transfer"));
         await When("the user continues without a host", () => User.Click(wizard.ContinueButton));
-        await Then("the wizard asks for the host name", () => wizard.ErrorText.Text!.ShouldBe("Enter the server host name."));
+        await Then("the wizard asks for the host name",
+            () => wizard.ErrorText.Text!.ShouldBe("Enter the server host name."));
         await When("the transfer settings are complete", () =>
         {
             FillTransfer(wizard, TransferProtocol.Sftp);
@@ -187,7 +185,8 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
         await Then("the test fails with the server's message", async () =>
         {
             var result = User.Find<TextBlock>(wizard, "TestResultText");
-            await User.WaitUntil(() => result.Text is not (null or "" or "Connecting..."), "the connection test to finish");
+            await User.WaitUntil(() => result.Text is not (null or "" or "Connecting..."),
+                "the connection test to finish");
             result.Text!.ShouldNotBe("Connection successful.");
             ViewModel(wizard).Transfer.IsTesting.ShouldBeFalse();
         });
@@ -228,19 +227,22 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
             var window = await App.WindowAsync<ProjectWindow>();
             window.Title.ShouldBe("Trade Updater - nUpdate Administration");
         });
-        await And("the project folder holds project.nupdproj with the secrets under the password and a trailing slash on the URL", async () =>
-        {
-            App.ListedProjects.ShouldBe(["Trade Updater"]);
-            File.Exists(App.ProjectFile("Trade Updater")).ShouldBeTrue();
-            Directory.Exists(Path.Combine(App.ProjectFolder("Trade Updater"), "packages")).ShouldBeTrue();
-            (await App.Store.LoadAsync(App.ProjectFile("Trade Updater"))).SecretsState.ShouldBe(nUpdate.Administration.Core.Projects.SecretsState.PasswordRequired);
-            var saved = await App.SavedAsync("Trade Updater");
-            saved.Project.UpdateUrl.ShouldBe(Context.Server.HttpBaseUrl);
-            saved.Project.Transfer.Protocol.ShouldBe(TransferProtocol.Sftp);
-            saved.Project.Transfer.TrustedHostKeyFingerprint.ShouldNotBeNullOrEmpty();
-            saved.Secrets.TransferPassword.ShouldBe(ServerFixture.SftpPassword);
-            saved.Secrets.PrivateKey.ShouldNotBeNullOrEmpty();
-        });
+        await And(
+            "the project folder holds project.nupdproj with the secrets under the password and a trailing slash on the URL",
+            async () =>
+            {
+                App.ListedProjects.ShouldBe(["Trade Updater"]);
+                File.Exists(App.ProjectFile("Trade Updater")).ShouldBeTrue();
+                Directory.Exists(Path.Combine(App.ProjectFolder("Trade Updater"), "packages")).ShouldBeTrue();
+                (await App.Store.LoadAsync(App.ProjectFile("Trade Updater"))).SecretsState.ShouldBe(
+                    nUpdate.Administration.Core.Projects.SecretsState.PasswordRequired);
+                var saved = await App.SavedAsync("Trade Updater");
+                saved.Project.UpdateUrl.ShouldBe(Context.Server.HttpBaseUrl);
+                saved.Project.Transfer.Protocol.ShouldBe(TransferProtocol.Sftp);
+                saved.Project.Transfer.TrustedHostKeyFingerprint.ShouldNotBeNullOrEmpty();
+                saved.Secrets.TransferPassword.ShouldBe(ServerFixture.SftpPassword);
+                saved.Secrets.PrivateKey.ShouldNotBeNullOrEmpty();
+            });
     });
 
     [AvaloniaFact]
@@ -275,7 +277,9 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
             var saved = await App.Store.LoadAsync(App.ProjectFile("Stats"));
             saved.SecretsState.ShouldBe(nUpdate.Administration.Core.Projects.SecretsState.NotSaved);
             saved.Project.Statistics.Enabled.ShouldBeTrue();
-            using var response = await Context.HttpClient.GetAsync(Context.Server.HttpBaseUrl + "nupdate-statistics.php/v2/projects/" + saved.Project.Id + "/statistics");
+            using var response = await Context.HttpClient.GetAsync(Context.Server.HttpBaseUrl +
+                                                                   "nupdate-statistics.php/v2/projects/" +
+                                                                   saved.Project.Id + "/statistics");
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
         });
     });
@@ -300,7 +304,8 @@ public sealed class NewProjectWizardScenarios : ScenarioTest
         });
         await Then("the wizard stays open and explains the conflict", async () =>
         {
-            await User.WaitUntil(() => wizard.ErrorText.IsEffectivelyVisible || !wizard.IsVisible, "the creation to finish");
+            await User.WaitUntil(() => wizard.ErrorText.IsEffectivelyVisible || !wizard.IsVisible,
+                "the creation to finish");
             wizard.IsVisible.ShouldBeTrue();
             wizard.ErrorText.Text!.ShouldContain("already exists");
             App.ListedProjects.ShouldBe(["Demo"]);

@@ -16,7 +16,8 @@ public static class LegacySignature
         {
             using var rsa = RSA.Create();
             rsa.ImportFromPem(publicKeyPem);
-            return rsa.VerifyData(zip, Convert.FromBase64String(base64Signature), HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+            return rsa.VerifyData(zip, Convert.FromBase64String(base64Signature), HashAlgorithmName.SHA512,
+                RSASignaturePadding.Pkcs1);
         }
         catch (Exception ex) when (ex is FormatException or ArgumentException or CryptographicException)
         {

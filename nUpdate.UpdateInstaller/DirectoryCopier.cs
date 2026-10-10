@@ -36,7 +36,9 @@ public sealed class DirectoryCopier
 
     /// <summary>Counts the files below the directory, which is the number of progress steps copying it takes.</summary>
     public int CountFiles(string directory) =>
-        _fileSystem.Directory.Exists(directory) ? _fileSystem.Directory.GetFiles(directory, "*", SearchOption.AllDirectories).Length : 0;
+        _fileSystem.Directory.Exists(directory)
+            ? _fileSystem.Directory.GetFiles(directory, "*", SearchOption.AllDirectories).Length
+            : 0;
 
     /// <exception cref="LockedFileException">A locked file could not be replaced and the UI chose to abort.</exception>
     public void Copy(string sourceDirectory, string targetDirectory, OperationContext context)
@@ -57,7 +59,8 @@ public sealed class DirectoryCopier
         }
 
         foreach (var directory in _fileSystem.Directory.GetDirectories(sourceDirectory))
-            Copy(directory, _fileSystem.Path.Combine(targetDirectory, _fileSystem.Path.GetFileName(directory)), context);
+            Copy(directory, _fileSystem.Path.Combine(targetDirectory, _fileSystem.Path.GetFileName(directory)),
+                context);
     }
 
     /// <summary>Whether the exception means another process holds the file open (Win32 sharing or lock violation).</summary>
@@ -91,7 +94,8 @@ public sealed class DirectoryCopier
                     case LockedFileDecision.Skip:
                         return;
                     default:
-                        throw new LockedFileException(context.Options.Text(InstallerText.FileInUseError, target), target, ex);
+                        throw new LockedFileException(context.Options.Text(InstallerText.FileInUseError, target),
+                            target, ex);
                 }
             }
         }

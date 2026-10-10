@@ -8,14 +8,11 @@ public partial class ProjectPasswordViewModel : DialogViewModel
 {
     public const int MinimumLength = 8;
 
-    [ObservableProperty]
-    private bool _saveCredentials = true;
+    [ObservableProperty] private bool _saveCredentials = true;
 
-    [ObservableProperty]
-    private string _password = string.Empty;
+    [ObservableProperty] private string _password = string.Empty;
 
-    [ObservableProperty]
-    private string _passwordConfirmation = string.Empty;
+    [ObservableProperty] private string _passwordConfirmation = string.Empty;
 
     public ProjectPasswordViewModel()
     {

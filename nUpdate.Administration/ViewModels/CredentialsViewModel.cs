@@ -26,37 +26,32 @@ public partial class CredentialsViewModel : DialogViewModel
 {
     private readonly IFilePickerService _files;
 
-    [ObservableProperty]
-    private string _projectPassword = string.Empty;
+    [ObservableProperty] private string _projectPassword = string.Empty;
 
-    [ObservableProperty]
-    private bool _rememberPassword = true;
+    [ObservableProperty] private bool _rememberPassword = true;
 
-    [ObservableProperty]
-    private string _transferPassword = string.Empty;
+    [ObservableProperty] private string _transferPassword = string.Empty;
 
-    [ObservableProperty]
-    private string _sftpKeyPassphrase = string.Empty;
+    [ObservableProperty] private string _sftpKeyPassphrase = string.Empty;
 
-    [ObservableProperty]
-    private string _proxyPassword = string.Empty;
+    [ObservableProperty] private string _proxyPassword = string.Empty;
 
-    [ObservableProperty]
-    private string _httpPassword = string.Empty;
+    [ObservableProperty] private string _httpPassword = string.Empty;
 
-    [ObservableProperty]
-    private string _statisticsAdminSecret = string.Empty;
+    [ObservableProperty] private string _statisticsAdminSecret = string.Empty;
 
-    [ObservableProperty]
-    private string _privateKey = string.Empty;
+    [ObservableProperty] private string _privateKey = string.Empty;
 
-    public CredentialsViewModel(IFilePickerService files, UpdateProject project, ProjectSecrets secrets, CredentialsMode mode)
+    public CredentialsViewModel(IFilePickerService files, UpdateProject project, ProjectSecrets secrets,
+        CredentialsMode mode)
     {
         _files = files ?? throw new ArgumentNullException(nameof(files));
         Project = project ?? throw new ArgumentNullException(nameof(project));
         Secrets = secrets ?? throw new ArgumentNullException(nameof(secrets));
         if (mode == CredentialsMode.ProjectPassword && string.IsNullOrEmpty(project.Secrets))
-            throw new ArgumentException("The project file holds no encrypted secrets, so there is no project password to ask for.", nameof(mode));
+            throw new ArgumentException(
+                "The project file holds no encrypted secrets, so there is no project password to ask for.",
+                nameof(mode));
         Mode = mode;
         Title = AsksForProjectPassword ? $"Unlock {project.Name}" : $"Credentials for {project.Name}";
         TransferPassword = secrets.TransferPassword ?? string.Empty;
@@ -81,7 +76,8 @@ public partial class CredentialsViewModel : DialogViewModel
     /// <summary>The project password that unlocked the secrets, so the caller can remember it.</summary>
     public string? EnteredPassword { get; private set; }
 
-    public bool NeedsSftpPassphrase => Project.Transfer.Protocol == TransferProtocol.Sftp && !string.IsNullOrEmpty(Project.Transfer.SftpPrivateKeyPath);
+    public bool NeedsSftpPassphrase => Project.Transfer.Protocol == TransferProtocol.Sftp &&
+                                       !string.IsNullOrEmpty(Project.Transfer.SftpPrivateKeyPath);
 
     public bool NeedsProxyPassword => Project.Transfer.Proxy is not null;
 
@@ -92,7 +88,8 @@ public partial class CredentialsViewModel : DialogViewModel
     [RelayCommand]
     private async Task LoadPrivateKeyAsync()
     {
-        var path = await _files.PickFileAsync("Choose the private key file (PEM)", new FileTypeFilter("Key files", "*.pem", "*.key", "*.txt"), FileTypeFilter.All);
+        var path = await _files.PickFileAsync("Choose the private key file (PEM)",
+            new FileTypeFilter("Key files", "*.pem", "*.key", "*.txt"), FileTypeFilter.All);
         if (path is null)
             return;
         try
@@ -144,7 +141,8 @@ public partial class CredentialsViewModel : DialogViewModel
         Secrets.PrivateKey = Null(PrivateKey.Trim());
         if (!ProjectSecretsProtection.IsComplete(Project, Secrets))
         {
-            ErrorMessage = "The transfer password (or SFTP key), the private key and, if statistics are enabled, the admin secret are required.";
+            ErrorMessage =
+                "The transfer password (or SFTP key), the private key and, if statistics are enabled, the admin secret are required.";
             return;
         }
 

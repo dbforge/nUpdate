@@ -47,7 +47,8 @@ public sealed class HeadlessDialogService : IDialogService
         await ShowDialogAsync<object?>(window);
     }
 
-    public async Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK", string cancelText = "Cancel")
+    public async Task<bool> ConfirmAsync(string title, string message, string confirmText = "OK",
+        string cancelText = "Cancel")
     {
         var window = new MessageWindow(title, message, MessageWindow.Kind.Question, confirmText, cancelText);
         Popups.Add(window);

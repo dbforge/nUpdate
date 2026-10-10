@@ -20,8 +20,10 @@ public class ServiceOperationHandlerTests
         _services.ServiceController.Received().StartService("svc", Arg.Is<string[]>(a => a.Single() == "-a"));
         handler.Execute(new StopServiceOperation { ServiceName = "svc" }, context);
         _services.ServiceController.Received().StopService("svc");
-        _services.Reporter.Operations.Select(o => o.Text).ShouldBe(["Starting service \"svc\"...", "Stopping service \"svc\"..."]);
-        Should.Throw<NotSupportedException>(() => handler.Execute(new TerminateProcessOperation { ProcessName = "x" }, context));
+        _services.Reporter.Operations.Select(o => o.Text)
+            .ShouldBe(["Starting service \"svc\"...", "Stopping service \"svc\"..."]);
+        Should.Throw<NotSupportedException>(() =>
+            handler.Execute(new TerminateProcessOperation { ProcessName = "x" }, context));
     }
 
     [Fact]

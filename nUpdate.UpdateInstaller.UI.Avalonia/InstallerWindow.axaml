@@ -27,8 +27,10 @@
       <StackPanel Spacing="6" IsVisible="{Binding !HasFailed}">
         <TextBlock Name="StatusText" Classes="muted" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
         <DockPanel>
-          <TextBlock Name="PercentageText" DockPanel.Dock="Right" Text="{Binding PercentageText}" MinWidth="44" TextAlignment="Right" VerticalAlignment="Center" />
-          <ProgressBar Name="Progress" Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" Minimum="0" Maximum="100" Height="8"
+          <TextBlock Name="PercentageText" DockPanel.Dock="Right" Text="{Binding PercentageText}" MinWidth="44"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <ProgressBar Name="Progress" Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}"
+                       Minimum="0" Maximum="100" Height="8"
                        Foreground="{DynamicResource InstallerAccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
         </DockPanel>
       </StackPanel>
@@ -36,18 +38,22 @@
       <StackPanel Name="LockedFilePanel" Spacing="10" IsVisible="{Binding IsAskingAboutLockedFile}" Margin="0,6,0,0">
         <TextBlock Name="LockedFileText" Text="{Binding LockedFileMessage}" TextWrapping="Wrap" />
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-          <Button Name="RetryButton" Classes="accent" Content="{Binding RetryText}" Command="{Binding RetryCommand}" IsDefault="True" />
+          <Button Name="RetryButton" Classes="accent" Content="{Binding RetryText}" Command="{Binding RetryCommand}"
+                  IsDefault="True" />
           <Button Name="SkipButton" Content="{Binding SkipText}" Command="{Binding SkipCommand}" />
           <Button Name="AbortButton" Content="{Binding AbortText}" Command="{Binding AbortCommand}" />
         </StackPanel>
       </StackPanel>
 
       <StackPanel Name="ErrorPanel" Spacing="8" IsVisible="{Binding HasFailed}">
-        <TextBlock Name="ErrorCaptionText" Text="{Binding ErrorCaption}" FontWeight="SemiBold" Foreground="#C42B1C" TextWrapping="Wrap" />
+        <TextBlock Name="ErrorCaptionText" Text="{Binding ErrorCaption}" FontWeight="SemiBold" Foreground="#C42B1C"
+                   TextWrapping="Wrap" />
         <SelectableTextBlock Name="ErrorMessageText" Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
-        <SelectableTextBlock Name="LogFileText" Classes="muted" Text="{Binding LogFileText}" TextWrapping="Wrap" FontSize="12"
+        <SelectableTextBlock Name="LogFileText" Classes="muted" Text="{Binding LogFileText}" TextWrapping="Wrap"
+                             FontSize="12"
                              IsVisible="{Binding LogFileText, Converter={x:Static ObjectConverters.IsNotNull}}" />
-        <Button Name="CloseButton" Classes="accent" Content="{Binding CloseText}" Command="{Binding CloseCommand}" HorizontalAlignment="Right" IsDefault="True" />
+        <Button Name="CloseButton" Classes="accent" Content="{Binding CloseText}" Command="{Binding CloseCommand}"
+                HorizontalAlignment="Right" IsDefault="True" />
       </StackPanel>
     </StackPanel>
   </DockPanel>

@@ -539,7 +539,7 @@ public class PackageEditorTests
 
         editor.NewPlatform = new PlatformChoice("osx-arm64");
         editor.AddPlatformCommand.Execute(null);
-        editor.SelectedPlatform.IsMacOS.ShouldBeTrue();
+        editor.SelectedPlatform.IsMacOs.ShouldBeTrue();
         await editor.AddFolderCommand.ExecuteAsync(null);
         editor.Files.Select(f => f.Display).OrderBy(d => d, StringComparer.Ordinal)
             .ShouldBe(["Program/Contents/Info.plist", "Program/Contents/MacOS/Demo"]);

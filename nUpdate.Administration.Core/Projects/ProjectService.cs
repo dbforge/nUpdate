@@ -15,10 +15,12 @@ namespace nUpdate.Administration.Core.Projects;
 public interface IProjectService
 {
     /// <summary>Creates the key pair, the project folder with <c>project.nupdproj</c> and <c>packages/</c>, and (if enabled) the statistics script on the server.</summary>
-    Task<ProjectLoadResult> CreateAsync(NewProjectRequest request, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default);
+    Task<ProjectLoadResult> CreateAsync(NewProjectRequest request, IProgress<PipelineProgress>? progress = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Checks that the transfer settings work. Throws <see cref="TransferException" /> when they do not.</summary>
-    Task TestConnectionAsync(TransferSettings settings, TransferCredentials credentials, CancellationToken cancellationToken = default);
+    Task TestConnectionAsync(TransferSettings settings, TransferCredentials credentials,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Renames the project (name and registration only; the folder stays) and saves it.</summary>
     Task RenameAsync(UpdateProject project, string newName, CancellationToken cancellationToken = default);
@@ -27,19 +29,23 @@ public interface IProjectService
     ///     Writes changed settings and secrets to the project file. With a project password the secrets are encrypted
     ///     into the file and the password is remembered for this user; without one the file holds no secrets.
     /// </summary>
-    Task SaveAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword, CancellationToken cancellationToken = default);
+    Task SaveAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Writes a project converted from an earlier format as <c>project.nupdproj</c> in its folder (the old file is
     ///     left in place) and registers it, with the secrets saved like <see cref="SaveAsync" />.
     /// </summary>
-    Task SaveMigratedAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword, CancellationToken cancellationToken = default);
+    Task SaveMigratedAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Uploads <c>nupdate-statistics.php</c> and its configuration and checks the API.</summary>
-    Task SetupStatisticsAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default);
+    Task SetupStatisticsAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Removes the project from the list and optionally deletes its folder and its files on the server (including legacy files).</summary>
-    Task DeleteAsync(UpdateProject project, ProjectSecrets secrets, bool deleteLocalFiles, bool deleteServerFiles, CancellationToken cancellationToken = default);
+    Task DeleteAsync(UpdateProject project, ProjectSecrets secrets, bool deleteLocalFiles, bool deleteServerFiles,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>Input for a new project.</summary>
@@ -70,41 +76,43 @@ public sealed class NewProjectRequest
     public bool TestConnection { get; set; } = true;
 }
 
-public sealed class ProjectService : IProjectService
+public sealed class ProjectService(
+    IFileSystem fileSystem,
+    AdministrationPaths paths,
+    IProjectStore projects,
+    IProjectPasswordStore passwords,
+    ITransferProviderFactory transferFactory,
+    IStatisticsApi statistics,
+    ILegacyFeedMigrator migrator,
+    IProjectLogger logger,
+    Func<int, (string PublicKey, string PrivateKey)> keyGenerator)
+    : IProjectService
 {
-    private readonly IFileSystem _fileSystem;
-    private readonly IProjectStore _projects;
-    private readonly IProjectPasswordStore _passwords;
-    private readonly ITransferProviderFactory _transferFactory;
-    private readonly IStatisticsApi _statistics;
-    private readonly ILegacyFeedMigrator _migrator;
-    private readonly IProjectLogger _logger;
-    private readonly StatisticsDeployer _deployer;
-    private readonly AdministrationPaths _paths;
-    private readonly Func<int, (string PublicKey, string PrivateKey)> _keyGenerator;
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+    private readonly IProjectStore _projects = projects ?? throw new ArgumentNullException(nameof(projects));
+    private readonly IProjectPasswordStore _passwords = passwords ?? throw new ArgumentNullException(nameof(passwords));
 
-    public ProjectService(IFileSystem fileSystem, AdministrationPaths paths, IProjectStore projects, IProjectPasswordStore passwords, ITransferProviderFactory transferFactory,
+    private readonly ITransferProviderFactory _transferFactory =
+        transferFactory ?? throw new ArgumentNullException(nameof(transferFactory));
+
+    private readonly IStatisticsApi _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
+    private readonly ILegacyFeedMigrator _migrator = migrator ?? throw new ArgumentNullException(nameof(migrator));
+    private readonly IProjectLogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly StatisticsDeployer _deployer = new(fileSystem, transferFactory, statistics);
+    private readonly AdministrationPaths _paths = paths ?? throw new ArgumentNullException(nameof(paths));
+
+    private readonly Func<int, (string PublicKey, string PrivateKey)> _keyGenerator =
+        keyGenerator ?? throw new ArgumentNullException(nameof(keyGenerator));
+
+    public ProjectService(IFileSystem fileSystem, AdministrationPaths paths, IProjectStore projects,
+        IProjectPasswordStore passwords, ITransferProviderFactory transferFactory,
         IStatisticsApi statistics, ILegacyFeedMigrator migrator, IProjectLogger logger)
         : this(fileSystem, paths, projects, passwords, transferFactory, statistics, migrator, logger, GenerateKeyPair)
     {
     }
 
-    public ProjectService(IFileSystem fileSystem, AdministrationPaths paths, IProjectStore projects, IProjectPasswordStore passwords, ITransferProviderFactory transferFactory,
-        IStatisticsApi statistics, ILegacyFeedMigrator migrator, IProjectLogger logger, Func<int, (string PublicKey, string PrivateKey)> keyGenerator)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _paths = paths ?? throw new ArgumentNullException(nameof(paths));
-        _projects = projects ?? throw new ArgumentNullException(nameof(projects));
-        _passwords = passwords ?? throw new ArgumentNullException(nameof(passwords));
-        _transferFactory = transferFactory ?? throw new ArgumentNullException(nameof(transferFactory));
-        _statistics = statistics ?? throw new ArgumentNullException(nameof(statistics));
-        _migrator = migrator ?? throw new ArgumentNullException(nameof(migrator));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _keyGenerator = keyGenerator ?? throw new ArgumentNullException(nameof(keyGenerator));
-        _deployer = new StatisticsDeployer(fileSystem, transferFactory, statistics);
-    }
-
-    public async Task<ProjectLoadResult> CreateAsync(NewProjectRequest request, IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task<ProjectLoadResult> CreateAsync(NewProjectRequest request,
+        IProgress<PipelineProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         ValidateName(request.Name);
@@ -112,7 +120,8 @@ public sealed class ProjectService : IProjectService
             throw new ArgumentException("The project folder is empty.", nameof(request));
         if (!UpdateProject.IsValidUpdateUrl(request.UpdateUrl))
             throw new ArgumentException($"\"{request.UpdateUrl}\" is not a valid absolute URL.", nameof(request));
-        if ((await _projects.ListAsync(cancellationToken).ConfigureAwait(false)).Any(p => string.Equals(p.Name, request.Name, StringComparison.OrdinalIgnoreCase)))
+        if ((await _projects.ListAsync(cancellationToken).ConfigureAwait(false)).Any(p =>
+                string.Equals(p.Name, request.Name, StringComparison.OrdinalIgnoreCase)))
             throw new ArgumentException($"A project named \"{request.Name}\" already exists.", nameof(request));
         if (request.Statistics.Enabled && request.Statistics.Database is null)
             throw new ArgumentException("Statistics need database settings.", nameof(request));
@@ -136,11 +145,15 @@ public sealed class ProjectService : IProjectService
 
         var folderCreated = false;
         var pipeline = new CompensatingPipeline()
-            .Add("Testing the connection", ct => request.TestConnection ? TestConnectionAsync(project.Transfer, secrets.ToTransferCredentials(), ct) : Task.CompletedTask)
+            .Add("Testing the connection",
+                ct => request.TestConnection
+                    ? TestConnectionAsync(project.Transfer, secrets.ToTransferCredentials(), ct)
+                    : Task.CompletedTask)
             .Add("Generating the key pair", async ct =>
             {
                 // 8192-bit keys take seconds; keep the UI thread free.
-                var (publicKey, privateKey) = await Task.Run(() => _keyGenerator(request.KeySize), ct).ConfigureAwait(false);
+                var (publicKey, privateKey) =
+                    await Task.Run(() => _keyGenerator(request.KeySize), ct).ConfigureAwait(false);
                 project.PublicKey = publicKey;
                 secrets.PrivateKey = privateKey;
             })
@@ -164,10 +177,12 @@ public sealed class ProjectService : IProjectService
         });
 
         await pipeline.RunAsync(progress, cancellationToken).ConfigureAwait(false);
-        return new ProjectLoadResult(project, secrets, migrated: false, request.ProjectPassword is null ? SecretsState.NotSaved : SecretsState.Loaded);
+        return new ProjectLoadResult(project, secrets, migrated: false,
+            request.ProjectPassword is null ? SecretsState.NotSaved : SecretsState.Loaded);
     }
 
-    public async Task TestConnectionAsync(TransferSettings settings, TransferCredentials credentials, CancellationToken cancellationToken = default)
+    public async Task TestConnectionAsync(TransferSettings settings, TransferCredentials credentials,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(credentials);
@@ -182,7 +197,8 @@ public sealed class ProjectService : IProjectService
         ValidateName(newName);
         if (string.Equals(project.Name, newName, StringComparison.Ordinal))
             return;
-        if ((await _projects.ListAsync(cancellationToken).ConfigureAwait(false)).Any(p => string.Equals(p.Name, newName, StringComparison.OrdinalIgnoreCase) && p.Id != project.Id))
+        if ((await _projects.ListAsync(cancellationToken).ConfigureAwait(false)).Any(p =>
+                string.Equals(p.Name, newName, StringComparison.OrdinalIgnoreCase) && p.Id != project.Id))
             throw new ArgumentException($"A project named \"{newName}\" already exists.", nameof(newName));
 
         project.Name = newName;
@@ -190,12 +206,16 @@ public sealed class ProjectService : IProjectService
         await _projects.SaveAsync(project, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task SaveAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword, CancellationToken cancellationToken = default)
+    public async Task SaveAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
         // The blob is written first; the remembered password only changes once the file holds secrets for it.
-        project.Secrets = projectPassword is null ? null : await Task.Run(() => ProjectSecretsProtection.Protect(secrets, projectPassword), cancellationToken).ConfigureAwait(false);
+        project.Secrets = projectPassword is null
+            ? null
+            : await Task.Run(() => ProjectSecretsProtection.Protect(secrets, projectPassword), cancellationToken)
+                .ConfigureAwait(false);
         await _projects.SaveAsync(project, cancellationToken).ConfigureAwait(false);
         if (projectPassword is null)
             await _passwords.RemoveAsync(project.Id, cancellationToken).ConfigureAwait(false);
@@ -203,7 +223,8 @@ public sealed class ProjectService : IProjectService
             await _passwords.SetAsync(project.Id, projectPassword, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task SaveMigratedAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword, CancellationToken cancellationToken = default)
+    public async Task SaveMigratedAsync(UpdateProject project, ProjectSecrets secrets, string? projectPassword,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -232,7 +253,8 @@ public sealed class ProjectService : IProjectService
     {
         var folder = project.Folder;
         var fileName = _fileSystem.Path.GetFileName(project.Path);
-        var folderName = _fileSystem.Path.GetFileName(folder.TrimEnd(_fileSystem.Path.DirectorySeparatorChar, _fileSystem.Path.AltDirectorySeparatorChar));
+        var folderName = _fileSystem.Path.GetFileName(folder.TrimEnd(_fileSystem.Path.DirectorySeparatorChar,
+            _fileSystem.Path.AltDirectorySeparatorChar));
         if (IsSameOrBelow(folder, _paths.LegacyProjectsDirectory))
             folder = _paths.SuggestedProjectFolder(project.Name);
         else if (!string.Equals(folderName, project.Name, StringComparison.OrdinalIgnoreCase))
@@ -250,7 +272,8 @@ public sealed class ProjectService : IProjectService
         {
             var existing = Serializer.Deserialize<UpdateProject>(_fileSystem.File.ReadAllText(target));
             if (existing is null || existing.Id != project.Id)
-                throw new InvalidOperationException($"The folder \"{folder}\" already holds another project. Move the file \"{fileName}\" to a folder of its own and open it there.");
+                throw new InvalidOperationException(
+                    $"The folder \"{folder}\" already holds another project. Move the file \"{fileName}\" to a folder of its own and open it there.");
         }
 
         return target;
@@ -258,13 +281,16 @@ public sealed class ProjectService : IProjectService
 
     private bool IsSameOrBelow(string path, string directory)
     {
-        var parent = _fileSystem.Path.GetFullPath(directory).TrimEnd(_fileSystem.Path.DirectorySeparatorChar, _fileSystem.Path.AltDirectorySeparatorChar);
+        var parent = _fileSystem.Path.GetFullPath(directory).TrimEnd(_fileSystem.Path.DirectorySeparatorChar,
+            _fileSystem.Path.AltDirectorySeparatorChar);
         var child = _fileSystem.Path.GetFullPath(path);
         return string.Equals(child, parent, StringComparison.OrdinalIgnoreCase)
-               || child.StartsWith(parent + _fileSystem.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+               || child.StartsWith(parent + _fileSystem.Path.DirectorySeparatorChar,
+                   StringComparison.OrdinalIgnoreCase);
     }
 
-    public Task SetupStatisticsAsync(UpdateProject project, ProjectSecrets secrets, CancellationToken cancellationToken = default)
+    public Task SetupStatisticsAsync(UpdateProject project, ProjectSecrets secrets,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
@@ -274,21 +300,28 @@ public sealed class ProjectService : IProjectService
         return _deployer.DeployAsync(project, secrets, cancellationToken);
     }
 
-    public async Task DeleteAsync(UpdateProject project, ProjectSecrets secrets, bool deleteLocalFiles, bool deleteServerFiles, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(UpdateProject project, ProjectSecrets secrets, bool deleteLocalFiles,
+        bool deleteServerFiles, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(secrets);
         if (deleteServerFiles)
         {
             if (project.Statistics.Enabled && !string.IsNullOrEmpty(secrets.StatisticsAdminSecret))
-                await _statistics.DeleteProjectAsync(PublishService.Endpoint(project, secrets), project.Id, cancellationToken).ConfigureAwait(false);
+                await _statistics
+                    .DeleteProjectAsync(PublishService.Endpoint(project, secrets), project.Id, cancellationToken)
+                    .ConfigureAwait(false);
             // The server files of nUpdate 3 and 4 go with the project; their local copies belong to nUpdate Administration 4.
-            var legacy = await _migrator.FindLegacyFilesAsync(project, secrets, cancellationToken).ConfigureAwait(false);
-            await _migrator.DeleteLegacyFilesAsync(project, secrets, legacy.ServerOnly(), cancellationToken).ConfigureAwait(false);
+            var legacy = await _migrator.FindLegacyFilesAsync(project, secrets, cancellationToken)
+                .ConfigureAwait(false);
+            await _migrator.DeleteLegacyFilesAsync(project, secrets, legacy.ServerOnly(), cancellationToken)
+                .ConfigureAwait(false);
             await using var transfer = _transferFactory.Create(project.Transfer, secrets.ToTransferCredentials());
             await transfer.ConnectAsync(cancellationToken).ConfigureAwait(false);
             foreach (var package in project.Packages.Where(p => p.Released))
-                await transfer.DeleteDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), cancellationToken).ConfigureAwait(false);
+                await transfer
+                    .DeleteDirectoryAsync(PackageLayout.RemoteVersionDirectory(package.Version), cancellationToken)
+                    .ConfigureAwait(false);
             await transfer.DeleteFileAsync(UpdateFeed.FileName, cancellationToken).ConfigureAwait(false);
             await transfer.DeleteFileAsync(StatisticsScript.ScriptFileName, cancellationToken).ConfigureAwait(false);
             await transfer.DeleteFileAsync(StatisticsScript.ConfigFileName, cancellationToken).ConfigureAwait(false);
@@ -303,7 +336,8 @@ public sealed class ProjectService : IProjectService
                 _fileSystem.File.Delete(project.Path);
             if (_fileSystem.Directory.Exists(project.PackagesDirectory))
                 _fileSystem.Directory.Delete(project.PackagesDirectory, recursive: true);
-            if (_fileSystem.Directory.Exists(project.Folder) && !_fileSystem.Directory.EnumerateFileSystemEntries(project.Folder).Any())
+            if (_fileSystem.Directory.Exists(project.Folder) &&
+                !_fileSystem.Directory.EnumerateFileSystemEntries(project.Folder).Any())
                 _fileSystem.Directory.Delete(project.Folder);
         }
     }
@@ -313,7 +347,8 @@ public sealed class ProjectService : IProjectService
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("The project name is empty.", nameof(name));
         if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || name.Trim() != name)
-            throw new ArgumentException($"\"{name}\" is not a valid project name: it must be usable as a folder name.", nameof(name));
+            throw new ArgumentException($"\"{name}\" is not a valid project name: it must be usable as a folder name.",
+                nameof(name));
     }
 
     private static (string PublicKey, string PrivateKey) GenerateKeyPair(int keySize)

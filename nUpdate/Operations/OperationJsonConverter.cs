@@ -10,7 +10,8 @@ public sealed class OperationJsonConverter : JsonConverter
 
     public override bool CanConvert(Type objectType) => typeof(Operation).IsAssignableFrom(objectType);
 
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue,
+        JsonSerializer serializer)
     {
         if (reader is null)
             throw new ArgumentNullException(nameof(reader));
@@ -32,5 +33,6 @@ public sealed class OperationJsonConverter : JsonConverter
         return operation;
     }
 
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => throw new NotSupportedException();
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) =>
+        throw new NotSupportedException();
 }

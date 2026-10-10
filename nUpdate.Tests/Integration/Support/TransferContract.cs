@@ -16,7 +16,8 @@ public static class TransferContract
 
         var local = context.WriteFile($"{prefix}.txt", "hello " + prefix);
         var progress = new List<TransferProgress>();
-        await transfer.UploadFileAsync(local, $"{directory}/nested/{prefix}.txt", new SyncProgress<TransferProgress>(progress));
+        await transfer.UploadFileAsync(local, $"{directory}/nested/{prefix}.txt",
+            new SyncProgress<TransferProgress>(progress));
         (await transfer.FileExistsAsync($"{directory}/nested/{prefix}.txt")).ShouldBeTrue();
         (await transfer.FileExistsAsync($"{directory}/nested/missing.txt")).ShouldBeFalse();
         progress.ShouldNotBeEmpty();
@@ -25,10 +26,12 @@ public static class TransferContract
         listing.Single().Name.ShouldBe("nested");
         listing.Single().ItemType.ShouldBe(ServerItemType.Directory);
         var deep = await transfer.ListAsync(directory, recursive: true);
-        deep.ShouldContain(i => i.Name == $"{prefix}.txt" && i.ItemType == ServerItemType.File && i.Size == ("hello " + prefix).Length);
+        deep.ShouldContain(i =>
+            i.Name == $"{prefix}.txt" && i.ItemType == ServerItemType.File && i.Size == ("hello " + prefix).Length);
 
         var downloaded = Path.Combine(context.Root, $"{prefix}-download.txt");
-        await transfer.DownloadFileAsync($"{directory}/nested/{prefix}.txt", downloaded, new SyncProgress<TransferProgress>(progress));
+        await transfer.DownloadFileAsync($"{directory}/nested/{prefix}.txt", downloaded,
+            new SyncProgress<TransferProgress>(progress));
         File.ReadAllText(downloaded).ShouldBe("hello " + prefix);
 
         await transfer.RenameAsync($"{directory}/nested/{prefix}.txt", $"{directory}/nested/renamed.txt");

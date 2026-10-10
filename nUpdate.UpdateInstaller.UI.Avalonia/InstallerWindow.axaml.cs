@@ -51,7 +51,8 @@ public partial class InstallerWindow : Window
             using var stream = File.OpenRead(path);
             return new Bitmap(stream);
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or InvalidOperationException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException
+                                       or NotSupportedException or InvalidOperationException)
         {
             return null;
         }

@@ -32,7 +32,10 @@ public class SetRegistryValuesOperationTests
         json.ShouldContain("""{"name":"Empty","kind":"string","value":null}""");
 
         var restored = OperationJson.RoundTrip(operation).ShouldBeOfType<SetRegistryValuesOperation>();
-        restored.Values.Select(v => v.Kind).ShouldBe([RegistryValueKind.String, RegistryValueKind.ExpandString, RegistryValueKind.DWord, RegistryValueKind.QWord, RegistryValueKind.MultiString, RegistryValueKind.Binary, RegistryValueKind.String]);
+        restored.Values.Select(v => v.Kind).ShouldBe([
+            RegistryValueKind.String, RegistryValueKind.ExpandString, RegistryValueKind.DWord, RegistryValueKind.QWord,
+            RegistryValueKind.MultiString, RegistryValueKind.Binary, RegistryValueKind.String
+        ]);
         restored.Values[2].Value.ShouldBe(1L);
         restored.Values[3].Value.ShouldBe(5_000_000_000L);
         restored.Values[4].Value.ShouldBe(new[] { "a", "b" });

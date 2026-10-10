@@ -30,7 +30,8 @@ public static class LegacyAesCredentialDecryptor
         aes.IV = Derive(ivPassword, aes.BlockSize / 8);
 
         using var decryptor = aes.CreateDecryptor();
-        var plain = decryptor.TransformFinalBlock(Convert.FromBase64String(base64CipherText), 0, Convert.FromBase64String(base64CipherText).Length);
+        var plain = decryptor.TransformFinalBlock(Convert.FromBase64String(base64CipherText), 0,
+            Convert.FromBase64String(base64CipherText).Length);
         return Encoding.UTF8.GetString(plain);
     }
 

@@ -21,7 +21,8 @@ public class SystemProcessServiceTests
         File.Copy(Path.Combine(Environment.SystemDirectory, "ping.exe"), target);
         try
         {
-            using var process = Process.Start(new ProcessStartInfo(target, "-n 60 127.0.0.1") { CreateNoWindow = true, UseShellExecute = false })!;
+            using var process = Process.Start(new ProcessStartInfo(target, "-n 60 127.0.0.1")
+            { CreateNoWindow = true, UseShellExecute = false })!;
             service.WaitForExit(process.Id, TimeSpan.FromMilliseconds(200)).ShouldBeFalse();
             service.Kill(Path.GetFileNameWithoutExtension(target));
             service.WaitForExit(process.Id, TimeSpan.FromSeconds(10)).ShouldBeTrue();

@@ -4,14 +4,9 @@ using nUpdate.Security;
 
 namespace nUpdate.Administration.Core.Packages;
 
-public sealed class PackageSigner : IPackageSigner
+public sealed class PackageSigner(IFileSystem fileSystem) : IPackageSigner
 {
-    private readonly IFileSystem _fileSystem;
-
-    public PackageSigner(IFileSystem fileSystem)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-    }
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
     public string Sign(string packagePath, string privateKeyPem)
     {

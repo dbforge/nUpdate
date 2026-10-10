@@ -35,7 +35,8 @@ public static class InstallerHost
     /// <param name="createWindow">Builds the window from the options and the log path.</param>
     /// <param name="services">The system services; the production ones when <c>null</c>.</param>
     /// <returns><see cref="Succeeded" />, <see cref="Failed" /> or <see cref="CouldNotStart" />.</returns>
-    public static int Run(string[] args, Func<InstallerSession, IProgressReporter> createWindow, InstallerServices? services = null)
+    public static int Run(string[] args, Func<InstallerSession, IProgressReporter> createWindow,
+        InstallerServices? services = null)
     {
         if (args is null)
             throw new ArgumentNullException(nameof(args));
@@ -45,26 +46,35 @@ public static class InstallerHost
         var fileSystem = services.FileSystem;
 
         var optionsPath = args.Length == 1 && !string.IsNullOrWhiteSpace(args[0]) ? args[0] : null;
-        var logDirectory = optionsPath is null ? null : fileSystem.Path.GetDirectoryName(fileSystem.Path.GetFullPath(optionsPath));
-        using var log = new InstallLog(fileSystem, string.IsNullOrEmpty(logDirectory) || !fileSystem.Directory.Exists(logDirectory) ? null : fileSystem.Path.Combine(logDirectory, LogFileName), services.Clock);
+        var logDirectory = optionsPath is null
+            ? null
+            : fileSystem.Path.GetDirectoryName(fileSystem.Path.GetFullPath(optionsPath));
+        using var log = new InstallLog(fileSystem,
+            string.IsNullOrEmpty(logDirectory) || !fileSystem.Directory.Exists(logDirectory)
+                ? null
+                : fileSystem.Path.Combine(logDirectory, LogFileName), services.Clock);
         using var windowless = new WindowlessProgressReporter(services);
 
         InstallerOptions options;
         try
         {
             if (optionsPath is null)
-                throw new ArgumentException("Expected exactly one argument: the path of the installer options file.", nameof(args));
+                throw new ArgumentException("Expected exactly one argument: the path of the installer options file.",
+                    nameof(args));
             options = InstallerOptionsReader.Read(fileSystem, optionsPath);
         }
         catch (Exception ex)
         {
-            log.Write(InstallerTexts.Default(InstallerText.InitializingErrorCaption) + Environment.NewLine + ex.ToString());
+            log.Write(InstallerTexts.Default(InstallerText.InitializingErrorCaption) + Environment.NewLine +
+                      ex.ToString());
             ShowStartupError(ex, createWindow, services, log, windowless);
             return CouldNotStart;
         }
 
-        log.Write($"Updating {options.Application.Name} in \"{options.Application.ProgramDirectory}\" with {options.Packages.Count} package(s): {string.Join(", ", options.Packages.Select(p => p.Path))}");
-        var logging = new LoggingProgressReporter(CreateReporter(options, createWindow, services, log, windowless), log);
+        log.Write(
+            $"Updating {options.Application.Name} in \"{options.Application.ProgramDirectory}\" with {options.Packages.Count} package(s): {string.Join(", ", options.Packages.Select(p => p.Path))}");
+        var logging =
+            new LoggingProgressReporter(CreateReporter(options, createWindow, services, log, windowless), log);
         var engine = new InstallEngine(services);
         var run = Task.Run(() => engine.Run(options, logging));
         logging.Initialize();
@@ -72,7 +82,8 @@ public static class InstallerHost
     }
 
     /// <summary>The window, wrapped so the windowless reporter takes over when it fails, or the windowless reporter.</summary>
-    private static IProgressReporter CreateReporter(InstallerOptions options, Func<InstallerSession, IProgressReporter> createWindow, InstallerServices services,
+    private static IProgressReporter CreateReporter(InstallerOptions options,
+        Func<InstallerSession, IProgressReporter> createWindow, InstallerServices services,
         InstallLog log, IProgressReporter windowless)
     {
         if (!options.Ui.ShowWindow)
@@ -102,12 +113,14 @@ public static class InstallerHost
     ///     Shows why the installer could not start. The application has already closed, so on a desktop the window is the
     ///     only sign the user gets; without one the error goes to the error output and the Windows event log.
     /// </summary>
-    private static void ShowStartupError(Exception exception, Func<InstallerSession, IProgressReporter> createWindow, InstallerServices services, InstallLog log,
+    private static void ShowStartupError(Exception exception, Func<InstallerSession, IProgressReporter> createWindow,
+        InstallerServices services, InstallLog log,
         IProgressReporter windowless)
     {
         var options = new InstallerOptions();
         options.Texts[nameof(InstallerText.WindowTitle)] = "nUpdate";
-        options.Texts[nameof(InstallerText.UpdatingErrorCaption)] = InstallerTexts.Default(InstallerText.InitializingErrorCaption);
+        options.Texts[nameof(InstallerText.UpdatingErrorCaption)] =
+            InstallerTexts.Default(InstallerText.InitializingErrorCaption);
         var reporter = CreateReporter(options, createWindow, services, log, windowless);
         var report = Task.Run(() =>
         {

@@ -56,7 +56,8 @@ public static class PasswordProtectedData
         if (data.Length < headerLength || !data.AsSpan(0, Magic.Length).SequenceEqual(Magic))
             throw new InvalidDataException("The data is not a password-protected nUpdate export.");
         if (data[Magic.Length] != Version)
-            throw new InvalidDataException($"The export uses format version {data[Magic.Length]}, which this version cannot read.");
+            throw new InvalidDataException(
+                $"The export uses format version {data[Magic.Length]}, which this version cannot read.");
 
         var offset = Magic.Length + 1;
         var salt = data.AsSpan(offset, SaltSize).ToArray();
@@ -74,5 +75,6 @@ public static class PasswordProtectedData
     }
 
     private static byte[] DeriveKey(string password, byte[] salt) =>
-        Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, Iterations, HashAlgorithmName.SHA256, KeySize);
+        Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, Iterations, HashAlgorithmName.SHA256,
+            KeySize);
 }

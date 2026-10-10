@@ -32,7 +32,8 @@ public sealed class FilePermissions : IFilePermissions
         var probe = Path.Combine(directory, ".nupdate-write-test-" + Guid.NewGuid().ToString("N"));
         try
         {
-            using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose))
+            using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1,
+                       FileOptions.DeleteOnClose))
             {
             }
 
@@ -54,7 +55,8 @@ public sealed class FilePermissions : IFilePermissions
         if (_isWindows)
             return;
         if (NativeMethods.chmod(Encoding.UTF8.GetBytes(path + "\0"), (uint)mode) != 0)
-            throw new IOException($"The permissions of \"{path}\" could not be set (error {Marshal.GetLastWin32Error()}).");
+            throw new IOException(
+                $"The permissions of \"{path}\" could not be set (error {Marshal.GetLastWin32Error()}).");
     }
 
     private static class NativeMethods

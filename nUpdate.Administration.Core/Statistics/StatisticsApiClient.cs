@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using nUpdate.Updating;
 
@@ -9,14 +8,10 @@ namespace nUpdate.Administration.Core.Statistics;
 ///     HTTP implementation of <see cref="IStatisticsApi" />: REST routes below <c>nupdate-statistics.php/v2</c>, Bearer
 ///     authentication, JSON errors. Requests go through the project's proxy and HTTP authentication like the feed does.
 /// </summary>
-public sealed class StatisticsApiClient : IStatisticsApi
+public sealed class StatisticsApiClient(IProjectHttpClientFactory httpClientFactory) : IStatisticsApi
 {
-    private readonly IProjectHttpClientFactory _httpClientFactory;
-
-    public StatisticsApiClient(IProjectHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-    }
+    private readonly IProjectHttpClientFactory _httpClientFactory =
+        httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
     public async Task VerifyAsync(StatisticsEndpoint endpoint, CancellationToken cancellationToken = default)
     {
@@ -32,27 +27,33 @@ public sealed class StatisticsApiClient : IStatisticsApi
         }
 
         if (version != nUpdate.Statistics.StatisticsApi.Version)
-            throw new StatisticsException($"The statistics endpoint \"{endpoint.Uri}\" is not a nUpdate statistics API version {nUpdate.Statistics.StatisticsApi.Version}.");
+            throw new StatisticsException(
+                $"The statistics endpoint \"{endpoint.Uri}\" is not a nUpdate statistics API version {nUpdate.Statistics.StatisticsApi.Version}.");
     }
 
-    public Task RegisterVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version, CancellationToken cancellationToken = default)
+    public Task RegisterVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(version);
         return SendAsync(endpoint, HttpMethod.Put, VersionRoute(projectId, version), cancellationToken);
     }
 
-    public Task DeleteVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version, CancellationToken cancellationToken = default)
+    public Task DeleteVersionAsync(StatisticsEndpoint endpoint, Guid projectId, UpdateVersion version,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(version);
         return SendAsync(endpoint, HttpMethod.Delete, VersionRoute(projectId, version), cancellationToken);
     }
 
-    public Task DeleteProjectAsync(StatisticsEndpoint endpoint, Guid projectId, CancellationToken cancellationToken = default) =>
+    public Task DeleteProjectAsync(StatisticsEndpoint endpoint, Guid projectId,
+        CancellationToken cancellationToken = default) =>
         SendAsync(endpoint, HttpMethod.Delete, $"projects/{projectId}", cancellationToken);
 
-    public async Task<ProjectStatistics> GetStatisticsAsync(StatisticsEndpoint endpoint, Guid projectId, CancellationToken cancellationToken = default)
+    public async Task<ProjectStatistics> GetStatisticsAsync(StatisticsEndpoint endpoint, Guid projectId,
+        CancellationToken cancellationToken = default)
     {
-        var body = await SendAsync(endpoint, HttpMethod.Get, $"projects/{projectId}/statistics", cancellationToken).ConfigureAwait(false);
+        var body = await SendAsync(endpoint, HttpMethod.Get, $"projects/{projectId}/statistics", cancellationToken)
+            .ConfigureAwait(false);
         try
         {
             return Serializer.Deserialize<ProjectStatistics>(body) ?? new ProjectStatistics();
@@ -63,14 +64,17 @@ public sealed class StatisticsApiClient : IStatisticsApi
         }
     }
 
-    private static string VersionRoute(Guid projectId, UpdateVersion version) => $"projects/{projectId}/versions/{Uri.EscapeDataString(version.ToString())}";
+    private static string VersionRoute(Guid projectId, UpdateVersion version) =>
+        $"projects/{projectId}/versions/{Uri.EscapeDataString(version.ToString())}";
 
-    private async Task<string> SendAsync(StatisticsEndpoint endpoint, HttpMethod method, string route, CancellationToken cancellationToken)
+    private async Task<string> SendAsync(StatisticsEndpoint endpoint, HttpMethod method, string route,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         using var request = new HttpRequestMessage(method, nUpdate.Statistics.StatisticsApi.Route(endpoint.Uri, route));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.AdminSecret);
-        request.Headers.TryAddWithoutValidation("X-nUpdate-Secret", endpoint.AdminSecret); // for hosts that strip Authorization
+        request.Headers.TryAddWithoutValidation("X-nUpdate-Secret",
+            endpoint.AdminSecret); // for hosts that strip Authorization
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         using var httpClient = _httpClientFactory.Create(endpoint.Project, endpoint.Secrets);
@@ -81,7 +85,8 @@ public sealed class StatisticsApiClient : IStatisticsApi
         }
         catch (HttpRequestException ex)
         {
-            throw new StatisticsException($"The statistics endpoint \"{endpoint.Uri}\" could not be reached: {ex.Message}", ex);
+            throw new StatisticsException(
+                $"The statistics endpoint \"{endpoint.Uri}\" could not be reached: {ex.Message}", ex);
         }
         catch (OperationCanceledException ex) when (!cancellationToken.IsCancellationRequested)
         {
@@ -94,7 +99,9 @@ public sealed class StatisticsApiClient : IStatisticsApi
             if (response.IsSuccessStatusCode)
                 return content;
             var (code, message) = ParseError(content);
-            throw new StatisticsException(code, $"The statistics endpoint responded with {(int)response.StatusCode}: {message}", (int)response.StatusCode);
+            throw new StatisticsException(code,
+                $"The statistics endpoint responded with {(int)response.StatusCode}: {message}",
+                (int)response.StatusCode);
         }
     }
 
@@ -103,7 +110,8 @@ public sealed class StatisticsApiClient : IStatisticsApi
         try
         {
             if (JObject.Parse(content)["error"] is JObject error)
-                return (error.Value<string>("code") is { Length: > 0 } code ? code : "unknown", error.Value<string>("message") is { Length: > 0 } message ? message : content);
+                return (error.Value<string>("code") is { Length: > 0 } code ? code : "unknown",
+                    error.Value<string>("message") is { Length: > 0 } message ? message : content);
         }
         catch (Newtonsoft.Json.JsonException)
         {

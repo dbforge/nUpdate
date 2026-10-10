@@ -23,9 +23,12 @@ public sealed class UpdateFlowTests : IDisposable
         _services.FileSystem.AddDrive(root, new MockDriveData { AvailableFreeSpace = 10_000 });
 
         // By default the presenter runs the search and the download straight away and the user accepts the install.
-        _presenter.RunSearchAsync(Arg.Any<Func<CancellationToken, Task<bool>>>()).Returns(call => call.Arg<Func<CancellationToken, Task<bool>>>()(CancellationToken.None));
+        _presenter.RunSearchAsync(Arg.Any<Func<CancellationToken, Task<bool>>>()).Returns(call =>
+            call.Arg<Func<CancellationToken, Task<bool>>>()(CancellationToken.None));
         _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>())
-            .Returns(call => call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(new Progress<UpdateDownloadProgress>(), CancellationToken.None));
+            .Returns(call =>
+                call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(
+                    new Progress<UpdateDownloadProgress>(), CancellationToken.None));
         _presenter.ConfirmInstallAsync().Returns(true);
     }
 
@@ -49,15 +52,24 @@ public sealed class UpdateFlowTests : IDisposable
         var info = new PackageInfo
         {
             Version = new UpdateVersion("1.1.0"),
-            Files = [new PackageFile { Path = "packages/1.1.0/any.zip", Size = served.Length, Sha512 = TestKeys.Sha512(served), Signature = new PackageSignature { Value = TestKeys.Sign(package) } }],
+            Files =
+            [
+                new PackageFile
+                {
+                    Path = "packages/1.1.0/any.zip", Size = served.Length, Sha512 = TestKeys.Sha512(served),
+                    Signature = new PackageSignature { Value = TestKeys.Sign(package) }
+                }
+            ],
         };
         _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed { Packages = [info] }));
     }
 
-    private void ServeEmptyFeed() => _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed()));
+    private void ServeEmptyFeed() =>
+        _services.Http.Text(HttpMethod.Get, FeedUri, Serializer.Serialize(new UpdateFeed()));
 
     private UpdateErrorMessage ShownError() =>
-        (UpdateErrorMessage)_presenter.ReceivedCalls().Single(c => c.GetMethodInfo().Name == nameof(IUpdateFlowPresenter.ShowErrorAsync)).GetArguments()[0]!;
+        (UpdateErrorMessage)_presenter.ReceivedCalls()
+            .Single(c => c.GetMethodInfo().Name == nameof(IUpdateFlowPresenter.ShowErrorAsync)).GetArguments()[0]!;
 
     [Fact]
     public void Constructor_ValidatesArguments()
@@ -106,7 +118,8 @@ public sealed class UpdateFlowTests : IDisposable
         _services.Http.On(HttpMethod.Get, FeedUri, _ => new HttpResponseMessage(HttpStatusCode.InternalServerError));
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.Failed);
         ShownError().Caption.ShouldBe(_manager.Texts.SearchError);
-        await _presenter.Received().ShowErrorAsync(Arg.Any<UpdateErrorMessage>(), Arg.Is<Exception?>(e => e is HttpRequestException));
+        await _presenter.Received().ShowErrorAsync(Arg.Any<UpdateErrorMessage>(),
+            Arg.Is<Exception?>(e => e is HttpRequestException));
     }
 
     [Fact]
@@ -130,7 +143,8 @@ public sealed class UpdateFlowTests : IDisposable
         Publish();
         _presenter.ConfirmInstallAsync().Returns(false);
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.Declined);
-        await _presenter.DidNotReceive().RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>());
+        await _presenter.DidNotReceive()
+            .RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>());
     }
 
     [Fact]
@@ -140,9 +154,11 @@ public sealed class UpdateFlowTests : IDisposable
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.InsufficientDiskSpace);
         var error = ShownError();
         error.Caption.ShouldBe(_manager.Texts.NotEnoughDiskSpaceTitle);
-        error.Text.ShouldContain(nUpdate.Ui.ByteSizeFormatter.Format(_manager.TotalDownloadSize * 2 - 10_000, System.Globalization.CultureInfo.CurrentCulture));
+        error.Text.ShouldContain(nUpdate.Ui.ByteSizeFormatter.Format(_manager.TotalDownloadSize * 2 - 10_000,
+            System.Globalization.CultureInfo.CurrentCulture));
         await _presenter.Received().ShowErrorAsync(Arg.Any<UpdateErrorMessage>(), null);
-        await _presenter.DidNotReceive().RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>());
+        await _presenter.DidNotReceive()
+            .RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>());
     }
 
     [Fact]
@@ -151,18 +167,22 @@ public sealed class UpdateFlowTests : IDisposable
         Publish();
         var reports = new List<UpdateDownloadProgress>();
         _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>())
-            .Returns(call => call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(new SynchronousProgress(reports), CancellationToken.None));
+            .Returns(call =>
+                call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(
+                    new SynchronousProgress(reports), CancellationToken.None));
         _services.AddInstaller();
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.InstallerStarted);
         reports.Last().Percentage.ShouldBe(100f);
         _services.ApplicationTerminator.Received(1).Terminate();
 
-        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()).Returns(call =>
-        {
-            using var cancellation = new CancellationTokenSource();
-            cancellation.Cancel();
-            return call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(new Progress<UpdateDownloadProgress>(), cancellation.Token);
-        });
+        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>())
+            .Returns(call =>
+            {
+                using var cancellation = new CancellationTokenSource();
+                cancellation.Cancel();
+                return call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(
+                    new Progress<UpdateDownloadProgress>(), cancellation.Token);
+            });
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.Cancelled);
     }
 
@@ -188,11 +208,13 @@ public sealed class UpdateFlowTests : IDisposable
     {
         Publish();
         using var cancellation = new CancellationTokenSource();
-        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()).Returns(async call =>
-        {
-            await call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(new Progress<UpdateDownloadProgress>(), CancellationToken.None);
-            cancellation.Cancel();
-        });
+        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>())
+            .Returns(async call =>
+            {
+                await call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(
+                    new Progress<UpdateDownloadProgress>(), CancellationToken.None);
+                cancellation.Cancel();
+            });
         (await _flow.RunAsync(cancellation.Token)).ShouldBe(UpdateFlowResult.Cancelled);
         await _presenter.DidNotReceive().ShowErrorAsync(Arg.Any<UpdateErrorMessage>(), Arg.Any<Exception?>());
     }
@@ -201,11 +223,13 @@ public sealed class UpdateFlowTests : IDisposable
     public async Task Run_VerificationFailure_IsShownAsVerificationError()
     {
         Publish();
-        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()).Returns(async call =>
-        {
-            await call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(new Progress<UpdateDownloadProgress>(), CancellationToken.None);
-            _services.FileSystem.File.Delete(_manager.DownloadedPackages.Values.Single());
-        });
+        _presenter.RunDownloadAsync(Arg.Any<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>())
+            .Returns(async call =>
+            {
+                await call.Arg<Func<IProgress<UpdateDownloadProgress>, CancellationToken, Task>>()(
+                    new Progress<UpdateDownloadProgress>(), CancellationToken.None);
+                _services.FileSystem.File.Delete(_manager.DownloadedPackages.Values.Single());
+            });
         (await _flow.RunAsync()).ShouldBe(UpdateFlowResult.Failed);
         ShownError().Text.ShouldBe(_manager.Texts.PackageNotFound);
     }

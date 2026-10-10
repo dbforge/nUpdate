@@ -9,13 +9,13 @@ namespace nUpdate.UI.WPF;
 /// <summary>
 ///     Runs the complete update process with the built-in WPF dialogs. Create and use it on the UI thread.
 /// </summary>
-public sealed class UpdaterUI
+public sealed class UpdaterUi
 {
     private readonly UpdateFlow _flow;
 
     /// <param name="updateManager">The configured update manager.</param>
     /// <param name="owner">The window that owns the dialogs; <c>null</c> centres them on the screen.</param>
-    public UpdaterUI(UpdateManager updateManager, Window? owner = null)
+    public UpdaterUi(UpdateManager updateManager, Window? owner = null)
     {
         if (updateManager is null)
             throw new ArgumentNullException(nameof(updateManager));
@@ -30,7 +30,8 @@ public sealed class UpdaterUI
     }
 
     /// <summary>Starts the update process and shows the dialogs for every step.</summary>
-    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) => _flow.RunAsync(cancellationToken);
+    public Task<UpdateFlowResult> RunAsync(CancellationToken cancellationToken = default) =>
+        _flow.RunAsync(cancellationToken);
 
     private sealed class WpfPresenter(UpdateManager updateManager, Window? owner) : IUpdateFlowPresenter
     {
@@ -43,7 +44,8 @@ public sealed class UpdaterUI
 
         public Task ShowNoUpdatesAsync()
         {
-            ShowMessage(updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo, MessageBoxImage.Information);
+            ShowMessage(updateManager.Texts.NoUpdatesTitle, updateManager.Texts.NoUpdatesInfo,
+                MessageBoxImage.Information);
             return Task.CompletedTask;
         }
 

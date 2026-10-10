@@ -1,14 +1,10 @@
 namespace nUpdate.Updating;
 
 /// <summary>What a client is and accepts, for <see cref="UpdateFilter" />.</summary>
-internal sealed class UpdateFilterOptions
+internal sealed class UpdateFilterOptions(UpdateVersion currentVersion)
 {
-    public UpdateFilterOptions(UpdateVersion currentVersion)
-    {
-        CurrentVersion = currentVersion ?? throw new ArgumentNullException(nameof(currentVersion));
-    }
-
-    public UpdateVersion CurrentVersion { get; }
+    public UpdateVersion CurrentVersion { get; } =
+        currentVersion ?? throw new ArgumentNullException(nameof(currentVersion));
 
     public Stability MinimumStability { get; set; }
 

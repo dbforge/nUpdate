@@ -44,7 +44,8 @@ public static class User
     {
         Pump();
         return root.GetVisualDescendants().OfType<T>().FirstOrDefault(c => c.Name == name)
-               ?? throw new InvalidOperationException($"There is no {typeof(T).Name} named \"{name}\" in {root.GetType().Name}.");
+               ?? throw new InvalidOperationException(
+                   $"There is no {typeof(T).Name} named \"{name}\" in {root.GetType().Name}.");
     }
 
     /// <summary>Finds a button by the text on it.</summary>
@@ -60,23 +61,28 @@ public static class User
     {
         Pump();
         return root.GetVisualDescendants().OfType<Button>()
-                   .FirstOrDefault(b => (Equals(b.Content, text) || Equals(ToolTip.GetTip(b), text)) && ReferenceEquals(b.DataContext, dataContext))
-               ?? throw new InvalidOperationException($"There is no button \"{text}\" for {dataContext} in {root.GetType().Name}.");
+                   .FirstOrDefault(b => (Equals(b.Content, text) || Equals(ToolTip.GetTip(b), text)) &&
+                                        ReferenceEquals(b.DataContext, dataContext))
+               ?? throw new InvalidOperationException(
+                   $"There is no button \"{text}\" for {dataContext} in {root.GetType().Name}.");
     }
 
     /// <summary>The text box bound to an item of a list, e.g. the changelog of a language.</summary>
     public static TextBox TextBoxFor(Visual root, object dataContext)
     {
         Pump();
-        return root.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(b => ReferenceEquals(b.DataContext, dataContext))
-               ?? throw new InvalidOperationException($"There is no text box for {dataContext} in {root.GetType().Name}.");
+        return root.GetVisualDescendants().OfType<TextBox>()
+                   .FirstOrDefault(b => ReferenceEquals(b.DataContext, dataContext))
+               ?? throw new InvalidOperationException(
+                   $"There is no text box for {dataContext} in {root.GetType().Name}.");
     }
 
     /// <summary>Clicks a control with the mouse. Fails when the user could not click it either.</summary>
     public static void Click(Control control)
     {
         Pump();
-        var window = TopLevel.GetTopLevel(control) ?? throw new InvalidOperationException($"{Describe(control)} is not in a window.");
+        var window = TopLevel.GetTopLevel(control) ??
+                     throw new InvalidOperationException($"{Describe(control)} is not in a window.");
         window.UpdateLayout();
         if (!control.IsEffectivelyVisible)
             throw new InvalidOperationException($"{Describe(control)} is not visible.");
@@ -91,7 +97,8 @@ public static class User
                     ?? throw new InvalidOperationException($"{Describe(control)} has no position in its window.");
         var hit = window.InputHitTest(point) as Visual;
         if (hit is null || !(hit == control || hit.GetVisualAncestors().Contains(control)))
-            throw new InvalidOperationException($"{Describe(control)} is covered by {hit?.GetType().Name ?? "nothing"} at {point}.");
+            throw new InvalidOperationException(
+                $"{Describe(control)} is covered by {hit?.GetType().Name ?? "nothing"} at {point}.");
         window.MouseMove(point);
         window.MouseDown(point, MouseButton.Left);
         window.MouseUp(point, MouseButton.Left);
@@ -112,7 +119,8 @@ public static class User
     public static void Type(TextBox box, string text)
     {
         Pump();
-        var window = TopLevel.GetTopLevel(box) ?? throw new InvalidOperationException($"{Describe(box)} is not in a window.");
+        var window = TopLevel.GetTopLevel(box) ??
+                     throw new InvalidOperationException($"{Describe(box)} is not in a window.");
         if (!box.IsEffectivelyVisible)
             throw new InvalidOperationException($"{Describe(box)} is not visible.");
         if (!box.IsEffectivelyEnabled)
@@ -171,5 +179,6 @@ public static class User
         return list.Items.Cast<object>().Select(i => i?.ToString() ?? string.Empty).ToList();
     }
 
-    private static string Describe(Control control) => $"{control.GetType().Name} \"{control.Name ?? (control as ContentControl)?.Content?.ToString() ?? "?"}\"";
+    private static string Describe(Control control) =>
+        $"{control.GetType().Name} \"{control.Name ?? (control as ContentControl)?.Content?.ToString() ?? "?"}\"";
 }

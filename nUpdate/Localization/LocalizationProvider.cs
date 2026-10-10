@@ -7,27 +7,24 @@ namespace nUpdate.Localization;
 /// <summary>
 ///     Loads <see cref="UpdateTexts" /> from the embedded language files or from custom files on disk.
 /// </summary>
-internal sealed class LocalizationProvider
+internal sealed class LocalizationProvider(IFileSystem fileSystem)
 {
-    private static readonly string[] IntegratedCultureNames = ["de-AT", "de-CH", "de-DE", "en", "es-ES", "it-IT", "zh-CN"];
+    private static readonly string[] IntegratedCultureNames =
+        ["de-AT", "de-CH", "de-DE", "en", "es-ES", "it-IT", "zh-CN"];
 
-    private readonly IFileSystem _fileSystem;
+    private readonly IFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
     public LocalizationProvider()
         : this(new FileSystem())
     {
     }
 
-    public LocalizationProvider(IFileSystem fileSystem)
-    {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-    }
-
     /// <summary>The culture used when none is specified.</summary>
     public static CultureInfo DefaultCulture => new("en");
 
     /// <summary>The cultures shipped inside the library. Created on demand so that a host without culture data still loads the type.</summary>
-    public static IReadOnlyList<CultureInfo> IntegratedCultures => IntegratedCultureNames.Select(name => new CultureInfo(name)).ToArray();
+    public static IReadOnlyList<CultureInfo> IntegratedCultures =>
+        IntegratedCultureNames.Select(name => new CultureInfo(name)).ToArray();
 
     public static bool IsIntegratedCulture(CultureInfo culture) =>
         culture is not null && IntegratedCultureNames.Contains(culture.Name, StringComparer.OrdinalIgnoreCase);
@@ -51,8 +48,12 @@ internal sealed class LocalizationProvider
             if (current.Name.IndexOf('-') < 0)
             {
                 // A neutral culture without texts of its own takes a specific one of the same language, the "home" region first.
-                var candidates = IntegratedCultureNames.Concat(customFiles?.Keys.Select(c => c.Name) ?? []).Where(name => name.StartsWith(current.Name + "-", StringComparison.OrdinalIgnoreCase)).ToList();
-                var sibling = candidates.FirstOrDefault(name => string.Equals(name, current.Name + "-" + current.Name.ToUpperInvariant(), StringComparison.OrdinalIgnoreCase)) ?? candidates.FirstOrDefault();
+                var candidates = IntegratedCultureNames.Concat(customFiles?.Keys.Select(c => c.Name) ?? [])
+                    .Where(name => name.StartsWith(current.Name + "-", StringComparison.OrdinalIgnoreCase)).ToList();
+                var sibling = candidates.FirstOrDefault(name => string.Equals(name,
+                                  current.Name + "-" + current.Name.ToUpperInvariant(),
+                                  StringComparison.OrdinalIgnoreCase)) ??
+                              candidates.FirstOrDefault();
                 if (sibling is not null)
                     return new CultureInfo(sibling);
             }
@@ -72,19 +73,24 @@ internal sealed class LocalizationProvider
         if (customFile is not null)
         {
             if (!_fileSystem.File.Exists(customFile))
-                throw new FileNotFoundException($"The localization file \"{customFile}\" for culture \"{culture.Name}\" does not exist.", customFile);
+                throw new FileNotFoundException(
+                    $"The localization file \"{customFile}\" for culture \"{culture.Name}\" does not exist.",
+                    customFile);
             return Parse(_fileSystem.File.ReadAllText(customFile), culture);
         }
 
         using var stream = typeof(LocalizationProvider).GetTypeInfo().Assembly
-            .GetManifestResourceStream($"nUpdate.Localization.{Resolve(culture)}.json")
-            ?? throw new ArgumentException($"The culture \"{culture.Name}\" is not available. Register a custom localization file for it.", nameof(culture));
+                               .GetManifestResourceStream($"nUpdate.Localization.{Resolve(culture)}.json")
+                           ?? throw new ArgumentException(
+                               $"The culture \"{culture.Name}\" is not available. Register a custom localization file for it.",
+                               nameof(culture));
         using var reader = new StreamReader(stream);
         return Parse(reader.ReadToEnd(), culture);
     }
 
     private static string Resolve(CultureInfo culture) =>
-        IntegratedCultureNames.FirstOrDefault(name => string.Equals(name, culture.Name, StringComparison.OrdinalIgnoreCase)) ?? culture.Name;
+        IntegratedCultureNames.FirstOrDefault(name =>
+            string.Equals(name, culture.Name, StringComparison.OrdinalIgnoreCase)) ?? culture.Name;
 
     private static string? TryGetCustomFile(CultureInfo culture, IReadOnlyDictionary<CultureInfo, string>? customFiles)
     {

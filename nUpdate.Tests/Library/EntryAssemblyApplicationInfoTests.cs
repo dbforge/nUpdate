@@ -29,7 +29,9 @@ public class EntryAssemblyApplicationInfoTests
     public void ExecutablePath_UnderTheDotnetHost_PointsToTheApphostNextToTheAssembly(string? mainModule, bool windows)
     {
         var info = new EntryAssemblyApplicationInfo(TestAssembly, mainModule, windows);
-        var expected = windows ? Path.ChangeExtension(TestAssembly.Location, ".exe") : Path.ChangeExtension(TestAssembly.Location, null);
+        var expected = windows
+            ? Path.ChangeExtension(TestAssembly.Location, ".exe")
+            : Path.ChangeExtension(TestAssembly.Location, null);
         info.ExecutablePath.ShouldBe(expected);
         info.ProductName.ShouldBe("nUpdate.Tests");
     }
@@ -37,8 +39,10 @@ public class EntryAssemblyApplicationInfoTests
     [Fact]
     public void ExecutablePath_PrefersTheProcessImageOfAnApphost()
     {
-        new EntryAssemblyApplicationInfo(TestAssembly, "/opt/app/MyApp", false).ExecutablePath.ShouldBe("/opt/app/MyApp");
-        new EntryAssemblyApplicationInfo(TestAssembly, @"C:\app\MyApp.exe", true).ExecutablePath.ShouldBe(@"C:\app\MyApp.exe");
+        new EntryAssemblyApplicationInfo(TestAssembly, "/opt/app/MyApp", false).ExecutablePath.ShouldBe(
+            "/opt/app/MyApp");
+        new EntryAssemblyApplicationInfo(TestAssembly, @"C:\app\MyApp.exe", true).ExecutablePath.ShouldBe(
+            @"C:\app\MyApp.exe");
     }
 
     [Fact]
@@ -62,7 +66,8 @@ public class EntryAssemblyApplicationInfoTests
     [Fact]
     public void DeclaredVersion_IsNullWithoutTheAttribute()
     {
-        new EntryAssemblyApplicationInfo(typeof(Updating.UpdateVersion).Assembly, null, false).DeclaredVersion.ShouldBeNull();
+        new EntryAssemblyApplicationInfo(typeof(Updating.UpdateVersion).Assembly, null, false).DeclaredVersion
+            .ShouldBeNull();
     }
 
     [Fact]
@@ -76,7 +81,8 @@ public class EntryAssemblyApplicationInfoTests
         try
         {
             var assembly = context.LoadFromAssemblyPath(path);
-            new EntryAssemblyApplicationInfo(assembly, @"C:\Program Files\dotnet\dotnet.exe", true).ExecutablePath.ShouldBe(path);
+            new EntryAssemblyApplicationInfo(assembly, @"C:\Program Files\dotnet\dotnet.exe", true).ExecutablePath
+                .ShouldBe(path);
         }
         finally
         {

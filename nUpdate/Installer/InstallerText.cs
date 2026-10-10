@@ -34,7 +34,8 @@ public enum InstallerText
 /// <summary>English fallback texts for <see cref="InstallerText" />, the defaults of <see cref="UpdateTexts" />.</summary>
 public static class InstallerTexts
 {
-    private static readonly Dictionary<string, string> English = InstallerTextMapper.ToInstallerTexts(new UpdateTexts());
+    private static readonly Dictionary<string, string>
+        English = InstallerTextMapper.ToInstallerTexts(new UpdateTexts());
 
     public static string Default(InstallerText key) =>
         English.TryGetValue(key.ToString(), out var text) ? text : throw new ArgumentOutOfRangeException(nameof(key));

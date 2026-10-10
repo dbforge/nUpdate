@@ -28,7 +28,8 @@ public sealed class WindowsRegistry : IRegistry
         if (value is null)
             throw new ArgumentNullException(nameof(value));
         using var key = Open(keyPath);
-        key.SetValue(value.Name, RegistryValueConverter.ToRegistryValue(value), RegistryValueConverter.ToWin32Kind(value.Kind));
+        key.SetValue(value.Name, RegistryValueConverter.ToRegistryValue(value),
+            RegistryValueConverter.ToWin32Kind(value.Kind));
     }
 
     public void DeleteValue(string keyPath, string valueName)

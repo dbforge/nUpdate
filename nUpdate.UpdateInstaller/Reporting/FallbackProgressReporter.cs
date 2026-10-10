@@ -6,19 +6,13 @@ namespace nUpdate.UpdateInstaller.Reporting;
 ///     Reports to a window and switches to a windowless reporter for good as soon as the window fails: when it cannot
 ///     be opened (no display server after all) or when one of its methods throws. The update itself never notices.
 /// </summary>
-public sealed class FallbackProgressReporter : IProgressReporter
+public sealed class FallbackProgressReporter(IProgressReporter window, IProgressReporter fallback, InstallLog log)
+    : IProgressReporter
 {
-    private readonly IProgressReporter _window;
-    private readonly IProgressReporter _fallback;
-    private readonly InstallLog _log;
+    private readonly IProgressReporter _window = window ?? throw new ArgumentNullException(nameof(window));
+    private readonly IProgressReporter _fallback = fallback ?? throw new ArgumentNullException(nameof(fallback));
+    private readonly InstallLog _log = log ?? throw new ArgumentNullException(nameof(log));
     private volatile bool _failed;
-
-    public FallbackProgressReporter(IProgressReporter window, IProgressReporter fallback, InstallLog log)
-    {
-        _window = window ?? throw new ArgumentNullException(nameof(window));
-        _fallback = fallback ?? throw new ArgumentNullException(nameof(fallback));
-        _log = log ?? throw new ArgumentNullException(nameof(log));
-    }
 
     /// <summary>Blocks in the window until it is closed, or in the windowless reporter once the window failed.</summary>
     public void Initialize()
@@ -40,9 +34,11 @@ public sealed class FallbackProgressReporter : IProgressReporter
         _fallback.Initialize();
     }
 
-    public void ReportUnpackingProgress(float progress, string currentFile) => Call(r => r.ReportUnpackingProgress(progress, currentFile));
+    public void ReportUnpackingProgress(float progress, string currentFile) =>
+        Call(r => r.ReportUnpackingProgress(progress, currentFile));
 
-    public void ReportOperationProgress(float progress, string currentOperation) => Call(r => r.ReportOperationProgress(progress, currentOperation));
+    public void ReportOperationProgress(float progress, string currentOperation) =>
+        Call(r => r.ReportOperationProgress(progress, currentOperation));
 
     public LockedFileDecision ReportLockedFile(string filePath, int attempt)
     {

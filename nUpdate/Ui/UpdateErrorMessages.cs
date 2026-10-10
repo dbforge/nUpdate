@@ -3,17 +3,11 @@ using nUpdate.Localization;
 namespace nUpdate.Ui;
 
 /// <summary>A caption and a text, as the built-in user interfaces show errors.</summary>
-public sealed class UpdateErrorMessage
+public sealed class UpdateErrorMessage(string caption, string text)
 {
-    public UpdateErrorMessage(string caption, string text)
-    {
-        Caption = caption ?? throw new ArgumentNullException(nameof(caption));
-        Text = text ?? throw new ArgumentNullException(nameof(text));
-    }
+    public string Caption { get; } = caption ?? throw new ArgumentNullException(nameof(caption));
 
-    public string Caption { get; }
-
-    public string Text { get; }
+    public string Text { get; } = text ?? throw new ArgumentNullException(nameof(text));
 }
 
 internal static class UpdateErrorMessages
@@ -36,7 +30,8 @@ internal static class UpdateErrorMessages
         return exception switch
         {
             FileNotFoundException => new UpdateErrorMessage(texts.VerificationError, texts.PackageNotFound),
-            ArgumentException or Exceptions.InvalidFeedException => new UpdateErrorMessage(texts.VerificationError, texts.InvalidSignatureData),
+            ArgumentException or Exceptions.InvalidFeedException => new UpdateErrorMessage(texts.VerificationError,
+                texts.InvalidSignatureData),
             _ => new UpdateErrorMessage(texts.VerificationError, exception.Message),
         };
     }

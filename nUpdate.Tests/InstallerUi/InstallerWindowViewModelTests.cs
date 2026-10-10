@@ -7,12 +7,14 @@ namespace nUpdate.Tests.InstallerUi;
 
 public class InstallerWindowViewModelTests
 {
-    internal static InstallerSession Session(string? logPath = "/tmp/nUpdate Installer/App/install.log", Action<InstallerOptions>? configure = null)
+    internal static InstallerSession Session(string? logPath = "/tmp/nUpdate Installer/App/install.log",
+        Action<InstallerOptions>? configure = null)
     {
         var options = new InstallerOptions
         {
             Packages = [new InstallerPackage { Path = "/tmp/nUpdate/App/1.1.0.zip" }],
-            Application = new ApplicationOptions { Name = "Demo", Directory = "/opt/demo", ExecutablePath = "/opt/demo/demo" },
+            Application = new ApplicationOptions
+            { Name = "Demo", Directory = "/opt/demo", ExecutablePath = "/opt/demo/demo" },
         };
         configure?.Invoke(options);
         return new InstallerSession(options, logPath);
@@ -57,7 +59,8 @@ public class InstallerWindowViewModelTests
         viewModel.IconPath.ShouldBe("/tmp/icon.png");
         viewModel.AccentColor.ShouldBe(Color.FromRgb(0x33, 0x66, 0x99));
         viewModel.LogFileText.ShouldBeNull();
-        new InstallerWindowViewModel(Session(configure: o => o.Ui.AccentColor = "not a color")).AccentColor.ShouldBeNull();
+        new InstallerWindowViewModel(Session(configure: o => o.Ui.AccentColor = "not a color")).AccentColor
+            .ShouldBeNull();
     }
 
     [Fact]
@@ -97,7 +100,8 @@ public class InstallerWindowViewModelTests
 
         viewModel.AskAboutLockedFile("/opt/demo/app.dll", answers.Add);
         viewModel.IsAskingAboutLockedFile.ShouldBeTrue();
-        viewModel.LockedFileMessage.ShouldBe("The installer cannot overwrite the file '/opt/demo/app.dll' because it is being used by another process. Close the applications that block it and try again.");
+        viewModel.LockedFileMessage.ShouldBe(
+            "The installer cannot overwrite the file '/opt/demo/app.dll' because it is being used by another process. Close the applications that block it and try again.");
 
         var command = decision switch
         {

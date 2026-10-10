@@ -5,14 +5,9 @@ namespace nUpdate.Tests.Integration;
 
 [Collection(ServerCollectionFixture.Name)]
 [Trait("Category", "Integration")]
-public sealed class SftpTransferProviderTests : IDisposable
+public sealed class SftpTransferProviderTests(ServerFixture server) : IDisposable
 {
-    private readonly IntegrationContext _context;
-
-    public SftpTransferProviderTests(ServerFixture server)
-    {
-        _context = new IntegrationContext(server);
-    }
+    private readonly IntegrationContext _context = new(server);
 
     public void Dispose() => _context.Dispose();
 
@@ -53,7 +48,8 @@ public sealed class SftpTransferProviderTests : IDisposable
             }
         }
 
-        await using var wrong = _context.TransferFactory.Create(settings, new TransferCredentials { Password = "nope" });
+        await using var wrong =
+            _context.TransferFactory.Create(settings, new TransferCredentials { Password = "nope" });
         (await Should.ThrowAsync<TransferException>(() => wrong.ConnectAsync())).Message.ShouldContain("rejected");
     }
 
@@ -61,7 +57,8 @@ public sealed class SftpTransferProviderTests : IDisposable
     public async Task UploadFile_UploadIsServedOverHttp()
     {
         await _context.Server.ResetAsync();
-        await using (var sftp = await _context.ConnectTrustedAsync(_context.SftpSettings(), IntegrationContext.SftpCredentials))
+        await using (var sftp = await _context.ConnectTrustedAsync(_context.SftpSettings(),
+                         IntegrationContext.SftpCredentials))
             await sftp.UploadFileAsync(_context.WriteFile("via-sftp.txt", "sftp"), "via-sftp.txt");
 
         (await _context.HttpClient.GetStringAsync(_context.Server.HttpBaseUrl + "via-sftp.txt")).ShouldBe("sftp");

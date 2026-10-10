@@ -50,13 +50,12 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
     [NotifyPropertyChangedFor(nameof(CanReload))]
     private bool _migrated;
 
-    [ObservableProperty]
-    private string _checkStatus = "Not checked yet.";
+    [ObservableProperty] private string _checkStatus = "Not checked yet.";
 
-    [ObservableProperty]
-    private bool? _checkSucceeded;
+    [ObservableProperty] private bool? _checkSucceeded;
 
-    public MigrationViewModel(ILegacyFeedMigrator migrator, IFeedChecker checker, IDialogService dialogs, IClipboardService clipboard, UpdateProject project, ProjectSecrets secrets)
+    public MigrationViewModel(ILegacyFeedMigrator migrator, IFeedChecker checker, IDialogService dialogs,
+        IClipboardService clipboard, UpdateProject project, ProjectSecrets secrets)
     {
         _migrator = migrator ?? throw new ArgumentNullException(nameof(migrator));
         _checker = checker ?? throw new ArgumentNullException(nameof(checker));
@@ -65,7 +64,11 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         Project = project ?? throw new ArgumentNullException(nameof(project));
         Secrets = secrets ?? throw new ArgumentNullException(nameof(secrets));
         Title = $"Move {project.Name} to nUpdate 5";
-        Steps = [new WizardStep(1, "What changes"), new WizardStep(2, "Packages"), new WizardStep(3, "Statistics"), new WizardStep(4, "Migrate"), new WizardStep(5, "Side by side")];
+        Steps =
+        [
+            new WizardStep(1, "What changes"), new WizardStep(2, "Packages"), new WizardStep(3, "Statistics"),
+            new WizardStep(4, "Migrate"), new WizardStep(5, "Side by side")
+        ];
         Steps[0].IsCurrent = true;
         CloseRequested += (_, _) => Dispose();
     }
@@ -128,9 +131,11 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
                     : $"{UpdateFeed.FileName} with {Count(_plan.ExistingFeed.Packages.Count, "package")}, which applications built with nUpdate 5 read.",
             };
             if (_plan.LegacyStatisticsUsed)
-                lines.Add($"Packages of {LegacyFeed.FileName} report their downloads to {StatisticsScript.LegacyScriptFileName}.");
+                lines.Add(
+                    $"Packages of {LegacyFeed.FileName} report their downloads to {StatisticsScript.LegacyScriptFileName}.");
             if (_plan.UnreadableVersions.Count > 0)
-                lines.Add($"{LegacyFeed.FileName} has entries whose version nUpdate 5 cannot read; they are left out: {string.Join(", ", _plan.UnreadableVersions)}.");
+                lines.Add(
+                    $"{LegacyFeed.FileName} has entries whose version nUpdate 5 cannot read; they are left out: {string.Join(", ", _plan.UnreadableVersions)}.");
             return lines;
         }
     }
@@ -145,7 +150,8 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
                 $"{UpdateFeed.FileName}: the feed applications built with nUpdate 5 read, at {Project.FeedUri}.",
             };
             if (Project.Statistics.Enabled)
-                lines.Add($"{StatisticsScript.ScriptFileName} and {StatisticsScript.ConfigFileName}: the statistics of nUpdate 5, with their own tables in the same database.");
+                lines.Add(
+                    $"{StatisticsScript.ScriptFileName} and {StatisticsScript.ConfigFileName}: the statistics of nUpdate 5, with their own tables in the same database.");
             lines.Add($"On this computer: the new packages in {Project.PackagesDirectory}.");
             return lines;
         }
@@ -163,7 +169,8 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
                     : $"{LegacyFeed.FileName} and the package folders {string.Join(", ", folders)}: installed copies of your application that still run nUpdate 3 or 4 keep updating from them.",
             };
             if (_plan?.LegacyStatisticsUsed == true)
-                lines.Add($"{StatisticsScript.LegacyScriptFileName} and its tables: those copies keep reporting their downloads.");
+                lines.Add(
+                    $"{StatisticsScript.LegacyScriptFileName} and its tables: those copies keep reporting their downloads.");
             lines.Add(Project.LegacyProjectFile is { } file
                 ? $"Your project file of nUpdate Administration 4 ({file}) and its package copies, so you can keep publishing to {LegacyFeed.FileName} with it in the meantime."
                 : $"The project and the package copies of nUpdate Administration 4, so you can keep publishing to {LegacyFeed.FileName} with it in the meantime.");
@@ -201,8 +208,12 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
             return
             [
                 $"Endpoint: {PublishService.StatisticsUri(Project)}",
-                database is null ? "Database: not set" : $"Database: {database.Name} on {database.Host}, user {database.Username}",
-                string.IsNullOrEmpty(Secrets.StatisticsDatabasePassword) ? "Database password: missing" : "Database password: entered",
+                database is null
+                    ? "Database: not set"
+                    : $"Database: {database.Name} on {database.Host}, user {database.Username}",
+                string.IsNullOrEmpty(Secrets.StatisticsDatabasePassword)
+                    ? "Database password: missing"
+                    : "Database password: entered",
                 string.IsNullOrEmpty(Secrets.StatisticsAdminSecret) ? "Admin secret: missing" : "Admin secret: present",
             ];
         }
@@ -215,11 +226,13 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         {
             if (!StatisticsEnabled)
                 return null;
-            const string Fix = " Close the assistant, enter it in the project settings, save them and open the assistant again from the project window.";
+            const string fix =
+                " Close the assistant, enter it in the project settings, save them and open the assistant again from the project window.";
             if (Project.Statistics.Database is null || string.IsNullOrWhiteSpace(Project.Statistics.Database.Name))
-                return "The statistics need database settings." + Fix.Replace("enter it", "enter them", StringComparison.Ordinal);
+                return "The statistics need database settings." +
+                       fix.Replace("enter it", "enter them", StringComparison.Ordinal);
             if (string.IsNullOrEmpty(Secrets.StatisticsDatabasePassword))
-                return "The database password of the statistics is missing." + Fix;
+                return "The database password of the statistics is missing." + fix;
             return string.IsNullOrEmpty(Secrets.StatisticsAdminSecret)
                 ? "The statistics admin secret is missing. Close the assistant, enter it in the project credentials and open the assistant again from the project window."
                 : null;
@@ -238,7 +251,10 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
             if (_plan is null)
                 return [];
             if (NothingToMigrate)
-                return [$"No package is selected and {UpdateFeed.FileName} exists already, so there is nothing to do. Continue to see how to run both versions side by side."];
+                return
+                [
+                    $"No package is selected and {UpdateFeed.FileName} exists already, so there is nothing to do. Continue to see how to run both versions side by side."
+                ];
             var included = _plan.Included.ToList();
             var lines = new List<string>
             {
@@ -248,10 +264,12 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
                 $"{UpdateFeed.FileName} is written with {Count((_plan.ExistingFeed?.Packages.Count ?? 0) + included.Count, "package")}.",
             };
             if (StatisticsEnabled)
-                lines.Add($"{StatisticsScript.ScriptFileName} is uploaded" + (included.Count > 0 ? " and the versions are registered in it." : "."));
+                lines.Add($"{StatisticsScript.ScriptFileName} is uploaded" +
+                          (included.Count > 0 ? " and the versions are registered in it." : "."));
             if (included.Count > 0)
                 lines.Add("The project is saved with the packages marked as released.");
-            lines.Add("Nothing of nUpdate 3 and 4 is changed. If a step fails, what this migration uploaded is removed again.");
+            lines.Add(
+                "Nothing of nUpdate 3 and 4 is changed. If a step fails, what this migration uploaded is removed again.");
             return lines;
         }
     }
@@ -263,11 +281,14 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         get
         {
             var leftOut = _plan?.Pending.Count(p => !(Migrated && p.Include)) ?? 0;
-            var start = Migrated ? "The migration is done." : leftOut == 0 ? $"Every package of {LegacyFeed.FileName} is in {UpdateFeed.FileName}." : "Nothing was migrated in this run.";
+            var start = Migrated ? "The migration is done." :
+                leftOut == 0 ? $"Every package of {LegacyFeed.FileName} is in {UpdateFeed.FileName}." :
+                "Nothing was migrated in this run.";
             var missing = leftOut == 0
                 ? string.Empty
                 : $" {Count(leftOut, "package")} of {LegacyFeed.FileName} {(leftOut == 1 ? "is" : "are")} not in {UpdateFeed.FileName}, so applications built with nUpdate 5 do not see {(leftOut == 1 ? "it" : "them")}; that only matters for versions newer than your first nUpdate 5 release.";
-            return start + missing + " Follow these steps to move your users to nUpdate 5 while nUpdate 4 keeps serving the copies that are installed today.";
+            return start + missing +
+                   " Follow these steps to move your users to nUpdate 5 while nUpdate 4 keeps serving the copies that are installed today.";
         }
     }
 
@@ -286,8 +307,11 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         {
             var (bridge, bridgeLegacy) = BridgeVersion;
             var newest = NewestPackage;
-            var higher = newest is null ? string.Empty : $" It has to be higher than {newest.LiteralVersion}, the newest package in {LegacyFeed.FileName}, because step 3 ships it through the old feed.";
-            return $"Declare the version of that build in the new form, [assembly: ApplicationVersion(\"{bridge}\")] for what nUpdate Administration 4 calls {bridgeLegacy}, instead of [assembly: nUpdateVersion(...)].{higher} The UpdateManager reads the version from that attribute; nUpdate 5 no longer reads spellings like {bridgeLegacy} or 1.2b1.";
+            var higher = newest is null
+                ? string.Empty
+                : $" It has to be higher than {newest.LiteralVersion}, the newest package in {LegacyFeed.FileName}, because step 3 ships it through the old feed.";
+            return
+                $"Declare the version of that build in the new form, [assembly: ApplicationVersion(\"{bridge}\")] for what nUpdate Administration 4 calls {bridgeLegacy}, instead of [assembly: nUpdateVersion(...)].{higher} The UpdateManager reads the version from that attribute; nUpdate 5 no longer reads spellings like {bridgeLegacy} or 1.2b1.";
         }
     }
 
@@ -297,7 +321,9 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         get
         {
             var newest = NewestPackage?.Version;
-            var bridge = newest is null ? new UpdateVersion(1, 2, 0) : new UpdateVersion(newest.Major, newest.Minor + 1, 0);
+            var bridge = newest is null
+                ? new UpdateVersion(1, 2, 0)
+                : new UpdateVersion(newest.Major, newest.Minor + 1, 0);
             return (bridge, $"{bridge.Major}.{bridge.Minor}.0.0");
         }
     }
@@ -306,10 +332,13 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
     {
         get
         {
-            var tool = Project.LegacyProjectFile is { } file ? $"nUpdate Administration 4 and the project file {file}" : "nUpdate Administration 4";
+            var tool = Project.LegacyProjectFile is { } file
+                ? $"nUpdate Administration 4 and the project file {file}"
+                : "nUpdate Administration 4";
             var (bridge, bridgeLegacy) = BridgeVersion;
-            return $"Installed copies still run nUpdate 4 and only read {LegacyFeed.FileName}. Publish the build from step 2 once with {tool}, under the version it declares written the old way ({bridgeLegacy} for {bridge}). " +
-                   $"When your users install it, your application reads {UpdateFeed.FileName} from then on. Publish the same version here as well, and every later version only here.";
+            return
+                $"Installed copies still run nUpdate 4 and only read {LegacyFeed.FileName}. Publish the build from step 2 once with {tool}, under the version it declares written the old way ({bridgeLegacy} for {bridge}). " +
+                $"When your users install it, your application reads {UpdateFeed.FileName} from then on. Publish the same version here as well, and every later version only here.";
         }
     }
 
@@ -327,7 +356,8 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         if (_plan is not null || _disposed)
             return;
         MigrationPlan? plan = null;
-        if (!await RunBusyAsync("Looking at the server...", async progress => plan = await _migrator.PrepareAsync(Project, Secrets, progress)))
+        if (!await RunBusyAsync("Looking at the server...",
+                async progress => plan = await _migrator.PrepareAsync(Project, Secrets, progress)))
         {
             ErrorMessage = "The server could not be read: " + ErrorMessage;
             return;
@@ -423,7 +453,8 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         IsMigrating = true;
         try
         {
-            if (!await RunTrustingAsync(_dialogs, Project.Transfer, "Migrating...", async progress => migrated = await _migrator.RunAsync(Project, Secrets, _plan!, progress)))
+            if (!await RunTrustingAsync(_dialogs, Project.Transfer, "Migrating...",
+                    async progress => migrated = await _migrator.RunAsync(Project, Secrets, _plan!, progress)))
                 return;
         }
         finally
@@ -443,7 +474,8 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         FeedCheckResult? result = null;
         CheckSucceeded = null;
         CheckResults.Clear();
-        if (!await RunBusyAsync("Checking the new feed...", async progress => result = await _checker.CheckAsync(Project, Secrets, progress)))
+        if (!await RunBusyAsync("Checking the new feed...",
+                async progress => result = await _checker.CheckAsync(Project, Secrets, progress)))
         {
             CheckStatus = ErrorMessage!;
             CheckSucceeded = false;
@@ -453,9 +485,13 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
         if (result!.FeedProblem is { } feedProblem)
             CheckResults.Add("✗ " + feedProblem);
         foreach (var package in result.Packages)
-            CheckResults.Add(package.Problem is null ? $"✓ {package.Version} ({package.Platform}): downloaded, size, hash, signature and manifest are fine." : $"✗ {package.Version} ({package.Platform}): {package.Problem}");
+            CheckResults.Add(package.Problem is null
+                ? $"✓ {package.Version} ({package.Platform}): downloaded, size, hash, signature and manifest are fine."
+                : $"✗ {package.Version} ({package.Platform}): {package.Problem}");
         if (result.StatisticsChecked)
-            CheckResults.Add(result.StatisticsProblem is null ? $"✓ {StatisticsScript.ScriptFileName} answers." : $"✗ {StatisticsScript.ScriptFileName}: {result.StatisticsProblem}");
+            CheckResults.Add(result.StatisticsProblem is null
+                ? $"✓ {StatisticsScript.ScriptFileName} answers."
+                : $"✗ {StatisticsScript.ScriptFileName}: {result.StatisticsProblem}");
         CheckSucceeded = result.Succeeded;
         CheckStatus = result.Succeeded
             ? "An application built with nUpdate 5 can update from this server."
@@ -476,14 +512,9 @@ public sealed partial class MigrationViewModel : DialogViewModel, IDisposable
 }
 
 /// <summary>One package of the migration plan as the assistant lists it.</summary>
-public sealed partial class MigrationPackageItemViewModel : ObservableObject
+public sealed partial class MigrationPackageItemViewModel(MigrationPackage package) : ObservableObject
 {
-    public MigrationPackageItemViewModel(MigrationPackage package)
-    {
-        Package = package ?? throw new ArgumentNullException(nameof(package));
-    }
-
-    public MigrationPackage Package { get; }
+    public MigrationPackage Package { get; } = package ?? throw new ArgumentNullException(nameof(package));
 
     public string Title => $"{Package.LiteralVersion} → {Package.Version}";
 
@@ -511,8 +542,11 @@ public sealed partial class MigrationPackageItemViewModel : ObservableObject
                 return $"Already in {UpdateFeed.FileName}.";
             if (Package.Problem is not null)
                 return Package.Source is null ? "Cannot be migrated." : $"Cannot be migrated from {Package.Source}.";
-            var origin = Package.Source!.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? $"downloaded from {Package.Source}" : $"from this computer ({Package.Source})";
-            return $"{Count(Package.FileCount, "file")}, {Count(Package.Operations.Count, "operation")}, {ByteSizeFormatter.Format(Package.Size)}, {origin}.";
+            var origin = Package.Source!.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? $"downloaded from {Package.Source}"
+                : $"from this computer ({Package.Source})";
+            return
+                $"{Count(Package.FileCount, "file")}, {Count(Package.Operations.Count, "operation")}, {ByteSizeFormatter.Format(Package.Size)}, {origin}.";
         }
     }
 
@@ -526,7 +560,8 @@ public sealed partial class MigrationPackageItemViewModel : ObservableObject
                 notes.Add(Package.Problem);
             notes.AddRange(Package.Warnings);
             if (Package.SkippedEntries.Count > 0)
-                notes.Add($"Left out because they are outside the folders the installer knows: {string.Join(", ", Package.SkippedEntries)}.");
+                notes.Add(
+                    $"Left out because they are outside the folders the installer knows: {string.Join(", ", Package.SkippedEntries)}.");
             return notes;
         }
     }

@@ -11,7 +11,8 @@ public class LegacySignatureTests
     {
         var zip = LegacyZip(false);
         LegacySignature.Verify(new MemoryStream(zip), TestKeys.PublicKey, Sign(zip)).ShouldBeTrue();
-        LegacySignature.Verify(new MemoryStream(LegacyZip(false, ("Program/x", "x"))), TestKeys.PublicKey, Sign(zip)).ShouldBeFalse();
+        LegacySignature.Verify(new MemoryStream(LegacyZip(false, ("Program/x", "x"))), TestKeys.PublicKey, Sign(zip))
+            .ShouldBeFalse();
         LegacySignature.Verify(new MemoryStream(zip), TestKeys.PublicKey, "not base64!").ShouldBeFalse();
         LegacySignature.Verify(new MemoryStream(zip), "not a key", Sign(zip)).ShouldBeFalse();
         LegacySignature.Verify(new MemoryStream(zip), TestKeys.PublicKey, null).ShouldBeFalse();

@@ -16,7 +16,9 @@ public class InstallLogTests
         log.Path.ShouldBe("/tmp/install.log");
         log.Write("first");
         log.Write("second");
-        _logs.ReadLog("/tmp/install.log").ShouldBe(["2026-10-07 12:00:00.000 +02:00  first", "2026-10-07 12:00:00.000 +02:00  second"]);
+        _logs.ReadLog("/tmp/install.log").ShouldBe([
+            "2026-10-07 12:00:00.000 +02:00  first", "2026-10-07 12:00:00.000 +02:00  second"
+        ]);
         log.Dispose();
         log.Write("after the end"); // ignored
         _logs.FileSystem.File.ReadAllLines("/tmp/install.log").Length.ShouldBe(2);

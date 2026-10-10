@@ -19,7 +19,8 @@ internal static class Serializer
 
     public static T? Deserialize<T>(Stream stream)
     {
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 4096, leaveOpen: true);
+        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true,
+            bufferSize: 4096, leaveOpen: true);
         return Deserialize<T>(reader.ReadToEnd());
     }
 

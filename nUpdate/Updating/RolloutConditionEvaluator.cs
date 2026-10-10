@@ -34,5 +34,6 @@ internal static class RolloutConditionEvaluator
     }
 
     private static bool Matches(RolloutCondition condition, IReadOnlyDictionary<string, string> client) =>
-        client.TryGetValue(condition.Key, out var value) && string.Equals(condition.Value, value, StringComparison.OrdinalIgnoreCase);
+        client.TryGetValue(condition.Key, out var value) &&
+        string.Equals(condition.Value, value, StringComparison.OrdinalIgnoreCase);
 }
