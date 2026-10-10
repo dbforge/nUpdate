@@ -1,0 +1,97 @@
+name: Release
+
+# Pushing a tag v<version> publishes that version to nuget.org with Trusted Publishing: the publish job trades
+# GitHub's OIDC token for an API key that nuget.org issues for an hour, so the repository keeps no NuGet secret. The
+# trusted publishing policy on nuget.org names this repository, this file (release.yml) and the environment nuget.
+# Run by hand (Actions > Release > Run workflow), the workflow builds and checks the packages without publishing.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  pack:
+    name: Build and check the packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: read # to find the CI run of the commit
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # CI does not run for tags, but it ran for the push of the commit to master.
+      - name: Require a passed CI run of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          passed="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow CI --commit "$GITHUB_SHA" --status success --json databaseId --jq length)"
+          test "$passed" -gt 0 || { echo "CI has not passed for $GITHUB_SHA: push the commit and wait for CI first." >&2; exit 1; }
+
+      - name: Require the tag to match the version
+        if: github.ref_type == 'tag'
+        run: |
+          version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props | head -n 1)"
+          test "$GITHUB_REF_NAME" = "v$version" || { echo "The tag $GITHUB_REF_NAME does not match the version $version in Directory.Build.props." >&2; exit 1; }
+
+      # Packing publishes the built-in installer for all seven runtime identifiers, which all build on Linux.
+      - name: Pack
+        run: dotnet pack nUpdate.sln --configuration Release --output artifacts/packages
+
+      - name: Check the packages
+        run: |
+          ls -la artifacts/packages
+          test "$(ls artifacts/packages/*.nupkg | wc -l)" -eq 7
+          unzip -l artifacts/packages/nUpdate.UpdateInstaller.UI.Avalonia.[0-9]*.nupkg > artifacts/installer-package.txt
+          test "$(grep -c 'installer/.*/nUpdate.UpdateInstaller.UI.Avalonia' artifacts/installer-package.txt)" -eq 7
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nuget-packages
+          path: |
+            artifacts/packages/*.nupkg
+            artifacts/packages/*.snupkg
+
+  publish:
+    name: Publish to nuget.org
+    needs: pack
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Add required reviewers to this environment (Settings > Environments) to approve each release before it goes out.
+    environment: nuget
+    permissions:
+      id-token: write # for the OIDC token that nuget.org exchanges for an API key
+    steps:
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: nuget-packages
+          path: artifacts/packages
+
+      - name: Log in to nuget.org
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: Trade # the nuget.org profile that owns the packages and the trusted publishing policy
+
+      # The symbol packages next to them go up with them; --skip-duplicate lets a failed run be repeated.
+      - name: Push the packages
+        run: |
+          dotnet nuget push "artifacts/packages/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json --skip-duplicate

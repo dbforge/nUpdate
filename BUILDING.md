@@ -181,6 +181,35 @@ and starts it. The macOS job (Apple silicon) checks the signature of the osx-arm
 published-installer tests, including the bundle swap, and builds the macOS bundles of nUpdate Administration for
 osx-arm64 and osx-x64. Coverage, test results, packages and the published administration are uploaded as artifacts.
 
+## Releasing
+
+Releases go to nuget.org through `.github/workflows/release.yml` with Trusted Publishing: the workflow trades
+GitHub's OIDC token for an API key that nuget.org issues for an hour, so no NuGet secret is stored anywhere.
+
+Once, on nuget.org, signed in as Trade, the owner of the packages: under Trusted Publishing, add a policy for GitHub
+Actions with the repository owner `dbforge`, the repository `nUpdate`, the workflow file `release.yml` and the
+environment `nuget`.
+
+For each release:
+
+1. Set `<Version>` in `Directory.Build.props`, push it to master and wait for CI to pass.
+2. Optionally run the workflow by hand (Actions › Release › Run workflow): it builds and checks the packages without
+   publishing them.
+3. Tag the commit and push the tag:
+
+   ```bash
+   git tag -a v5.0.0-rc.1 -m "nUpdate 5.0.0-rc.1"
+   git push origin v5.0.0-rc.1
+   ```
+
+   The workflow checks that the tag matches the version and that CI passed for the commit, packs and checks the
+   packages and pushes them, symbol packages included. A run that failed halfway can be re-run: packages already on
+   nuget.org are skipped. Required reviewers on the GitHub environment `nuget` (Settings › Environments) make each
+   release wait for an approval.
+4. Create the GitHub release for the tag, as a pre-release for a release candidate, with nUpdate Administration from
+   the CI run of that commit: the artifacts `administration-win-x64` (zip the folder), `administration-osx-arm64`,
+   `administration-osx-x64`, `administration-linux-x64` and `administration-linux-arm64`.
+
 ## Layout
 
 | Project | Target | Purpose |
