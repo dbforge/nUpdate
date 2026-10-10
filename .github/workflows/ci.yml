@@ -28,13 +28,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
@@ -80,13 +80,13 @@ jobs:
             --require nUpdate.Administration=90,90 \
             --show-uncovered
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
           path: TestResults/report
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-linux
@@ -106,12 +106,12 @@ jobs:
           HOME="$RUNNER_TEMP/home" xvfb-run -a bash tools/ci/check-starts.sh 15 \
             "$RUNNER_TEMP/administration/nUpdate-Administration/nUpdate.Administration"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: administration-linux-x64
           path: artifacts/administration-linux/nUpdate-Administration-linux-x64.tar.gz
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: administration-linux-arm64
           path: artifacts/administration-linux/nUpdate-Administration-linux-arm64.tar.gz
@@ -122,13 +122,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: nuget-packages-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
@@ -153,7 +153,7 @@ jobs:
           dotnet build nUpdate.Tests/nUpdate.Tests.csproj --configuration Release
           xvfb-run -a dotnet test nUpdate.Tests/nUpdate.Tests.csproj --configuration Release --no-build -- --filter-trait "Category=PublishedInstaller"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nuget-packages
           path: |
@@ -167,13 +167,13 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
@@ -196,14 +196,14 @@ jobs:
         continue-on-error: true # a runner without a desktop session must not fail the build
         run: dotnet run --project tools/WinFormsScreenshots --configuration Release --no-build -- artifacts/screenshots
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: screenshots-windows
           path: artifacts/screenshots
           if-no-files-found: ignore
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: artifacts/packages
@@ -223,12 +223,12 @@ jobs:
         shell: bash
         run: bash tools/ci/check-starts.sh 15 artifacts/administration-win-x64/nUpdate.Administration.exe
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: administration-win-x64
           path: artifacts/administration-win-x64
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-windows
@@ -241,19 +241,19 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ env.NUGET_PACKAGES }}
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: artifacts/packages
@@ -288,12 +288,12 @@ jobs:
               "artifacts/administration-$rid/nUpdate Administration.app/Contents/MacOS/nUpdate.Administration"
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: administration-osx-arm64
           path: artifacts/administration-osx-arm64/nUpdate-Administration-osx-arm64.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: administration-osx-x64
           path: artifacts/administration-osx-x64/nUpdate-Administration-osx-x64.zip

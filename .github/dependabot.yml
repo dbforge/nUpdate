@@ -7,7 +7,15 @@ updates:
     groups:
       dotnet:
         patterns: ["*"]
+    ignore:
+      # Avalonia.Headless.XUnit 12.1 calls an xunit.v3 method that 4.0 removed, so its UI tests are not even
+      # discovered. Lift this once Avalonia.Headless.XUnit supports xunit.v3 4.
+      - dependency-name: xunit.v3.mtp-v2
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
