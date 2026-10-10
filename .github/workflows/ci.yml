@@ -203,7 +203,7 @@ jobs:
           path: artifacts/screenshots
           if-no-files-found: ignore
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: artifacts/packages
@@ -253,7 +253,7 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '.config/dotnet-tools.json') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: artifacts/packages
